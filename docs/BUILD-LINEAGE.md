@@ -27,7 +27,7 @@ result was buried in prose.
 > **RULE: before naming any calibration address as a lever, grep `analysis-2020accord/build_v*_tva.py`
 > for it and check the table below. State its on-car result in your recommendation.**
 
-🛑 **THIS FILE IS SPLIT ACROSS THREE FILES — READ THE POINTER TABLE BEFORE CONCLUDING SOMETHING IS ABSENT.**
+🛑 **THIS FILE IS SPLIT ACROSS FOUR FILES — READ THE POINTER TABLE BEFORE CONCLUDING SOMETHING IS ABSENT.**
 Every mandatory-read file must stay under the **256 KB `Read` cap**; past it a file loads with its tail
 **SILENTLY TRUNCATED and no warning**. This file is the **ENTRY POINT** — start here.
 
@@ -36,6 +36,7 @@ Every mandatory-read file must stay under the **256 KB `Read` cap**; past it a f
 | **`docs/BUILD-LINEAGE.md`** (this file) | RULES 3–13 · struck hypotheses and **struck LEVERS killed on evidence** · ledger corrections · the current-build block · **Part 2 — code caves / GATE 1 / GATE 2** · Part 3 — per-build byte delta · Part 4 — flash status at a glance |
 | [`docs/BUILD-LINEAGE-PART1-LEVER-INDEX.md`](BUILD-LINEAGE-PART1-LEVER-INDEX.md) | **Part 1 — the lever index, by address.** 🛑 **Grep it by address before proposing any calibration edit.** |
 | [`docs/BUILD-LINEAGE-CATCHUP-V76-V100.md`](BUILD-LINEAGE-CATCHUP-V76-V100.md) | the **per-build CATCH-UP ledger, V76 → V100** — 24 rows plus the per-build artifact / route / hash notes |
+| [`docs/BUILD-LINEAGE-PART6-V291-ONWARD.md`](BUILD-LINEAGE-PART6-V291-ONWARD.md) | 🆕 **2026-09-13 — the per-build entries from V293 onward.** This file crossed **233 KB** at the V292 flight verdict, so new entries land there instead. V291 and V292 keep their entries HERE (with V292's FLEW verdict); **V293 has a one-line stub here so `grep V293` still lands**, and its full entry is in PART6. ⚠ **`PART6`, not `PART5` — `docs/BUILD-LINEAGE-PART5-V122-ONWARD-MEASURED.md` already exists and is a different thing** (a generated V122–V210 address index). |
 
 ⚠ **`Part 2` means the code-cave section IN THIS FILE**, which has not moved. The catch-up file is
 deliberately not numbered `PART2` so the two can never be confused.
@@ -249,7 +250,83 @@ Slot 7 only (X 0,32,36,44,88 · Y 248,248,512,512,248) — the other 27 records 
 
 **WHY.** r35 (V281 rev 3): the 7 Hz cycle is gone but seven 1–3 s stalled-wheel runs appeared at idx 54–79 delivering 0.62 of V280's torque — a P-only loop's deadband. Ki 50: corner f = 1.24·Ki/Kp = 0.25 Hz; accumulates the held error until the wheel breaks free (~1.5 s in a 2000-count stall on the ki_sizing plant); costs ×0.984/−1.4° at 7 Hz (the ring is r24's), ~0 at 20 Hz; the integrator is in series with the T tap. Ki 5 (V270/V271, unflown) cannot break a stall (6 s time constant). **CLASS:** the first integrator ever run on this car; a cal that has never been non-zero on any flown build. **RISK:** stall-release lurch ~10 deg/s for ~1.8 s (clamp-set); push against a held hand at idx 40–84 back to V280's level within ~1 s; residual after long curves (~4 s). **READ IT BY:** stalled runs ≥ 1 s ≤ 2 (r35 7), idx 40–80 rate ≥ 70 % of reference (r35 45 %), dead fraction ≤ 0.10 (r35 0.34); 7 Hz and 20 Hz unchanged; FAIL: stalls persist with the accumulator railed; cost FAIL: lurch > 20 deg/s or > 3 s, or a new sub-1 Hz hunt.
 
-### V292 — V291's loop-opening dose made BYTE-EXACT: the feedback lag filter's two floors carry error-feedback remainders in a 52-byte cave  (2026-09-13, **BUILT, NOT FLOWN — THE FLIGHT CANDIDATE: CLEARED by the orchestrator over one dissent (adversarial A/C/D PASS; B FAIL on the sp = 3 steady-state clause only)**)
+### V293 — TORQUE MODE on the V282 base (the LKAS rate feedback clamped to zero) — 🛑 **THE ENTRY IS IN [`docs/BUILD-LINEAGE-PART6-V291-ONWARD.md`](BUILD-LINEAGE-PART6-V291-ONWARD.md)**
+
+**Stub so `grep V293` lands here.** 2026-09-13, **BUILT, NOT FLOWN — 🛑 CLEARED AS THE FLIGHT CANDIDATE
+OVER ONE DISSENT (B2 as written).** A/C/D PASS; B1, B3, B4, B5, B7 PASS, B8 reported; **B2 and B6 FAIL AS
+WRITTEN and both are adjudicated.** V282 is the fallback, the fork preset is MANDATORY, the first drive is
+an IDENTIFICATION drive, and the low-speed 1–4 Hz signature is the first revert trigger. **The decision to
+fly is the operator's.** Cal-only on
+V282: `0xC62E6` 46080 → **0** (the fb clamp — the loop is open at every frequency), `0xC61B6` 10240 → **0**
+and the Kd bank → **0** (D ≡ 0 twice over), the Kp bank → **120 flat**, `0xC6446` 5244 → **2048** (the r24
+engaged arm). **Class: V279 rev 2's structure rebased onto V282** — the LKAS lane becomes a linear torque
+map. Full entry, dose reasoning, predictions, read and revert signatures: **PART6**.
+
+### V292 — V291's loop-opening dose made BYTE-EXACT: the feedback lag filter's two floors carry error-feedback remainders in a 52-byte cave  (2026-09-13, **FLOWN 2026-09-13 on routes `…0000006d` / `…6e` / `…6f` — 🛑🛑 REVERT BY ITS OWN PRE-REGISTRATION: two revert signatures FIRED and the ring did NOT fall. The fallback on the car is V282.** Built and CLEARED the same day over one dissent: adversarial A/C/D PASS; B FAIL on the sp = 3 steady-state clause only)
+
+**🛑🛑 ON-CAR, 2026-09-13 — THE FLIGHT READ (`rlog-tools/studies/grind/V292-FLIGHT-READ-2026-09-13.md`).**
+Operator: **grinding still present, stuttering WORSE — "most visible as an oscillation when holding the
+wheel at a high angle."** Routes `75604b0a432fdc89_0000006d--5e7b4d2ceb` (18 segs, 643.6 s engaged-lateral),
+`…6e--64b4a5fef4` (23 segs, 507.4 s), `…6f--d876c761bc` (13 segs, 572.3 s). 🛑 **The dongle counter was
+RESET — these are NOT the August `r6d`/`r6e`/`r6f` of V84/V85; caches carry the `_v292` suffix.**
+**Attribution is from the TAP, not the label:** the prereg's b3 DUTY read does **not** discriminate
+(V292 0.418/0.445/0.453 vs V282's r6c 0.467, overlapping; the idle control reads backwards, 0.035–0.049
+vs r6c 0.000). What discriminates is the bit's **meaning** — b3 tracks `sign(0x18F rate)` at lag **+1
+frame**, split 0.642–0.764 and peak corr +0.771 to +0.818, against four reference builds (V282 ×2,
+V288r2, V289r1) flat within ±0.06 at every lag. **⇒ V292 on all three routes, cave LIVE.** Cells
+re-verified byte by byte from the images (`0xC63E8/EA` 962/958, `0xC6446` 4725, hook `0x28F8E` = `jr
+0xC4C00`, cave bytes present); the 427 tap is IDENTICAL on both images, so `T` is directly comparable.
+
+| pre-registered read | threshold / prediction | measured (r6d / r6e / r6f) | verdict |
+|---|---|---|---|
+| 6–9 Hz strong-turn ripple → **REVERT** | F7 ≥ 2 /100 s **or** tap ripple/level ≥ 0.25 | F7 **3.99 / 2.22 / 6.30** (pooled **4.17** [1.68, 8.59]; V282 r6c 1.03, r39 0.00, V281r3 r35 0.00; rate ratio ×8.1, p = 0.022); rip/L **0.214 / 0.327 / 0.339** (r6c 0.104, r39 0.166, r35 0.161) | 🛑 **FIRED, both arms** |
+| new roughness or a line at 10–18 Hz → **REVERT** | ×1.3–1.7 byte-exact, peak near 13 Hz | 13–17 Hz **×1.85 / ×1.91 / ×2.14** high-angle, **×1.85 / ×1.81 / ×1.81** hands-off 8–15 m/s (r39 ×1.22, r35 ×1.02); a **14.84 Hz line at +6.3 to +6.4 dB** on r6d where r6c reads +2.8 | 🛑 **FIRED** |
+| 18–22 Hz ring amplitude | ×0.55 pooled, **×0.71 vs r6c** | **route-normalised (engaged ÷ SAME route's disengaged) ×1.20 / ×2.00 / ×1.61**; present-window amplitude **×1.38 / ×1.07 / ×1.25**; pre-registered creep stratum ×1.10 [0.68, 1.56] | ❌ **opposite** |
+| half-peak decay | 545 → ≈183 ms | **273 / 315 / 130 ms** (r6c 190, r39 187) — two rose, one fell, CIs overlap the references | confounded metric |
+| T-vs-rate phase Δ at 10 Hz | **−14° ± 4** | **+38.4 / +25.9 / +15.5** vs r6c (+6.4 to +11.1 at 7.3 Hz where coherence is 0.91–0.96) | ❌ **opposite sign** |
+| 22–30 Hz line → REVERT | — | peak excess +0.43 to +2.37 dB, inside r39's +2.00 and r35's +1.88 | ✅ none |
+| did the object move? | V289 moved it to 15–17 Hz | **19.92–20.02 Hz on every route, every stratum** | ✅ did not move |
+| b5/b6, the r24 cut's control | ≈ −10 % | ×0.897/×0.823, ×0.933/×0.849, ×1.340/×1.250 reweighted — **but r39 (a V282 route) reads ×0.887/×0.870 on the identical comparison** | **uninformative at this dose** |
+
+**MECHANISM — it is NOT the V278 rev 3 stalled-wheel class.** P is **not railed on any of the seven F7
+episodes** (duty 0.00–0.20, five of seven ≤ 0.05), and three sit at rate ÷ reference 0.25–0.51. The seven
+episodes read **7.03 / 7.14 / 6.64 / 7.47 / 7.03 / 7.04 / 7.03 Hz** — precisely the **7.3 Hz gate
+`DESIGN-V291-FBLP` predicted every dose at a ≥ 927 would pay; V292 carries a = 962.** ⇒ the linear 7 Hz
+mode V281 rev 3 damped out was **re-armed by the fb pole's phase lag.** [EVIDENCE for every number;
+BELIEF for "re-armed by the loop change" as the causal attribution.] The frequency did **not** move
+(f0 p50 7.00 Hz on r6d/r6e/r6f **and** on r6c); the amplitude roughly doubled.
+
+**THE CONTROLS THAT MAKE IT A BUILD RESULT, not a route result.** (1) **Exposure** — speed, |angle|,
+demand index and |bar| percentiles match across all six routes in the scored stratum. (2) **Excitation** —
+openpilot's own `0xE4` content in the same band and stratum is at most **×1.3** while the response moved
+**×2**; the extra ripple is **not commanded**. (3) **Route normalisation** — engaged ÷ that route's own
+lateral-**disengaged** amplitude, which cancels a quieter or rougher drive; r6e is the cleanest case in
+the corpus (disengaged ×0.52–0.64 of r6c's in every band while engaged is up ×1.24–2.38: **quieter road,
+louder loop**). (4) Speed-matched re-weighting survives: the two scorable V292 routes sit ×1.2–2.2 at
+18–22 Hz and ×2.6–2.8 at 13–17 Hz while V281 rev 3 sits at or below 1 in every band.
+⚠ **One confound stands and is stated:** the driving model changed `tsfdo` → `gyhu3` between r6c and the
+V292 routes, which changes the LKAS excitation — hence controls (2) and (3). **RESOLVED and NOT a
+confound:** every `Accord*` param was ABSENT from `initData.params` on the V292 routes, and each code
+default equals the 2026-09-10 backup value, so the effective outer loop was unchanged. `AccordCurvatureLead`
+was absent on both sides ⇒ default OFF, the prereg requirement met.
+
+**🛑 VERDICT: REVERT. The fallback on the car is V282.** V292's own pre-registered null sentence — *decay
+not below 1.23× V282's while the phase HAS moved ⇒ the object's damping is not set by the rate loop's
+return ratio* — has **fired**, and the byte-exact replay's ×0.55 ring prediction was **falsified on the
+wire**. Either the fit family mis-sizes what a fb pole does at 20 Hz (the opposite-sign phase is the tell),
+or the engaged-only de-damping is not the LKAS loop's return ratio at all. **V293 (torque mode, fb ≡ 0 at
+every frequency) is the model-independent test of that disjunction.**
+
+**WHAT THIS CHANGES FOR EVERY LATER BUILD.** (a) **Score the ring by the DRIVE-CONTROLLED measure** —
+engaged ÷ same-route lateral-disengaged 18–22 Hz, plus present-window amplitude vs r6c — **never** by the
+driven half-peak decay, which this flight showed is confounded (and which `V292-REPLAY-PREDICTION` §4.2
+had already said would be). (b) **Pre-register MARGINS, not points**: the operator's revert threshold on
+the 7 Hz ripple (0.25) and V292's own prediction (0.22) were **13 % apart**. (c) **A duty read is not an
+attribution**: design the identity read on the bit's *meaning* (a lagged-sign correlation with a lag
+profile and reference builds), not on a duty that overlaps the reference. 🛑 Two scripts had an ordering
+defect on first run and are fixed in place; `v292_flight_census.py` did not complete and its answers are
+reproduced by `v292_flight_creep.py` / `_decay.py` on the identical predicate. No IMU, so road vs rack vs
+motor is still not separated.
 
 **Class: the same OPEN-THE-RATE-LOOP-ABOVE-~8 Hz dose as V291 (fb lag pole 16.5 → 9.94 Hz DC-held, r24 arm
 5244 → 4725, 0x14A b3 = sign(fb state)), plus a code cave that makes the integer filter's mean behaviour equal

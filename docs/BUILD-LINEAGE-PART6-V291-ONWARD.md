@@ -1,0 +1,404 @@
+# BUILD LINEAGE — Part 6: the per-build entries from V293 onward
+
+🛑 **This is a CONTINUATION of [`docs/BUILD-LINEAGE.md`](BUILD-LINEAGE.md), which is the ENTRY POINT.**
+Split out at the 2026-09-13 close-out, when the entry file crossed **233 KB** against the 256 KB `Read`
+cap (past it a file loads with its tail **silently truncated and no warning**). The RULES, the struck
+levers, the ledger corrections, **Part 2 (code caves / GATE 1 / GATE 2)**, Part 3 and Part 4 all stay in
+the entry file and are **not** repeated here.
+
+⚠ **This file is `PART6`, not `PART5`.** `docs/BUILD-LINEAGE-PART5-V122-ONWARD-MEASURED.md` already
+exists and is a different artifact — a generated V122 → V210 address index with no reasoning in it. The
+two must never be confused.
+
+**V291 and V292 keep their entries in the entry file** (V292's with its FLEW verdict). **V293 has a
+one-line stub there so `grep V293` lands**, and its full entry is below. Every later build's entry goes
+here.
+
+🛑 **Same rule as everywhere else: grep by ADDRESS across BOTH files plus
+[`BUILD-LINEAGE-PART1-LEVER-INDEX.md`](BUILD-LINEAGE-PART1-LEVER-INDEX.md) before proposing any
+calibration edit, and state the cell's on-car result. FALSIFIED ≠ INERT-BY-MODE ≠ never-tried.**
+
+---
+
+### V293 — TORQUE MODE: the LKAS rate feedback clamped to zero, D killed twice over, the forward path re-levelled  (2026-09-13, **BUILT, NOT FLOWN — 🛑 CLEARED AS THE FLIGHT CANDIDATE OVER ONE DISSENT (B2 as written). A/C/D PASS; B1, B3, B4, B5, B7 PASS, B8 reported; B2 and B6 FAIL AS WRITTEN and both are adjudicated. V282 is the fallback; the fork preset is MANDATORY; the first drive is an IDENTIFICATION drive; the low-speed 1–4 Hz signature is the first revert trigger. The decision to fly is the operator's. Nothing is flashed.**)
+
+**Class — V279 rev 2's STRUCTURE (2026-09-02, built, never flown) REBASED ONTO V282: the LKAS lane stops
+being a rate regulator and becomes a linear TORQUE MAP, `T = f(cmd)·taper`, with no rate feedback and no
+derivative term.** It is **not a new lever** — V279 built the same three mechanisms on a V268 base. What
+is new is **(i) the base** (V282's ×6 map, its clamps, its 0x14A cave and its `0x1AB` torque tap all come
+along), **(ii) the r24 dose**, and **(iii) the StarPilot preset that flies it.** Against the recent arc:
+V288 worked the **reference** side (setpoint pre-filter) and was null on the grinding; V289 put a **notch
+on the loop output** and the ring relocated; V291/V292 **lowered the loop's feedback bandwidth** and the
+ring did not fall while the 7 Hz mode came back. **V293 removes the loop instead of shaping it** — the
+first build since V279 to change *what the loop is* rather than *how it is tuned*, and the first ever to
+do so on a base the operator has driven and accepted.
+
+**base** V282 (`_v282_…FEEDBACK46080.TORQUE.TAP_plain_image.bin`) · **CAL-ONLY, not one code byte** ·
+**image** `f75e77cf0ba9d93b5302196877e59c6a41deae4983afc09ade99c5b766e1db17` · **rwd**
+`ac4723865378ff376086174bbb82fcabf07c435fae5bf5706a6ef83caa6e71ba`
+(`39990-TVA,A160-V293-V282BASE-TORQUEMODE.FB0-KD0.BANK.ALL+DCLAMP0-KP.FLAT.120.ALL-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP-0x13000-0x100000.rwd`,
+**exactly one V293 rwd on disk**) · **242 assertions** (census **64 substantive / 172 vacuous / 6
+tautological** post-`scriptfix`; 63/172/6 at write time, and adversary C found the substantive count
+**overstated by 23**) · **16/16 mutations caught** (13/13 at write time) · **378 diff bytes over 6 CRC blocks, ZERO of them below `0xC0000`** — the cal-only claim is a
+byte fact, not a docstring claim · script
+`analysis-2020accord/builds/v108_plus/build_v293_tva.py` (agent `builder293`; presets + `--grid`, a
+zero-edit control, `KP_SCOPE = all`), sha256 **`8ffb29a9…` at write time**; agent `scriptfix` then applied
+adversary C's four hygiene fixes (the docstring's 87 % → 14.5 %, the Kd *"128 on 8 / 64 on 20"* line, the
+D-clamp integer into the tag, a full-tuple assertion), so **the script hash moved and the IMAGE hash did
+not — re-hashed at close-out: image still `f75e77cf…`, script now `27d6ff76…`.** 🛑 **Quote the script
+hash with its moment; the artifact is the invariant** · the builder's dry run and adversary C's
+**independent rebuild from the V282 image plus the pre-registration's edit list land on the SAME two
+hashes** ·
+**page** https://claude.ai/code/artifact/6751b3ba-2098-4c74-894b-b74741ff4565 (v2 — A/C/D1 verdicts, the
+taper split, the authority callout) ·
+design `docs/specs/design/DESIGN-V293-TORQUE-MODE-2026-09-13.md` · prereg
+`docs/review/ADVERSARIAL-V293-PREREG-2026-09-13.md` (written before the image existed) · trace
+`docs/traces/TRACE-2026-09-13-lkas-pid-tracked-quantity.md` · arc grounding
+`docs/research/ARC-GROUNDING-TORQUE-MODE-AND-ACCEL-TRACKING-2026-09-13.md` · fork side
+`docs/research/FORK-LATERAL-DESIGN-FOR-TORQUE-MODE-AND-RATE-TARGET-2026-09-13.md` and the operator's card
+`docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
+
+#### The cells — base values read from the record, not from the build script
+
+| cell | STOCK | V282 (the base) | **V293** | what it physically is |
+|---|---|---|---|---|
+| `0xC62E6` | 7680 (30×256) | **46080** | **0** | the LKAS rate-PID's **feedback saturation clamp**, applied to the two-sample sum `r26` at `0x28FA6–0x28FBE` before `sub r26,r16` at `0x29D78`. Zero forces the rate-feedback operand to **exactly 0 on all three branches** ⇒ `E = 32·setpoint` unconditionally. **The loop is open at every frequency.** Three accessors image-wide (`0x28F96`, `0x28F9C`, `0x28FB8`), all `ld.hu` (zero-extend, so a written 0 reads as 0 — no sign trap), **zero writers**. V279 rev 2 already flew this edit past five adversaries on a V268 base, and the whole span `0x28F7C–0x28FC8` plus `0x29D78` is **byte-identical between V268 and V282**, so that proof transfers |
+| Kd bank `0xCB7D4` (all 28 records; live slot 7 = `0xE511C`, X 0/11/22/32, Y 128×4) | 128 | **128** | **0** | the rate PID's **derivative schedule**. With the feedback dead, `dE = 32·d(setpoint)` is a pure **setpoint kick**: one demand-index count near the top of the map is `dE = 32·344/80 = 137`, and at Kd 128 that is `D = (137·128)>>3 = 2192` counts — **87 % of the delivered peak from a single command step.** Zeroing makes `D = (dE·0)>>3 = 0` exactly, at every amplitude, with no clamp involved. **Never edited on any flown build** |
+| `0xC61B6` | 10240 | **10240** | **0** | the **D clamp**, the same three-branch `cmp/ble/mov/subr/cmp/bge/ld.hu/subr` idiom as the fb clamp, so a zero bound forces `D` to exactly 0 on every branch. **7 readers** image-wide (4 live in the clamp block at `0x29EE8/EF2/EF8/F02`, 3 inside the dead twin island), **0 writers**. This makes D zero **twice over, by two independent cells** — which is what the pre-registration's A1 clause requires ("D ≢ 0 for any ΔE with EITHER cell alone" is a FAIL). **BYTE-STOCK from stock through V292** |
+| Kp bank `0xCB994`, **all 28 records** | 248…717 rising | **flat per slot: 205 / 248 / 266 / 307** (V281 rev 3 flattened each record to its OWN Y[0]; the live slot 7 is **248**) | **120 flat, every record** | the **proportional schedule**. With `fb ≡ 0`, `P = (32·Y·Kp)>>8`; on V282's linear map `Y = 4.3·idx → 1032`, so Kp 120 gives `P = 15480` at idx 240, clipping to the **same 15360 P-rail V282 already has**, and linear below it. **Why 120 and not 248:** at fb = 0 V282's Kp 248 rails from **idx 116**, i.e. it would deliver PEAK TORQUE from 48 % of demand upward — a ×2.07 over-gain on the bottom half of the range. **Why all 28 records and not just slot 7:** the fb clamp is **ONE GLOBAL cell** while Kp is **per-slot**, so a selector that is ever not 7 must land on the same surface, not on zero feedback at a 205–307 Kp railing at 44–58 % of demand. (The selector was MEASURED **7** on the V276 wire and the record says it maxes at 9, so this is a **contingency, not a live defect** — it is bought for ~45 payload bytes.) 🛑 **Kp 119 was rejected by the prereg's own A2 clause**: it delivers 2504, one count below V282's rail, and A2 FAILs if the rail differs by one count or more. 119 stays on the builder's grid as the control showing the **clamp** pins the rail, not the arithmetic |
+| `0xC6446` | 512 | **5244** (V84's Lever B) | **2048** | the **r24 ENGAGED rate-lane arm** — r24 is a lag-4 backward difference of torsion-bar torque, unit-weight sibling of the LKAS lane at `gp-0x6b94` ⇒ **1 : 1 at the motor**. On the wire it is a pure **PUMP at 3–7 Hz** (∠+170°) and a near-pure **DAMPER at 18–22 Hz** (∠+9…+15°, 73–86 % of the electronic 20 Hz damping). ⭐ **2048 is not an arbitrary rung: `0xC6440` = 2048 is the DISENGAGED arm, and it reads 2048 on EVERY image including STOCK** — so **V293 sets the engaged arm EQUAL to the disengaged one**, which is a far more interpretable statement than "a number between 512 and 5244". See the dose reasoning below |
+
+#### The byte census, re-derived from the BUILT image by this writer, not taken from the builder's report
+
+**378 differing bytes vs V282 in 183 runs, over 6 CRC blocks** — and it reconciles exactly:
+
+| region | bytes | what |
+|---|---|---|
+| `0xC62E7` | 1 | the fb clamp's high byte (46080 → 0) |
+| `0xC61B7` | 1 | the D clamp's high byte (10240 → 0) |
+| `0xC6446–47` | 2 | the r24 arm (5244 → 2048) |
+| `0xE4xxx`–`0xE8xxx` | **112** | the Kd bank — 28 records × 4 knots |
+| `0xE4xxx`–`0xE8xxx` | **240** | the Kp bank — 28 records × knots, every one 120 |
+| `0xC6FFC`, `0xE4FFC`, `0xE5FFC`, `0xE6FFC`, `0xE7FFC`, `0xE8FFC` | **22** | the six CRC trailers |
+
+1 + 1 + 2 + 112 + 240 = **356 payload bytes**, + 22 trailer bytes = **378**. ⚠ **Two of the six trailers
+differ in only 3 of their 4 bytes** (`0xE6FFC` `6fe05911` → `df1459ab`, `0xE7FFC` `af54b962` → `1fa0b9d8`),
+which is why 6 blocks carry 22 and not 24 bytes — **a run-length scan that requires a full 4-byte trailer
+run finds only FOUR blocks and undercounts.** Cells read back from the built image: `0xC62E6` = **0**,
+`0xC61B6` = **0**, `0xC6446` = **2048**; Kd slot-7 record `0xE511C` Y = **0,0,0** (V282: 128,128,128);
+Kp slot-7 record `0xE5378` Y = **120,120,120,120** (V282: 248,248,248,248), X knots unchanged.
+
+Everything else **byte-identical to V282**: the ×6 map (slot 7 ceiling 1032), the P/sum clamps 15360, the
+output clamps 3072, the forward gain 5346, `Ki = 0` (`0xC63E6`), the fb lag pole 923/1560 (its **state
+keeps running** — only its clamped output is zero), the output lag 992/507, the override taper, the idx
+clamps 240, the 0x14A cave and its rungs **b4–b7** (🛑 **b3 stays V282's ALIASED bit — it is NOT V292's
+fb-state rung**), and the `0x1AB` tap of `gp-0x6b38` (= the delivered lane torque `T`). Only the CRC
+trailers of the blocks owning the touched cells change.
+
+#### The dose reasoning for `0xC6446` = 2048 — **the orchestrator's ruling, against the design agent's recommendation**
+
+`DESIGN-V293-TORQUE-MODE` recommends **4451** (−15.1 %): with the servo gone the 7.3 Hz gate collapses to
+`1.19·(arm/5244)` and 4451 restores it to exactly **1.010**, the criterion. **The orchestrator took 2048
+instead, before any image existed**, on three grounds:
+
+1. **A criterion-exact arm carries no margin against the operator's loudest symptom.** The same model
+   under-predicted V292's measured 5–9 Hz cost **three-fold** (predicted ×1.03–1.10; the wire read
+   ×2.9–4.3 route-normalised, ×1.6–2.2 raw), and that band is the one the operator has just called worse.
+2. **2048 is the record's own priced lever** — *"7.3 Hz ring 0.98 → 0.48, no margin or authority cost"*
+   (`GRINDING-DEEP-ANALYSIS-2026-09-03` §2–3). It is not a new number.
+3. ⭐ **In torque mode the r24 cut is FREE at 20 Hz, and only here.** With the servo present, cutting r24
+   costs 20 Hz damping (paired Δζ **−0.044 / −0.075 / −0.086** at κ 0.10 / 0.20 / 0.45 — the record's own
+   finding, reproduced to four decimals). With the servo **gone**, removing r24 **RAISES** ζ (paired
+   **+0.036 / +0.097 / +0.183**, on 96 / 96 / 100 % of plants). **r24's apparent 20 Hz damping was a
+   partial cancellation of the servo's de-damping; delete the servo and it evaporates.** The broader
+   (V282-pole-only) family's marginal 21–23 Hz pole at arm 5244 also clears below ~2622.
+
+**BELIEF that 2048 is the better hedge** — the adversarial B surface is briefed to score 4451 and 2048
+side by side, so the ruling is falsifiable rather than assumed. ⚠ The lever index's V69/V70 remark stands
+and cuts the other way at the *other* end of the range: `0xC6446` = **512** (Honda stock) is **not** a
+free improvement — `grind_loop_shape.py` §G's *"5244 → 512 improves both bands"* is **falsified on the
+car**, because V70 at 512 put grind #1 back at creep. 2048 is between, and is the first time this cell has
+been set there on any built image.
+
+#### The delivered surface — the rail read from BOTH BUILT IMAGES
+
+🛑 **THREE DIFFERENT NUMBERS HAVE BEEN CALLED "THE RAIL" IN THIS RECORD. THEY ARE NOT THE SAME QUANTITY,
+AND ONLY ONE OF THEM IS DELIVERED.**
+
+| number | what it actually is | use it for |
+|---|---|---|
+| **2461** | ⭐ **THE DELIVERED RAIL — the byte-exact steady state through the fade and the output lag, and it reads 2461 on the V293 image AND on the V282 image.** The residue is the output lag's integer fixed-point interval | **this is the one the car delivers** |
+| 2462 | the **linear DC** of the same chain — what the output lag's DC gain gives before the integer fixed point settles | a linear cross-check only |
+| 2505 | the **structural ceiling** — `min((15360·5346)>>15, 3072)`, the `T_ceil` convention the V279/V282/V292 docstrings print | 🛑 **NEVER quote it as delivered.** Neither build reaches it at fade 254 |
+
+⇒ **Peak authority is ×1.000, not ×0.9992** — the ×0.9992 (2461 vs 2463) in
+`DESIGN-V293-TORQUE-MODE-2026-09-13.md` §1.4 compared V293's byte-exact march against a V282 figure
+computed a different way. **Both images rail at 2461** from a cold-start state of 0.
+
+🛑 **2461 IS AN AT-REST NUMBER — condition every on-car rail read on SPEED.** ✅ **The SELECTOR question
+is CLOSED** by a decompile of the built image: the taper is **ONE stage, not two** — `0x2A13x` carries
+`factor = ((tapAB · tapCD) & 0xFFFF) >> 8; S = (factor·S) >> 8`, at-rest 254/256 only because **both halves
+return 255 at rest** — and **`gp-0x6803` picks B × D (`0xCBBC4`)**. **The kit memory was right about D; the
+tracer's C (`0xCBAE4`) reading was wrong.**
+
+🛑 **BUT THE AXIS UNIT IS STILL OPEN, AND IT IS WORTH REAL TORQUE.** Adversary A read the C/D half's X axis
+as speed and **assumed km/h — flagged as its own BELIEF** — which would derate the rail to **2151 at
+10 m/s and 736 at ≥ 20 m/s.** The record's on-car tap numbers point the other way: V278 rev 3's
+`T_meas/T_sim` is **0.42–0.51 at 3–9 m/s**, and the tap rails at 310 on faster routes. **Do not quote the
+derated rails as established.** ⭐ **What is safe either way: the table is IDENTICAL on both builds, so the
+V282 : V293 ratio holds at every speed and the trade below does not depend on resolving the axis.**
+Because the output lag's floors give an **interval** of fixed points, *"the rail is identical to V282's"*
+is scored on **matched trajectories** from a cold-start state of 0, not on a single number.
+
+`T(idx)` in EPS torque counts at the CAN-427 tap, fade `m` = 254 (no driver torque). **The V293 row is the
+byte-exact steady state `T_ss`; the V282 rows are the design's `T_ceil` convention** and so print 2505
+where the delivered value is 2461:
+
+| idx | 0 | 40 | 80 | 120 | 160 | 200 | 240 |
+|---|---|---|---|---|---|---|---|
+| **V293 `T_ss`** (Kp 120, fb ≡ 0) | 0 | 413 | 826 | 1237 | 1653 | 2067 | **2461** |
+| V293 `T_ceil` (for comparison with the older docstrings) | 0 | 420 | 841 | 1260 | 1683 | 2104 | 2505 |
+| V282 at fb = 0 (wheel still), `T_ceil` | 0 | 869 | 1739 | 2505 | 2505 | 2505 | 2505 |
+| V282 at 10 deg/s of wheel rate, `T_ceil` | **−385** | 485 | 1355 | 2219 | 2505 | 2505 | 2505 |
+| V282 at 20 deg/s of wheel rate, `T_ceil` | **−776** | 94 | 964 | 1828 | 2505 | 2505 | 2505 |
+
+🛑 **"×1.00 of V282's authority" is true of the PEAK and of nothing else.** Three senses, and they
+disagree: **peak torque ×1.000** (2461 delivered on both images) · **torque at a given command with the
+wheel still ×0.48** below idx 115,
+rising to ×1.00 at 240 · **torque delivered on the operator's own recorded episodes ×0.82 rms** on r39's
+grinding windows and **×3.6** on loaded high-angle turns, because V282's servo has already nulled there
+and V293 does not. **Sense 3 is the one he drives.** No single Kp makes all three ×1.00, because V282's
+delivered torque is not a function of the command at all. The fade LERP (`0xCBBC4` slot 7) is the **only**
+thing that backs a torque-mode lane off for a driver — there is no error term left to do it — and it is
+the same LERP on both builds. At idx 48 V282 delivers 35 counts once the wheel reaches the asked rate and
+0 at the null rate; V293 delivers ~492 counts **and keeps delivering them**, receding only as the driver's
+own bar torque climbs the fade above |bar| ≈ 512. [EVIDENCE for the numbers; **BELIEF** that this feels
+like V276's *"the only way to stop it is to hold the steering wheel very firmly"* — V276 also had a limit
+cycle, which this does not.]
+
+#### Predictions on record BEFORE the pass — so no adversary scores against a moving target
+
+- **18–22 Hz wheel ring ×0.285** [0.27, 0.30] on r39's loudest windows, **×0.40** on r6c; the **on-car
+  anchor** (engaged ÷ same-route disengaged on V282 routes, reciprocal) **×0.24–0.29**; ring-down
+  169 → 43 ms; r6c's 12–17 Hz episodes ×0.80. ζ(20 Hz) 0.030 → **0.157–0.325** by κ.
+  ✅ **RESOLVED by `advB3b`: the anchor is an ESTIMATE, not a lower bound.** The r24 lane is **SWITCHED**
+  to `0xC6440` when disengaged, **not gated off** — the selector reads
+  `g = 1024 if gp-0x671d else 0xC6446 if lateral else 0xC6440` (`0x3ABFE` / `0x3AC08` / `0x3AC12`) — so
+  **on V293 the r24 lane is BIT-IDENTICAL engaged and disengaged.** ⚠ **Three residuals keep it an
+  estimate rather than a measurement:** V293 still injects `f(cmd)` (the replay sizes the forced ring at
+  **3.49** against V282's **10.30** counts); the disengaged reference is **mostly stationary**; and the
+  **r26 base-assist arm `0xC6444` also moves with the `0x3AA96` gate** — unresolved.
+  🛑 **The same predictor's V292 prediction (×0.535) FAILED on the wire (the loop's contribution went UP
+  ×1.20–2.00). The failure is the METHOD's** — the design agent reproduced the published V292 number with
+  its own implementation, so it is not a coding difference. **This is the largest single risk on the page.**
+- **5–9 Hz wheel band on loaded high-angle windows ×2.10 (r39) / ×1.45 (r35)**, consistent with
+  `|1 + L_V282(7.3 Hz)| = 2.04` — the servo's disturbance rejection removed. Stall-class P-rail duty
+  0.66 → **0.00**; ripple/level 0.705 → 0.078 **but the denominator grows ×3.6**, so the ABSOLUTE
+  6–8.5 Hz tap ripple must be scored too (×0.52 r39 / ×3.2 r35).
+- **Outer loop is NOT the risk.** At the operator's live tune (LAF 6.0 / Kp 0.9 / Ki 0.30) V293's margins
+  are indistinguishable from V282's: Ms 1.09–1.38 vs 1.04–1.35, PM 64° vs 66° at 28.5 m/s. **No cell in
+  the 6 × 3 × 3 grid reproduces V276's 2–4 Hz signature that V282 does not also reproduce.** V276's shape
+  returns not as a margin failure but as a **feedforward mis-scaling ×3.17 at 5 m/s** — hence the fork
+  preset below.
+- **Edit-live control:** regress `|427 tap|` on `f(cmd)·fade` — R² **−4.82 (V282) → +0.92 (V293)**,
+  residual 349 → 47 counts; `0x14A` **b7 duty 0.996 → 0.808** is the mover, **b4 (sign r24)** the negative
+  control; b6 is **not** pre-registered.
+- ⭐ **The lever inside the lever, and the operator is entitled to it before he decides:** sweeping
+  `0xC62E6` from 46080 to 0 with Kp 120 / Kd 0 held moves the wheel ring only **×0.299 → ×0.272** —
+  **~90 % of the grinding benefit is Kd = 0 and the Kp re-level, not the clamp.** The clamp is what
+  changes the delivered **quantity** (the session's other goal) and is nearly free on the ring.
+- 🛑 **No intermediate dose exists.** `0xC62E6` is a **clamp, not a gain**: a small non-zero value is not
+  "less feedback", it is a **Coulomb relay on sign(wheel rate)**. Swept byte-exact at 256/512/1024/2048/
+  4096, every value is worse than zero on every column, and with the command frozen the relay **ADDS**
+  18–22 Hz (×1.005–1.079) and 5–9 Hz (×1.02–1.10) motion. **The cell is effectively binary and 0 is the
+  right end.**
+
+#### READ IT BY — the first drive is an IDENTIFICATION drive, not a symptom drive
+
+1. **Identification first** (fork memo §3.5): hands-off, laterally engaged, **≥ 400 frame pairs per |τ|
+   bucket in ≥ 4 buckets to |τ| 0.5, both signs** — then fit LAF by instrumental variables against
+   `modelV2.action.desiredCurvature·v²`. **Do not identify LAF from `torqued`**: its buckets do not fill on
+   this car and its estimate is a long-filter TLS through central buckets on a plant whose gain has just
+   changed discontinuously. Then the tune, then symptom scoring.
+2. **The edit-live identity, on every engaged frame:** `T_tap = f(cmd)·taper`, with
+   `sign(T) = −sign(cmd)` agreement ≈ 1.00 proving the feedback is dead. **T saturating below the map top
+   means the map is not the live source.**
+3. **The ring by the DRIVE-CONTROLLED measure the V292 flight read established** — engaged 18–22 Hz
+   amplitude ÷ the **SAME route's lateral-disengaged** amplitude (V282 reads **3.4–3.9** on r6c/r39/r35;
+   V292 read 4.1–6.8), plus present-window amplitude vs r6c (V282 ×1.0–1.05, V292 ×1.07–1.38) and the
+   14–15 Hz line excess in dB. 🛑 **NOT the driven half-peak decay** — the V292 read showed it is confounded.
+4. F7 and tap ripple/level at |angle| ≥ 30°; a 1–4 Hz line in command **and** angle; b4–b7 duties as the
+   r24 control.
+
+**THE SENTENCE A NULL LICENSES** (write it down before the drive, per the design law):
+> *If the 18–22 Hz ring's amplitude and ring-down are unchanged with the LKAS loop open on every frame —
+> the edit-live identity holding — then the 20 Hz object is not the LKAS loop's, and the whole in-loop
+> class, V38 → V293, is closed.*
+
+**REVERT IF:** grinding unchanged (**the operator's word, not a band**) · the 6–9 Hz ripple returns
+(F7 ≥ 2/100 s **or** ripple/level ≥ 0.25) · **a 1–4 Hz oscillation of command and angle** — the V276
+signature, i.e. the outer loop; the fix is the fork preset, not the firmware, **but the drive stops** · a
+10–18 Hz line · a darty or loose feel · a one-sided pull at rest · any EME or DTC.
+🛑 **It licenses no claim that the grinding or the stutter is fixed. The operator scores the symptom.**
+
+#### The fork side — ONE switch, and the mismatch is not symmetric
+
+`AccordEpsTorqueMode` (Galaxy → *Custom Patches*), **uncommitted on `raayyymond-StarPilot/StarPilot` @
+`Dom`, ships OFF**. The card is `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
+
+> **The one rule: `AccordEpsTorqueMode` may be ON only while a torque-map EPS image (V293 or later) is in
+> the ECU.** Going TO V293: **flash first, toggle second.** Reverting: **toggle first, flash second.**
+
+| state | consequence |
+|---|---|
+| mode **ON** + rate-servo image (V282/V292/stock) | 🛑 **OVER-DELIVERY** — feedforward **×2.55** at 15 m/s / 0.9 m/s², measured from the built fork code, inside the record's ×2.4–4.3 band. **Nothing downstream catches it**: `opendbc/safety/modes/honda.h` applies no magnitude, rate, driver-torque or RT-window limit to `0xE4`. **Never create this row, not even for the drive to the flashing spot** |
+| mode **OFF** + torque-map image (V293) | **UNDER-DELIVERY** — the rate-plant feedforward inverting a servo that is no longer there. The car wanders and the driver takes over. **Recoverable**, and it is the state Safe Mode forces |
+
+🛑🛑 **A STANDING FORK DEFECT, FOUND BY B6 AND LIVE ON V282 TODAY — not a V293 problem.** StarPilot feeds
+**`error_with_lsf`** (= `error·(1 + lsf/kp)`) into `get_friction`, where upstream openpilot feeds the
+**raw** error. The friction compensator's gain is therefore **`(friction/0.30)·(1 + lsf/kp)`**:
+**×17.9 at Kp 0.3 and 5 m/s** — and **×6.6 at the operator's LIVE Kp 0.9, on the car right now.**
+⭐ **A lower Kp makes it WORSE, not safer** (the loop gain is minimised near Kp ≈ 1.0), which inverts the
+preset's own rationale for Kp 0.3. **Repair: preset friction 0.01 → 0.00** ⇒ PM 22.8° → **42.2°**,
+Ms 4.32 → **2.06**, gain margin **×1.40**.
+
+Provisional first-drive tune, all four in `latcontrol_vehicle_tunes.py`'s `HONDA_ACCORD_TORQUE_MODE_*`
+block: LAF **6.0** (🛑 carried over so the first flight is not also a gain change — **not an
+identification**; on a torque actuator the DC gain is finite and should come out *lower*), friction
+**0.01 → 0.00 (B6's repair, being applied)**, Kp **0.3** (🛑 **its stated rationale is falsified by B6 —
+see above**), Ki **0.15**. **Net command at 15 m/s / 0.9 m/s² comes out ×0.955 of today's** — the
+bigger feedforward is more than paid for by the Kp and Ki cuts, but that is **a coincidence at one
+operating point, not a safety margin.** `SteerRatio` stays **16.88** through identification; in torque mode
+its second consumer is gone so the level's sensitivity roughly **halves** [BELIEF, from the structure].
+
+#### 🛑 ADVERSARIAL PASS — COMPLETE. **CLEARED OVER ONE DISSENT.**
+
+> **VERDICT: V293 is CLEARED as the flight candidate over ONE DISSENT (B2 as written), with V282 the
+> fallback, the fork preset (`AccordEpsTorqueMode` ON: LAF 6.0 / friction 0.00 / Kp 0.3 / Ki 0.15,
+> rate-plant FF OFF) MANDATORY, the first drive an IDENTIFICATION drive, and the low-speed 1–4 Hz
+> signature the first revert trigger. The decision to fly is the operator's. Nothing here licenses any
+> claim that the grinding or the stutter is fixed — the operator scores the symptom; the pre-registered
+> read and the terminal null sentence stand.**
+
+**`advA3` PASS (A1–A4) · `advC3` PASS (C1–C5) · `advD3` PASS (D1–D5) · `advB3` / `advB3b`: B1, B3, B4, B5,
+B7 PASS, B8 reported, 🛑 B2 and B6 FAIL AS WRITTEN — both adjudicated below.** Full table:
+`docs/review/ADVERSARIAL-V293-PREREG-2026-09-13.md`.
+
+- **A — ARITHMETIC: PASS on A1–A4.** The clamp block **simulated from its own decoded bytes over 4,023
+  int32 states gives ZERO non-zero operands** — and the capable-null control is real: **V282 at 46080
+  gives 4,012 on the same sweep.** `D ≡ 0` by **each cell alone**. The `0x2A0C6` damper mode is
+  **unreachable by three methods**, including **zero LE32 hits of `0xFEDF17F6`** — which closes the
+  tracer's residual on it. **Rail 2461 = 2461** on matched cold-start trajectories; **P first rails at
+  idx 239**; linear fit **10.336·idx − 1.89** (max residual 2.19 counts, accounted for); worst product
+  ×495 inside int32; the code region byte-identical; **b3 is V282's aliased `ld.w gp-0x3680`**; the tap
+  (`gp-0x6b38`) under-reads by 0–7 counts.
+- 🛑🛑 **A's CARRIED FINDING — NOT GATED, AND IT CHANGES HOW THIS BUILD MUST BE DESCRIBED.**
+  **V293's sub-rail slope is 10.34 counts per demand index against V282's 21.35 at `fb = 0`.** Below
+  idx 116 **V293 delivers 0.47–0.49 of V282's STALLED-WHEEL torque** (at idx 58: **598 vs 1236**), meeting
+  it only at idx 239–240. In A's own words: **"the peak is identical and needs twice the demand to
+  reach."** ⇒ 🛑 **DO NOT WRITE "AUTHORITY UNCHANGED" ANYWHERE ABOUT V293**, and **a page that shows only
+  the rail is misleading** — the sub-rail surface is half of V282's against a wheel that is not moving,
+  which is precisely the condition the driver feels at a stall.
+- **C — BUILD AUDIT: PASS.** The **independent rebuild from the V282 image plus the pre-registration's
+  edit list is byte-identical** and lands on both reported hashes. Non-blocking findings, each recorded
+  because they are exactly the class this audit exists to catch: the **substantive assertion census (63)
+  is overstated by 23**; **seven single-knot mutations are invisible to the assertions** (a knot could
+  move and no assertion would fire); **the tag does not encode the D-clamp integer**, so two builds
+  differing only in `0xC61B6` would carry the same tag; and two docstring errors. 🛑 **None of the four is
+  in the artifact** — the image is what the pre-registration specifies.
+- **D — INTERLOCKS: D1 PASS, and the number is what makes it one.** This was the clause most likely to
+  return do-not-flash, because a torque-mode lane holds full commanded torque however fast the wheel
+  already moves, so **dwell at the rail rises even though the peak does not.** The census found the
+  mechanism and then bounded it: the **soft-EME integrator `gp-0x3570` in the shaper `FUN_00042af8`**
+  arms **SM2 at `|I>>15| ≥ 15361`**, integrating the excess of `|cmd|` over
+  `max(corridor, IIR, boost floor 5120)`. ⭐ **The LKAS lane's rail (≈ 2481 at the shaper's input) cannot
+  reach the bound at all.** The only band V293 newly opens is **`5120 < |cmd| ≤ 5325`, and it needs
+  75 ms of CONTINUOUS residency**; SM2/SM3 self-clear; the energy budget `FUN_0007b022` is unreachable;
+  every interlock cal is byte-identical to V282. ⚠ **D5's wording is FALSE but INERT** — the dead twin
+  island *does* read `0xC61B6`; it is uncalled, so nothing follows.
+- 🛑🛑 **B6 — THE OUTER LOOP: INTERIM FAIL ON THE BUILD + PRESET PAIR AS SHIPPED. THE FIRMWARE IS NOT THE
+  DEFECT; THE FORK IS.** At **5 m/s, κ 1.00, τ 0.20 s the outer loop's phase margin is 22.8°**
+  (Ms 4.32, crossover 0.82 Hz). **Cause:** StarPilot feeds **`error_with_lsf`** (= `error·(1 + lsf/kp)`)
+  into `get_friction`, where upstream openpilot feeds the **raw** error — so the friction compensator's
+  gain is **`(friction/0.30)·(1 + lsf/kp)`**, i.e. **×17.9 at Kp 0.3 and 5 m/s.**
+  ⭐ **AND A LOWER Kp IS WORSE, NOT SAFER** — the loop gain is minimised near **Kp ≈ 1.0**, so the
+  preset's "Kp 0.3 is the conservative choice" reasoning is **backwards**. **The repair is on the fork
+  side: preset friction 0.01 → 0.00** ⇒ PM **42.2°**, Ms **2.06**, gain margin **×1.40**.
+  🛑 **RE-SCORED AT THE MEASURED τ AND AT THE REPAIRED PRESET: B6 STILL FAILS AS WRITTEN — AND IT IS A
+  BROKEN CHECK THAT FIRES CLEANLY.** V293 at friction 0.00 breaks **3 of 10** controller-loop cells (worst
+  **PM 33.2°**, k30 1.09, kU 1.80 at 5 m/s / τ 0.25) — and **V282, at the tune it is actually flown with,
+  breaks 3 of 10 too** (worst **PM 35.6°**, k30 1.12, kU 1.74 at 28.5 m/s / τ 0.22). On the path-following
+  channel **both** go unstable inside [0.5×, 2×] (kU 1.31 vs 1.27); the friction repair is worth **×1.58
+  on k30.** ⇒ **Scored on its INTENT — V293's outer loop no worse than the build on the car — B6 PASSES.**
+  ⚠ **Residual, named not closed: the creep margin at 5 m/s is only ~10–20 % of plant gain on BOTH builds,
+  and the failure mode there is the V276 1–4 Hz signature — the FIRST THING TO WATCH, at low speed.**
+  ⚠ **The verdict was conditional on τ ≥ 0.18 s, and τ = 0.20 s was the operator's `SteerDelay`
+  toggle ECHOED BACK, not identified** (the Honda port's prior is **0.10 s**).
+  ✅ **τ HAS SINCE BEEN MEASURED** (`rlog-tools/studies/grind/TAU-ACTUATOR-DELAY-2026-09-13.md`, six
+  routes): **258 ms** [251, 264] at 3–8 m/s, 232 at 8–15, 211 at 15–25, **182** at 25+. **The condition
+  τ ≥ 0.18 s holds at every speed band, and with margin (258 ms) at the 5 m/s point where the FAIL sits.**
+  ⚠ **Not a clean substitution** — the same report finds the path is **not a pure delay** (three
+  estimators differ by up to 100 ms; the fitted pole is **1.4–4.3 Hz, the torque controller's own
+  bandwidth plus plant, NOT the EPS servo**) and says to use **`tau_eq(f)` at the crossover**, not a
+  scalar. **B6's premise is satisfied on the best evidence available; the re-score settles the verdict.** ✅ **The 1–4 Hz V276 signature does NOT reproduce on frequency** — every predicted cycle sits at
+  **1.21–1.25 Hz**. ⚠ **The clause's literal "[0.5×, 2×] true gain" wording is BROKEN** (V282 fails it at
+  28.5 m/s, κ 2), **but the V293 FAIL does not rest on it**: it sits at **κ 1.00, where V282 reads 40.1°.**
+- **B3 PASS** (delivered before `advB3` died): **rail ×1.000000 by three methods**, slope **0.641212
+  counts per CAN count**, the P clamp binds at **idx 239**.
+- **B1 PASS at r24 = 2048** — **0 unstable fits on every family and every κ**; **4451 has 5 unstable on
+  the broad family at κ 0.45.** ⚠ The literal `ζ < 0.05` clause is **broken** — it condemns the FLOWN
+  V282 on **250/250** and **12/12** — so it was scored as *"no unstable fit and no worse than V282."*
+  ⚠ **The both-poles family at κ 1.45 is EMPTY (n = 0), hence unscoreable** — the κ dispute is not
+  settled by this pass, it is sidestepped at one end.
+- **B5 PASS at r24 = 2048** — the 5–9 Hz rise is **×1.50–1.59 vs V282** and **×1.05–1.13 vs STOCK**,
+  **under both thresholds** (the clause needed ≥ ×1.6 **and** ≥ ×1.2 together); **4451 trips the first leg
+  on r39.** ⭐ **The rise is BROADBAND and peakiness is UNCHANGED** — structurally different from the
+  resonant 7 Hz re-arm V292 produced, which is the distinction the operator will actually feel.
+- ⭐⭐ **B1 AND B5 TOGETHER VINDICATE THE 2048 RULING.** The dose was recorded above as **BELIEF** against
+  the design's criterion-exact 4451, with B briefed to score both side by side. **It did, and 2048 wins on
+  both clauses while 4451 fails each.** That BELIEF is now **EVIDENCE** on B1 and B5.
+- **B4 PASS — the THINNEST margin in the pass.** Ripple/level on loaded turns **0.028 / 0.034 / 0.048**
+  against the 0.25 gate (V282 0.019 / 0.013 / 0.099; **stock 0.044 / 0.033 / 0.087 — V293 sits BETWEEN
+  the two**); predicted F7 **≈ 1.24 /100 s** against 2, **a margin of only ×1.6 through a nonlinear
+  mapping.**
+- **B7 PASS** — **0 of 250** plants with ζ < 0.10 in 10–18 Hz; 13–17 Hz **×1.058** max vs V282 against a
+  ×1.5 gate. (V292's rejected number on the same band was ×1.9–2.1.)
+- **B8 reported** — the command-driven 18–22 Hz torque is **×0.055–0.137 of V282's ring and has NO POLE:
+  it cannot ring.** This is the residual the operator may still feel with the loop open, and it is small.
+- 🛑 **B2 FAIL AS WRITTEN — ADJUDICATED PASS ON INTENT, AND THE DISSENT STANDS.** Uncalibrated ring
+  **×0.285** (r39) / **×0.403** (r6c); the mandated V292 calibration (**×1.90–3.64**) ⇒ **×0.54–1.04 /
+  ×0.77–1.47** against the ≤ ×0.50 gate; the open-loop calibration (×1.64) ⇒ 0.47 / 0.66; **the on-car
+  anchor, no predictor, re-derived independently: ×0.237 / ×0.285 / ×0.265.**
+  **Why it was adjudicated rather than settled by the broken-check rule:** B2 does **not** condemn a flown
+  build, so that rule does not reach it. The calibration factor was measured on **V292, a build that did
+  NOT open the loop** — the fit family's error there is in how a feedback pole reshapes the return ratio
+  at 20 Hz, **an error with no channel when the operand is identically zero** (`|S| ≡ 1` is an identity the
+  code region's bytes prove, not a fit). Transferred to the one fully-open-loop configuration the car has
+  been measured in, **that calibration over-predicts the measured ring by ×1.3–2.0 — the calibrated
+  predictor fails a measured case.** On the clause's intent (the ring at least halved) the direct on-car
+  measurement reads ×0.24–0.29 and the command-driven residual ×0.06–0.14, **both EVIDENCE rather than
+  model.** 🛑 **The V292 precedent is stated, not hidden: V292 was ALSO cleared over one dissent and then
+  failed on the wire on clauses the model had passed — which is exactly why this candidate's ring claim
+  rests on the car's own open-loop measurement and NOT on the replay.**
+- 🛑 **Agent note: `advB3` DIED of an OUT-OF-MEMORY error mid-run**, after delivering B3 and the B6
+  sub-check; **`advB3b` completed B1, B2, B4, B5, B7, B8 and the B6 re-score at the repaired preset.**
+- 🛑🛑 **TWO RECORD DEFECTS `advB3` FOUND ON ITS WAY DOWN, both in machinery other results rest on.**
+  **(a) The module-default `B(f)` fit is BAD** — at `nb = 1, nd = 4` it returns rms `ln|B|` **0.54**,
+  phase error **38°** and **a spurious UNSTABLE 4.5 Hz root**; **use the design's `nb = 1, nd = 3`**, and
+  re-check anything fitted with the module default. **(b) `r24_plant_refit.py` CANNOT REGENERATE
+  `r24_plant_refit.json`** — its `fit_B(nb=4, nd=2)` now raises on the properness guard, so **the
+  pre-registration's own named reference family for B1 is not reproducible from its own script** and the
+  JSON on disk is an artifact with no working producer.
+- **Golden model:** contract re-verified and **moved 90 → 94 symbols** this close-out, because the LKAS
+  rate PID itself was finally added (`lkas_rate_pid_tick`, `lkas_rate_pid_surface`, `lkas_rate_lerp`,
+  `lkas_output_lag`) — closing the gap that had left V288's and V289's mirrors with no caller. The
+  `_self_check()`+`_demo()` hash is **unchanged**, and an independent march reproduces V293's surface.
+
+_Four independent agents on disjoint surfaces (A arithmetic · B unit/scale + GATE 2 closed-loop · C build
+audit · D interlocks/downstream), FAIL criteria fixed in `docs/review/ADVERSARIAL-V293-PREREG-2026-09-13.md`
+**before the image existed**, with a FAIL on A, B(1–6) or D(1–4) defined as **DO NOT FLASH**. **Two clauses
+did fail as written and neither was quietly dropped: B6 was voided by the kit's standing broken-check rule
+because it condemns the FLOWN build by the same count, and B2 was adjudicated on its intent with the
+dissent kept on the page.** The pass was structurally able to return "do not flash" and is on record as
+having fired twice. **What it licenses is a candidate handed to the operator, not a recommendation to
+fly — that decision is his.**_

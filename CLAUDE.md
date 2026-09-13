@@ -151,9 +151,13 @@ repoint this index at all of them** — do not leave a pointer to a file that ca
    **Check its size at every close-out.** The same cap applies to any file an agent must read whole,
    `memory/MEMORY.md` included.
 2. **`docs/BUILD-LINEAGE.md`** — every lever that has been flashed, and what it did on-car.
-   **Mandatory before proposing any calibration edit.** 🛑 **THREE FILES:** this entry file (RULES,
-   struck levers, Parts 2–4) · `docs/BUILD-LINEAGE-PART1-LEVER-INDEX.md` (the lever index — **grep it
-   by address**) · `docs/BUILD-LINEAGE-CATCHUP-V76-V100.md` (the per-build ledger, V76→V100).
+   **Mandatory before proposing any calibration edit.** 🛑 **FOUR FILES:** this entry file (RULES,
+   struck levers, Parts 2–4, and every per-build entry through V292) · `docs/BUILD-LINEAGE-PART1-LEVER-INDEX.md`
+   (the lever index — **grep it by address**) · `docs/BUILD-LINEAGE-CATCHUP-V76-V100.md` (the per-build
+   ledger, V76→V100) · `docs/BUILD-LINEAGE-PART6-V291-ONWARD.md` (**per-build entries from V293 onward**,
+   split out 2026-09-13 when the entry file crossed 240 KB; V293 keeps a one-line stub in the entry file
+   so `grep V293` lands. ⚠ **PART6, not PART5** — `PART5-V122-ONWARD-MEASURED` already exists and is a
+   generated address index).
    ⚠ *"Part 2"* still means the **code-cave section inside the entry file** — it did not move.
 3. **The latest `docs/handoffs/<YYYY-MM>/HANDOFF-*.md`** — narrative of the most recent session, and the chain behind it.
    `docs/INDEX.md` lists the full reading order. 🛑 **Results, CIs and retractions live in `STATE.md`
@@ -291,16 +295,16 @@ Only these other things need saying:
 
   | file | KB | contents |
   |---|---|---|
-  | `analysis-2020accord/model/eps_lkas_chain_model.py` | 31 | **FACADE** — re-exports all 90 symbols; `import eps_lkas_chain_model` still works unchanged |
-  | `analysis-2020accord/model/eps_chain_core.py` | 37 | SECTIONS 0–1 — `Calibration`, containers, helpers |
-  | `analysis-2020accord/model/eps_chain_lanes.py` | 119 | SECTIONS 2–3 — CAN intake, torque voter, base assist, boost index, the rate lanes |
-  | `analysis-2020accord/model/eps_chain_control.py` | 137 | SECTIONS 4–6 — engage SM, arbitration, mixer/gate, aggregator, governor, analyses |
-  | `analysis-2020accord/model/eps_chain_delivery.py` | 33 | SECTIONS 7–9 — EME shaper, lockstep monitor, FOC/PWM, `control_task`, `_self_check`, `_demo` |
+  | `analysis-2020accord/model/eps_lkas_chain_model.py` | 45 | **FACADE** — re-exports all 94 symbols; `import eps_lkas_chain_model` still works unchanged |
+  | `analysis-2020accord/model/eps_chain_core.py` | 52 | SECTIONS 0–1 — `Calibration`, containers, helpers |
+  | `analysis-2020accord/model/eps_chain_lanes.py` | 124 | SECTIONS 2–3 — CAN intake, torque voter, base assist, boost index, the rate lanes |
+  | `analysis-2020accord/model/eps_chain_control.py` | 161 | SECTIONS 4–6 — engage SM, arbitration, **the LKAS rate PID (5D)**, mixer/gate, aggregator, governor, analyses |
+  | `analysis-2020accord/model/eps_chain_delivery.py` | 36 | SECTIONS 7–9 — EME shaper, lockstep monitor, FOC/PWM, `control_task`, `_self_check`, `_demo` |
 
   Dependency order is strict and acyclic: `core` → `lanes` → `control` → `delivery`. **Keep it updated.**
   🛑 **VERIFICATION CONTRACT — re-run it after ANY edit to these files:** `import eps_lkas_chain_model`
-  must expose **exactly 90 symbols** (NON-DUNDER: `[x for x in dir(M) if not x.startswith("__")]` — this INCLUDES the 11 underscore-prefixed helpers; counting only public names gives 79 and looks like a broken contract; 87→88 on 2026-09-07 when `lkas_setpoint_prefilter` was added for V288; 88→90 on 2026-09-08 when `lkas_sum_notch` + `lkas_fb_lag` were added for V289), and `_self_check()` + `_demo()` stdout must hash to
-  **`740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d`** (2,512 bytes).
+  must expose **exactly 94 symbols** (NON-DUNDER: `[x for x in dir(M) if not x.startswith("__")]` — this INCLUDES the 11 underscore-prefixed helpers; counting only public names gives 83 and looks like a broken contract; 87→88 on 2026-09-07 when `lkas_setpoint_prefilter` was added for V288; 88→90 on 2026-09-08 when `lkas_sum_notch` + `lkas_fb_lag` were added for V289; **90→94 on 2026-09-13 when the LKAS RATE PID ITSELF was added** — `lkas_rate_pid_tick` + `lkas_rate_pid_surface` + `lkas_output_lag` + `lkas_rate_lerp`, SECTION 5D of `eps_chain_control.py`, closing the gap that had left V288's and V289's mirrors with no caller), and `_self_check()` + `_demo()` stdout must hash to
+  **`740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d`** (2,512 bytes) — **unchanged**, because every `_self_check_v2xx()` asserts and prints nothing.
 
 - 🛑 **CITE BY HEADING OR GREP STRING, NEVER BY LINE NUMBER.** The golden model split on 2026-08-12 and
   `docs/BUILD-LINEAGE.md` + `memory/MEMORY.md` split on 2026-08-21, so every line-number citation

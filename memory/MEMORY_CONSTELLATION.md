@@ -1136,3 +1136,128 @@ lever proposal, check ALL of its readers, not just the one the current task care
 label only covers one role, say so in the label itself (`"gp-0x6b70's clamp (1 of ≥4 roles)"` rather
 than `"gp-0x6b70's clamp"`). See [[accord-check-build-lineage-before-proposing-lever]] for the sibling
 discipline (grep the lineage before naming any cal address) this one completes.
+
+
+---
+
+## 2026-09-13 — Era: **OPEN THE LOOP.** V276 → V279 → V282 → V291/V292 → V293, and the disjunction the whole chain now turns on
+
+> ⚠ **The chain jumps from 2026-08-13 to 2026-09-13.** The intervening eras (V90 → V290) were recorded in
+> `docs/STATE.md`, `docs/BUILD-LINEAGE.md` and the `HANDOFF-*` chain but **never drawn here**. This entry
+> does not backfill them; it draws the one chain that is load-bearing for the next decision.
+
+### THE CHAIN
+
+**The question the whole chain asks: is the 18–22 Hz grinding object a creature of the LKAS rate loop?**
+Every node below is a different way of pushing on that loop, and they run in one direction — from
+*strengthening* it, through *shaping* it, to *removing* it.
+
+1. **★ V276 — strengthen the feedback, and the loop stops damping.** It raised the feedback clamp ×6 so
+   the error could **never change sign**, turning the P/D controller into a `sign(error)` **relay**.
+   On-car: *"a large, slower (2–4 Hz) oscillation when LKAS engaged … excites itself … only way to stop it
+   is to hold the steering wheel very firmly."* ⇒ **the loop's own sign behaviour is what produces
+   self-excitation**, and V276 is the standing warning for every open-loop-ish build since.
+   → [[accord-v276-mechanism-is-a-matter-of-degree]], [[accord-override-taper-is-a-cliff-not-a-taper]]
+2. **★ V279 rev 2 — remove the feedback entirely, and never fly it.** `0xC62E6` = 0 forces the feedback
+   operand to zero on every path (`E = 32·setpoint`), with `Kd = 0` and a linear map. **That IS torque
+   mode.** It passed five independent attackers on a V268 base and was **never flashed**. ⇒ **the class is
+   NEVER-TRIED, not falsified** — which is why it can be re-proposed without violating the lineage rule.
+   → [[accord-lkas-commands-rate-not-torque]], [[accord-v278r3-torque-tap-reads-310-and-damping-is-sign-t-ne-sign-rate]]
+3. **★ V282 — the base everything else is now measured against.** The ×6 map, the flat Kp, the clamps,
+   the 0x14A cave and the `0x1AB` torque tap. The operator has driven it and accepted it, so it is both
+   the **reference** and the **fallback**. Its servo is a **disturbance-rejecting loop below ~13 Hz**
+   (`|1 + L(7.3 Hz)| = 2.04`) — the fact that makes every later "open the loop" move cost 5–9 Hz motion.
+   → [[accord-backcalc-the-car-needs-friction-0025-and-laf-5-to-10-torqued-cannot-validate-on-the-modded-eps]]
+4. **★ The 35-route open-loop measurement — with the loop OPEN there is no 18–22 Hz object at all.**
+   4,759 s lateral-disengaged, no resonance in 16–26 Hz, a synthetic ζ ≤ 0.03 mode at the same energy
+   WOULD have been found ⇒ **ζ_open ≥ 0.05 or non-modal**, against V282's engaged **0.0164**.
+   **This is the measurement that set the direction for V291 onward.**
+   → [[accord-with-the-loop-open-there-is-no-18-22hz-object-zeta-open-ge-0-05]]
+5. **V291 / V292 — SHAPE the loop: lower its feedback bandwidth (16.5 → 9.94 Hz, DC held), pay the 7.3 Hz
+   gate with a 10 % r24 cut.** V291 failed one pre-registered clause on integer arithmetic; V292 fixed it
+   byte-exactly with a 52-byte error-feedback cave and was cleared over one dissent.
+   → [[accord-v291-c10-built-fb-pole-10hz-plus-r24-cut-loop-opening-class]],
+   [[accord-v292-built-loop-opening-dose-byte-exact-error-feedback-cave-cleared-over-one-dissent]]
+6. **🛑 V292 FLEW AND IS A REVERT — and this is the hinge of the whole chain.** The 7 Hz mode came back
+   (F7 ×8.1, p = 0.022), the 13–17 Hz shoulder fired with a new 14.84 Hz line, **the ring did not fall**
+   (route-normalised ×1.20–2.00 where ×0.55 was predicted), and **the phase moved opposite in sign**.
+   → [[accord-v292-flew-and-is-a-revert-7hz-rearmed-ring-not-reduced]]
+7. **★ V293 — REMOVE the loop, and make the answer model-free.** `0xC62E6` = 0 again, on V282 this time,
+   with Kd killed twice over, Kp re-levelled to 120 flat and r24 at 2048. **Built and CLEARED as the
+   flight candidate over ONE DISSENT (B2 as written)** — A/C/D PASS; B1, B3, B4, B5, B7 PASS, B8 reported;
+   B2 and B6 fail as written and both are adjudicated (B6 is a broken check: it condemns flown V282 on
+   3/10 cells, worst PM 35.6°, against V293's 3/10 worst 33.2°). **V282 the fallback; the fork preset
+   mandatory; the first drive an IDENTIFICATION drive; the low-speed 1–4 Hz V276 signature the FIRST
+   revert trigger; the decision to fly is the operator's.**
+   → [[accord-v293-torque-mode-built-the-model-independent-test]]
+
+### THE DISJUNCTION — and it is what V293 exists to decide
+
+V292's own pre-registered null sentence fired, which leaves exactly two readings open. **The labels H1/H2
+are introduced here for the chain; the pre-registration states the disjunction in prose, not by label.**
+⚠ **Do not confuse them with the unrelated H1/H2 of
+[[accord-h1-torque-table-resolution-is-false-map-scale-is-a-gain-effect]].**
+
+| | reading | what would confirm it | what would kill it |
+|---|---|---|---|
+| **H1** | **The fit family mis-sizes what a feedback pole does at 20 Hz.** The loop IS the object's de-damper, but the model of it is wrong — the opposite-sign phase measurement is the tell. | V293 removes the ring (predicted ×0.285, on-car anchor ×0.24–0.29), i.e. the *direction* was right all along and only the *transfer* was mis-modelled | V293 leaves the ring where it is |
+| **H2** | **The engaged-only de-damping is not the LKAS rate loop's return ratio at all.** Something else that is engagement-gated carries it, and every in-loop lever V38 → V292 was pushing on the wrong thing. | V293 leaves the ring unchanged **with the loop provably open on every frame** (the edit-live identity holding) | V293 removes the ring |
+
+⭐ **Why V293 decides it and V291/V292 could not:** with `fb ≡ 0` there is **no loop at any frequency**, so
+**no fitted plant family stands between the edit and the answer.** Every ring prediction this kit has ever
+made runs through that family, and **the family's one out-of-sample test just failed** (V292 predicted
+×0.535, measured UP ×1.20–2.00). H2 is therefore not a fringe possibility — it is the reading the last
+flight pushed toward.
+
+### The load-bearing edges this era created
+
+- **`open-loop measurement` → `V291/V292` → `V293`** — the measurement set the direction, the flight
+  falsified the *transfer*, and the flight's failure is what promoted torque mode from *"one of the
+  readings of the goal"* to *"the experiment that settles the class."*
+- **`V276` ╌╌→ `V293`** — the nearest FLOWN relative of an open-loop lane, and the reason the outer loop
+  is **gated** in V293's pre-registration (B6) rather than assumed. V276's shape returns in the model not
+  as a margin failure but as a **feedforward mis-scaling ×3.17 at 5 m/s** — a fork-side problem with a
+  fork-side fix.
+- **`V279 rev 2` → `V293`** — a structural inheritance, not an analogy: `0x28F7C–0x28FC8` plus `0x29D78`
+  are **byte-identical V268 → V282**, so V279's proof of the clamp transfers to the new base unchanged.
+- **`r24` ↔ `the servo`** — ⭐ **r24's apparent 20 Hz damping is a partial cancellation of the servo's
+  de-damping.** With the servo present, cutting r24 costs ζ; with the servo gone, cutting it **raises** ζ.
+  That single edge is what makes the 7.3 Hz gate affordable **in torque mode and nowhere else.**
+  → [[accord-r24-lane-is-a-lag4-bar-difference-unit-weight-sibling-of-the-lkas-lane-damps-20hz-pumps-7hz]],
+  [[accord-r24-pumps-at-7hz-and-damps-at-20hz-the-same-cell-pulls-the-two-symptoms-opposite-ways]]
+- **`reference side` ⊥ `in-loop side`** — V288 rev 2 flew a setpoint pre-filter, the cave was live, the
+  D-bind duty fell ×0.03 as designed, **and the grinding was unchanged.** That is why a StarPilot rate
+  target (fork Design B) is recorded as *"cannot remove the grinding"* rather than built.
+  → [[accord-v288r2-flew-grind-unchanged-excitation-side-class-exhausted]]
+
+### Edges REDRAWN (corrections this era)
+
+- **The driven half-peak decay is NOT a ring instrument.** It rose on two V292 routes and fell on one.
+  Replace it everywhere with **engaged ÷ the same route's lateral-disengaged amplitude**, plus
+  present-window amplitude vs a named reference route.
+- **A duty read is not an attribution.** V292's pre-registered b3 duty overlapped its reference and its
+  idle control read backwards; attribution came from the bit's **meaning** (a lagged-sign correlation).
+  → [[feedback-attribute-the-build-from-the-tap-not-from-the-label]]
+- **The delivered rail is 2462, not 2481 or 2505** — an always-on ×254/256 override taper sits between the
+  sum and the sum clamp. **`0x29F18 sar 0x7,r2` is the I accumulator, not P.** **`0x2A0C6` is a second,
+  unreachable delivery MODE, not a reset route.** The `gp-0x3d30`/`gp-0x3d2c` boot values are now
+  **EVIDENCE** (both 0), not belief.
+
+### What is honestly unresolved after this era
+
+1. **H1 vs H2.** Undecided until V293 **flies**. It is now CLEARED over one dissent, so the experiment
+   exists — but a clearance is not a drive, and the decision to fly is the operator's.
+2. **The EME / governor DWELL census.** A torque-mode lane holds full commanded torque however fast the
+   wheel already moves — **dwell at the rail rises even though the peak does not.** No integrate-and-trip
+   census of `gp-0x6b94` / `gp-0x6ace` / `gp-0x6acc` has ever been run. It is the one V293 clause that can
+   return *"do not flash"*.
+3. **The taper — SELECTOR closed, AXIS UNIT open.** ✅ Closed: **ONE stage**, `factor =
+   ((tapAB·tapCD)&0xFFFF)>>8`, **`gp-0x6803` picks B × D (`0xCBBC4`)**, 254/256 at rest only because both
+   halves return 255 there; the kit memory was right about D and the tracer's C reading was wrong.
+   🛑 **Open: what the C/D half's X axis is in.** Adversary A read it as speed and **assumed km/h (its own
+   BELIEF)** ⇒ rail 2151 at 10 m/s, 736 at ≥ 20 m/s; the record's on-car tap numbers (V278r3 `T_meas/T_sim`
+   0.42–0.51 at 3–9 m/s) point the other way. ⭐ **The table is identical on both builds, so the V282 : V293
+   ratio holds at every speed** — but **2461 is an AT-REST number.**
+4. **κ, the r24 lane's effective arm** — 0.10–0.20 vs 0.45 vs 1.45, still disputed; and 10–14 Hz is
+   unidentified in every stratum.
+5. **No IMU.** Road vs rack vs motor is still not separated on any drive.

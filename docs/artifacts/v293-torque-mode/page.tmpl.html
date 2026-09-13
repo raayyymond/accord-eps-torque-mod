@@ -1,0 +1,903 @@
+<title>V293 Torque Mode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+:root{
+  --sans:"IBM Plex Sans Condensed","Helvetica Neue",Arial,sans-serif;
+  --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --ground:#E6E8EE; --surface:#FAFAFC; --surface-2:#F1F2F7;
+  --ink:#15161E; --ink-mut:#5B6070; --rule:#CBCFDC; --rule-soft:#DCDFE8;
+  --v293:#4B45C6; --v282:#B35A09; --v292:#0089A0; --stock:#B03A72;
+  --risk:#A62A21; --ok:#1F6B4E; --riskbg:#F7E6E4; --okbg:#E2F0E9; --pendbg:#EFEDFB;
+  --grid:#D5D8E3; --knr:#C3C7D6;
+  --band:rgba(75,69,198,.09); --warnband:rgba(166,42,33,.09);
+  --nodefill:#FFFFFF; --noderule:#B8BDCE; --editfill:rgba(75,69,198,.10);
+  --opfill:#EDEFF4; --plantfill:#E4E7EF; --cavefill:#F1F2F7;
+  --flow:#767C8E; --on-bar:#FFFFFF;
+  --shadow:0 1px 2px rgba(21,22,30,.06),0 6px 18px rgba(21,22,30,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0C0D14; --surface:#141621; --surface-2:#1A1C29;
+    --ink:#DEE0EA; --ink-mut:#8A90A4; --rule:#2A2D3D; --rule-soft:#212433;
+    --v293:#8C85EE; --v282:#BE7A2C; --v292:#1FA3BC; --stock:#DE5C9E;
+    --risk:#E8776A; --ok:#4CB287; --riskbg:#2A1917; --okbg:#13251E; --pendbg:#1C1B34;
+    --grid:#262A3A; --knr:#333850;
+    --band:rgba(140,133,238,.13); --warnband:rgba(232,119,106,.11);
+    --nodefill:#1A1C29; --noderule:#343953; --editfill:rgba(140,133,238,.14);
+    --opfill:#15171F; --plantfill:#1B1E2B; --cavefill:#15171F;
+    --flow:#6E748A; --on-bar:#0C0D14;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0C0D14; --surface:#141621; --surface-2:#1A1C29;
+  --ink:#DEE0EA; --ink-mut:#8A90A4; --rule:#2A2D3D; --rule-soft:#212433;
+  --v293:#8C85EE; --v282:#BE7A2C; --v292:#1FA3BC; --stock:#DE5C9E;
+  --risk:#E8776A; --ok:#4CB287; --riskbg:#2A1917; --okbg:#13251E; --pendbg:#1C1B34;
+  --grid:#262A3A; --knr:#333850;
+  --band:rgba(140,133,238,.13); --warnband:rgba(232,119,106,.11);
+  --nodefill:#1A1C29; --noderule:#343953; --editfill:rgba(140,133,238,.14);
+  --opfill:#15171F; --plantfill:#1B1E2B; --cavefill:#15171F;
+  --flow:#6E748A; --on-bar:#0C0D14;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--serif);
+  font-size:16px;line-height:1.62;padding-block:0 64px;padding-left:18px;padding-right:18px;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1020px;margin:0 auto}
+.col{max-width:66ch}
+h1,h2,h3,.eyebrow,th,.lbl{font-family:var(--sans)}
+h1{font-size:clamp(30px,6.4vw,48px);line-height:1.04;margin:0 0 8px;letter-spacing:-.015em;text-wrap:balance}
+h2{font-size:clamp(19px,3.4vw,25px);line-height:1.18;margin:0 0 14px;letter-spacing:-.005em;text-wrap:balance}
+h3{font-size:16px;margin:0 0 8px;letter-spacing:.01em}
+p{margin:0 0 14px}
+a{color:var(--v293)}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mut);margin:0 0 10px}
+.mono{font-family:var(--mono)}
+.sub{color:var(--ink-mut)}
+
+header.mast{padding-block:44px 26px;border-bottom:2px solid var(--ink)}
+.dek{font-size:clamp(17px,2.6vw,20px);line-height:1.45;color:var(--ink-mut);max-width:48ch;margin:0}
+.idstrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);margin-top:26px}
+.idcell{background:var(--surface);padding:11px 13px}
+.idcell .lbl{display:block;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mut);margin-bottom:3px}
+.idcell .val{font-family:var(--mono);font-size:12.5px;word-break:break-all;line-height:1.4}
+.verdict{margin-top:18px;border:1.5px solid var(--v293);border-left-width:5px;background:var(--pendbg);padding:13px 16px}
+.verdict.bad{border-color:var(--risk);background:var(--riskbg)}
+.verdict.cleared{border-color:var(--ok);background:var(--okbg)}
+.verdict .vlbl{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--v293);margin:0 0 4px}
+.verdict.bad .vlbl{color:var(--risk)}
+.verdict.cleared .vlbl{color:var(--ok)}
+.verdict .vtxt{font-size:15px;line-height:1.5;margin:0}
+.verdict .vtxt+.vtxt{margin-top:8px}
+.supersede{display:flex;flex-wrap:wrap;align-items:baseline;gap:9px;margin:12px 0 0;
+  font-size:13.5px;line-height:1.5;color:var(--ink-mut)}
+.supersede b{color:var(--ink);font-weight:600}
+
+section{padding-block:40px 0}
+section+section{border-top:1px solid var(--rule-soft)}
+.lead{font-size:18px;line-height:1.6}
+.lead strong{font-weight:600}
+
+figure{margin:26px 0 0}
+.figbody{background:var(--surface);border:1px solid var(--rule);box-shadow:var(--shadow);
+  padding:14px;overflow-x:auto}
+.chart{display:block;width:100%;height:auto;min-width:420px}
+.chartw{display:block;width:100%;height:auto;min-width:560px}
+.duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:20px;margin-top:26px}
+.duo figure{margin:0}
+.flow{display:block;width:100%;height:auto;min-width:1120px}
+figcaption{font-size:13.5px;line-height:1.5;color:var(--ink-mut);margin-top:10px;max-width:80ch}
+figcaption b{color:var(--ink);font-weight:600}
+.scrollhint{font-family:var(--mono);font-size:11px;color:var(--ink-mut);margin-top:8px}
+
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin:0 0 10px;font-family:var(--sans);font-size:12.5px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:16px;height:3px;border-radius:2px;display:inline-block}
+.sw.d{background-image:linear-gradient(90deg,currentColor 62%,transparent 62%);background-size:8px 3px}
+
+/* chart primitives */
+.gl{stroke:var(--grid);stroke-width:1}
+.knr{stroke:var(--knr);stroke-width:1;stroke-dasharray:3 3}
+.tk{fill:var(--ink-mut);font-size:11px;font-family:var(--mono)}
+.tk.sm{font-size:9.5px}
+.ln{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.ln.thin{stroke-width:1.6}
+.a282{stroke:var(--v282)} .a293{stroke:var(--v293)} .a292{stroke:var(--v292)} .astock{stroke:var(--stock)}
+.dash{stroke-dasharray:7 5} .dot{stroke-dasharray:2 4}
+.kn{stroke:none} .kn.v293{fill:var(--v293)} .kn.v282{fill:var(--v282)} .kn.stock{fill:var(--stock)}
+.dlbl{font-family:var(--sans);font-size:12px;font-weight:700}
+.zl{stroke:var(--ink-mut);stroke-width:1;stroke-dasharray:4 3;opacity:.7}
+
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums;margin:18px 0 0}
+th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-mut);border-bottom:1.5px solid var(--rule);padding:7px 9px 7px 0;vertical-align:bottom}
+th.n{text-align:right;padding-right:12px}
+td{padding:8px 9px 8px 0;border-bottom:1px solid var(--rule-soft);vertical-align:top;font-family:var(--serif)}
+td.n{text-align:right;font-family:var(--mono);padding-right:12px}
+td.m{font-family:var(--mono);font-size:12.5px}
+td.sha{font-size:11px;color:var(--ink-mut)}
+td.chg{font-weight:600;background:var(--surface-2)}
+td.v293b{color:var(--v293);font-weight:600}
+.tblwrap{overflow-x:auto}
+.tblwrap table{min-width:560px}
+.tblwrap.mx table{min-width:1180px;font-size:12px}
+.tblwrap.mx td,.tblwrap.mx th{padding-right:9px}
+.v282c{color:var(--v282);font-weight:600}
+.v293c{color:var(--v293);font-weight:600}
+.v292c{color:var(--v292);font-weight:600}
+
+.chip{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.05em;
+  padding:1.5px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.chip.ev{color:var(--ok)} .chip.bel{color:var(--v282)} .chip.risk{color:var(--risk)}
+.chip.new{color:var(--v293)} .chip.open{color:var(--stock)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:22px}
+.card{background:var(--surface);border:1px solid var(--rule);padding:15px 16px;box-shadow:var(--shadow)}
+.card .lbl{display:block;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mut)}
+.card .addr{font-family:var(--mono);font-size:13px;color:var(--v293);font-weight:600;margin:4px 0 2px}
+.card .swing{font-family:var(--mono);font-size:20px;line-height:1.2;margin:6px 0 8px}
+.card .swing.sm{font-size:14.5px;line-height:1.3}
+.card .swing .from{color:var(--v282)}
+.card .swing .to{color:var(--v293)}
+.card p{font-size:13.5px;line-height:1.5;margin:0;color:var(--ink-mut)}
+.card p b{color:var(--ink);font-weight:600}
+
+.advrow{border:1px solid var(--rule);border-left:4px solid var(--knr);background:var(--surface);
+  padding:15px 17px;margin-top:14px;box-shadow:var(--shadow)}
+.advrow.pend{border-left-color:var(--v293);background:var(--pendbg)}
+.advrow.pass{border-left-color:var(--ok);background:var(--okbg)}
+.advrow.fail{border-left-color:var(--risk);background:var(--riskbg)}
+.advhead{display:flex;align-items:center;flex-wrap:wrap;gap:11px;margin-bottom:9px}
+.advid{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--ink-mut);line-height:1}
+.advname{font-family:var(--sans);font-size:16px;font-weight:700;flex:1 1 auto}
+.advrow p,.advrow li{font-size:14.5px;line-height:1.55}
+.advrow p:last-child{margin-bottom:0}
+
+.callout{border-left:3px solid var(--risk);background:var(--riskbg);padding:14px 16px;margin:22px 0 0}
+.callout.good{border-left-color:var(--ok);background:var(--okbg)}
+.callout.note{border-left-color:var(--v293);background:var(--pendbg)}
+.callout h3{margin-bottom:6px}
+.callout p:last-child{margin-bottom:0}
+
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);margin-top:20px}
+.kv>div{background:var(--surface);padding:12px 14px}
+.kv .lbl{display:block;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mut);margin-bottom:4px}
+.kv .big{font-family:var(--mono);font-size:22px;line-height:1.15}
+.kv .big.bad{color:var(--risk)} .kv .big.good{color:var(--ok)} .kv .big.n{color:var(--v293)}
+.kv small{display:block;font-size:12.5px;line-height:1.45;color:var(--ink-mut);margin-top:5px}
+
+ul,ol{margin:0 0 14px;padding-left:1.15em}
+li{margin-bottom:8px}
+li::marker{color:var(--ink-mut)}
+code{font-family:var(--mono);font-size:.88em;background:var(--surface-2);padding:1px 4px;border-radius:3px}
+pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--surface);border:1px solid var(--rule);
+  padding:13px 15px;overflow-x:auto;margin:16px 0}
+blockquote{margin:16px 0;padding:2px 0 2px 16px;border-left:3px solid var(--v293);font-style:italic;color:var(--ink)}
+blockquote p:last-child{margin-bottom:0}
+footer{margin-top:48px;padding-top:22px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--ink-mut)}
+footer .mono{font-size:11.5px;word-break:break-all}
+:focus-visible{outline:2px solid var(--v293);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:560px){
+  body{padding-left:14px;padding-right:14px}
+  .idcell .val{font-size:11.5px}
+}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">2020 Honda Accord &#183; EPS 39990-TVA-A160 &#183; close-out artifact &#183; 13 Sep 2026</p>
+  <h1>V293 &#8212; the rate loop is not tuned, it is deleted</h1>
+  <p class="dek">Five calibration cells clamp the LKAS rate feedback to exactly zero. The EPS stops being a rate servo and becomes a torque map: what openpilot commands is what the motor delivers, whatever the wheel is doing.</p>
+  <div class="idstrip">
+    <div class="idcell"><span class="lbl">V293 plain image sha256</span><span class="val">{{v293.sha}}</span></div>
+    <div class="idcell"><span class="lbl">image file</span><span class="val">{{v293.file}}</span></div>
+    <div class="idcell"><span class="lbl">rwd sha256</span><span class="val">{{v293.rwd}}</span></div>
+    <div class="idcell"><span class="lbl">base</span><span class="val">V282 &#183; {{v282.sha}}</span></div>
+    <div class="idcell"><span class="lbl">delta vs V282</span><span class="val">{{diff.n}} bytes &#183; {{diff.clusters}} clusters &#183; cal-only, 0 code bytes</span></div>
+  </div>
+  {{prov.banner}}
+  <div class="verdict cleared">
+    <p class="vlbl">Verdict &#8212; CLEARED as the flight candidate, over one dissent</p>
+    <p class="vtxt"><b>V293 is CLEARED as the flight candidate over ONE dissent (B2 as written).</b> A, C and D <b>PASS</b>, with D1&#8217;s dwell residual named. B1, B3, B4, B5 and B7 <b>PASS</b>; B6 is a <b>broken-check PASS</b>. <b>V282 is the fallback.</b></p>
+    <p class="vtxt"><b>The fork preset is mandatory, not advisory</b> &#8212; <code>AccordEpsTorqueMode</code> ON, with lat-accel factor 6.0, <b>friction 0.00</b>, Kp 0.3, Ki 0.15 and the rate-plant feedforward off. <b>The first drive is an identification drive.</b> <b>A 1&#8211;4&nbsp;Hz line at low speed is the first revert trigger.</b></p>
+    <p class="vtxt"><b>The decision to fly is the operator&#8217;s. Nothing here says the grinding or the stutter is fixed</b> &#8212; this page scores bands; he scores the symptom.</p>
+  </div>
+  <div class="verdict bad">
+    <p class="vlbl">And the precedent, stated rather than hidden</p>
+    <p class="vtxt"><b>V292 was also cleared over one dissent, and then failed on the wire on clauses the model had passed.</b> That is exactly why this candidate&#8217;s ring claim rests on <b>the car&#8217;s own open-loop measurement</b> and not on the replay &#8212; and why the dissent below is printed in full rather than summarised away.</p>
+    <p class="vtxt">What the build <em>is</em> is settled: <b>torque mode &#8212; V279&#8217;s structure, which was built on 2&nbsp;September and never flown, rebased onto V282.</b> It is not a new lever. What is new is the base, the r24 dose, and the fork preset that flies it.</p>
+  </div>
+  <p class="supersede"><span class="chip risk">V292 &#8212; REVERT</span> <span>V292 flew on three routes today and hit two of its own pre-registered revert signatures. <b>The operator: grinding still present, stutter worse.</b> That flight read is what V293 answers; it is summarised below.</span></p>
+</header>
+
+<section>
+  <div class="col">
+    <p class="eyebrow">What the build does</p>
+    <p class="lead">Honda&#8217;s EPS does not treat openpilot&#8217;s 0xE4 frame as a torque. It maps it through an assist map to an <strong>angular-rate setpoint</strong> and closes a 1&nbsp;kHz PID on the measured column rate. openpilot&#8217;s own lateral controller is wrapped around that inner loop without knowing it is there. So there are two loops on one plant, and the inner one has been the subject of this kit&#8217;s last dozen builds.</p>
+    <p class="lead"><strong>V293 removes the inner loop.</strong> The feedback lag filter&#8217;s output clamp goes to zero, which forces the clamped operand to exactly&nbsp;0 on all three branches of the clamp block, for every state value, so <code>E&nbsp;=&nbsp;32&#183;sp</code> unconditionally. Kd goes to zero and the D clamp goes to zero, so the derivative term is zero twice over. Kp comes down from 248 to 120 flat, which is what keeps the delivered surface <em>linear to full command</em> instead of railing at 48&nbsp;% of it. And the r24 rate lane &#8212; now the only rate-fed term left in the ECU &#8212; is cut from 5244 to 2048.</p>
+    <p><strong>The case for flying it leans on a near-measurement.</strong> With <code>STEER_REQUEST</code>&nbsp;=&nbsp;0 the LKAS lane is gated off, which for the 18&#8211;22&nbsp;Hz question is close to what a zero feedback clamp does. The engaged &#247; disengaged band ratio on V282&#8217;s own routes is 3.48&#8211;4.20, and its reciprocal &#8212; <b>&#215;0.24 to &#215;0.29</b> &#8212; is what an open lane does on this car. A byte-exact replay on the ten loudest recorded grinding episodes reads &#215;0.28 independently. <span class="chip bel">ESTIMATE, not a measurement &#8212; the residuals are below</span></p>
+    <p><strong>The price is on the symptom the operator complained about today.</strong> V282&#8217;s loop is a disturbance-rejecting servo below about 13&nbsp;Hz, and opening it removes that rejection: the same replay puts the 5&#8211;9&nbsp;Hz wheel motion <b>up &#215;1.74</b> at the chosen r24 arm. That is not a risk the build runs &#8212; it is a prediction the build makes. He is being asked to trade the band he is unhappy about now for the band he has been unhappy about longer.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <span class="lbl">Edit 1 &#183; the loop opens</span>
+      <div class="addr">0xC62E6</div>
+      <div class="swing"><span class="from">46,080</span> &#8594; <span class="to">0</span></div>
+      <p>The feedback lag filter&#8217;s <b>output clamp</b>, binding on the two-sample sum before the error is formed. At zero all three clamp branches return zero, so <code>fb &#8801; 0</code> at every frequency. Read <code>ld.hu</code> at three sites, all inside the filter; zero writers. <b>The filter&#8217;s state keeps running</b> &#8212; only its clamped output is dead.</p>
+    </div>
+    <div class="card">
+      <span class="lbl">Edit 2 &#183; D dies twice over</span>
+      <div class="addr">0xCB7D4 bank &#183; 0xC61B6</div>
+      <div class="swing sm"><span class="from">Kd 128 &#183; clamp 10,240</span> &#8594; <span class="to">0 &#183; 0</span></div>
+      <p>All 28 Kd records zeroed, and the D clamp zeroed as a <b>second independent cell</b>. Either alone forces D&nbsp;=&nbsp;0; the pre-registration fails the build if one of them can be undone by a single wrong byte.</p>
+    </div>
+    <div class="card">
+      <span class="lbl">Edit 3 &#183; the forward path rescaled</span>
+      <div class="addr">0xCB994 bank</div>
+      <div class="swing"><span class="from">248</span> &#8594; <span class="to">120</span></div>
+      <p>All 28 Kp records flattened to 120. With the loop open, V282&#8217;s Kp 248 is a <b>&#215;2.07 over-gain</b> on the bottom half of the range and rails the P clamp from demand index 116. At 120 the surface stays linear to index 239 and lands on V282&#8217;s own peak &#8212; <b>but needs twice the demand to get there.</b></p>
+    </div>
+    <div class="card">
+      <span class="lbl">Edit 4 &#183; the last rate-fed lane</span>
+      <div class="addr">0xC6446</div>
+      <div class="swing"><span class="from">5,244</span> &#8594; <span class="to">2,048</span></div>
+      <p>The r24 engaged arm, <b>&#8722;60.9&nbsp;%</b>, back toward Honda&#8217;s 512. It pumps the 7&nbsp;Hz strong-turn ripple and, with the servo present, supplies most of the 20&nbsp;Hz damping. With the servo gone that second job evaporates &#8212; which is what makes the cut affordable here and nowhere else.</p>
+    </div>
+  </div>
+
+  <div class="tblwrap">
+  <table>
+    <caption class="eyebrow" style="text-align:left;padding-bottom:6px">The cumulative delta vs V282, and nothing else moves</caption>
+    <thead><tr><th>cell</th><th class="n">V282</th><th class="n">V293</th><th>what it physically is</th></tr></thead>
+    <tbody>
+      <tr><td class="m">0xC62E6</td><td class="n v282c">46,080</td><td class="n v293c">0</td><td>LKAS PID feedback saturation clamp, applied to the two-sample sum at <code>0x28FA6</code> before <code>sub r26,r16</code></td></tr>
+      <tr><td class="m">0xCB7D4 bank, 28 records</td><td class="n v282c">128 / 64</td><td class="n v293c">0</td><td>the rate PID&#8217;s derivative schedule. Live slot&nbsp;7 carries 128; slots 2, 5 and 10&#8211;27 carry 64</td></tr>
+      <tr><td class="m">0xC61B6</td><td class="n v282c">10,240</td><td class="n v293c">0</td><td>the D clamp &#8212; the same three-branch idiom, so a zero bound forces D to zero independently of Kd</td></tr>
+      <tr><td class="m">0xCB994 bank, 28 records</td><td class="n v282c">205 / 248 / 266 / 307</td><td class="n v293c">120</td><td>the proportional schedule. V281&nbsp;rev&nbsp;3 flattened every record to <em>its own</em> Y[0], so V282 is not 248 everywhere; live slot&nbsp;7 is 248</td></tr>
+      <tr><td class="m">0xC6446</td><td class="n v282c">5,244</td><td class="n v293c">2,048</td><td>the r24 engaged rate-lane gain arm (&#8220;Lever B&#8221;). Honda stock 512; V84 raised it to 5244</td></tr>
+      <tr><td class="m">CRC trailers</td><td class="n">&#8212;</td><td class="n">&#8212;</td><td>the 4-byte trailers of the six blocks that own those bytes: {{diff.trailers}}</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="scrollhint"><b>Not one code byte changes.</b> This is the cal-only class every success since V29 belongs to, and outside the kit&#8217;s only bricking class &#8212; V24, V27 and V48B were all code caves. The assist map, both torque clamps, the forward gain, Ki, both lag poles, the 0x14A telemetry cave and the CAN-427 torque tap are byte-identical to V282.</p>
+
+  <div class="kv">
+    <div><span class="lbl">whole-megabyte diff vs V282</span><span class="big">{{diff.n}} bytes</span><small>in {{diff.clusters}} clusters, and <b>{{diff.low}} bytes below 0x13000</b> &#8212; the region the <code>.rwd</code> does not carry.</small></div>
+    <div><span class="lbl">every byte attributed</span><span class="big n">{{diff.orphan}} orphans</span><small>{{diff.cell}} in the three scalar cells &#183; {{diff.kpY}} in Kp record Y knots &#183; {{diff.kdY}} in Kd record Y knots &#183; {{diff.crc}} in CRC trailers. <b>Nothing unaccounted.</b></small></div>
+    <div><span class="lbl">semantic check on the built image</span><span class="big good">28 / 28</span><small>{{diff.sem}} &#8212; a byte count alone would not catch a record whose pointer or knot count moved.</small></div>
+    <div><span class="lbl">flashable rwd files named V293</span><span class="big good">{{v293.nrwd}}</span><small>Exactly one, as the pre-registration requires. A second differing image of the same build number carries no evidence and would be a clause C5 failure.</small></div>
+  </div>
+
+  <div class="callout note">
+    <h3>The r24 dose of 2,048 turns out to be Honda&#8217;s own disengaged arm &#8212; and that is why the anchor is an estimate</h3>
+    <p><b>The r24 lane has two arms, and only one of them has ever moved.</b> The engaged arm is 0xC6446; the disengaged arm is <code>0xC6440</code>, and it reads <b>2,048 on every image in this kit, Honda&#8217;s own dump included</b> &#8212; stock, V38, V84, V104, V112, V276, V279, V282, V289, V292. <b>V293 is the first build on which the two are equal</b>, so its r24 lane is bit-identical engaged and disengaged. <span class="chip ev">EVIDENCE, read across ten images</span></p>
+    <p><b>That closes one confound in the on-car anchor and sharpens what the anchor can claim.</b> The reciprocal of the engaged&#247;disengaged ratio was previously weakened by the fact that going disengaged <em>also</em> drops the r24 arm to 2,048 &#8212; a second change riding along with the one being measured. On V293 that second change is gone, because the build already sits there.</p>
+    <p><b>Three residuals remain, and they are why this is an estimate rather than a measurement.</b> V293 still drives <code>f(cmd)</code> into the plant where a disengaged lane drives nothing &#8212; a forced 18&#8211;22&nbsp;Hz content of 3.49 counts against the disturbance floor&#8217;s 10.30. The disengaged reference is mostly stationary, so it is the car&#8217;s noise floor rather than road input at speed. And the r26 arm still moves with the engagement gate. <b>The number is the best this arc has produced and it is not a measurement of V293.</b></p>
+    <p><span class="chip risk">DO NOT</span> <b>And it must not be quoted at 5&#8211;9&nbsp;Hz.</b> Engaged, the command is the dominant driver in that band, so the engaged&#247;disengaged ratio there measures openpilot&#8217;s excitation rather than the loop. The 5&#8211;9&nbsp;Hz prediction rests on the return-ratio arithmetic and the replay, and on nothing measured.</p>
+  </div>
+
+  <div class="callout note">
+    <h3>Two doses differ from the design study, and both are the orchestrator&#8217;s call</h3>
+    <p>The design agent recommended <b>Kp 119</b> and <b>r24 4451</b>. The pre-registration overrode both. <b>Kp 120</b> because clause A2 fails the build if the delivered rail differs from V282&#8217;s by one count or more, and 119 lands one count low at 2504. <b>r24 2048</b> because the model that sized 4451 under-predicted V292&#8217;s measured 5&#8211;9&nbsp;Hz cost three-fold, so a criterion-exact arm carries no margin against the operator&#8217;s loudest symptom; 2048 is the record&#8217;s own priced lever. <span class="chip bel">BELIEF that 2048 is the better hedge</span> &#8212; the adversarial pass scores 4451 and 2048 side by side.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>Where the edits sit, and what the demand path does around them</h2>
+    <p>One diagram, because the two things the close-out contract asks for are the same picture: the LKAS demand path runs left to right across the top four bands, and every V293 edit lands somewhere on it. The feedback leg is the fifth band &#8212; and after this build it returns a hard zero. The r24 lane is the sixth: a parallel branch off bar twist that rejoins at the aggregator with <strong>unit weight on both</strong>, which is why it has to be re-sized when the LKAS lane&#8217;s character changes.</p>
+    <p><strong>What openpilot expects is a torque. V293 delivers <code>T = f(cmd)&#183;fade</code></strong> &#8212; a function of the command and the driver&#8217;s own bar torque, and of nothing else. Follow band&nbsp;1 through band&nbsp;4 and that is the whole demand path; band&nbsp;5 is the term that used to make it untrue.</p>
+    <p>Each edited stage carries its own <strong>before/after curve, drawn where it acts</strong>. Amber is V282, indigo is V293, rose is Honda stock. The same curves appear full size in the next section.</p>
+  </div>
+  <figure>
+    <div class="figbody"><svg viewBox="0 0 1260 1080" role="img" class="flow" aria-label="Signal-flow diagram of the 2020 Accord EPS chain under V293 torque mode: openpilot's torque controller commands 0xE4, which becomes a demand index and then a setpoint through the unchanged assist map; the error is 32 times the setpoint minus a feedback operand that V293 clamps to exactly zero; P uses Kp flattened from 248 to 120, D is zero by both Kd and its clamp, the sum passes a fade and clamps through a gain of 5346 to the delivered lane torque; the r24 rate lane's arm is cut from 5244 to 2048 before the aggregator, governor, shaper and motor">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--flow)"/></marker>
+  <marker id="ahE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--v293)"/></marker>
+</defs>
+
+<!-- BAND 1 : openpilot -->
+<text x="40" y="22" fill="var(--ink-mut)" font-family="var(--sans)" font-weight="700" letter-spacing=".09em" font-size="10.5">BAND 1 &#183; OPENPILOT &#8212; WHAT IT COMMANDS IS A TORQUE</text>
+<rect x="40" y="32" width="274" height="52" rx="4" fill="var(--opfill)" stroke="var(--noderule)" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="177" y="54" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">modeld</text>
+<text x="177" y="71" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">20 Hz desiredCurvature</text>
+<rect x="340" y="32" width="500" height="52" rx="4" fill="var(--opfill)" stroke="var(--v293)" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="590" y="54" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">LatControlTorque &#8212; AccordEpsTorqueMode ON</text>
+<text x="590" y="71" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">rate-plant FF OFF &#183; LAF 6.0 &#183; friction 0.00 &#183; Kp 0.3 &#183; Ki 0.15</text>
+<rect x="866" y="32" width="230" height="52" rx="4" fill="var(--opfill)" stroke="var(--noderule)" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="981" y="54" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">0xE4 STEER_TORQUE</text>
+<text x="981" y="71" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">100 Hz &#183; &#177;4096</text>
+<polyline points="314,58 340,58" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="840,58 866,58" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="1112" y="50" fill="var(--v293)" font-size="11.5" font-weight="700" font-family="var(--sans)">expects TORQUE</text>
+<text x="1112" y="66" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">V293 delivers</text>
+<text x="1112" y="79" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">T = f(cmd)&#183;fade</text>
+
+<!-- BAND 2 : reference path -->
+<text x="40" y="120" fill="var(--ink-mut)" font-family="var(--sans)" font-weight="700" letter-spacing=".09em" font-size="10.5">BAND 2 &#183; EPS REFERENCE PATH &#8212; THE DEMAND BECOMES A SETPOINT (UNCHANGED)</text>
+<rect x="40" y="130" width="222" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="151" y="152" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">gp&#8722;0x69ae</text>
+<text x="151" y="169" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">clamp(&#8722;4&#183;wire, &#177;0x4000)</text>
+<rect x="288" y="130" width="236" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="406" y="152" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">demand index idx</text>
+<text x="406" y="169" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">&#247;16.125736 &#183; cap 240</text>
+<rect x="550" y="118" width="264" height="106" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="682" y="137" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">assist map 0xE502C</text>
+<g transform="translate(634,146)">
+  <rect x="-2" y="-2" width="100" height="48" fill="var(--surface-2)" stroke="var(--rule-soft)" stroke-width="1"/>
+  <polyline points="{{mini.map_stock}}" class="ln thin astock"/>
+  <polyline points="{{mini.map_v282}}" class="ln thin a293"/>
+</g>
+<text x="682" y="215" text-anchor="middle" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">UNCHANGED &#183; linear 4.30/idx to 1032</text>
+<rect x="840" y="130" width="120" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="900" y="161" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">setpoint sp</text>
+<circle cx="1056" cy="156" r="21" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="1056" y="163" text-anchor="middle" fill="var(--ink)" font-size="18" font-weight="600" font-family="var(--sans)">&#931;</text>
+<polyline points="981,84 981,104 24,104 24,156 40,156" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="500" y="100" text-anchor="middle" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">the 0xE4 command, into the ECU</text>
+<polyline points="262,156 288,156" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="524,156 550,156" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="814,156 840,156" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="960,156 1035,156" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="998" y="148" text-anchor="middle" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">&#215;32</text>
+<text x="1090" y="120" fill="var(--ink-mut)" font-size="11.5" font-family="var(--mono)">E = 32&#183;sp &#8722; fb</text>
+<text x="1090" y="136" fill="var(--v293)" font-size="12" font-weight="700" font-family="var(--mono)">&#8594; E = 32&#183;sp</text>
+
+<!-- BAND 3 : the PID -->
+<text x="40" y="262" fill="var(--ink-mut)" font-family="var(--sans)" font-weight="700" letter-spacing=".09em" font-size="10.5">BAND 3 &#183; THE RATE PID &#8212; EDITS 2 AND 3 LAND HERE</text>
+<rect x="40" y="272" width="300" height="106" rx="4" fill="var(--editfill)" stroke="var(--v293)" stroke-width="2.2"/>
+<text x="190" y="291" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">P = (E&#183;Kp) &gt;&gt; 8, clamp 15,360</text>
+<g transform="translate(142,300)">
+  <rect x="-2" y="-2" width="100" height="48" fill="var(--surface)" stroke="var(--rule-soft)" stroke-width="1"/>
+  <polyline points="{{mini.kp_stock}}" class="ln thin astock"/>
+  <polyline points="{{mini.kp_v282}}" class="ln thin a282"/>
+  <polyline points="{{mini.kp_v293}}" class="ln thin a293"/>
+</g>
+<rect x="40" y="355" width="300" height="19" rx="9.5" fill="var(--v293)"/>
+<text x="190" y="369" text-anchor="middle" fill="var(--on-bar)" font-size="10.5" font-weight="700" font-family="var(--mono)">0xCB994 &#183; Kp 248 &#8594; 120, all 28 records</text>
+<rect x="366" y="272" width="300" height="106" rx="4" fill="var(--editfill)" stroke="var(--v293)" stroke-width="2.2"/>
+<text x="516" y="291" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">D = (&#916;E&#183;Kd) &gt;&gt; 3, clamp</text>
+<g transform="translate(468,300)">
+  <rect x="-2" y="-2" width="100" height="48" fill="var(--surface)" stroke="var(--rule-soft)" stroke-width="1"/>
+  <polyline points="{{mini.kd_v282}}" class="ln thin a282"/>
+  <polyline points="{{mini.kd_v293}}" class="ln thin a293"/>
+</g>
+<rect x="366" y="355" width="300" height="19" rx="9.5" fill="var(--v293)"/>
+<text x="516" y="369" text-anchor="middle" fill="var(--on-bar)" font-size="10.5" font-weight="700" font-family="var(--mono)">Kd 128 &#8594; 0  AND  0xC61B6 10,240 &#8594; 0</text>
+<rect x="692" y="298" width="220" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="802" y="320" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">I &#8212; Ki = 0</text>
+<text x="802" y="337" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">0xC63E6, Honda ships it off</text>
+<circle cx="1000" cy="324" r="21" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="1000" y="331" text-anchor="middle" fill="var(--ink)" font-size="18" font-weight="600" font-family="var(--sans)">&#931;</text>
+<polyline points="1056,177 1056,238 190,238 190,272" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="516,238 516,272" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="802,238 802,298" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="640" y="234" text-anchor="middle" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">the error E, to all three terms</text>
+<polyline points="190,378 190,392 1000,392 1000,345" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="516,378 516,392" fill="none" stroke="var(--flow)" stroke-width="1.6"/>
+<polyline points="912,324 979,324" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="1032" y="318" fill="var(--v293)" font-size="11.5" font-weight="700" font-family="var(--mono)">S = P alone</text>
+<text x="1032" y="333" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">I &#8801; 0, D &#8801; 0</text>
+
+<!-- BAND 4 : fade, clamps, gain, delivery -->
+<text x="40" y="416" fill="var(--ink-mut)" font-family="var(--sans)" font-weight="700" letter-spacing=".09em" font-size="10.5">BAND 4 &#183; FADE, CLAMPS, GAIN, DELIVERY &#8212; ALL UNCHANGED, SO NO RANGE CHANGE ANYWHERE</text>
+<rect x="40" y="426" width="270" height="106" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="175" y="445" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">fade &#8594; sum clamp 15,360</text>
+<g transform="translate(127,454)">
+  <rect x="-2" y="-2" width="100" height="48" fill="var(--surface-2)" stroke="var(--rule-soft)" stroke-width="1"/>
+  <polyline points="{{mini.sD}}" class="ln thin a282"/>
+  <polyline points="{{mini.taper}}" class="ln thin astock"/>
+</g>
+<text x="175" y="523" text-anchor="middle" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">&#215;254/256 at rest &#183; byte-stock</text>
+<rect x="336" y="452" width="252" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="462" y="474" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">output lag 992 / 507</text>
+<text x="462" y="491" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">5.05 Hz &#183; DC 0.990234</text>
+<rect x="614" y="452" width="252" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="740" y="474" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">T = (y&#183;5346) &gt;&gt; 15</text>
+<text x="740" y="491" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">clamp &#177;3072 &#183; gain 0xC6CD0</text>
+<rect x="892" y="440" width="252" height="76" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="1018" y="461" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">gp&#8722;0x6b38</text>
+<text x="1018" y="478" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">the delivered lane torque</text>
+<text x="1018" y="496" text-anchor="middle" fill="var(--v293)" font-size="10.5" font-family="var(--mono)">&#8594; CAN 427, 8 counts/LSB, 50 Hz</text>
+<polyline points="1021,324 1150,324 1150,408 175,408 175,426" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="310,478 336,478" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="588,478 614,478" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="866,478 892,478" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+
+<!-- BAND 5 : the feedback leg -->
+<text x="40" y="570" fill="var(--v293)" font-family="var(--sans)" font-weight="700" letter-spacing=".09em" font-size="10.5">BAND 5 &#183; THE FEEDBACK LEG &#8212; EDIT 1, AND IT NOW RETURNS A HARD ZERO</text>
+<rect x="40" y="580" width="222" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="151" y="602" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">column rate gp&#8722;0x6abe</text>
+<text x="151" y="619" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">8 counts per deg/s</text>
+<rect x="288" y="580" width="236" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="406" y="602" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">gp&#8722;0x6a56</text>
+<text x="406" y="619" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">&#215;1.697754, sat &#177;12000</text>
+<rect x="550" y="580" width="264" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="682" y="600" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">lag filter 923 / 1560, then sum</text>
+<text x="682" y="617" text-anchor="middle" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">state gp&#8722;0x3d30 KEEPS RUNNING</text>
+<rect x="840" y="566" width="304" height="106" rx="4" fill="var(--editfill)" stroke="var(--v293)" stroke-width="2.2"/>
+<text x="992" y="585" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">clamp &#177;[0xC62E6] &#8594; fb</text>
+<g transform="translate(944,594)">
+  <rect x="-2" y="-2" width="100" height="48" fill="var(--surface)" stroke="var(--rule-soft)" stroke-width="1"/>
+  <line x1="0" y1="{{mini.fb_zero}}" x2="96" y2="{{mini.fb_zero}}" class="zl"/>
+  <polyline points="{{mini.fb_v282}}" class="ln thin a282"/>
+  <polyline points="{{mini.fb_v293}}" class="ln thin a293"/>
+</g>
+<rect x="840" y="649" width="304" height="19" rx="9.5" fill="var(--v293)"/>
+<text x="992" y="663" text-anchor="middle" fill="var(--on-bar)" font-size="10.5" font-weight="700" font-family="var(--mono)">46,080 &#8594; 0 &#8212; zero on all three branches</text>
+<polyline points="262,606 288,606" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="524,606 550,606" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="814,606 840,606" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="1144,619 1214,619 1214,156 1077,156" fill="none" stroke="var(--v293)" stroke-width="2.2" marker-end="url(#ahE)"/>
+<text x="1206" y="330" text-anchor="end" fill="var(--v293)" font-size="11" font-weight="700" font-family="var(--mono)">fb &#8801; 0 at every frequency</text>
+
+<!-- BAND 6 : the r24 lane -->
+<text x="40" y="710" fill="var(--v293)" font-family="var(--sans)" font-weight="700" letter-spacing=".09em" font-size="10.5">BAND 6 &#183; THE r24 RATE LANE &#8212; EDIT 4, AND THE ONLY RATE-FED TERM LEFT IN THE ECU</text>
+<rect x="40" y="720" width="222" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="151" y="742" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">torsion-bar twist</text>
+<text x="151" y="759" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">gp&#8722;0x4f60 &#183; what hands load</text>
+<rect x="288" y="720" width="236" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="406" y="742" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">4-tap derivative</text>
+<text x="406" y="759" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">d = (bar[n] &#8722; bar[n&#8722;4])&#183;&#189;</text>
+<rect x="550" y="706" width="284" height="106" rx="4" fill="var(--editfill)" stroke="var(--v293)" stroke-width="2.2"/>
+<text x="692" y="725" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">arm 0xC6446 &#183; r24 = &#8722;(d&#183;K) &gt;&gt; 10</text>
+<g transform="translate(644,734)">
+  <rect x="-2" y="-2" width="100" height="48" fill="var(--surface)" stroke="var(--rule-soft)" stroke-width="1"/>
+  <line x1="0" y1="{{mini.r24_zero}}" x2="96" y2="{{mini.r24_zero}}" class="zl"/>
+  <polyline points="{{mini.r24_5244}}" class="ln thin a282"/>
+  <polyline points="{{mini.r24_2048}}" class="ln thin a293"/>
+</g>
+<rect x="550" y="789" width="284" height="19" rx="9.5" fill="var(--v293)"/>
+<text x="692" y="803" text-anchor="middle" fill="var(--on-bar)" font-size="10.5" font-weight="700" font-family="var(--mono)">5,244 &#8594; 2,048  (&#215;5.12 &#8594; &#215;2.00)</text>
+<rect x="860" y="733" width="284" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="1002" y="755" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">deadband &#177;3 &#183; clamp &#177;8192</text>
+<text x="1002" y="772" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">&#8594; gp&#8722;0x6ada</text>
+<polyline points="262,746 288,746" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="524,746 550,746" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="834,759 860,759" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+
+<!-- BAND 7 : motor chain -->
+<text x="40" y="864" fill="var(--ink-mut)" font-family="var(--sans)" font-weight="700" letter-spacing=".09em" font-size="10.5">BAND 7 &#183; AGGREGATOR TO MOTOR &#8212; BYTE-IDENTICAL, AND THE TWO LANES CARRY UNIT WEIGHT</text>
+<rect x="40" y="874" width="210" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="145" y="896" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">gp&#8722;0x6b4c</text>
+<text x="145" y="913" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">clamp &#177;0x2800</text>
+<rect x="276" y="874" width="230" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="391" y="896" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">aggregator gp&#8722;0x6b94</text>
+<text x="391" y="913" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">FUN_0003aa2c</text>
+<rect x="532" y="874" width="180" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="622" y="896" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">governor</text>
+<text x="622" y="913" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">FUN_0004503c</text>
+<rect x="738" y="874" width="180" height="52" rx="4" fill="var(--nodefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="828" y="896" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">EME shaper</text>
+<text x="828" y="913" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">FUN_00042af8</text>
+<rect x="944" y="874" width="200" height="52" rx="4" fill="var(--plantfill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="1044" y="896" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">motor &#183; column &#183; rack</text>
+<text x="1044" y="913" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">the plant</text>
+<polyline points="1144,466 1186,466 1186,818 145,818 145,874" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="700" y="814" text-anchor="middle" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">the LKAS lane</text>
+<polyline points="1002,785 1002,846 391,846 391,874" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="700" y="842" text-anchor="middle" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">the r24 lane</text>
+<polyline points="250,900 276,900" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="506,900 532,900" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="712,900 738,900" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="918,900 944,900" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="1144,900 1240,900 1240,690 22,690 22,606 40,606" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="560" y="686" text-anchor="middle" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">the measured column rate &#8212; still measured, no longer used</text>
+<polyline points="1044,926 1044,952 14,952 14,746 40,746" fill="none" stroke="var(--flow)" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="560" y="948" text-anchor="middle" fill="var(--ink-mut)" font-size="10.5" font-family="var(--mono)">bar twist &#8212; the driver&#8217;s hands and the road, into r24 and into the fade</text>
+
+<!-- BAND 8 : telemetry -->
+<text x="40" y="986" fill="var(--ink-mut)" font-family="var(--sans)" font-weight="700" letter-spacing=".09em" font-size="10.5">BAND 8 &#183; LIVE TELEMETRY, CARRIED BYTE-IDENTICAL FROM V282 &#8212; NO NEW CAVE BIT IS NEEDED</text>
+<rect x="40" y="996" width="1056" height="52" rx="4" fill="var(--cavefill)" stroke="var(--noderule)" stroke-width="1.2"/>
+<text x="128" y="1014" text-anchor="middle" fill="var(--v293)" font-size="12" font-weight="700" font-family="var(--mono)">b7</text>
+<text x="128" y="1029" text-anchor="middle" fill="var(--ink-mut)" font-size="10" font-family="var(--mono)">sign(gp&#8722;0x6b4c)</text>
+<text x="128" y="1042" text-anchor="middle" fill="var(--v293)" font-size="9.5" font-family="var(--mono)">0.996 &#8594; 0.808, the mover</text>
+<line x1="216" y1="996" x2="216" y2="1048" stroke="var(--noderule)" stroke-width="1"/>
+<text x="304" y="1014" text-anchor="middle" fill="var(--ink)" font-size="12" font-weight="700" font-family="var(--mono)">b6</text>
+<text x="304" y="1029" text-anchor="middle" fill="var(--ink-mut)" font-size="10" font-family="var(--mono)">|r24| &#8805; |T|</text>
+<text x="304" y="1042" text-anchor="middle" fill="var(--ink-mut)" font-size="9.5" font-family="var(--mono)">not pre-registered</text>
+<line x1="392" y1="996" x2="392" y2="1048" stroke="var(--noderule)" stroke-width="1"/>
+<text x="480" y="1014" text-anchor="middle" fill="var(--ink)" font-size="12" font-weight="700" font-family="var(--mono)">b5</text>
+<text x="480" y="1029" text-anchor="middle" fill="var(--ink-mut)" font-size="10" font-family="var(--mono)">|r24| &#8805; |aggregator|</text>
+<line x1="568" y1="996" x2="568" y2="1048" stroke="var(--noderule)" stroke-width="1"/>
+<text x="656" y="1014" text-anchor="middle" fill="var(--v293)" font-size="12" font-weight="700" font-family="var(--mono)">b4</text>
+<text x="656" y="1029" text-anchor="middle" fill="var(--ink-mut)" font-size="10" font-family="var(--mono)">sign(r24)</text>
+<text x="656" y="1042" text-anchor="middle" fill="var(--v293)" font-size="9.5" font-family="var(--mono)">the NEGATIVE CONTROL</text>
+<line x1="744" y1="996" x2="744" y2="1048" stroke="var(--noderule)" stroke-width="1"/>
+<text x="832" y="1014" text-anchor="middle" fill="var(--ink)" font-size="12" font-weight="700" font-family="var(--mono)">b3</text>
+<text x="832" y="1029" text-anchor="middle" fill="var(--ink-mut)" font-size="10" font-family="var(--mono)">sign(gp&#8722;0x3680)</text>
+<text x="832" y="1042" text-anchor="middle" fill="var(--ink-mut)" font-size="9.5" font-family="var(--mono)">measured aliased</text>
+<line x1="920" y1="996" x2="920" y2="1048" stroke="var(--noderule)" stroke-width="1"/>
+<text x="1008" y="1014" text-anchor="middle" fill="var(--ink)" font-size="12" font-weight="700" font-family="var(--mono)">b2&#8211;b0</text>
+<text x="1008" y="1029" text-anchor="middle" fill="var(--ink-mut)" font-size="10" font-family="var(--mono)">stock Honda</text>
+<text x="1108" y="1014" fill="var(--ink-mut)" font-size="10.5" font-family="var(--sans)" font-weight="700">CAN 0x14A</text>
+<text x="1108" y="1028" fill="var(--ink-mut)" font-size="10.5" font-family="var(--sans)" font-weight="700">byte 4</text>
+<text x="1108" y="1042" fill="var(--ink-mut)" font-size="10" font-family="var(--mono)">100 Hz</text>
+</svg></div>
+    <figcaption><b>Indigo outlines mark what V293 changes; indigo bars carry the dose.</b> Every mini-plot is the real LERP for that stage, drawn at the stage where it acts and generated from the image bytes, not sketched: amber V282, indigo V293, rose Honda stock. The heavy indigo return arrow from band&nbsp;5 is the whole build &#8212; it used to carry a number proportional to how fast the wheel was already moving, and now it carries zero. Note what does <em>not</em> change: the assist map, the fade, both clamps, the gain, the aggregator&#8217;s unit weights and the &#177;3072 output cap, so there is no range change anywhere downstream. Sources: <span class="mono">TRACE-2026-09-13-lkas-pid-tracked-quantity.md</span> &#167;1&#8211;3, <span class="mono">DESIGN-V293-TORQUE-MODE-2026-09-13.md</span> &#167;1, <span class="mono">ADVERSARIAL-V293-PREREG-2026-09-13.md</span>.</figcaption>
+  </figure>
+  <p class="scrollhint">Scroll the diagram sideways on a narrow screen.</p>
+</section>
+
+<section>
+  <div class="col">
+    <h2>The curves, full size</h2>
+    <p>Six LERP records matter to this build: two it changes, one it depends on completely, and three it deliberately leaves alone. Every one is read from the image, walked with the firmware&#8217;s own truncating integer interpolation, and plotted on the same axes before and after.</p>
+  </div>
+
+  <div class="duo">
+  <figure>
+    <div class="legend"><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>V282 and V293 &#8212; identical</span><span style="color:var(--stock)"><i class="sw" style="background:var(--stock)"></i>Honda stock</span></div>
+    <div class="figbody"><svg viewBox="0 0 500 232" role="img" class="chart" aria-label="The assist map: setpoint versus demand index. V282 and V293 carry the same linear map rising 4.3 counts per index to 1032; Honda stock saturates at 172.">
+      {{map.yaxis}}{{map.xaxis}}{{map.rate_axis}}
+      <polyline points="{{map.stock}}" class="ln astock"/>
+      <polyline points="{{map.v282}}" class="ln a293"/>
+      {{map.stock_knots}}{{map.v282_knots}}
+      <text x="300" y="55" class="dlbl" fill="var(--v293)">V282 = V293 &#183; top 1032</text>
+      <text x="300" y="182" class="dlbl" fill="var(--stock)">stock &#183; top 172</text>
+      <text x="242" y="228" class="tk" text-anchor="middle">demand index (0&#8211;240)</text>
+      <text x="16" y="14" class="tk">setpoint sp</text>
+      <text x="484" y="14" class="tk" text-anchor="end">deg/s</text>
+    </svg></div>
+    <figcaption><b>The assist map is UNCHANGED.</b> Linear at 4.30 setpoint counts per demand index to a top of 1032, six times Honda&#8217;s ceiling. The right axis is what that setpoint <em>meant</em> on V282 &#8212; the rate the closed loop would null at, 133.6&nbsp;deg/s at the top. <span class="chip open">On V293 that axis has no meaning</span>: with the feedback gone the map is a command-to-torque gain schedule and nothing compares it to a measurement. The &#215;6 torque survives literally; the &#215;6 rate setpoint survives only as a name.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="legend"><span style="color:var(--v282)"><i class="sw" style="background:var(--v282)"></i>V282 &#183; 248 flat</span><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>V293 &#183; 120 flat</span><span style="color:var(--stock)"><i class="sw" style="background:var(--stock)"></i>stock &#183; rising to 696</span></div>
+    <div class="figbody"><svg viewBox="0 0 500 232" role="img" class="chart" aria-label="The Kp schedule versus demand index. Honda stock rises from 248 to 696 across knots at 0, 68, 112, 136 and 208. V282 is flat at 248 on the live slot. V293 is flat at 120 on every slot.">
+      {{kp.yaxis}}{{kp.knotrules}}{{kp.xaxis}}
+      <polyline points="{{kp.stock}}" class="ln astock"/>
+      <polyline points="{{kp.v282}}" class="ln a282"/>
+      <polyline points="{{kp.v293}}" class="ln a293"/>
+      {{kp.stock_knots}}
+      <text x="300" y="52" class="dlbl" fill="var(--stock)">stock schedule</text>
+      <text x="300" y="139" class="dlbl" fill="var(--v282)">V282 slot 7 &#183; 248</text>
+      <text x="300" y="171" class="dlbl" fill="var(--v293)">V293 all slots &#183; 120</text>
+      <text x="242" y="228" class="tk" text-anchor="middle">demand index &#183; knot positions on the rules</text>
+      <text x="16" y="14" class="tk">Kp</text>
+    </svg></div>
+    <figcaption><b>The single number that makes edit&nbsp;3 necessary rather than cosmetic.</b> V281 rev&nbsp;3 flattened every Kp record to its own first knot, so V282 carries <b>205, 248, 266 and 307</b> depending on the variant slot &#8212; not 248 everywhere. With the loop open and Kp 248, P reaches its 15,360 clamp at demand index <b>116</b>, so the lane would deliver peak torque from 48&nbsp;% of command upward and be flat above it. At 120 it rails at index 239. V293 writes 120 into <b>all 28 records</b> because the feedback clamp is one global cell: a selector that is ever not 7 must land on the same surface.</figcaption>
+  </figure>
+  </div>
+
+  <div class="duo">
+  <figure>
+    <div class="legend"><span style="color:var(--v282)"><i class="sw" style="background:var(--v282)"></i>V282 slot 7 &#183; 128</span><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>V293 &#183; 0</span></div>
+    <div class="figbody"><svg viewBox="0 0 500 232" role="img" class="chart" aria-label="The Kd schedule versus demand index. V282 is flat at 128 on the live slot with knots at 0, 11, 22 and 32. V293 is flat at zero.">
+      {{kd.yaxis}}{{kd.knotrules}}{{kd.xaxis}}
+      <polyline points="{{kd.other}}" class="ln thin a282 dot"/>
+      <polyline points="{{kd.v282}}" class="ln a282"/>
+      <polyline points="{{kd.v293}}" class="ln a293"/>
+      <text x="300" y="53" class="dlbl" fill="var(--v282)">V282 slot 7 &#183; 128</text>
+      <text x="300" y="123" class="tk" fill="var(--v282)">other slots &#183; 64</text>
+      <text x="300" y="198" class="dlbl" fill="var(--v293)">V293 &#183; 0, all 28 records</text>
+      <text x="242" y="228" class="tk" text-anchor="middle">demand index &#183; last knot at 32, flat above</text>
+      <text x="16" y="14" class="tk">Kd</text>
+    </svg></div>
+    <figcaption><b>Kd has never been edited on any flown build.</b> It is flat on Honda too, and its last knot is at index 32, so it is unschedulable above that. With the feedback dead, <code>&#916;E</code> is a pure command derivative: one demand-index step near the top of the map is <code>&#916;E</code>&nbsp;=&nbsp;137, which at Kd&nbsp;128 is 2,192 counts of torque from a single command step &#8212; 87&nbsp;% of the delivered peak, at 100&nbsp;Hz. That kick is why Kd must go, and it is why the D clamp goes too.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="legend"><span style="color:var(--v282)"><i class="sw" style="background:var(--v282)"></i>V282 &#183; 30.89 &#215; rate</span><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>V293 &#183; identically 0</span></div>
+    <div class="figbody"><svg viewBox="0 0 500 232" role="img" class="chart" aria-label="The feedback operand against wheel rate. On V282 it rises linearly at about 247 counts per degree per second, reaching 2434 at 10 and 4908 at 20 degrees per second. On V293 it is identically zero at every rate.">
+      {{fb.yaxis}}{{fb.xaxis}}
+      <polyline points="{{fb.v282}}" class="ln a282"/>
+      <polyline points="{{fb.v293}}" class="ln a293"/>
+      <text x="150" y="72" class="dlbl" fill="var(--v282)">V282</text>
+      <text x="240" y="180" class="dlbl" fill="var(--v293)">V293 &#8212; zero at every rate</text>
+      <text x="242" y="228" class="tk" text-anchor="middle">column rate, deg/s</text>
+      <text x="16" y="14" class="tk">operand counts</text>
+    </svg></div>
+    <figcaption><b>This is the build.</b> The two-sample sum has a DC gain of 30.8911, so on V282 the operand reads <b>2,434</b> at 10&nbsp;deg/s and <b>4,908</b> at 20 &#8212; subtracted straight from <code>32&#183;sp</code>, which is why V282&#8217;s delivered torque collapses and even reverses as the wheel follows. The &#177;46,080 clamp only binds above 186&nbsp;deg/s, so it never binds on the road; at zero it binds on every tick. The filter&#8217;s state still runs, so the 0x14A rung that publishes its sign stays a live check that the filter is alive while the lane no longer listens to it.</figcaption>
+  </figure>
+  </div>
+
+  <div class="duo">
+  <figure>
+    <div class="legend"><span style="color:var(--stock)"><i class="sw" style="background:var(--stock)"></i>driver-torque override cliff</span><span style="color:var(--v282)"><i class="sw" style="background:var(--v282)"></i>the live post-PID fade</span></div>
+    <div class="figbody"><svg viewBox="0 0 500 196" role="img" class="chart" aria-label="The override taper record, unchanged: a cliff from 254 to 0 between 70 and 80 counts of driver torque.">
+      {{taper.yaxis}}{{taper.xaxis}}
+      <polyline points="{{taper.v282}}" class="ln astock"/>
+      {{taper.knots}}
+      <text x="70" y="45" class="dlbl" fill="var(--stock)">254</text>
+      <text x="300" y="150" class="dlbl" fill="var(--stock)">0 &#8212; a cliff, not a taper</text>
+      <text x="242" y="192" class="tk" text-anchor="middle">axis counts &#183; knots 70 / 72 / 78 / 80</text>
+      <text x="16" y="14" class="tk">factor /255</text>
+    </svg></div>
+    <figcaption><b>UNCHANGED, and it is not the live fade.</b> Record 0xE5404, from bank 0xCBA04, reads Y = 254, 234, 12, 0 &#8212; byte-identical on stock, V282 and V293. It is a separate record from the two halves of the live fade stage below, and it is drawn here because the pre-registration names it and because its first knot is <em>also</em> 254 &#8212; which is exactly why it was once mistaken for the source of the at-rest scalar. <b>It is the right number for the wrong reason,</b> and that mis-attribution is on record.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="legend"><span style="color:var(--v282)"><i class="sw" style="background:var(--v282)"></i>table D &#183; 0xCBBC4 &#183; LIVE</span><span style="color:var(--stock)"><i class="sw" style="background:var(--stock)"></i>table C &#183; 0xCBAE4</span></div>
+    <div class="figbody"><svg viewBox="0 0 500 196" role="img" class="chart" aria-label="The two candidate post-PID fade tables C and D, both byte-stock, which derate the PID sum at their upper knots to 51 and 77 of 255 respectively.">
+      {{speedtaper.yaxis}}{{speedtaper.xaxis}}
+      <polyline points="{{speedtaper.C}}" class="ln astock"/>
+      <polyline points="{{speedtaper.Dd}}" class="ln a282"/>
+      {{speedtaper.Cknots}}{{speedtaper.Dknots}}
+      <text x="290" y="112" class="dlbl" fill="var(--v282)">D &#8594; 77/255</text>
+      <text x="330" y="152" class="dlbl" fill="var(--stock)">C &#8594; 51/255</text>
+      <text x="242" y="192" class="tk" text-anchor="middle">axis counts</text>
+      <text x="16" y="14" class="tk">factor /255</text>
+    </svg></div>
+    <figcaption><span class="chip ev">STRUCTURE: EVIDENCE</span> <b>The adversarial decompile settles the shape of this stage.</b> There is <em>one</em> fade stage, at <code>0x2A13x</code>, computing <code>factor = ((tapAB &#183; tapCD) &amp; 0xFFFF) &gt;&gt; 8</code>. The A/B half (0xCBB54 and 0xCBC34, byte-identical to each other) sits on the bar-derivative axis; the C/D half is this pair. <b>Both halves are picked by the same flag, <code>gp&#8722;0x6803</code>, the 0xE4 <code>SET_ME_X00</code> field openpilot sends as zero &#8212; so B&nbsp;&#215;&nbsp;D is live.</b> Both halves return 255 at rest, which is where the always-on <code>((255&#183;255)&amp;0xFFFF)&gt;&gt;8 = 254</code> comes from. <b>This supersedes the design study&#8217;s reading of 0xCBBC4&#8217;s axis as driver torque.</b></figcaption>
+    <figcaption style="margin-top:8px"><span class="chip open">AXIS UNIT: OPEN</span> <b>What the D half&#8217;s knots are measured in is not settled, and it changes the delivered number a lot.</b> The adversary read the operand as a speed and <em>assumed km/h</em>, marking it BELIEF and not re-derived; on that reading the rail derates to about <b>2,151 at 10&nbsp;m/s and 736 at 20&nbsp;m/s and above</b>, since the top knot&#8217;s factor is <code>(255&#183;77)&gt;&gt;8 = 76</code>. <b>The record&#8217;s own on-car tap measurements point the other way</b> &#8212; V278 rev&nbsp;3 read a measured-to-simulated torque ratio of 0.42&#8211;0.51 at 3&#8211;9&nbsp;m/s, and the tap reached its 310 rail on faster routes, which a &#215;0.30 derate above 20&nbsp;m/s would not allow. Both readings are on the page and neither is asserted. <b>V293 touches neither record, so V282 and V293 share this stage exactly and the ratio between the two surfaces holds at every speed.</b></figcaption>
+  </figure>
+  </div>
+
+  <figure>
+    <div class="legend"><span style="color:var(--v282)"><i class="sw" style="background:var(--v282)"></i>V282 &#183; arm 5244</span><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>V293 &#183; arm 2048</span><span style="color:var(--stock)"><i class="sw" style="background:var(--stock)"></i>Honda &#183; arm 512</span></div>
+    <div class="figbody"><svg viewBox="0 0 500 232" role="img" class="chartw" aria-label="The r24 lane transfer: output against the four-tap bar-torque derivative, at arms 5244, 2048 and 512. The slope falls from 5.12 to 2.00 to 0.50, with a plus or minus 3 count dead band at the origin.">
+      {{r24.yaxis}}{{r24.xaxis}}
+      <line x1="56" y1="{{r24.y0}}" x2="428" y2="{{r24.y0}}" class="zl"/>
+      <polyline points="{{r24.a512}}" class="ln thin astock"/>
+      <polyline points="{{r24.a2048}}" class="ln a293"/>
+      <polyline points="{{r24.a5244}}" class="ln a282"/>
+      <text x="300" y="40" class="dlbl" fill="var(--v282)">5244 &#183; &#215;5.12</text>
+      <text x="330" y="76" class="dlbl" fill="var(--v293)">2048 &#183; &#215;2.00</text>
+      <text x="356" y="106" class="tk" fill="var(--stock)">512 &#183; &#215;0.50</text>
+      <text x="242" y="228" class="tk" text-anchor="middle">4-tap bar-torque derivative d, counts</text>
+      <text x="16" y="14" class="tk">r24 lane output</text>
+    </svg></div>
+    <figcaption><b>The r24 lane opposes bar motion, and the arm sets how hard.</b> The traced transfer is <code>&#8722;clip(deadband(trunc(clip(&#189;&#183;(bar[n]&#8722;bar[n&#8722;4]))&#183;g/1024)))</code>, so the arm is a pure slope with a &#177;3-count dead band at the origin and a &#177;8192 clamp beyond this axis. <b>The record has measured this cell in both directions:</b> it pumps the 7&nbsp;Hz strong-turn ripple and, with the servo present, supplies 73&#8211;86&nbsp;% of the 20&nbsp;Hz mode&#8217;s damping. The design study&#8217;s paired sweep says that second job is a partial cancellation of the servo&#8217;s own de-damping &#8212; delete the servo and removing r24 <em>raises</em> 20&nbsp;Hz damping on 96&#8211;100&nbsp;% of plants. <span class="chip bel">BELIEF &#8212; a modelled counterfactual on a measurement-constrained plant family, not a measurement</span></figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="col">
+    <h2>What actually reaches the motor</h2>
+    <p>The consequence of all four edits, in one curve. Every number below is walked through the same byte-exact integer chain the ECU runs: the map LERP, <code>E&nbsp;=&nbsp;32&#183;sp</code>, <code>P&nbsp;=&nbsp;(E&#183;Kp)&gt;&gt;8</code> against the 15,360 clamp, the &#215;254/256 fade, the sum clamp, the output lag from its cold state, the &#215;5346 gain and the &#177;3072 output cap.</p>
+    <p><strong>V282&#8217;s delivered torque is not a function of the command at all.</strong> Each amber curve is the same build at a different wheel rate, and they are wildly different &#8212; at 20&nbsp;deg/s and low demand V282 delivers <em>negative</em> torque, actively opposing the wheel. That is the servo doing its job. <strong>V293 has one curve, because delivery no longer depends on what the wheel is doing.</strong></p>
+  </div>
+  <figure>
+    <div class="legend"><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>V293 &#183; every wheel rate</span><span style="color:var(--v282)"><i class="sw" style="background:var(--v282)"></i>V282 at 0 deg/s</span><span style="color:var(--v282)"><i class="sw d"></i>V282 at 10 and 20 deg/s</span></div>
+    <div class="figbody"><svg viewBox="0 0 640 292" role="img" class="chartw" aria-label="Delivered lane torque against demand index. V293 is a straight line from zero to 2461 counts at index 240. V282 at a still wheel rails at 2461 from index 116; at 10, 20 and 45 degrees per second it starts negative and reaches the rail later.">
+      {{surface.yaxis}}{{surface.xaxis}}
+      <line x1="62" y1="{{surface.y0}}" x2="562" y2="{{surface.y0}}" class="zl"/>
+      <line x1="62" y1="{{surface.ceil}}" x2="562" y2="{{surface.ceil}}" class="zl"/>
+      <text x="72" y="{{surface.ceil}}" class="tk" dy="-5">2505 &#8212; the clamp ceiling, never delivered</text>
+      <polyline points="{{surface.v282_20}}" class="ln thin a282 dash"/>
+      <polyline points="{{surface.v282_10}}" class="ln thin a282 dash"/>
+      <polyline points="{{surface.v282_0}}" class="ln a282"/>
+      <polyline points="{{surface.v293}}" class="ln a293"/>
+      <text x="300" y="42" class="dlbl" fill="var(--v282)">V282, wheel still &#8212; rails from index 116</text>
+      <text x="330" y="150" class="dlbl" fill="var(--v293)">V293 &#8212; linear to the same rail</text>
+      <text x="84" y="212" class="tk" fill="var(--v282)">V282 at speed: negative at low demand</text>
+      <text x="312" y="288" class="tk" text-anchor="middle">demand index (0&#8211;240)</text>
+      <text x="18" y="14" class="tk">delivered torque, counts</text>
+    </svg></div>
+    <figcaption><b>Read from the image, through the full chain including the fade and the output lag.</b> The two builds land on the same peak, <b>2,461 counts</b> &#8212; but <b>V293 needs twice the demand to reach it</b>: index 239 against V282&#8217;s 116 at a still wheel. The dashed 2505 line is the <em>clamp ceiling</em> in the docstring convention that omits the fade and the lag &#8212; <b>neither build ever delivers it, and it must never be quoted as a delivery.</b> That correction is on record: 2481 and 2505 both circulated before the always-on &#215;254/256 was traced. The 45&nbsp;deg/s case is in the table rather than the chart; at demand index 0 it reads &#8722;1,723 counts and would double the axis on its own.</figcaption>
+    <figcaption style="margin-top:8px"><span class="chip risk">READ THIS BEFORE QUOTING 2,461</span> <b>Every number in this chart and table is AT REST.</b> The live fade&#8217;s D half derates the whole surface as its axis rises, and its top knot&#8217;s factor is <code>(255&#183;77)&gt;&gt;8 = 76</code> of 254 &#8212; a fall to roughly <b>736 counts</b> at the top of that axis. <b>It derates V282 and V293 identically</b>, since neither build touches the record, so every ratio on this page survives. But 2,461 is a stationary-wheel figure and is not a road-speed delivery. Where the derate bites depends on the axis unit, which is <span class="chip open">OPEN</span> above.</figcaption>
+  </figure>
+
+  <div class="tblwrap">
+  <table>
+    <caption class="eyebrow" style="text-align:left;padding-bottom:6px">Delivered torque in counts, by demand index and wheel rate</caption>
+    <thead><tr><th class="n">idx</th><th class="n">sp</th><th class="n">deg/s ref</th><th class="n">0xE4</th><th class="n">V293 &#183; any rate</th><th class="n">V282 @ 0</th><th class="n">V282 @ 10</th><th class="n">V282 @ 20</th><th class="n">V282 @ 45</th></tr></thead>
+    <tbody>{{surface.rows}}</tbody>
+  </table>
+  </div>
+  <div class="callout">
+    <h3>The authority sentence, written the way the arithmetic forces it</h3>
+    <p><b>Do not read this build as &#8220;authority unchanged&#8221;.</b> The peak is identical &#8212; 2,461 counts at rest &#8212; <b>and it now takes twice the demand to reach</b>. V293&#8217;s surface climbs at <b>10.34 counts per demand index</b> against V282&#8217;s <b>21.37</b> at a still wheel, so below index 116 <b>V293 delivers 0.47 to 0.49 of V282&#8217;s stalled-wheel torque.</b> At the record&#8217;s own p90 demand of index 58 that is <b>598 counts against 1,236</b>.</p>
+    <p><b>Against a moving wheel the comparison reverses,</b> and that is the honest other half. V282 delivers <em>less</em> than its stalled-wheel figure once the wheel follows &#8212; the 10 and 20&nbsp;deg/s columns above, negative at low demand &#8212; while V293 delivers the same number at every wheel rate. So &#8220;authority rises&#8221; and &#8220;authority falls&#8221; are both true depending on what the wheel is doing. <b>The one statement that holds unconditionally is that delivery becomes a function of command alone.</b></p>
+    <p><b>openpilot absorbs the slope, and the cost shows up as headroom.</b> Fitting the lat-accel factor on the first drive re-scales the outer gain, so the loop reaches the same torque by asking for more command: <b>the fraction of the 4,096-count actuator in use roughly doubles, from about 12&nbsp;% to about 24&nbsp;%</b> at that same p90 demand. Nothing saturates, but the margin to the rail halves. <span class="chip ev">EVIDENCE &#8212; every figure here recomputed from the built image</span></p>
+    <p>And on the operator&#8217;s own recorded episodes the delivered rms is &#215;0.82 on grinding windows but <b>&#215;3.6</b> on loaded high-angle turns, because V282&#8217;s servo has already nulled there and V293&#8217;s does not. <b>No single Kp makes those readings agree</b>, because V282&#8217;s delivered torque is not a function of the command at all.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>V292 flew, and this is why V293 exists</h2>
+    <p>Three routes on 13 September, 1,723 engaged seconds. <strong>The operator: grinding still present, stuttering worse, most visible as an oscillation holding the wheel at a high angle.</strong> Two of V292&#8217;s own pre-registered revert signatures fired and the ring prediction inverted. <strong>By its own pre-registration, that is a REVERT</strong> &#8212; not a judgement call made afterwards.</p>
+  </div>
+  <div class="kv">
+    <div><span class="lbl">6&#8211;9 Hz strong-turn ripple</span><span class="big bad">F7 4.17</span><small>per 100&nbsp;s of engaged high-angle time, against V282&#8217;s 0.51 and V281&nbsp;rev&nbsp;3&#8217;s 0.00. Revert threshold was 2. Rate ratio &#215;8.1, p&nbsp;=&nbsp;0.022 one-sided. <b>FIRED</b></small></div>
+    <div><span class="lbl">tap ripple &#247; level</span><span class="big bad">0.21&#8211;0.34</span><small>against V282&#8217;s 0.10&#8211;0.17. Revert threshold was 0.25. <b>FIRED on both arms of the same clause</b></small></div>
+    <div><span class="lbl">18&#8211;22 Hz, route-normalised</span><span class="big bad">&#215;1.20&#8211;2.00</span><small>engaged &#247; the same route&#8217;s disengaged amplitude, the measure that survives the driving-model change. Predicted &#215;0.55&#8211;0.71. <b>OPPOSITE</b></small></div>
+    <div><span class="lbl">13&#8211;17 Hz shoulder</span><span class="big bad">&#215;1.31&#8211;2.42</span><small>with a 14.84&nbsp;Hz line at +6.3&nbsp;dB where V282 reads +2.8. Predicted &#215;1.3&#8211;1.7. <b>FIRED, at or above the top of its own range</b></small></div>
+    <div><span class="lbl">5&#8211;9 Hz, route-normalised</span><span class="big bad">&#215;2.92&#8211;4.25</span><small>against a model that predicted &#215;1.03&#8211;1.10. <b>The same sign as V293&#8217;s prediction and three times the size</b></small></div>
+    <div><span class="lbl">where the 20 Hz object sits</span><span class="big">19.92 Hz</span><small>on every route and every stratum. V289 relocated it to 15&#8211;17&nbsp;Hz; V292 did not move it at all. 22&#8211;30&nbsp;Hz did not fire.</small></div>
+  </div>
+  <div class="callout">
+    <h3>What that costs V293&#8217;s own prediction</h3>
+    <p><b>The one out-of-sample test of the ring predictor failed, by &#215;1.9 to &#215;3.2 and in the wrong direction.</b> The same replay machinery that says V293&#8217;s ring falls to &#215;0.28 said V292&#8217;s would fall to &#215;0.55; the wire read it up. The design study reproduced the published V292 prediction with its own implementation, so the failure is the method&#8217;s, not a coding difference. <span class="chip ev">EVIDENCE</span></p>
+    <p><b>Two things make V293&#8217;s case different, and one does not.</b> V292 was a pole <em>move</em>, a shaping whose benefit depends on the fitted plant&#8217;s phase; V293 deletes the return ratio, so <code>|S| &#8801; 1</code> is an identity rather than a fit. And the engaged &#247; disengaged ratio measures the loop&#8217;s own contribution <em>on the car</em>, which V292 never had. But if the V292 prediction failed because the plant family is wrong in a way the disturbance inversion absorbs, <b>that same error is in V293&#8217;s replay.</b></p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>The risk, before the drive</h2>
+    <p>Stated here so it is on the page and not only in a review file. <strong>This build raises the band the operator complained about today.</strong> It is a prediction, not a hazard the build merely tolerates.</p>
+  </div>
+
+  <div class="kv">
+    <div><span class="lbl">predicted 5&#8211;9 Hz wheel motion</span><span class="big bad">&#215;1.74</span><small>at the chosen r24 arm, on the ten loudest recorded grinding episodes. Consistent with <code>|1+L(7.3&nbsp;Hz)| = 2.04</code>: V282&#8217;s loop is a disturbance-rejecting servo below ~13&nbsp;Hz and V293 removes that rejection.</small></div>
+    <div><span class="lbl">predicted 18&#8211;22 Hz ring</span><span class="big n">&#215;0.28</span><small>on creep windows; the on-car anchor reads &#215;0.24&#8211;0.29 independently. <b>But on loaded high-angle turns the benefit is only &#215;0.50&#8211;0.68</b> &#8212; the ring falls least exactly where the 5&#8211;9&nbsp;Hz cost is largest. Ring-down 169&nbsp;&#8594;&nbsp;43&nbsp;ms.</small></div>
+    <div><span class="lbl">7.3 Hz magnitude gate</span><span class="big good">0.465</span><small>at arm 2048, against the record&#8217;s allowance of 1.010 and the 1.0526 configuration whose ripple the operator <em>felt</em>. At 5244 it would read 1.190.</small></div>
+    <div><span class="lbl">outer loop &#183; creep margin, BOTH builds</span><span class="big bad">10&#8211;20&nbsp;%</span><small>of plant gain at 5&nbsp;m/s, on V293 <em>and</em> on flown V282. The failure mode there is the V276 1&#8211;4&nbsp;Hz signature. <b>This is the first thing to watch, and the first revert trigger.</b> <span class="chip risk">RESIDUAL, NOT CLOSED</span></small></div>
+  </div>
+
+  <div class="callout">
+    <h3>The preset was the problem, not the firmware &#8212; and a lower Kp was making it worse</h3>
+    <p><b>The outer-loop surface returned a FAIL on the build and the shipped preset taken together:</b> 22.8&#176; of phase margin at 5&nbsp;m/s. The cause is a fork detail nothing in the design study had priced. <b>StarPilot feeds <code>error_with_lsf</code> into <code>get_friction</code> where upstream openpilot feeds the raw error</b>, so the friction term&#8217;s contribution to loop gain carries a factor of <code>(1 + lsf/kp)</code>.</p>
+    <p><span class="chip risk">READ THIS</span> <b>That inverts the reasoning the preset was built on.</b> Cutting <code>SteerKP</code> from 0.9 to 0.3 was meant to buy margin; through this path <b>a lower Kp is worse</b>, and the total loop gain is minimised near <b>Kp &#8776; 1.0</b>, not below it. The preset&#8217;s own headline change was pushing the wrong way.</p>
+    <p><b>The repair is one number and it is applied in the fork: torque-mode friction 0.01 &#8594; 0.00.</b> That takes phase margin to <b>42.2&#176;</b> with Ms 2.06 and a gain margin of &#215;1.40, and it is worth <b>&#215;1.58</b> on the gain metric at the measured delay. The 1&#8211;4&nbsp;Hz V276 signature <b>does not reproduce on frequency</b> &#8212; what cycles, cycles at 1.21&#8211;1.25&nbsp;Hz, below the band. <b>That repair is why the preset is mandatory rather than advisory.</b></p>
+    <p><b>Re-scored at the delay measured on this car, the clause fails the build &#8212; and fails the car too.</b> V293 under the repaired preset breaks 3 of 10 controller-loop cells, worst 33.2&#176; at 5&nbsp;m/s; <b>flown V282 at its own tune breaks 3 of 10</b>, worst 35.6&#176; at 28.5&nbsp;m/s. A criterion that condemns the build already on the car by the same count is a broken criterion, so it was scored on its intent and <b>passes: no worse than the car.</b> Reported as a broken check rather than quietly dropped.</p>
+    <p><b>What is NOT closed:</b> at 5&nbsp;m/s the creep margin is 10&#8211;20&nbsp;% of plant gain <b>on both builds</b>, and the failure mode there is the V276 1&#8211;4&nbsp;Hz signature. <b>Watch low speed first.</b></p>
+  </div>
+
+  <div class="callout">
+    <h3>The lane cannot back off for the driver</h3>
+    <p>With <code>fb &#8801; 0</code> there is no error term left to recede. At demand index 48 the reference asks 25.8&nbsp;deg/s; V282 delivers 35 counts once the wheel is at that rate and zero at the null rate, while <b>V293 delivers 494 counts and keeps delivering them</b>. Against a driver that is a steady push which only recedes as his own bar torque climbs the fade &#8212; and the fade needs <code>|bar|</code> near 1600 before it removes a third of it. V276&#8217;s <em>&#8220;the only way to stop it is to hold the steering wheel very firmly&#8221;</em> is the shape of that, and here it is structural rather than incidental. V276 also limit-cycled; this is predicted not to. <span class="chip ev">EVIDENCE for the numbers</span> <span class="chip bel">BELIEF that it feels like V276</span></p>
+  </div>
+
+  <div class="callout">
+    <h3>The firmware and the fork must agree, and the two mismatches are not symmetric</h3>
+    <p>One switch now covers it: <code>AccordEpsTorqueMode</code>, which ships OFF. <b>Going to V293: flash first, toggle second.</b> <b>Reverting: toggle first, flash second.</b> Both orders exist to avoid the same forbidden window.</p>
+    <ul>
+      <li><b>Mode ON with a rate-servo image in the ECU &#8212; OVER-DELIVERY, and this is the row that must never exist.</b> The plain lateral-accel feedforward, sized for a torque actuator, fed to a servo: <b>&#215;2.55</b> at 15&nbsp;m/s and 0.9&nbsp;m/s&#178;, measured from the built fork code. Nothing downstream catches it &#8212; the safety layer applies no magnitude, rate, driver-torque or window limit to 0xE4. <b>Never create this row, not even for the drive to the flashing spot.</b></li>
+      <li><b>Mode OFF with V293 in the ECU &#8212; and it is NOT simply under-delivery.</b> The rate-plant feedforward inverts a servo that is no longer there, and the sign of the error flips with what the wheel is doing. <b>On a steady curve</b>, where the wheel is near stalled, V293 delivers about half the torque per command below demand index 116, so a V282-sized feedforward <em>starves</em> and the integrator has to carry the shortfall. <b>On turn-in</b>, where the wheel is moving, V293 never backs off and the rate runs <b>&#215;3.17 what the geometry asks at 5&nbsp;m/s</b>. So the same mismatch produces <b>opposite-direction errors minutes apart</b>. Still the recoverable row, and still where Safe Mode deliberately lands you &#8212; but do not read it as a uniform softness.</li>
+    </ul>
+    <p>Left on a torque-map image with the rate-plant feedforward still enabled, the open-loop push is <b>&#215;3.17</b> what the geometry needs at 5&nbsp;m/s, falling to &#215;0.95 at motorway speed. That is V276&#8217;s failure <em>shape</em> with no instability in it, and it is why the preset is part of the build rather than a recommendation.</p>
+  </div>
+
+  <div class="callout note">
+    <h3>The delay is not a number, and the margins above depend on which one you mean</h3>
+    <p><b>Measured on the current tune, the closed outer loop&#8217;s lag from <code>desiredCurvature</code> to steering angle is 258&nbsp;ms at 3&#8211;8&nbsp;m/s, 232 at 8&#8211;15, 211 at 15&#8211;25 and 182 above 25</b> &#8212; unchanged by V292, though the tune itself slowed it by 20 to 55&nbsp;ms. The fitted lag pole sits at 1.4&#8211;4.3&nbsp;Hz, which is the torque controller&#8217;s own bandwidth plus the plant, <b>not the EPS servo.</b></p>
+    <p>Neither of the two numbers in circulation is an identification of that. The fork&#8217;s <code>lateralDelayEstimate</code> of 0.248 is <b>about 99&nbsp;% seed value</b> and is gated to speeds at or above 15&nbsp;m/s. The operator&#8217;s <code>SteerDelay</code> of 0.2 is a <b>full</b> delay, which implies a vehicle contribution of exactly zero.</p>
+    <p><span class="chip risk">READ THIS</span> <b>So the phase margins on this page are conditional on a definition, not just on a value.</b> The re-score at the measured delays is in adversary B&#8217;s final table, and it is not in yet.</p>
+  </div>
+
+  <div class="col">
+    <h3>The first drive is an identification drive, not a symptom drive</h3>
+    <p>Three of the four torque-mode tune numbers are provisional: lat-accel factor 6.0 carried over so the first flight is not also a gain change, Kp 0.3 &#8212; a third of today&#8217;s &#8212; and Ki 0.15. <strong>The fourth is not provisional. Friction 0.00 is the outer-loop repair</strong>, and it is the difference between 22.8&#176; and 42.2&#176; of phase margin at 5&nbsp;m/s. It is not a conservative starting guess and it must not be raised as one. <strong>Every friction and lat-accel figure in the record was measured <em>through</em> a rate servo, which hides the rack&#8217;s Coulomb friction behind its own loop gain, so none of them transfers.</strong> The lat-accel factor has to be fitted from the drive&#8217;s own log by instrumental variables, with at least 400 hands-off laterally-engaged pairs in each of four command buckets to 0.5, both signs. Raise Kp only after that. And check <code>initData.params</code> before scoring any band: every <code>Accord*</code> key was absent on the V292 routes.</p>
+  </div>
+
+  <div class="col">
+    <h3>What one short symptomatic episode has to show</h3>
+    <p><strong>The edit-live control is within-frame and costs this build nothing</strong>, because CAN&nbsp;427 already carries the delivered lane torque. On V293 the tap must be an exact function of the demand and the driver&#8217;s bar torque with <em>no dependence on wheel rate</em>: regressing <code>|tap|</code> on <code>f(cmd)&#183;fade</code> inside the same frames should go from R&#178;&nbsp;&#8722;4.81 to <strong>+0.92</strong>, residual 349&nbsp;&#8594;&nbsp;47 counts. That is not a tautology &#8212; the V282 residual <em>is</em> the feedback leg, and it has to vanish. Sign agreement between the tap and the command near 1.00 proves the feedback is dead; near 0.5 means it is not.</p>
+    <p>Then the bands, by the drive-controlled measure the V292 read established: engaged 18&#8211;22&nbsp;Hz amplitude divided by the <em>same route&#8217;s</em> laterally-disengaged amplitude, where V282 reads 3.4&#8211;3.9 and V292 read 4.1&#8211;6.8. Plus F7 and tap ripple at high angle, a 1&#8211;4&nbsp;Hz line in command and angle, and the 0x14A duties &#8212; b7 as the mover, <strong>b4 as the negative control, identical by construction</strong>.</p>
+  </div>
+
+  <blockquote><p><b>The sentence a null licenses.</b> If the 18&#8211;22&nbsp;Hz ring&#8217;s amplitude and ring-down are unchanged with the LKAS rate loop fully open on every frame &#8212; the within-frame identity holding &#8212; then the 20&nbsp;Hz object is not the LKAS loop&#8217;s, the engaged&#247;disengaged ratio of 3.5&#8211;4.2 measures something other than the loop, and <b>the whole in-loop class, V38 through V293 &#8212; shaping, notching, pole-moving and opening &#8212; is closed.</b></p></blockquote>
+
+  <div class="callout">
+    <h3>Revert if</h3>
+    <p>Grinding unchanged, in the operator&#8217;s own word. The 6&#8211;9&nbsp;Hz ripple back: F7 at or above 2 per 100&nbsp;s, or tap ripple&#247;level at or above 0.25 at <code>|angle|</code>&nbsp;&#8805;&nbsp;30&#176;. A 1&#8211;4&nbsp;Hz oscillation of command and angle together &#8212; the V276 signature, where the fix is the fork preset and not the firmware, but the drive stops. A 10&#8211;18&nbsp;Hz line. A darty or loose feel. A one-sided pull at rest. Any EME fault or DTC.</p>
+    <p><b>Nothing here licenses a claim that the grinding or the stutter is fixed.</b> This page scores bands; the operator scores symptoms.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>Where this sits in the arc</h2>
+    <p class="lead"><strong>Torque mode &#8212; V279&#8217;s structure, on the V282 base. Not a new lever.</strong> V279 built the same three mechanisms on a V268 base on 2 September, passed its own assertions and an adversarial pass, and was never driven. So the class is <em>untested</em>, not falsified, and there is no on-car evidence in either direction for what a zero feedback clamp does to this car.</p>
+    <p>The matrix below is nine cells read down every image on disk from Honda&#8217;s dump to today. Shaded cells are where a value changed from the build to its left. Four things it shows at a glance, and none of them is obvious from prose:</p>
+    <ul>
+      <li><strong>The feedback clamp sat at Honda&#8217;s 7,680 from the stock dump all the way to V273.</strong> V276 took it to 46,080, V278 rev&nbsp;3 to 15,360, and every build from V280 on has carried 46,080. It has been <em>zero</em> exactly twice &#8212; V279 and V293 &#8212; and <b>neither has turned a wheel.</b></li>
+      <li><strong>Kd has never moved on any flown build</strong>, and neither has the D clamp except on V287 rev&nbsp;2, which was rejected.</li>
+      <li><strong>Kp carried Honda&#8217;s rising 248&#8594;696 schedule on every flown build until V281 rev&nbsp;3 flattened it.</strong> V279 flattened it too, to 256, and never flew.</li>
+      <li><strong>The r24 arm has been 5,244 since V104</strong> &#8212; frozen across twenty images &#8212; until V291 and V292 cut it 9.9&nbsp;%. V293&#8217;s 2,048 is the first substantial move on that cell in the whole span.</li>
+    </ul>
+  </div>
+  <div class="tblwrap mx">
+  <table>
+    <thead><tr><th>cell</th><th>what it is</th>{{matrix.head}}</tr></thead>
+    <tbody>{{matrix.body}}</tbody>
+  </table>
+  </div>
+  <p class="scrollhint">Read from the plain images with an independent little-endian reader, anchored on stock 0xC646C&nbsp;=&nbsp;891, stock 0x454FE&nbsp;=&nbsp;0xBA, V282 0x2A1F0&nbsp;=&nbsp;0x7CD0 and V282 0xC63E8&nbsp;=&nbsp;923 before any value was used. <b>The kit&#8217;s own ledger script was not used</b> &#8212; it hard-codes a V38&#8211;V84 build list and a different cell set &#8212; so this is a second implementation of the same conventions, and it reproduces the build script&#8217;s published surface table to the count as its positive control. Scroll sideways.</p>
+
+  <div class="tblwrap">
+  <table>
+    <caption class="eyebrow" style="text-align:left;padding-bottom:6px">What each build in the matrix was</caption>
+    <thead><tr><th>build</th><th>the lever</th><th>image sha256</th></tr></thead>
+    <tbody>{{matrix.notes}}</tbody>
+  </table>
+  </div>
+
+  <div class="col">
+    <h3>How this build&#8217;s class differs from the last five</h3>
+    <ul>
+      <li><b>V288 rev&nbsp;2</b> was a <b>reference-side</b> cave &#8212; a setpoint pre-filter. It flew, the cave was live, the D-clamp bind duty fell &#215;0.03 as designed, and the grinding was unchanged. That closed the reference side.</li>
+      <li><b>V289 rev&nbsp;1</b> was an <b>in-loop filter</b>, a 20.04&nbsp;Hz notch. It flew, it removed the 20&nbsp;Hz mode entirely, and a different pre-existing 15&#8211;17&nbsp;Hz pole took its margin.</li>
+      <li><b>V291 and V292</b> open the loop <b>by pole move</b> &#8212; the feedback corner dropped 16.5&nbsp;&#8594;&nbsp;9.94&nbsp;Hz so the return ratio collapses above about 8&nbsp;Hz. V292 flew today and reverted.</li>
+      <li><b>V293 opens the loop all the way, by clamp rather than by pole.</b> Not a different dose of the V291 lever: a different mechanism for the same direction, and the terminal point of it. Where V292 made the feedback arithmetic exact, V293 deletes the feedback.</li>
+    </ul>
+    <p>What is different this time from V279: the base is V282, which already carries the linear &#215;6 map, the 46,080 clamp, the 0x14A comparator cave and the CAN-427 torque tap, so V293 needs five cal cells where V279 needed 28 map records, 28 Kp records, 28 Kd records and a packer rewrite. The instrument is already flying and has been read on four drives. The peak is pinned to V282&#8217;s measured peak rather than a recomputed one. And the symptom being chased is the grinding and the high-angle stutter, where V279&#8217;s stated target was the 3.9&nbsp;Hz crossover.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <h2>The adversarial pass</h2>
+    <p>Four independent agents on disjoint attack surfaces, each re-deriving from the built image rather than from the build script&#8217;s constants or the orchestrator&#8217;s brief. The pass must be able to return <strong>do not flash</strong>, and what a failure looks like on each surface was written down before any of them was briefed. <strong>It bit.</strong> Four claims on this page were rewritten because an adversary overturned them &#8212; the fade stage&#8217;s structure, the authority sentence, the standing of the on-car ring anchor, and the fork preset&#8217;s own friction number, which turned out to be the difference between 22.8&#176; and 42.2&#176; of phase margin. <strong>Two surfaces returned a literal FAIL.</strong></p>
+  </div>
+
+  <div class="advrow pass">
+    <div class="advhead"><span class="advid">A</span><span class="advname">Arithmetic</span><span class="chip ev">PASS &#183; A1&#8211;A4</span></div>
+    <p><b>What it proved.</b> The clamped feedback operand is identically zero <b>over 4,023 int32 state values</b>, simulated from the clamp block&#8217;s own decoded bytes &#8212; and the null is demonstrably capable, because <b>the same sweep on V282 returns 4,012 non-zero operands.</b> D is zero <b>by each cell alone</b>, which is what the A1 clause demands. The rail reads <b>2,461 = 2,461</b> against V282 on matched cold-start trajectories. The code region is byte-identical, all <b>378 differing cal bytes are attributed</b>, and the 0x14A cave and the CAN-427 packer are unchanged &#8212; b3 is still V282&#8217;s aliased bit, not V292&#8217;s feedback-state rung.</p>
+    <p><b>Two corrections it forced, both carried above.</b> The fade stage&#8217;s structure is now EVIDENCE and supersedes the design study&#8217;s axis reading; the C/D half&#8217;s axis <em>unit</em> is OPEN and the adversary&#8217;s km/h assumption is marked BELIEF. And the authority claim was rewritten: the peak is identical but needs twice the demand, and &#8220;authority unchanged&#8221; must not be printed.</p>
+  </div>
+  <div class="advrow pass">
+    <div class="advhead"><span class="advid">C</span><span class="advname">Build-script audit</span><span class="chip ev">PASS</span></div>
+    <p><b>An independent rebuild from the V282 image reproduces the artifact byte-identically, with both hashes predicted before the write</b> &#8212; and exactly one flashable V293 <code>.rwd</code> exists on disk. 378 bytes, zero unattributed, round-trip byte-equal, 50 of 50 block CRCs under two independent routines, and a write guard that refuses before touching the filesystem.</p>
+    <p><b>Five defects were found in the script&#8217;s own self-verification and prose, and none of them reaches the artifact.</b> The one worth repeating: <b>seven single-knot mutations &#8212; one Kp knot at 121, one Kd knot at 1 &#8212; pass all 241 of the script&#8217;s assertions</b>, because a byte counter cannot see a wrong level and the rail check samples only the last knot. Bounded at +9 counts at one index, and closed for V293 by this pass&#8217;s own independent knot derivation. The others: an assertion census overstated by 23, a tag that ignores the D-clamp integer, a docstring torque figure off by a unit factor, and a &#8220;Kd 128 on every record&#8221; line that is true on 8 of 28. <b>Four fixes were applied after the pass with the image hash held</b>, so the artifact is untouched.</p>
+  </div>
+  <div class="advrow pass">
+    <div class="advhead"><span class="advid">D1</span><span class="advname">The sustained-effort question</span><span class="chip ev">PASS, with a quantified residual</span></div>
+    <p><b>This was the open question the code-path trace left,</b> and it is the one that could have returned do-not-flash: a torque-mode lane holds its commanded torque however fast the wheel already moves, so dwell at the rail rises even though the peak does not.</p>
+    <p><b>The integrate-and-trip structure exists, and it was found.</b> It is the soft-EME command integrator <code>gp&#8722;0x3570</code> in the shaper: it accumulates the excess over a bound at 1&nbsp;kHz, and SM2 arms once the accumulator clears its threshold &#8212; a sustained 100-count excess does it in <b>154&nbsp;ms</b>. The bound is the greater of the corridor, an IIR and the 5,120 boost floor, all byte-identical.</p>
+    <p><b>The LKAS lane cannot drive that wind-up on its own, because it is clamped at 3,072</b>, and the aggregate ceiling of 5,325 is unchanged. The governor and the two monitors beside it carry no accumulator at all, and the energy budget is unreachable because it needs strictly more than 5,325 while the cap table&#8217;s maximum <em>is</em> 5,325.</p>
+    <p><b>The residual, named and not closed:</b> a <b>205-count band</b> between the 5,120 floor and the 5,325 ceiling needs <b>75&nbsp;ms of continuous residency</b> to arm. <b>That band exists on V282 as well</b>, and SM2 and SM3 self-clear. So the raised dwell is real, it is bounded, and it opens no trip path the car does not already have.</p>
+  </div>
+  <div class="advrow pass">
+    <div class="advhead"><span class="advid">D2&#8211;D5</span><span class="advname">Cell readers, interlocks, the fork preset, the dead island</span><span class="chip ev">PASS</span></div>
+    <p><b>The reader census closes.</b> <code>0xC62E6</code> has three readers, all inside the filter. <code>0xC61B6</code> has seven &#8212; four live and three in the uncalled twin island. <code>0xC6446</code> has one. All <b>56 of 56</b> Kp and Kd record pointers are owned. <code>gp&#8722;0x680a</code>, which gates the dead viscous-damper delivery mode, still has zero writers.</p>
+    <p><b>Nothing an interlock watches has moved:</b> every EME, governor, DTC, lockstep and latch calibration is byte-identical. The lockstep mirror <code>gp&#8722;0x4ca6</code>&#8217;s five accesses all sit inside <code>FUN_0003f776</code>, disjoint from the clamp this build edits.</p>
+    <p><b>D5 is false as worded and passes in effect</b> &#8212; the dead island <em>does</em> read <code>0xC61B6</code>, so the clause&#8217;s literal claim is wrong, but the island has 239 internal jump targets, <b>zero external sources and no <code>jarl</code> into it</b>, so nothing reaches those reads. Recorded that way rather than restated to fit.</p>
+    <p><b>D4, the fork preset:</b> with the mode off, pre-patch behaviour exactly; with it on, the rate-plant feedforward branch cannot execute.</p>
+  </div>
+
+  <div class="advrow pass">
+    <div class="advhead"><span class="advid">B</span><span class="advname">Unit and scale chain, closed-loop stability</span><span class="chip ev">B1 B3 B4 B5 B7 PASS</span><span class="chip risk">B2 B6 FAIL AS WRITTEN</span></div>
+    <p><b>B1, the pole census: PASS at 2,048 &#8212; and the dose choice decided it.</b> Unstable fits in torque mode on the V282-pole-only family: <b>2,048 gives 0 and 0</b> at the two disputed effective arms, against 4,451&#8217;s <b>5</b> and 0, and V282&#8217;s own 7 and 2. On the better-constrained family the worst plant reads &#950; <b>+0.161</b> against V282&#8217;s &#8722;0.005. <b>Had the design study&#8217;s recommended 4,451 been built, B1 would have failed.</b> The literal &#8220;&#950; &lt; 0.05&#8221; clause condemns flown V282 on 250 of 250 plants, so it was scored on its intent: no unstable fit, and no worse than the car.</p>
+    <p><b>B3, the surface: PASS.</b> Rail <b>&#215;1.000000</b>, P first rails at demand index 239.</p>
+    <p><b>B4, the strong-turn ripple: PASS, and it is the thinnest margin in the whole pass.</b> Tap ripple over level on loaded turns reads 0.028&#8211;0.048 against a 0.25 gate, with <b>V293 sitting between stock and V282</b> rather than outside them. Predicted F7 is about <b>1.24 per 100&nbsp;s against a threshold of 2</b> &#8212; a margin of only &#215;1.6, on a nonlinear mapping.</p>
+    <p><b>B5, the 5&#8211;9 Hz rise: PASS at 2,048, and both legs were needed.</b> The band rises <b>&#215;1.50&#8211;1.59</b> against V282 and <b>&#215;1.05&#8211;1.13</b> against stock&#8217;s own engaged loop; neither leg of the two-leg gate trips. <b>At 4,451 the first leg trips on r39.</b> The rise is broadband &#8212; peakiness is unchanged &#8212; so this is lost disturbance rejection, not a new mode.</p>
+    <p><b>B7, the shoulder: PASS.</b> Zero of 250 plants carry a pole under 0.10 damping in 10&#8211;18&nbsp;Hz, and the 13&#8211;17&nbsp;Hz band reads <b>&#215;1.06</b> at worst against a &#215;1.5 gate. V292&#8217;s rejected reading on that same band was &#215;1.9&#8211;2.1.</p>
+    <p><b>B8, reported and not gated:</b> the command-driven 18&#8211;22&nbsp;Hz torque is <b>&#215;0.055&#8211;0.137</b> of V282&#8217;s ring <b>and has no pole, so it cannot ring.</b> That is the residual the operator may still feel with the loop open, and it is an order of magnitude down.</p>
+  </div>
+
+  <div class="advrow fail">
+    <div class="advhead"><span class="advid">B2</span><span class="advname">The ring &#8212; the one dissent</span><span class="chip risk">FAIL AS WRITTEN &#183; adjudicated PASS on intent</span></div>
+    <p>The clause demands the replayed 18&#8211;22&nbsp;Hz ring at or under <b>&#215;0.50</b> of V282&#8217;s, <em>after calibrating the predictor on V292</em>. The readings do not agree, and every one is printed because the choice between them <em>is</em> the decision.</p>
+    <div class="tblwrap">
+    <table>
+      <thead><tr><th>reading</th><th class="n">ring vs V282</th><th>against the &#8804; &#215;0.50 gate</th></tr></thead>
+      <tbody>
+        <tr><td><b>Calibrated on V292</b>, as the clause specifies</td><td class="n">&#215;0.54 &#8211; 1.47</td><td><b>FAIL</b></td></tr>
+        <tr><td>Uncalibrated replay</td><td class="n">&#215;0.285 / &#215;0.403</td><td>PASS</td></tr>
+        <tr><td>Calibrated on the car&#8217;s own open-loop configuration</td><td class="n">&#215;0.47 / &#215;0.66</td><td>mixed</td></tr>
+        <tr><td><b>The on-car anchor</b>, no predictor, independently re-derived</td><td class="n">&#215;0.237 / &#215;0.285 / &#215;0.265</td><td>PASS</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p><b>Why it was adjudicated PASS on intent.</b> The mandated calibration factor was measured on V292 &#8212; <b>a build that did not open the loop.</b> The fit family&#8217;s error there is in how a feedback pole reshapes the return ratio at 20&nbsp;Hz, and <b>that error has no channel when the operand is identically zero</b>: the code region is byte-identical and the clamp is a symmetric &#177;C clamp, so a return ratio of zero is an identity the bytes prove rather than a fit. Transferred to the one fully-open-loop configuration this car has actually been measured in, <b>that same calibration over-predicts the measured ring by &#215;1.3 to &#215;2.0 &#8212; the calibrated predictor fails a measured case.</b> On the clause&#8217;s intent, that the ring at least halves, the direct on-car reading is &#215;0.24&#8211;0.29 and the command-driven residual &#215;0.06&#8211;0.14, both evidence rather than model.</p>
+    <p><b>The literal FAIL and its numbers stay in the table above as the dissent</b>, and the V292 precedent at the head of this page is why they stay.</p>
+  </div>
+
+  <div class="advrow fail">
+    <div class="advhead"><span class="advid">B6</span><span class="advname">The outer loop &#8212; a broken check that fires cleanly</span><span class="chip risk">FAIL AS WRITTEN &#183; PASS on intent</span></div>
+    <p>Re-scored at the delay <em>measured on this car</em> rather than an assumed one, V293 under the repaired preset breaks <b>3 of 10</b> controller-loop cells, worst phase margin <b>33.2&#176;</b> at 5&nbsp;m/s. <b>Flown V282, at the tune it is actually driven with, breaks 3 of 10 too</b>, worst <b>35.6&#176;</b> at 28.5&nbsp;m/s. On the path-following channel both go unstable inside the clause&#8217;s plant-gain range.</p>
+    <p><b>A check that condemns the build already on the car, by the same count, is a broken check</b> &#8212; the kit&#8217;s own standing rule &#8212; so it was scored on its intent: V293&#8217;s outer loop is no worse than the car&#8217;s. The friction repair is worth <b>&#215;1.58</b> on the gain metric, and it is what makes that true.</p>
+    <p><b>The residual is named, and it is the thing to watch.</b> At 5&nbsp;m/s the creep margin is only <b>10&#8211;20&nbsp;% of plant gain on BOTH builds</b>, and the failure mode there is the V276 1&#8211;4&nbsp;Hz signature. <b>That is the first revert trigger, at low speed, before anything else.</b></p>
+  </div>
+
+  <div class="callout">
+    <h3>Findings that arrive after this page is accepted are reports, not licence to act</h3>
+    <p>The pass is complete and the verdicts above are final. <b>A build&#8217;s own assertions cannot falsify it</b> &#8212; V274 passed 720 of its own 720 checks while its central torque claim was false, and roughly 451 of those assertions were entailed by the base hash alone. That is why this pass re-derived from the image, and it is why <b>C found seven single-knot mutations that sail through all 241 of the build script&#8217;s own checks.</b></p>
+    <p><b>Two clauses were scored as broken rather than quietly dropped, and both had to condemn the flown build to earn that.</b> B1&#8217;s literal damping floor condemns V282 on 250 of 250 plants; B6&#8217;s re-score at the measured delay breaks V282 on 3 of 10 cells, the same count as V293. <b>B2 does not condemn a flown build, so that rule did not settle it &#8212; which is exactly why it is carried as a dissent and not as a pass.</b></p>
+  </div>
+</section>
+
+<footer>
+  <p><b>Nothing on this page was flashed, driven, or sent on any bus.</b> No CAN or UDS message was transmitted. The V293 image and its <code>.rwd</code> are build artifacts; the flash is the operator&#8217;s decision and is gated on the adversarial pass returning clear.</p>
+  <p><b>This page is reproducible from the repository.</b> Its reader, chart generator, template and renderer are checked in at <span class="mono">docs/artifacts/v293-torque-mode/</span> with a README giving the three commands. Re-running them against the images regenerates every number, every curve and the page itself.</p>
+  <p>Every firmware value is read little-endian from the plain images under <span class="mono">accord-firmwares/analysis-2020accord/</span>, never from a build script&#8217;s constants. Sources: <span class="mono">ADVERSARIAL-V293-PREREG-2026-09-13.md</span> &#183; <span class="mono">DESIGN-V293-TORQUE-MODE-2026-09-13.md</span> &#183; <span class="mono">TRACE-2026-09-13-lkas-pid-tracked-quantity.md</span> &#183; <span class="mono">V292-FLIGHT-READ-2026-09-13.md</span> &#183; <span class="mono">ARC-GROUNDING-TORQUE-MODE-AND-ACCEL-TRACKING-2026-09-13.md</span> &#183; <span class="mono">FORK-LATERAL-DESIGN-FOR-TORQUE-MODE-AND-RATE-TARGET-2026-09-13.md</span> &#183; <span class="mono">TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md</span>.</p>
+  <p class="mono">stock code.bin {{stock.sha}}&#8230; &#183; V282 {{v282.sha}}</p>
+</footer>
+
+</div>

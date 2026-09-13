@@ -88,7 +88,10 @@ model/eps_lkas_chain_model.py
          OWN extra `pol` multiply, so with pol = -1 the SAME cell arrives PUMPING-signed there.
          The sign does not transfer between the two aggregators.
 
-    VERIFICATION CONTRACT IS UNAFFECTED by this docstring: still exactly 87 symbols, and
+    VERIFICATION CONTRACT IS UNAFFECTED by this docstring: exactly 94 symbols (87 when this paragraph
+    was written; 88 on 2026-09-07 with lkas_setpoint_prefilter, 90 on 2026-09-08 with lkas_sum_notch +
+    lkas_fb_lag, 94 on 2026-09-13 with the rate PID -- lkas_rate_pid_tick, lkas_rate_pid_surface,
+    lkas_output_lag, lkas_rate_lerp), and
     `_self_check()` + `_demo()` stdout still hashes to
     740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d (2,512 bytes). Re-run it after
     ANY edit below this docstring.
@@ -168,8 +171,50 @@ model/eps_lkas_chain_model.py
         _self_check(), asserts only: DC exactly 1, zero-input decay, lock-in centre/depth on the
         integer mirror, no int32 wrap on the l1 worst case at |S| = 15360, FLAG domain, 152,500-tick
         equivalence against the build script's own mirror, the fb-lag DC/clamp/guard/arms).
-    🛑 STILL NO CALLER: the rate PID that produces S and consumes fb is not in this model (see V288
-    above), so control_task() calls neither. Contract: 90 symbols, stdout hash unchanged.
+    ⚠ THAT "STILL NO CALLER" IS NOW OUT OF DATE -- see the V293 block immediately below, which added
+    the stage all three of those mirrors attach to. Kept as written because it records what was true.
+    V293 -- THE LKAS RATE PID ITSELF (added 2026-09-13). Grep `lkas_rate_pid_tick` [control], SECTION
+    5D. ✅ THIS CLOSES THE MODELLING GAP V288 AND V289 BOTH DECLARED: until today nothing here formed
+    E = 32*sp - fb, walked the Kp/Kd banks (0xCB994 / 0xCB7D4) or carried the 0xC61B6 D clamp, so
+    lkas_setpoint_prefilter, lkas_sum_notch and lkas_fb_lag were three exact mirrors with NO CALLER.
+    The stage is stock code, FUN_00028ea6 from the error former at 0x29D76 to the lane-torque store
+    `st.h r1,-0x6b38,gp` @0x2A23C, at Ts = 1 ms:
+        E = 32*sp - fb ; I = clamp((I_state>>3) + ((deadband(E>>5)*Ki)>>3), (0xC61BA<<10)>>3)
+        P = clamp((E*Kp)>>8, +-0xC61BC)   D = clamp((dE*Kd)>>3, +-0xC61B6)   S = (I>>7) + P + D
+        S = (taper*S)>>8 ; S = clamp(S, +-0xC61BE) ; [V289's hook] ; y = output lag (0xC63EC/0xC63EE)
+        T = clamp((sxh((y*ramp)>>15) * pol * 0xC6CD0)>>15, +-0xC61B4)
+    Ki ships at ZERO, so it is a PD. V293 is the CAL-ONLY build on top of it: fb_clamp (0xC62E6)
+    46080 -> 0 opens the loop outright, kd_y and pid_d_clamp -> 0 force D == 0 two independent ways,
+    and kp_y 248 -> 120 rescales the forward path so the P clamp binds at demand index 239 instead of
+    116 -- which keeps V282's measured rail (2461 counts) while removing its 2.07x over-gain on the
+    bottom half. 🛑 NOT A NEW LEVER: V279 built the same fb mute on a V268 base on 2026-09-02 and was
+    never flown. ⚠ V293 also moves the r24 ENGAGED ARM 0xC6446 5244 -> 2048; that is a DIFFERENT LANE
+    (FUN_0003aa2c, reaching the motor through the aggregator, not through this PID) and is NOT a
+    Calibration field -- a V293 Calibration is the PID stage, not the whole build.
+    THE DELTA IN THIS MODEL, in full:
+      * Calibration [core], the block "THE LKAS RATE PID ITSELF" -- pid_err_deadband (0xC62E4),
+        pid_ki (0xC63E6), pid_i_clamp (0xC61BA), pid_p_clamp (0xC61BC), pid_d_clamp (0xC61B6),
+        pid_e_prev_window (a CODE literal), out_lag_a/out_lag_b (0xC63EC/EE), out_lag_gate (0xC61B8),
+        out_lag_gate_arm (0xC64A3), lkas_forward_gain (0xC6CD0 -- NOT `lkas_output_gain`),
+        out_clamp (0xC61B4), override_taper_factor, and the three banks assist_map_x/y, kp_x/y, kd_x/y
+        on the live selector 7. EVERY DEFAULT READ LITTLE-ENDIAN FROM THE V282 IMAGE (sha256
+        0ea98d06b292ca1a5e78a752f339c8fad103a35a603e0237e598e68c1d5ed0fe), stock noted in each comment.
+      * EpsState [core] -- pid_i_state (gp-0x6dd0, and 🛑 the cell holds 8*I), out_lag_s (gp-0x3d3c),
+        pid_ramp (gp-0x69b0), pid_sum_publish (gp-0x6b2e), lkas_lane_torque (gp-0x6b38, the CAN-427
+        tap's source). st.pid_prev_err_cell (gp-0x6cf8) was already there, from V288.
+      * lkas_rate_pid_tick(), lkas_rate_pid_surface(), lkas_output_lag(), lkas_rate_lerp() [control],
+        and _self_check_v293() (not exported; called from _self_check(), asserts only).
+    THE SELF-CHECK'S CRUX: it reproduces build_v293_tva.py's own printed surface table TO THE COUNT at
+    all 25 demand indices -- V293's P/S/T/T_ceil and V282's delivery at 0, 10 and 20 deg/s of wheel
+    rate, including the NEGATIVE V282 columns at low demand -- plus the feedback operand 0/2434/4908
+    on V282 and 0/0/0 on V293. It does that by MARCHING this model's tick from the cold-boot state,
+    where the builder solves a fixed point, so the agreement is between two independent methods.
+    THREE NUMBERS THE RECORD GOT WRONG ONCE, carried correctly here: r2 at 0x29F18 is the INTEGRAL
+    accumulator (not P; P is (E*Kp)>>8 at 0x29E36); the rail is 2461, not 2505 (which drops the taper
+    AND the lag) and not 2462 (the LINEAR lag DC -- the integer lag's reachable fixed points sit one
+    count lower); and the output lag has an INTERVAL of fixed points, so the settled value depends on
+    the trajectory and lkas_rate_pid_surface() reports the reachable band next to the cold-start answer.
+    Contract: 94 symbols, stdout hash unchanged (the self-check prints nothing).
 
     ⚠ Line-number citations of the form `model/eps_lkas_chain_model.py:NNNN` written before 2026-08-12
       (in build scripts, handoffs and memories) point into the PRE-SPLIT file and are now STALE.
@@ -580,6 +625,10 @@ from eps_chain_control import (
     limit_distribute_mixer_gate,
     lkas_fb_lag,
     lkas_iir_quantization_analysis,
+    lkas_output_lag,
+    lkas_rate_lerp,
+    lkas_rate_pid_surface,
+    lkas_rate_pid_tick,
     lkas_setpoint_prefilter,
     lkas_sum_notch,
     motor_torque_demand_aggregator,

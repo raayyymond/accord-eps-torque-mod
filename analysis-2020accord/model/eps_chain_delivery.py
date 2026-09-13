@@ -74,6 +74,7 @@ from eps_chain_control import (
     GOVERNOR_RATE_SLOPE_Q13,
     _self_check_v288,
     _self_check_v289,
+    _self_check_v293,
     a160_governor_rate_cap,
     computed_runtime_governor,
     engage_decider,
@@ -511,6 +512,11 @@ def _self_check():
     _self_check_v288()
     # V289 sum notch + fb-lag pole. Asserts only, prints nothing (same contract as V288's).
     _self_check_v289()
+    # V293 / the LKAS rate PID itself (SECTION 5D). Asserts only, prints nothing, so the hashed
+    # _self_check()+_demo() stdout is unchanged by the PID's arrival. It reproduces
+    # build_v293_tva.py's own printed surface table to the COUNT at every demand index, by marching
+    # this model's tick rather than solving a fixed point -- two independent implementations.
+    _self_check_v293()
 
 
 def _demo():

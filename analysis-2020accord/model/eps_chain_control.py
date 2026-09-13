@@ -729,6 +729,397 @@ def _self_check_v289():
     assert lkas_fb_lag(-7, st, v289) == -16 and st.fb_lag_s == -16
 
 
+# -----------------------------------------------------------------------------------------------------
+# SECTION 5D -- THE LKAS RATE PID ITSELF  (stock code, FUN_00028ea6, 0x29D72..0x2A23C)   added 2026-09-13
+# -----------------------------------------------------------------------------------------------------
+# ✅ THIS CLOSES THE MODELLING GAP SECTIONS 5B AND 5C BOTH DECLARE. Until today nothing in this model
+# formed E = 32*sp - fb, walked the Kp/Kd banks, or carried the 0xC61B6 D clamp, so lkas_setpoint_prefilter,
+# lkas_sum_notch and lkas_fb_lag were three exact mirrors with NO CALLER. lkas_rate_pid_tick is the
+# stage they attach to, and it calls all three at the addresses the bytes fix.
+#
+# THE FULL LANE, WITH EVERY INSTRUCTION ADDRESS. Ts = 1 ms. Sources: the byte-exact traces
+# docs/traces/TRACE-2026-09-13-lkas-pid-tracked-quantity.md (sections 1-4) and
+# docs/traces/TRACE-2026-09-13-fb-lag-filter-bytes.md (sections 1, 4-6). Every cal default is read
+# little-endian from the V282 image; see the Calibration block "THE LKAS RATE PID ITSELF" [core].
+#
+#   CAN 0x0E4 STEER_TORQUE (100 Hz)  ->  gp-0x69ae = clamp(-4 * wire, +-0x4000)
+#      |   0x29032 ld.h -0x69ae   (the COMMAND path; 0x29124 is a separate |cmd| <= 0x4000 GATE)
+#      |   clamp to +-LERP_speed(0xCB844) ; * G ; >> 22 ; clamp +-240 ; rectify, keep the sign
+#   idx  (0..240, the DEMAND INDEX -- 16.125736 wire counts per LSB, MEASURED)
+#      |   assist map, bank 0xC9A88 -> record 0xE502C on the live selector 7
+#   sp = sign(cmd) * LERP(assist_map, idx)                  published to gp-0x6a32 @0x29D72
+#      |   [V288's cave REPLACES that store: lkas_setpoint_prefilter()]
+#   E  = 32*sp - fb                                         0x29D76 shl 0x5,r16 ; 0x29D78 sub r26,r16
+#      |   fb is lkas_fb_lag()'s r26, formed 2,812 bytes EARLIER at 0x28F4C..0x28FBE
+#   I  = clamp((I_state>>3) + ((deadband(E>>5) * Ki)>>3), (0xC61BA<<10)>>3)      Ki = 0 => INERT
+#   P  = clamp((E * Kp)>>8, +-0xC61BC)                      0x29E36 mul ; 0x29E3E sar 0x8
+#   D  = clamp((dE * Kd)>>3, +-0xC61B6)                     0x29EE4 mul ; 0x29EEC sar 0x3
+#   S  = (I>>7) + P + D                                     0x29F18 sar 0x7,r2 ; 0x29F1E ; 0x29F24
+#   S  = (taper * S) >> 8                                   0x2A0B4/B8/BC form it, 0x2A0BE/C2 apply it
+#   S  = clamp(S, +-0xC61BE)                                0x2A13E..0x2A160
+#      |   [V289's cave hooks HERE: lkas_sum_notch()]       0x2A174
+#   y  = output lag                                         0x2A174..0x2A1AC, cals 0xC63EC/0xC63EE
+#   T  = clamp((sxh((y*ramp)>>15) * pol * gain)>>15, +-0xC61B4)   0x2A1E6..0x2A202, gain 0xC6CD0
+#   st.h r1,-0x6b38,gp @0x2A23C   ->  the delivered lane torque, and the CAN-427 tap's source
+#
+# 🛑 THREE CORRECTIONS THIS MIRROR CARRIES, each of which the record got wrong once:
+#  1. REGISTERS AT THE SUM. An earlier trace read `0x29F18 sar 0x7,r2` as "P = (Kp product) >> 7".
+#     WRONG -- r2 is the INTEGRAL accumulator, r9 is P, r8 is D. P is (E*Kp)>>8 at 0x29E36/0x29E3E.
+#     (TRACE-2026-09-13-lkas-pid-tracked-quantity section 6, row 1.)
+#  2. THE RAIL IS 2461 COUNTS, NOT 2505 AND NOT 2462. 2505 omits the always-on x254/256 taper AND the
+#     output lag; 2462 is the LINEAR output-lag DC 0.990234; 2461 is what the INTEGER recursion's
+#     reachable fixed points give, because the output lag carries the same pair of `sar 0xa` floors
+#     that V292's cave removed from the FEEDBACK lag -- and V292 did NOT correct this one.
+#  3. `sar` FLOORS TOWARD -INFINITY, everywhere, and the negation at 0x2A202 is INSIDE the shift. On
+#     the delivered sign that is worth one count; every `>>` below is Python's, which also floors.
+#
+# 🛑 THE OUTPUT LAG HAS AN INTERVAL OF FIXED POINTS, NOT ONE. Because each term is floored separately,
+# every L with L == (a*L>>10) + (b*S>>10) is a fixed point, and which one you land on depends on the
+# trajectory. lkas_rate_pid_surface() therefore MARCHES FROM THE COLD-BOOT STATE 0 -- which the .data
+# copy loop 0x1476C..0x14794 (flash [0x86260,0x8AB18) -> RAM 0xFEDF11B0) guarantees -- rather than
+# solving for a fixed point, and reports the reachable band alongside the cold-start answer.
+#
+# WHAT V293 IS, IN THIS MODEL (built 2026-09-13, NOT FLOWN as of this writing):
+#   replace(Calibration(), fb_clamp=0, kd_y=(0,)*4, pid_d_clamp=0, kp_y=(120,)*5)
+#   0xC62E6 46080 -> 0 forces fb == 0 on every path and for every state value (all three clamp arms
+#   return 0 at C = 0), so E = 32*sp exactly and the lane becomes a pure feedforward torque source.
+#   Kd -> 0 AND the D clamp -> 0 are two INDEPENDENT ways to force D == 0 (either alone suffices).
+#   Kp 248 -> 120 rescales the forward path so the P clamp binds at idx 239 instead of idx 115, which
+#   keeps V282's measured RAIL (2461) while removing its 2.07x over-gain on the bottom half.
+#   ⚠ V293 also moves the r24 ENGAGED ARM 0xC6446 5244 -> 2048. That is a DIFFERENT LANE (the rate
+#   lane in FUN_0003aa2c, which reaches the motor through the aggregator, not through this PID), and
+#   this model carries it only as a hard-coded 512 inside eps_chain_lanes. It is deliberately NOT a
+#   field here and NOT part of this mirror -- do not read a V293 Calibration as the whole build.
+#   🛑 V293 IS NOT A NEW LEVER: V279 built the same fb mute on a V268 base on 2026-09-02 and was never
+#   flown. No flown build has ever zeroed this feedback, in either direction.
+
+
+def lkas_rate_lerp(X, Y, x: int) -> int:
+    """
+    The firmware's integer LERP walk, shared by all three per-variant banks this stage reads: the
+    assist map @0x29CFE.., the Kp schedule @0x29DC6.. and the Kd schedule @0x29E76...
+
+    [EVIDENCE] Flat extrapolation below X[0] and above X[-1] (which is why Kd, whose last knot is
+    idx 32, is UNSCHEDULABLE above 32), then Y[i] + (Y[i+1]-Y[i])*(x-X[i]) / (X[i+1]-X[i]) with the
+    hardware divide, which TRUNCATES TOWARD ZERO rather than flooring. On every record this stage
+    walks the slope is non-negative, so trunc and floor agree -- but the truncation is what the
+    hardware does and a future record with a falling segment would separate them.
+    """
+    if x <= X[0]:
+        return Y[0]
+    if x >= X[-1]:
+        return Y[-1]
+    for i in range(len(X) - 1):
+        if X[i] <= x <= X[i + 1]:
+            num, den = (Y[i + 1] - Y[i]) * (x - X[i]), (X[i + 1] - X[i])
+            q = abs(num) // abs(den)                    # trunc toward zero, not floor
+            return Y[i] + (-q if (num < 0) != (den < 0) else q)
+    raise AssertionError("lkas_rate_lerp: X is not monotone")
+
+
+def lkas_output_lag(S: int, st: EpsState, cal: Calibration) -> int:
+    """
+    The rate PID's OUTPUT lag, 0x2A174..0x2A1AC: the second one-pole filter in this lane, structurally
+    the same two-sample sum as lkas_fb_lag but with an extra >>5 and its own state word gp-0x3d3c.
+
+        s_new = ((a * s) >> 10) + ((S * b) >> 10)       a = cal.out_lag_a (0xC63EC, ld.h SIGNED @0x2A184)
+        y     = (s + s_new) >> 5                        b = cal.out_lag_b (0xC63EE, ld.hu @0x2A174)
+        s    := s_new                                   st.out_lag_s (gp-0x3d3c, int32)
+
+    DC = 2b/((1024-a)*32) = 0.990234375 at (992, 507); corner ~5.05 Hz at Ts = 1 ms.
+
+    [EVIDENCE] 0xC63EE is the cell V289's notch cave DISPLACES and replicates as its last act
+    (`ld.hu 0x73ee,tp,r7` @0xC4C84), which is how we know the notch sits strictly between the sum
+    clamp and this filter. 🛑 The disengage epilogue at 0x2A164 does NOT clear st.out_lag_s (nor
+    st.fb_lag_s) -- "the skip routes reset every PID cell" is too strong; they reset the registers,
+    the four published gp-0x6b2e/32/34/36 cells and E_prev only.
+    """
+    s = _s32(st.out_lag_s)
+    s_new = _s32(((_signed16(cal.out_lag_a) * s) >> 10) + ((S * (cal.out_lag_b & 0xFFFF)) >> 10))
+    y = _s32((s + s_new) >> 5)                     # the TWO-SAMPLE SUM, then the extra >>5
+    st.out_lag_s = s_new
+    return y
+
+
+def lkas_rate_pid_tick(sp: int, fb: int, idx: int, st: EpsState, cal: Calibration,
+                       pol: int = 1, taper: Optional[int] = None, engaged: bool = True) -> dict:
+    """
+    ONE TICK of the LKAS rate PID, byte-exact, from the error former at 0x29D76 to the lane-torque
+    store at 0x2A23C. Returns every intermediate the record quotes, and advances st.pid_i_state,
+    st.pid_prev_err_cell and st.out_lag_s (plus the notch state when cal.sum_notch is live).
+
+      sp    the assist-map output, already signed. Pass it through lkas_setpoint_prefilter() FIRST if
+            the build carries V288's cave -- that cave physically replaces the store at 0x29D72 and
+            returns to the `shl 0x5` at 0x29D76, so it is strictly between the map and this function.
+      fb    lkas_fb_lag()'s r26. 🛑 The fb filter runs 2,812 bytes EARLIER in the same straight-line
+            flow and is NOT engagement-gated, so it keeps tracking the wheel while disengaged; and a
+            filter BAIL forces the PID to skip this tick entirely (r25, set at 0x290AC/0x290C0, is
+            tested at 0x29A60). Passing fb=0 models the V279/V293 clamp-to-zero, NOT a bail.
+      idx   the demand index 0..240 that all three banks are walked on.
+      pol   gp-0x6752, the +-1 arm flag (ld.b @0x2A1F2; three writers, +1/+1/-1, never 0).
+      taper the always-on override factor, default cal.override_taper_factor (254 at rest).
+      engaged False zeroes the delivered torque without disturbing the filters, which is what the
+            0x29A5C/0x29A64 skips do to the OUTPUT while the fb filter keeps running.
+
+    [EVIDENCE] Every line carries the instruction that executes it. Verified against the two traces
+    named in the SECTION 5D header, and reproduced to the COUNT against build_v293_tva.py's own
+    surface table by _self_check_v293() -- which marches this function rather than solving a fixed
+    point, so the agreement is between two independent implementations, not a copy.
+    """
+    tap = cal.override_taper_factor if taper is None else taper
+    E = _s32(32 * sp - fb)                       # 0x29D76 shl 0x5,r16 ; 0x29D78 sub r26,r16
+
+    # ---- I : a DEADBAND on E>>5, then Ki, into a 32-bit accumulator that holds 8*I -----------------
+    e5 = E >> 5                                  # 0x29D6C sar 0x5 (feeds the deadband compare only)
+    db = cal.pid_err_deadband                    # 0xC62E4, read at 0x29D6E/0x29D84/0x29D8C/0x29D96
+    exc = e5 - db if e5 > db else (e5 + db if e5 < -db else 0)
+    i_clamp = (cal.pid_i_clamp << 10) >> 3       # 0xC61BA = 10240 -> 1,310,720
+    I = _clamp(_s32((st.pid_i_state >> 3) + ((exc * cal.pid_ki) >> 3)), -i_clamp, i_clamp)
+                                                 # 0x29DA4 ld.w -0x6dd0,gp ; sar 0x3 ; 0x29D9C Ki
+    st.pid_i_state = _s32(I << 3)                # 0x2A190 st.w -0x6dd0,gp   (the cell holds 8*I)
+
+    # ---- P ------------------------------------------------------------------------------------------
+    kp = lkas_rate_lerp(cal.kp_x, cal.kp_y, idx)          # 0x29DC6.. bank 0xCB994 -> record 0xE5378
+    P = _clamp((E * kp) >> 8, -cal.pid_p_clamp, cal.pid_p_clamp)   # 0x29E36 mul ; 0x29E3E sar 0x8
+
+    # ---- D : on the FULL error, behind an E_prev plausibility window --------------------------------
+    kd = lkas_rate_lerp(cal.kd_x, cal.kd_y, idx)          # 0x29E76.. bank 0xCB7D4 -> record 0xE511C
+    w = cal.pid_e_prev_window
+    r27 = E if not (-w <= st.pid_prev_err_cell <= w) else st.pid_prev_err_cell   # 0x29E7E cmovnc
+    dE = _s32(E - r27)                                    # 0x29EE2 sub r27,r8  -- the FULL error
+    D = _clamp((dE * kd) >> 3, -cal.pid_d_clamp, cal.pid_d_clamp)  # 0x29EE4 mul ; 0x29EEC sar 0x3
+    st.pid_prev_err_cell = E                              # 0x2A18C st.w -0x6cf8,gp  (32-bit)
+
+    # ---- the sum, the always-on taper, the sum clamp, then V289's hook -----------------------------
+    S = _s32((I >> 7) + P + D)                   # 0x29F18 sar 0x7,r2 ; 0x29F1E add r9,r2 ; 0x29F24 add r8,r2
+    S = _s32((tap * S) >> 8)                     # 0x2A0BE mul r2,r12 ; 0x2A0C2 sar 0x8
+    S = _clamp(S, -cal.sum_clamp, cal.sum_clamp)  # 0x2A13E..0x2A160. ⚠ LATENT SIGN DEFECT: the compare
+                                                 # @0x2A142 is `ld.hu` but the +saturation @0x2A146 is
+                                                 # `ld.h`. Inert at 15360; NEVER set sum_clamp > 32767.
+    S = lkas_sum_notch(S, st, cal)               # 0x2A174 -- V289's cave; identity when sum_notch None
+    st.pid_sum_publish = S                       # 0x2A17C st.h r12,-0x6b2e,gp
+
+    # ---- the output lag, the engagement ramp, the forward gain, the output clamp --------------------
+    y = lkas_output_lag(S, st, cal)              # 0x2A174..0x2A1AC
+    yr = _signed16((y * st.pid_ramp) >> 15)      # 0x2A1E6 mul r14,r9 ; 0x2A1EA sar 0xf ; then sxh.
+                                                 # ramp = gp-0x69b0, Q15, max 0x8000 -> identity
+    # 0x2A1EE ld.h 0x7cd0,tp,r7 (V282's repointed displacement) ; 0x2A1F2 ld.b -0x6752,gp ;
+    # 0x2A1F6 mulh ; 0x2A1FC add r9,r11 (the addend gp-0x6b2c is IDENTICALLY ZERO) ; 0x2A1FE mul ;
+    # 0x2A202 sar 0xf ; clamp to +-[0xC61B4] @0x2A1F8/20C/212/21C
+    T = _clamp((yr * pol * _signed16(cal.lkas_forward_gain)) >> 15, -cal.out_clamp, cal.out_clamp)
+    if not engaged:
+        T = 0                                    # 0x29A5C / 0x29A64 -> the 0x2A164 epilogue
+    st.lkas_lane_torque = T                      # 0x2A23C st.h r1,-0x6b38,gp  -- and the CAN-427 tap
+    # T_ceil is the number older docstrings quote (2505). It is NOT a delivery: it drops the taper AND
+    # the output lag. Reported so the 2505/2481 in the record can be recognised for what it is.
+    t_ceil = _clamp((_clamp(_s32((I >> 7) + P + D), -cal.sum_clamp, cal.sum_clamp)
+                     * _signed16(cal.lkas_forward_gain)) >> 15, -cal.out_clamp, cal.out_clamp)
+    return dict(E=E, I=I, P=P, D=D, kp=kp, kd=kd, S=S, y=y, T=T, T_ceil=t_ceil,
+                p_rail=abs(P) == cal.pid_p_clamp)
+
+
+def lkas_rate_pid_surface(idx: int, cal: Calibration, fb: int = 0, pol: int = 1,
+                          taper: Optional[int] = None, max_ticks: int = 500000) -> dict:
+    """
+    The DELIVERED SURFACE at one demand index: hold the command and the feedback operand constant and
+    march lkas_rate_pid_tick() FROM THE COLD-BOOT STATE until the output lag's state repeats, then
+    report the last tick. This is the curve a build docstring means by "torque vs demand".
+
+    Returns the tick dict plus `T_lo`/`T_hi`, the delivered torque at the two ends of the output lag's
+    REACHABLE FIXED-POINT INTERVAL. 🛑 That interval is not a formality: each term of the lag is
+    floored separately, so the settled state depends on the trajectory, and the cold-boot answer sits
+    at the LOW end. Quoting the linear DC instead costs one count at the rail (2462 vs 2461).
+
+    [EVIDENCE] Cold boot is state 0: the .data copy loop at 0x1476C-0x14794 walks flash
+    [0x86260, 0x8AB18) into RAM from 0xFEDF11B0, and the sources of gp-0x3d30 (0x89380) and gp-0x3d2c
+    (0x89384) are zero bytes. Cited from TRACE-2026-09-13-lkas-pid-tracked-quantity section 3.6.
+    """
+    sp = lkas_rate_lerp(cal.assist_map_x, cal.assist_map_y, idx)
+    st = EpsState()                                   # the cold-boot state, every cell at its default
+    seen, last = set(), None
+    for _ in range(max_ticks):
+        if st.out_lag_s in seen:
+            break
+        seen.add(st.out_lag_s)
+        last = lkas_rate_pid_tick(sp, fb, idx, st, cal, pol=pol, taper=taper)
+    assert last is not None
+    # the reachable fixed-point interval of s' = (a*s>>10) + (b*S>>10), scanned around the settled state
+    a, b = _signed16(cal.out_lag_a), cal.out_lag_b & 0xFFFF
+    step = (last["S"] * b) >> 10
+    fixed = [L for L in range(st.out_lag_s - 96, st.out_lag_s + 96) if L == ((a * L) >> 10) + step]
+
+    def deliver(s_state):
+        yy = _signed16((((s_state + s_state) >> 5) * st.pid_ramp) >> 15)
+        return _clamp((yy * pol * _signed16(cal.lkas_forward_gain)) >> 15, -cal.out_clamp, cal.out_clamp)
+
+    band = sorted(deliver(L) for L in fixed) if fixed else [last["T"], last["T"]]
+    return dict(idx=idx, sp=sp, T_lo=band[0], T_hi=band[-1], **last)
+
+
+def _self_check_v293():
+    """V293 / rate-PID assertions. Called from _self_check(); prints NOTHING, so the hashed
+    _self_check()+_demo() stdout is unchanged. Every expected number is the BUILD SCRIPT's own
+    printed output, reproduced here by an independent march."""
+    v282 = Calibration()                 # the defaults ARE V282, read from its image
+    v293 = replace(Calibration(), fb_clamp=0, kd_y=(0, 0, 0, 0), pid_d_clamp=0, kp_y=(120,) * 5)
+    assert (v282.pid_p_clamp, v282.pid_d_clamp, v282.sum_clamp, v282.out_clamp) == (15360, 10240, 15360, 3072)
+    assert (v282.lkas_forward_gain, v282.out_lag_a, v282.out_lag_b) == (5346, 992, 507)
+    assert v282.pid_ki == 0 and v282.override_taper_factor == 254
+
+    # 0. THE LERP WALK: flat extrapolation both ends, and Kd unschedulable above its last knot 32.
+    assert lkas_rate_lerp(v282.kd_x, v282.kd_y, 1000) == 128 and lkas_rate_lerp(v282.kd_x, v282.kd_y, -5) == 128
+    assert lkas_rate_lerp(v282.assist_map_x, v282.assist_map_y, 240) == 1032
+    assert lkas_rate_lerp(v282.assist_map_x, v282.assist_map_y, 300) == 1032      # flat above the top
+    #    one segment by hand: idx 130 sits in [128,160], Y 550->688, so 550 + 138*2//32 = 558
+    assert lkas_rate_lerp(v282.assist_map_x, v282.assist_map_y, 130) == 558
+    #    the divide TRUNCATES toward zero; on a FALLING segment that is one count above a floor.
+    #    (0,3) -> (10,0) at x = 2: num = -20, den = 3; trunc gives -6 -> 4, floor gives -7 -> 3.
+    assert lkas_rate_lerp((0, 3), (10, 0), 2) == 4 and 10 + ((0 - 10) * 2) // 3 == 3
+
+    # 1. THE FEEDBACK OPERAND through lkas_fb_lag at 0, 10 and 20 deg/s of wheel rate. The wire scale
+    #    is 8 counts per deg/s [BELIEF, inherited -- see the trace's section 7.1], so 10 deg/s = 80.
+    #    Expected: 0 / 2434 / 4908 on V282 and 0 / 0 / 0 on V293 -- build_v293_tva.py's [10] block.
+    def fb_settle(x, cal):
+        st, seen, last = EpsState(), set(), 0
+        for _ in range(200000):
+            if st.fb_lag_s in seen:
+                break
+            seen.add(st.fb_lag_s)
+            last = lkas_fb_lag(x, st, cal)
+        return last
+    assert [fb_settle(x, v282) for x in (0, 80, 160)] == [0, 2434, 4908]
+    assert [fb_settle(x, v293) for x in (0, 80, 160)] == [0, 0, 0]
+    #    and the linear DC 2b/(1024-a) = 30.8911 over-predicts both, because BOTH terms floor
+    assert abs(2 * v282.fb_lag_b / (1024 - v282.fb_lag_a) - 30.8911) < 1e-3
+    assert 2434 < 80 * 30.8911 and 4908 < 160 * 30.8911
+
+    # 2. THE DELIVERED SURFACE, every index to the COUNT against build_v293_tva.py's printed table.
+    #    Columns: V293 P / S / T / T_ceil, then V282's T at fb = 0, 10 deg/s and 20 deg/s.
+    #    🛑 The V282 columns go NEGATIVE at low demand -- that is the rate feedback opposing a moving
+    #    wheel, and it is exactly what V293 removes.
+    EXPECT = {     # idx: (P, S, T, T_ceil, V282@0, V282@10deg/s, V282@20deg/s)
+        0:   (0,     0,     0,    0,    0,    -379, -763),
+        10:  (645,   639,   102,  105,  213,  -165, -549),
+        20:  (1290,  1279,  206,  210,  426,  48,   -336),
+        30:  (1935,  1919,  309,  315,  640,  262,  -122),
+        40:  (2580,  2559,  413,  420,  854,  476,  92),
+        50:  (3225,  3199,  516,  526,  1067, 689,  305),
+        60:  (3855,  3824,  617,  628,  1276, 898,  514),
+        70:  (4500,  4464,  720,  734,  1490, 1112, 727),
+        80:  (5160,  5119,  826,  841,  1708, 1330, 946),
+        90:  (5805,  5759,  929,  947,  1922, 1544, 1160),
+        100: (6450,  6399,  1033, 1052, 2135, 1758, 1374),
+        110: (7080,  7024,  1134, 1155, 2344, 1966, 1582),
+        120: (7725,  7664,  1237, 1260, 2461, 2180, 1796),
+        130: (8370,  8304,  1341, 1365, 2461, 2394, 2009),
+        140: (9015,  8944,  1444, 1470, 2461, 2461, 2223),
+        150: (9660,  9584,  1547, 1575, 2461, 2461, 2437),
+        160: (10320, 10239, 1653, 1683, 2461, 2461, 2461),
+        170: (10965, 10879, 1757, 1788, 2461, 2461, 2461),
+        180: (11610, 11519, 1860, 1894, 2461, 2461, 2461),
+        190: (12255, 12159, 1963, 1999, 2461, 2461, 2461),
+        200: (12900, 12799, 2067, 2104, 2461, 2461, 2461),
+        210: (13545, 13439, 2170, 2209, 2461, 2461, 2461),
+        220: (14190, 14079, 2273, 2315, 2461, 2461, 2461),
+        230: (14835, 14719, 2377, 2420, 2461, 2461, 2461),
+        240: (15360, 15240, 2461, 2505, 2461, 2461, 2461),
+    }
+    fb282 = {x: fb_settle(x, v282) for x in (0, 80, 160)}
+    for idx, (P, S, T, tc, c0, c10, c20) in EXPECT.items():
+        r = lkas_rate_pid_surface(idx, v293)
+        assert (r["P"], r["S"], r["T"], r["T_ceil"]) == (P, S, T, tc), (idx, r)
+        assert r["kp"] == 120 and r["kd"] == 0 and r["D"] == 0 and r["I"] == 0
+        for x, want in ((0, c0), (80, c10), (160, c20)):
+            assert lkas_rate_pid_surface(idx, v282, fb=fb282[x])["T"] == want, (idx, x)
+
+    # 3. THE THREE CLAIMS THAT TABLE MAKES, asserted rather than read off it.
+    #    (a) V293's rail EQUALS V282's at a stalled wheel -- Kp 120 pins it; Kp 119 lands ONE low.
+    assert lkas_rate_pid_surface(240, v293)["T"] == lkas_rate_pid_surface(240, v282, fb=0)["T"] == 2461
+    assert lkas_rate_pid_surface(240, replace(v293, kp_y=(119,) * 5))["T"] == 2460
+    #    (b) the P clamp binds at idx 239 on V293 but from idx 116 on V282-at-fb-0: that is the 2.07x
+    #        over-gain on the bottom half of the range that Kp 248 -> 120 removes.
+    assert not lkas_rate_pid_surface(238, v293)["p_rail"] and lkas_rate_pid_surface(239, v293)["p_rail"]
+    assert lkas_rate_pid_surface(116, v282, fb=0)["p_rail"] and not lkas_rate_pid_surface(115, v282, fb=0)["p_rail"]
+    #    (c) V293's surface is MONOTONE and a straight line in demand index
+    ts = [lkas_rate_pid_surface(i, v293)["T"] for i in range(0, 241, 10)]
+    assert ts == sorted(ts)
+    #    (d) the rail is 2461, NOT the 2505 ceiling convention and NOT the 2462 the LINEAR lag DC gives
+    top = lkas_rate_pid_surface(240, v293)
+    assert top["T_ceil"] == 2505 and top["T"] == 2461
+    lin_y = int(top["S"] * 2 * v282.out_lag_b / ((1024 - v282.out_lag_a) * 32))
+    assert (lin_y * v282.lkas_forward_gain) >> 15 == 2462          # the trace's 2462, one count high
+    assert top["T_lo"] == top["T_hi"] == 2461                      # the reachable band is a point here
+
+    # 4. TORQUE MODE IS A REMOVAL, NOT A REDUCTION: on V293 the delivered torque is a function of the
+    #    COMMAND ALONE -- identical at every wheel rate, including rates the fb clamp would have
+    #    saturated on. On V282 it is not. This is the edit-live identity the drive is meant to read.
+    for idx in (10, 60, 120, 240):
+        base = lkas_rate_pid_surface(idx, v293)["T"]
+        for x in (0, 80, 160, 1600, 12000):
+            assert lkas_rate_pid_surface(idx, v293, fb=fb_settle(x, v293))["T"] == base
+    assert lkas_rate_pid_surface(60, v282, fb=fb_settle(160, v282))["T"] != \
+           lkas_rate_pid_surface(60, v282, fb=0)["T"]
+
+    # 5. THE fb CLAMP AT C = 0 IS EXACT ON ALL THREE ARMS and for EVERY state value -- the reason V293
+    #    mutes at 0xC62E6 and not at the input gain b. With b = 0 instead, floor(-a/1024) = -1 makes
+    #    s = -1 ABSORBING for every a < 1024, so fb would rest at -2 forever rather than 0.
+    for s0 in (-10 ** 6, -1, 0, 1, 10 ** 6):
+        st = EpsState(fb_lag_s=s0)
+        for x in (-12000, -1, 0, 1, 12000):
+            assert lkas_fb_lag(x, st, v293) == 0
+    #    🛑 A REFINEMENT OF THE RECORD, measured here. TRACE-2026-09-13-lkas-pid-tracked-quantity
+    #    section 4a says "s = -1 is absorbing, so fb would rest at -2, forever, not 0". The absorbing
+    #    set is BIGGER than one state: floor(a*s/1024) == s holds for EVERY s in [-1024/(1024-a), -1],
+    #    i.e. s in [-10, -1] at a = 923, and the state a large negative excursion lands on is -10, not
+    #    -1. So with b = 0 the resting feedback is anywhere in [-20, -2] -- up to 10x the -2 on record,
+    #    and seed-dependent. The DIRECTION of the record's conclusion is unchanged and is what matters:
+    #    b = 0 is NOT an exact mute, the clamp cell 0xC62E6 is, which is why V279/V293 use the clamp.
+    b0 = replace(v282, fb_lag_b=0)
+    k_max = 1024 // (1024 - v282.fb_lag_a)                    # = 10 at a = 923
+    assert k_max == 10 and all(((v282.fb_lag_a * -k) >> 10) == -k for k in range(1, k_max + 1))
+    assert ((v282.fb_lag_a * -(k_max + 1)) >> 10) != -(k_max + 1)      # and -11 is NOT a fixed point
+    for seed, want_s in ((-10 ** 6, -10), (-1000, -10), (-11, -10), (-1, -1)):
+        st = EpsState(fb_lag_s=seed)
+        for _ in range(20000):
+            fb_b0 = lkas_fb_lag(0, st, b0)
+        assert (fb_b0, st.fb_lag_s) == (2 * want_s, want_s), (seed, fb_b0, st.fb_lag_s)
+    for seed in (0, 1, 10 ** 6):                              # non-negative states DO reach exactly 0
+        st = EpsState(fb_lag_s=seed)
+        for _ in range(20000):
+            fb_b0 = lkas_fb_lag(0, st, b0)
+        assert (fb_b0, st.fb_lag_s) == (0, 0), (seed, fb_b0, st.fb_lag_s)
+
+    # 6. STATE PLUMBING. The integrator cell holds 8*I; E_prev's window kills dE on the first tick
+    #    after a gap; and the output lag's state survives a disengage (the model must not clear it).
+    st = EpsState()
+    assert st.pid_prev_err_cell == 0x7FFFFFFF          # a fresh state IS "first tick after a gap"
+    r = lkas_rate_pid_tick(1032, 0, 240, st, v282)
+    assert r["D"] == 0 and st.pid_prev_err_cell == 32 * 1032          # dE = 0 via the cmovnc arm
+    r2 = lkas_rate_pid_tick(0, 0, 0, st, v282)                        # a full-scale command step DOWN
+    assert r2["D"] == -v282.pid_d_clamp                               # and D RAILS on it
+    ki = replace(v282, pid_ki=64)
+    st = EpsState()
+    for _ in range(10):
+        lkas_rate_pid_tick(1032, 0, 240, st, ki)
+    assert st.pid_i_state != 0 and st.pid_i_state % 8 == 0            # the cell carries 8*I
+    st = EpsState(out_lag_s=12345)
+    lkas_rate_pid_tick(100, 0, 20, st, v282, engaged=False)
+    assert st.out_lag_s != 12345 and st.out_lag_s != 0   # ran and advanced; NOT cleared by disengage
+
+    # 7. V288's pre-filter and V289's notch now have a REAL call site. Wiring the pre-filter ahead of
+    #    this stage must leave a settled command byte-identical to V282's, and the notch must be an
+    #    identity on every build before V289 (so no pre-V289 surface moved when SECTION 5D arrived).
+    v288 = replace(Calibration(), spfilt_k=4)
+    st = EpsState()
+    for _ in range(4000):
+        y = lkas_setpoint_prefilter(1032, st, v288)
+    assert y == 1032
+    assert lkas_rate_pid_surface(240, v288)["T"] == lkas_rate_pid_surface(240, v282)["T"]
+    st = EpsState(notch_s1=5, notch_s2=6, notch_e=7, notch_flag=0x20)
+    lkas_rate_pid_tick(500, 0, 100, st, v282)
+    assert (st.notch_s1, st.notch_s2, st.notch_e, st.notch_flag) == (5, 6, 7, 0x20)   # untouched
+
+
 def steer_torque_arbitration(sensors: SensorInputs, st: EpsState, cal: Calibration) -> int:
     """
     Limit the LKAS setpoint, apply the Q15 gain/clamp, and run the two inlined SMs (driver assist is

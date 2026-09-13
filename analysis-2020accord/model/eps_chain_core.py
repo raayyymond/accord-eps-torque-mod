@@ -148,6 +148,74 @@ class Calibration:
     #   replace(Calibration(), fb_lag_a=875, fb_lag_b=2301, sum_notch=(16048, -31842, 16048, -31842, 15712))
     sum_notch: Optional[tuple] = None
 
+    # ---- THE LKAS RATE PID ITSELF (stock cals, first modelled for V293, 2026-09-13) -----------------
+    # 🛑 EVERY DEFAULT BELOW IS READ LITTLE-ENDIAN FROM THE V282 IMAGE
+    #    `_v282_V282-V281R3BASE-KP.FLAT.Y0-CAVE.R24CMP.BITS5.6-MAP.LINEAR.TO6X.FEEDBACK46080
+    #     .TORQUE.TAP_plain_image.bin`, sha256 0ea98d06b292ca1a5e78a752f339c8fad103a35a603e0237e598e68c
+    #    1d5ed0fe -- not from a build script's constants. Where V282 differs from STOCK the stock value
+    #    is named in the comment. See lkas_rate_pid_tick() [control, SECTION 5D] for the arithmetic and
+    #    the instruction address of every cell's load.
+    pid_err_deadband: int = 4            # 0xC62E4 (tp+0x72e4), `ld.hu`. The dead band applied to E>>5
+                                         # on the INTEGRAL path only (0x29D6E/0x29D84/0x29D8C/0x29D96 --
+                                         # 4 live readers). Inert today because pid_ki is 0.
+    pid_ki: int = 0                      # 0xC63E6 (tp+0x73e6), read @0x29D9C. 🛑 SHIPS AT ZERO on
+                                         # stock and on every build through V293, so the "PID" is a PD.
+    pid_i_clamp: int = 10240             # 0xC61BA (tp+0x71ba). The integrator's anti-windup bound; the
+                                         # code uses it as (cell << 10) >> 3 = 1,310,720 against an
+                                         # accumulator cell that itself holds 8*I.
+    pid_p_clamp: int = 15360             # 0xC61BC (tp+0x71bc), `ld.hu`, 4 live readers
+                                         # (0x29E3A/44/4A/58). 🛑 THIS is what pins the delivered rail:
+                                         # on V282's Kp 248 it binds from demand index ~115, so the top
+                                         # half of the assist map is inert at a stalled wheel.
+    pid_d_clamp: int = 10240             # 0xC61B6 (tp+0x71b6), `ld.hu`, 4 live readers
+                                         # (0x29EE8/EF2/EF8/F02). V293 sets it to 0 as a second,
+                                         # independent way of forcing D == 0 (Kd = 0 is the first).
+    pid_e_prev_window: int = 768000      # a CODE literal, not a cal: `mov 0xfff44800,r10` @0x29E68 and
+                                         # `mov 0x177001,r13` @0x29E62 form the unsigned-window test
+                                         # -768000 <= E_prev <= 768000 at 0x29E74. Outside it the
+                                         # cmovnc @0x29E7E substitutes E_now for E_prev, so dE = 0.
+                                         # Modelled as a field only so the window is visible; do not
+                                         # treat it as a patchable byte.
+    out_lag_a: int = 992                 # 0xC63EC (tp+0x73ec), `ld.h` SIGNED, read @0x2A184. The
+                                         # OUTPUT lag's pole, Q10 -- a DIFFERENT filter from the
+                                         # feedback lag (fb_lag_a/b) and it carries an extra >>5.
+    out_lag_b: int = 507                 # 0xC63EE (tp+0x73ee), `ld.hu`, read @0x2A174 -- the very
+                                         # instruction V289's notch cave displaces and replicates.
+                                         # DC = 2b/((1024-a)*32) = 0.990234375, corner ~5.05 Hz.
+    out_lag_gate: int = 102              # 0xC61B8 (tp+0x71b8). |y| <= this zeroes the ramped output,
+                                         # but ONLY on the arm that is armed while NOT engaged.
+    out_lag_gate_arm: int = 1            # 0xC64A3, a byte. Together with gp-0x6806 == 0 it arms the
+                                         # out_lag_gate; modelled, not exercised by the engaged path.
+    lkas_forward_gain: int = 5346        # 0xC6CD0 (tp+0x7cd0), `ld.h` SIGNED @0x2A1EE. 🛑 NOT the same
+                                         # field as `lkas_output_gain` above (that is the arbitration
+                                         # Q15 gain). STOCK CODE reads 0xC646C = 891 here; the V57
+                                         # lever -- lost in the V38 rebase, restored in V81 and carried
+                                         # by V282/V292 -- repoints the DISPLACEMENT at 0x2A1F0 from
+                                         # 0x746C to 0x7CD0 onto this private cell. 5346/891 = the x6.
+    out_clamp: int = 3072                # 0xC61B4 (tp+0x71b4), `ld.hu`, 4 live readers
+                                         # (0x2A1F8/20C/212/21C). The final +-clamp on the lane torque
+                                         # T stored to gp-0x6b38 @0x2A23C. STOCK 512; 3072 since V279.
+    override_taper_factor: int = 254     # NOT one cell: factor = ((A * B) & 0xFFFF) >> 8 formed at
+                                         # 0x2A0B4/B8/BC from A (bank 0xCBB54, |bar-derivative| axis)
+                                         # and B (a SPEED taper). At rest both return 255, so the
+                                         # factor is ((255*255)&0xFFFF)>>8 = 254 -- an ALWAYS-ON
+                                         # x254/256 with no driver torque and no speed. That is why the
+                                         # delivered rail is 2461 and not the 2505 older docstrings
+                                         # quote. ⚠ WHICH speed taper is live is DISPUTED (0xCBAE4 vs
+                                         # 0xCBBC4); they are identical below their first knot, so the
+                                         # at-rest scalar is 254 either way and only the SPEED
+                                         # derating differs. Pass a measured factor to override.
+    # The three per-variant LERP banks the PID walks, all on the LIVE selector 7 (record 11, TVCA4,
+    # MEASURED on the V276 wire). Bank pointer -> record: 0xC9A88 -> 0xE502C, 0xCB994 -> 0xE5378,
+    # 0xCB7D4 -> 0xE511C. X of all three is the DEMAND INDEX (16.125736 wire 0x0E4 counts per LSB).
+    assist_map_x: tuple = (0, 12, 20, 24, 32, 64, 96, 128, 160, 240)
+    assist_map_y: tuple = (0, 52, 86, 103, 138, 275, 413, 550, 688, 1032)   # STOCK Y peaks at 172;
+                                         # V282's is linear (Y/X = 4.30 at every knot), the x6 map.
+    kp_x: tuple = (0, 68, 112, 136, 208)
+    kp_y: tuple = (248, 248, 248, 248, 248)   # FLAT since V281r3. STOCK (248,512,645,696,696).
+    kd_x: tuple = (0, 11, 22, 32)        # 🛑 the last knot is 32, so Kd is UNSCHEDULABLE above idx 32.
+    kd_y: tuple = (128, 128, 128, 128)   # flat on STOCK too, so Kd = 128 unconditionally.
+
     assist_ramp_ticks: int = 10          # tp+0x74d1 * 10; assist engage-ramp dwell per state (gp-0x68c8)
     distribute_lkas_lane_clamp: int = 0x2800   # LKAS rides the +/-0x2800 distributor lane
     mixer_gate_clamp: int = 0x2800       # gate: |x|<=0x2800 ? x : 0x7FFF-sentinel
@@ -386,6 +454,24 @@ class EpsState:
     notch_flag: int = 0           # gp-0x6c3a (0xFEDF13C6), the HIGH halfword of that word: the
                                   # telemetry FLAG in {0, 0x20, 0x80, 0xA0}, written `st.h` @0xC4C6E
                                   # AFTER the word store, read by the 0x14A tail @0xC4BDC.
+    # ---- The rate PID's own RAM (stock cells; modelled for V293, 2026-09-13) ----
+    pid_i_state: int = 0          # gp-0x6dd0 (0xFEDF1230), int32. 🛑 THE CELL HOLDS 8*I, not I: the
+                                  # code loads it @0x29DA4 and immediately `sar 0x3`, and stores I<<3
+                                  # @0x2A190. Inert while pid_ki is 0, but it is the state a Ki edit
+                                  # would wind up, and the one no telemetry can see.
+    out_lag_s: int = 0            # gp-0x3d3c (0xFEDF42C4), int32. The OUTPUT lag's one state word,
+                                  # the exact analogue of fb_lag_s for the other filter. 🛑 The
+                                  # disengage epilogue at 0x2A164 does NOT clear it (nor fb_lag_s).
+    pid_ramp: int = 0x8000        # gp-0x69b0 (0xFEDF1650), Q15, max 0x8000. The engagement ramp
+                                  # multiplied in at 0x2A1E6 (`mul r14,r9` then `sar 0xf`). Defaults
+                                  # to FULL so a steady-state surface reads the delivered ceiling.
+    pid_sum_publish: int = 0      # gp-0x6b2e (0xFEDF14D2), int16. The clamped loop output S, stored
+                                  # @0x2A17C -- i.e. immediately AFTER V289's notch hook at 0x2A174,
+                                  # which is why the notch changes what this cell reports.
+    lkas_lane_torque: int = 0     # gp-0x6b38 (0xFEDF14C8), int16. 🛑 THE DELIVERED LANE TORQUE, stored
+                                  # @0x2A23C, and the source the CAN-427 tap packs at 0x55DF0 on every
+                                  # build since V280 rev 2: wire = (sign(T) << 9) | (|T| >> 3). It
+                                  # forwards to gp-0x6b3c @0x2B41C. This is the signal a drive reads.
     arb_command: int = 0          # gp-0x6b3c (0xFEDF14C4) arbitration gated command
     mixed_command: int = 0        # gp-0x6b4c, LKAS-internal lane into the demand aggregator
     secondary_mixer_command: int = 0  # gp-0x6afe, separate lane consumed at final shaper output

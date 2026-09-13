@@ -20,6 +20,14 @@ this kit at least once; several have recurred.
   on opposite parities: an encoder or scan assuming one parity **silently addresses the neighbouring
   cell with every other field perfect.**
 
+- **Opcode-field COLLISIONS — `hw2` bit 0 is the discriminator, every time** (2026-09-13, hit by three
+  independent decoders in one session): field `0x3C`/`0x3D` is shared by Format-V `jr`/`jarl` and the
+  6-byte extended load — a real `jr`/`jarl` target is EVEN, so **reject any Format-V hit whose target is
+  odd**; `ld.bu` (bits[10:5] = `0b11110x`) collides with `jarl`/`jr` (bits[10:6] = `0b11110`) — `ld.bu`
+  requires `hw2[0] = 1`, `hw2[0] = 0` is the branch (an adversary's decoder read the 427 packer's
+  `bf ff 64 3c` as `ld.bu`; it is `jarl 0x49A5A`); field `0x3F` is shared by `ld.hu`, `mul` and `setfcc`
+  (a real `ld.hu` has `hw2[0] = 1`). An opcode-agnostic "loose" scan reported 10 writers of a cell that
+  has 2 — eight were the `0x3D` parity neighbour one byte away.
 - **`jarl` disp22 is opcode field `0x1E`** (hw1 bits 6-10), not `0x1B`. Getting it wrong is not a quiet
   failure: `0x1B` matches **4,448 sites** across the code region and resolves **zero** real calls, so
   the scan looks like it ran and returns a confident, empty answer. Cost a wrong "dead code" verdict

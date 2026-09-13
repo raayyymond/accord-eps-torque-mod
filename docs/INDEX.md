@@ -37,12 +37,19 @@ needed.
 2. **research/HONDA-EPS-PID-KNOWLEDGE.md** — the canonical Honda EPS PID reference, distilled from a 26-day private Discord working group. Read this BEFORE attempting any PID tune.
 3. **`../flashing-2020accord/EPS_UPDATE_TVA_README.md`** — the current Accord flashing workflow.
 4. **guides/EPS-FLASH-RUNBOOK.md** + **guides/RED-PANDA-EPS-SETUP.md** — the physical red-panda + comma-harness rig (car-agnostic hardware/procedure, still the setup in use).
-5. 🛑 **START WITH `STATE.md`, then `BUILD-LINEAGE.md` (RULES 3–13), then the LATEST handoff:**
-   **`handoffs/2026-08/HANDOFF-2026-08-12-v94-aborted-and-the-override-regime.md`** — see "The current arc, newest
-   first" below for it and the chain behind it. 🛑 **V94 is ON THE CAR and the operator stopped driving
-   it; V95 exists and is unflashed.** ⚠ Entries further down this item name older handoffs as "latest";
-   they are retained for their still-current technical material (V80's damper-relay and `0xC407E`
-   analysis, V85's linear-loop characterisation), **not** for their status.
+5. 🛑 **START WITH `STATE.md`, then `BUILD-LINEAGE.md` (RULES 3–13), then the LATEST handoff.**
+   ✅ **CORRECTED 2026-09-13 — everything below this sub-item about "what is on the car" is STALE.**
+   - **THE LATEST HANDOFF IS `handoffs/2026-09/HANDOFF-2026-09-13-V292-FLEW-REVERT-V293-TORQUE-MODE-BUILT.md`.**
+   - **ON THE CAR: V292 — flown 2026-09-13 and a REVERT by its own pre-registration; the fallback is V282.
+     V293 (torque mode) is BUILT, NOT FLOWN and NOT CLEARED.** `STATE.md`'s decision box is the authority.
+   - 🛑 **`BUILD-LINEAGE.md` IS FOUR FILES:** the entry file (RULES, struck levers, Parts 2–4, every
+     per-build entry through V292) · `BUILD-LINEAGE-PART1-LEVER-INDEX.md` (grep by address) ·
+     `BUILD-LINEAGE-CATCHUP-V76-V100.md` (V76→V100) · **`BUILD-LINEAGE-PART6-V291-ONWARD.md` (per-build
+     entries from V293 onward**, split out 2026-09-13; ⚠ **PART6, not PART5**).
+   ⚠ **Everything from here to the end of item 5 is retained ONLY for its still-current technical
+   material** (V80's damper-relay and `0xC407E` analysis, V85's linear-loop characterisation), **not for
+   any status claim.** The handoffs it names as "latest" are not, and the builds it names as on the car
+   are not. Read "The current arc, newest first" below for the chain.
    **`handoffs/2026-08/HANDOFF-2026-08-07-v80-flew-the-damper-is-a-relay.md`** — ★★★★★ **V80 flew route `66` and produced the
    worst grinding in the kit's history — without faulting.** Root cause: the damper became a **near-bang-bang
    Coulomb relay** (constant ~495 counts above ~25 °/s **at every speed**, 97% of its 512 ceiling), and the
