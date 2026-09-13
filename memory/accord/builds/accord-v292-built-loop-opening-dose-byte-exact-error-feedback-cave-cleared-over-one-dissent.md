@@ -46,3 +46,5 @@ ripple; new roughness/line at 10–18 Hz (byte-exact worst-fit sensitivity ×1.3
 Related: [[accord-v291-c10-built-fb-pole-10hz-plus-r24-cut-loop-opening-class]] ·
 [[accord-with-the-loop-open-there-is-no-18-22hz-object-zeta-open-ge-0-05]] ·
 [[feedback-a-check-that-condemns-the-flown-build-is-broken]]
+
+**Replay prediction on the operator's own recorded grinding episodes (byte-exact closed loop, `V292-REPLAY-PREDICTION-2026-09-13.md`):** ring amplitude ×0.55 [0.54, 0.57] of V282's (×0.71 on r6c), ring-down ×0.29–0.36, strong-turn ripple ×1.03/×0.94 (worst fit ×1.10), torque outside the bands ×1.00, 9–18 Hz ×1.09–1.17 (worst ×1.36). A model prediction, not a drive.

@@ -43,7 +43,10 @@ sign asymmetry of the three builds. **The orchestrator cleared V292 by the kit's
 recorded B2's dissent verbatim, and put the sp = 3 numbers, the gp-0x6806 premise and the 9–18 Hz shoulder
 on the page. V291 is SUPERSEDED-DO-NOT-FLASH on disk.** Two corrections from the pass propagate: the b3
 read is the DUTY (0.47–0.50), not the transition rate; the record's r24 fold omitted the motor gain and
-over-weighted r24 ×6.13 (pessimistic — corrected folded f0 18.4 Hz).
+over-weighted r24 ×6.13 (pessimistic — corrected folded f0 18.4 Hz). **Then the byte-exact replay of the operator's
+own recorded grinding episodes predicted V292 at ×0.55 of V282's 20 Hz ring amplitude (×0.71 on r6c) with the mode's
+ring-down cut to a third, the strong-turn ripple held (×1.03 / ×0.94), authority untouched, and the 9–18 Hz cost at
+×1.1–1.2 (worst fit ×1.36) — a model prediction, not a drive.**
 
 ## 1. How the session ran
 
@@ -68,6 +71,7 @@ GO WRITE.
 | `builder292` | the V292 script | 69 bytes vs V282; hashes reproduced across five runs; two write blockers found (Windows 260-char paths, unpinned mirror import) and fixed; 14/14 mutations; wrote on GO WRITE and superseded V291 |
 | `advA2` / `advB2` / `advC2` / `advD2` | the V292 adversarial pass | **PASS / DO-NOT-FLASH (sp = 3 clause only) / PASS / PASS**; A2: the b3 read must be the duty; B2: the five-floor mechanism, the ×6.13 fold defect, the gp-0x6806 premise; D2: the hook liveness wording and the boot copy loop |
 | `artifact2` | the page, V292 | same URL, version 4 |
+| `replay` | V292 on the operator's recorded episodes | ring ×0.55, ring-down ×0.29–0.36, 7 Hz ×1.03/×0.94, torque ×1.00, shoulder ×1.1–1.2; two mirror defects corrected; positive control 12.8 % median |
 | `biv` | the two flips B named | **the deadband does NOT explain the r24 arm gap (≤ 15 %); the residual is a constant pre-deadband scale; the effective arm (κ 0.449) is admissible; the 5244 rung IS selected; B(f) not biased at 20.3 Hz; 9.94–14 Hz identified at nperseg 512** → B3 re-scored PASS |
 
 ## 2. What changed our mind, and in what order
