@@ -249,6 +249,77 @@ Slot 7 only (X 0,32,36,44,88 · Y 248,248,512,512,248) — the other 27 records 
 
 **WHY.** r35 (V281 rev 3): the 7 Hz cycle is gone but seven 1–3 s stalled-wheel runs appeared at idx 54–79 delivering 0.62 of V280's torque — a P-only loop's deadband. Ki 50: corner f = 1.24·Ki/Kp = 0.25 Hz; accumulates the held error until the wheel breaks free (~1.5 s in a 2000-count stall on the ki_sizing plant); costs ×0.984/−1.4° at 7 Hz (the ring is r24's), ~0 at 20 Hz; the integrator is in series with the T tap. Ki 5 (V270/V271, unflown) cannot break a stall (6 s time constant). **CLASS:** the first integrator ever run on this car; a cal that has never been non-zero on any flown build. **RISK:** stall-release lurch ~10 deg/s for ~1.8 s (clamp-set); push against a held hand at idx 40–84 back to V280's level within ~1 s; residual after long curves (~4 s). **READ IT BY:** stalled runs ≥ 1 s ≤ 2 (r35 7), idx 40–80 rate ≥ 70 % of reference (r35 45 %), dead fraction ≤ 0.10 (r35 0.34); 7 Hz and 20 Hz unchanged; FAIL: stalls persist with the accumulator railed; cost FAIL: lurch > 20 deg/s or > 3 s, or a new sub-1 Hz hunt.
 
+### V291 (C10) — V282 + the LKAS feedback lag pole 16.5 → 9.94 Hz (DC held) + the r24 engaged arm 5244 → 4725 + 0x14A b3 = sign(fb state)  (2026-09-13, **BUILT, NOT FLOWN — NOT CLEARED FOR FLASHING by its pre-registered adversarial pass (B FAIL on B4 + an ungated 9–18 Hz cost; B3 re-scored PASS); A/C/D PASS**)
+
+**Class: OPEN THE LKAS RATE LOOP ABOVE ~8 Hz + a partial revert of Lever B — the first build V38 → V291 to
+lower the servo's feedback bandwidth instead of shaping the loop AT the mode, and the first to touch the r24
+engaged arm since V88 set it.** Diff vs V282: **15 bytes / 6 runs / 3 cal halfwords + 1 cave displacement +
+2 CRC trailers.** Forward path (map ×6, Kp 248 flat, Kd 128, Ki 0, clamps, ×6 gain, output lag) byte-identical.
+
+**base** V282 · **image** `a66f9c54b21031d3948cf1f60fbcadc6ac44d422c01d5a357b19aa0d23144657` · **rwd**
+`8ce8d5b7c7cda973a04fbe9a061090c76121b6a136d1bba18d1b67fd24530533`
+(`39990-TVA,A160-V291-V282BASE-FBPOLE.10HZ.962.958-R24.4725-B3.FBSTATE-KP.FLAT.Y0-CAVE.R24CMP.B5.B6-MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.TAP-0x13000-0x100000.rwd`)
+· **490/490** (380 substantive / 60 vacuous / 50 tautological, census printed by the script) · independent
+rebuild reproduces · script `analysis-2020accord/builds/v108_plus/build_v291_tva.py` (DOSE C12/C10/C8 ×
+TELEMETRY_BIT b3/b7/off; writes only with `ACCORD_V291_WRITE=rwd`) · **exactly one V291 rwd on disk** ·
+design `docs/specs/design/DESIGN-V291-FBLP-2026-09-13.md` (+ Addenda A–D) · prereg
+`docs/review/ADVERSARIAL-V291-PREREG-2026-09-13.md` · traces `docs/traces/TRACE-2026-09-13-fb-lag-filter-bytes.md`,
+`TRACE-2026-09-13-lkas-lane-to-aggregator-and-ghidra-gap.md` · wire `rlog-tools/studies/grind/OPENLOOP-RING-DAMPING-2026-09-13.md`,
+`B-OF-F-V282-2026-09-13.md` · page: see the handoff.
+
+| cell | stock | V282 | **V291** | what it is |
+|---|---|---|---|---|
+| `0xC63E8` (tp+0x73E8, `a`, `ld.h` SIGNED @0x28F8A) | 923 | 923 | **962** | LKAS rate-PID feedback lag pole: `s_new = (a·s>>10) + (b·x>>10)`, `r26 = s + s_new`, x = −(0x18F rate) at 1 kHz, state 32-bit @gp-0x3d30, runs every tick engaged or not; corner 16.53 → **9.94 Hz** |
+| `0xC63EA` (tp+0x73EA, `b`, `ld.hu` @0x28F86) | 1560 | 1560 | **958** | same filter; DC = 2b/(1024−a) = 30.891 → **30.903 (held, +0.04 %)** — steady-state authority unchanged; input quantum b/1024 = 1.52 → 0.94 per raw count (dead zone 0.08 → 0.13 deg/s, ×15 below the ring's 16 LSB) |
+| `0xC6446` (tp+0x7446, `ld.hu` @0x3AC08, Q10) | 512 | 5244 (V84 Lever B) | **4725** | the r24 ENGAGED gain arm on the lag-4 torsion-bar-torque difference: ×5.121 → **×4.614 (−9.9 %)**; a partial revert toward stock. Needed because the 7.3 Hz gate (|LS73·R73 + k·LR73| ≤ 1.01) fails at every fb-pole dose with r24 at 5244 (12 Hz reads 1.075; 94 % of the damage is phase lag) |
+| `0xC4BAA-AB` (cave rung, b3) | — | `ld.w −0x3680[gp],r6` | **`ld.w −0x3d30[gp],r6`** | 0x14A byte-4 **b3 = 1 iff the fb state s < 0**; b3 used to publish an aliased 45–47 transitions/s coin-flip (sign of the driver-torque PID's D EMA); b7 = sign(gp-0x6b4c) KEPT (it is the LKAS summand); b4/b5/b6 (sign r24, |r24| ≥ |aggregator|, |r24| ≥ |T|) byte-identical — the r24 cut's own instrument; b0–2 stock |
+| `0xC4FFC` / `0xC6FFC` | — | 446bb04e / 72dfea75 | 26c4ce34 / bb129bed | CRC trailers (the 0xC4FFC block spans [0x13000, 0xC4FFC)) |
+
+**WHY.** (1) With the loop open there is NO 18–22 Hz object (35 routes, 4,759 s lateral-disengaged; a mode of
+ζ ≤ 0.03 at the same energy would have been found ⇒ ζ_open ≥ 0.05 or non-modal; V289's relocated 16 Hz ring
+is also engagement-gated; V289's notch removed the 20 Hz mode outright). (2) Every in-loop lever AT the mode
+(V289's notch, option C, Kd, fb pole UP, output lag) returned a null under the authority gates; lowering the
+fb pole is the only candidate ever scored that improves ζ, max Ms over the whole 12–26 Hz band, PM, GM, HF
+noise AND transient authority together (Ms 12–26 19.4 → 3.6 at 9.94 Hz; S@20.3 ×0.34; PM +39 → +57°; GM 1.15
+→ 1.55; pkR 1.026 worst; 0/121 unstable; no new pole below ζ +0.36) — and its only block was the 7.3 Hz gate,
+which the r24 cut removes (gate 1.0099). (3) C10 is the dose that is readable from one episode (×2.98 SUB
+against the ×2.43 floor; C12 at 12 Hz cannot observe its own edit), passes the extended gates with margin
+(|T(3.9)| 1.071 / 1.15; |ΔL|<5 Hz 18 % / 30 %; overshoot 0.823 / 1.205) and keeps the 5–9 Hz bump below unity
+(0.91 at 9 Hz; C8's crosses at 1.18). **CLASS:** genuinely new — the servo's bandwidth has never been lowered
+(the 2026-09-03 "fb pole 5 Hz" rows carried DC ×1.49 and were not a DC-held test).
+
+**RISK, stated.** Torque authority unchanged; capped-step overshoot ~×1.1 (39 → 49 % median); openpilot's
+outer loop sees ×1.07 at 3.9 Hz (adverse bound 0.38 → 0.41). 🛑 **The r24 cut removes ~10 % of the lane
+that supplies 73–86 % of the electronic damping at 20 Hz — the two edits are in tension at the target
+frequency.** The r24 fold (DESIGN Addendum D) is NOT certified: its C3(ii) control fails in the 10–14 Hz band
+where the bar-to-rate transfer is unidentified (coherence 0.28–0.50), and the effective r24 arm reads 0.45×
+the cal on the wire (κ bracket 0.45–1.45). Under the wire-supported (effective) fold C10's Ms 12–26 is 4.73
+(×4.1 better than V282), under the pessimistic flown-cal fold 12.28 (×1.6) — and the folded mode may land at
+17.0–17.9 Hz, the edge of the 15–17 Hz band the operator rejected on V289. gate_k's premise LR73 ∝ 0xC6446 is
+BELIEF. Pre-existing and unchanged: the gp-0x671d Schmitt latch that would collapse r24 to 1024 (unarmed on
+4,653 s of V282; V291 makes a latch event slightly less disruptive, ×0.217 vs ×0.195).
+
+**READ IT BY** (`DESIGN-V291-FBLP` Addendum C §C2.3; one ~20 s hands-off creep episode): 18–22 Hz envelope
+half-peak decay ≈545 → ≈183 ms (×2.98) — the effect; T-vs-0x18F-rate cross-spectrum phase −14° ± 4° at 10 Hz
+(−12.5° at 7.3 Hz) over 16 s of creep — the LANDED check; 0x14A b3 transition rate ×0.785 [0.762, 0.805] of
+the byte-exact mirror's V282-pole prediction on the same 0x18F trace, within-drive (`v291_b7_state_sign_sizing.py`;
+the duty moves only ×1.07 — do not use it); positive control: 45+ b3 transitions/s = the re-point did not
+land, stuck 0/1 with b5/b6 alive = wrong operand; b6 duty should fall ~10 % with the r24 cut. **NULL:** decay
+not below 1.23× V282's while the phase HAS moved ⇒ the object's damping is not set by the rate loop's return
+ratio ⇒ the whole in-loop class is closed (both placements, both bases, the Kd schedule, the fb pole). Phase
+NOT moved ⇒ NO-READ. **REVERT if:** the 6–9 Hz strong-turn ripple returns (F7 ≥ 2/100 s or tap ripple/level
+≥ 0.25 in loaded turns); a new 15–18 Hz line in trains; a 22–30 Hz line; the grinding unchanged or louder; a
+darty/loose lane-centring feel; a one-sided standing pull at rest.
+
+**Adversarial pass (pre-registered before the image existed):** **A PASS · C PASS · D PASS · 🛑 B DO-NOT-FLASH on B4 (4th clause) + one UNGATED cost; B3 RE-SCORED PASS.** B3 (after `biv` settled the r24 arm as EFFECTIVE κ 0.449 and identified 9.94–14 Hz at nperseg 512): the r24-folded 12–26 Hz improvement is ×3.3–4.2 across the whole B(f) perturbation box, f0 17.45–17.95 Hz, no new ζ < 0.05 pole. B4: byte-exact steady state ×1.34–1.80 at sp = 3 counts (sub-deg/s absolute; within 3 % at sp = 33) — the feedback quantum 0.66 → 1.07 raw counts leaves the loop effectively open below ~0.5 deg/s; intrinsic to any cal-only fb-pole change, fixable only by a cave with error feedback. UNGATED: worst-fit sensitivity worse than V282 on 121/121 fits over 3.0–18.2 Hz, peak ×1.99 at 12.85 Hz — a well-damped shoulder, no pole below ζ 0.36. NO instability on any fit at any scaling. **ORCHESTRATOR'S VERDICT: NOT CLEARED FOR FLASHING by the letter of the pre-registration** (the rule was written before the image existed); the rwd stays on disk as the only V291; flying it is the operator's decision against the verdict, with the 10–18 Hz shoulder pre-registered as a revert signature. `docs/review/ADVERSARIAL-V291-PREREG-2026-09-13.md` carries the four reports, the re-score and `B-IV-AND-KAPPA-2026-09-13.md`.
+
+**Fork side (uncommitted, `raayyymond-StarPilot` @ Dom):** `ModelCurvatureLead` — a slope-continuous
+reconstruction of the 20 Hz modelV2 staircase, toggle `AccordCurvatureLead` default OFF, gain 0.75 — is on
+disk and **must stay OFF for the first V291 drive** (it adds +1.5–1.9 dB at 5–10 Hz, on V291's 9 Hz bump;
+worth −2.4/−4.2 dB on the 0xE4 18–22 Hz band, ~−18 % ring, unreadable from one drive). No fork tune change
+is required for V291 (the rate-plant FF is bandwidth-blind to a 10 Hz inner loop; Ki 0.30 → 0.15 is the
+conservative knob if centring feels lazy).
+
 ### V290 — 🛑 **DESIGNED, FULLY SPECIFIED, AND NOT CUT. NO IMAGE, NO RWD, NO BUILD SCRIPT EXISTS.** (2026-09-09)
 
 **THE OPERATOR'S DECISION, verbatim in substance: *"Neither — revert to V282 and stop here."*** Shown the
