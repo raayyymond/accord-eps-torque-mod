@@ -10,7 +10,7 @@
 <text x="177" y="54" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">modeld</text>
 <text x="177" y="71" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">20 Hz desiredCurvature</text>
 <rect x="340" y="32" width="500" height="52" rx="4" fill="var(--opfill)" stroke="var(--v293)" stroke-width="2" stroke-dasharray="5 4"/>
-<text x="590" y="54" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">LatControlTorque &#8212; AccordEpsTorqueMode ON</text>
+<text x="590" y="54" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">LatControlTorque &#8212; Testing Ground 9, variant B</text>
 <text x="590" y="71" text-anchor="middle" fill="var(--ink-mut)" font-size="11" font-family="var(--mono)">rate-plant FF OFF &#183; LAF 6.0 &#183; Kp 0.3 &#183; Ki 0.15</text>
 <rect x="866" y="32" width="230" height="52" rx="4" fill="var(--opfill)" stroke="var(--noderule)" stroke-width="1.2" stroke-dasharray="5 4"/>
 <text x="981" y="54" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--sans)">0xE4 STEER_TORQUE</text>

@@ -457,3 +457,46 @@ every low-speed cell.**
 
 Outputs in `_scratch/tau_*.{txt,json}` beside them. Route caches in
 `analysis-2020accord/_scratch/cache/tau/<tag>_lat.npz`.
+
+## 7. Reading for the fork, recorded at the operator's request (2026-09-13, orchestrator)
+
+**The operator's position, verbatim in substance:** he is skeptical that the speed-dependent lag is a
+controls artefact rather than a real, physically variable delay, and he may implement a variable lateral
+(and longitudinal) delay in StarPilot if a real one exists. This section separates what this study can and
+cannot say about that.
+
+**What is established [EVIDENCE, §4].** The command-to-response lag of the CLOSED outer loop rises as speed
+falls (25+ m/s ≈ 0.15–0.18 s → 3–8 m/s ≈ 0.25 s on the current tune); it is not a pure transport delay (three
+estimators disagree by up to 100 ms on the same data; the fitted lag pole is 1.4–4.3 Hz); the tune moved the
+total by 20–55 ms (r39's SR 12.5 / LAF 2.11 tune was faster than today's LAF 6.0 tune); the lag is
+amplitude-dependent in the friction direction (small-signal 30–50 ms slower, gain lower); and at 3–8 m/s the
+wheel realises only 0.57–0.69 of the commanded curvature at 1 Hz. The dead-time/pole split is NOT identified.
+
+**What could produce the speed dependence — three candidates, none excluded here:**
+1. **The EPS firmware's own speed-dependent output scaling (neither "controls" nor "tire physics").** The
+   LKAS output passes one fade stage whose speed half (table D at 0xCBBC4, factor 255 → 77 across its axis;
+   axis UNIT OPEN — see `ADVERSARIAL-V293-PREREG` erratum) derates the delivered torque with speed in ONE
+   direction. The record's on-car reading is a ×0.42–0.51 delivered/simulated multiplier at 3–9 m/s
+   (V278r3), and this study's 0.57–0.69 realised curvature at 3–8 m/s is the same shape. A lower plant gain
+   at low speed makes the closed loop slower — an apparent delay that a delay model would mis-attribute and
+   a speed-dependent gain would fix. Identical on V282 and V293 (byte-stock on both).
+2. **Rack Coulomb friction / deadband [physical, nonlinear].** §4.7: lag falls and gain rises with
+   amplitude — the opposite of rate limiting. Small motions at creep are exactly where friction dominates.
+   A variable delay cannot represent this; a friction/deadband compensator can.
+3. **The outer-loop tune [controls].** LAF 6.0 cut P/I authority ×2.5 and the measured total moved with it;
+   the `low_speed_factor` and the friction compensator's `error_with_lsf` input change the effective loop
+   gain with speed (see the standing fork defect in `docs/STATE.md`).
+
+**Evidence for a physically variable transport delay:** the r39 FOPDT fit places the speed dependence in
+the dead time (80 → 180 ms) — but the r6c fit places it in the pole with dead time flat at 160–180 ms, and
+the two are indistinguishable on this data. **Not established either way.**
+
+**What would decide it, cheaply:** the V293 identification drive. In torque mode the EPS lane is
+open-loop (T = f(cmd)·fade, one tick) and the fork's rate-plant feedforward is bypassed, so the
+0xE4 → steering-rate pair loses the anticausal contamination of §1 and measures the PLANT (rack + tire +
+fade) directly, per speed band and per amplitude tercile. If the dead time is flat with speed there, the
+speed dependence on V282 was the servo + tune + fade; if it still grows toward 0.18 s at creep, it is
+physical and a variable delay is warranted. Run `tau_identify.py` on that route with the 0xE4 pair
+re-enabled and compare against §4.4.
+
+**Longitudinal:** nothing in this session bears on it; no longitudinal delay was measured.

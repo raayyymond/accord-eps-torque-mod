@@ -241,18 +241,42 @@ signature, i.e. the outer loop; the fix is the fork preset, not the firmware, **
 10–18 Hz line · a darty or loose feel · a one-sided pull at rest · any EME or DTC.
 🛑 **It licenses no claim that the grinding or the stutter is fixed. The operator scores the symptom.**
 
-#### The fork side — ONE switch, and the mismatch is not symmetric
+#### The fork side — ONE Testing Ground slot, and the mismatch is not symmetric
 
-`AccordEpsTorqueMode` (Galaxy → *Custom Patches*), **uncommitted on `raayyymond-StarPilot/StarPilot` @
-`Dom`, ships OFF**. The card is `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
+**Testing Ground 9, "Accord EPS Torque Mode", variant B** (Galaxy → *Testing Ground*), **uncommitted
+on `raayyymond-StarPilot/StarPilot` @ `Dom`, ships on A**. The card is
+`docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
 
-> **The one rule: `AccordEpsTorqueMode` may be ON only while a torque-map EPS image (V293 or later) is in
-> the ECU.** Going TO V293: **flash first, toggle second.** Reverting: **toggle first, flash second.**
+🛑 **Reworked 2026-09-13 from a param to a slot.** It shipped first as `AccordEpsTorqueMode` plus four
+`AccordTorqueMode*` sliders; the operator rejected a toggle whose only job is to apply a preset of
+other toggles, and the fork already had the right mechanism — Testing Grounds, where A is the
+installed tune and B the experiment. **All five keys are gone** from `common/params_keys.h`,
+`starpilot_variables.py`, `SAFE_MODE_MANAGED_KEYS` and the Galaxy layout; the selection lives in
+`/data/testing_grounds/slots.json` and the four tune numbers are now CONSTANTS in
+`latcontrol_vehicle_tunes.py`, not sliders.
+
+> **The one rule: slot 9 may sit on variant B only while a torque-map EPS image (V293 or later) is in
+> the ECU.** Going TO V293: **flash first, select B second.** Reverting: **select A first, flash
+> second.** Any other slot's selection is equivalent to A — the gate is `testing_ground.use("9","B")`.
 
 | state | consequence |
 |---|---|
-| mode **ON** + rate-servo image (V282/V292/stock) | 🛑 **OVER-DELIVERY** — feedforward **×2.55** at 15 m/s / 0.9 m/s², measured from the built fork code, inside the record's ×2.4–4.3 band. **Nothing downstream catches it**: `opendbc/safety/modes/honda.h` applies no magnitude, rate, driver-torque or RT-window limit to `0xE4`. **Never create this row, not even for the drive to the flashing spot** |
-| mode **OFF** + torque-map image (V293) | **UNDER-DELIVERY** — the rate-plant feedforward inverting a servo that is no longer there. The car wanders and the driver takes over. **Recoverable**, and it is the state Safe Mode forces |
+| variant **B** + rate-servo image (V282/V292/stock) | 🛑 **OVER-DELIVERY** — feedforward **×2.55** at 15 m/s / 0.9 m/s², measured from the built fork code, inside the record's ×2.4–4.3 band. **Nothing downstream catches it**: `opendbc/safety/modes/honda.h` applies no magnitude, rate, driver-torque or RT-window limit to `0xE4`. **Never create this row, not even for the drive to the flashing spot** |
+| variant **A** + torque-map image (V293) | **UNDER-DELIVERY** — the rate-plant feedforward inverting a servo that is no longer there. The car wanders and the driver takes over. **Recoverable.** ⚠ It is **no longer** the state Safe Mode forces — see below |
+
+🛑🛑 **SAFE MODE NO LONGER FORCES THE MODE OFF — a behaviour change the rework brought, recorded here
+because the pre-rework entries above say the opposite.** `safe_mode.py` resets PARAMS; it has never
+touched Testing Grounds, for any slot. **A Safe Mode trip leaves variant B active.** On V293 that is
+the correct branch, so nothing gets more dangerous with the torque map in the ECU — but Safe Mode is
+**not** a route back to the rate-servo tune during a revert. [EVIDENCE: no testing-ground reference in
+`safe_mode.py`; pinned by `test_safe_mode_does_not_reset_the_variant`.]
+
+⭐ **Two smaller consequences.** The `params_pyx.so` rebuild trap does not apply — `testing_grounds.py`
+is plain Python — and the failure mode becomes "an older fork shows no B button at all". And the
+selection is itself logged: `the_galaxy` publishes `customReserved9` (`slotId`/`slotName`/`variant`/
+`variantLabel`/`reason`/`wallTimeNanos`) on a 15 s heartbeat plus every manual change, so a drive can
+be corroborated from the wire — though only `starpilotLateralState.epsTorqueMode` at 100 Hz reports
+which **branch** actually ran.
 
 🛑🛑 **A STANDING FORK DEFECT, FOUND BY B6 AND LIVE ON V282 TODAY — not a V293 problem.** StarPilot feeds
 **`error_with_lsf`** (= `error·(1 + lsf/kp)`) into `get_friction`, where upstream openpilot feeds the
@@ -263,18 +287,23 @@ preset's own rationale for Kp 0.3. **Repair: preset friction 0.01 → 0.00** ⇒
 Ms 4.32 → **2.06**, gain margin **×1.40**.
 
 Provisional first-drive tune, all four in `latcontrol_vehicle_tunes.py`'s `HONDA_ACCORD_TORQUE_MODE_*`
-block: LAF **6.0** (🛑 carried over so the first flight is not also a gain change — **not an
-identification**; on a torque actuator the DC gain is finite and should come out *lower*), friction
-**0.01 → 0.00 (B6's repair, being applied)**, Kp **0.3** (🛑 **its stated rationale is falsified by B6 —
-see above**), Ki **0.15**. **Net command at 15 m/s / 0.9 m/s² comes out ×0.955 of today's** — the
-bigger feedforward is more than paid for by the Kp and Ki cuts, but that is **a coincidence at one
-operating point, not a safety margin.** `SteerRatio` stays **16.88** through identification; in torque mode
-its second consumer is gone so the level's sensitivity roughly **halves** [BELIEF, from the structure].
+block, and since the slot rework they are **CONSTANTS, not sliders** — re-tuning between drives needs a
+source edit and a reinstall: LAF **6.0** (🛑 carried over so the first flight is not also a gain change
+— **not an identification**; on a torque actuator the DC gain is finite and should come out *lower*),
+friction **0.00 (B6's repair, applied)**, Kp **0.3** (🛑 **its stated rationale is falsified by B6 —
+see above**), Ki **0.15**. **Net command at 15 m/s / 0.9 m/s² comes out ×0.929 of today's** at those
+constants — the bigger feedforward is more than paid for by the Kp, Ki and friction cuts, but that is
+**a coincidence at one operating point, not a safety margin.** `SteerRatio` stays **16.88** through
+identification; on variant B its second consumer is gone so the level's sensitivity roughly **halves**
+[BELIEF, from the structure]. ⭐ One thing the rework made strictly safer: with no params there is no
+second source for these four numbers, so a stale or hand-written param can no longer put a value on
+the car that the code does not carry.
 
 #### 🛑 ADVERSARIAL PASS — COMPLETE. **CLEARED OVER ONE DISSENT.**
 
 > **VERDICT: V293 is CLEARED as the flight candidate over ONE DISSENT (B2 as written), with V282 the
-> fallback, the fork preset (`AccordEpsTorqueMode` ON: LAF 6.0 / friction 0.00 / Kp 0.3 / Ki 0.15,
+> fallback, the fork preset (Testing Ground 9 "Accord EPS Torque Mode" variant B: LAF 6.0 /
+> friction 0.00 / Kp 0.3 / Ki 0.15,
 > rate-plant FF OFF) MANDATORY, the first drive an IDENTIFICATION drive, and the low-speed 1–4 Hz
 > signature the first revert trigger. The decision to fly is the operator's. Nothing here licenses any
 > claim that the grinding or the stutter is fixed — the operator scores the symptom; the pre-registered

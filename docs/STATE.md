@@ -25,14 +25,16 @@ hashes. **378 diff bytes, and ZERO of them below `0xC0000`** — the cal-only cl
 docstring claim.
 
 > 🛑 **THE VERDICT: V293 is CLEARED as the flight candidate over ONE DISSENT (B2 as written), with V282
-> the fallback, the fork preset (`AccordEpsTorqueMode` ON: LAF 6.0 / friction 0.00 / Kp 0.3 / Ki 0.15,
-> rate-plant FF OFF) MANDATORY, the first drive an IDENTIFICATION drive, and the low-speed 1–4 Hz
+> the fallback, the fork preset (Testing Ground 9 "Accord EPS Torque Mode" variant B: LAF 6.0 /
+> friction 0.00 / Kp 0.3 / Ki 0.15, rate-plant FF OFF) MANDATORY, the first drive an IDENTIFICATION drive, and the low-speed 1–4 Hz
 > signature the first revert trigger. The decision to fly is the operator's. Nothing licenses any claim
 > that the grinding or the stutter is fixed — he scores the symptom; the pre-registered read and the
 > terminal null sentence stand.**
 
-**Page:** https://claude.ai/code/artifact/6751b3ba-2098-4c74-894b-b74741ff4565 (v2 — the A/C/D1 verdicts,
-the taper split, and the authority callout).
+**Page:** https://claude.ai/code/artifact/6751b3ba-2098-4c74-894b-b74741ff4565 (v5 — the full verdict block
+with both dissents, Testing Ground 9 as the fork side, the scorer, the measured delay and its open reading).
+**Scorer for the first V293 drive:** `python rlog-tools/studies/grind/v293_flight_read.py <route id>` — the
+whole pre-registered scorecard, negative-controlled on six non-V293 routes (`V293-FLIGHT-READ-HOWTO.md`).
 
 **THE PASS, COMPLETE — `advA3` PASS (A1–A4) · `advC3` PASS (C1–C5) · `advD3` PASS (D1–D5) · `advB3`/`advB3b`:
 B1, B3, B4, B5, B7 PASS, B8 reported, and 🛑 TWO CLAUSES FAIL AS WRITTEN (B2, B6), BOTH ADJUDICATED.**
@@ -247,7 +249,7 @@ target**; and the StarPilot tuning updated to match.
 | **"torque"** | **Torque mode** — V279's structure on V282: fb clamp 0, Kd 0, Kp re-levelled | ⭐ **BUILT as V293.** Cal-only, no cave, and the model-independent test of the in-loop class |
 | **"angular acceleration tracking"** | the PID tracks `d(rate)/dt` instead of rate | 🛑 **DOMINATED — recorded, not built.** It **CONTAINS torque mode** and adds electronic inertia on top, and the inertia term **needs a cave** (the kit's only bricking class). Reasoning: `TRACE-2026-09-13-lkas-pid-tracked-quantity.md` §4 |
 | **"StarPilot outputs a rate target"** (fork Design B) | shape the reference on the openpilot side | 🛑 **CANNOT REMOVE THE GRINDING — recorded, not built.** V288 rev 2 flew exactly this class: the cave was live, the D-bind duty fell ×0.03 as designed, **and the grinding was unchanged** (19.99 vs 19.93 Hz, KS p 0.18). Nothing on the fork's reference side reaches the 20 Hz ring |
-| **"the tuning updated"** | four toggles the operator had to keep consistent by hand | ⭐ **ONE switch instead**: `AccordEpsTorqueMode`, uncommitted in the fork, OFF by default |
+| **"the tuning updated"** | four toggles the operator had to keep consistent by hand | ⭐ **ONE selection instead**: Testing Ground 9 "Accord EPS Torque Mode" variant B, uncommitted in the fork, ships on A |
 
 ### ⏱ τ, MEASURED — and "τ = 0.20 s" was never a measurement
 
@@ -278,6 +280,16 @@ FAIL sits. ⚠ **Not a clean substitution**, because the report's own finding is
 `tau_eq` at the crossover. **B6's condition is satisfied on the best evidence available; the re-score at
 the repaired preset is still what settles it.** [EVIDENCE for the totals; this inference is mine.]
 
+**The operator's reading of the speed-dependent lag, recorded 2026-09-13 (τ study §7):** he is skeptical it
+is a controls artefact rather than a real, physically variable delay, and may implement a variable lateral
+(and longitudinal) delay in StarPilot if one is real. This session does NOT decide it: the dead-time/pole
+split is unidentified (r39's fit puts the speed dependence in dead time 80 → 180 ms, r6c's in the pole), the
+tune moved the total 20–55 ms, the lag is amplitude-dependent in the friction direction, and the EPS's own
+speed-half fade (table D, axis unit OPEN; ×0.42–0.69 delivered at 3–9 m/s on-car) lowers the plant gain at low
+speed — three candidate causes (firmware fade, rack friction, outer-loop tune), none excluded. **The V293
+identification drive decides it for free:** in torque mode the lane is open-loop and the rate-plant FF is
+bypassed, so the 0xE4 → rate pair measures the plant directly per speed band. Longitudinal: not measured.
+
 ### 🛑🛑 A STANDING FORK DEFECT — LIVE ON THE CAR TODAY, ×6.6, AND IT IS NOT A V293 PROBLEM
 
 Found by `advB3`'s B6 surface, **crux verified in the fork source by the orchestrator.** StarPilot feeds
@@ -296,29 +308,49 @@ conditional on **τ ≥ 0.18 s**, and **τ = 0.20 s is the operator's `SteerDela
 identified** (the Honda port's prior is 0.10 s) — being measured from the rlogs now. **This is a fork fact,
 not a firmware fact: it is live on V282 today and it does not depend on which image is in the ECU.**
 
-### FORK (`raayyymond-StarPilot` @ `Dom`) — one switch, and the mismatch is NOT symmetric
-**`AccordEpsTorqueMode`** (Galaxy → *Custom Patches*), **uncommitted, ships OFF**, card
-`docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`. **The one rule: it may be ON only while a
-torque-map image (V293 or later) is in the ECU.** Going TO V293 — **flash first, toggle second**;
-reverting — **toggle first, flash second**. 🛑 **Mode ON + rate-servo image = OVER-DELIVERY, feedforward
-×2.55 at 15 m/s / 0.9 m/s², and NOTHING downstream catches it** (`opendbc/safety/modes/honda.h` applies no
-magnitude, rate, driver-torque or RT-window limit to `0xE4`) — **never create that state, not even for the
-drive to the flashing spot.** Mode OFF + torque-map image = under-delivery, recoverable, and the state
-Safe Mode forces. Provisional first-drive tune, all four in `latcontrol_vehicle_tunes.py`'s
-`HONDA_ACCORD_TORQUE_MODE_*` block and **all PROVISIONAL**: LAF **6.0** (carried over so the first flight
-is not also a gain change — **not an identification**; on a torque actuator the DC gain is finite and
-should come out lower), friction **0.01**, Kp **0.3**, Ki **0.15**. Net command at 15 m/s / 0.9 m/s² is
-**×0.955** of today's — a coincidence at one operating point, **not a safety margin**. `SteerRatio` stays
-**16.88** through identification (its second consumer is gone in torque mode, so the level's sensitivity
-roughly halves) [BELIEF, from the structure]. 🛑 **If the toggle appears inert, `params_pyx.so` was not
-rebuilt** — the new keys live in the compiled `common/params_keys.h`, and an older `.so` silently falls
-through to the default (which is OFF, so the failure is in the safe direction, but it is silent).
+### FORK (`raayyymond-StarPilot` @ `Dom`) — one Testing Ground slot, and the mismatch is NOT symmetric
+**Testing Ground 9, "Accord EPS Torque Mode", variant B** (Galaxy → *Testing Ground*), **uncommitted,
+ships on A**, card `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`. 🛑 **Reworked 2026-09-13
+from a param to a slot** — `AccordEpsTorqueMode` and the four `AccordTorqueMode*` keys **no longer
+exist** anywhere (params_keys, Galaxy layout, `starpilot_variables`, `SAFE_MODE_MANAGED_KEYS`); the
+operator rejected a toggle that only applies a preset of other toggles, and slot 9's A is the
+installed rate-servo tune against B the experiment. Selection lives in
+`/data/testing_grounds/slots.json`. **The one rule: B only while a torque-map image (V293 or later)
+is in the ECU.** Going TO V293 — **flash first, select B second**; reverting — **select A first,
+flash second**. 🛑 **B + rate-servo image = OVER-DELIVERY, feedforward ×2.55 at 15 m/s / 0.9 m/s²,
+and NOTHING downstream catches it** (`opendbc/safety/modes/honda.h` applies no magnitude, rate,
+driver-torque or RT-window limit to `0xE4`) — **never create that state, not even for the drive to
+the flashing spot.** A + torque-map image = under-delivery, recoverable. Provisional first-drive
+tune, all four in `latcontrol_vehicle_tunes.py`'s `HONDA_ACCORD_TORQUE_MODE_*` block, now **CONSTANTS
+not sliders** and **all PROVISIONAL**: LAF **6.0** (carried over so the first flight is not also a
+gain change — **not an identification**; on a torque actuator the DC gain is finite and should come
+out lower), friction **0.00** (B6's repair), Kp **0.3**, Ki **0.15**. Re-tuning them now needs a
+source edit and a reinstall, not a slider — a real cost on an identification drive, and the price of
+the branch and the four numbers being one inseparable selection. Net command at 15 m/s / 0.9 m/s² is
+**×0.929** of today's at the shipped constants — a coincidence at one operating point, **not a safety
+margin**. `SteerRatio` stays **16.88** through identification (its second consumer is gone on B, so
+the level's sensitivity roughly halves) [BELIEF, from the structure].
+- 🛑🛑 **SAFE MODE NO LONGER FORCES IT OFF, and the old record said it did.** `safe_mode.py` manages
+  PARAMS only and has never referenced Testing Grounds, for any slot ⇒ **a Safe Mode trip LEAVES
+  variant B active.** On V293 that is the correct branch anyway, so nothing gets more dangerous while
+  the torque map is in the ECU — but Safe Mode is **not** a route back to the rate-servo tune during
+  a revert. [EVIDENCE: no testing-ground reference in `safe_mode.py`; pinned by
+  `test_safe_mode_does_not_reset_the_variant`.]
+- ⭐ **The `params_pyx.so` trap is GONE for this switch** — `testing_grounds.py` is plain Python, not
+  a compiled key table. The new failure mode is simply that an older fork has no slot 9, in which
+  case **no B button appears at all**.
+- ⭐ **The selection IS in the rlog**, as `customReserved9` (`slotId` / `slotName` / `variant` /
+  `variantLabel` / `reason` / `wallTimeNanos`), published by `the_galaxy` on a **15 s heartbeat** plus
+  every manual change. Coarse, and absent if that process was down ⇒ corroboration, not a gate.
+  `starpilotLateralState.epsTorqueMode` at 100 Hz stays the primary read.
 - 🛑 **THE PARAMS-WIPE TRAP, measured on the V292 routes:** every `Accord*` key was **ABSENT** from
   `initData.params`, i.e. running its **code default** — which is invisible in a route read unless you
   have the checkout. It was benign this time (each default equalled the 2026-09-10 backup value), but
   **an `Accord*` param at its default is absent from `initData.params` by construction**, which is why
   `starpilotLateralState.epsTorqueMode` exists as a cereal field. **Verify the mode from the cereal
-  field, not from the params blob.**
+  field, not from the params blob.** 🛑 Since the 2026-09-13 slot rework this is doubly true: the mode
+  is **not a param at all**, so `AccordEpsTorqueMode = absent` in a scorecard is expected and carries
+  no information — a *value* there means the device is running a pre-rework fork.
 - **`torqued` UPDATED, and it is a report, not a licence to edit the memories:** on route 6f
   `liveTorqueParameters` reads `useParams` 1, **`liveValid` 1**, `latAccelFactorRaw` **6.24** (p5–p95
   5.86–6.67) — within 4 % of the toggle. The record's *"torqued cannot validate on the modded EPS"* was
@@ -331,6 +363,29 @@ through to the default (which is OFF, so the failure is in the safe direction, b
   `AccordRatePlantFF` by hand** — that single flip on a rate-servo image *is* the over-delivery hazard.
 
 ### CORRECTIONS OF RECORD, 2026-09-13 (late)
+0. **Two instrument traps from the V293 scorer (`rlog-tools/studies/grind/v293_flight_read.py`, EVIDENCE):**
+   (a) the kit's cereal schema declares `epsTelemetry @137` while the fork declares `starpilotLateralState @137`
+   — same union slot, same struct id `0xc2243c65e0340384`, different layout — so **any kit decoder reading
+   `epsTelemetry` from a fork-logged (2026-09) rlog reads garbage**; the scorer loads a patched schema copy
+   (`_scratch/cereal_fork/`), the kit schema is untouched and must be fixed at the next tooling pass — and a
+   SECOND collision of the same shape: kit `modelDataV2SP @116` (struct id `0xa1680744031fdb2d`) vs the fork's
+   `customReserved9 @116` (the Testing Ground selection heartbeat: slotId/slotName/variant/variantLabel), so
+   two slots mis-decode fork rlogs, not one;
+   (b) **the 427 tap's wire polarity is sign(T) = +sign(cmd)** — the V293 prereg's "−sign(cmd) ≈ 1.00" read
+   was inherited from V279's docstring and is inverted (V282/V292 read 0.145–0.149 on it); the prereg carries
+   the erratum and the scorer prints both columns. The scorer's zero-parameter identity FAILS on all six
+   non-V293 routes (R² ≤ −0.01) and reads 0.96 on a synthetic V293 tap; V292 fails every V293 revert gate it
+   would have been scored on (ring ×1.07–1.38 vs ≤ 0.40; F7 2.2–6.3; absolute 6–8.5 Hz tap ripple ×2.0–2.2).
+0b. **Four more from the scorer's validation (`V293-FLIGHT-READ-HOWTO.md`):** DESIGN-V293 §6.2's b7 0.996 → 0.808
+   and b4 0.808 are r39's ten loudest one-direction windows, not whole-route (whole-route V282: b7 0.507–0.548,
+   b4 0.394–0.404 — the scorer prints and uses these); §6.3's absolute 6–8.5 Hz tap-ripple clause never sized
+   V282 (now r6c 73.1 / r39 107.5 / r35 119.2 counts — the ×1.5 gate is 110 vs 161 depending on the reference;
+   the scorer takes r6c, on which V292 fails ×2.0–2.2); clause B5's literal window (|angle| ≥ 30°, bar 400–1216)
+   has < 3 s of runs on every reference route — the scorer substitutes the 6–8.5 Hz wheel rate on loaded turns;
+   r35's tap ripple/level has three values in the record (0.21 / 0.18 / 0.161 by stratum) — pin the stratum. Also:
+   1–4 Hz coherence reads 0.88–1.00 on EVERY route (openpilot commands there) — the outer-loop discriminator is
+   the 1–4 Hz angle AMPLITUDE vs same-speed references, never coherence; the toggle's only control-path check is
+   `torqueState` f/D (torque mode ⇒ 1.000; rate-plant 0.24–0.40; gate 0.75).
 1. **The V292 prereg's b3 DUTY read did not discriminate** — V292 0.418–0.453 against V282's 0.467,
    overlapping, and the idle control read backwards (0.035–0.049 vs r6c 0.000). A **design defect in the
    read**, caught only because the flight agent refused to force it. Attribution came from the bit's
@@ -418,10 +473,14 @@ through to the default (which is OFF, so the failure is in the safe direction, b
    ring benefit is Kd = 0 + Kp 120, not the clamp** — the two goals are separable); **A's authority
    finding** (the peak is identical and needs twice the demand to reach; 0.47–0.49 of V282's stalled-wheel
    torque below idx 116); and **the dissent on B2** in its own words.
-2. **If he flies it, the ORDER is not optional.** Toggle checklist: **flash first, toggle second**; the
-   fork preset is **mandatory**; **the first drive is an IDENTIFICATION drive**, then the tune, then the
-   symptom drive. **Watch the low-speed 1–4 Hz signature first** — it is the first revert trigger and the
-   creep margin is only ~10–20 % of plant gain on **both** builds. Score the bands; **he scores the symptom.**
+2. **If he flies it, the ORDER is not optional.** Checklist: **flash first, then Galaxy → Testing
+   Ground → "Accord EPS Torque Mode" → B**; that selection is **mandatory**; **the first drive is an
+   IDENTIFICATION drive**, then the tune, then the symptom drive. **Watch the low-speed 1–4 Hz
+   signature first** — it is the first revert trigger and the creep margin is only ~10–20 % of plant
+   gain on **both** builds. Score the bands; **he scores the symptom.** 🛑 **Reverting is
+   variant A FIRST, then flash V282 — and Safe Mode will NOT do it for you** (it manages params, and
+   the slot is not one). Re-tuning the four numbers between drives now needs a source edit and a
+   reinstall, so decide the identification plan before the first drive rather than after it.
 3. **The EME / governor dwell residual is NAMED, not closed:** the 205-count band
    **`5120 < |cmd| ≤ 5325` needs 75 ms continuous residency** to arm SM2. It exists on V282 too and
    SM2/SM3 self-clear, but nothing has ever measured the dwell on the wire.

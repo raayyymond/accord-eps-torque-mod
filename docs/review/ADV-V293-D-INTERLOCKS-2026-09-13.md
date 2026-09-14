@@ -312,6 +312,24 @@ monotonically with that arm.
 
 ## 4. D4 — THE FORK PRESET
 
+🛑 **SUPERSEDED IN ITS MECHANISM, NOT IN ITS VERDICT — 2026-09-13, later the same day.** Everything in
+§4 below was scored against the fork patch as it stood at the time: a param, `AccordEpsTorqueMode`,
+plus four `AccordTorqueMode*` sliders. **That patch was reworked onto Testing Ground 9 ("Accord EPS
+Torque Mode", variant B) and all five params were deleted.** The body of §4 is left exactly as
+written — it is the record of what was scored — but read it with these three substitutions, and see
+`docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md` for the current card:
+- *"`AccordEpsTorqueMode` OFF"* → **variant A** (or any other slot selected). The gate is now
+  `self.is_honda_accord and accord_torque_mode_testing_ground_active()`, i.e.
+  `testing_ground.use("9","B")`; `honda_accord_torque_mode_active()` no longer exists.
+- *"`accord_curvature_lead_active()` gains `and not accord_eps_torque_mode`"* → it gains a fourth
+  parameter, `torque_mode_active`, which `controlsd` supplies from the same slot gate. The logic is
+  unchanged.
+- 🛑 **D4's Safe Mode reasoning does NOT carry over.** Safe Mode manages params and has never touched
+  Testing Grounds, so **a Safe Mode trip now leaves variant B active** rather than forcing it off.
+  That inverts the fail-safe direction assumed anywhere below.
+§4.1's deployment warning stands verbatim: `epsTorqueMode @8` is still written every frame in both
+variants, so the capnp schema change must ship with the Python change.
+
 Read from the operator's own working tree, `C:/Users/dudei/Desktop/Projects/openpilots/raayyymond-StarPilot/StarPilot`,
 **read-only** (`git diff`, no edit). ⚠ The uncommitted patch carries **two** features, not one:
 `AccordEpsTorqueMode` **and** `AccordCurvatureLead`/`ModelCurvatureLead` (V292's subject). Both must be

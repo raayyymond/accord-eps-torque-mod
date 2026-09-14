@@ -47,9 +47,10 @@ conclusion independently), that the 5–9 Hz rise is **gated** rather than merel
 **contains** torque mode and adds electronic inertia on top, and the inertia term **needs a code cave** —
 this kit's only bricking class. Reasoning: `docs/traces/TRACE-2026-09-13-lkas-pid-tracked-quantity.md` §4.
 
-**What the fork side shipped instead:** one switch, `AccordEpsTorqueMode` (uncommitted, OFF by default),
-replacing four toggles the operator had to keep consistent by hand —
-`docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
+**What the fork side shipped instead:** one selection — **Testing Ground 9, "Accord EPS Torque Mode",
+variant B** (uncommitted, ships on A) — replacing four toggles the operator had to keep consistent by
+hand. It shipped first as a param, `AccordEpsTorqueMode`, and was reworked onto the slot the same day;
+all five params are gone. Card: `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
 
 ---
 

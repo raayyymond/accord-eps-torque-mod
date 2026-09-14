@@ -43,9 +43,13 @@ limit-cycled at 2–4 Hz.
 that drive an **IDENTIFICATION drive, not a symptom drive** — LAF fitted by instrumental variables against
 `modelV2.action.desiredCurvature·v²`, **not** from `torqued` — then the tune, then symptom scoring.
 
-**What shipped on the fork side:** one switch, `AccordEpsTorqueMode` (uncommitted, OFF by default),
-replacing four toggles the operator had to keep consistent by hand, with the asymmetric mismatch hazard
-encoded as a step order — `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
+**What shipped on the fork side:** one selection — **Testing Ground 9, "Accord EPS Torque Mode",
+variant B** (uncommitted, ships on A) — replacing four toggles the operator had to keep consistent by
+hand, with the asymmetric mismatch hazard encoded as a step order. It shipped first as a param,
+`AccordEpsTorqueMode`, and was reworked onto the slot the same day; all five params are gone, and the
+four tune numbers below are now **constants in `latcontrol_vehicle_tunes.py`, not sliders** — so
+§3.5's identification has to be planned before the drive, not adjusted between drives. Card:
+`docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
 
 ---
 
