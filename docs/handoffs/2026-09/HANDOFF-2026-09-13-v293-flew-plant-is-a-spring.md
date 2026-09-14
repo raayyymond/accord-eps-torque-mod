@@ -511,11 +511,11 @@ loop marginal). The plant tables were therefore replaced **in fork code**, the o
 
 | fork `selfdrive/controls/lib/latcontrol_vehicle_tunes.py` | was (V280–V292 rate loop) | **now (V293, route 70)** |
 |---|---|---|
-| `HONDA_ACCORD_EPS_G_V` at [5, 12.5, 18.5, 28.5] m/s (deg/s per unit torque = 1/b) | [120, 95, 85, 70] | **[550, 271, 246, 205]** |
-| `HONDA_ACCORD_EPS_K_V` at [4, 8, 12.5, 18.5, 28.5] m/s (1/s = a/b) | [0.17, 0.28, 0.35, 0.45, 0.50] | **[0.30, 1.00, 2.15, 2.77, 3.15]** |
+| `HONDA_ACCORD_EPS_G_V` at [5, 12.5, 18.5, 28.5] m/s (deg/s per unit torque = 1/b) | [120, 95, 85, 70] | **[550, 271, 246, 167]** |
+| `HONDA_ACCORD_EPS_K_V` at [4, 8, 12.5, 18.5, 28.5] m/s (1/s = a/b) | [0.17, 0.28, 0.35, 0.45, 0.50] | **[0.30, 1.00, 2.30, 2.77, 3.91]** |
 | hold torque per degree k/G at [5, 12.5, 18.5, 28.5] | 0.00165 / 0.00368 / 0.00529 / 0.00714 | **0.00202 / 0.00794 / 0.01125 / 0.01539** |
 
-Fork commit **`8c4051ce6` on `Dom`** (base `4247cb09e`; the old tables kept in the comment for a
+Fork commit **`66cf4454a` on `Dom`** (base `4247cb09e`; the old tables kept in the comment for a
 V282-class image; `test_latcontrol.py` expectations updated — the openpilot test runtime is not
 installable on this host, so the assertions were evaluated on a pure mirror of the function). The
 feedforward consumes only k/G (hold) and 1/G (move), never k alone, so the tables' weak pole does not
@@ -528,7 +528,7 @@ the best toggle-only option and 0.080 / 0.045 / 0.045 / 0.049 for the flown bran
 
 **The rev-2 toggle config** — `analysis-2020accord/reference/toggle-config_V293_torque_mode_r2.json`
 (generator `tools/make_galaxy_toggle_config.py`, 15 keys, a delta; **requires the fork at or after
-`8c4051ce6`**):
+`66cf4454a`**):
 
 | key | rev 1 (flown) | **rev 2** | why |
 |---|---|---|---|
@@ -545,14 +545,14 @@ the best toggle-only option and 0.080 / 0.045 / 0.045 / 0.049 for the flown bran
 
 Predicted on the identified plant (§J/§K, "R2′" adapted to the tables): Ms **1.78** at 15–22 m/s, **≈1.9**
 at >22, **PM 68° / Ms 2.16 at 4.5 m/s** (as flown: −11° / 12.3); 1 m/s² step overshoot **0.48 / 0.38**
-(as flown 1.41 / 1.56, i.e. ÷3–4); FF hold ratio **0.99 / 0.84** at 15–22 / >22 (as flown 1.90 / 2.06);
+(as flown 1.41 / 1.56, i.e. ÷3–4); FF hold ratio **1.01 / 1.00** at 15–22 / >22 (as flown 1.90 / 2.06);
 controller hold stiffness at speed **≈ as flown** (0.0104 / ~0.013 u/deg). ⚠ **Every config, this one
 included, still fails the margin bound at 3 m/s** — the low-speed factor's doing (14.8 added to Kp), and
 the plant there is an extrapolation of the study's weakest cell: read that row as a direction. The
 adversarial pass on the package is `docs/review/ADV-REV2-FORK-PACKAGE-2026-09-13.md`.
 
 🛑 **The mismatch hazard is NOT symmetric and the step order still binds.** The firmware stays V293; the
-fork must be updated on the device to `8c4051ce6` or later **before** the rev-2 config is restored (on the
+fork must be updated on the device to `66cf4454a` or later **before** the rev-2 config is restored (on the
 old tables `AccordRatePlantFF` 1 under-holds ×2.1 above 12 m/s). Reverting the fork side is: restore the
 rev-1 config (`toggle-config_V293_torque_mode.json`), restart. A torque-mode config on a **rate-servo**
 image is over-delivery that **nothing downstream catches** (§7: panda applies no limit to 0xE4) — never
@@ -649,14 +649,16 @@ passes; `b` and `b2` are superseded and say so in their own docstrings.** Output
 - `rlog-tools/studies/grind/v293_ident_n.py`.
 
 **Added after the draft:** `analysis-2020accord/reference/toggle-config_V293_torque_mode_r2.json` (+ `.decoded.json`),
-`tools/make_galaxy_toggle_config.py` (rev-2 entry), fork commit `8c4051ce6` (tables), `docs/review/ADV-REV2-FORK-PACKAGE-2026-09-13.md`,
+`tools/make_galaxy_toggle_config.py` (rev-2 entry), fork commit `66cf4454a` (tables), `docs/review/ADV-REV2-FORK-PACKAGE-2026-09-13.md`,
 the scorer v2 files, the page v7. The kit commit at close-out carries all of it.
 
 ---
 
 ## 12. Open questions and next steps
 
-1. ⭐ **The rev-2 package is the next action**: fork `8c4051ce6` on the device FIRST, then restore
+> **Sample-rate check (operator's question, 2026-09-13 night — measured on route 70's own CAN timestamps):** the steering feedback is **100 Hz**, not 50 — `0x14A` STEERING_SENSORS (angle) and `0x18F` STEER_STATUS (rate, 0.125 deg/s LSB) both arrive at 100.9 Hz median (p5–p95 9.1–11.3 ms), `0xE4` goes out at 100 Hz, and the samples are FRESH each frame (identical consecutive values only 5 % on the rate and 10 % on the angle while moving, equal on both frame parities — a 50 Hz-held value re-sent at 100 Hz would read ~100 % on one parity). Only the **427 torque tap (`0x1AB`) is 50 Hz** (49.7 Hz), and a fork rate loop would not use it. So a 100 Hz rate-feedback term in the fork has a 100 Hz measurement to close on; its delay budget is the openpilot round trip (~20–40 ms) plus the EPS torque-map response, not a sample-rate floor. [EVIDENCE — `r70_v293.npz` timestamps]
+
+1. ⭐ **The rev-2 package is the next action**: fork `66cf4454a` on the device FIRST, then restore
    `toggle-config_V293_torque_mode_r2.json`, restart openpilot (order of §9; checklist in
    `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`). **The drive after it is
    the one that separates the two friction linearisers** — the one thing route 70 structurally could not do.

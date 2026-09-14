@@ -23,7 +23,7 @@ the EPS rate loop is dead on the wire.
 > build, amplitude ×0.43; F7 0.00; tap ripple ×0.10); NOTHING is "fixed" — he scores the symptom. Every one of the
 > four new symptoms traces to the FORK'S MODEL of the plant, not to the firmware: V293 left a SPRING + Coulomb
 > friction (torque → angle) and StarPilot modelled one lateral-accel gain at every speed with no friction. The fix
-> shipped this session is the fork side ONLY — plant tables re-identified in fork code (`Dom` `8c4051ce6`) and a
+> shipped this session is the fork side ONLY — plant tables re-identified in fork code (`Dom` `66cf4454a`) and a
 > rev-2 Galaxy toggle config (`toggle-config_V293_torque_mode_r2.json`: plant FF on, friction 0.011, LAF 14,
 > Kp 0.85, Ki 0.30, learned offset off). The next drive is HIS to score; its instrument is `v293_flight_read.py`
 > v2 with the four symptom rows pre-registered against route 70 and the V282 references.**
@@ -32,7 +32,7 @@ the EPS rate loop is dead on the wire.
 ratchet statistics, the rev-2 package, the risk before the next drive). **Scorer for the NEXT drive:**
 `python rlog-tools/studies/grind/v293_flight_read.py <route id> --config analysis-2020accord/reference/toggle-config_V293_torque_mode_r2.decoded.json`
 (`V293-FLIGHT-READ-HOWTO.md`). **Checklist:** `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md` (fork
-`8c4051ce6` on the device FIRST, then restore the rev-2 config, then restart — on the old tables the plant FF
+`66cf4454a` on the device FIRST, then restore the rev-2 config, then restart — on the old tables the plant FF
 under-holds ×2.1 above 12 m/s). **Authority vs stock, re-verified from the three images at the operator's request:
 peak ×6.17 (2461 vs 399 lane counts, stalled wheel), every authority cell exactly ×6.000, the 2.8 % surplus is the
 P term against the unchanged stock P clamp, median ×4.35 over the demand range — nothing changed.**
@@ -291,7 +291,7 @@ target**; and the StarPilot tuning updated to match.
 | **"torque"** | **Torque mode** — V279's structure on V282: fb clamp 0, Kd 0, Kp re-levelled | ⭐ **BUILT as V293 and FLOWN (route 70).** Cal-only, no cave; the loop is open on the wire; no classic grinding or stuttering per the operator; the plant left is a spring + friction |
 | **"angular acceleration tracking"** | the PID tracks `d(rate)/dt` instead of rate | 🛑 **DOMINATED — recorded, not built.** It **CONTAINS torque mode** and adds electronic inertia on top, and the inertia term **needs a cave** (the kit's only bricking class). Reasoning: `TRACE-2026-09-13-lkas-pid-tracked-quantity.md` §4 |
 | **"StarPilot outputs a rate target"** (fork Design B) | shape the reference on the openpilot side | 🛑 **CANNOT REMOVE THE GRINDING — recorded, not built.** V288 rev 2 flew exactly this class: the cave was live, the D-bind duty fell ×0.03 as designed, **and the grinding was unchanged** (19.99 vs 19.93 Hz, KS p 0.18). Nothing on the fork's reference side reaches the 20 Hz ring |
-| **"the tuning updated"** (goal amended 2026-09-13: *and address my route 70 feedback* — ratchety, loose, oversteer, overshoot-then-correct) | the fork's plant model + a toggle config | ⭐ **Rev 1** (`toggle-config_V293_torque_mode.json`: rate-plant FF off, Kp 0.3, Ki 0.15, friction 0.00, LAF 6.0) flew on route 70 and identified the plant. **Rev 2 = the fork's Accord plant tables re-identified in CODE (`Dom` `8c4051ce6`, the only place the shape lives: no single `AccordEpsSpringScale` fits both below 8 m/s and above 12) + `toggle-config_V293_torque_mode_r2.json`** (plant FF on, friction 0.011, LAF 14, Kp 0.85, Ki 0.30, learned offset off, delay 0.2). Each symptom has a cause, a fix and an instrument (scorer v2 §7) |
+| **"the tuning updated"** (goal amended 2026-09-13: *and address my route 70 feedback* — ratchety, loose, oversteer, overshoot-then-correct) | the fork's plant model + a toggle config | ⭐ **Rev 1** (`toggle-config_V293_torque_mode.json`: rate-plant FF off, Kp 0.3, Ki 0.15, friction 0.00, LAF 6.0) flew on route 70 and identified the plant. **Rev 2 = the fork's Accord plant tables re-identified in CODE (`Dom` `66cf4454a`, the only place the shape lives: no single `AccordEpsSpringScale` fits both below 8 m/s and above 12) + `toggle-config_V293_torque_mode_r2.json`** (plant FF on, friction 0.011, LAF 14, Kp 0.85, Ki 0.30, learned offset off, delay 0.2). Each symptom has a cause, a fix and an instrument (scorer v2 §7) |
 
 ### ⏱ τ, MEASURED — and "τ = 0.20 s" was never a measurement
 
@@ -364,7 +364,7 @@ conditional on **τ ≥ 0.18 s**, and **τ = 0.20 s is the operator's `SteerDela
 identified** (the Honda port's prior is 0.10 s) — being measured from the rlogs now. **This is a fork fact,
 not a firmware fact: it is live on V282 today and it does not depend on which image is in the ECU.**
 
-### FORK (`raayyymond-StarPilot` @ `Dom`) — REV 2: the plant tables in CODE (`8c4051ce6`) + a toggle config; rev 1 flew and identified the plant
+### FORK (`raayyymond-StarPilot` @ `Dom`) — REV 2: the plant tables in CODE (`66cf4454a`) + a toggle config; rev 1 flew and identified the plant
 
 **What the fork computes** is mapped end to end in `docs/research/FORK-LATERAL-PATH-V293-2026-09-13.md` (100 Hz;
 `lat_delay` = `SteerDelay` + 0.1 = 0.30 s flat; the setpoint is a complementary filter that is the 0.30 s-delayed
@@ -378,14 +378,14 @@ plant has — with tables that were identified on the V280–V292 RATE loop and 
 
 **Rev 2, shipped 2026-09-13 night** (`docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`;
 `docs/review/ADV-REV2-FORK-PACKAGE-2026-09-13.md` is the adversarial pass on it):
-- **Fork CODE — `Dom` `8c4051ce6`** (two commits: `9622aee9f` the tables, `8c4051ce6` the low-speed knots after the adversarial pass; `selfdrive/controls/lib/latcontrol_vehicle_tunes.py`): `HONDA_ACCORD_EPS_G_V`
-  [120, 95, 85, 70] → **[550, 271, 246, 205]**, `HONDA_ACCORD_EPS_K_V` [0.17, 0.28, 0.35, 0.45, 0.50] →
-  **[0.30, 1.00, 2.15, 2.77, 3.15]** (G = 1/b, k = a/b, hold k/G = a = 0.00086/0.00794/0.01125/0.01539 (0.00055 at ≤ 4 m/s, 0.0023 at 8) u/deg at
+- **Fork CODE — `Dom` `66cf4454a`** (three commits: `9622aee9f` the tables, `8c4051ce6` the low-speed knots after the adversarial pass, `66cf4454a` the knot placement (measured values at the band centres); `selfdrive/controls/lib/latcontrol_vehicle_tunes.py`): `HONDA_ACCORD_EPS_G_V`
+  [120, 95, 85, 70] → **[550, 271, 246, 167]**, `HONDA_ACCORD_EPS_K_V` [0.17, 0.28, 0.35, 0.45, 0.50] →
+  **[0.30, 1.00, 2.30, 2.77, 3.91]** (G = 1/b, k = a/b, hold k/G = a = 0.00085/0.0074/0.0116/0.0154 at the band centres 4.9/12.0/18.9/22.8 m/s (0.00055 at ≤ 4, 0.0023 at 8; the 28.5 knot extrapolated so the table lands on the measurement at 22.8 instead of under-holding by 16 % there) u/deg at
   5/12.5/18.5/28.5 m/s; 4–5 m/s BELIEF and conservative; 28.5 extrapolated; old tables kept in the comment;
   `test_latcontrol.py` updated). **Why code and not a scale:** the old tables need ×1.2 at 5 m/s and ×2.1 from
   12.5 m/s up — a single `AccordEpsSpringScale` right at speed over-holds ~2.1× below 8 m/s, the dangerous
   direction. Replay residual vs the torque the plant needed: **0.042/0.042/0.007/0.010** by band (toggle-only best
-  0.210/0.037/0.031/0.021; the flown branch 0.080/0.045/0.045/0.049); hold ratio **~0.5/0.94/0.99/0.84** (the 1–8 band re-bounded by the adversary: the joint fit's 1.19 rested on a knot 2.4× above route 70's own hands-off bound).
+  0.210/0.037/0.031/0.021; the flown branch 0.080/0.045/0.045/0.049); hold ratio **~0.5/0.97/1.01/1.00** at the band centres (the 1–8 band re-bounded by the adversary: the joint fit's 1.19 rested on a knot 2.4× above route 70's own hands-off bound).
 - **Toggle config — `analysis-2020accord/reference/toggle-config_V293_torque_mode_r2.json`** (15 keys, a delta;
   generator `tools/make_galaxy_toggle_config.py`): `AccordRatePlantFF` **1** · `AccordEpsSpringScale` /
   `AccordEpsGainScale` **1.0** · `AccordFFRateGain` **0.5** (1/G is the measured viscous term, but at 1.0 the move term on a planner-limited reference drove the FF past full scale below 8 m/s on route 70's demand — ADV-REV2 finding 2) · `SteerFriction`
@@ -395,12 +395,12 @@ plant has — with tables that were identified on the V280–V292 RATE loop and 
   0.6× at speed) · `KeepLearnedLatAccelOffset` **0** (drops the −0.07 m/s² restored, never-revalidated learned offset; ⚠ the +0.41 m/s²
   of the command-vs-`f` gap is ROLL compensation — a persistent +2.4° estimated roll no toggle touches) · `SteerDelay` 0.2 / `UseAutoSteerDelay` 0 · pins as rev 1.
 - **Predicted on the identified plant:** Ms 1.78 (15–22) / ≈1.9 (>22); step overshoot 0.48/0.38 (flown 1.41/1.56);
-  FF hold ratio 0.99/0.84 (flown 1.90/2.06); **every config still fails the margin bound at 3 m/s** (the low-speed
+  FF hold ratio 1.01/1.00 (flown 1.90/2.06); **every config still fails the margin bound at 3 m/s** (the low-speed
   factor; direction, not magnitude). What would falsify it on the next drive: tracking gain 0.88/1.02/1.12 → 1.00;
   integrator share 0.38 → ≪; straight-line delivery 80 % → 90–110; dwells/min at th 0.25 → ≤ 3× r6c; concentration
   0.468 → ≤ 0.40; 1–4 Hz prominence < 3 dB. If friction + FF move the ratchet but not the tracking (or the reverse),
   the two causes separate — the one thing route 70 could not do.
-- 🛑 **ORDER:** fork `8c4051ce6` on the device FIRST, then restore the rev-2 config, then restart openpilot. The
+- 🛑 **ORDER:** fork `66cf4454a` on the device FIRST, then restore the rev-2 config, then restart openpilot. The
   firmware stays V293. Fork-side revert = restore rev 1 (`toggle-config_V293_torque_mode.json`) + restart. A torque
   config on a **rate-servo** image is over-delivery nothing downstream catches — never; **Safe Mode resets these
   keys** (a route out, never in). **Rev 1 + V293 is the flown state** (loose/ratchety, not unsafe).
@@ -410,7 +410,8 @@ plant has — with tables that were identified on the V280–V292 RATE loop and 
   taken under `ForceAutoTuneOff`, its OFFSET was (rev 1) and is not (rev 2); `ModelCurvatureLead` is not in the fork
   (patch preserved); the cereal slot collisions (`@137`, `@116`) still require the scorer's patched schema.
 - **Not done, deliberately:** no 100 Hz rate-feedback term in the fork yet (rung 2 of the design note — only if the
-  snap statistic does not fall); no reshape of the low-speed factor (code; only if 3–8 m/s stays marginal on the
+  snap statistic does not fall; ✅ the operator's 50 Hz worry was CHECKED: `0x14A`/`0x18F` are 100 Hz with fresh samples
+  every frame on route 70, only the `0x1AB` tap is 50 Hz — the design note carries the measurement); no reshape of the low-speed factor (code; only if 3–8 m/s stays marginal on the
   rev-2 drive); no firmware change.
 
 ### CORRECTIONS OF RECORD, 2026-09-13 (late)
@@ -519,7 +520,7 @@ plant has — with tables that were identified on the V280–V292 RATE loop and 
    "×33–72 engagement gating" is a presence RATE and the amplitude ratio is ×4.5.
 
 ### ✈ NEXT — in order
-1. ⭐ **THE OPERATOR FLIES REV 2 (his call):** device fork → `8c4051ce6`, restore `toggle-config_V293_torque_mode_r2.json`,
+1. ⭐ **THE OPERATOR FLIES REV 2 (his call):** device fork → `66cf4454a`, restore `toggle-config_V293_torque_mode_r2.json`,
    restart; drive the same kind of route as route 70 (low-speed manoeuvres, a motorway stretch, a few hard
    transients); score with `v293_flight_read.py <route> --config …_r2.decoded.json`; **he scores the four symptoms in
    his words.** Revert triggers unchanged (darty/loose, one-sided pull, oscillation, grinding) plus "ratchet worse

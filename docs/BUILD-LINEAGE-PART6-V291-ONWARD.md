@@ -43,7 +43,7 @@ calibration edit, and state the cell's on-car result. FALSIFIED ≠ INERT-BY-MOD
 > smoother); the low-speed loop had PM −11° from the hard-coded low-speed factor. **Authority vs stock, re-verified
 > from the three images:** peak ×6.17 (2461 vs 399 lane counts), every authority cell exactly ×6.000, median ×4.35 —
 > nothing changed. **Disposition: V293 STAYS IN THE CAR; the fix is the FORK — plant tables re-identified in code
-> (Dom `8c4051ce6`) + the rev-2 toggle config (`toggle-config_V293_torque_mode_r2.json`: plant FF on, friction 0.011,
+> (Dom `66cf4454a`) + the rev-2 toggle config (`toggle-config_V293_torque_mode_r2.json`: plant FF on, friction 0.011,
 > LAF 14, Kp 0.85, Ki 0.30, offset off).** Handoff `HANDOFF-2026-09-13-v293-flew-plant-is-a-spring.md`.
 
 **Class — V279 rev 2's STRUCTURE (2026-09-02, built, never flown) REBASED ONTO V282: the LKAS lane stops

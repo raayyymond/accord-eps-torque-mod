@@ -34,6 +34,7 @@ With `J·α = T − c·ω − k(v)·θ − F·sign ω` (J not identifiable below
    references — a pre-registered fall from 0.47 toward 0.33–0.35 at q75–90.
 2. **Fork, code:** a 100 Hz rate-feedback term (`torque += K_v·(ω_des − ω)` from `carState.steeringRateDeg`),
    crossover a few Hz — no firmware. Only if rung 1 leaves the snap statistic where it is.
+   **Sample-rate check (operator's question, 2026-09-13 night — measured on route 70's own CAN timestamps):** the steering feedback is **100 Hz**, not 50 — `0x14A` STEERING_SENSORS (angle) and `0x18F` STEER_STATUS (rate, 0.125 deg/s LSB) both arrive at 100.9 Hz median (p5–p95 9.1–11.3 ms), `0xE4` goes out at 100 Hz, and the samples are FRESH each frame (identical consecutive values only 5 % on the rate and 10 % on the angle while moving, equal on both frame parities — a 50 Hz-held value re-sent at 100 Hz would read ~100 % on one parity). Only the **427 torque tap (`0x1AB`) is 50 Hz** (49.7 Hz), and a fork rate loop would not use it. So a 100 Hz rate-feedback term in the fork has a 100 Hz measurement to close on; its delay budget is the openpilot round trip (~20–40 ms) plus the EPS torque-map response, not a sample-rate floor. [EVIDENCE — `r70_v293.npz` timestamps]
 3. **Firmware:** an angle loop (electronic spring). A **cave** — the kit's only bricking class — with the
    two GATES of `BUILD-LINEAGE.md` Part 2. After rung 2, never before.
 4. **Never:** an angular-acceleration loop; a half-open fb clamp.

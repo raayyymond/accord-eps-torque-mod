@@ -122,7 +122,7 @@ there — and the guard is on the denominator only, so it cannot bias the estima
 
 🛑 **The rev-2 config sets `AccordEpsSpringScale` 1.0 and `AccordEpsGainScale` 1.0 not because no
 correction is wanted, but because the correction moved into fork code.**
-`HONDA_ACCORD_EPS_G_V` → `[550, 271, 246, 205]` and `_K_V` → `[0.93, 1.64, 2.15, 2.77, 3.15]` were
+`HONDA_ACCORD_EPS_G_V` → `[550, 271, 246, 167]` and `_K_V` → `[0.93, 1.64, 2.15, 2.77, 3.15]` were
 replaced on Dom at **9622aee9f**. Fly the rev-2 config on **4247cb09e** and those scales multiply the
 *old* tables — the plant feedforward the identification measured as 1.4–2.6× too small — and **every
 other gate would pass a silently wrong drive**.

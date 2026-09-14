@@ -38,11 +38,11 @@ XOR_KEY = "s8#pL3*Xj!aZ@dWq", character-wise).  The codec is checked here agains
 
 REV 2 (2026-09-13, after the first V293 drive, route 70 -- `V293-PLANT-IDENT-2026-09-13.md`): the plant is a
 SPRING + Coulomb friction, and the fork's own spring feedforward (the `AccordRatePlantFF` branch) is the right
-SHAPE once its tables are re-identified -- which is fork CODE (commit 8c4051ce6 on Dom: HONDA_ACCORD_EPS_G_V /
+SHAPE once its tables are re-identified -- which is fork CODE (commit 66cf4454a on Dom: HONDA_ACCORD_EPS_G_V /
 K_V; the 4 m/s knot bounded by route 70's own hands-off data, ADV-REV2 finding 3), because no single
 AccordEpsSpringScale fits both below 8 m/s and above 12 m/s.  The rev-2 delta then:
 
-    AccordRatePlantFF   False -> True    the spring feedforward, on the V293 tables (fork >= 8c4051ce6 REQUIRED)
+    AccordRatePlantFF   False -> True    the spring feedforward, on the V293 tables (fork >= 66cf4454a REQUIRED)
     AccordEpsSpringScale / AccordEpsGainScale 1.0   the tables carry the identification; scales stay unity
     AccordFFRateGain    0.5 (pinned)     with the V293 tables 1/G IS the measured viscous term, but the move term is fed
                                          a planner-limited reference: at 1.0 the FF alone passed full scale for 0.34 s
@@ -115,7 +115,7 @@ RATE_SERVO_REVERT = {
     "AccordTurnFFTaper": False,
 }
 
-# REV 2 -- the retune from the first V293 drive (route 70).  REQUIRES the fork at or after Dom 8c4051ce6
+# REV 2 -- the retune from the first V293 drive (route 70).  REQUIRES the fork at or after Dom 66cf4454a
 # (the re-identified HONDA_ACCORD_EPS_G_V / K_V tables); on the old tables AccordRatePlantFF True under-holds
 # x2.1 above 12 m/s.  Every value is a plain existing param; the scorer reads this file's decoded copy.
 TORQUE_MODE_R2 = {

@@ -6,11 +6,11 @@ V293, restore the rev-1 config) is what route 70 flew; it is kept below as the f
 
 | file | what it is |
 |---|---|
-| fork `Dom` **`8c4051ce6`** (two commits: `9622aee9f` "EPS plant tables re-identified on the V293 torque-mode firmware" + `8c4051ce6` "low-speed hold knots bounded by route 70's own hands-off data") | `HONDA_ACCORD_EPS_G_V` / `K_V` re-identified for the spring plant V293 left; old tables in the comment |
+| fork `Dom` **`66cf4454a`** (three commits: `9622aee9f` the tables + `8c4051ce6` the low-speed knots + `66cf4454a` the knot placement) | `HONDA_ACCORD_EPS_G_V` / `K_V` re-identified for the spring plant V293 left; old tables in the comment |
 | `analysis-2020accord/reference/toggle-config_V293_torque_mode_r2.json` | **the rev-2 config** (15 keys, a delta) — Galaxy → Settings → toggle backup → Restore |
 | `…/toggle-config_V293_torque_mode_r2.decoded.json` | the same, readable; the scorer's `--config` argument |
 | `…/toggle-config_V293_torque_mode.json` | **rev 1** (flown on route 70): the fork-side revert |
-| `…/toggle-config_V282_rate_servo_REVERT.json` | the installed rate-servo tune — only with a V282-class image AND the old tables (fork revert of `8c4051ce6`) |
+| `…/toggle-config_V282_rate_servo_REVERT.json` | the installed rate-servo tune — only with a V282-class image AND the old tables (fork revert of `66cf4454a`) |
 | `tools/make_galaxy_toggle_config.py` | regenerates all of them; `--decode <file>` prints any Galaxy backup |
 | `rlog-tools/studies/grind/v293_flight_read.py` (v2) | the scorer for the drive; `V293-FLIGHT-READ-HOWTO.md` explains every row |
 
@@ -23,8 +23,8 @@ image (V282/V292) is over-delivery that nothing downstream catches — never cre
 
 ## A. Going to REV 2 (V293 stays in the ECU)
 
-1. **Update the fork on the device to `Dom` ≥ `8c4051ce6`** (his usual pull/install). Confirm on the device:
-   `git -C /data/openpilot log -1 --oneline` shows `8c4051ce6` or later, and
+1. **Update the fork on the device to `Dom` ≥ `66cf4454a`** (his usual pull/install). Confirm on the device:
+   `git -C /data/openpilot log -1 --oneline` shows `66cf4454a` or later, and
    `grep HONDA_ACCORD_EPS_G_V /data/openpilot/selfdrive/controls/lib/latcontrol_vehicle_tunes.py` shows `550.0`.
 2. **Galaxy → Settings → toggle backup → Restore → `toggle-config_V293_torque_mode_r2.json`.** It applies exactly
    these 15 keys and touches nothing else:
@@ -45,7 +45,7 @@ not unsafe). The tables commit can stay; rev 1 has `AccordRatePlantFF` 0, so the
 ## C. Reverting the EPS to V282/V292 (rate servo)
 
 1. Restore `toggle-config_V282_rate_servo_REVERT.json` **and** put the fork back on the old tables
-   (`git revert 8c4051ce6` on `Dom`, or check out `4247cb09e`) — the REVERT config has `AccordRatePlantFF` 1 and
+   (`git revert 66cf4454a` on `Dom`, or check out `4247cb09e`) — the REVERT config has `AccordRatePlantFF` 1 and
    the rate-servo tune wants the rate-loop tables. Restart.
 2. Kill openpilot (`tmux kill-server`), flash the V282 rwd (the operator names file + bus; nothing here does it).
 

@@ -56,8 +56,8 @@ G_OLD = [120, 95, 85, 70]
 # (ADV-REV2-FORK-PACKAGE) bounded the hold below 8 m/s from route 70's own hands-off frames
 # (251 deg held at |u| <= 0.163, which with Coulomb 0.012 gives <= 0.0007 torque/deg) and the
 # fit's 0.93 / 1.64 knots sat 2.4x above that bound.
-K_NEW = [0.30, 1.00, 2.15, 2.77, 3.15]
-G_NEW = [550, 271, 246, 205]
+K_NEW = [0.30, 1.00, 2.30, 2.77, 3.91]   # fork Dom 66cf4454a: 12.5 and 28.5 knots placed so the interpolation hits the band CENTRES (12.0, 22.8 m/s)
+G_NEW = [550, 271, 246, 167]
 BOUNDED_ABOVE = 8.0  # below this the new curve is bounded by measurement, not fitted to it
 MEAS = [  # v, a (torque per degree), CI lo, CI hi
     (4.93, 0.00228, 0.00089, 0.00657),
@@ -133,7 +133,7 @@ FFR = [  # label, colour var, values
     ("lat-accel FF &#183; as flown", "var(--v282)", [0.650, 1.140, 1.901, 2.057]),
     ("old tables &#215;3.3", "var(--stock)", [3.20, 1.52, 1.54, 1.29]),
     ("old tables &#215;2.15", "var(--v292)", [2.09, 0.99, 1.00, 0.84]),
-    ("new tables &#183; rev 2", "var(--v293)", [1.19, 0.94, 0.99, 0.84]),
+    ("new tables &#183; rev 2", "var(--v293)", [0.50, 0.97, 1.01, 1.00]),
 ]
 
 
@@ -144,8 +144,8 @@ def fig2():
     sy = lambda v: y1 - v / ymax * (y1 - y0)
     o = [f'<svg viewBox="0 0 {W} {H}" role="img" class="chartw" aria-label="Feedforward hold '
          'ratio by speed band for four configurations. The flown lateral-acceleration '
-         'feedforward reaches 1.90 and 2.06 above 15 metres per second; the new tables sit '
-         'between 0.84 and 1.19 in every band.">']
+         'feedforward reaches 1.90 and 2.06 above 15 metres per second; the shipped tables sit '
+         'at 0.97-1.01 from 8 m/s up and about 0.5 below 8, bounded by route 70 (the safe direction).">']
     o.append(hgrid(x0, x1, [0, 1, 2, 3], sy, "{:.0f}"))
     gw = (x1 - x0) / 4
     bw = gw * 0.175
@@ -529,9 +529,9 @@ def fig7():
 
     o.append(box(470, 132, 350, 92, "plant feedforward &#183; switched ON", (
         "hold = k(v)/G(v) &#183; angle_des",
-        "move = rate_des/G(v) &#183; AccordFFRateGain 1.0",
-        "K_V [0.93, 1.64, 2.15, 2.77, 3.15]",
-        "G_V [550, 271, 246, 205]"), "n2 edit"))
+        "move = rate_des/G(v) &#183; AccordFFRateGain 0.5",
+        "K_V [0.30, 1.00, 2.30, 2.77, 3.91]",
+        "G_V [550, 271, 246, 167]"), "n2 edit"))
     # No label on this feed: the box it enters already names `angle_des`, and a caption here
     # collided with both the friction branch and the feedback return.
     o.append(arrow([(330, 88), (350, 88), (350, 178), (470, 178)]))

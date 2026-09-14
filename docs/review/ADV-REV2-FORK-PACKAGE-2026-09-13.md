@@ -8,11 +8,11 @@ a2b_margins,a3_r70_replay,a4_sim,a5_transients,a6_bounds,a7_lowspeed}.py`.
 
 > **DISPOSITION (orchestrator, 2026-09-13 night) — applied before the package was offered:** finding 1 → the on-disk config is the
 > intended one (LAF 14 / Kp 0.85 / Ki 0.30 / friction 0.011; every document, the scorer and the page now agree; `UseAutoSteerDelay` 0
-> kept). Finding 2 → `AccordFFRateGain` 1.0 → **0.5** (config regenerated). Finding 3 → fork commit `8c4051ce6` lowers the low-speed
-> knots: `HONDA_ACCORD_EPS_K_V` [0.93, 1.64, …] → **[0.30, 1.00, 2.15, 2.77, 3.15]** (hold 0.00055 / 0.00086 / 0.0023 / 0.0041 per deg at
+> kept). Finding 2 → `AccordFFRateGain` 1.0 → **0.5** (config regenerated). Finding 3 → fork commit `66cf4454a` lowers the low-speed
+> knots: `HONDA_ACCORD_EPS_K_V` [0.93, 1.64, …] → **[0.30, 1.00, 2.30, 2.77, 3.91]** (hold 0.00055 / 0.00086 / 0.0023 / 0.0041 per deg at
 > ≤4 / 5 / 8 / 10 m/s — 25 % over the route-70 bound at 5, 25 % under the v² extrapolation at 8–10). Finding 4 recorded as the
 > expected low-speed 'loose' cost. Finding 14 → the `−(p+i+f)/output = SteerLatAccel` identity added to the scorer's attribution
-> block; the f/D gate was already retired by scorer v2. Findings 11/13 → checklist (device fork ≥ `8c4051ce6`; a stale params module
+> block; the f/D gate was already retired by scorer v2. Findings 11/13 → checklist (device fork ≥ `66cf4454a`; a stale params module
 > shows up as absent keys in `initData`). Verdict carried: **FLY-WITH-CHANGE, changes applied.**
 
 

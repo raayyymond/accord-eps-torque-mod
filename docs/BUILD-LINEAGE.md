@@ -252,7 +252,7 @@ Slot 7 only (X 0,32,36,44,88 · Y 248,248,512,512,248) — the other 27 records 
 
 ### V293 — TORQUE MODE on the V282 base (the LKAS rate feedback clamped to zero) — 🛑 **THE ENTRY IS IN [`docs/BUILD-LINEAGE-PART6-V291-ONWARD.md`](BUILD-LINEAGE-PART6-V291-ONWARD.md)**
 
-**Stub so `grep V293` lands here.** ✈ **FLEW 2026-09-13 (route 70) — no grinding/stutter per the operator; ratchety snapping, loose, oversteer, overshoot-then-correct; the plant is a SPRING + Coulomb friction; the fix is the FORK (tables in code `8c4051ce6` + rev-2 toggle config) — full entry in PART6.** Pre-flight: **BUILT — 🛑 CLEARED AS THE FLIGHT CANDIDATE
+**Stub so `grep V293` lands here.** ✈ **FLEW 2026-09-13 (route 70) — no grinding/stutter per the operator; ratchety snapping, loose, oversteer, overshoot-then-correct; the plant is a SPRING + Coulomb friction; the fix is the FORK (tables in code `66cf4454a` + rev-2 toggle config) — full entry in PART6.** Pre-flight: **BUILT — 🛑 CLEARED AS THE FLIGHT CANDIDATE
 OVER ONE DISSENT (B2 as written).** A/C/D PASS; B1, B3, B4, B5, B7 PASS, B8 reported; **B2 and B6 FAIL AS
 WRITTEN and both are adjudicated.** V282 is the fallback, the fork preset is MANDATORY, the first drive is
 an IDENTIFICATION drive, and the low-speed 1–4 Hz signature is the first revert trigger. **The decision to
