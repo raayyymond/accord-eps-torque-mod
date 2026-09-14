@@ -1,191 +1,87 @@
-# EPS torque mode — the checklist for a V293 drive, and for reverting
+# EPS torque mode — the checklist for the REV-2 drive (fork tables + toggle config), and for reverting
 
-**2026-09-13, third and final form.** The fork side is a **Galaxy toggle config**, nothing more:
+**Updated 2026-09-13 night, after the first V293 drive (route 70).** The firmware **stays V293**; nothing is flashed.
+What changes is the FORK: its Accord plant tables (code) and a rev-2 toggle config. Rev 1 of this checklist (flash
+V293, restore the rev-1 config) is what route 70 flew; it is kept below as the fork-side revert.
 
-| file (`analysis-2020accord/reference/`) | what it does |
+| file | what it is |
 |---|---|
-| **`toggle-config_V293_torque_mode.json`** | the torque-mode tune: `AccordRatePlantFF` **0**, `SteerKP` **0.3**, `AccordTorqueKi` **0.15**, `SteerFriction` **0.00**, `SteerLatAccel` 6.0, plus five pins that are already your values (`ForceAutoTuneOff` 1, `ForceAutoTune` 0, `AdvancedLateralTune` 1, `KeepLearnedLatAccelOffset` 1, `AccordTurnFFTaper` 0) |
-| **`toggle-config_V282_rate_servo_REVERT.json`** | the installed rate-servo tune, exactly as your 2026-09-10 backup and route 6f's `initData` carry it (`AccordRatePlantFF` 1, `SteerKP` 0.9, `AccordTorqueKi` 0.30, `SteerFriction` 0.01, `SteerLatAccel` 6.0) |
-| `*.decoded.json` beside each | the same ten keys, readable |
-| `tools/make_galaxy_toggle_config.py` | regenerates both; the codec is checked against your own 2026-09-10 backup before anything is written |
-
-Both files are **deltas** on purpose: Galaxy's restore applies exactly the keys in the file and leaves every
-other setting alone. Restoring your full 2026-09-10 backup instead would drag `SteerRatio` back to 16.33
-and `LaneChangeSmoothing` to 6 (route 6f shows you have since moved them to 16.88 and 4).
-
-**There is no fork code for this.** The preset param (`AccordEpsTorqueMode`) and the Testing Ground 9 slot
-that each shipped earlier on 2026-09-13 were both rejected and the fork commit was force-removed; Dom
-`4247cb09e` carries nothing torque-mode-specific, and `starpilotLateralState.epsTorqueMode` never
-shipped. If a device still shows an "Accord: EPS Torque Mode" toggle or a Testing Ground slot 9, it is
-running a stale fork build.
-
----
+| fork `Dom` **`8c4051ce6`** (two commits: `9622aee9f` "EPS plant tables re-identified on the V293 torque-mode firmware" + `8c4051ce6` "low-speed hold knots bounded by route 70's own hands-off data") | `HONDA_ACCORD_EPS_G_V` / `K_V` re-identified for the spring plant V293 left; old tables in the comment |
+| `analysis-2020accord/reference/toggle-config_V293_torque_mode_r2.json` | **the rev-2 config** (15 keys, a delta) — Galaxy → Settings → toggle backup → Restore |
+| `…/toggle-config_V293_torque_mode_r2.decoded.json` | the same, readable; the scorer's `--config` argument |
+| `…/toggle-config_V293_torque_mode.json` | **rev 1** (flown on route 70): the fork-side revert |
+| `…/toggle-config_V282_rate_servo_REVERT.json` | the installed rate-servo tune — only with a V282-class image AND the old tables (fork revert of `8c4051ce6`) |
+| `tools/make_galaxy_toggle_config.py` | regenerates all of them; `--decode <file>` prints any Galaxy backup |
+| `rlog-tools/studies/grind/v293_flight_read.py` (v2) | the scorer for the drive; `V293-FLIGHT-READ-HOWTO.md` explains every row |
 
 ## 🛑 THE ONE RULE
 
-> **The torque config may be live only while a TORQUE-MAP EPS image (V293 or later) is in the ECU.**
-> Every step order below is just that rule applied to the two directions.
+**The rev-2 config presumes the rev-2 tables.** `AccordRatePlantFF` 1 on the OLD tables under-holds ×2.1 above
+12 m/s (the integrator would carry half the turn); on the new tables it is the identified plant. So the ORDER is:
+**fork first, config second, restart third.** And, unchanged from rev 1: a torque-mode config on a **rate-servo**
+image (V282/V292) is over-delivery that nothing downstream catches — never create that state.
 
-The two mismatches are **not symmetric**:
+## A. Going to REV 2 (V293 stays in the ECU)
 
-| state | what the fork does | consequence |
-|---|---|---|
-| torque config + **rate-servo** image (V282/V292, stock) | the plain lateral-accel feedforward, sized for a torque actuator, fed to a rate servo | 🛑 **OVER-DELIVERY.** Feedforward **×2.55** at 15 m/s / 0.9 m/s² — measured from the fork code, inside the record's 2.4–4.3× band. Nothing downstream catches it: `opendbc/safety/modes/honda.h` applies **no** magnitude, rate, driver-torque or RT-window limit to `0xE4`. |
-| installed tune + **torque-map** image (V293) | the rate-plant feedforward, i.e. the inverse of a servo that is no longer there | 🛑 **Not simple sluggishness.** On a held curve V293 delivers ~½ the torque per command below demand index 116, so the feedforward starves and the integrator carries the shortfall; on turn-in V293 never backs off and the rate runs **×3.17** what the geometry asks at 5 m/s (×1.46 at 12.5, ×0.95 at 28.5 — B6's back-solve). Opposite-direction errors minutes apart. Recoverable, not safe. |
+1. **Update the fork on the device to `Dom` ≥ `8c4051ce6`** (his usual pull/install). Confirm on the device:
+   `git -C /data/openpilot log -1 --oneline` shows `8c4051ce6` or later, and
+   `grep HONDA_ACCORD_EPS_G_V /data/openpilot/selfdrive/controls/lib/latcontrol_vehicle_tunes.py` shows `550.0`.
+2. **Galaxy → Settings → toggle backup → Restore → `toggle-config_V293_torque_mode_r2.json`.** It applies exactly
+   these 15 keys and touches nothing else:
+   `AccordRatePlantFF` 1 · `AccordEpsSpringScale` 1.0 · `AccordEpsGainScale` 1.0 · `AccordFFRateGain` 0.5 ·
+   `SteerFriction` 0.011 · `SteerLatAccel` 14.0 · `SteerKP` 0.85 · `AccordTorqueKi` 0.30 ·
+   `KeepLearnedLatAccelOffset` 0 · `SteerDelay` 0.2 · `UseAutoSteerDelay` 0 · `ForceAutoTuneOff` 1 ·
+   `ForceAutoTune` 0 · `AdvancedLateralTune` 1 · `AccordTurnFFTaper` 0.
+3. **Restart openpilot** (most keys broadcast at ~1 Hz, but the restart is what makes `initData.params` — the
+   scorer's attribution — carry the config from segment 0).
+4. Drive. **Watch the first 30 s at low speed** — the least-known band (the tables' 4–5 m/s knots are conservative
+   guesses; the loop there is marginal by design of the fork's low-speed factor, not of this config).
 
-⇒ **Never create the first row, not even for the drive to the flashing spot.** The second row is the
-*less bad* of the two — prefer it in every transition window, and do not linger in it.
+## B. Fork-side revert (V293 stays)
 
----
+Restore **`toggle-config_V293_torque_mode.json`** (rev 1) and restart — the state route 70 flew (loose, ratchety,
+not unsafe). The tables commit can stay; rev 1 has `AccordRatePlantFF` 0, so they are inert.
 
-## A. Going TO V293 (torque map)
+## C. Reverting the EPS to V282/V292 (rate servo)
 
-**Order: FLASH FIRST, RESTORE THE CONFIG SECOND.**
+1. Restore `toggle-config_V282_rate_servo_REVERT.json` **and** put the fork back on the old tables
+   (`git revert 8c4051ce6` on `Dom`, or check out `4247cb09e`) — the REVERT config has `AccordRatePlantFF` 1 and
+   the rate-servo tune wants the rate-loop tables. Restart.
+2. Kill openpilot (`tmux kill-server`), flash the V282 rwd (the operator names file + bus; nothing here does it).
 
-1. **Kill openpilot** (`tmux kill-server` on the comma device) — mandatory before any flash.
-2. **Flash V293** and verify the part number and the image hash. Name the `.rwd` file and the bus out loud
-   before starting; do not flash from this card.
-3. **Confirm the flash took** before the car moves again.
-4. **Only now**, Galaxy → toggle backup → **Restore** → upload `toggle-config_V293_torque_mode.json`. Galaxy
-   answers *"Restored 10 toggle settings."* — if it says any were skipped as incompatible, stop and read
-   which.
-5. **Restart openpilot** (reboot the device). `controlsd` reads the tune at start.
-6. **Leave everything else exactly as it is.** `SteerRatio` stays 16.88 (the map's nominal, scale 1.0000);
-   `AccordEpsGainScale`, `AccordEpsSpringScale` and `AccordFFRateGain` are inert with the rate-plant branch
-   off; `AccordTurnFFTaper` is pinned off by the config.
-7. Verify §C before driving.
+## D. Verifying the state — from the wire
 
-## B. Reverting to V282/V292 (rate servo)
+`python rlog-tools/studies/grind/v293_flight_read.py <route id> --config analysis-2020accord/reference/toggle-config_V293_torque_mode_r2.decoded.json`
 
-**Order: RESTORE THE REVERT CONFIG FIRST, FLASH SECOND.** The mirror image, for the same reason: the window
-between the two steps must never be "torque config + rate servo".
+Section 0 must show: every config key matching in `initData.params`; `GitCommit` ≠ `4247cb09e` (the tables commit
+or later); **Kp at 100 Hz = 0.85** (`torqueState.p/error`, the read that survives a mid-route change); the **branch
+identity LIVE** (`torqueState.f` ≠ `starpilotLateralState.feedforward` on active frames — they are equal only in
+the lat-accel branch); `latAccelOffset` effectively 0. Section 1 must still HOLD (the EPS map is on the wire: the
+firmware did not change). Then §7 — the four symptom rows against route 70 and the V282 references.
 
-1. Galaxy → toggle backup → **Restore** → `toggle-config_V282_rate_servo_REVERT.json`. Restart openpilot.
-2. Confirm §C reads the installed tune (Kp 0.9, rate-plant FF on).
-3. **Kill openpilot**, flash V282 (or V292), verify.
+## E. What this drive decides, and the revert triggers
 
-**If you are ever unsure which way round you are:** restore the REVERT config. The installed tune is safe
-on a rate servo and merely under-driven on the torque map.
+- **Ratchety snapping** → dwells/min at th 0.25 deg/s (route 70: 15.2/7.7/4.6/1.2 by band; r6c 0.39/0.64/0.44/0.20)
+  and the rate-magnitude concentration (0.468 → ≤ 0.40). If they do not fall: rung 2 of
+  `docs/research/DESIGN-NOTE-INNER-LOOP-QUANTITY-2026-09-13.md` (a 100 Hz rate-feedback term in the fork).
+- **Loose** → controller hold stiffness vs the plant's spring (kept ≈ as flown by `SteerKP` 0.85 at LAF 14).
+- **Oversteer** → turn-hold actual/desired at >20 m/s (1.09 → ≤ 1.04) and the tracking gain 0.88/1.02/1.12 → 1.00.
+- **Overshoot-then-correct** → step overshoot (0.44 relative at 10–20 m/s → ≤ 0.20).
+- Plus: integrator share 0.38 → ≪; straight-line delivery 80 % → 90–110 %; 1–4 Hz prominence 6.5–11.8 dB → < 3 dB.
+- **Revert triggers (his):** darty or loose feel worse than route 70, a one-sided pull, any oscillation, grinding,
+  any EME warning or DTC. **Scorer's:** the 1–4 Hz outer-loop line; "ratchet worse than route 70".
 
----
+## F. Standing fork facts that shape the numbers
 
-## C. Verifying the state — from the wire, no code flag
-
-`python rlog-tools/studies/grind/v293_flight_read.py <route id>` prints all of these in its section 0.
-Negative-controlled on the V292 route r6f, which reads the installed tune exactly.
-
-| check | where | torque config reads | installed tune reads |
-|---|---|---|---|
-| the keys | `initData.params` (logged once, at process start) | `AccordRatePlantFF` `0`, `SteerKP` `0.3`, `AccordTorqueKi` `0.15`, `SteerFriction` `0.0` | `SteerKP` `0.9`, `SteerFriction` `0.01`, and the two `Accord*` keys **absent** — an `Accord*` key at its `params_keys.h` default is absent, so absence means the default (rate-plant FF **on**, Ki 0.30) |
-| **Kp at 100 Hz** | `controlsState…torqueState`: median `p / error` over active frames | **0.300** | **0.9000** (r6f: 42 905 frames, IQR [0.9000, 0.9000], 100 % within 5 %) — the fork logs `pid_log.error = error_with_lsf` and calls `pid.update(pid_log.error, …)`, whose `p = k_p·error`, so the ratio IS the toggle. This one survives a mid-route toggle change; `initData` does not. |
-| the branch | median `f / desiredLateralAccel` | **1.00** (friction 0 ⇒ f = D) | **~0.3** (r6c 0.32, r6d 0.24, r6e 0.40, r6f 0.29) |
-
-🛑 **Safe Mode RESETS this config.** All ten of its keys are in `SAFE_MODE_MANAGED_KEYS`
-(`starpilot/common/safe_mode.py`), so a Safe Mode trip puts `AccordRatePlantFF` back to 1 and the tune back
-to its defaults — the installed-tune-on-V293 row above while V293 is in the ECU. It is a route **out** of
-the torque config, never into it. After any trip, restore the config again before the next drive on V293.
-[EVIDENCE: the key list, read 2026-09-13.]
-
----
-
-## D. The first-drive tune — all four numbers are PROVISIONAL, and they are sliders
-
-The config sets the four Galaxy sliders; after restoring it you can re-tune between drives from Galaxy
-without touching the fork.
-
-| slider | config value | note |
-|---|---|---|
-| `SteerLatAccel` | **6.0** | 🛑 **NOT an identification.** Today's rate-servo value, carried over so the first flight is not also a gain change. On a rate servo a constant command gives a constant wheel *rate*, so lat-accel-per-command rises without bound as frequency falls; on a torque actuator the DC gain is finite and should come out **lower**. Identify it from the first drive's rlog (§3.5 of `docs/research/FORK-LATERAL-DESIGN-FOR-TORQUE-MODE-AND-RATE-TARGET-2026-09-13.md`: instrumental variables against `modelV2.action.desiredCurvature·v²`, ≥400 hands-off laterally-engaged pairs per bucket in ≥4 buckets to 0.5, both signs — **not from `torqued`**, whose buckets do not fill on this car). |
-| `SteerFriction` | **0.00** | 🛑 **ZERO, and that is a STABILITY choice, not a feel choice.** This fork feeds the friction compensator the **LSF-inflated** error (§F), so its gain is multiplied by `1 + lsf/Kp` — ×17.9 at 5 m/s with Kp 0.3. At friction 0.01 the outer loop's worst phase margin is **22.8°** (Ms 4.32); at 0.00 it is **42.2°** (Ms 2.06), gain margin to 30° at ×1.40. |
-| `SteerKP` | **0.3** | a third of today's 0.9. 🛑 **Its safety depends on friction being 0.00, and the two cannot be separated.** With friction 0 the low-speed loop gain is monotone in Kp, so 0.3 is the safe side; with **any** friction > 0 the gain has an interior minimum near Kp ≈ 1.0 and **a LOWER Kp is WORSE**. ⇒ **friction 0 AND Kp ≤ 1.0, both, never one without the other.** |
-| `AccordTorqueKi` | **0.15** | half the rate-servo value. A mis-sized LAF with a live integrator is the configuration that hides the error until it is a wallow. |
-
-### 🛑 The tune rule
-
-> **Never raise friction above 0 before the LAF is fitted. Never take Kp above 1.0. And the modelled margins
-> assume the measured, speed-dependent lag (0.15 s at motorway, ~0.25 s at 3–8 m/s — see
-> `rlog-tools/studies/grind/TAU-ACTUATOR-DELAY-2026-09-13.md`), not the `SteerDelay` toggle echoed back.**
-
-- the proportional contribution is `Kp + lsf`, which **rises** with Kp;
-- the friction contribution is `(friction / 0.30) · (1 + lsf/Kp)`, which **falls** with Kp;
-- with friction live their sum has an interior minimum near **Kp 1.0** at 5 m/s, so cutting Kp to 0.3
-  *raises* the low-speed loop gain — the opposite of the usual reflex;
-- at friction **0.00** the second term is gone and a lower Kp is plainly safer again.
-
-[EVIDENCE: the `1 + lsf/Kp` inflation and `lsf(5 m/s) = 5.0625` are re-derived from the fork's own
-`LOW_SPEED_X`/`LOW_SPEED_Y`/`MIN_SPEED`; the phase margins are adversary B's sub-check B6.]
-
-**Also still live, from the design grid** (`DESIGN-V293-TORQUE-MODE-2026-09-13.md` §5): LAF ≤ 2.0
-together with Kp ≥ 0.6 at motorway speed is the one RISK region, the V276-shaped outer-loop signature. No
-runtime guard exists. If the identification returns a LAF near 2, lower Kp first, then LAF.
-
-**One consequence worth knowing before the drive.** With the config values the *net* command at 15 m/s /
-0.9 m/s² comes out **0.929×** today's: the bigger feedforward (×2.55 with the tune held equal) is more than
-paid for by Kp 0.9→0.3, Ki 0.30→0.15 and friction 0.01→0.00. The terms move differently with speed, error
-and curvature, so **this near-cancellation is a coincidence at one operating point, not a safety margin.**
-
-| configuration | p | i | f | torque |
-|---|---|---|---|---|
-| installed tune (rate-plant FF) | 1.1523 | 0.7287 | 0.3772 | −0.3763 |
-| rate-plant FF off, tune held at today's | 1.1523 | 0.7340 | 0.9600 | −0.4744 |
-| the torque config | 0.6123 | 0.5850 | 0.9000 | −0.3495 |
-
-**And the steer-ratio level changes meaning.** Today `SteerRatio` pushes twice in the same direction (the
-map feeds both the measurement and the rate-plant feedforward). With the branch off the second consumer is
-gone, so the level's sensitivity roughly **halves**. Leave it at 16.88 through identification. [BELIEF,
-from the structure.]
-
----
-
-## E. What this does *not* do
-
-- **It is not a grinding fix.** V288 rev 2 flew a reference-side setpoint pre-filter, the cave was live, the
-  D-clamp bind duty fell ×0.03 as designed, and the grinding was **unchanged**. Nothing on the fork's
-  reference side reaches the 20 Hz ring. What may remove it is the *firmware* side — a torque-map image
-  opens the rate loop by construction, and with the loop open there is no 18–22 Hz object at all (35
-  routes). That claim is about V293, not about this config. [BELIEF that V293 removes the symptom — it has
-  never been driven.]
-- 🛑 **It DOES change authority below full demand.** From adversary A, re-derived from the built image:
-
-  | | V282 | **V293** |
-  |---|---|---|
-  | delivered peak, at rest | 2461 | **2461 — identical** |
-  | demand needed to reach it | idx ~116 | **idx 239–240** |
-  | torque per demand index below the rail, wheel **still** | 21.35 counts/idx | **10.34 counts/idx** |
-  | delivered at idx 58, wheel **still** | 1236 | **598 (×0.48)** |
-
-  The peak is identical and now needs twice the demand to reach. Against a *moving* wheel V282's servo backs
-  off while V293 delivers the same torque whatever the wheel does, so "less authority" holds only in the
-  stalled regime. openpilot's LAF identification absorbs the slope change — which is why **the first drive
-  is an identification drive and the tune comes after it**. `STEER_MAX` stays 4096 and the ±3/frame rate
-  limit is untouched.
-- **It writes nothing the REVERT config does not undo.** Restore the REVERT file and the installed tune is
-  back exactly.
-
----
-
-## F. Standing fork fact — the friction compensator is fed the LSF-inflated error
-
-**A property of the fork, not of torque mode, and live on V282 today.**
-
-```python
-ff += friction_scale * get_friction(error_with_lsf + JERK_GAIN * friction_jerk, ...)
-#                                   ^^^^^^^^^^^^^^   upstream openpilot passes the raw `error`
-error_with_lsf = error * (1 + low_speed_factor / max(current_kp, 1e-3))
-```
-
-so the compensator's small-signal slope in torque units is `(friction / threshold) · (1 + lsf/Kp)` instead
-of `friction / threshold`. At 5 m/s the low-speed factor is **5.0625**:
-
-| Kp | `1 + lsf/Kp` | slope at friction 0.01 |
-|---|---|---|
-| 0.3 | ×17.9 | 0.596 |
-| 0.9 | ×6.6 | 0.221 |
-| 1.0 | ×6.1 | 0.202 |
-
-1. **A lower Kp makes the friction term worse.** This is why the config ships friction at 0.
-2. **It is already acting on the car.** At today's `SteerKP` 0.9 and `SteerFriction` 0.01 the compensator's
-   gain is ×6.6 what the raw error would give at 5 m/s. The config does not add to it.
-
-The same two lines are why `torqueState.p / torqueState.error` reads the `SteerKP` toggle exactly (§C):
-`pid_log.error` *is* `error_with_lsf`, and the PID's `p = k_p · error` on the same number.
+- In the `AccordRatePlantFF` branch the output is `(P + I)/SteerLatAccel + plant_ff_torque + friction_torque`:
+  **`SteerLatAccel` scales P and I only** — the one lever on the low-speed loop gain, because the hard-coded
+  low-speed factor `[12, 10.5, 8, 5]` is ADDED to `SteerKP`. As flown (LAF 6) the loop at 4.5 m/s had PM −11° /
+  Ms 12; at LAF 14 with Kp 0.85 it has PM 68° / Ms 2.16. **Every config still fails the bound at 3 m/s** — a
+  direction, not a magnitude (the plant there is the study's weakest cell).
+- The friction compensator is fed the LSF-inflated error (`(friction/0.30)·(1 + lsf/Kp)`); at Kp 0.85 the inflation
+  at 4.5 m/s is 8.4, and the describing-function check finds no relay limit cycle at 0.011 (first sustaining value
+  0.0235). The rule **friction > 0 requires Kp ≤ 1.0** holds.
+- `SteerDelay` 0.2 (+0.1 software) = a 0.30 s lookahead; measured τ_eq 0.19–0.34 s. Not a lever worth a drive.
+- The learner (`torqued`) keeps running; with `KeepLearnedLatAccelOffset` 0 nothing consumes its offset.
+- **Safe Mode resets these keys** (`SAFE_MODE_MANAGED_KEYS`) — a route out of the config, never into it; on V293
+  that lands on the fork's defaults (`AccordRatePlantFF` 1 with the new tables, the platform tune) — recoverable.

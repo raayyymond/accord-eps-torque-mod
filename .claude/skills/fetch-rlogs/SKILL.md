@@ -25,7 +25,11 @@ propose firmware work, do not open Ghidra, do not read the golden model.
 
 A **route id** looks like `75604b0a432fdc89_000000a6` on connect and
 `75604b0a432fdc89|000000a6--28ef595061` (or `...|2026-09-08--14-31-02`) in useradmin URLs.
-Route counters are **hex** and monotonically increasing — `a7` is newer than `a6`.
+Route counters are **hex** and increasing **between resets only**. 🛑 The device's counter RESET on
+2026-09-13 (routes `6c`–`70` are NEWER than the locally cached `a6`, and `00000070` had already been used
+by an unrelated August route), so **never decide "newest" or "already local" from the counter alone**:
+order routes by their connect date/time, and confirm a route's build from its useradmin `git_commit`.
+Key every cache and filename on the full `counter--hash` pair (the segment filenames already do).
 
 ## Step 0 — know what you already have (do this BEFORE opening a browser)
 

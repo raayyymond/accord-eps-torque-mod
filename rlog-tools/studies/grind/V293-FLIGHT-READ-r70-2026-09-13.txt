@@ -1,0 +1,311 @@
+============================================================================================================================
+  extracting 75604b0a432fdc89_00000070--717f5a7866 -> r70_v293 : 19 segments on disk [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+  wrote r70_v293.npz (1135.7 s route, 0 bookmarks, 19 segments)
+      presence r70_v293 ALL engaged: 500/1715 windows, 46 s elapsed
+      presence r70_v293 ALL engaged: 1000/1715 windows, 88 s elapsed
+      presence r70_v293 ALL engaged: 1500/1715 windows, 131 s elapsed
+============================================================================================================================
+V293 FLIGHT READ -- r70_v293   build V293   [image _v293_V293-V282BASE-TORQUEMODE.FB0-KD0.BANK.ALL+DCLAMP0-KP.FLAT.120.ALL-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP_plain_image.bin]
+pre-registered read: docs/review/ADVERSARIAL-V293-PREREG-2026-09-13.md 'What PASS licenses'
+                     docs/specs/design/DESIGN-V293-TORQUE-MODE-2026-09-13.md section 6
+============================================================================================================================
+cells read from the image: fb_clamp 0  d_clamp 0  Kd [0, 0, 0, 0]  Kp [120, 120, 120, 120, 120]  r24 arm 2048  gain 5346
+
+0. EXPOSURE AND THE FORK TOGGLES  [EVIDENCE -- the wire and initData]
+----------------------------------------------------------------------------------------------------------------------------
+   route 1136 s | engaged-lateral 858 s | disengaged 277 s | hands-off 762 s | |ang|>=30 48 s | hands-off creep 1-3 m/s 29 s
+   THE FORK SIDE IS A TOGGLE CONFIG (toggle-config_V293_torque_mode.json), not code: params that
+   already exist on Dom.  Read here from initData.params (logged ONCE, at process start) and,
+   independently, from the CONTROL PATH at 100 Hz (torqueState p/error = SteerKP exactly; f/D = 1
+   under the config's friction 0).  Accord* keys are ABSENT from initData when they sit at their
+   params_keys.h default (measured on r6f), so absence reads as the default.
+   AccordRatePlantFF          = '0'                          config wants 0     ok
+   SteerKP                    = '0.3'                        config wants 0.3   ok
+   AccordTorqueKi             = '0.15'                       config wants 0.15  ok
+   SteerFriction              = '0.0'                        config wants 0.0   ok
+   SteerLatAccel              = '6.0'                        config wants 6.0   ok
+   ForceAutoTuneOff           = '1'                          config wants 1     ok
+   AdvancedLateralTune        = '1'                          config wants 1     ok
+   AccordTurnFFTaper          = '0'                          config wants 0     ok
+   SteerRatio                 = '16.88'
+   KeepLearnedLatAccelOffset  = '1'
+   ForceTorqueController      = '1'
+   GitCommit                  = '4247cb09ef5722325483259dbe644a220c6a8daf'
+   GitBranch                  = 'Dom'
+   AccordCurvatureLead        = ABSENT       (must be ABSENT or "0"; the key does not exist on Dom)
+   torqueState  Kp at 100 Hz = median(p / error) = 0.3000   (n 77863; IQR [0.3000, 0.3000]; 1.000 of frames within 5%)
+     the fork logs pid_log.error = error_with_lsf and calls pid.update(pid_log.error, ...), whose
+     p = k_p * error, so the ratio IS the SteerKP toggle on every active frame -- a wire read of
+     the tune that survives a mid-route toggle change, which initData (logged once) does not.
+     Expected 0.300 under the torque config; the installed rate-servo tune reads 0.90.
+   Testing Ground             = slot 1 variant A  (ACC Bolt Long Tune / A - Installed tune)   over 75 published frames
+     informational only -- no Testing Ground slot is the torque mode (the slot-9 rework was undone
+     on 2026-09-13).  Decoded off the PATCHED @116 struct (the kit calls it `modelDataV2SP`, the
+     fork `customReserved9`; same struct id 0xa1680744031fdb2d, different fields).  The @137
+     collision (`epsTelemetry` vs the fork's `starpilotLateralState`, id 0xc2243c65e0340384) is
+     patched the same way; any other kit script reading either from a 2026-09 rlog reads GARBAGE.
+   torqueState  median f / desiredLateralAccel = 0.7469   (n 27511 of 112521; whole-route regression slope 0.8590)
+     by |D| band: 0.3-0.6 0.561 (n12764)  0.6-0.9 0.665 (n7398)  0.9-1.3 0.758 (n3853)  1.3-2.0 0.867 (n1347)
+     THE SECOND, INDEPENDENT TOGGLE SOURCE, and the only one that reads the CONTROL PATH
+     rather than a parameter: friction ships at 0, so torque mode gives f = D exactly
+     (ratio 1.000) while the rate-plant branch scales it down.  MEASURED on four routes that
+     are NOT torque mode: r6c 0.32 / r6d 0.24 / r6e 0.40 / r6f 0.31 -- pooled median 0.24-0.40, worst band 0.58.  The gate is 0.75,
+     which sits 1.3x above the worst observation and 1.3x below the expected 1.000.
+     ⚠ the whole-route REGRESSION SLOPE is NOT usable as a gate: it reads 0.21-0.64 on the
+     same four routes, a spread that overlaps nothing useful.  The ratio is the statistic.
+
+1. THE EDIT-LIVE IDENTITY -- |427 tap| vs f(cmd)*fade, on every laterally engaged frame
+   [EVIDENCE -- the wire, against cells read from the BUILT IMAGE.  This is the control that
+    decides ATTRIBUTION: with 0xC62E6 = 0 the tap is an exact function of demand and fade and
+    carries NO wheel-rate term.  Pre-registered V293 R2 +0.92 resid 47 ; V282/V292 -4.81 / 349.]
+----------------------------------------------------------------------------------------------------------------------------
+   56672 tap frames.  The predictor is ZOH-sampled onto the tap's NATIVE 50 Hz (the tap is never
+   up-sampled); the transport lag is scanned -40..+120 ms and the best row is reported.
+   gate: R2 >= 0.50 AND residual <= 38 = 2.5x this route's own positive control.  MEASURED yardstick: this estimator's ceiling on real
+   data is R2 +0.964 (a synthetic V293 tap) and its floor across six non-V293 routes is -0.011.
+   cells / fade axis      lag ms         n         R2    resid res/rms  pearson sgn=sgn(pred) sgn=-sgn(cmd) verdict
+   V282/bar               -10        42885    -0.6733    244.1   1.019    0.979      0.979      0.003       -
+   V282/const             -30        42885    -2.1218    333.4   1.392    0.951      0.983      0.002       -
+   V282/speed             -40        42885    -0.6556    242.8   1.014    0.862      0.963      0.002       -
+   V293/bar               -20        42885     0.9862     22.2   0.093    0.993      0.983      0.002   HOLDS
+   V293/const             -40        42885     0.5836    121.8   0.508    0.903      0.983      0.002       -
+   V293/speed             -40        42885     0.4171    144.1   0.602    0.800      0.924      0.002       -
+   ⚠ POLARITY, measured: the delivered tap follows sign(T) = +sign(cmd), so the column that
+     must go to ~1.00 is sign(T)=sign(pred).  The prereg's phrase 'sign(T) = -sign(cmd)' is the
+     opposite convention -- on the wire that column reads ~0.15 on V282.  Both are printed so
+     the reading cannot be taken the wrong way round.
+   The estimator has ZERO free parameters (no fitted scale, no offset): R2 -> 1 means the BYTES
+   PREDICT THE WIRE.  Pearson r beside it separates a SCALE error (high r, failing R2) from a
+   STRUCTURAL one (low r).
+   fade axis is OPEN (ADV-V293-A erratum): the record reads 0xCBBC4 by |bar|>>5, adversary A
+   reads it as km/h.  On this route the bar reading derates on 5075/56672 frames (median m 254)
+   and the speed reading would derate on 38752/56672 (median m 184).  The winning R2 row above IS
+   the evidence for which axis is right -- with the loop open the tap IS the surface.
+   POSITIVE CONTROL -- a V293 tap synthesised from THIS route's own command by the byte-exact
+     1 kHz march (Elec, fb clamped to +-0), decimated to 50 Hz, quantised, regressed by the
+     SAME estimator: R2 p50 0.9688 (min 0.9478) resid 15.2 over 6 windows / 4440 frames.
+     Not a tautology: the predictor is the STEADY-STATE surface, the synthetic tap is dynamic.
+   NEGATIVE CONTROL, measured 2026-09-13 by `--controls` (the same estimator, V293's cells, on
+     routes that are NOT V293): r6c -0.011  r39 -0.840  r35 -0.069  r6d_v292 -0.135  r6e_v292 -1.225  r6f_v292 -0.561
+     -- every one FAILS, which is what makes a PASS here attributable.
+
+2. THE 18-22 Hz RING -- the DRIVE-CONTROLLED measure (V292 flight read section 4)
+   [EVIDENCE.  engaged band amplitude / the SAME route's lateral-DISENGAGED amplitude.  The
+    disengaged reference is mostly STATIONARY on every route -- like-for-like between builds,
+    not a road-input normalisation.]
+----------------------------------------------------------------------------------------------------------------------------
+   route                    5-9       9-13      13-17     18-22     22-26     26-30    
+   r70_v293 (V293)          1.707     3.289     3.279     1.882     1.739     1.713    
+   r6c (V282)               0.832     1.105     1.870     3.399     2.067     1.968    
+   r39 (V282)               1.681     1.214     1.863     3.920     2.347     2.229    
+   r35 (V281r3)             1.230     0.984     1.623     3.618     2.036     1.708    
+   r6d_v292 (V292)          3.056     1.748     3.778     5.484     2.040     1.937    
+   r6e_v292 (V292)          3.537     3.524     5.190     6.795     3.529     2.995    
+   r6f_v292 (V292)          2.428     1.870     2.450     4.086     2.429     2.083    
+   record literals, 18-22 Hz (V292-FLIGHT-READ section 4): r6c 3.40  r39 3.92  r35 3.62  r6d_v292 5.48  r6e_v292 6.79  r6f_v292 4.09
+   >>> this route's 18-22 Hz engaged/disengaged = 1.882   = x0.554 of r6c's 3.399
+
+   PRESENT-WINDOW RING AMPLITUDE -- the record's predicate (2 s windows, 0.5 s step; 18-22 Hz
+   prominence >= 8 on the DRIVER-TORQUE bar AND bar amplitude >= 40), 18-22 Hz on the 0x18F
+   rate, deg/s.  THIS is the clause: <= 0.40x of V282's.
+   route / stratum          build         n_win   n_pres   pres %   amp p50   amp p90       f0
+   r70_v293  ALL engaged    V293           1679       19     1.1%     1.142     3.873    17.89
+   r70_v293  hands-off creep 1-3 V293              5        0     0.0%       nan       nan      nan
+   r6c  ALL engaged         V282           6215      609     9.8%     2.630     5.101    20.03
+   r39  ALL engaged         V282           1742      364    20.9%     2.766     5.508    20.03
+   r35  ALL engaged         V281r3         1808      293    16.2%     3.487     7.306    20.06
+   r6d_v292  ALL engaged    V292           1266      229    18.1%     3.638     5.627    20.03
+   r6e_v292  ALL engaged    V292            984      184    18.7%     2.820     4.159    20.11
+   r6f_v292  ALL engaged    V292           1134      233    20.5%     3.277     5.917    20.08
+   record literals, present-window amp p50 (V292-FLIGHT-READ section 3.1): r6c 2.63  r39 2.77  r35 3.49  r6d_v292 3.64  r6e_v292 2.82  r6f_v292 3.28
+   >>> present-window ring x0.434 of r6c (2.630)   and x0.413 of r39 (2.766)   [n_pres 19]
+
+3. THE 6-9 Hz STRONG-TURN RIPPLE -- the operator's 'stutter' channel  [EVIDENCE]
+   F7: the record's FIXED 103-wire detector, |angle| >= 30 AND fdom >= 6, per 100 s of engaged
+   high-angle time.  REVERT at >= 2/100 s.  rip/L: stutter_v283 section C.  REVERT at >= 0.25.
+   The ABSOLUTE 6-8.5 Hz tap ripple is scored too -- torque mode grows the DENOMINATOR x1.2-3.6.
+----------------------------------------------------------------------------------------------------------------------------
+   route                    build     hi-ang s    n F7  F7/100 s rip/L p50 rip/L p90   rip ABS   |T| p50
+   r70_v293                 V293          48.2       0      0.00     0.008     0.025       7.5       962
+   r6c                      V282          97.2       1      1.03     0.104     0.240      73.1       877
+   r39                      V282          97.4       0      0.00     0.166     0.470     107.5       736
+   r35                      V281r3        79.8       0      0.00     0.161     0.330     119.2       739
+   r6d_v292                 V292          75.2       3      3.99     0.214     0.425     163.0       824
+   r6e_v292                 V292          45.1       1      2.22     0.327     1.228     147.4       584
+   r6f_v292                 V292          47.6       3      6.30     0.339     1.102     162.8       669
+   record literals, F7/100 s (DESIGN 6.2): r39 1.03  r35 0.0  r6d_v292 3.99  r6e_v292 2.22  r6f_v292 6.3
+   THE 5-9 Hz WHEEL BAND (B5's channel).  A BROADBAND x1.5 rise is PREDICTED -- the servo's
+   disturbance rejection is what V293 removes; a resonant LINE is not predicted and is the
+   thing to look for.  'rate 6-8.5 loaded' is the 0x18F rate on the SAME loaded-turn windows
+   as rip/L above, and is the only one of these that is populated on every route.
+   route                    build     | |ang|>=30 off  5-9 off 18-22 off | rate 6-8.5 loaded
+   r70_v293                 V293      |        14.9    1.421    0.424 |       2.682
+   r6c                      V282      |        43.6    1.017    1.863 |       4.242
+   r39                      V282      |        43.3    1.004    1.015 |       4.986
+   r35                      V281r3    |        37.5      nan      nan |       6.312
+   r6d_v292                 V292      |        26.5      nan      nan |       9.363
+   r6e_v292                 V292      |        12.9      nan      nan |       8.157
+   r6f_v292                 V292      |        16.1      nan      nan |       9.482
+   ⚠ the |angle| >= 30 hands-LIGHT (bar 400-1216) stratum is EMPTY on all six reference routes
+     (under 3 s of runs >= 1 s), so B5's literal window does not exist in the corpus.  The
+     hands-OFF column exists only on r6c and r39.  Read the loaded-turn column as the populated
+     one.  [EVIDENCE -- exposure counted from the caches]
+   >>> ABSOLUTE 6-8.5 Hz tap ripple 7.5 counts = x0.103 of r6c's 73.1
+
+4. THE OUTER LOOP -- a coherent 1-4 Hz line in 0xE4 COMMAND and STEERING ANGLE  [EVIDENCE]
+   The V276 signature, and the orchestrator's first revert trigger: watch LOW SPEED FIRST.
+   🛑 COHERENCE IS NOT THE DISCRIMINATOR -- it reads 0.88-1.00 at 1-4 Hz on EVERY route in the
+   corpus, V282 and V292 alike, because openpilot commands there and the car follows.  What
+   separates a limit cycle from ordinary tracking is the ANGLE AMPLITUDE at 1-4 Hz, against
+   the V282/V281r3 references in the same speed band.  Coherence is kept only as a guard: a
+   rise with LOW coherence is road input, not the loop.  [EVIDENCE -- measured on six routes]
+----------------------------------------------------------------------------------------------------------------------------
+   route                    band           t s    n_run   coh p50   coh p90   f at coh ang 1-4 deg
+   r70_v293                 0-5 m/s       92.4        5     0.999     1.000       1.95     3.5469   <-- ELEVATED
+   r70_v293                 5-10 m/s     105.1        4     0.953     1.000       1.76     0.3462
+   r70_v293                 10-20 m/s    368.7       18     0.987     0.999       2.15     0.5628   <-- ELEVATED
+   r70_v293                 >=20 m/s     291.4        5     0.883     0.920       1.95     0.2444
+   r6c (V282)               0-5 m/s      312.5       20     1.000     1.000       1.37     0.5893
+   r6c (V282)               5-10 m/s     381.6       23     0.974     1.000       1.56     0.2300
+   r6c (V282)               10-20 m/s    678.7       31     0.930     0.988       1.37     0.1335
+   r6c (V282)               >=20 m/s    1763.7        4     0.882     0.915       1.17     0.0942
+   r39 (V282)               0-5 m/s      157.3       11     0.985     1.000       1.95     1.3781
+   r39 (V282)               5-10 m/s     327.5       21     0.989     1.000       1.76     0.3034
+   r39 (V282)               10-20 m/s    289.3       10     0.964     1.000       2.15     0.1486
+   r39 (V282)               >=20 m/s     105.7        1     0.723     0.723       2.93     0.2812
+   r35 (V281r3)             0-5 m/s      118.0        9     0.995     1.000       2.73     0.5427
+   r35 (V281r3)             5-10 m/s     275.4       19     0.979     1.000       1.37     0.2904
+   r35 (V281r3)             10-20 m/s    408.3       11     0.920     0.979       1.76     0.1313
+   r35 (V281r3)             >=20 m/s     117.8        2     0.823     0.925       3.03     0.4063
+   r6d_v292 (V292)          0-5 m/s       64.0        4     0.993     0.998       2.15     1.7777
+   r6d_v292 (V292)          5-10 m/s      64.2        3     0.990     0.998       2.15     2.1973
+   r6d_v292 (V292)          10-20 m/s    105.9        5     0.936     0.964       1.56     0.3704
+   r6d_v292 (V292)          >=20 m/s     409.5        1     0.718     0.718       1.17     0.1164
+   r6e_v292 (V292)          0-5 m/s      129.8        6     0.995     1.000       2.93     1.9497
+   r6e_v292 (V292)          5-10 m/s     100.3        9     0.987     1.000       1.95     0.4604
+   r6e_v292 (V292)          10-20 m/s    177.3        6     0.956     0.997       1.37     0.1696
+   r6e_v292 (V292)          >=20 m/s     100.0        1     0.929     0.929       1.17     0.1085
+   r6f_v292 (V292)          0-5 m/s       87.4        4     0.989     0.993       1.37     1.4964
+   r6f_v292 (V292)          5-10 m/s      78.9        5     0.964     0.999       1.56     0.7567
+   r6f_v292 (V292)          10-20 m/s    176.3        8     0.973     1.000       1.27     0.1225
+   r6f_v292 (V292)          >=20 m/s     229.7        3     0.997     0.999       1.37     0.0955
+
+5. THE OTHER BANDS -- 13-17 Hz (V292's rejected x1.9-2.1) and any 22-30 Hz line  [EVIDENCE]
+----------------------------------------------------------------------------------------------------------------------------
+   pooled Welch on the 0x18F rate, deg/s, no episode selection.  BOTH strata: 'hands-off 8-15
+   m/s' is the one the record headlined V292's 13-17 Hz x1.81-1.85 on, so it carries the gate;
+   'hands-off ALL speeds' is beside it because the 8-15 band can be thin on a short drive.
+   --- hands-off 8-15 m/s ---
+   route                    build          t s 5-9       9-13      13-17     18-22     22-26     26-30    
+   r70_v293                 V293         159.0 0.773     0.471     0.450     0.286     0.241     0.226    
+   r6c                      V282         482.0 0.481     0.438     0.437     0.751     0.475     0.395    
+   r39                      V282         290.3 0.587     0.558     0.532     0.738     0.555     0.480    
+   r35                      V281r3       349.6 0.494     0.433     0.447     0.633     0.470     0.433    
+   r6d_v292                 V292          64.2 0.630     0.514     0.808     1.258     0.520     0.371    
+   r6e_v292                 V292         109.7 0.883     0.622     0.789     1.038     0.467     0.378    
+   r6f_v292                 V292         109.0 0.659     0.591     0.791     0.917     0.499     0.407    
+   ratios to r6c: 5-9 x1.61  9-13 x1.08  13-17 x1.03  18-22 x0.38  22-26 x0.51  26-30 x0.57
+   --- hands-off ALL speeds ---
+   route                    build          t s 5-9       9-13      13-17     18-22     22-26     26-30    
+   r70_v293                 V293         761.5 0.706     0.804     0.463     0.316     0.261     0.238    
+   r6c                      V282        2943.8 0.379     0.498     0.680     0.603     0.403     0.449    
+   r39                      V282         736.0 0.678     0.607     0.550     0.794     0.584     0.490    
+   r35                      V281r3       812.5 0.631     0.530     0.558     0.713     0.530     0.458    
+   r6d_v292                 V292         543.5 0.393     0.541     1.107     0.638     0.402     0.472    
+   r6e_v292                 V292         434.2 0.665     1.001     0.594     0.817     0.475     0.349    
+   r6f_v292                 V292         485.4 0.580     0.925     0.743     0.796     0.548     0.465    
+   ratios to r6c: 5-9 x1.86  9-13 x1.61  13-17 x0.68  18-22 x0.52  22-26 x0.65  26-30 x0.53
+   line locations (peak of the excess-dB spectrum), hands-off ALL speeds.  A LINE is a narrow
+   excess; a broadband rise shows as a band amplitude change with no dB excess moving:
+   r70_v293                 10-17: 10.55 Hz +3.81 dB  17-24: 21.48 Hz +1.31 dB  22-30: 29.69 Hz +0.77 dB  5-9.5:  7.03 Hz +0.29 dB
+   r6c                      10-17: 14.84 Hz +2.84 dB  17-24: 19.92 Hz +3.08 dB  22-30: 28.91 Hz +0.52 dB  5-9.5:  8.20 Hz +0.50 dB
+   r39                      10-17: 12.89 Hz +2.25 dB  17-24: 19.92 Hz +4.49 dB  22-30: 25.78 Hz +0.81 dB  5-9.5:  7.42 Hz +0.97 dB
+   r35                      10-17: 13.28 Hz +1.83 dB  17-24: 19.92 Hz +4.11 dB  22-30: 23.44 Hz +0.83 dB  5-9.5:  7.81 Hz +1.87 dB
+   r6d_v292                 10-17: 14.84 Hz +6.33 dB  17-24: 19.92 Hz +4.28 dB  22-30: 29.69 Hz +2.13 dB  5-9.5:  5.08 Hz +1.40 dB
+   r6e_v292                 10-17: 10.94 Hz +1.91 dB  17-24: 19.92 Hz +3.28 dB  22-30: 25.39 Hz +1.83 dB  5-9.5:  5.08 Hz +0.84 dB
+   r6f_v292                 10-17: 12.89 Hz +3.97 dB  17-24: 19.92 Hz +3.19 dB  22-30: 26.95 Hz +1.08 dB  5-9.5:  5.08 Hz +1.33 dB
+
+6. THE 0x14A CAVE DUTIES -- b4 = sign(r24) is the NEGATIVE CONTROL; b7 is the pre-registered
+   MOVER (0.996 -> 0.808).  b5/b6 are NOT pre-registered.  b0-b2 are stock Honda (1.000).
+----------------------------------------------------------------------------------------------------------------------------
+   route                    stratum            b7    b6    b5    b4    b3    b2    b1    b0            n
+   r70_v293                 engaged            0.567 0.075 0.076 0.392 0.468 1.000 1.000 1.000     85771
+   r70_v293                 SCA=0              0.000 0.998 0.003 0.136 0.412 1.000 1.000 1.000     27562
+   r70_v293                 IDLE still         0.000 1.000 0.000 0.098 0.171 1.000 1.000 1.000       287
+   r6c (V282)               engaged            0.548 0.192 0.194 0.394 0.467 1.000 1.000 1.000    313641
+   r39 (V282)               engaged            0.507 0.114 0.134 0.404 0.479 1.000 1.000 1.000     87984
+   r35 (V281r3)             engaged            0.492 0.000 0.253 0.389 0.477 1.000 1.000 1.000     91954
+   r6d_v292 (V292)          engaged            0.526 0.158 0.169 0.409 0.418 1.000 1.000 1.000     64364
+   r6e_v292 (V292)          engaged            0.548 0.146 0.157 0.410 0.445 1.000 1.000 1.000     50744
+   r6f_v292 (V292)          engaged            0.591 0.217 0.238 0.441 0.453 1.000 1.000 1.000     57234
+   pre-registered (DESIGN 6.2): b7 V282 0.996 -> V293 0.808 (the MOVER); b4 0.808 -> 0.808 (the NEGATIVE CONTROL, identical by construction).
+   🛑 DO NOT COMPARE THOSE TWO NUMBERS WITH THE ROWS ABOVE.  0.996 and 0.808 were computed
+   on r39's TEN LOUDEST ONE-DIRECTION TURN WINDOWS, where the summand's sign is pinned by
+   the turn.  Whole-route, V282 measures b7 0.507-0.548 and b4 0.394-0.404 (the rows
+   above).  The comparison that means anything is THIS ROUTE against the MEASURED V282
+   rows, which is what the b4 clause below uses.  [EVIDENCE -- --controls, 2026-09-13]
+
+============================================================================================================================
+PRE-REGISTERED CLAUSES -- r70_v293
+============================================================================================================================
+EVERY GATE BELOW IS CALIBRATED BY V292 -- the build the operator drove and rejected on
+2026-09-13.  Measured by `--controls` against r6c (V282): V292 read the ring at x1.38/x1.07/
+x1.25 (gate <= 0.40), F7 at 3.99/2.22/6.30 per 100 s (gate < 2), rip/L at 0.214/0.327/0.339
+(gate < 0.25) and the ABSOLUTE 6-8.5 Hz tap ripple at x2.23/x2.02/x2.23 (gate < 1.5).  A gate
+that a rejected build passes is theatre; none of these does.  [EVIDENCE]
+----------------------------------------------------------------------------------------------------------------------------
+  [REVERT] outer loop     a coherent 1-4 Hz line in command AND angle at 0-5 m/s (coherence p90 1.00, angle 1-4 Hz 3.547 deg, >1.5x every V282/V281r3 reference) -- the V276 signature.  The fix is the FORK TOGGLE CONFIG (the outer-loop tune), not the firmware, but the drive stops.
+  [FAIL  ] branch         torqueState median f/D = 0.747 -- that is the RATE-PLANT branch (measured 0.24-0.40 pooled on four non-torque-mode routes), not torque mode.  With V293 in the ECU that is the FF-starved AND high-gain-feedback mismatch (ADV-V293-D 4.4), which is NOT merely sluggish.
+  [FAIL  ] ring           present-window 18-22 Hz ring x0.434 of r6c's -- the pre-registered success is <= 0.40x.  A band did not move; the OPERATOR scores the symptom.
+  [PASS  ] toggle         initData.params carries the torque config: AccordRatePlantFF=0, SteerKP=0.3, AccordTorqueKi=0.15, SteerFriction=0.0, SteerLatAccel=6.0, ForceAutoTuneOff=1, AdvancedLateralTune=1, AccordTurnFFTaper=0
+  [PASS  ] kp             Kp = 0.300 at 100 Hz over 77863 frames -- the torque config's 0.3 was LIVE on the control path
+  [PASS  ] identity       identity HOLDS: R2 0.986 (>= 0.50), resid 22.2 counts (<= 38), sign(T)=sign(pred) 0.983 -- the LKAS rate feedback is DEAD on the wire
+  [PASS  ] F7             F7 = 0.00 per 100 s (< 2.0)
+  [PASS  ] rip/L          tap ripple/level p50 = 0.008 (< 0.25)
+  [PASS  ] rip ABS        absolute 6-8.5 Hz tap ripple x0.10 of V282's (< 1.5)
+  [PASS  ] 13-17 Hz       13-17 Hz x1.03 of r6c's on hands-off 8-15 m/s (< 1.5)
+  [PASS  ] b4 control     b4 (sign r24) 0.392 vs r6c's 0.394 -- unchanged, as the negative control requires
+  [REPORT] 5-9 Hz         5-9 Hz hands-off x1.61 of r6c's on hands-off 8-15 m/s -- a BROADBAND rise ~x1.5 is PREDICTED (the servo's disturbance rejection removed, B5); a resonant LINE is not.  Read it against the line table.
+  [REPORT] 22-30 Hz       22-30 Hz at most x0.57 of r6c's -- reported, not gated
+  [REPORT] b7 mover       b7 (sign of the LKAS summand) reads 0.567; pre-registered 0.996 -> 0.808.  It is a direction-of-turn statistic, so read it beside b4, not alone.
+
+  >>> 1 REVERT trigger(s) fired.  The pre-registration's instruction is to STOP THE DRIVE and go back to V282.
+
+  🛑 THE OPERATOR SCORES THE SYMPTOMS.  Nothing above licenses the word 'fixed' for grinding,
+     vibrating, micro-ratcheting, ratcheting or excess friction.  These are BANDS.
+  🛑 Operator-only revert triggers, not scoreable here: grinding unchanged; a darty or loose
+     feel; a one-sided pull at rest; any EME warning or DTC.
+
+============================================================================================================================
+THE TERMINAL NULL SENTENCE -- the identity HOLDS and the ring did NOT fall.  Verbatim:
+============================================================================================================================
+  ADVERSARIAL-V293-PREREG 'What PASS licenses':
+    if the 18-22 Hz ring's amplitude and ring-down are unchanged with the LKAS loop open on every frame (identity
+    holding), the 20 Hz object is not the LKAS loop's and the whole in-loop class - V38 -> V293 - is closed
+
+  DESIGN-V293-TORQUE-MODE section 6.3:
+    "If the 18-22 Hz ring amplitude on hands-off creep does not fall to at most 0.4x of V282's - an effect three times
+    the x1.22 the kit has ruled unreadable, and one the car's own engaged/disengaged ratio of 3.5-4.2 says must be there
+    - with the LKAS rate loop FULLY OPEN (|R_servo| = 0 at every frequency, verified on the wire by the within-frame
+    identity in 6.2), then the 18-22 Hz object is NOT the LKAS rate loop's, the engaged/disengaged ratio measures
+    something other than the loop, and every in-loop class - shaping, notching, pole-moving and opening - is CLOSED."
+
+wrote _scratch/v293_flight_read_r70_v293.{txt,json}
+exit 0
+
+============================================================================================================================
+OPERATOR SYMPTOM SCORE -- route 70 (V293 first drive), reported 2026-09-13 evening, verbatim
+============================================================================================================================
+  "I did not experience any classic grinding or stuttering."
+  "steering felt ratchety, like the wheel did not move smoothly but only snapped between angles rather than smoothly
+   moving between them"
+  (The bands above are the instrument; these two lines are the symptom score.  Nothing in the bands is "fixed".)
+  "Sometimes steering felt loose and then sometimes there was oversteer and other times on hard transients, it would
+   overshoot then correct slightly"
+
+============================================================================================================================
+SUPERSEDING NOTE (scorer v2, 2026-09-13 night): the "[FAIL  ] branch" line above is a v1 DEFECT, not a finding. v1 compared
+torqueState.f (= D_current - roll*g*fade - latAccelOffset*fade) with desiredLateralAccel (= the 0.30 s delayed setpoint), so
+f/D = 1 - c/|D| by construction. v2 gates the branch on |f - starpilotLateralState.feedforward| (0.0000 on r70 = the else
+arm, as the rev-1 config asks; 3.3x relative on every plant-FF route) and reads PASS on this route. The c is +0.41 m/s^2 of
+ROLL compensation (+2.4 deg estimated roll) plus a -0.07 learned offset. Every other verdict above is reproduced by v2.

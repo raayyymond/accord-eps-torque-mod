@@ -1,0 +1,261 @@
+<section id="drive">
+  <div class="col">
+    <p class="eyebrow">The first drive &#183; route 70 &#183; 19 segments &#183; 1,135.7&#8239;s</p>
+    <h2>V293 flew, and the operator&#8217;s three sentences are the result</h2>
+    <p class="lead">The bands below are the instrument. <strong>These are the score.</strong></p>
+  </div>
+
+  <blockquote class="opquote">
+    <p>&#8220;I did not experience any classic grinding or stuttering.&#8221;</p>
+    <p>&#8220;steering felt ratchety, like the wheel did not move smoothly but only snapped between angles rather than smoothly moving between them&#8221;</p>
+    <p>&#8220;Sometimes steering felt loose and then sometimes there was oversteer and other times on hard transients, it would overshoot then correct slightly&#8221;</p>
+    <p class="attrib">&#8212; verbatim, reported the evening of 13 September 2026</p>
+  </blockquote>
+
+  <div class="col">
+    <p><strong>Nothing on this page says the grinding is fixed.</strong> What the first sentence says is that the symptom the kit has chased since V38 was <em>not present</em> on one drive, and that a new one arrived in its place. The old symptom and the new one are the same plant seen from two sides, and the rest of this page is that argument.</p>
+  </div>
+
+  <div class="kv">
+    <div><span class="lbl">the edit, live on the wire</span><span class="big good">R&#178; 0.986</span><small>regressing <code>|CAN&nbsp;427 tap|</code> on <code>f(cmd)&#183;fade</code> inside the same frame, residual <b>22.2 counts</b> against a pre-registered 47 and a gate of 38. Zero free parameters. <b>The LKAS rate feedback is dead on the wire.</b> <span class="chip ev">EVIDENCE</span></small></div>
+    <div><span class="lbl">18&#8211;22&#8239;Hz ring &#183; present-window amplitude</span><span class="big">&#215;0.434</span><small>of r6c&#8217;s 2.630. The pre-registered success was <b>&#8804;&#8239;0.40&#215;</b>, so it <b>misses by 8&#160;%</b>. But the share of engaged windows carrying the ring at all fell from <b>9.8&#8211;20.9&#160;% to 1.1&#160;%</b>.</small></div>
+    <div><span class="lbl">6&#8211;9&#8239;Hz strong-turn ripple</span><span class="big good">F7 0.00</span><small>per 100&#8239;s of engaged high-angle time, against a revert threshold of 2 and V292&#8217;s 2.22&#8211;6.30. Tap ripple&#247;level <b>0.008</b> against 0.25. The absolute 6&#8211;8.5&#8239;Hz tap ripple is <b>&#215;0.10</b> of V282&#8217;s.</small></div>
+    <div><span class="lbl">1&#8211;4&#8239;Hz line at 0&#8211;5&#8239;m/s</span><span class="big bad">3.55&#176;</span><small>of angle amplitude at coherence 1.00, against every V282 and V281&#8239;rev&#8239;3 reference at 0.54&#8211;1.38&#176;. <b>The V276 signature. This is the one pre-registered REVERT trigger, and it fired.</b></small></div>
+  </div>
+
+  <div class="col">
+    <h3>The pre-registered scorecard, as the scorer printed it</h3>
+    <p>One command, no parameters, and a null in both directions: the identity estimator reads <b>&#8722;0.01 or worse on all six non-V293 routes</b> and 0.92&#8211;0.96 on a synthetic V293 tap. Every gate below is calibrated by V292 &#8212; the build driven and rejected the same day &#8212; and none of them is one V292 would have passed.</p>
+  </div>
+  <div class="tblwrap">
+  <table>
+    <caption class="eyebrow" style="text-align:left;padding-bottom:6px">r70_v293 against its own pre-registration</caption>
+    <thead><tr><th>clause</th><th class="n">measured</th><th class="n">gate</th><th>reading</th></tr></thead>
+    <tbody>
+      <tr><td class="m">outer loop</td><td class="n">3.547&#176; @ 0&#8211;5&#8239;m/s</td><td class="n">&lt; 1.5&#215; refs</td><td><span class="chip risk">REVERT</span> a coherent 1&#8211;4&#8239;Hz line in command <em>and</em> angle. The fix is the fork tune, not the firmware &#8212; but the drive stops.</td></tr>
+      <tr><td class="m">branch</td><td class="n">f/D 0.747</td><td class="n">&#8805; 0.75</td><td><span class="chip open">BROKEN CHECK</span> <code>f</code> and <code>D</code> are different quantities by construction, so the ratio can never be 1.000. See below.</td></tr>
+      <tr><td class="m">ring</td><td class="n">&#215;0.434</td><td class="n">&#8804; 0.40</td><td><span class="chip risk">FAIL</span> by 8&#160;%. A band did not move far enough. The operator scores the symptom.</td></tr>
+      <tr><td class="m">identity</td><td class="n">R&#178; 0.986</td><td class="n">&#8805; 0.50</td><td><span class="chip ev">PASS</span> residual 22.2 counts, sign agreement 0.983.</td></tr>
+      <tr><td class="m">toggle</td><td class="n">8 of 8 keys</td><td class="n">all</td><td><span class="chip ev">PASS</span> <code>initData.params</code> carries the torque config exactly.</td></tr>
+      <tr><td class="m">kp</td><td class="n">0.3000</td><td class="n">0.300</td><td><span class="chip ev">PASS</span> over 77,863 frames at 100&#8239;Hz, IQR zero-width. The config was live on the control path.</td></tr>
+      <tr><td class="m">F7</td><td class="n">0.00 / 100&#8239;s</td><td class="n">&lt; 2.0</td><td><span class="chip ev">PASS</span> and tap ripple&#247;level 0.008 against 0.25.</td></tr>
+      <tr><td class="m">13&#8211;17&#8239;Hz</td><td class="n">&#215;1.03</td><td class="n">&lt; 1.5</td><td><span class="chip ev">PASS</span> V292&#8217;s rejected shoulder did not return.</td></tr>
+      <tr><td class="m">b4 control</td><td class="n">0.392</td><td class="n">&#8776; 0.394</td><td><span class="chip ev">PASS</span> the negative control is unchanged, as construction requires.</td></tr>
+      <tr><td class="m">5&#8211;9&#8239;Hz</td><td class="n">&#215;1.61</td><td class="n">report</td><td>a broadband rise of about &#215;1.5 was <b>predicted</b> &#8212; it is the servo&#8217;s disturbance rejection being removed. No resonant line appeared. <b>The prediction held.</b></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="duo">
+    <figure>
+      <div class="legend"><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>r70 V293</span><span style="color:var(--v282)"><i class="sw" style="background:var(--v282);opacity:.45"></i>range across r6c, r39 and r35</span></div>
+      <div class="figbody"><!--#fig6a#--></div>
+      <figcaption><b>This is the revert trigger.</b> Route 70 carries a genuine peak at <b>1.17&#8211;1.76&#8239;Hz</b> below 20&#8239;m/s; no reference route has one. On the quantiser-free rate channel the 1&#8211;4&#8239;Hz content is <b>&#215;4.8 to &#215;11.6</b> every reference in every band. Prominence is measured above a log-log line fitted to the 0.6&#8211;0.9 and 4&#8211;7&#8239;Hz shoulders &#8212; a flat baseline scores the spectrum&#8217;s own slope as a peak and returns 16&#8211;21&#8239;dB on every route, including the references. <span class="chip ev">EVIDENCE</span></figcaption>
+    </figure>
+    <figure>
+      <div class="figbody"><!--#fig6b#--></div>
+      <figcaption><b>And this is the half of the ring result the pre-registered number does not carry.</b> The gate was on amplitude <em>when the ring is present</em>, which read &#215;0.434 and failed. How often it is present at all fell from one engaged window in five to <b>one in ninety</b>. The hands-off creep stratum the clause names is <b>empty</b> on this route &#8212; 5 windows, none present &#8212; so the all-engaged row is what was scored. <span class="chip ev">EVIDENCE</span> <span class="chip bel">BELIEF that the presence collapse is the more physical reading</span></figcaption>
+    </figure>
+  </div>
+
+  <div class="callout note">
+    <h3>The branch gate is wrong as written, and the plant study found why</h3>
+    <p>The gate assumed <code>SteerFriction&#8239;=&#8239;0</code> makes <code>f</code> equal <code>desiredLateralAccel</code> exactly. It cannot: <code>f</code> is the <em>future</em> demand minus roll compensation minus a learned offset, while <code>D</code> is the <em>lookahead</em> setpoint. Measured, <code>f&#8239;=&#8239;0.866&#183;D&#8239;&#8722;&#8239;0.300</code> with R&#178; 0.876 over 806&#8239;s &#8212; so <code>f/D</code> ramps from 0.53 to 0.87 with demand size <b>by construction</b>, which is exactly the ramp the scorer reported. <b>The gate measures an offset, not a branch.</b> Attribution rests instead on the two reads that cannot be confounded: eight of eight toggle keys, and <code>Kp&#8239;=&#8239;0.3000</code> on 77,863 control-path frames. <span class="chip ev">EVIDENCE</span></p>
+    <p><b>That offset is not a nuisance &#8212; it is a finding.</b> The learned lateral-accel offset is <b>0.30&#8239;m/s&#178;</b>, frozen by <code>ForceAutoTuneOff</code> and <code>KeepLearnedLatAccelOffset</code> and inherited from the V282 tune. On a straight, where the median demand is 0.062&#8239;m/s&#178;, <b>the offset is five times the demand itself</b>, and the integrator&#8217;s 0.25&#8239;m/s&#178; median is three-quarters of it. It reads the same sign in left turns, right turns and near centre, so it is a vehicle-frame bias and not road banking.</p>
+  </div>
+
+  <div class="callout">
+    <h3>What the terminal null sentence actually does with this</h3>
+    <p>The pre-registration said: if the ring is <b>unchanged</b> with the loop open on every frame, the 20&#8239;Hz object is not the LKAS loop&#8217;s and the whole in-loop class &#8212; V38 through V293, shaping, notching, pole-moving and opening &#8212; is <b>closed</b>.</p>
+    <p><b>The identity held and the ring did not go unchanged.</b> It fell: amplitude to &#215;0.434 and presence to a ninth. So the sentence <b>did not fire</b>. What it licenses instead is narrower and still useful: with <code>|R_servo|&#8239;=&#8239;0</code> at every frequency the ring is <em>mostly</em> the loop&#8217;s, the pre-registered 0.40&#215; threshold was very close to right, and the residual 1.1&#160;% of windows is the part that is not. <span class="chip ev">EVIDENCE for the numbers</span> <span class="chip bel">BELIEF for the attribution split</span></p>
+  </div>
+</section>
+
+<section id="plant">
+  <div class="col">
+    <p class="eyebrow">What the opened loop exposed</p>
+    <h2>Underneath the servo the car is a spring, not an integrator</h2>
+    <p class="lead">V293 removed the EPS rate loop, and what it uncovered is the thing every tune before it was fitted <em>through</em>. <strong>Steering torque commands an angle, and the torque needed per degree barely depends on speed.</strong></p>
+    <p>The test is the log-log slope of the transfer magnitude, instrumental-variable, over the coherent band. A spring reads <b>(0,&#8239;+1)</b> for torque&#8594;angle and torque&#8594;rate; an integrator reads <b>(&#8722;1,&#8239;0)</b>. Measured at 15&#8211;22&#8239;m/s: <b>+0.111 and +1.237</b>. At &gt;22: <b>+0.117 and +1.241</b>. The rate channel is the angle channel differentiated, slope difference 1.13 and 1.12 against a predicted 1.00 &#8212; an internal consistency check the data passes. The estimator returns 0&#8239;ms on a zero-lag pair and 196&#8239;ms [182,&#8239;198] on a pair delayed by exactly 200. <span class="chip ev">EVIDENCE</span></p>
+    <p><strong>A second-order fit adds nothing.</strong> Where the first-order model reaches VAF 0.98 the model with an inertia term reaches 0.98&#8211;0.99, and where the first-order model is weak the second-order one is weaker still. There is no identifiable inertia below 1.5&#8239;Hz; any resonance lives above the band this drive can see.</p>
+  </div>
+
+  <figure>
+    <div class="legend"><span style="color:var(--plant)"><i class="sw" style="background:var(--plant)"></i>measured, joint fit with 95&#160;% CI</span><span style="color:var(--v282)"><i class="sw d"></i>fork tables as flown</span><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>rev-2 tables</span></div>
+    <div class="figbody"><!--#fig1#--></div>
+    <figcaption><b>The LERP that decides the whole rev-2 config, before and after, on the same axes.</b> The curves are the real interpolation the fork runs &#8212; <code>k(v)</code> and <code>G(v)</code> interpolated separately on their own breakpoints, then divided &#8212; not a straight line between endpoints. The fork&#8217;s hold term was identified on the V280-era <em>rate</em> loop and is <b>1.4&#215; to 2.2&#215; too small</b> for the plant V293 exposes. The rev-2 tables land on the measurement in the two best-determined bands and inside the interval in the third. <b>Below 8&#8239;m/s nothing is identified</b>: the damper coefficient&#8217;s interval crosses zero, so the 4.0&#8239;m/s knot is <span class="chip bel">BELIEF</span>, and so is 28.5&#8239;m/s, which the drive never reached (max 26.6, p95 25.0).</figcaption>
+  </figure>
+
+  <div class="col">
+    <h3>The two replaced tables, as code</h3>
+    <p>These are the only lines of the rev-2 change that are not a Galaxy toggle. The hold term they produce is <b>&#215;1.23 at 5&#8239;m/s and &#215;2.12&#8211;2.15 from 12.5&#8239;m/s up</b>.</p>
+  </div>
+  <pre>HONDA_ACCORD_EPS_G_BP = [5.0, 12.5, 18.5, 28.5]
+HONDA_ACCORD_EPS_G_V  = [550, 271, 246, 205]            <span class="cmt"># was [120, 95, 85, 70]</span>
+HONDA_ACCORD_EPS_K_BP = [4.0, 8.0, 12.5, 18.5, 28.5]
+HONDA_ACCORD_EPS_K_V  = [0.93, 1.64, 2.15, 2.77, 3.15]  <span class="cmt"># was [0.17, 0.28, 0.35, 0.45, 0.50]</span></pre>
+
+  <div class="col">
+    <h3>The controller&#8217;s model of the car is wrong in two independent directions, and both are about &#215;2</h3>
+    <p>openpilot carries one number for how much lateral acceleration a unit of torque buys. Measured on a grid that separates speed from demand amplitude, that number runs from <b>1.28 to 9.43</b> &#8212; a factor of seven across the drive.</p>
+  </div>
+  <figure>
+    <div class="figbody"><!--#fig4#--></div>
+    <figcaption><b>Read down a column and across a row, and the two errors separate cleanly.</b> Down (speed fixed, &gt;22&#8239;m/s): <b>&#215;2.8</b> from small to large demand. That is Coulomb friction, and <code>SteerFriction</code> was set to <b>0.00</b> on this drive against a measured 0.009&#8211;0.014 in exactly that toggle&#8217;s unit. Across (amplitude fixed, mid): <b>&#215;1.9</b> from 8&#8211;15 to &gt;22&#8239;m/s. That one is structural &#8212; torque sets an angle, and angle becomes lateral acceleration through <code>v&#178;</code>, so a single <code>SteerLatAccel</code> cannot be right at two speeds. Empty cells had too few windows to fit. <b>The steer ratio is not the cause</b>: the controller&#8217;s own <code>actualLateralAccel</code> agrees with the raw gyro to within 1&#160;% in every angle stratum from 2&#176; to 400&#176;. <span class="chip ev">EVIDENCE</span></figcaption>
+  </figure>
+
+  <div class="col">
+    <h3>&#8220;Snapped between angles&#8221;, measured &#8212; and it is the car, not the command</h3>
+    <p>The instrument had to be settled first, and settling it changed the answer twice. The 0x14A angle field quantises at 0.1&#176;, so <em>any</em> angle-based smoothness measure reads a perfect 1.000 below about 10&#8239;deg/s whatever the plant does; every number here comes from the 0x18F <strong>rate</strong> field at 0.125&#8239;deg/s instead. And the driver-torque bar cannot stand in for <code>steeringPressed</code> on this car &#8212; it reads EPS twist, and no threshold separates hands-on from hands-off. So every cross-route comparison is all-engaged on both routes, like for like.</p>
+  </div>
+
+  <div class="duo">
+    <figure>
+      <div class="legend"><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>r70 V293 hands-off</span><span style="color:var(--v293)"><i class="sw" style="background:var(--v293);opacity:.55"></i>r70 all engaged</span><span style="color:var(--v282)"><i class="sw" style="background:var(--v282)"></i>r6c V282</span></div>
+      <div class="figbody"><!--#fig3a#--></div>
+      <figcaption><b>The decisive statistic.</b> A dwell is the 0.10&#8239;s moving mean of wheel rate below the threshold for at least 0.20&#8239;s. At the tightest threshold the wheel comes to a <em>genuine stop</em> <b>6.2&#215; to 39&#215;</b> more often than on V282. At 0.5&#8239;deg/s the ratio is 1.1&#8211;2.6&#215;; by 1&#8211;2&#8239;deg/s the two builds converge. <b>The excess is specifically in stops, not in slow motion</b> &#8212; which is why it lives in a run-length statistic and left the marginal distribution&#8217;s shape unchanged. <span class="chip ev">EVIDENCE</span></figcaption>
+    </figure>
+    <figure>
+      <div class="legend"><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>r70 V293</span><span style="color:var(--v282)"><i class="sw" style="background:var(--v282)"></i>r6c V282</span><span style="color:var(--v292)"><i class="sw" style="background:var(--v292)"></i>r39 V282</span><span style="color:var(--stock)"><i class="sw" style="background:var(--stock)"></i>r35 V281 rev 3</span></div>
+      <div class="figbody"><!--#fig3b#--></div>
+      <figcaption><b>Scale-free, and matched on activity.</b> Of all the wheel travel in a 4&#8239;s window, what share arrives in the fastest 10&#160;% of its frames? Windows are binned by their <em>own</em> rms rate, because route 70&#8217;s is 2&#8211;3&#215; the references&#8217; in the same speed band. V293 is above all three references in every bin and <b>the gap widens with activity</b>: 0.468 against 0.325&#8211;0.351 at q75&#8211;90. A 10-step staircase scores 1.000, off the top of this axis. <b>The command is not the cause</b> &#8212; the same measure on the 0xE4 command is flat across bins, and V293&#8217;s per-frame command step is <b>2.9&#215; smaller</b> than V282&#8217;s. <span class="chip ev">EVIDENCE</span></figcaption>
+    </figure>
+  </div>
+
+  <div class="callout note">
+    <h3>Three nulls kill the obvious explanation, and the surviving one is arithmetic</h3>
+    <p>The textbook story is stiction plus integrator wind-up: torque builds until it breaks the wheel free. <b>All three of its signatures are absent.</b> There is no excess spike at zero rate &#8212; the ratio of exactly-zero to barely-moving frames is 0.556&#8211;0.641 on every route and band, V293 included. Breakaway torque minus hold torque reads <b>+10.2 / &#8722;6.5 / &#8722;4.4 / +0.6</b> counts, indistinguishable from V282&#8217;s and not consistently positive. And the command moves only <b>0.36 to 0.63 of the Coulomb band</b> across a dwell, barely more than on V282. The dwells are 0.11&#8211;0.13&#8239;s &#8212; far too short for Ki&#8239;=&#8239;0.15 to wind anything. <span class="chip ev">EVIDENCE &#8212; three independent nulls</span></p>
+    <p><b>What survives is the spring plus the friction band, with almost no feedback to linearise it.</b> Inside the band the wheel does not move; when the command&#8217;s own slow evolution carries it out, the spring releases the stored deflection at once. The snap size is <code>2F/a(v)</code> &#8212; the friction band expressed in degrees &#8212; and the median snap is the <em>same</em> on both builds. What differs is how long the wheel sits still first: V293&#8217;s p90 dwell reaches <b>0.93&#8211;1.11&#8239;s</b> against V282&#8217;s 0.375&#8211;0.625. <span class="chip bel">BELIEF &#8212; the mechanism; the statistics behind it are EVIDENCE</span></p>
+    <p><b>V282 had two friction linearisers and this drive removed both at once</b>, so it cannot separate them: the EPS&#8217;s own 1&#8239;kHz rate servo, and the fork&#8217;s rate-plant feedforward, whose <code>d(angle)/dt</code> term was dithering the command. Dither and a rate servo are the two classic ways friction gets linearised. <b>Rev&#8239;2 restores the second one.</b></p>
+  </div>
+</section>
+
+<section id="demand">
+  <div class="col">
+    <p class="eyebrow">The LKAS demand path, end to end</p>
+    <h2>Where the feedforward lands, and why the feedback cannot rescue it</h2>
+    <p class="lead">On the identified plant the as-flown loop crosses over at <strong>0.034&#8211;0.25&#8239;Hz</strong> with 110&#8211;136&#176; of phase margin. Above about 0.1&#8239;Hz the car is running open loop, <strong>so every dynamic error is a feedforward error.</strong></p>
+    <p>The integrator nevertheless carries about <strong>38&#160;% of the commanded torque in every speed band</strong>, with 55.7&#8239;s of the drive above 0.4 in 16 episodes, longest 11.9&#8239;s, at median speed 6.2&#8239;m/s. That is a feedforward that is persistently wrong at DC, not noise. And the tracking gain of actual on desired rises monotonically with speed &#8212; <b>0.88 at 8&#8211;15, 1.02 at 15&#8211;22, 1.12 above 22</b> &#8212; which is the speed error showing up directly in the closed loop: under-turning below 15&#8239;m/s, over-turning above 22. <span class="chip ev">EVIDENCE</span></p>
+  </div>
+
+  <figure>
+    <div class="legend"><span style="color:var(--v282)"><i class="sw" style="background:var(--v282)"></i>lat-accel FF, as flown</span><span style="color:var(--stock)"><i class="sw" style="background:var(--stock)"></i>old tables &#215;3.3</span><span style="color:var(--v292)"><i class="sw" style="background:var(--v292)"></i>old tables &#215;2.15</span><span style="color:var(--v293)"><i class="sw" style="background:var(--v293)"></i>rev-2 tables</span></div>
+    <div class="figbody"><!--#fig2#--></div>
+    <figcaption><b>Torque commanded per degree of steady angle, divided by the torque the plant actually needs.</b> The flown feedforward <b>over-commands by &#215;1.9 to &#215;2.1 above 15&#8239;m/s</b> &#8212; which is the operator&#8217;s oversteer, arriving exactly where the numbers say it should. <b>One scalar cannot fix the shape.</b> The fork&#8217;s hold term rises with speed while the measured spring is flat, so any single <code>AccordEpsSpringScale</code> that is right at speed over-holds by about &#215;2.1 below 8&#8239;m/s &#8212; the direction that steers the driver into low-speed turns, in the band where phase margin is already worst. The rev-2 tables sit at 0.84&#8211;1.19 everywhere. <span class="chip ev">EVIDENCE</span> <span class="chip risk">the &lt;8&#8239;m/s column rests on the least-determined number in the study</span></figcaption>
+  </figure>
+
+  <div class="col">
+    <h3>The branch algebra, stated once</h3>
+    <p>With the plant feedforward on, the fork computes <code>output = (P&#8239;+&#8239;I)&#8239;/&#8239;SteerLatAccel&#8239;+&#8239;plant_ff&#8239;+&#8239;friction</code>. Three consequences follow and all three are load-bearing:</p>
+    <ul>
+      <li><strong><code>SteerLatAccel</code> scales only P and I</strong>, not the feedforward. With the plant branch on it stops being the feedforward&#8217;s gain and becomes purely the loop divider.</li>
+      <li><strong><code>Kp_eff</code> = <code>SteerKP</code> + <code>lsf(v)</code>, and <code>lsf</code> is added, not scaled.</strong> It reads <b>7.10 at 4.4&#8239;m/s</b>, 1.07 at 11.6 and 0.39 at 23.2. Below about 7&#8239;m/s the toggle is nearly inert &#8212; driving <code>SteerKP</code> to its 3.0 ceiling moves the gain by 18&#160;% at 3&#8239;m/s.</li>
+      <li><strong>The feedforward does not enter <code>L(s)</code>.</strong> It sets the error the loop starts from. So a feedforward fix changes the step response without changing a single margin, which is why rev&#8239;2 fixes it first.</li>
+    </ul>
+    <h3>And the loop gain in the angle domain is flat, which is why nothing here is speed-selective</h3>
+    <p>The low-speed factor exists precisely to cancel the <code>v&#178;</code> in the error, and it does so almost perfectly. Computed from the fork&#8217;s code with the real vehicle-model slip factor and the served steer ratio:</p>
+  </div>
+  <div class="tblwrap">
+  <table>
+    <caption class="eyebrow" style="text-align:left;padding-bottom:6px">P loop gain in the steering-angle domain, as flown</caption>
+    <thead><tr><th class="n">v, m/s</th><th class="n">1</th><th class="n">3</th><th class="n">5</th><th class="n">10</th><th class="n">15</th><th class="n">20</th><th class="n">25</th><th class="n">30</th><th class="n">35</th></tr></thead>
+    <tbody>
+      <tr><td class="m">low-speed factor</td><td class="n">140.4</td><td class="n">14.82</td><td class="n">5.06</td><td class="n">1.10</td><td class="n">0.380</td><td class="n">0.160</td><td class="n">0.068</td><td class="n">0.028</td><td class="n">0.020</td></tr>
+      <tr><td class="m">P effective</td><td class="n">140.7</td><td class="n">15.12</td><td class="n">5.36</td><td class="n">1.40</td><td class="n">0.680</td><td class="n">0.460</td><td class="n">0.368</td><td class="n">0.328</td><td class="n">0.320</td></tr>
+      <tr class="hl"><td class="m">counts per degree of angle error</td><td class="n">36.3</td><td class="n">34.9</td><td class="n">34.0</td><td class="n">33.8</td><td class="n">34.1</td><td class="n">37.1</td><td class="n">41.2</td><td class="n">46.7</td><td class="n">54.5</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="col">
+    <p><strong>33 to 37 counts per degree from 1&#8239;m/s all the way to 20</strong>, rising only &#215;1.34 by 30. So a 2&#8239;Hz ring at 0&#8211;5&#8239;m/s and an elevated 2&#8239;Hz line at 10&#8211;20&#8239;m/s are the <em>same</em> instability, because the controller applies the same angle-domain gain at both. <strong>There is nothing speed-selective to blame; what changed is the plant.</strong> There is also no derivative term to damp any of it &#8212; the PID is constructed with no third gain, so <code>torqueState.d</code> is identically zero. <span class="chip ev">EVIDENCE &#8212; both files read</span></p>
+  </div>
+
+  <div class="callout note">
+    <h3>If an inner loop ever comes back, it must close on the angle</h3>
+    <p>The operator asked whether an inner loop could track the derivative of filtered angular velocity. <b>On this plant that is the one quantity to avoid.</b> A P term on angular acceleration adds electronic <em>inertia</em>: the friction band <code>2F/k</code> is unchanged, the wheel is slower to break away <em>and</em> slower to stop, and command&#8594;angle becomes a double integrator &#8212; worse than the single integrator V282 gave, which is what forced the rate-plant feedforward hack in the first place. Differentiating a 0.125&#8239;deg/s-quantised rate needs so much filtering that the loop has no authority left at the 4&#8211;9&#8239;Hz timescale where the dwells live.</p>
+    <p><b>An angle loop is the right quantity</b> &#8212; an electronic spring shrinks the band to <code>2F/(k&#8239;+&#8239;K_e)</code> and leaves command&#8594;angle exactly the plant the fork&#8217;s spring feedforward already models. But it is rung 3. <b>Rung 1 is the fork toggles below; rung 2 is a 100&#8239;Hz rate-feedback term in the fork, no firmware.</b> A firmware angle loop is a code cave, which is this kit&#8217;s only bricking class, and it comes after rung 2 or not at all. A half-open feedback clamp is never: it makes a hybrid neither controller can model.</p>
+  </div>
+</section>
+
+<section id="rev2">
+  <div class="col">
+    <p class="eyebrow">The next drive</p>
+    <h2>Rev&#8239;2 &#8212; the firmware stays, the fork learns the plant</h2>
+    <p class="lead">Nothing in the ECU changes. <strong>The V293 image stays exactly as flown</strong>, and every edit below is on the openpilot side: eight Galaxy toggles and two replaced tables.</p>
+    <p>The diagram is the whole path with the plant feedforward switched back on. The branch that was bypassed on route 70 is the one shaded &#8212; and the reason it is safe to switch on now is that its tables have been re-identified against the plant V293 exposed, rather than against the rate servo V293 deleted.</p>
+  </div>
+
+  <figure>
+    <div class="figbody"><!--#fig7#--></div>
+    <div class="scrollhint">&#8592; scroll the diagram sideways on a narrow screen &#8594;</div>
+    <figcaption><b>Shaded blocks are what rev&#8239;2 changes.</b> Three things are worth tracing with a finger. <b>The divider sits on P and I only</b>, so raising <code>SteerLatAccel</code> from 6.0 to 12.0 halves the feedback everywhere without touching the feedforward. <b>The low-speed factor enters as an addition</b>, so no value of <code>SteerKP</code> removes it &#8212; at 4.4&#8239;m/s it alone puts <code>Kp_eff</code> near 7. And <b>the return path crosses over at 0.03&#8211;0.25&#8239;Hz</b>, which is why the feedforward, not the feedback, is where the fix has to land.</figcaption>
+  </figure>
+
+  <div class="col">
+    <h3>The configuration, in full</h3>
+    <p>Eight toggles restored through Galaxy, plus the two tables above in fork code. <code>SteerFriction</code> is the one number still open: three candidates are being checked against a describing-function estimate of the friction relay before the value is written.</p>
+  </div>
+  <pre>AccordRatePlantFF          1          <span class="cmt"># the spring feedforward, back on</span>
+AccordEpsSpringScale       1.0        <span class="cmt"># the new tables already carry the measured spring</span>
+AccordEpsGainScale         1.0
+AccordFFRateGain           1.0        <span class="cmt"># and the measured damper, so no rescale</span>
+KeepLearnedLatAccelOffset  0          <span class="cmt"># drop the inherited 0.30 m/s&#178; vehicle-frame bias</span>
+SteerLatAccel              12.0       <span class="cmt"># divides P and I only; 6.0 left Ms 8.8-13.0 at 4.5 m/s</span>
+SteerKP                    0.70       <span class="cmt"># buys back the hold stiffness LAF 12 would cost</span>
+AccordTorqueKi             0.20
+SteerDelay                 0.20
+SteerFriction              {{FRICTION}}   <span class="cmt"># 0.012 / 0.008 / 0.005 under check; measured F = 0.0089-0.0137</span>
+
+<span class="cmt"># fork code, two tables (see above)     fork commit: TBD</span></pre>
+
+  <div class="duo">
+    <figure>
+      <div class="figbody"><!--#fig5a#--></div>
+      <figcaption><b>4.5&#8239;m/s is the band that decides the config, and as flown it was unstable there.</b> Every candidate was scored on the identified plant. <code>SteerLatAccel</code> is the only lever that reaches this band, because it divides the whole feedback while the low-speed factor is immune to <code>SteerKP</code>. <b>LAF&#8239;12 is what makes low speed survivable</b> &#8212; that, not the loop gain at speed, is the argument for raising it. Cutting Ki from 0.50 to 0.20 moves M&#8347; by 0.01. <span class="chip ev">EVIDENCE &#8212; on the identified plant</span> <span class="chip bel">BELIEF that the plant generalises below 8&#8239;m/s</span></figcaption>
+    </figure>
+    <figure>
+      <div class="figbody"><!--#fig5b#--></div>
+      <figcaption><b>&#8220;On hard transients it would overshoot then correct slightly.&#8221;</b> Simulated with each config&#8217;s own feedforward error included, because that is where the overshoot comes from. The drive&#8217;s measured step events agree on the shape: 38 of them, overshoot 0.44 at 10&#8211;20&#8239;m/s, ring 0.78&#8211;1.56&#8239;Hz &#8212; and absolute overshoot does <em>not</em> scale with step size (slope &#8722;0.46, R&#178; 0.027), which rules out an under-damped linear loop and points at a fixed excursion. <span class="chip ev">EVIDENCE</span></figcaption>
+    </figure>
+  </div>
+
+  <div class="tblwrap">
+  <table>
+    <caption class="eyebrow" style="text-align:left;padding-bottom:6px">As flown against rev&#8239;2, on the four symptoms the operator named</caption>
+    <thead><tr><th>symptom, in his words</th><th>the quantity</th><th class="n">as flown</th><th class="n">rev&#8239;2</th><th>change</th></tr></thead>
+    <tbody>
+      <tr><td>&#8220;snapped between angles&#8221;</td><td class="m">friction cancelled, of a measured 0.0098&#8211;0.0120</td><td class="n">0.000</td><td class="n v293b">{{FRICTION}}</td><td class="chg">from none to essentially all</td></tr>
+      <tr><td>&#8220;felt loose&#8221;</td><td class="m">controller hold stiffness at 18.9 / 22.8&#8239;m/s</td><td class="n">0.01071 / 0.01262</td><td class="n v293b">0.00973 / 0.01264</td><td>&#8722;9&#160;% / &#177;0 &#8212; held, and it is the reason <code>SteerKP</code> rises to 0.70</td></tr>
+      <tr><td>&#8220;there was oversteer&#8221;</td><td class="m">feedforward hold ratio at 15&#8211;22 / &gt;22</td><td class="n">1.901 / 2.057</td><td class="n v293b">0.993 / 0.835</td><td class="chg">from &#215;1.9&#8211;2.1 over to &#215;0.84&#8211;0.99</td></tr>
+      <tr><td>&#8220;overshoot then correct&#8221;</td><td class="m">simulated 1&#8239;m/s&#178; step overshoot</td><td class="n">1.41 / 1.56</td><td class="n v293b">0.43 / 0.32</td><td class="chg">&#247;3.3 to &#247;4.9</td></tr>
+      <tr><td>the revert trigger</td><td class="m">phase margin / M&#8347; at 4.5&#8239;m/s</td><td class="n">&#8722;10.8&#176; / 12.31</td><td class="n v293b">57.7&#176; / 2.50</td><td class="chg">from unstable to marginal</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <h3>Risk before the drive</h3>
+    <p><b>Low-speed margin is marginal, not comfortable.</b> M&#8347; 2.50 at 4.5&#8239;m/s sits just outside the 2.0 bound, and it sits on the <em>least-determined</em> band in the study: below 8&#8239;m/s the damper coefficient&#8217;s interval crosses zero, so the plant there is <span class="chip bel">BELIEF</span>, carried from the bands above it. The as-flown config read &#8722;10.8&#176; and M&#8347; 12.31 in the same place, so rev&#8239;2 is a large improvement onto a number that is still not comfortable. <b>Watch low speed first, again.</b></p>
+    <p><b>The friction term is a relay, and a relay can sustain a cycle.</b> Adding <code>SteerFriction</code> puts a sign-following bias into the loop. If it is larger than the plant&#8217;s own Coulomb term it is anti-damping, and a small limit cycle at roughly 1&#8211;2&#8239;Hz at low speed is the shape it would take &#8212; which is uncomfortably close to the 1&#8211;4&#8239;Hz line that just fired the revert. <span class="chip bel">BELIEF &#8212; a describing-function check is running, and it is what picks the value</span></p>
+    <p><b>Two knots are extrapolation.</b> 28.5&#8239;m/s is beyond anything the drive reached (max 26.6, p95 25.0), and the 4.0&#8239;m/s knot rests on the band where nothing identifies. Both are in the shipped tables, and both are <span class="chip bel">BELIEF</span>.</p>
+    <p><b>What does not change: the firmware, and therefore the authority.</b> The image is byte-identical to the one that flew. Peak delivered lane torque stays 2,461 counts &#8212; <b>&#215;6.17 of stock at the very top of the demand axis, &#215;4.35 at the median and &#215;3.79 at its minimum</b> &#8212; and it still takes twice V282&#8217;s demand to reach. Raising <code>SteerLatAccel</code> lowers the loop gain; it does not raise what the ECU can deliver.</p>
+  </div>
+
+  <div class="col">
+    <h3>Revert</h3>
+    <p><strong>Two steps, no flash.</strong> Restore the rev-1 config file through Galaxy, which puts every toggle back to what flew on route 70, and revert the fork commit that replaced the two tables. The ECU is untouched either way, so there is no forbidden window and no ordering constraint &#8212; the one asymmetry that matters (<em>never</em> run the torque config against a rate-servo image) does not arise, because no image changes.</p>
+    <p><span class="chip risk">KNOW THIS BEFORE YOU NEED IT</span> <b>Safe Mode resets the toggles.</b> Every key above is in the fork&#8217;s Safe-Mode-managed list, so a trip restores defaults &#8212; which on a V293 image is the mismatched row, not a safe one. After any trip, restore the config before the next drive.</p>
+
+    <h3>What would falsify rev&#8239;2 on the next drive</h3>
+    <p>Pre-registered here so the next read cannot be scored after the fact. Each is a statistic route 70 already measured, so each has a number to beat.</p>
+    <ul>
+      <li><b>Tracking gain of actual on desired flattens toward 1.00</b> across the bands. It read 0.88 / 1.02 / 1.12 &#8212; if the speed law is now modelled, the spread closes.</li>
+      <li><b>The integrator&#8217;s share falls well below 0.38.</b> It carried about 38&#160;% of the command in every band; a correct feedforward should leave it very little to do.</li>
+      <li><b>Dwells per minute fall to at most &#215;3 of r6c&#8217;s</b> at the 0.25&#8239;deg/s threshold &#8212; from 15.2, 7.7, 4.6 and 1.2 toward 1.2, 1.9, 1.3 and 0.6.</li>
+      <li><b>Rate-magnitude concentration falls to 0.40 or below</b> at q75&#8211;90, from 0.468 toward the references&#8217; 0.325&#8211;0.351.</li>
+      <li><b>1&#8211;4&#8239;Hz prominence below 3&#8239;dB</b> in every speed band, from 6.51 / 11.78 / 7.65 / 3.08. This is the revert trigger and it is the first thing to read.</li>
+      <li>And straight-line delivery should rise from <b>80&#160;%</b>, which is the friction error seen in the regime where demand is smallest.</li>
+    </ul>
+    <p><b>The experiment this drive could not run, rev&#8239;2 can.</b> Route 70 changed the firmware and the fork config together, so it cannot separate the EPS rate servo from the fork&#8217;s command dither as the thing that was linearising friction. Rev&#8239;2 changes only the fork. <strong>If the ratchet statistics move and the tracking does not, or the reverse, that separates the two causes.</strong></p>
+  </div>
+</section>

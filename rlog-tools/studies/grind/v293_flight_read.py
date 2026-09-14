@@ -2,6 +2,7 @@
 """v293_flight_read.py -- THE TURNKEY SCORER FOR THE FIRST V293 DRIVE.  ONE COMMAND.
 
     python rlog-tools/studies/grind/v293_flight_read.py <route id or cache tag> [--build V293|V282|V292]
+                                                       [--config <a *.decoded.json toggle config>]
 
 It extracts the route into the v280-format cache if it is not there already (decode copied VERBATIM
 from extract_v292_routes.py, so every census tool reads it with the same yardstick), then prints a
@@ -23,6 +24,22 @@ SECTIONS
   4  the outer-loop signature -- a 1-4 Hz line in 0xE4 command and steering angle, per speed band.
   5  13-17 Hz vs V282 (V292's rejected x1.9-2.1) and any 22-30 Hz line.
   6  the 0x14A cave duties b4-b7 (b4 = sign(r24) = the NEGATIVE CONTROL; b7 = the pre-registered mover).
+  7  THE OPERATOR'S FOUR SYMPTOMS -- ratchet, loose, oversteer, overshoot-then-correct -- as
+     pre-registered instruments, with every reference column RE-DERIVED at run time by
+     `v293_symptom_instruments.py` on the cached routes, never copied from a report.  Carries its own
+     POSITIVE CONTROL: the same code must reproduce V293-PLANT-IDENT-2026-09-13.md on r70_v293.
+
+WHAT CHANGED IN v2 (2026-09-13)
+  * THE EXPECTED FORK CONFIG IS READ FROM A FILE (`--config`), not hard-coded, so a revised toggle
+    config is scored against itself.  Default: the rev-2 file if it exists, else the rev-1 one.
+  * THE `branch` GATE WAS REPLACED.  v1's `median f/desiredLateralAccel >= 0.75` was BROKEN AS
+    WRITTEN and failed a correctly-attributed drive: `f` is the current command minus an offset and
+    `desiredLateralAccel` is the 0.30 s delayed setpoint plus a jerk lead, so f/D = 1 - c/|D| by
+    construction.  The replacement reads `torqueState.f` against
+    `starpilotLateralState.feedforward` (bimodal: 0.000 in the else arm, 3.3 under plant FF) and
+    re-derives the fork's own f-formula on the wire.  The gate's POLARITY FOLLOWS THE CONFIG.
+  * A SECOND REVERT CLASS: a ratchet worse than the rev-1 flight reverts the TOGGLE CONFIG, not the
+    firmware.
 
 THE CONTROLS, and why they are the point
   * NEGATIVE CONTROL: `--controls` runs the SAME identity on r6c (V282) and r6d/r6e/r6f (V292) and
@@ -124,21 +141,97 @@ FORK_TG_STRUCT = """struct ModelDataV2SP @0xa1680744031fdb2d {
   reason @4 :Text;
   wallTimeNanos @5 :UInt64;
 }"""
-# THE FORK-SIDE TORQUE-MODE CONFIG as the rlog's initData.params must carry it: the Galaxy toggle
-# config analysis-2020accord/reference/toggle-config_V293_torque_mode.json (written and round-trip
-# checked by tools/make_galaxy_toggle_config.py).  Values are the params store's strings.  The
-# Accord* keys are ABSENT from initData when they sit at their params_keys.h default (a params
-# rebuild drops default-valued keys -- measured on r6f), so absence is read as the default here.
-TORQUE_CONFIG = {                 # key: (expected, default-when-absent, kind)
-    "AccordRatePlantFF": ("0", "1", "bool"),      # the switch: rate-plant FF branch bypassed
-    "SteerKP": ("0.3", None, "float"),
-    "AccordTorqueKi": ("0.15", "0.30", "float"),
-    "SteerFriction": ("0.0", None, "float"),      # 0 is a STABILITY choice (LSF-inflated friction)
-    "SteerLatAccel": ("6.0", None, "float"),      # carried over, NOT an identification
-    "ForceAutoTuneOff": ("1", None, "bool"),      # makes the SteerLatAccel/SteerFriction params live
-    "AdvancedLateralTune": ("1", None, "bool"),   # the Steer* toggles are read only under it
-    "AccordTurnFFTaper": ("0", "0", "bool"),
+# ======================================================================================================
+# 0b.  THE EXPECTED FORK CONFIG -- READ FROM A FILE, never hard-coded  [v2, 2026-09-13]
+# ======================================================================================================
+# 🛑 WHY THIS MOVED OUT OF THE SOURCE.  v1 hard-coded the rev-1 torque-mode config, so the very next
+# drive -- which flies a REVISED config on the SAME firmware -- would have been scored against the
+# wrong expectation and reported a bogus `toggle` FAIL.  The expectation now comes from the decoded
+# Galaxy toggle config itself, which is the same artefact the operator restores on the device.
+CONFIG_DIR = os.path.join(KIT, "analysis-2020accord", "reference")
+CONFIG_R2 = os.path.join(CONFIG_DIR, "toggle-config_V293_torque_mode_r2.decoded.json")
+CONFIG_R1 = os.path.join(CONFIG_DIR, "toggle-config_V293_torque_mode.decoded.json")
+
+# params_keys.h DECLARED defaults, transcribed from FORK-LATERAL-PATH-V293-2026-09-13.md section 5
+# (which read them out of `common/params_keys.h` at Dom 4247cb09e).  A params rebuild DROPS a key that
+# sits at its declared default, so an ABSENT key in initData reads as the default -- MEASURED on r6f,
+# where `AccordRatePlantFF` was absent and the rate-plant branch was demonstrably live.
+# ⚠ `SteerKP` / `SteerFriction` / `SteerLatAccel` / `SteerDelay` / `SteerRatio` are deliberately NOT
+# here: their declared defaults are platform-derived, so absence is genuinely ambiguous and must read
+# as a MISMATCH rather than quietly resolve to a guess.
+PARAMS_DEFAULTS = {
+    "AccordRatePlantFF": "1", "AccordTorqueKi": "0.30", "AccordTurnFFTaper": "0",
+    "AccordFFRateGain": "0.5", "AccordEpsGainScale": "1.0", "AccordEpsSpringScale": "1.0",
+    "AccordVariableSteerRatio": "1", "ForceAutoTuneOff": "1", "ForceAutoTune": "0",
+    "AdvancedLateralTune": "1", "KeepLearnedLatAccelOffset": "1", "UseAutoSteerDelay": "1",
 }
+# keys we read but never gate on -- printed as context beneath the config table
+CONTEXT_KEYS = ("SteerRatio", "SteerDelay", "UseAutoSteerDelay", "AccordVariableSteerRatio",
+                "AccordFFRateGain", "AccordEpsGainScale", "AccordEpsSpringScale",
+                "KeepLearnedLatAccelOffset", "ForceTorqueController", "ForceAutoTune",
+                "GitCommit", "GitBranch")
+
+# 🛑 WHICH FORK COMMIT A CONFIG NEEDS.  The rev-2 config sets AccordEpsSpringScale 1.0 and
+# AccordEpsGainScale 1.0 NOT because no correction is wanted, but because the correction moved INTO
+# FORK CODE: `HONDA_ACCORD_EPS_G_V` -> [550, 271, 246, 205] and `_K_V` -> [0.93, 1.64, 2.15, 2.77,
+# 3.15] were replaced on Dom at 9622aee9f.  Fly it on 4247cb09e and the scales are 1.0 against the
+# OLD tables, i.e. the plant feedforward is the one the identification measured as 1.4-2.6x too
+# small -- a silently wrong drive that every other gate would pass.  The rlog cannot read the tables,
+# only the commit, so this gate is a COMMIT check and says so.
+CONFIG_FORK_COMMIT = {
+    "toggle-config_V293_torque_mode_r2.decoded.json": dict(
+        want="9622aee9f", forbid="4247cb09e",
+        why="the rev-2 config's spring/gain scales are 1.0 because the Accord plant tables were "
+            "REPLACED IN FORK CODE at 9622aee9f; on 4247cb09e those scales multiply the OLD tables"),
+}
+
+
+def load_config(path=None):
+    """the expected config, from a `*.decoded.json` under analysis-2020accord/reference/.
+
+    Returns (path, {key: (expected_string, default_or_None, kind)}) in the shape the v1 table used, so
+    the gate code below is unchanged.  JSON bools become "1"/"0"; JSON numbers become their repr and
+    are compared as floats, so 0.3 == "0.3" == "0.30".
+    """
+    if path is None:
+        path = CONFIG_R2 if os.path.exists(CONFIG_R2) else CONFIG_R1
+    if not os.path.exists(path):
+        raise SystemExit("no expected-config file at %s\n"
+                         "  -> pass --config <a *.decoded.json under analysis-2020accord/reference/>"
+                         % path)
+    raw = json.load(open(path))
+    cfg = {}
+    for k, v in raw.items():
+        if isinstance(v, bool):
+            cfg[k] = ("1" if v else "0", PARAMS_DEFAULTS.get(k), "bool")
+        elif isinstance(v, (int, float)):
+            cfg[k] = (repr(float(v)), PARAMS_DEFAULTS.get(k), "float")
+        else:
+            cfg[k] = (str(v), PARAMS_DEFAULTS.get(k), "str")
+    return path, cfg
+
+
+CONFIG_PATH, CONFIG = None, {}    # set by main() / set_config(); the EXPECTED fork toggle config
+EXPECT_PLANT_FF = None            # True when the config asks for AccordRatePlantFF = 1
+
+
+def set_config(path=None):
+    """load the expected config and derive which feedforward ARM it asks for.
+
+    🛑 THE BRANCH GATE'S POLARITY FOLLOWS THE CONFIG.  Rev 1 turned the rate-plant FF OFF (the else
+    arm); the rev-2 config turns it ON.  A gate hard-wired to "the else arm must be live" would fail
+    the very next drive for doing exactly what it was told to do.
+    """
+    global CONFIG_PATH, CONFIG, EXPECT_PLANT_FF
+    CONFIG_PATH, CONFIG = load_config(path)
+    v = CONFIG.get("AccordRatePlantFF")
+    EXPECT_PLANT_FF = (v[0] == "1") if v else None
+    for k in CONFIG:
+        if k not in WANT_PARAMS:
+            WANT_PARAMS.append(k)
+    return CONFIG_PATH
+
+
 INSTALLED_KP = 0.9                # the rate-servo tune's SteerKP (2026-09-10 backup; route 6f initData)
 _LOG = None
 
@@ -198,6 +291,7 @@ import lowcmd_loopgain_v112_v278_v280 as LG     # noqa: E402
 import strongturn_r32_r33 as ST                 # noqa: E402
 import v292_replay_lib as RL                    # noqa: E402
 import v293_lib as L                            # noqa: E402
+import v293_symptom_instruments as SI           # noqa: E402
 
 IMG = {
     "V282": L.IMG282,
@@ -251,9 +345,33 @@ THR = dict(
     band_1317_ratio=1.5,       # prereg B7 gate (V292's rejected x1.9-2.1)
     coh_14=0.50,               # a GUARD, not the discriminator: coherence reads 0.88-1.00 at 1-4 Hz
                                # on every route in the corpus.  The angle AMPLITUDE discriminates.
-    fD_ratio=0.75,             # torqueState median f / desiredLateralAccel.  Torque mode with the
-                               # shipped friction 0 gives exactly 1.000; MEASURED on four routes that
-                               # are not torque mode: pooled 0.24-0.40, worst |D| band 0.58.
+    # --- v2, 2026-09-13: THE BRANCH IDENTITY.  `fD_ratio` is GONE -- see `branch_block` for why it
+    #     could not work.  Both sides below are MEASURED, not assumed:
+    #       median |f - starpilotLateralState.feedforward| / median |f|
+    #         ELSE arm  (rate-plant FF OFF): r70_v293 0.0000 · r39 0.0000 · r35 0.0000
+    #         PLANT arm (rate-plant FF ON) : r6f_v292 3.325 · r6c 3.371
+    #     The statistic is BIMODAL with nothing between 0.00 and 3.3, so the gate sits far from both
+    #     sides.  The absolute guard catches a route whose |f| is itself tiny.
+    branch_rel=0.10,
+    branch_abs=0.02,           # m/s^2
+    branch_slope_tol=0.02,     # the f-on-D_future slope must be 1.000 +- this in the ELSE arm
+    branch_r2=0.95,            # below this the three-term identity does not hold -> not the ELSE arm
+    offset_tol=0.02,           # m/s^2: |effective latAccelOffset| when the config says KEEP = 0
+    # --- v2: THE OPERATOR'S FOUR SYMPTOMS.  Every one is calibrated against at least one route that
+    #     FAILS it (r70_v293, the rev-1 flight) and one that PASSES (a V282/V281r3 reference), and the
+    #     section 7 printout names which is which beside the threshold.
+    ratchet_vs_r6c=3.0,        # dwells/min at th 0.25 must be <= 3x r6c's in every populated band
+    ratchet_min_s=60.0,        # a band under this much exposure is reported, not gated
+    conc_q7590=0.40,           # rate concentration in the q75-90 rms bin.  r70 0.468 FAIL;
+                               # r6c 0.345 / r39 0.325 / r35 0.351 PASS; sine 0.157, noise 0.278
+    track_lo=0.95, track_hi=1.05,     # tracking gain.  r70 >22 1.123 FAIL; r6c 0.966-0.996 PASS
+    track_min_s=60.0,
+    hold_hi=1.04,              # turn-hold actual/desired above 20 m/s.  r70 1.093 FAIL
+    overshoot=0.20,            # relative step overshoot at 10-20 and >20.  r70 0.437 / 0.341 FAIL
+    prom_db=3.0,               # 1-4 Hz prominence.  r70 6.5-11.8 FAIL; r6c -2.3..+2.2 PASS
+    rate14_vs_r6c=2.0,         # 1-4 Hz rate content against r6c's
+    i_share=0.20,              # integrator share of |f|+|p|+|i|.  r70 0.35-0.39 FAIL
+    deliver_lo=0.90, deliver_hi=1.10,   # straight-line delivery.  r70 0.800 FAIL
 )
 
 NULL_SENTENCE_PREREG = (
@@ -279,7 +397,11 @@ WANT_PARAMS = ["AccordEpsTorqueMode", "AccordRatePlantFF", "AccordFFRateGain", "
                "AdvancedLateralTune", "KeepLearnedLatAccelOffset", "ForceTorqueController",
                "AccordEpsGainScale", "AccordEpsSpringScale", "AccordTurnFFTaper", "GitCommit",
                "GitBranch", "GitRemote", "GitCommitDate", "Version", "TermsVersion", "CarParams",
-               "DongleId"]         # AccordEpsTorqueMode stays only as a STALE-FORK trap detector
+               "DongleId",
+               # v2: the rev-2 config touches these, and a key that is not CAPTURED reads the same as
+               # a key that is ABSENT from the store -- which is a silent wrong answer, not a null.
+               "SteerDelay", "UseAutoSteerDelay"]
+                                   # AccordEpsTorqueMode stays only as a STALE-FORK trap detector
 
 
 def i16be(d, i):
@@ -415,6 +537,7 @@ def extract(prefix, tag):
     pdump = params_dump or {}
     pdump["_tg_readable"] = bool(patched)
     pdump["_written_by"] = "v293_flight_read.py"
+    pdump["_want_params"] = sorted(WANT_PARAMS)
     pdump.update(_torque_state_stats(tq_f))
     pdump.update(_tg_summary(tg))
     json.dump(pdump, open(os.path.join(CACHE, tag + "_params.json"), "w"), indent=1)
@@ -428,6 +551,151 @@ def extract(prefix, tag):
               open(os.path.join(pd_, "CACHE-POINTER.json"), "w"), indent=1)
     pr("  wrote %s.npz (%.1f s route, %d bookmarks, %d segments)"
        % (tag, D["t18"][-1] - t0, len(marks), len(order)))
+
+
+# ======================================================================================================
+# 2b. THE CONTROL-PATH CACHE -- what SECTION 7 and the BRANCH IDENTITY need and the v280 cache lacks
+# ======================================================================================================
+# 🛑 The v280 cache is CAN + carState ONLY.  Three of the operator's four symptoms (loose, oversteer,
+# overshoot) and the new branch-identity gate are all read off openpilot's own control path, which is
+# not in it.  So this builds a SECOND, separate cache per route -- never touching the v280 one -- with
+# the 100 Hz controlsState/torqueState series, the fork's starpilotLateralState (which needs the
+# PATCHED schema), liveTorqueParameters at 4 Hz and liveParameters at 20 Hz.  Times are stored as
+# ABSOLUTE mono seconds so they align onto the v280 cache's own grid (whose t18 is absolute too).
+CS_FIELDS = ("la_des", "la_act", "f", "p", "i", "err", "out", "active", "sat", "version")
+
+
+def tag_prefix(tag):
+    """the route prefix on disk for a cache tag like 'r6c' / 'r70_v293' -- the tag's leading rXX is the
+    route counter in hex, exactly as `resolve` built it."""
+    mk = os.path.join(CACHE, tag + "_marks.json")
+    if os.path.exists(mk):
+        p = (json.load(open(mk)) or {}).get("route_prefix")
+        if p:
+            return p
+    ctr = re.sub(r"_v\d+.*$", "", tag)
+    ctr = ctr[1:] if ctr.startswith("r") else ctr
+    cand = {}
+    for p in glob.glob(os.path.join(RLOGS, "*_%s--*--rlog.zst" % ctr.rjust(8, "0"))):
+        cand.setdefault("--".join(os.path.basename(p).split("--")[:2]), []).append(p)
+    if len(cand) == 1:
+        return list(cand)[0]
+    if not cand:
+        return None
+    # 🛑 THE DONGLE COUNTER WAS RESET, so a counter can name two different routes (r35 and r6f both
+    # do).  Disambiguate against the v280 cache's OWN duration -- segments are ~60 s, so the segment
+    # count pins which route the cache was built from.  Never guess: a wrong prefix would silently
+    # align a different drive's control path onto this drive's CAN grid.
+    npz = os.path.join(CACHE, tag + ".npz")
+    if not os.path.exists(npz):
+        return None
+    with np.load(npz) as D:
+        want = float(D["t18"][-1] - D["t18"][0]) / 60.0
+    best = min(cand, key=lambda k: abs(len(cand[k]) - want))
+    if abs(len(cand[best]) - want) > 1.5:
+        return None
+    return best
+
+
+def cs_cache_path(tag):
+    return os.path.join(SCR, "cs_%s.npz" % tag)
+
+
+def build_cs_cache(tag, prefix=None, force=False):
+    """ONE rlog pass per route for the control path.  Returns the npz path, or None if no rlogs.
+
+    Every field is read with getattr + a default, because the reference routes were logged by older
+    fork builds and a missing field must degrade to NaN rather than kill the pass.  `epsTelemetry` is
+    the KIT's name for union slot @137, which the fork publishes as `starpilotLateralState` -- readable
+    only through the patched schema, so `sp_ff` is NaN-filled when the patch is unavailable.
+    """
+    out = cs_cache_path(tag)
+    if os.path.exists(out) and not force:
+        return out
+    prefix = prefix or tag_prefix(tag)
+    if not prefix:
+        return None
+    segs = sorted(glob.glob(os.path.join(RLOGS, "%s--*--rlog.zst" % prefix)),
+                  key=lambda p: int(os.path.basename(p).split("--")[2]))
+    if not segs:
+        return None
+    clog, patched = fork_log_schema()
+    import zstandard
+    pr("  building the CONTROL-PATH cache for %s (%d segments, one pass; cached in _scratch/) ..."
+       % (tag, len(segs)))
+    C = {k: [] for k in ("t_cs",) + CS_FIELDS + ("des_curv", "curv")}
+    C.update({k: [] for k in ("t_sp", "sp_ff", "sp_active", "sp_lsf")})
+    C.update({k: [] for k in ("t_ltp", "ltp_off", "ltp_fac", "ltp_fric", "ltp_valid")})
+    C.update({k: [] for k in ("t_lpar", "roll")})
+    for p in segs:
+        with open(p, "rb") as fh:
+            data = zstandard.ZstdDecompressor().stream_reader(fh).read()
+        it = clog.Event.read_multiple_bytes(data)
+        while True:
+            try:
+                evt = next(it)
+            except StopIteration:
+                break
+            except Exception:
+                break
+            try:
+                w = evt.which()
+            except Exception:
+                continue
+            tm = evt.logMonoTime * 1e-9
+            if w == "controlsState":
+                try:
+                    m = evt.controlsState
+                    lcs = m.lateralControlState
+                    st = getattr(lcs, lcs.which())
+                except Exception:
+                    continue
+                C["t_cs"].append(tm)
+                C["des_curv"].append(float(getattr(m, "desiredCurvature", np.nan)))
+                C["curv"].append(float(getattr(m, "curvature", np.nan)))
+                for nm, fld, cast in (("la_des", "desiredLateralAccel", float),
+                                      ("la_act", "actualLateralAccel", float),
+                                      ("f", "f", float), ("p", "p", float), ("i", "i", float),
+                                      ("err", "error", float), ("out", "output", float),
+                                      ("active", "active", lambda z: 1.0 if z else 0.0),
+                                      ("sat", "saturated", lambda z: 1.0 if z else 0.0),
+                                      ("version", "version", float)):
+                    try:
+                        C[nm].append(cast(getattr(st, fld)))
+                    except Exception:
+                        C[nm].append(np.nan)
+            elif w == "epsTelemetry" and patched:
+                # PATCHED name: this is the FORK's starpilotLateralState (same slot @137, same struct id)
+                try:
+                    s = evt.epsTelemetry
+                    C["t_sp"].append(tm)
+                    C["sp_ff"].append(float(s.feedforward))
+                    C["sp_active"].append(1.0 if s.active else 0.0)
+                    C["sp_lsf"].append(float(s.lowSpeedFactor))
+                except Exception:
+                    pass
+            elif w == "liveTorqueParameters":
+                try:
+                    m = evt.liveTorqueParameters
+                    C["t_ltp"].append(tm)
+                    C["ltp_off"].append(float(getattr(m, "latAccelOffsetFiltered", np.nan)))
+                    C["ltp_fac"].append(float(getattr(m, "latAccelFactorFiltered", np.nan)))
+                    C["ltp_fric"].append(float(getattr(m, "frictionCoefficientFiltered", np.nan)))
+                    C["ltp_valid"].append(1.0 if getattr(m, "liveValid", False) else 0.0)
+                except Exception:
+                    pass
+            elif w == "liveParameters":
+                try:
+                    C["t_lpar"].append(tm)
+                    C["roll"].append(float(getattr(evt.liveParameters, "roll", np.nan)))
+                except Exception:
+                    pass
+    os.makedirs(SCR, exist_ok=True)
+    np.savez(out, **{k: np.asarray(v, float) for k, v in C.items()},
+             _patched=np.asarray([1.0 if patched else 0.0]))
+    pr("    wrote %s : %d controlsState, %d starpilotLateralState, %d liveTorqueParameters frames"
+       % (os.path.basename(out), len(C["t_cs"]), len(C["t_sp"]), len(C["t_ltp"])))
+    return out
 
 
 def resolve(arg, tag_override=None):
@@ -867,7 +1135,13 @@ def fork_toggles(prefix, max_seg=None):
     Written to the STUDY's own _scratch, never into the shared v280 cache -- a route the record
     already owns must not have its cache rewritten by this tool.
     """
-    out = os.path.join(SCR, "fork_toggles2_%s.json" % prefix)   # 2: carries the Kp read
+    # 🛑 THE CACHE KEY CARRIES THE KEY SET.  v1 keyed only on the route, so adding a param to
+    # WANT_PARAMS would have silently kept serving a dump that never captured it -- and a key that was
+    # never CAPTURED is indistinguishable from a key that is ABSENT from the store, which is the exact
+    # shape of a silent wrong answer.  The hash forces a re-read when the list changes.
+    import hashlib
+    kh = hashlib.sha1(("|".join(sorted(WANT_PARAMS))).encode("utf-8")).hexdigest()[:8]
+    out = os.path.join(SCR, "fork_toggles3_%s_%s.json" % (prefix, kh))
     if os.path.exists(out):
         return json.load(open(out))
     clog, patched = fork_log_schema()
@@ -913,7 +1187,8 @@ def fork_toggles(prefix, max_seg=None):
                 except Exception:
                     pass
     d = dict(params or {})
-    d.update(_tg_readable=bool(patched), _written_by="v293_flight_read.py")
+    d.update(_tg_readable=bool(patched), _written_by="v293_flight_read.py",
+             _want_params=sorted(WANT_PARAMS))
     d.update(_torque_state_stats(tq))
     d.update(_tg_summary(tg))
     json.dump(d, open(out, "w"), indent=1, default=float)
@@ -994,7 +1269,10 @@ def read_params(tag, prefix=None):
     """
     p = os.path.join(CACHE, tag + "_params.json")
     d = json.load(open(p)) if os.path.exists(p) else {}
-    if "_written_by" in d and "_kp_hat" in d:
+    # 🛑 A cache written before a key joined WANT_PARAMS does not CARRY that key, and "not captured"
+    # would then read as "absent from the store = its default".  Re-read the rlogs in that case.
+    covered = set(d.get("_want_params") or []) >= set(WANT_PARAMS)
+    if "_written_by" in d and "_kp_hat" in d and covered:
         return d
     mk = json.load(open(os.path.join(CACHE, tag + "_marks.json"))) \
         if os.path.exists(os.path.join(CACHE, tag + "_marks.json")) else {}
@@ -1013,9 +1291,183 @@ def read_params(tag, prefix=None):
 
 
 # ======================================================================================================
+# 8b. SECTION 7 -- THE OPERATOR'S FOUR SYMPTOMS, and the BRANCH IDENTITY   [v2, 2026-09-13]
+# ======================================================================================================
+SYM_REFS_JSON = os.path.join(SCR, "v293_symptom_refs.json")
+# r70_v293 is a REFERENCE COLUMN, not just the route under test: every future drive is read against
+# the rev-1 flight the operator scored those four symptoms on.
+SYM_REF_ROUTES = ("r70_v293", "r6c", "r39", "r35")
+SYM_REF_V282 = "r6c"
+SYM_GRID_VERSION = "sym-grid-1"     # bump when sym_grid's masks or resampling change
+
+
+def sym_code_hash():
+    """the reference cache is keyed by the INSTRUMENT CODE, so a change to any definition invalidates
+    every cached reference instead of silently comparing this drive against numbers from an older
+    estimator.  That is the failure the kit has hit before with hand-copied reference literals."""
+    import hashlib
+    h = hashlib.sha1()
+    h.update(io.open(SI.__file__, "rb").read())
+    h.update(SYM_GRID_VERSION.encode("utf-8"))
+    return h.hexdigest()[:16]
+
+
+def sym_grid(tag, prefix=None):
+    """ONE 100 Hz grid, built the way the identification built its own, so every instrument here
+    reproduces its published number exactly (checked on r70_v293 -- see the positive control).
+
+      t0 = the first 0x18F frame; t1 = the earliest last frame of 0x18F / 0x14A / 0xE4 / carState.
+      Every channel is ZOH-sampled onto it: previous value held, which is what the consumer sees.
+
+    🛑 TWO HANDS-OFF MASKS, and they are NOT interchangeable:
+      `ho_buf`  engaged & not pressed with a +-0.5 s buffer -- the RATCHET stratum (v293_ident_k.py).
+      `ho`      engaged & not pressed, NO buffer, plus finite control-path fields -- the stratum every
+                CONTROL-PATH instrument uses (v293_ident_i.py / _c.py).
+    Using one for the other moves the step count 29 -> 23 and the 8-15 m/s tracking gain 0.884 ->
+    0.808.  MEASURED, 2026-09-13; the split is deliberate and both sides reproduce their source.
+    """
+    d = dict(np.load(os.path.join(CACHE, tag + ".npz")))
+    t0 = float(d["t18"][0])
+    t1 = float(min(d["t18"][-1], d["t14"][-1], d["te4"][-1], d["tcs"][-1]))
+    ta = np.arange(0.0, t1 - t0, 1.0 / FS) + t0
+
+    def zoh(ts, ys):
+        j = np.searchsorted(ts, ta, side="right") - 1
+        o = np.full(len(ta), np.nan)
+        ok = j >= 0
+        o[ok] = np.asarray(ys, float)[j[ok]]
+        return o
+
+    g = dict(tag=tag, t=ta - t0, rate=zoh(d["t18"], d["rate"]) / CPD, ang=zoh(d["t14"], d["ang"]),
+             cmd=zoh(d["te4"], d["cmd"]), v=zoh(d["tcs"], d["vego"]))
+    g["eng"] = (zoh(d["te4"], d["req"]) > 0.5) & (zoh(d["t18"], d["sca"]) > 0.5)
+    if "cs_press" in d:
+        p = zoh(d["tcs"], d["cs_press"]) > 0.5
+        w = int(0.5 * FS)
+        g["ho_buf"] = g["eng"] & ~(np.convolve(p.astype(float), np.ones(2 * w + 1), "same") > 0)
+        g["ho_raw"] = g["eng"] & ~p
+        g["has_press"] = True
+    else:
+        g["ho_buf"] = g["ho_raw"] = None
+        g["has_press"] = False
+    csp = build_cs_cache(tag, prefix)
+    g["has_cs"] = bool(csp)
+    if csp:
+        C = dict(np.load(csp))
+        for k in CS_FIELDS + ("des_curv", "curv"):
+            g[k] = zoh(C["t_cs"], C[k])
+        for nm, tk, vk in (("sp_ff", "t_sp", "sp_ff"), ("sp_lsf", "t_sp", "sp_lsf"),
+                           ("roll", "t_lpar", "roll")):
+            g[nm] = zoh(C[tk], C[vk]) if len(C[tk]) else np.full(len(ta), np.nan)
+        g["ltp_off"] = np.asarray(C["ltp_off"], float)
+        g["ltp_valid"] = np.asarray(C["ltp_valid"], float)
+        fin = np.isfinite(g["la_des"]) & np.isfinite(g["la_act"])
+        base = g["ho_raw"] if g["ho_raw"] is not None else g["eng"]
+        g["ho"] = base & fin
+        g["ho_is_proxy"] = not g["has_press"]
+    return g
+
+
+def symptom_block(tag, prefix=None):
+    """every pre-registered symptom instrument, on one route.  Returns a plain dict (JSON-safe)."""
+    g = sym_grid(tag, prefix)
+    S = dict(tag=tag, has_cs=g["has_cs"], has_press=g["has_press"],
+             eng_s=float(g["eng"].sum()) / FS)
+    # --- 1. ratchet ---------------------------------------------------------------------------------
+    S["dwell_eng"] = SI.dwells(g["rate"], g["ang"], g["v"], g["eng"])
+    S["dwell_ho"] = (SI.dwells(g["rate"], g["ang"], g["v"], g["ho_buf"])
+                     if g["ho_buf"] is not None else None)
+    S["conc"] = SI.rate_concentration(g["rate"], g["cmd"], g["v"], g["eng"])
+    # --- 2. loose (the wander half is CAN-only, so it exists on every route) -------------------------
+    S["wander"] = SI.angle_wander(g["ang"], g["rate"], g["v"], g["eng"])
+    # --- report row: 1-4 Hz, CAN-only -----------------------------------------------------------------
+    S["prom"] = SI.prominence_1_4(g["ang"], g["cmd"], g["rate"], g["v"], g["eng"])
+    if not g["has_cs"]:
+        return S
+    ho = g["ho"]
+    S["ho_s"] = float(ho.sum()) / FS
+    S["stiff"] = SI.loop_stiffness(g["cmd"], g["ang"], g["la_des"], g["la_act"], g["out"], g["v"], ho)
+    S["hold"] = SI.turn_hold(g["la_des"], g["la_act"], g["v"], ho)
+    S["track"] = SI.tracking_gain(g["la_des"], g["la_act"], g["v"], ho)
+    S["step"] = SI.step_overshoot(g["la_des"], g["la_act"], g["i"], g["v"], ho)
+    S["shares"] = SI.pid_shares(g["f"], g["p"], g["i"], g["v"], ho)
+    S["regime"] = SI.regime_delivery(g["la_des"], g["la_act"], g["v"], ho)
+    S["branch"] = SI.branch_identity(g["f"], g["sp_ff"], g["la_des"], g["des_curv"], g["v"],
+                                     g["roll"], g["active"])
+    S["laf"] = SI.laf_identity(g["p"], g["i"], g["f"], g["out"], g["active"])
+    fade = np.interp(g["v"], [0.5, 2.5], [0.0, 1.0])
+    act = g["active"] > 0.5
+    if act.any() and np.isfinite(g["roll"]).any():
+        m = act & np.isfinite(g["roll"])
+        S["branch"]["roll_term_p50"] = float(np.median(9.81 * g["roll"][m] * fade[m]))
+    if len(g["ltp_off"]):
+        S["branch"]["ltp_off_published_p50"] = float(np.median(g["ltp_off"]))
+        S["branch"]["ltp_valid_frac"] = float(np.mean(g["ltp_valid"]))
+    if np.isfinite(g["roll"]).any():
+        S["branch"]["roll_p50_rad"] = float(np.nanmedian(g["roll"][ho])) if ho.any() else None
+    return S
+
+
+def symptom_refs(routes=SYM_REF_ROUTES, force=False):
+    """the reference numbers for section 7, RE-DERIVED by this code on the cached routes and cached
+    under _scratch/ keyed by `sym_code_hash()`.  🛑 They are never copied from
+    V293-PLANT-IDENT-2026-09-13.md -- that is what keeps the comparison honest when a definition
+    changes."""
+    key = sym_code_hash()
+    blob = {}
+    if os.path.exists(SYM_REFS_JSON) and not force:
+        try:
+            blob = json.load(open(SYM_REFS_JSON))
+        except Exception:
+            blob = {}
+    if blob.get("_code") == key and all(r in blob.get("routes", {}) for r in routes):
+        return blob["routes"]
+    pr("  computing the section 7 reference numbers on %s (code %s; cached in _scratch/) ..."
+       % (", ".join(routes), key))
+    out = {}
+    for rt in routes:
+        if not os.path.exists(os.path.join(CACHE, rt + ".npz")):
+            pr("    %s: no v280 cache -- skipped" % rt)
+            continue
+        try:
+            out[rt] = symptom_block(rt)
+        except Exception as e:
+            pr("    %s: %s" % (rt, str(e)[:90]))
+    json.dump(dict(_code=key, _built="v293_flight_read.py", routes=out),
+              open(SYM_REFS_JSON, "w"), indent=1, default=float)
+    return out
+
+
+# --- the identification's OWN published numbers, used ONLY as the POSITIVE CONTROL on r70_v293 -------
+# 🛑 These are NOT used as references anywhere.  They exist so the scorecard can show that this code,
+# run on the cached route, reproduces V293-PLANT-IDENT-2026-09-13.md -- and so a future edit that
+# silently moves an estimator is caught.  Tolerance is stated with the check.
+IDENT_R70 = {
+    "dwell025_eng": (15.23, 7.66, 4.56, 1.24),          # H2, all-engaged
+    "dwell025_ho": (20.97, 8.08, 5.26, 1.27),           # H2, hands-off
+    "conc": (0.371, 0.438, 0.454, 0.468, 0.361),        # H9, rate-magnitude concentration
+    "stiff": (0.0032, 0.0065, 0.0128, 0.0227),          # G2, torque per degree
+    "hold": (None, None, 0.937, 1.093),                 # G3
+    "track": (None, 0.884, 1.020, 1.123),               # C1, on the IDENT band grid
+    "step": (None, 0.166, 0.437, 0.341),                # G4, relative overshoot
+    "prom": (6.51, 11.78, 7.65, 3.08),                  # E5, dB
+    "rate14": (59.1, 23.0, 8.2, 2.3),                   # E5, deg/s
+    "i_share": (0.350, 0.348, 0.382, 0.384),            # C2, on the IDENT band grid
+    "straight": 0.800,                                  # C4
+}
+IDENT_TOL = 0.02          # relative; absolute floor below
+
+
+def _within(got, want, rel=IDENT_TOL, absf=0.003):
+    if got is None or want is None:
+        return None
+    return abs(got - want) <= max(absf, rel * abs(want))
+
+
+# ======================================================================================================
 # 9.  SCORE ONE ROUTE -- everything above, into one dict
 # ======================================================================================================
-def score_route(tag, build, with_positive=True, prefix=None):
+def score_route(tag, build, with_positive=True, prefix=None, with_symptoms=True):
     r = load_route(tag, build)
     g = r.g
     S = dict(tag=tag, build=build, image=os.path.basename(IMG[build]),
@@ -1051,6 +1503,13 @@ def score_route(tag, build, with_positive=True, prefix=None):
     # --- 6. cave + params ----------------------------------------------------------------------------
     S["cave"] = cave_duties(r)
     S["params"] = read_params(tag, prefix)
+    # --- 7. the operator's four symptoms, and the branch identity  [v2] ------------------------------
+    if with_symptoms:
+        try:
+            S["symptom"] = symptom_block(tag, prefix)
+        except Exception as e:
+            pr("  ⚠ section 7 could not be computed (%s)" % str(e)[:90])
+            S["symptom"] = None
     return S
 
 
@@ -1065,6 +1524,169 @@ def ref_get(refs, route, *path, default=None):
             return default
         d = d[p]
     return d if d is not None else default
+
+
+# ======================================================================================================
+# 9b. THE BRANCH IDENTITY BLOCK -- what replaced the broken f/D gate
+# ======================================================================================================
+def branch_block(S, refs):
+    """print the branch read and return its verdicts.
+
+    🛑 WHY THE v1 `f/desiredLateralAccel >= 0.75` GATE WAS WRONG, and it is worth stating in full
+    because it FAILED a correctly-attributed drive.  It asserted "friction 0 => f = desiredLateralAccel
+    exactly".  The fork does not compute those two from each other:
+
+        pid_log.desiredLateralAccel = setpoint = expected_lateral_accel + jerk * lat_delay
+        pid_log.f                   = ff       = D_future - roll*9.81*fade - latAccelOffset*fade
+        D_future                               = desiredCurvature * vEgo**2
+
+    one is the 0.30 s DELAYED reference plus a jerk lead, the other is the CURRENT command minus a
+    constant.  So f/D = 1 - c/|D| BY CONSTRUCTION, and the whole 0.56 -> 0.87 ramp across |D| bins
+    that v1 reported is that one additive constant.  A ratio rising with magnitude is the signature of
+    an ADDITIVE term; a branch change is MULTIPLICATIVE and would show a FLAT ratio.
+
+    WHAT IS PRINTED INSTEAD -- two independent reads, neither touching the delayed setpoint:
+      (a) median |f - starpilotLateralState.feedforward|, normalised by median |f|.
+      (b) the three-term regression  f ~ D_future + roll*fade + fade, whose coefficients in the ELSE
+          arm are EXACTLY (1.000, -9.81, -latAccelOffset).
+    Both were MEASURED on five routes before either became a gate; the numbers are printed below.
+    """
+    out = []
+    sym = S.get("symptom") or {}
+    b = sym.get("branch")
+    pr("   THE FEEDFORWARD BRANCH -- which arm of `LatControlTorque.update` actually executed")
+    pr("     [EVIDENCE -- the control path at 100 Hz.  This REPLACES v1's `f/desiredLateralAccel`")
+    pr("      gate, which was BROKEN AS WRITTEN: `f` and `desiredLateralAccel` are different")
+    pr("      quantities (the current command minus an offset, vs the 0.30 s delayed setpoint plus a")
+    pr("      jerk lead), so f/D = 1 - c/|D| by construction and v1 was gating on a learned offset.]")
+    if not b:
+        pr("     ⚠ no control-path cache for this route -- the branch is UNSCOREABLE.")
+        out.append(("REPORT", "branch", "no control-path cache (no rlogs on disk for this route) -- "
+                                        "the feedforward branch could not be read"))
+        return out
+    want_plant = EXPECT_PLANT_FF
+    rel, dabs = b.get("d_ff_rel"), b.get("d_ff_p50")
+    pr("     (a) median |torqueState.f - starpilotLateralState.feedforward| = %s m/s^2  "
+       "(p90 %s; |f| %s)" % (fmt(dabs, "%.4f"), fmt(b.get("d_ff_p90"), "%.4f"),
+                             fmt(b.get("f_level"), "%.4f")))
+    pr("         relative to |f| = %s   over %s active frames.  Both are published in the SAME"
+       % (fmt(rel, "%.4f"), b.get("n_ff", "-")))
+    pr("         `Controls.publish` call, so they align index-for-index.")
+    pr("         [EVIDENCE] they are the SAME NUMBER in the else arm and differ by ~3.3x relative")
+    pr("           under the plant-FF arm.  That is the whole of what the gate needs, and it is")
+    pr("           measured on five routes.")
+    pr("         [BELIEF] WHICH field holds which quantity under the plant-FF arm.  The sizes are")
+    pr("           consistent with `feedforward` carrying the generic lat-accel term (|.| 0.372 on")
+    pr("           r6f, against 0.366 on r70 where the two agree) and `f` carrying the live branch's")
+    pr("           output (|.| 0.113, the size the fork's own hold-torque table predicts) -- but that")
+    pr("           mapping was NOT read out of the fork source and nothing here depends on it.")
+    pr("         MEASURED CALIBRATION, 2026-09-13, this estimator on five cached routes:")
+    pr("           ELSE arm  (AccordRatePlantFF = 0): r70_v293 0.0000 · r39 0.0000 · r35 0.0000")
+    pr("           PLANT arm (AccordRatePlantFF = 1): r6f_v292 3.3246 · r6c 3.3706")
+    pr("         BIMODAL, with nothing between.  The gate is %.2f relative (or %.3f m/s^2 absolute),"
+       % (THR["branch_rel"], THR["branch_abs"]))
+    pr("         which is 30x above the ELSE side and 33x below the PLANT side.")
+    pr("     (b) the f-identity, regressed on ACTIVE frames:")
+    pr("           two-term   f = %s * D_future %+s            R2 %s"
+       % (fmt(b.get("slope"), "%.4f"), fmt(b.get("intercept"), "%.4f"), fmt(b.get("r2"), "%.4f")))
+    pr("           three-term f = %s * D_future %+s * roll*fade %+s * fade   R2 %s"
+       % (fmt(b.get("slope_roll"), "%.5f"), fmt(b.get("coef_roll"), "%.4f"),
+          fmt(-b["offset_roll"] if b.get("offset_roll") is not None else None, "%.5f"),
+          fmt(b.get("r2_roll"), "%.6f")))
+    pr("         In the ELSE arm the three coefficients must be EXACTLY (1.000, -9.81, "
+       "-latAccelOffset).")
+    pr("         MEASURED on r70_v293: 0.99992 / -9.8091 / -0.06865 at R2 0.999979 -- the fork's own")
+    pr("         formula, confirmed to machine precision.  On r6f_v292 (plant arm): 0.5337 / -0.803 /")
+    pr("         +0.0196 at R2 0.192.  [EVIDENCE]")
+    pr("     THE LEARNED LATERAL-ACCEL OFFSET -- two DIFFERENT numbers, and only one of them acts:")
+    pr("       published  liveTorqueParameters.latAccelOffsetFiltered (4 Hz) median = %s m/s^2 "
+       "(liveValid on %s of frames)"
+       % (fmt(b.get("ltp_off_published_p50"), "%+.5f"), fmt(b.get("ltp_valid_frac"), "%.2f")))
+    pr("       EFFECTIVE  the fade coefficient of the three-term fit          = %s m/s^2"
+       % fmt(b.get("offset_roll"), "%+.5f"))
+    pr("       `torqued` publishes the first whatever the toggle says; `KeepLearnedLatAccelOffset`")
+    pr("       decides whether controlsd TAKES it.  The EFFECTIVE one is the gate.")
+    if b.get("roll_p50_rad") is not None:
+        rr = b["roll_p50_rad"]
+        pr("     ⚠ ROLL, and a CORRECTION TO THE RECORD.  liveParameters.roll reads a median %+.5f rad"
+           % rr)
+        pr("       = %+.2f deg on this route, so the roll term alone subtracts a median %+.4f m/s^2"
+           % (np.degrees(rr), 9.81 * rr))
+        pr("       from the feedforward.  V293-PLANT-IDENT section G1 read the ~0.30 m/s^2 subtraction")
+        pr("       as a STALE LEARNED OFFSET; on r70 the three-term fit splits it +0.408 (roll) and")
+        pr("       only -0.069 (learned offset).  [EVIDENCE -- R2 0.999979, residual rms 0.0024 m/s^2,")
+        pr("       and the fitted offset matches the PUBLISHED one to 4 decimals.]  So clearing the")
+        pr("       learned offset removes about a FIFTH of that subtraction, not all of it; a")
+        pr("       persistent multi-degree roll is a device-levelling or camber question.  [BELIEF as")
+        pr("       to which of those it is -- this drive cannot separate them.]")
+    pr("     the OLD, BROKEN statistic, printed once so the change is visible and never gated on:")
+    pr("       median f / desiredLateralAccel = %s" % fmt(b.get("fD_p50_OLD"), "%.4f"))
+    # the two subtracted terms as their own REPORT rows, so the next drive carries them forward
+    rt, ot = b.get("roll_term_p50"), b.get("offset_roll")
+    rr = b.get("roll_p50_rad")
+    out.append(("REPORT", "roll term",
+                "roll*g*fade subtracts a median %s m/s^2 from the feedforward; liveParameters.roll "
+                "median %s rad = %s deg.  No toggle touches this term."
+                % (fmt(rt, "%+.4f"), fmt(rr, "%+.5f"),
+                   fmt(np.degrees(rr) if rr is not None else None, "%+.2f"))))
+    out.append(("REPORT", "learned offset",
+                "latAccelOffset*fade subtracts a median %s m/s^2 (published latAccelOffsetFiltered "
+                "%s, liveValid on %s of frames).  V293-PLANT-IDENT G1 read the whole ~0.30 m/s^2 "
+                "subtraction as this term; the three-term fit says it is mostly the ROLL row above."
+                % (fmt(ot, "%+.5f"), fmt(b.get("ltp_off_published_p50"), "%+.5f"),
+                   fmt(b.get("ltp_valid_frac"), "%.2f"))))
+    if want_plant is None or rel is None:
+        out.append(("REPORT", "branch", "the config does not name AccordRatePlantFF, or too few "
+                                        "active frames -- the branch is reported, not gated"))
+        return out
+    # EITHER a large relative difference OR a large absolute one means the two feedforwards are not
+    # the same number.  The absolute guard exists for a drive whose |f| is itself tiny, where a
+    # relative statistic is unstable.
+    live_plant = (rel >= THR["branch_rel"]) or (dabs is not None and dabs >= THR["branch_abs"])
+    armnm = "PLANT-FF" if live_plant else "ELSE (lat-accel FF)"
+    wantnm = "PLANT-FF" if want_plant else "ELSE (lat-accel FF)"
+    if live_plant == want_plant:
+        out.append(("PASS", "branch",
+                    "the %s arm is the one executing (|f - feedforward|/|f| = %.4f against a gate of "
+                    "%.2f) -- which is the arm %s asks for"
+                    % (armnm, rel, THR["branch_rel"], os.path.basename(CONFIG_PATH))))
+    else:
+        out.append(("FAIL", "branch",
+                    "the %s arm executed but %s asks for the %s arm (|f - feedforward|/|f| = %.4f, "
+                    "gate %.2f).  The band and symptom scores are NOT the contrast they were designed "
+                    "to be until this is fixed."
+                    % (armnm, os.path.basename(CONFIG_PATH), wantnm, rel, THR["branch_rel"])))
+    # the f-identity is only meaningful in the ELSE arm -- say so rather than scoring a nonsense fit
+    if not live_plant:
+        sl, r2r = b.get("slope_roll"), b.get("r2_roll")
+        if sl is not None and abs(sl - 1.0) <= THR["branch_slope_tol"] and (r2r or 0) >= THR["branch_r2"]:
+            out.append(("PASS", "f identity",
+                        "f = %.5f*D_future %+.4f*roll*fade %+.5f*fade at R2 %.6f -- the fork's own "
+                        "formula, confirmed on the wire" % (sl, b["coef_roll"], -b["offset_roll"], r2r)))
+        else:
+            out.append(("REPORT", "f identity",
+                        "the ELSE-arm f identity does not close: slope %s, R2 %s (wants 1.000 +- %.2f "
+                        "at R2 >= %.2f) -- read the branch row with that in mind"
+                        % (fmt(sl, "%.4f"), fmt(r2r, "%.4f"), THR["branch_slope_tol"], THR["branch_r2"])))
+    keep = CONFIG.get("KeepLearnedLatAccelOffset")
+    if keep is not None and keep[0] == "0":
+        eff = b.get("offset_roll")
+        if live_plant or (b.get("r2_roll") or 0) < THR["branch_r2"]:
+            out.append(("REPORT", "lat-accel offset",
+                        "the config asks for KeepLearnedLatAccelOffset = 0, but the EFFECTIVE offset "
+                        "is only identifiable in the ELSE arm; published latAccelOffsetFiltered "
+                        "median = %s.  Reported, not gated."
+                        % fmt(b.get("ltp_off_published_p50"), "%+.5f")))
+        elif eff is not None and abs(eff) <= THR["offset_tol"]:
+            out.append(("PASS", "lat-accel offset",
+                        "the effective learned offset reads %+.5f m/s^2 (|.| <= %.2f) -- "
+                        "KeepLearnedLatAccelOffset = 0 took" % (eff, THR["offset_tol"])))
+        else:
+            out.append(("FAIL", "lat-accel offset",
+                        "the config asks for KeepLearnedLatAccelOffset = 0 but the effective offset "
+                        "still reads %+.5f m/s^2 (gate %.2f) -- the toggle did not take, or openpilot "
+                        "was not restarted after it" % (eff, THR["offset_tol"])))
+    return out
 
 
 # ======================================================================================================
@@ -1105,28 +1727,38 @@ def print_scorecard(S, refs):
        % (S["route_s"], S["engaged_s"], S["disengaged_s"], S["handsoff_s"], S["hiang_s"], S["creep_s"]))
     P = S["params"]
     cl = P.get("AccordCurvatureLead")
-    pr("   THE FORK SIDE IS A TOGGLE CONFIG (toggle-config_V293_torque_mode.json), not code: params that")
-    pr("   already exist on Dom.  Read here from initData.params (logged ONCE, at process start) and,")
-    pr("   independently, from the CONTROL PATH at 100 Hz (torqueState p/error = SteerKP exactly; f/D = 1")
-    pr("   under the config's friction 0).  Accord* keys are ABSENT from initData when they sit at their")
-    pr("   params_keys.h default (measured on r6f), so absence reads as the default.")
+    pr("   THE FORK SIDE IS A TOGGLE CONFIG, not code: params that already exist on Dom.  The EXPECTED")
+    pr("   config is READ FROM A FILE -- %s" % os.path.relpath(CONFIG_PATH, KIT))
+    pr("   -- so a revised config is scored against itself, not against a constant baked into this")
+    pr("   script.  Read here from initData.params (logged ONCE, at process start) and, independently,")
+    pr("   from the CONTROL PATH at 100 Hz (torqueState p/error = SteerKP exactly; and the BRANCH")
+    pr("   IDENTITY in section 7).  Accord* keys are ABSENT from initData when they sit at their")
+    pr("   params_keys.h default (measured on r6f), so absence reads as the declared default; a key")
+    pr("   this cache never CAPTURED reads as NOT CAPTURED, which is a different thing and is a FAIL.")
     cfg_ok, cfg_rows = True, []
-    for k, (want, dflt, kind) in TORQUE_CONFIG.items():
+    captured = set(P.get("_want_params") or WANT_PARAMS)
+    for k, (want, dflt, kind) in sorted(CONFIG.items()):
         raw = P.get(k)
-        eff = raw if raw is not None else dflt
-        if eff is None:
-            ok, shown = False, "ABSENT (no default known)"
+        if raw is None and k not in captured:
+            ok, shown, eff = False, "NOT CAPTURED by this cache", None
         else:
-            try:
-                ok = (abs(float(eff) - float(want)) < 1e-6) if kind == "float" else (str(eff).strip() == want)
-            except ValueError:
-                ok = False
-            shown = repr(raw) if raw is not None else "absent = default %r" % dflt
+            eff = raw if raw is not None else dflt
+            if eff is None:
+                ok, shown = False, "ABSENT (no declared default)"
+            else:
+                try:
+                    ok = ((abs(float(eff) - float(want)) < 1e-6) if kind == "float"
+                          else (str(eff).strip() == want))
+                except ValueError:
+                    ok = False
+                shown = repr(raw) if raw is not None else "absent = default %r" % dflt
         cfg_ok &= ok
         cfg_rows.append((k, shown, want, ok))
-        pr("   %-26s = %-28s config wants %-5s %s" % (k, shown, want, "ok" if ok else "MISMATCH"))
-    for k in ("SteerRatio", "KeepLearnedLatAccelOffset", "ForceTorqueController", "GitCommit", "GitBranch"):
-        if k in P:
+        pr("   %-26s = %-30s config wants %-6s %s" % (k, shown, want, "ok" if ok else "MISMATCH"))
+    ctx = [k for k in CONTEXT_KEYS if k in P and k not in CONFIG]
+    if ctx:
+        pr("   -- context, read but NOT gated (the config file does not name them) --")
+        for k in ctx:
             pr("   %-26s = %s" % (k, repr(P[k])[:70]))
     pr("   AccordCurvatureLead        = %-10s   (must be ABSENT or \"0\"; the key does not exist on Dom)"
        % ("ABSENT" if cl is None else repr(cl)))
@@ -1141,7 +1773,8 @@ def print_scorecard(S, refs):
     pr("     the fork logs pid_log.error = error_with_lsf and calls pid.update(pid_log.error, ...), whose")
     pr("     p = k_p * error, so the ratio IS the SteerKP toggle on every active frame -- a wire read of")
     pr("     the tune that survives a mid-route toggle change, which initData (logged once) does not.")
-    pr("     Expected 0.300 under the torque config; the installed rate-servo tune reads %.2f." % INSTALLED_KP)
+    pr("     Expected %s under %s; the installed rate-servo tune reads %.2f."
+       % (CONFIG.get("SteerKP", ("(unspecified)",))[0], os.path.basename(CONFIG_PATH), INSTALLED_KP))
     # --- the Testing Ground heartbeat, informational ---------------------------------------------
     tgs, tgv, tgn = P.get("_tg_slot"), P.get("_tg_variant"), P.get("_tg_frames", 0)
     if tgn:
@@ -1158,61 +1791,114 @@ def print_scorecard(S, refs):
     pr("     fork `customReserved9`; same struct id 0xa1680744031fdb2d, different fields).  The @137")
     pr("     collision (`epsTelemetry` vs the fork's `starpilotLateralState`, id 0xc2243c65e0340384) is")
     pr("     patched the same way; any other kit script reading either from a 2026-09 rlog reads GARBAGE.")
-    fd = P.get("_torqueState_fD_p50")
-    sl_ = P.get("_torqueState_slope_f_vs_D")
-    pr("   torqueState  median f / desiredLateralAccel = %s   (n %s of %s; whole-route regression "
-       "slope %s)" % (fmt(fd, "%.4f"), P.get("_torqueState_n_fit", "-"),
-                      P.get("_torqueState_n", "-"), fmt(sl_, "%.4f")))
-    bb = P.get("_torqueState_fD_by_band") or {}
-    if bb:
-        pr("     by |D| band: " + "  ".join("%s %s (n%d)" % (k, fmt(v[0], "%.3f"), v[1])
-                                            for k, v in sorted(bb.items())))
-    pr("     THE SECOND, INDEPENDENT TOGGLE SOURCE, and the only one that reads the CONTROL PATH")
-    pr("     rather than a parameter: friction ships at 0, so torque mode gives f = D exactly")
-    pr("     (ratio 1.000) while the rate-plant branch scales it down.  MEASURED on four routes that")
-    pr("     are NOT torque mode: %s -- pooled median %.2f-%.2f, worst band %.2f.  The gate is %.2f,"
-       % ("r6c 0.32 / r6d 0.24 / r6e 0.40 / r6f 0.31", 0.24, 0.40, 0.58, 0.75))
-    pr("     which sits 1.3x above the worst observation and 1.3x below the expected 1.000.")
-    pr("     ⚠ the whole-route REGRESSION SLOPE is NOT usable as a gate: it reads 0.21-0.64 on the")
-    pr("     same four routes, a spread that overlaps nothing useful.  The ratio is the statistic.")
-    if build == "V293" and fd is not None:
-        if fd >= THR["fD_ratio"]:
-            verdicts.append(("PASS", "branch", "torqueState median f/D = %.3f (>= %.2f) -- the "
-                                               "TORQUE-MODE branch is the one executing" % fd))
+    # --- the latAccelFactor identity: the SECOND exact 100 Hz read, valid in BOTH arms ------------
+    LA = (S.get("symptom") or {}).get("laf") or {}
+    want_laf = None
+    if "SteerLatAccel" in CONFIG:
+        try:
+            want_laf = float(CONFIG["SteerLatAccel"][0])
+        except ValueError:
+            want_laf = None
+    pr("   torqueState  latAccelFactor at 100 Hz = median -(p + i + f) / output = %s"
+       % fmt(LA.get("laf"), "%.4f"))
+    pr("     (n %s active frames with |output| >= 1e-3; IQR %s; %s within 1%%, %s within 5%%)"
+       % (LA.get("n", "-"), fmt_pair(LA.get("iqr"), "%.4f"), fmt(LA.get("within1"), "%.3f"),
+          fmt(LA.get("within5"), "%.3f")))
+    pr("     `output_torque = output_lataccel / latAccelFactor`, `output_lataccel = f + p + i + d`")
+    pr("     with d structurally 0 on this car, and `torqueState.output = -output_torque`.  So the")
+    pr("     ratio IS the SteerLatAccel toggle on every active frame, EXACTLY -- and unlike the")
+    pr("     branch read it holds in BOTH feedforward arms, because `pid_log.f = pid.f` in each.")
+    pr("     VERIFIED on r70_v293: median 6.0000, IQR [6.0000, 6.0000], 99.2% of frames within 1%.")
+    if LA.get("laf") is None:
+        verdicts.append(("FAIL", "latAccelFactor", "-(p+i+f)/output could not be read (%s usable "
+                                                   "frames) -- the live authority scalar is unknown"
+                         % LA.get("n", 0)))
+    elif want_laf is None:
+        verdicts.append(("REPORT", "latAccelFactor", "latAccelFactor = %.3f at 100 Hz; the config "
+                                                     "names no SteerLatAccel, so this is reported, "
+                                                     "not gated" % LA["laf"]))
+    else:
+        ok = abs(LA["laf"] - want_laf) <= 0.02 * want_laf and (LA.get("within5") or 0) >= 0.95
+        if ok:
+            verdicts.append(("PASS", "latAccelFactor",
+                             "latAccelFactor = %.4f at 100 Hz over %d frames (config wants %.2f, "
+                             "within 2%%), %.3f of frames within 5%% -- the authority scalar was LIVE"
+                             % (LA["laf"], LA["n"], want_laf, LA.get("within5") or 0)))
         else:
-            verdicts.append(("FAIL", "branch",
-                             "torqueState median f/D = %.3f -- that is the RATE-PLANT branch (measured "
-                             "0.24-0.40 pooled on four non-torque-mode routes), not torque mode.  With "
-                             "V293 in the ECU that is the FF-starved AND high-gain-feedback mismatch "
-                             "(ADV-V293-D 4.4), which is NOT merely sluggish." % fd))
+            verdicts.append(("FAIL", "latAccelFactor",
+                             "latAccelFactor = %.4f at 100 Hz but %s wants %.2f (gate: within 2%% and "
+                             ">= 95%% of frames within 5%%; measured %.3f) -- P, I and the feedforward "
+                             "are ALL divided by this, so the whole authority is wrong"
+                             % (LA["laf"], os.path.basename(CONFIG_PATH), want_laf,
+                                LA.get("within5") or 0)))
+    # --- the FORK COMMIT: the config's scales only mean what they say on the right code -----------
+    fc = CONFIG_FORK_COMMIT.get(os.path.basename(CONFIG_PATH))
+    gc = str(P.get("GitCommit") or "")
+    pr("   fork GitCommit             = %s   branch %s"
+       % (gc[:12] or "ABSENT", P.get("GitBranch") or "?"))
+    if fc:
+        pr("     🛑 %s." % fc["why"])
+        pr("     The rlog CANNOT read the tables, only the commit, so this is a COMMIT check: it")
+        pr("     wants %s and must NOT be %s." % (fc["want"], fc["forbid"]))
+        if not gc:
+            verdicts.append(("FAIL", "fork commit", "initData carries no GitCommit -- the fork build "
+                                                    "cannot be attributed, and %s" % fc["why"]))
+        elif gc.startswith(fc["forbid"]):
+            verdicts.append(("FAIL", "fork commit",
+                             "GitCommit %s is the PRE-TABLE commit -- %s.  The plant feedforward is "
+                             "then the one the identification measured as 1.4-2.6x too small, and "
+                             "every other gate would pass a silently wrong drive."
+                             % (gc[:9], fc["why"])))
+        elif gc.startswith(fc["want"]):
+            verdicts.append(("PASS", "fork commit", "GitCommit %s -- the commit carrying the replaced "
+                                                    "Accord plant tables" % gc[:9]))
+        else:
+            verdicts.append(("REPORT", "fork commit",
+                             "GitCommit %s is neither the expected %s nor the forbidden %s -- the "
+                             "tables cannot be verified from the rlog; check the fork tree before "
+                             "reading the plant-FF rows" % (gc[:9], fc["want"], fc["forbid"])))
+    verdicts += branch_block(S, refs)
     if build == "V293":
         # THREE ATTRIBUTION GATES on the fork side, none of them a code flag: the initData config
         # read, the 100 Hz Kp read, and the f/D branch read above.
+        cfgname = os.path.basename(CONFIG_PATH).replace(".decoded.json", ".json")
         if cfg_ok:
-            verdicts.append(("PASS", "toggle", "initData.params carries the torque config: " +
-                             ", ".join("%s=%s" % (k, w) for k, (w, _, _) in TORQUE_CONFIG.items())))
+            verdicts.append(("PASS", "toggle", "initData.params carries %s: " % cfgname +
+                             ", ".join("%s=%s" % (k, w) for k, (w, _, _) in sorted(CONFIG.items()))))
         else:
             bad = ["%s=%s (wants %s)" % (k, sh, w) for k, sh, w, ok in cfg_rows if not ok]
             verdicts.append(("FAIL", "toggle",
-                             "initData.params does NOT carry the torque config -- " + "; ".join(bad) +
-                             ".  V293 in the ECU with the rate-plant tune is the FF-starved AND "
-                             "high-gain-feedback mismatch (ADV-V293-D 4.4), not merely sluggish, and "
-                             "the band scores are NOT a build contrast.  Restore "
-                             "toggle-config_V293_torque_mode.json in Galaxy and restart openpilot."))
+                             "initData.params does NOT carry %s -- " % cfgname + "; ".join(bad) +
+                             ".  V293 in the ECU with a tune it was not designed against is the "
+                             "FF-starved AND high-gain-feedback mismatch (ADV-V293-D 4.4), not merely "
+                             "sluggish, and the band scores are NOT a build contrast.  Restore %s in "
+                             "Galaxy and restart openpilot." % cfgname))
+        # 🛑 THE EXPECTED Kp COMES FROM THE CONFIG FILE.  v1 hard-coded 0.3, which would have failed the
+        # rev-2 drive for carrying the Kp its own config asked for.
+        want_kp = None
+        if "SteerKP" in CONFIG:
+            try:
+                want_kp = float(CONFIG["SteerKP"][0])
+            except ValueError:
+                want_kp = None
         if kp is None:
             verdicts.append(("FAIL", "kp", "torqueState p/error could not be read (%s active frames with "
                                            "|error| >= 0.02) -- the live Kp is unknown" % kpn))
-        elif abs(kp - 0.3) <= 0.03:
-            verdicts.append(("PASS", "kp", "Kp = %.3f at 100 Hz over %d frames -- the torque config's 0.3 "
-                                           "was LIVE on the control path" % (kp, kpn)))
+        elif want_kp is None:
+            verdicts.append(("REPORT", "kp", "Kp = %.3f at 100 Hz over %d frames; the config names no "
+                                             "SteerKP, so this is reported, not gated" % (kp, kpn)))
+        elif abs(kp - want_kp) <= max(0.03, 0.05 * want_kp):
+            verdicts.append(("PASS", "kp", "Kp = %.3f at 100 Hz over %d frames -- the config's %.2f was "
+                                           "LIVE on the control path" % (kp, kpn, want_kp)))
         elif abs(kp - INSTALLED_KP) <= 0.05:
             verdicts.append(("FAIL", "kp", "Kp = %.3f at 100 Hz -- that is the INSTALLED rate-servo tune "
-                                           "(%.2f), not the torque config: the restore did not take, or "
-                                           "openpilot was not restarted after it" % (kp, INSTALLED_KP)))
+                                           "(%.2f), not the config's %.2f: the restore did not take, or "
+                                           "openpilot was not restarted after it"
+                                           % (kp, INSTALLED_KP, want_kp)))
         else:
-            verdicts.append(("FAIL", "kp", "Kp = %.3f at 100 Hz -- neither the torque config (0.3) nor "
-                                           "the installed tune (%.2f); attribute before scoring"
-                                           % (kp, INSTALLED_KP)))
+            verdicts.append(("FAIL", "kp", "Kp = %.3f at 100 Hz -- neither the config's %.2f nor the "
+                                           "installed tune (%.2f); attribute before scoring"
+                                           % (kp, want_kp, INSTALLED_KP)))
         if P.get("AccordEpsTorqueMode") is not None:
             verdicts.append(("REPORT", "toggle",
                              "AccordEpsTorqueMode = %r is PRESENT in the params store -- that key existed "
@@ -1621,7 +2307,532 @@ def print_scorecard(S, refs):
                              "b0/b1/b2 read %.3f/%.3f/%.3f -- these are STOCK Honda bits and read 1.000 "
                              "on every build; a departure means the decode or the frame changed"
                              % (e["b0"], e["b1"], e["b2"])))
+
+    # ---------------------------------------------------------------- 7. the operator's symptoms
+    verdicts += print_section7(S)
     return verdicts
+
+
+# ======================================================================================================
+# 10b. SECTION 7 -- THE OPERATOR'S FOUR SYMPTOMS
+# ======================================================================================================
+def _g(d, *path):
+    for k in path:
+        if not isinstance(d, dict) or k not in d:
+            return None
+        d = d[k]
+    return d
+
+
+def print_section7(S):
+    """the four symptoms the operator reported on the rev-1 flight, each as a pre-registered
+    instrument with its references RE-COMPUTED by this run."""
+    v = []
+    tag = S["tag"]
+    own = S.get("symptom")
+    pr("")
+    pr("7. THE OPERATOR'S FOUR SYMPTOMS -- pre-registered instruments  [EVIDENCE]")
+    pr("   route 70's verbatim score: \"steering felt RATCHETY, like the wheel did not move smoothly")
+    pr("   but only SNAPPED BETWEEN ANGLES\" · \"sometimes LOOSE and then sometimes OVERSTEER and other")
+    pr("   times on hard transients it would OVERSHOOT THEN CORRECT slightly\".  Definitions in")
+    pr("   v293_symptom_instruments.py, ported from the identification's own scripts.")
+    pr("   🛑 EVERY REFERENCE COLUMN IS RE-DERIVED BY THIS CODE AT RUN TIME on the cached routes --")
+    pr("   none is copied from V293-PLANT-IDENT-2026-09-13.md.  The cache is keyed by a hash of the")
+    pr("   instrument source (%s), so changing a definition invalidates every reference." % sym_code_hash())
+    pr("   EVIDENCE vs BELIEF on the thresholds themselves:")
+    pr("     [EVIDENCE] every NUMBER in every table -- measured from the cached wire by the code named.")
+    pr("     [EVIDENCE] which routes pass and which fail each gate -- computed in the census at 7.7.")
+    pr("     [BELIEF]   that any of these statistics is what the operator FELT.  The instruments were")
+    pr("                chosen to match his words; the match is a judgement, not a measurement, and a")
+    pr("                statistic moving is not the car feeling right.")
+    pr("     [BELIEF]   the plant-spring column in 7.2 -- fitted on r70 and assumed to transfer, on the")
+    pr("                grounds that the firmware does not change between drives.")
+    pr("-" * 124)
+    if not own:
+        pr("   ⚠ section 7 is UNAVAILABLE on this route (no symptom block could be built).")
+        return v
+    R = symptom_refs()
+    cols = [c for c in SYM_REF_ROUTES if c in R]
+
+    def table(title, get, fmt_="%9.3f", rows=SI.SBNAME, note=None):
+        pr("   %s" % title)
+        pr("     %-9s %11s " % ("band", "THIS ROUTE")
+           + " ".join("%9s" % c.replace("_v293", "").replace("_v292", "") for c in cols))
+        for b in rows:
+            mine = get(own, b)
+            pr("     %-9s %11s " % (b, (fmt_ % mine) if mine is not None else "      n/a")
+               + " ".join((fmt_ % get(R[c], b)) if get(R[c], b) is not None else "      n/a"
+                          for c in cols))
+        if note:
+            pr("     %s" % note)
+
+    # ---------------------------------------------------------------- 7.1 ratchet
+    pr("")
+    pr("   7.1 RATCHET -- \"snapped between angles rather than smoothly moving between them\"")
+    pr("       dwell = the 0.10 s MOVING MEAN of |0x18F rate| below a threshold for >= 0.20 s.  The")
+    pr("       raw-threshold detector is a DOCUMENTED ARTEFACT: it finds 13 dwells on r70 and ZERO on")
+    pr("       r6c.  All-engaged on every route (the driver-torque bar cannot stand in for")
+    pr("       steeringPressed on this car); r70's hands-off stratum is printed beside it.")
+    table("dwells per minute at threshold 0.25 deg/s -- ALL ENGAGED",
+          lambda s, b: _g(s, "dwell_eng", b, "per_min_025"), "%9.2f")
+    table("dwells per minute at threshold 0.50 deg/s -- ALL ENGAGED",
+          lambda s, b: _g(s, "dwell_eng", b, "per_min_050"), "%9.2f")
+    table("dwell duration p90, s (th 0.50)   -- how long the wheel sits still before it moves",
+          lambda s, b: _g(s, "dwell_eng", b, "dwell_p90"), "%9.3f")
+    table("snap p90, deg (th 0.50)           -- how far it then jumps",
+          lambda s, b: _g(s, "dwell_eng", b, "snap_p90"), "%9.2f")
+    if own.get("dwell_ho"):
+        pr("     hands-off stratum, this route, th 0.25: "
+           + "  ".join("%s %s" % (b, fmt(_g(own, "dwell_ho", b, "per_min_025"), "%.2f"))
+                       for b in SI.SBNAME))
+    ref6c = R.get(SYM_REF_V282, {})
+    bad, exposed = [], []
+    for b in SI.SBNAME:
+        mine = _g(own, "dwell_eng", b, "per_min_025")
+        base = _g(ref6c, "dwell_eng", b, "per_min_025")
+        sec = _g(own, "dwell_eng", b, "sec") or 0.0
+        if mine is None or base is None:
+            continue
+        if sec < THR["ratchet_min_s"]:
+            continue
+        exposed.append(b)
+        if mine > THR["ratchet_vs_r6c"] * base:
+            bad.append("%s %.2f vs %.2f" % (b, mine, base))
+    pr("     PRE-REGISTERED: dwells/min at th 0.25 must fall toward the V282 rows -- PASS if <= %.0fx"
+       % THR["ratchet_vs_r6c"])
+    pr("     r6c's in every band with >= %.0f s of exposure.  CALIBRATION: r70_v293 FAILS this in all"
+       % THR["ratchet_min_s"])
+    pr("     four bands (15.23/7.66/4.56/1.24 against r6c 0.39/0.64/0.44/0.20); r39 and r35 PASS it.")
+    if not exposed:
+        v.append(("REPORT", "ratchet", "no speed band carries %.0f s of exposure -- the dwell "
+                                       "statistic is not decisive on this drive" % THR["ratchet_min_s"]))
+    elif bad:
+        v.append(("FAIL", "ratchet", "dwells/min at th 0.25 above %.0fx r6c's in %d of %d exposed "
+                                     "bands: %s" % (THR["ratchet_vs_r6c"], len(bad), len(exposed),
+                                                    "; ".join(bad))))
+    else:
+        v.append(("PASS", "ratchet", "dwells/min at th 0.25 within %.0fx r6c's in every exposed band "
+                                     "(%s)" % (THR["ratchet_vs_r6c"], ", ".join(exposed))))
+    # 🛑 THE SECOND REVERT TRIGGER, added 2026-09-13.  The rev-1 flight was driveable and the operator
+    # scored it; a config that makes the ratchet WORSE than that is a step backwards, and the drive
+    # stops.  Two bands, not one, so a single thin band cannot fire it.
+    worse = []
+    r70r = R.get("r70_v293", {})
+    if tag != "r70_v293":
+        for b in SI.SBNAME:
+            mine = _g(own, "dwell_eng", b, "per_min_025")
+            base = _g(r70r, "dwell_eng", b, "per_min_025")
+            sec = _g(own, "dwell_eng", b, "sec") or 0.0
+            if mine is None or base is None or sec < THR["ratchet_min_s"]:
+                continue
+            if mine > base:
+                worse.append("%s %.2f vs %.2f" % (b, mine, base))
+    pr("     REVERT TRIGGER: dwells/min at th 0.25 ABOVE r70_v293's in TWO OR MORE exposed bands --")
+    pr("     the rev-1 flight was driveable and scored; a config that ratchets harder than it is a")
+    pr("     step backwards and the drive stops.  Revert to the PREVIOUS config, not to V282.")
+    if len(worse) >= 2:
+        v.append(("REVERT", "ratchet", "the ratchet is WORSE than the rev-1 flight in %d bands (%s) -- "
+                                       "go back to the previous toggle config"
+                  % (len(worse), "; ".join(worse))))
+    pr("")
+    cal = SI.conc_calibration()
+    pr("     RATE-MAGNITUDE CONCENTRATION -- of all the wheel travel in a 4 s window, the share")
+    pr("     delivered in the fastest 10 % of its frames, binned by the window's OWN rms rate so the")
+    pr("     comparison is activity-matched.  CALIBRATION, recomputed now: a pure sine %.3f, 0-2 Hz"
+       % cal["sine"])
+    pr("     band-limited noise %.3f, a 10-step staircase %.3f.  Bin edges are FROZEN at the pooled"
+       % (cal["noise"], cal["staircase"]))
+    pr("     four-route percentiles %s deg/s." % ", ".join("%.3f" % x for x in SI.CONC_EDGES[1:5]))
+    table("", lambda s, b: _g(s, "conc", "rate", b, "med"), "%9.3f", rows=SI.CONC_LABELS)
+    pr("     and the 0xE4 COMMAND on the same windows -- the control that says whether the snappiness")
+    pr("     is INHERITED from openpilot or GENERATED by the car:")
+    table("", lambda s, b: _g(s, "conc", "cmd", b, "med"), "%9.3f", rows=SI.CONC_LABELS)
+    q = _g(own, "conc", "rate", "q75-90", "med")
+    pr("     PRE-REGISTERED: the q75-90 bin must fall from 0.468 toward the references' 0.33-0.35 --")
+    pr("     PASS if <= %.2f.  CALIBRATION: r70_v293 0.468 FAILS; r6c 0.345, r39 0.325, r35 0.351 PASS."
+       % THR["conc_q7590"])
+    if q is None:
+        v.append(("REPORT", "concentration", "the q75-90 rms bin is empty on this drive"))
+    elif q <= THR["conc_q7590"]:
+        v.append(("PASS", "concentration", "rate concentration in the q75-90 bin %.3f (<= %.2f)"
+                  % (q, THR["conc_q7590"])))
+    else:
+        v.append(("FAIL", "concentration", "rate concentration in the q75-90 bin %.3f (> %.2f) -- the "
+                                           "wheel still delivers its travel in bursts" % (q, THR["conc_q7590"])))
+
+    # ---------------------------------------------------------------- 7.2 loose
+    pr("")
+    pr("   7.2 LOOSE -- \"sometimes steering felt loose\"")
+    pr("       ⚠ NOT WANDER.  r70's 0.1-1 Hz angle wander on straights was LOWER than V282's, so the")
+    pr("       obvious reading is a measured NULL.  What is low is the outer loop's STIFFNESS against")
+    pr("       the plant's own return spring.  Wander is REPORT-only; stiffness carries the reading.")
+    table("0.1-1 Hz angle wander on straight-ish stretches, deg rms  [REPORT]",
+          lambda s, b: _g(s, "wander", b, "rms"), "%9.4f")
+    pr("")
+    pr("     OUTER-LOOP STIFFNESS, openpilot torque units per degree of angle, on straights, beside")
+    pr("     the plant's own return spring (identification F1/D1 joint fit).  A loop barely stiffer")
+    pr("     than the spring cannot hold the wheel against it, and on a straight the feedforward is")
+    pr("     nearly zero, so almost nothing else is.  [REPORT -- no numeric pre-registration]")
+    pr("     %-9s %11s %12s %7s " % ("band", "THIS ROUTE", "plant spring", "ratio")
+       + " ".join("%9s" % c.replace("_v293", "") for c in cols))
+    for b in SI.SBNAME:
+        mine = _g(own, "stiff", b, "tq_per_deg")
+        spr = SI.PLANT_SPRING_TQ_PER_DEG[b]
+        pr("     %-9s %11s %12.5f %7s " % (b, fmt(mine, "%.5f"), spr,
+                                           fmt(mine / spr if mine else None, "%.2f"))
+           + " ".join("%9s" % fmt(_g(R[c], "stiff", b, "tq_per_deg"), "%.5f") for c in cols))
+
+    # ---------------------------------------------------------------- 7.3 oversteer
+    pr("")
+    pr("   7.3 OVERSTEER -- \"sometimes there was oversteer\"")
+    table("turn-hold windows >= 1.5 s: mean|actual| / mean|desired| lateral accel",
+          lambda s, b: _g(s, "hold", "bands", b, "ratio"))
+    pr("     by DEMAND size, all speeds (the plant gain is amplitude-dependent):")
+    dl = sorted((_g(own, "hold", "demand") or {}).keys())
+    if dl:
+        pr("     %-9s %11s " % ("|D|", "THIS ROUTE")
+           + " ".join("%9s" % c.replace("_v293", "") for c in cols))
+        for b in dl:
+            pr("     %-9s %11s " % (b, fmt(_g(own, "hold", "demand", b, "ratio")))
+               + " ".join("%9s" % fmt(_g(R[c], "hold", "demand", b, "ratio")) for c in cols))
+    pr("")
+    pr("     TRACKING GAIN -- slope of actual on desired lateral accel, both low-passed at 0.5 Hz,")
+    pr("     over engaged runs >= 10 s.  🛑 ON THE IDENTIFICATION'S BAND GRID (<8 / 8-15 / 15-22 /")
+    pr("     >22 m/s), because that is where the reference lives.  r70 rose 0.884 -> 1.020 -> 1.123:")
+    pr("     UNDER-turning below 15 m/s, OVER-turning above 22 -- the feedforward's missing speed law,")
+    pr("     seen directly in the closed loop.")
+    table("", lambda s, b: _g(s, "track", b, "slope"), "%9.3f", rows=SI.IBNAME)
+    pr("     exposure, s: " + "  ".join("%s %s" % (b, fmt(_g(own, "track", b, "sec"), "%.0f"))
+                                        for b in SI.IBNAME))
+    bad = []
+    for b in SI.IBNAME:
+        sl = _g(own, "track", b, "slope")
+        sec = _g(own, "track", b, "sec") or 0.0
+        if sl is None or sec < THR["track_min_s"]:
+            continue
+        if not (THR["track_lo"] <= sl <= THR["track_hi"]):
+            bad.append("%s %.3f" % (b, sl))
+    pr("     PRE-REGISTERED: tracking gain within %.2f-%.2f in every band with >= %.0f s -> PASS."
+       % (THR["track_lo"], THR["track_hi"], THR["track_min_s"]))
+    pr("     CALIBRATION: r70_v293 FAILS (>22 reads 1.123); r6c PASSES (0.966/0.968/0.996/0.989).")
+    if bad:
+        v.append(("FAIL", "tracking gain", "outside %.2f-%.2f in %s -- the loop does not deliver what "
+                                           "the planner asks at those speeds"
+                  % (THR["track_lo"], THR["track_hi"], ", ".join(bad))))
+    else:
+        v.append(("PASS", "tracking gain", "within %.2f-%.2f in every band with >= %.0f s"
+                  % (THR["track_lo"], THR["track_hi"], THR["track_min_s"])))
+    hr = _g(own, "hold", "bands", ">20", "ratio")
+    pr("     PRE-REGISTERED: the >20 m/s turn-hold ratio 1.093 -> <= %.2f.  CALIBRATION: r70_v293 1.093"
+       % THR["hold_hi"])
+    pr("     FAILS and r6c 0.995 PASSES -- bracketed on both sides by real data.")
+    if hr is None:
+        v.append(("REPORT", "turn hold", "no turn-hold runs >= 1.5 s above 20 m/s on this drive"))
+    elif hr <= THR["hold_hi"]:
+        v.append(("PASS", "turn hold", "turn-hold actual/desired above 20 m/s = %.3f (<= %.2f)"
+                  % (hr, THR["hold_hi"])))
+    else:
+        v.append(("FAIL", "turn hold", "turn-hold actual/desired above 20 m/s = %.3f (> %.2f) -- the "
+                                       "car still turns more than the planner asks" % (hr, THR["hold_hi"])))
+
+    # ---------------------------------------------------------------- 7.4 overshoot
+    pr("")
+    pr("   7.4 OVERSHOOT-THEN-CORRECT -- \"on hard transients it would overshoot then correct slightly\"")
+    pr("       steps: |d(desiredLateralAccel)| >= 0.30 m/s^2 over 0.5 s, hands-off, >= 2.5 s apart,")
+    pr("       with the demand settling for 1.5 s.  Overshoot is relative to the final demand.")
+    table("relative overshoot (median over the band's step events)",
+          lambda s, b: _g(s, "step", "bands", b, "ov"))
+    table("absolute overshoot, m/s^2", lambda s, b: _g(s, "step", "bands", b, "ov_abs"), "%9.3f")
+    table("time to peak, s", lambda s, b: _g(s, "step", "bands", b, "tpk"), "%9.2f")
+    pr("     step events: this route %s  |  " % fmt(_g(own, "step", "n"), "%.0f")
+       + "  ".join("%s %s" % (c.replace("_v293", ""), fmt(_g(R[c], "step", "n"), "%.0f"))
+                   for c in cols))
+    d = _g(own, "step", "discriminator") or {}
+    pr("     THE DISCRIMINATOR, carried with it: absolute overshoot regressed on STEP SIZE reads")
+    pr("       slope %s, intercept %s, R2 %s over %s events; correlation with the integrator at the"
+       % (fmt(d.get("slope"), "%.4f"), fmt(d.get("intercept"), "%+.4f"), fmt(d.get("r2"), "%.3f"),
+          d.get("n", "-")))
+    pr("       peak %s.  An UNDER-DAMPED LINEAR LOOP gives a positive slope and ~0 intercept; a"
+       % fmt(d.get("corr_i"), "%+.3f"))
+    pr("       STICTION RELEASE or a fixed feedforward offset gives slope ~0 and a positive intercept.")
+    pr("       On r70 that read -0.456 / +0.571 / R2 0.027 -- a roughly FIXED excursion that does not")
+    pr("       scale, which RULES OUT an under-damped linear loop.  [EVIDENCE]")
+    bad = []
+    for b in ("10-20", ">20"):
+        ov = _g(own, "step", "bands", b, "ov")
+        if ov is not None and ov > THR["overshoot"]:
+            bad.append("%s %.3f" % (b, ov))
+    pr("     PRE-REGISTERED: relative overshoot <= %.2f at 10-20 and >20 m/s -> PASS.  CALIBRATION:"
+       % THR["overshoot"])
+    pr("     r70_v293 FAILS both (0.437 and 0.341).  🛑 NO route in the corpus passes this at 10-20 m/s")
+    pr("     (r6c 0.226 is the closest), so it is a TARGET, not a bracketed threshold -- see the")
+    pr("     census in 7.7.  A FAIL here means \"not yet at the target\", not \"worse than V282\".")
+    if bad:
+        v.append(("FAIL", "overshoot", "relative step overshoot above %.2f at %s"
+                  % (THR["overshoot"], ", ".join(bad))))
+    elif any(_g(own, "step", "bands", b, "ov") is not None for b in ("10-20", ">20")):
+        v.append(("PASS", "overshoot", "relative step overshoot <= %.2f at every scored band >= 10 m/s"
+                  % THR["overshoot"]))
+    else:
+        v.append(("REPORT", "overshoot", "no step events above 10 m/s on this drive"))
+
+    # ---------------------------------------------------------------- 7.5 the report rows
+    pr("")
+    pr("   7.5 REPORT ROWS -- the outer loop, the integrator and the delivery")
+    table("1-4 Hz PROMINENCE above the shoulder-fitted baseline, dB (a line, or just the road?)",
+          lambda s, b: _g(s, "prom", b, "prom"), "%9.2f")
+    table("1-4 Hz content on the 0x18F RATE, deg/s (quantiser-free)",
+          lambda s, b: _g(s, "prom", b, "rate"), "%9.2f")
+    pr("     ⚠ the FLAT-baseline prominence estimator returns 16-21 dB on EVERY route and is not used.")
+    badp = [b for b in SI.SBNAME
+            if (_g(own, "prom", b, "prom") or -99) >= THR["prom_db"]]
+    badr = []
+    for b in SI.SBNAME:
+        mine = _g(own, "prom", b, "rate")
+        base = _g(ref6c, "prom", b, "rate")
+        if mine is not None and base and mine > THR["rate14_vs_r6c"] * base:
+            badr.append("%s %.1f vs %.1f" % (b, mine, base))
+    pr("     PRE-REGISTERED: prominence < %.0f dB in every band AND 1-4 Hz rate content <= %.0fx r6c's."
+       % (THR["prom_db"], THR["rate14_vs_r6c"]))
+    pr("     CALIBRATION: r70_v293 FAILS both (6.5-11.8 dB; 4.8-11.6x).  r6c, r39 and r35 all PASS the")
+    pr("     prominence clause (max 2.21 dB), so that one is bracketed; the rate-content clause is")
+    pr("     against r6c itself, so only r6c passes it trivially -- read the census in 7.7.")
+    if badp or badr:
+        v.append(("FAIL", "1-4 Hz", ("prominence >= %.0f dB in %s" % (THR["prom_db"], ", ".join(badp))
+                                     if badp else "")
+                  + ("; " if badp and badr else "")
+                  + ("rate content above %.0fx r6c's at %s" % (THR["rate14_vs_r6c"], "; ".join(badr))
+                     if badr else "")))
+    else:
+        v.append(("PASS", "1-4 Hz", "no 1-4 Hz line (prominence < %.0f dB everywhere) and rate content "
+                                    "within %.0fx r6c's" % (THR["prom_db"], THR["rate14_vs_r6c"])))
+    pr("")
+    table("INTEGRATOR SHARE of |f|+|p|+|i|  [IDENT band grid]",
+          lambda s, b: _g(s, "shares", b, "i"), "%9.3f", rows=SI.IBNAME)
+    ish = [x for x in (_g(own, "shares", b, "i") for b in SI.IBNAME) if x is not None]
+    pr("     PRE-REGISTERED: < %.2f.  r70_v293 read 0.35-0.38 and FAILS; a feedforward that is right"
+       % THR["i_share"])
+    pr("     should not need the integrator to carry a third of the command.  🛑 NO route in the")
+    pr("     corpus passes this either (r6c 0.30-0.40) -- a TARGET, not a bracketed threshold.  It is")
+    pr("     the number a feedforward fix should move furthest, which is why it is scored at all.")
+    if not ish:
+        v.append(("REPORT", "integrator", "no control-path frames -- the integrator share is unread"))
+    elif max(ish) < THR["i_share"]:
+        v.append(("PASS", "integrator", "integrator share %.3f at its worst band (< %.2f)"
+                  % (max(ish), THR["i_share"])))
+    else:
+        v.append(("FAIL", "integrator", "integrator share %.3f at its worst band (>= %.2f) -- the "
+                                        "feedforward is still persistently wrong at DC"
+                  % (max(ish), THR["i_share"])))
+    pr("")
+    pr("     DELIVERY BY REGIME, mean|actual| / mean|desired| (demand-defined regimes):")
+    regs = ("straight", "turn entry", "turn hold", "turn exit", "low-speed manoeuvre")
+    pr("     %-22s %11s " % ("regime", "THIS ROUTE")
+       + " ".join("%9s" % c.replace("_v293", "") for c in cols))
+    for rg in regs:
+        mine = _g(own, "regime", rg, "deliver")
+        pr("     %-22s %11s " % (rg, fmt(mine * 100 if mine else None, "%.1f"))
+           + " ".join("%9s" % fmt((_g(R[c], "regime", rg, "deliver") or 0) * 100 or None, "%.1f")
+                      for c in cols))
+    st = _g(own, "regime", "straight", "deliver")
+    pr("     PRE-REGISTERED: straight-line delivery %.0f-%.0f %%.  r70_v293 read 80.0 %% and FAILS --"
+       % (100 * THR["deliver_lo"], 100 * THR["deliver_hi"]))
+    pr("     under-delivering on straights is the friction error, and straights are where the")
+    pr("     feedforward is nearly zero and the friction is nearly all of it.  🛑 NO reference route")
+    pr("     passes this band either -- r6c UNDER-delivers at 86 % and r39/r35 OVER-deliver at")
+    pr("     111/117 % -- so it is a TARGET.  What it does measure cleanly is the DIRECTION and size")
+    pr("     of the straight-line error, which is the friction term's own signature.")
+    if st is None:
+        v.append(("REPORT", "straight delivery", "no straight regime on this drive"))
+    elif THR["deliver_lo"] <= st <= THR["deliver_hi"]:
+        v.append(("PASS", "straight delivery", "straight-line delivery %.1f %% (%.0f-%.0f %%)"
+                  % (100 * st, 100 * THR["deliver_lo"], 100 * THR["deliver_hi"])))
+    else:
+        v.append(("FAIL", "straight delivery", "straight-line delivery %.1f %% (wants %.0f-%.0f %%)"
+                  % (100 * st, 100 * THR["deliver_lo"], 100 * THR["deliver_hi"])))
+
+    # ---------------------------------------------------------------- 7.6 the POSITIVE CONTROL
+    pr("")
+    pr("   7.6 POSITIVE CONTROL -- does this code reproduce the identification on r70_v293?")
+    pr("       Tolerance: %.0f %% relative or %.3f absolute, whichever is larger.  A FAIL here means an"
+       % (100 * IDENT_TOL, 0.003))
+    pr("       instrument moved, and every number in section 7 must be re-read before it is trusted.")
+    r70 = R.get("r70_v293")
+    if not r70:
+        pr("       ⚠ r70_v293 is not in the reference set -- the positive control could not run.")
+        v.append(("REPORT", "positive control", "r70_v293 has no symptom block; section 7's "
+                                                "instruments are UNVALIDATED on this run"))
+    else:
+        checks = [
+            ("dwells/min th 0.25, all-engaged", IDENT_R70["dwell025_eng"],
+             [_g(r70, "dwell_eng", b, "per_min_025") for b in SI.SBNAME]),
+            ("dwells/min th 0.25, hands-off", IDENT_R70["dwell025_ho"],
+             [_g(r70, "dwell_ho", b, "per_min_025") for b in SI.SBNAME]),
+            ("rate concentration", IDENT_R70["conc"],
+             [_g(r70, "conc", "rate", b, "med") for b in SI.CONC_LABELS]),
+            ("loop stiffness, torque/deg", IDENT_R70["stiff"],
+             [_g(r70, "stiff", b, "tq_per_deg") for b in SI.SBNAME]),
+            ("turn-hold ratio", IDENT_R70["hold"],
+             [_g(r70, "hold", "bands", b, "ratio") for b in SI.SBNAME]),
+            ("tracking gain", IDENT_R70["track"], [_g(r70, "track", b, "slope") for b in SI.IBNAME]),
+            ("relative overshoot", IDENT_R70["step"],
+             [_g(r70, "step", "bands", b, "ov") for b in SI.SBNAME]),
+            ("1-4 Hz prominence, dB", IDENT_R70["prom"], [_g(r70, "prom", b, "prom") for b in SI.SBNAME]),
+            ("1-4 Hz rate content", IDENT_R70["rate14"], [_g(r70, "prom", b, "rate") for b in SI.SBNAME]),
+            ("integrator share", IDENT_R70["i_share"], [_g(r70, "shares", b, "i") for b in SI.IBNAME]),
+            ("straight delivery", (IDENT_R70["straight"],), [_g(r70, "regime", "straight", "deliver")]),
+        ]
+        nfail = 0
+        pr("       %-34s %-42s %s" % ("instrument", "recomputed", "published / verdict"))
+        for nm, want, got in checks:
+            oks = [_within(g_, w_) for g_, w_ in zip(got, want)]
+            ok = all(o is not False for o in oks)
+            nfail += 0 if ok else 1
+            pr("       %-34s %-42s %-30s %s"
+               % (nm, " ".join("%8s" % fmt(x, "%.4f") for x in got),
+                  " ".join("%8s" % (("%.4f" % w) if w is not None else "  -") for w in want),
+                  "ok" if ok else "🛑 MOVED"))
+        if nfail:
+            v.append(("FAIL", "positive control",
+                      "%d of %d instruments no longer reproduce the identification on r70_v293 -- "
+                      "section 7 is not trustworthy until that is resolved" % (nfail, len(checks))))
+        else:
+            v.append(("PASS", "positive control",
+                      "all %d instruments reproduce V293-PLANT-IDENT-2026-09-13.md on r70_v293 within "
+                      "%.0f %%" % (len(checks), 100 * IDENT_TOL)))
+    # ---------------------------------------------------------------- 7.7 the CALIBRATION CENSUS
+    pr("")
+    pr("   7.7 THRESHOLD CALIBRATION CENSUS -- every gate, run on every reference route")
+    pr("       🛑 A GATE NOTHING FAILS IS THEATRE.  A GATE NOTHING PASSES IS A TARGET, NOT A")
+    pr("       CALIBRATION -- and this table says which is which, by RUNNING each gate's own")
+    pr("       predicate on each cached route rather than asserting it in prose.  A gate marked")
+    pr("       TARGET ONLY is still worth scoring, but a FAIL on it does not mean the drive is worse")
+    pr("       than the corpus; it means nothing in the corpus has ever met it.")
+    pr("       %-24s %-16s " % ("gate", "threshold")
+       + " ".join("%9s" % c.replace("_v293", "") for c in cols) + "   %s" % "verdict")
+    for nm, thtxt, fn, selfref in _gate_predicates():
+        res = []
+        for c in cols:
+            try:
+                res.append(fn(R[c]))
+            except Exception:
+                res.append(None)
+        # 🛑 A gate stated AS A RATIO TO r6c makes r6c's own PASS tautological (1 <= 2), so it does
+        # not count as evidence that the gate is reachable.  Judge those on the other routes only.
+        judged = [x for c, x in zip(cols, res) if not (selfref and c == SYM_REF_V282)]
+        nP = sum(1 for x in judged if x is True)
+        nF = sum(1 for x in judged if x is False)
+        if nP and nF:
+            verd = "bracketed"
+        elif nF and not nP:
+            verd = ("🛑 TARGET ONLY -- only %s passes, and it does so by construction" % SYM_REF_V282
+                    if selfref else "🛑 TARGET ONLY -- no reference route passes")
+        elif nP and not nF:
+            verd = "🛑 NOTHING FAILS -- this gate does not discriminate"
+        else:
+            verd = "unscoreable on the corpus"
+        pr("       %-24s %-16s " % (nm + (" *" if selfref else ""), thtxt)
+           + " ".join("%9s" % ("PASS" if x is True else ("FAIL" if x is False else "n/a"))
+                      for x in res) + "   %s" % verd)
+    pr("       * stated as a RATIO TO %s, so that column passes by construction and is excluded from"
+       % SYM_REF_V282)
+    pr("         the bracketing judgement.")
+    pr("")
+    pr("   🛑 THESE ARE INSTRUMENTS, NOT A VERDICT ON THE FEEL.  The operator scores the symptoms.")
+    pr("   A PASS here licenses \"the statistic the operator's words pointed at has moved\", nothing")
+    pr("   more -- and a statistic moving is not the same as the car feeling right.")
+    return v
+
+
+def _gate_predicates():
+    """each section 7 gate as a predicate over a symptom block, so the census below RUNS them rather
+    than quoting them.  Returns (name, threshold text, fn -> True/False/None)."""
+    def mk_ratchet(refs):
+        def f(s):
+            bad = exposed = 0
+            for b in SI.SBNAME:
+                mine = _g(s, "dwell_eng", b, "per_min_025")
+                base = _g(refs.get(SYM_REF_V282, {}), "dwell_eng", b, "per_min_025")
+                sec = _g(s, "dwell_eng", b, "sec") or 0.0
+                if mine is None or base is None or sec < THR["ratchet_min_s"]:
+                    continue
+                exposed += 1
+                bad += 1 if mine > THR["ratchet_vs_r6c"] * base else 0
+            return None if not exposed else (bad == 0)
+        return f
+
+    def conc(s):
+        q = _g(s, "conc", "rate", "q75-90", "med")
+        return None if q is None else (q <= THR["conc_q7590"])
+
+    def track(s):
+        seen = False
+        for b in SI.IBNAME:
+            sl = _g(s, "track", b, "slope")
+            sec = _g(s, "track", b, "sec") or 0.0
+            if sl is None or sec < THR["track_min_s"]:
+                continue
+            seen = True
+            if not (THR["track_lo"] <= sl <= THR["track_hi"]):
+                return False
+        return True if seen else None
+
+    def hold(s):
+        r = _g(s, "hold", "bands", ">20", "ratio")
+        return None if r is None else (r <= THR["hold_hi"])
+
+    def over(s):
+        seen = False
+        for b in ("10-20", ">20"):
+            ov = _g(s, "step", "bands", b, "ov")
+            if ov is None:
+                continue
+            seen = True
+            if ov > THR["overshoot"]:
+                return False
+        return True if seen else None
+
+    def prom(s):
+        vals = [_g(s, "prom", b, "prom") for b in SI.SBNAME]
+        vals = [x for x in vals if x is not None]
+        return None if not vals else (max(vals) < THR["prom_db"])
+
+    def mk_rate14(refs):
+        def f(s):
+            seen = False
+            for b in SI.SBNAME:
+                mine = _g(s, "prom", b, "rate")
+                base = _g(refs.get(SYM_REF_V282, {}), "prom", b, "rate")
+                if mine is None or not base:
+                    continue
+                seen = True
+                if mine > THR["rate14_vs_r6c"] * base:
+                    return False
+            return True if seen else None
+        return f
+
+    def ish(s):
+        vals = [_g(s, "shares", b, "i") for b in SI.IBNAME]
+        vals = [x for x in vals if x is not None]
+        return None if not vals else (max(vals) < THR["i_share"])
+
+    def deliv(s):
+        d = _g(s, "regime", "straight", "deliver")
+        return None if d is None else (THR["deliver_lo"] <= d <= THR["deliver_hi"])
+
+    refs = symptom_refs()
+    return [
+        ("ratchet dwells th0.25", "<= %.0fx r6c" % THR["ratchet_vs_r6c"], mk_ratchet(refs), True),
+        ("concentration q75-90", "<= %.2f" % THR["conc_q7590"], conc, False),
+        ("tracking gain", "%.2f-%.2f" % (THR["track_lo"], THR["track_hi"]), track, False),
+        ("turn hold >20 m/s", "<= %.2f" % THR["hold_hi"], hold, False),
+        ("step overshoot", "<= %.2f" % THR["overshoot"], over, False),
+        ("1-4 Hz prominence", "< %.0f dB" % THR["prom_db"], prom, False),
+        ("1-4 Hz rate content", "<= %.0fx r6c" % THR["rate14_vs_r6c"], mk_rate14(refs), True),
+        ("integrator share", "< %.2f" % THR["i_share"], ish, False),
+        ("straight delivery", "%.0f-%.0f %%" % (100 * THR["deliver_lo"], 100 * THR["deliver_hi"]),
+         deliv, False),
+    ]
 
 
 def print_verdicts(S, verdicts):
@@ -1640,10 +2851,19 @@ def print_verdicts(S, verdicts):
         pr("  [%-6s] %-14s %s" % (lvl, clause, txt))
     nrev = sum(1 for l, _, _ in verdicts if l == "REVERT")
     nfail = sum(1 for l, _, _ in verdicts if l == "FAIL")
+    ratrev = any(c == "ratchet" for l, c, _ in verdicts if l == "REVERT")
     pr("")
+    pr("  TWO CLASSES OF REVERT TRIGGER, and they point at DIFFERENT things:")
+    pr("    * the BAND triggers (outer loop, F7, rip/L, absolute ripple, 13-17 Hz) say STOP THE DRIVE")
+    pr("      and go back to V282 -- the FIRMWARE is the suspect.")
+    pr("    * the RATCHET trigger (section 7.1: dwells/min at th 0.25 above r70_v293's in two or more")
+    pr("      exposed bands) says go back to the PREVIOUS TOGGLE CONFIG -- the fork tune is the")
+    pr("      suspect, the firmware is not, and r70_v293 was a driveable, scored baseline.")
     if nrev:
-        pr("  >>> %d REVERT trigger(s) fired.  The pre-registration's instruction is to STOP THE DRIVE "
-           "and go back to V282." % nrev)
+        pr("  >>> %d REVERT trigger(s) fired.  %s" % (
+            nrev, ("Revert the TOGGLE CONFIG (the ratchet trigger fired); if a band trigger fired too, "
+                   "go back to V282 as well." if ratrev
+                   else "The pre-registration's instruction is to STOP THE DRIVE and go back to V282.")))
     elif nfail:
         pr("  >>> %d clause(s) FAILED and no revert trigger fired." % nfail)
     else:
@@ -1699,7 +2919,9 @@ def run_controls(routes=CONTROL_ROUTES):
             pr("  %s: no cache -- skipped" % tag); continue
         pr("")
         pr("  scoring %s (%s) ..." % (tag, b))
-        S = score_route(tag, b, with_positive=False)
+        # the symptom block has its OWN cache (keyed by the instrument code) and its own rlog pass;
+        # running it here would do a full control-path extraction on routes the section never cites.
+        S = score_route(tag, b, with_positive=False, with_symptoms=False)
         refs[tag] = dict(build=b, engdis=S["engdis"], spectra=S["spectra"],
                          presence=S["presence"], strongturn=S["strongturn"],
                          outer=S["outer"], cave=S["cave"],
@@ -1767,9 +2989,19 @@ def main():
     ap.add_argument("--controls", action="store_true",
                     help="run the negative control + recompute every band reference")
     ap.add_argument("--no-positive", action="store_true", help="skip the positive control (faster)")
+    ap.add_argument("--no-symptoms", action="store_true", help="skip section 7 (faster)")
     ap.add_argument("--reextract", action="store_true", help="rebuild the cache even if it exists")
+    ap.add_argument("--config", default=None,
+                    help="the EXPECTED fork toggle config: a *.decoded.json under "
+                         "analysis-2020accord/reference/.  Default: the rev-2 file if it exists, "
+                         "else the rev-1 torque-mode file.")
+    ap.add_argument("--refresh-symptom-refs", action="store_true",
+                    help="recompute section 7's reference routes even if the cache is current")
     a = ap.parse_args()
     os.makedirs(SCR, exist_ok=True)
+    set_config(a.config)
+    if a.refresh_symptom_refs:
+        symptom_refs(force=True)
     if a.controls:
         run_controls()
         io.open(os.path.join(SCR, "v293_flight_read_controls.txt"), "w",
@@ -1790,7 +3022,8 @@ def main():
         pr("  ⚠ no reference table at %s -- run `--controls` once to build it.  Falling back to the"
            % os.path.relpath(REFS_JSON, KIT))
         pr("    literals transcribed from V292-FLIGHT-READ-2026-09-13.md (printed beside every number).")
-    S = score_route(tag, build, with_positive=not a.no_positive, prefix=prefix)
+    S = score_route(tag, build, with_positive=not a.no_positive, prefix=prefix,
+                    with_symptoms=not a.no_symptoms)
     v = print_scorecard(S, refs)
     print_verdicts(S, v)
     json.dump(S, open(os.path.join(SCR, "v293_flight_read_%s.json" % tag), "w"), indent=1, default=float)

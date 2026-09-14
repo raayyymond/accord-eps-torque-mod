@@ -20,7 +20,31 @@ calibration edit, and state the cell's on-car result. FALSIFIED ≠ INERT-BY-MOD
 
 ---
 
-### V293 — TORQUE MODE: the LKAS rate feedback clamped to zero, D killed twice over, the forward path re-levelled  (2026-09-13, **BUILT, NOT FLOWN — 🛑 CLEARED AS THE FLIGHT CANDIDATE OVER ONE DISSENT (B2 as written). A/C/D PASS; B1, B3, B4, B5, B7 PASS, B8 reported; B2 and B6 FAIL AS WRITTEN and both are adjudicated. V282 is the fallback; the fork preset is MANDATORY; the first drive is an IDENTIFICATION drive; the low-speed 1–4 Hz signature is the first revert trigger. The decision to fly is the operator's. Nothing is flashed.**)
+### V293 — TORQUE MODE: the LKAS rate feedback clamped to zero, D killed twice over, the forward path re-levelled  (2026-09-13, **✈ FLEW 2026-09-13 on route `75604b0a432fdc89_00000070--717f5a7866` — see the FLIGHT paragraph right below this heading. Pre-flight status: CLEARED AS THE FLIGHT CANDIDATE OVER ONE DISSENT (B2 as written). A/C/D PASS; B1, B3, B4, B5, B7 PASS, B8 reported; B2 and B6 FAIL AS WRITTEN and both are adjudicated. V282 is the fallback; the fork preset is MANDATORY; the first drive is an IDENTIFICATION drive; the low-speed 1–4 Hz signature is the first revert trigger. The decision to fly is the operator's. Nothing is flashed.**)
+
+> ✈ **FLEW 2026-09-13, route 70 (19 segments, 858 s laterally engaged, fork `Dom` `4247cb09e`, rev-1 toggle
+> config confirmed in `initData` and by the 100 Hz Kp read 0.3000). THE OPERATOR'S SCORE, verbatim:** *"I did not
+> experience any classic grinding or stuttering."* / *"steering felt ratchety, like the wheel did not move smoothly
+> but only snapped between angles rather than smoothly moving between them"* / *"Sometimes steering felt loose and
+> then sometimes there was oversteer and other times on hard transients, it would overshoot then correct slightly."*
+> **Bands (the instrument, `V293-FLIGHT-READ-r70-2026-09-13.txt`):** the edit-live identity HOLDS (|427 tap| vs the
+> image surface R² 0.986, resid 22 counts, sign(T) = +sign(cmd)) — the EPS rate loop is dead on the wire; 18–22 Hz
+> ring present in **1.1 %** of windows (9.8–20.9 % on every reference), present-window amplitude ×0.43 of V282's
+> (gate ≤ 0.40 — a marginal miss of its own clause, not a null: the terminal null sentence's antecedent "unchanged"
+> is NOT met, so the in-loop class is NOT closed by this drive; the drive-controlled 18–22 Hz reads 1.88 = ×0.55 of
+> r6c, and the excess moved DOWN to 9–17 Hz, unexplained); F7 strong-turn ripple **0.00**/100 s; 6–8.5 Hz tap ripple
+> ×0.10; 5–9 Hz ×1.6–1.9 broadband (predicted); 13–17 Hz ×1.03; a 10.55 Hz +3.8 dB line not gated. **One REVERT
+> trigger fired — the OUTER LOOP:** a genuine 1.2–1.8 Hz peak in command and angle (angle 3.55° at 0–5 m/s, 2.5×
+> the worst reference; 6.5–11.8 dB prominence below 20 m/s where no reference has any), which the pre-registration
+> assigns to the FORK TUNE, not the firmware. **The plant left behind is a SPRING + Coulomb friction, not a rate
+> servo** (`V293-PLANT-IDENT-2026-09-13.md`): torque per degree 0.0079/0.0113/0.0154 u at 12.5/18.5/28.5 m/s, soft
+> below 8; F 0.010–0.012 u; the fork's model was wrong twice (no friction, one LAF at all speeds — measured 3.2 → 6.4
+> with speed, ×2.8 with amplitude); the ratchet is MEASURED (dwell-then-jump 6–39× V282 at th 0.25, the command 3×
+> smoother); the low-speed loop had PM −11° from the hard-coded low-speed factor. **Authority vs stock, re-verified
+> from the three images:** peak ×6.17 (2461 vs 399 lane counts), every authority cell exactly ×6.000, median ×4.35 —
+> nothing changed. **Disposition: V293 STAYS IN THE CAR; the fix is the FORK — plant tables re-identified in code
+> (Dom `8c4051ce6`) + the rev-2 toggle config (`toggle-config_V293_torque_mode_r2.json`: plant FF on, friction 0.011,
+> LAF 14, Kp 0.85, Ki 0.30, offset off).** Handoff `HANDOFF-2026-09-13-v293-flew-plant-is-a-spring.md`.
 
 **Class — V279 rev 2's STRUCTURE (2026-09-02, built, never flown) REBASED ONTO V282: the LKAS lane stops
 being a rate regulator and becomes a linear TORQUE MAP, `T = f(cmd)·taper`, with no rate feedback and no

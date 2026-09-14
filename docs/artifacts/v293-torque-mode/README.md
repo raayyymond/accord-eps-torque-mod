@@ -24,6 +24,37 @@ Python is the `bin_decompile` conda env (`C:/Users/dudei/anaconda3/envs/bin_deco
 | `diagram.svg.frag` | the main signal-flow diagram, hand-authored inline SVG |
 | `v293-torque-mode.html` | the rendered page as published |
 
+## Version 7 — V293 FLEW (route 70), the plant, the rev-2 fork side
+
+Added 2026-09-13 by agent `page-v7`. The data-json regeneration above is known to time out, so
+v7 was **spliced directly into both `v293-torque-mode.html` and `page.tmpl.html`**, byte-identically.
+
+```bash
+python v7_charts.py    # -> v7_figs.frag   (10 inline-SVG figures, exact geometry)
+python v7_splice.py    # v7_sections.src.html + v7_figs.frag -> both html files
+```
+
+`v7_splice.py` refuses to run on an already-spliced file. **To re-run it, restore both files from
+git first** (`git checkout -- v293-torque-mode.html page.tmpl.html`), then run both scripts.
+
+| file | what it is |
+|---|---|
+| `v7_charts.py` | the v7 figure geometry — the measured plant LERP, the FF hold ratios, the ratchet, the LAF grid, the config margins, the band scores, and the rev-2 fork signal-flow diagram |
+| `v7_sections.src.html` | the four new sections, with `<!--#figN#-->` markers |
+| `v7_splice.py` | fills the markers, inserts the CSS and the sections, and applies every tense/verdict edit to both files |
+
+🛑 **`{{FRICTION}}` is a deliberate literal placeholder** and appears three times in the page
+(diagram label, config block, symptom table). The orchestrator substitutes the chosen
+`SteerFriction` value by find-and-replace after the describing-function check. `render.py` will
+report it as an unreplaced key; that is expected.
+
+**Every v7 number is transcribed from a measurement file, never from a script's constants:**
+`rlog-tools/studies/grind/V293-FLIGHT-READ-r70-2026-09-13.txt` ·
+`rlog-tools/studies/grind/V293-PLANT-IDENT-2026-09-13.md` ·
+`docs/research/FORK-LATERAL-PATH-V293-2026-09-13.md` §4 ·
+`docs/research/DESIGN-NOTE-INNER-LOOP-QUANTITY-2026-09-13.md` ·
+`docs/handoffs/2026-09/HANDOFF-2026-09-13-v293-flew-plant-is-a-spring.md` §8.
+
 ## The reader is deliberately independent of the kit's ledger
 
 `analysis-2020accord/studies/ledger/ledger_v38_to_v84_bytes.py` hard-codes a V38–V84 build list and a
