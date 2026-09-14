@@ -122,6 +122,10 @@ optional extra.
    a curve he cannot see is a build he cannot assess.
 4. **The delivered-surface consequence** — a before/after table or curve of torque vs demand, read
    **from the built image**, never from the build script's constants.
+5. ⭐ **EVERY NEW TERM GETS ITS OWN GRAPH OR DIAGRAM — a note is not enough.** Standing operator
+   instruction, 2026-09-14: a filter, notch, hysteresis, inner loop or map added to the fork or the firmware
+   is drawn (its response vs frequency and/or its time trace, before/after where it changes behaviour), not
+   described in a bullet. A term that exists only as prose on the page is a page the operator sends back.
 
 **Rules that have each already cost this kit an error:**
 - **Read every number from the BUILT IMAGE.** V274's docstring asserted a peak torque that was a

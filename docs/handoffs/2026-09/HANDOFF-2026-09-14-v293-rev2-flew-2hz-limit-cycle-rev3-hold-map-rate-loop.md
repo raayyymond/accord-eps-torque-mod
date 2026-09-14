@@ -9,7 +9,7 @@
 > high speed like low speed but worse, with more oscillation/resonance."* He asked for the route data to be
 > read for symptoms and discrepancies beyond his words, and for a 100 Hz inner loop in StarPilot if necessary.
 > **Delivered: fork commit `e8e62f0e1` on `Dom` (rev 3) + `toggle-config_V293_torque_mode_r3.json`.**
-> **Page:** https://claude.ai/code/artifact/08d2f4e0-44b8-43a0-9fb8-128eedef58e0 (signal flow, LERPs before/after, simulated consequences, risk).
+> **Page:** https://claude.ai/code/artifact/08d2f4e0-44b8-43a0-9fb8-128eedef58e0 (signal flow, LERPs before/after, simulated consequences, risk); v2 adds one graph per new term — reference filter, notch, hysteresis, rate loop — per the operator's 2026-09-14 instruction now in CLAUDE.md).
 > Previous narrative: `HANDOFF-2026-09-13-v293-flew-plant-is-a-spring.md`.
 
 ---
@@ -170,8 +170,7 @@ REVERT file.
 `starpilot/common/assets/device_settings_layout.json`, both test files. ⚠ The openpilot test runtime is not
 importable on this host (cereal aborts); the tune functions were executed on a stubbed mirror
 (`C:/Users/dudei/.claude/jobs/ad52c287/tmp/validate_tunes.py`, all checks pass) and the controller-level test
-is reasoned, not run — **run `pytest selfdrive/controls/tests/test_latcontrol.py -k accord` on the device or a
-laptop build before the drive.**
+was then RUN ON THE DEVICE: **Tests PASSED on the comma (2026-09-14, /usr/local/venv python + pytest in /data/pytest_site): 14 Accord lateral tests, 25 Galaxy layout tests; the whole lateral file 190/192 — the two Bolt/Palisade failures pre-exist on 66cf4454a.** The device (comma@10.0.0.168, ssh key `id_ed25519_personal`) had already pulled e8e62f0e1, rebuilt params and restored the rev-3 config (all 12 keys verified in `/data/params/d`).
 
 **Kit reports (tracked)**: `rlog-tools/studies/grind/V293-REV2-READ-r71-2026-09-14.txt` (the §2 read), `V293-FLIGHT-READ-r71-2026-09-14.txt` (scorer v2), `V293-HOLD-MAP-2026-09-14.txt` (+ `.params.json`, the map and fits), `V293-REV3-DESIGN-SWEEP-2026-09-14.txt` (delay/second-order fit, candidate sweeps, linear margins).
 

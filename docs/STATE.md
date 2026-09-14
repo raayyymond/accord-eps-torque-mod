@@ -32,8 +32,7 @@ the EPS rate loop is dead on the wire.
 > ×1.5 / spring ×0.7–1.4; step overshoot 80–110 % → 30–45 %; Ms 4–30 → 1.9–2.6. **Order: fork, REBUILD PARAMS, config,
 > restart** (`docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md` §0). Handoff:
 > `docs/handoffs/2026-09/HANDOFF-2026-09-14-v293-rev2-flew-2hz-limit-cycle-rev3-hold-map-rate-loop.md`. **Page:** https://claude.ai/code/artifact/08d2f4e0-44b8-43a0-9fb8-128eedef58e0
-> (signal flow, the hold-map and loop LERPs before/after, the simulated consequences, the risk). Tests not run on
-> this host — run `pytest selfdrive/controls/tests/test_latcontrol.py -k accord` before the drive.**
+> (signal flow, the hold-map and loop LERPs before/after, the simulated consequences, the risk). Tests PASSED on the comma (2026-09-14, /usr/local/venv python + pytest in /data/pytest_site): 14 Accord lateral tests, 25 Galaxy layout tests; the whole lateral file 190/192 — the two Bolt/Palisade failures pre-exist on 66cf4454a. The device already carries e8e62f0e1 + the rev-3 params (read from /data/params/d).**
 >
 > *(superseded 2026-09-13 night box, kept for the record:)* 🛑 **THE VERDICT (2026-09-13 night): V293 STAYS IN THE CAR. The operator's score, verbatim — *"I did not
 > experience any classic grinding or stuttering."* · *"steering felt ratchety, like the wheel did not move smoothly
