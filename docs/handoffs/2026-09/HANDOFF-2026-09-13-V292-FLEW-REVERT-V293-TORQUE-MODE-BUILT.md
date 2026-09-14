@@ -1,5 +1,17 @@
 # HANDOFF 2026-09-13 (late) — V292 FLEW and is a REVERT; V293, TORQUE MODE, is BUILT and CLEARED over one dissent
 
+> 🛑 **SUPERSEDED IN ONE RESPECT, later on 2026-09-13 — the fork side.** Every "Testing Ground 9 / variant B"
+> statement below is history: the operator rejected that mechanism too (*"way too complicated for what
+> should just be a toggle config file"*), fork commit `3d1a3d0c7` was force-removed (Dom is `4247cb09e`,
+> carrying only the SR-map refit, the frpc deletions and one `import math`), and **the fork side is a Galaxy
+> toggle config** — `analysis-2020accord/reference/toggle-config_V293_torque_mode.json` (rate-plant FF off,
+> Kp 0.3, Ki 0.15, friction 0.00, LAF 6.0), no fork code. `starpilotLateralState.epsTorqueMode` never
+> shipped; the scorer attributes the drive from `initData.params` and the 100 Hz `torqueState.p/error`
+> read instead (r6f: Kp 0.9000 exactly). The `ModelCurvatureLead` patch that the same commit had swept in
+> was never part of V292 or V293 and is preserved as `docs/research/FORK-COMB-RECONSTRUCTION-2026-09-13.patch`.
+> Safe Mode DOES reset the config (all ten keys are managed). Current card:
+> `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`; current state: `docs/STATE.md`.
+
 **Read `docs/STATE.md`'s decision box first.** This is the narrative of the second half of 2026-09-13:
 the session that put V292 on the car, measured that it re-armed the 7 Hz mode and did **not** touch the
 20 Hz ring, and then answered the operator's goal with **torque mode** — V279's structure rebased onto
@@ -32,9 +44,8 @@ the cave was live, the D-bind duty fell ×0.03 as designed, and the grinding was
 operator had to keep consistent by hand.
 
 > 🛑 **THE VERDICT: V293 is CLEARED as the flight candidate over ONE DISSENT (B2 as written), with V282
-> the fallback, the fork preset (Testing Ground 9 "Accord EPS Torque Mode" variant B: LAF 6.0 /
-> friction 0.00 / Kp 0.3 / Ki 0.15,
-> rate-plant FF OFF) MANDATORY, the first drive an IDENTIFICATION drive, and the low-speed 1–4 Hz
+> the fallback, the fork TOGGLE CONFIG (`toggle-config_V293_torque_mode.json`: rate-plant FF OFF /
+> LAF 6.0 / friction 0.00 / Kp 0.3 / Ki 0.15 — existing sliders, no fork code) MANDATORY, the first drive an IDENTIFICATION drive, and the low-speed 1–4 Hz
 > signature the first revert trigger. The decision to fly is the operator's. Nothing licenses any claim
 > that the grinding or the stutter is fixed — he scores the symptom; the pre-registered read and the
 > terminal null sentence stand.**

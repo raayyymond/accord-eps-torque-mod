@@ -1,0 +1,12 @@
+{
+  "AccordRatePlantFF": true,
+  "SteerKP": 0.9,
+  "AccordTorqueKi": 0.3,
+  "SteerFriction": 0.01,
+  "SteerLatAccel": 6.0,
+  "ForceAutoTuneOff": true,
+  "ForceAutoTune": false,
+  "AdvancedLateralTune": true,
+  "KeepLearnedLatAccelOffset": true,
+  "AccordTurnFFTaper": false
+}

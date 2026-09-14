@@ -11,7 +11,8 @@ one-page scorecard against the PRE-REGISTERED read:
     docs/specs/design/DESIGN-V293-TORQUE-MODE-2026-09-13.md  section 6
 
 SECTIONS
-  0  exposure, the fork toggles, and `epsTorqueMode` -- is this drive attributable at all?
+  0  exposure and the fork toggles -- initData.params plus the 100 Hz Kp read off torqueState -- is
+     this drive attributable at all?  (The fork side is a TOGGLE CONFIG, not code, since 2026-09-13.)
   1  THE EDIT-LIVE IDENTITY -- the control that decides attribution.  |427 tap| regressed on
      f(cmd)*fade computed from the BUILT IMAGE's own cells.  Pre-registered: V293 R2 ~ +0.92 with a
      ~47-count residual; V282/V292 ~ -4.8 and ~349.  Carries its own NEGATIVE and POSITIVE controls.
@@ -88,16 +89,16 @@ def pr(s=""):
 #    and the fork declares
 #       starpilotLateralState @137 :Custom.StarPilotLateralState   struct id 0xc2243c65e0340384
 #    -- the SAME union slot and the SAME struct id with a COMPLETELY DIFFERENT field layout (the kit's
-#    is nine flag/byte fields from the V31P-V2 gate telemetry; the fork's is eight floats/bools plus
-#    `epsTorqueMode @8 :Bool`).  So the kit's decoder reads the fork's lateral state as EpsTelemetry
+#    is nine flag/byte fields from the V31P-V2 gate telemetry; the fork's is eight floats/bools).
+#    So the kit's decoder reads the fork's lateral state as EpsTelemetry
 #    and every field is garbage.  We do NOT edit the kit's schema; we build a patched COPY under
 #    _scratch/ and load it with capnp.load().  Everything else in the schema is untouched, and nothing
 #    on the extraction path (can / carState / userBookmark / initData) reads this struct.
 FORK_STRUCT = """struct EpsTelemetry @0xc2243c65e0340384 {
   # PATCHED COPY for the V293 flight read -- the FORK repurposed this struct id as
   # StarPilotLateralState (cereal/custom.capnp on raayyymond-StarPilot/StarPilot @ Dom).  Field list
-  # copied verbatim from the fork so `epsTorqueMode` decodes correctly.  The kit's own schema is NOT
-  # modified by this file.
+  # copied verbatim from the fork (Dom @ 4247cb09e -- the `epsTorqueMode @8` of the UNDONE commit
+  # 3d1a3d0c7 never shipped).  The kit's own schema is NOT modified by this file.
   active @0 :Bool;
   frictionThreshold @1 :Float32;
   frictionScale @2 :Float32;
@@ -106,16 +107,16 @@ FORK_STRUCT = """struct EpsTelemetry @0xc2243c65e0340384 {
   frictionJerkDeadzone @5 :Float32;
   lowSpeedFactor @6 :Float32;
   unwindDetected @7 :Bool;
-  epsTorqueMode @8 :Bool;
 }"""
 # 🛑 A SECOND COLLISION, same shape.  The kit declares `modelDataV2SP @116 :Custom.ModelDataV2SP`
 # (struct id 0xa1680744031fdb2d, one enum field); the FORK declares the same slot and the same struct
 # id as `customReserved9 :Custom.CustomReserved9`, six Text/UInt64 fields carrying THE TESTING GROUND
-# SELECTION.  That is where the torque-mode switch lives now, so it has to be patched too.
+# SELECTION.  Decoded and REPORTED only: no Testing Ground slot is the torque mode (the operator
+# undid the slot-9 rework on 2026-09-13; the fork side is a plain toggle config).
 FORK_TG_STRUCT = """struct ModelDataV2SP @0xa1680744031fdb2d {
   # PATCHED COPY -- the FORK repurposed this struct id as CustomReserved9, which carries the Testing
-  # Ground selection published by the_galaxy (slot 9 "Accord EPS Torque Mode", variant B = torque
-  # mode).  Field list copied verbatim from the fork.
+  # Ground selection published by the_galaxy.  Informational on this scorecard.  Field list copied
+  # verbatim from the fork.
   slotId @0 :Text;
   slotName @1 :Text;
   variant @2 :Text;
@@ -123,13 +124,29 @@ FORK_TG_STRUCT = """struct ModelDataV2SP @0xa1680744031fdb2d {
   reason @4 :Text;
   wallTimeNanos @5 :UInt64;
 }"""
-TG_SLOT, TG_VARIANT = "9", "B"          # starpilot/common/testing_grounds.py: TESTING_GROUND_9 = "9"
+# THE FORK-SIDE TORQUE-MODE CONFIG as the rlog's initData.params must carry it: the Galaxy toggle
+# config analysis-2020accord/reference/toggle-config_V293_torque_mode.json (written and round-trip
+# checked by tools/make_galaxy_toggle_config.py).  Values are the params store's strings.  The
+# Accord* keys are ABSENT from initData when they sit at their params_keys.h default (a params
+# rebuild drops default-valued keys -- measured on r6f), so absence is read as the default here.
+TORQUE_CONFIG = {                 # key: (expected, default-when-absent, kind)
+    "AccordRatePlantFF": ("0", "1", "bool"),      # the switch: rate-plant FF branch bypassed
+    "SteerKP": ("0.3", None, "float"),
+    "AccordTorqueKi": ("0.15", "0.30", "float"),
+    "SteerFriction": ("0.0", None, "float"),      # 0 is a STABILITY choice (LSF-inflated friction)
+    "SteerLatAccel": ("6.0", None, "float"),      # carried over, NOT an identification
+    "ForceAutoTuneOff": ("1", None, "bool"),      # makes the SteerLatAccel/SteerFriction params live
+    "AdvancedLateralTune": ("1", None, "bool"),   # the Steer* toggles are read only under it
+    "AccordTurnFFTaper": ("0", "0", "bool"),
+}
+INSTALLED_KP = 0.9                # the rate-servo tune's SteerKP (2026-09-10 backup; route 6f initData)
 _LOG = None
 
 
 def fork_log_schema():
-    """load a PATCHED copy of the kit's cereal so `epsTorqueMode` decodes.  Falls back to the kit's
-    own schema (and says so) if anything goes wrong -- a missing toggle read must not stop the read."""
+    """load a PATCHED copy of the kit's cereal so the fork's lateral state and its Testing Ground
+    heartbeat decode.  Falls back to the kit's own schema (and says so) if anything goes wrong -- a
+    missing informational read must not stop the scorecard."""
     global _LOG
     if _LOG is not None:
         return _LOG
@@ -138,8 +155,11 @@ def fork_log_schema():
     try:
         import capnp
         capnp.remove_import_hook()
+        import hashlib
         stamp = os.path.join(dst, ".patched")
-        if not os.path.exists(stamp):
+        want = "patched " + hashlib.sha1((FORK_STRUCT + FORK_TG_STRUCT).encode("utf-8")).hexdigest()[:12] + "\n"
+        have = io.open(stamp, encoding="utf-8").read() if os.path.exists(stamp) else ""
+        if have != want:            # first run, or the patched structs changed -> rebuild the copy
             if os.path.isdir(dst):
                 shutil.rmtree(dst)
             os.makedirs(dst)
@@ -156,11 +176,11 @@ def fork_log_schema():
                 if n != 1:
                     raise RuntimeError("%s struct not found in custom.capnp (n=%d)" % (nm, n))
             io.open(p, "w", encoding="utf-8").write(txt)
-            io.open(stamp, "w").write("patched\n")
+            io.open(stamp, "w", encoding="utf-8").write(want)
         _LOG = (capnp.load(os.path.join(dst, "log.capnp")), True)
     except Exception as e:
         pr("  ⚠ patched fork schema unavailable (%s) -- falling back to the KIT schema; "
-           "`epsTorqueMode` cannot be read." % str(e)[:70])
+           "the Testing Ground heartbeat cannot be read." % str(e)[:70])
         sys.path.insert(0, os.path.join(KIT, "rlog-tools"))
         from cereal import log as clog
         _LOG = (clog, False)
@@ -255,10 +275,11 @@ NULL_SENTENCE_DESIGN = (
 # ======================================================================================================
 WANT_PARAMS = ["AccordEpsTorqueMode", "AccordRatePlantFF", "AccordFFRateGain", "AccordTorqueKi",
                "AccordVariableSteerRatio", "SteerRatio", "SteerLatAccel", "SteerFriction", "SteerKP",
-               "AccordCurvatureLead", "AccordCurvatureLeadGain", "ForceAutoTune",
-               "ForceTorqueController", "AccordEpsGainScale", "AccordEpsSpringScale",
-               "AccordTurnFFTaper", "GitCommit", "GitBranch", "GitRemote", "GitCommitDate",
-               "Version", "TermsVersion", "CarParams", "DongleId"]
+               "AccordCurvatureLead", "AccordCurvatureLeadGain", "ForceAutoTune", "ForceAutoTuneOff",
+               "AdvancedLateralTune", "KeepLearnedLatAccelOffset", "ForceTorqueController",
+               "AccordEpsGainScale", "AccordEpsSpringScale", "AccordTurnFFTaper", "GitCommit",
+               "GitBranch", "GitRemote", "GitCommitDate", "Version", "TermsVersion", "CarParams",
+               "DongleId"]         # AccordEpsTorqueMode stays only as a STALE-FORK trap detector
 
 
 def i16be(d, i):
@@ -268,7 +289,8 @@ def i16be(d, i):
 
 def extract(prefix, tag):
     """build <TAG>.npz / _b4.npz / _marks.json / _params.json exactly as extract_v292_routes.py does,
-    plus the fork's `epsTorqueMode` duty, which needs the PATCHED schema."""
+    plus the fork-side attribution reads: torqueState (f, D, p, error) and the Testing Ground
+    heartbeat (which needs the PATCHED schema)."""
     clog, patched = fork_log_schema()
     import zstandard
     segs = sorted(glob.glob(os.path.join(RLOGS, "%s--*--rlog.zst" % prefix)),
@@ -283,7 +305,6 @@ def extract(prefix, tag):
     cs_ang, cs_tq, cs_press, cs_sr = [], [], [], []
     marks, seg_span, failed = [], {}, []
     params_dump = None
-    tm_n = tm_true = 0
     tq_f, tg = [], {}
     for p in segs:
         sn = int(os.path.basename(p).split("--")[2])
@@ -331,27 +352,22 @@ def extract(prefix, tag):
                     cs_sr.append(cs.steeringRateDeg)
                 except Exception:
                     cs_sr.append(float("nan"))
-            elif w == "epsTelemetry" and patched:
-                # PATCHED name -- this is the fork's starpilotLateralState
-                try:
-                    tm_n += 1
-                    if evt.epsTelemetry.epsTorqueMode:
-                        tm_true += 1
-                except Exception:
-                    pass
             elif w == "modelDataV2SP" and patched:
                 # PATCHED name -- this is the fork's customReserved9, the Testing Ground selection
                 _tg_collect(evt, tg)
             elif w == "controlsState":
-                # the SECOND, INDEPENDENT source for the toggle (docs/guides/TORQUE-MODE-TOGGLE-
-                # CHECKLIST section C): under torque mode f = desiredLateralAccel + friction and
-                # friction ships at 0, so f tracks D one-for-one; under the rate-plant branch the
-                # same point reads ~0.38 of it.  MEASURED on r6c seg 3 (V282): slope 0.3905.
+                # THE CONTROL-PATH reads of the fork tune (docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST
+                # section C).  (1) f/D: under the torque config f = desiredLateralAccel + friction
+                # and friction is 0, so f tracks D one-for-one; under the rate-plant branch the same
+                # point reads ~0.38 of it (MEASURED on r6c seg 3, V282: slope 0.3905).  (2) Kp at
+                # 100 Hz: the fork logs pid_log.error = error_with_lsf and feeds THAT to pid.update,
+                # whose p = k_p * error, so p / error == SteerKP on every active frame, exactly.
                 try:
                     ls = evt.controlsState.lateralControlState
                     if ls.which() == "torqueState":
                         t_ = ls.torqueState
-                        tq_f.append((float(t_.f), float(t_.desiredLateralAccel), bool(t_.active)))
+                        tq_f.append((float(t_.f), float(t_.desiredLateralAccel), bool(t_.active),
+                                     float(t_.p), float(t_.error)))
                 except Exception:
                     pass
             elif w == "userBookmark":
@@ -397,32 +413,9 @@ def extract(prefix, tag):
                lo_route_note="use lo_can_route; lo_route is initData's process-start stamp")
     json.dump(out, open(os.path.join(CACHE, tag + "_marks.json"), "w"), indent=1)
     pdump = params_dump or {}
-    pdump["_epsTorqueMode_frames"] = tm_n
-    pdump["_epsTorqueMode_true"] = tm_true
-    pdump["_epsTorqueMode_duty"] = (tm_true / tm_n) if tm_n else None
-    pdump["_epsTorqueMode_readable"] = bool(patched)
+    pdump["_tg_readable"] = bool(patched)
     pdump["_written_by"] = "v293_flight_read.py"
-    if tq_f:
-        Q = np.asarray(tq_f, float)
-        sel = (Q[:, 2] > 0.5) & (np.abs(Q[:, 1]) >= 0.3)
-        pdump["_torqueState_n"] = int(len(Q))
-        pdump["_torqueState_n_fit"] = int(sel.sum())
-        if sel.sum() >= 50:
-            sl, ic = np.polyfit(Q[sel, 1], Q[sel, 0], 1)
-            pdump["_torqueState_slope_f_vs_D"] = float(sl)
-            pdump["_torqueState_intercept"] = float(ic)
-            pdump["_torqueState_fD_p50"] = float(np.median(Q[sel, 0] / Q[sel, 1]))
-            pdump["_torqueState_fD_by_band"] = {}
-            for lo, hi in ((0.3, 0.6), (0.6, 0.9), (0.9, 1.3), (1.3, 2.0)):
-                s2 = (Q[:, 2] > 0.5) & (np.abs(Q[:, 1]) >= lo) & (np.abs(Q[:, 1]) < hi)
-                pdump["_torqueState_fD_by_band"]["%.1f-%.1f" % (lo, hi)] = (
-                    [float(np.median(Q[s2, 0] / Q[s2, 1])), int(s2.sum())] if s2.sum() > 50
-                    else [None, int(s2.sum())])
-        else:
-            pdump["_torqueState_slope_f_vs_D"] = pdump["_torqueState_fD_p50"] = None
-    else:
-        pdump["_torqueState_n"] = 0
-        pdump["_torqueState_slope_f_vs_D"] = pdump["_torqueState_fD_p50"] = None
+    pdump.update(_torque_state_stats(tq_f))
     pdump.update(_tg_summary(tg))
     json.dump(pdump, open(os.path.join(CACHE, tag + "_params.json"), "w"), indent=1)
     pd_ = os.path.join(PTRCACHE, prefix)
@@ -868,13 +861,13 @@ def cave_duties(r):
 
 
 def fork_toggles(prefix, max_seg=None):
-    """read ONLY the three toggle sources from a route's rlogs: initData.params, the fork's
-    starpilotLateralState.epsTorqueMode, and controlsState...torqueState (f, desiredLateralAccel).
+    """read ONLY the toggle sources from a route's rlogs: initData.params, controlsState...torqueState
+    (f, desiredLateralAccel, p, error) and the Testing Ground heartbeat.
 
     Written to the STUDY's own _scratch, never into the shared v280 cache -- a route the record
     already owns must not have its cache rewritten by this tool.
     """
-    out = os.path.join(SCR, "fork_toggles_%s.json" % prefix)
+    out = os.path.join(SCR, "fork_toggles2_%s.json" % prefix)   # 2: carries the Kp read
     if os.path.exists(out):
         return json.load(open(out))
     clog, patched = fork_log_schema()
@@ -886,7 +879,6 @@ def fork_toggles(prefix, max_seg=None):
     if not segs:
         return {}
     pr("  reading the fork toggles from %d rlog segments (once; cached in _scratch) ..." % len(segs))
-    tm_n = tm_true = 0
     tq, params, tg = [], None, {}
     for p in segs:
         with open(p, "rb") as fh:
@@ -903,21 +895,15 @@ def fork_toggles(prefix, max_seg=None):
                 w = evt.which()
             except Exception:
                 continue
-            if w == "epsTelemetry" and patched:
-                try:
-                    tm_n += 1
-                    if evt.epsTelemetry.epsTorqueMode:
-                        tm_true += 1
-                except Exception:
-                    pass
-            elif w == "modelDataV2SP" and patched:
+            if w == "modelDataV2SP" and patched:
                 _tg_collect(evt, tg)
             elif w == "controlsState":
                 try:
                     ls = evt.controlsState.lateralControlState
                     if ls.which() == "torqueState":
                         t_ = ls.torqueState
-                        tq.append((float(t_.f), float(t_.desiredLateralAccel), bool(t_.active)))
+                        tq.append((float(t_.f), float(t_.desiredLateralAccel), bool(t_.active),
+                                   float(t_.p), float(t_.error)))
                 except Exception:
                     pass
             elif w == "initData" and params is None:
@@ -927,9 +913,7 @@ def fork_toggles(prefix, max_seg=None):
                 except Exception:
                     pass
     d = dict(params or {})
-    d.update(_epsTorqueMode_frames=tm_n, _epsTorqueMode_true=tm_true,
-             _epsTorqueMode_duty=((tm_true / tm_n) if tm_n else None),
-             _epsTorqueMode_readable=bool(patched), _written_by="v293_flight_read.py")
+    d.update(_tg_readable=bool(patched), _written_by="v293_flight_read.py")
     d.update(_torque_state_stats(tq))
     d.update(_tg_summary(tg))
     json.dump(d, open(out, "w"), indent=1, default=float)
@@ -958,27 +942,37 @@ def _tg_collect(evt, acc):
 
 
 def _tg_summary(acc):
-    """majority (slot, variant) and whether it is Testing Ground 9 variant B."""
+    """majority (slot, variant) -- informational; no slot is the torque mode."""
     d = dict(_tg_frames=acc.get("n", 0), _tg_slot=None, _tg_variant=None,
              _tg_slot_name=acc.get("slotName"), _tg_variant_label=acc.get("variantLabel"),
-             _tg_pairs=None, _tg_is_torque_mode=None)
+             _tg_pairs=None)
     pairs = acc.get("pairs") or {}
     if not pairs:
         return d
     d["_tg_pairs"] = {"%s/%s" % k: v for k, v in sorted(pairs.items(), key=lambda z: -z[1])}
     (sid, var), _ = max(pairs.items(), key=lambda z: z[1])
     d["_tg_slot"], d["_tg_variant"] = sid, var
-    d["_tg_is_torque_mode"] = bool(sid == TG_SLOT and var == TG_VARIANT)
     return d
 
 
 def _torque_state_stats(tq):
-    """the branch check: torque mode ships friction 0, so f = desiredLateralAccel exactly."""
+    """the two CONTROL-PATH reads of the fork tune.  f/D: the torque config ships friction 0, so
+    f = desiredLateralAccel exactly (the rate-plant branch reads ~0.3).  Kp: p / error == SteerKP on
+    every active frame (the fork logs the LSF-inflated error and feeds the same number to the PID)."""
     if not tq:
-        return dict(_torqueState_n=0, _torqueState_slope_f_vs_D=None, _torqueState_fD_p50=None)
+        return dict(_torqueState_n=0, _torqueState_slope_f_vs_D=None, _torqueState_fD_p50=None,
+                    _kp_hat=None, _kp_n=0)
     Q = np.asarray(tq, float)
     sel = (Q[:, 2] > 0.5) & (np.abs(Q[:, 1]) >= 0.3)
-    d = dict(_torqueState_n=int(len(Q)), _torqueState_n_fit=int(sel.sum()))
+    d = dict(_torqueState_n=int(len(Q)), _torqueState_n_fit=int(sel.sum()), _kp_hat=None, _kp_n=0)
+    if Q.shape[1] >= 5:
+        k = (Q[:, 2] > 0.5) & (np.abs(Q[:, 4]) >= 0.02)
+        d["_kp_n"] = int(k.sum())
+        if k.sum() >= 50:
+            r = Q[k, 3] / Q[k, 4]
+            med = float(np.median(r))
+            d.update(_kp_hat=med, _kp_iqr=[float(np.percentile(r, 25)), float(np.percentile(r, 75))],
+                     _kp_within5pct=(float(np.mean(np.abs(r - med) <= 0.05 * abs(med))) if med else None))
     if sel.sum() < 50:
         d.update(_torqueState_slope_f_vs_D=None, _torqueState_fD_p50=None)
         return d
@@ -1000,7 +994,7 @@ def read_params(tag, prefix=None):
     """
     p = os.path.join(CACHE, tag + "_params.json")
     d = json.load(open(p)) if os.path.exists(p) else {}
-    if "_written_by" in d:
+    if "_written_by" in d and "_kp_hat" in d:
         return d
     mk = json.load(open(os.path.join(CACHE, tag + "_marks.json"))) \
         if os.path.exists(os.path.join(CACHE, tag + "_marks.json")) else {}
@@ -1076,6 +1070,10 @@ def ref_get(refs, route, *path, default=None):
 # ======================================================================================================
 # 10. THE SCORECARD
 # ======================================================================================================
+def fmt_pair(p, f="%.3f"):
+    return "-" if not p else "[%s, %s]" % (f % p[0], f % p[1])
+
+
 def fmt(v, f="%.3f"):
     try:
         if v is None or (isinstance(v, float) and not np.isfinite(v)):
@@ -1106,31 +1104,45 @@ def print_scorecard(S, refs):
        "|ang|>=30 %.0f s | hands-off creep 1-3 m/s %.0f s"
        % (S["route_s"], S["engaged_s"], S["disengaged_s"], S["handsoff_s"], S["hiang_s"], S["creep_s"]))
     P = S["params"]
-    tm = P.get("AccordEpsTorqueMode")
     cl = P.get("AccordCurvatureLead")
-    duty = P.get("_epsTorqueMode_duty")
-    pr("   AccordEpsTorqueMode        = %-10s   INFORMATIONAL ONLY -- this key no longer exists."
-       % ("absent" if tm is None else repr(tm)))
-    pr("     The switch moved off the params family onto the fork's TESTING GROUND mechanism: slot 9")
-    pr("     \"Accord EPS Torque Mode\", variant B.  `common/params_keys.h` now carries a comment where")
-    pr("     the key used to be, so ABSENT here is EXPECTED under the Testing Ground gate and is not")
-    pr("     evidence of anything.  A value would mean the device is running a PRE-REWORK fork.")
-    pr("   AccordCurvatureLead        = %-10s   (still a real param; must be ABSENT or \"0\")"
+    pr("   THE FORK SIDE IS A TOGGLE CONFIG (toggle-config_V293_torque_mode.json), not code: params that")
+    pr("   already exist on Dom.  Read here from initData.params (logged ONCE, at process start) and,")
+    pr("   independently, from the CONTROL PATH at 100 Hz (torqueState p/error = SteerKP exactly; f/D = 1")
+    pr("   under the config's friction 0).  Accord* keys are ABSENT from initData when they sit at their")
+    pr("   params_keys.h default (measured on r6f), so absence reads as the default.")
+    cfg_ok, cfg_rows = True, []
+    for k, (want, dflt, kind) in TORQUE_CONFIG.items():
+        raw = P.get(k)
+        eff = raw if raw is not None else dflt
+        if eff is None:
+            ok, shown = False, "ABSENT (no default known)"
+        else:
+            try:
+                ok = (abs(float(eff) - float(want)) < 1e-6) if kind == "float" else (str(eff).strip() == want)
+            except ValueError:
+                ok = False
+            shown = repr(raw) if raw is not None else "absent = default %r" % dflt
+        cfg_ok &= ok
+        cfg_rows.append((k, shown, want, ok))
+        pr("   %-26s = %-28s config wants %-5s %s" % (k, shown, want, "ok" if ok else "MISMATCH"))
+    for k in ("SteerRatio", "KeepLearnedLatAccelOffset", "ForceTorqueController", "GitCommit", "GitBranch"):
+        if k in P:
+            pr("   %-26s = %s" % (k, repr(P[k])[:70]))
+    pr("   AccordCurvatureLead        = %-10s   (must be ABSENT or \"0\"; the key does not exist on Dom)"
        % ("ABSENT" if cl is None else repr(cl)))
     if P.get("_augmented_from_rlogs"):
-        pr("   (this route's cache predates v293_flight_read.py; the two cereal-side readings below were")
-        pr("    read straight from its rlogs into _scratch/ -- the shared cache was NOT rewritten)")
+        pr("   (this route's cache predates this read; the cereal-side readings were read straight from")
+        pr("    its rlogs into _scratch/ -- the shared cache was NOT rewritten)")
     elif "_written_by" not in P:
-        pr("   ⚠ neither cereal-side toggle source could be read: no cache keys and no rlogs on disk.")
-    pr("   starpilotLateralState.epsTorqueMode duty = %s  over %s frames%s"
-       % (fmt(duty), P.get("_epsTorqueMode_frames", "-"),
-          "" if P.get("_epsTorqueMode_readable", True) else "   [NOT READABLE -- schema patch failed]"))
-    pr("     🛑 the kit's cereal calls union slot @137 `epsTelemetry` and the FORK calls it")
-    pr("     `starpilotLateralState` -- same struct id 0xc2243c65e0340384, DIFFERENT fields.  This")
-    pr("     tool loads a PATCHED COPY of the schema from _scratch/cereal_fork/; the kit's own")
-    pr("     schema is untouched.  Any other kit script reading `epsTelemetry` from a 2026-09 rlog")
-    pr("     is reading GARBAGE.  [EVIDENCE -- both schemas, read 2026-09-13]")
-    # --- the Testing Ground selection, on a SECOND colliding slot -------------------------------
+        pr("   ⚠ no toggle source could be read: no cache keys and no rlogs on disk.")
+    kp, kpn = P.get("_kp_hat"), P.get("_kp_n", 0)
+    pr("   torqueState  Kp at 100 Hz = median(p / error) = %s   (n %s; IQR %s; %s of frames within 5%%)"
+       % (fmt(kp, "%.4f"), kpn, fmt_pair(P.get("_kp_iqr"), "%.4f"), fmt(P.get("_kp_within5pct"), "%.3f")))
+    pr("     the fork logs pid_log.error = error_with_lsf and calls pid.update(pid_log.error, ...), whose")
+    pr("     p = k_p * error, so the ratio IS the SteerKP toggle on every active frame -- a wire read of")
+    pr("     the tune that survives a mid-route toggle change, which initData (logged once) does not.")
+    pr("     Expected 0.300 under the torque config; the installed rate-servo tune reads %.2f." % INSTALLED_KP)
+    # --- the Testing Ground heartbeat, informational ---------------------------------------------
     tgs, tgv, tgn = P.get("_tg_slot"), P.get("_tg_variant"), P.get("_tg_frames", 0)
     if tgn:
         pr("   Testing Ground             = slot %s variant %s  (%s / %s)   over %d published frames"
@@ -1139,27 +1151,13 @@ def print_scorecard(S, refs):
             pr("     ⚠ the selection CHANGED during the route: "
                + "  ".join("%s x%d" % (k, v) for k, v in P["_tg_pairs"].items()))
     else:
-        pr("   Testing Ground             = no selection frames decoded on this route")
-    pr("     the selection lives in /data/testing_grounds/slots.json, NOT in the params store -- but")
-    pr("     it IS logged: the_galaxy publishes it as `customReserved9` (slotId / slotName / variant /")
-    pr("     variantLabel / reason / wallTimeNanos), and that slot COLLIDES TOO -- the kit calls @116")
-    pr("     `modelDataV2SP`, struct id 0xa1680744031fdb2d, one enum field.  The patched copy carries")
-    pr("     the fork's field list, which is how the row above decodes.  Torque mode = slot %s / %s."
-       % (TG_SLOT, TG_VARIANT))
-    if build == "V293" and tgn:
-        tg_on = bool(P.get("_tg_is_torque_mode"))
-        duty_on = (duty is not None and duty > 0.9)
-        if tg_on == duty_on:
-            note = ("this AGREES with the epsTorqueMode duty (%s), so the two mechanisms are "
-                    "consistent" % fmt(duty))
-        else:
-            note = ("🛑 this DISAGREES with the epsTorqueMode duty (%s): one of the two mechanisms "
-                    "is wrong, and the drive cannot be attributed until that is resolved" % fmt(duty))
-        verdicts.append(("REPORT", "testing ground",
-                         "the Testing Ground published slot %s variant %s over %d frames (torque mode "
-                         "is slot %s / %s).  %s.  Reported, not gated: the two toggle GATES are the "
-                         "epsTorqueMode duty and the torqueState f/D ratio."
-                         % (tgs, tgv, tgn, TG_SLOT, TG_VARIANT, note)))
+        pr("   Testing Ground             = no selection frames decoded on this route%s"
+           % ("" if P.get("_tg_readable", True) else "   [schema patch failed]"))
+    pr("     informational only -- no Testing Ground slot is the torque mode (the slot-9 rework was undone")
+    pr("     on 2026-09-13).  Decoded off the PATCHED @116 struct (the kit calls it `modelDataV2SP`, the")
+    pr("     fork `customReserved9`; same struct id 0xa1680744031fdb2d, different fields).  The @137")
+    pr("     collision (`epsTelemetry` vs the fork's `starpilotLateralState`, id 0xc2243c65e0340384) is")
+    pr("     patched the same way; any other kit script reading either from a 2026-09 rlog reads GARBAGE.")
     fd = P.get("_torqueState_fD_p50")
     sl_ = P.get("_torqueState_slope_f_vs_D")
     pr("   torqueState  median f / desiredLateralAccel = %s   (n %s of %s; whole-route regression "
@@ -1187,38 +1185,42 @@ def print_scorecard(S, refs):
                              "0.24-0.40 pooled on four non-torque-mode routes), not torque mode.  With "
                              "V293 in the ECU that is the FF-starved AND high-gain-feedback mismatch "
                              "(ADV-V293-D 4.4), which is NOT merely sluggish." % fd))
-    for k in ("SteerLatAccel", "SteerFriction", "SteerKP", "AccordTorqueKi", "AccordRatePlantFF",
-              "ForceTorqueController", "GitCommit"):
-        if k in P:
-            pr("   %-26s = %s" % (k, repr(P[k])[:70]))
     if build == "V293":
-        # 🛑 TWO TOGGLE GATES, and the params key is NOT one of them.  The switch moved onto the
-        # Testing Ground mechanism, so `AccordEpsTorqueMode` is absent by design and its absence
-        # carries no information.  The gates are the cereal duty and the control-path ratio.
-        if duty is not None and duty > 0.9:
-            verdicts.append(("PASS", "toggle", "starpilotLateralState.epsTorqueMode duty %.3f over %s "
-                                               "frames -- the mode is ON, engaged or not"
-                             % (duty, P.get("_epsTorqueMode_frames", "?"))))
-        elif duty is not None:
-            verdicts.append(("FAIL", "toggle",
-                             "starpilotLateralState.epsTorqueMode duty is %.3f -- the mode is OFF.  "
-                             "V293 in the ECU with the mode off is the FF-starved AND "
-                             "high-gain-feedback mismatch (ADV-V293-D 4.4), not merely sluggish, and "
-                             "the band scores are NOT a build contrast.  Check Testing Ground slot %s "
-                             "variant %s, and that params_pyx.so was rebuilt."
-                             % (duty, TG_SLOT, TG_VARIANT)))
+        # THREE ATTRIBUTION GATES on the fork side, none of them a code flag: the initData config
+        # read, the 100 Hz Kp read, and the f/D branch read above.
+        if cfg_ok:
+            verdicts.append(("PASS", "toggle", "initData.params carries the torque config: " +
+                             ", ".join("%s=%s" % (k, w) for k, (w, _, _) in TORQUE_CONFIG.items())))
         else:
+            bad = ["%s=%s (wants %s)" % (k, sh, w) for k, sh, w, ok in cfg_rows if not ok]
             verdicts.append(("FAIL", "toggle",
-                             "starpilotLateralState.epsTorqueMode could not be read at all, so the "
-                             "drive cannot be attributed to a torque-mode tune from the cereal side."))
-        if tm is not None:
+                             "initData.params does NOT carry the torque config -- " + "; ".join(bad) +
+                             ".  V293 in the ECU with the rate-plant tune is the FF-starved AND "
+                             "high-gain-feedback mismatch (ADV-V293-D 4.4), not merely sluggish, and "
+                             "the band scores are NOT a build contrast.  Restore "
+                             "toggle-config_V293_torque_mode.json in Galaxy and restart openpilot."))
+        if kp is None:
+            verdicts.append(("FAIL", "kp", "torqueState p/error could not be read (%s active frames with "
+                                           "|error| >= 0.02) -- the live Kp is unknown" % kpn))
+        elif abs(kp - 0.3) <= 0.03:
+            verdicts.append(("PASS", "kp", "Kp = %.3f at 100 Hz over %d frames -- the torque config's 0.3 "
+                                           "was LIVE on the control path" % (kp, kpn)))
+        elif abs(kp - INSTALLED_KP) <= 0.05:
+            verdicts.append(("FAIL", "kp", "Kp = %.3f at 100 Hz -- that is the INSTALLED rate-servo tune "
+                                           "(%.2f), not the torque config: the restore did not take, or "
+                                           "openpilot was not restarted after it" % (kp, INSTALLED_KP)))
+        else:
+            verdicts.append(("FAIL", "kp", "Kp = %.3f at 100 Hz -- neither the torque config (0.3) nor "
+                                           "the installed tune (%.2f); attribute before scoring"
+                                           % (kp, INSTALLED_KP)))
+        if P.get("AccordEpsTorqueMode") is not None:
             verdicts.append(("REPORT", "toggle",
-                             "AccordEpsTorqueMode = %r is PRESENT in the params store.  The key was "
-                             "removed when the switch moved to the Testing Ground, so this device is "
-                             "running a PRE-REWORK fork and the two mechanisms may disagree." % tm))
+                             "AccordEpsTorqueMode = %r is PRESENT in the params store -- that key existed "
+                             "only on the pre-rework preset patch, so this device runs a STALE fork build"
+                             % P.get("AccordEpsTorqueMode")))
         if cl not in (None, "0"):
-            verdicts.append(("FAIL", "toggle", "AccordCurvatureLead = %r -- V292's subject is live "
-                                               "and confounds this drive" % cl))
+            verdicts.append(("FAIL", "toggle", "AccordCurvatureLead = %r -- a separate, undriven fork "
+                                               "experiment is live and confounds this drive" % cl))
 
     # ---------------------------------------------------------------- 1. the identity
     pr("")
@@ -1499,7 +1501,7 @@ def print_scorecard(S, refs):
         verdicts.append(("REVERT", "outer loop",
                          "a coherent 1-4 Hz line in command AND angle at %s (coherence p90 %.2f, angle "
                          "1-4 Hz %.3f deg, >1.5x every V282/V281r3 reference) -- the V276 signature.  "
-                         "The fix is the FORK PRESET, not the firmware, but the drive stops."
+                         "The fix is the FORK TOGGLE CONFIG (the outer-loop tune), not the firmware, but the drive stops."
                          % (flagged[0][0], flagged[0][1]["coh_p90"], flagged[0][1]["ang14_deg"])))
     else:
         verdicts.append(("PASS", "outer loop",

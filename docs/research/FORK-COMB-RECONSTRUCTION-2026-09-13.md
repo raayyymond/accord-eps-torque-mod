@@ -1,5 +1,14 @@
 # The fork-side, lag-free removal of the 20 Hz command comb — designed, measured, built, NOT driven
 
+> **2026-09-13, later — the code is NOT in the fork.** It was swept into fork commit `3d1a3d0c7` together with the
+> torque-mode Testing Ground, and the operator undid that commit (he had not asked for the curvature lead, and it was
+> never part of V292's or V293's plan — both pre-registrations required `AccordCurvatureLead` OFF). The complete
+> patch — `ModelCurvatureLead`, `accord_curvature_lead_active`, the two params, the Galaxy layout entries, the
+> Safe-Mode keys, the `starpilot_variables` reads and its 227-line test — is preserved as
+> **`docs/research/FORK-COMB-RECONSTRUCTION-2026-09-13.patch`** (`git apply` it on `Dom`; it applies cleanly to
+> `a357cd2b5`). Still designed, measured, built and NOT driven.
+
+
 Subagent `combfix`, **2026-09-13**. **NOTHING WAS FLASHED, NOTHING WAS SENT ON ANY BUS, NOTHING WAS
 COMMITTED OR PUSHED.** One patch is left applied in the openpilot fork's **working tree**, uncommitted,
 behind a toggle that is **OFF by default**.

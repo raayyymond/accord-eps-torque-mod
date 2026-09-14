@@ -1,0 +1,463 @@
+diff --git a/common/params_keys.h b/common/params_keys.h
+index f3015f0c6..f8e6dcaf2 100644
+--- a/common/params_keys.h
++++ b/common/params_keys.h
+@@ -390,6 +390,8 @@ inline static std::unordered_map<std::string, ParamKeyAttributes> keys = {
+     {"AccordFFRateGain", {PERSISTENT, FLOAT, "0.5", "0.5", 2, SETTINGS_SIMPLE}},
+     {"AccordTorqueKi", {PERSISTENT, FLOAT, "0.30", "0.15", 2, SETTINGS_SIMPLE}},
+     {"AccordTurnFFTaper", {PERSISTENT, BOOL, "0", "0", 2, SETTINGS_SIMPLE}},
++    {"AccordCurvatureLead", {PERSISTENT, BOOL, "0", "0", 2, SETTINGS_SIMPLE}},
++    {"AccordCurvatureLeadGain", {PERSISTENT, FLOAT, "0.75", "0.75", 2, SETTINGS_SIMPLE}},
+     {"AccordEpsGainScale", {PERSISTENT, FLOAT, "1.0", "1.0", 2, SETTINGS_SIMPLE}},
+     {"AccordEpsSpringScale", {PERSISTENT, FLOAT, "1.0", "1.0", 2, SETTINGS_SIMPLE}},
+     {"ForceFingerprint", {PERSISTENT, BOOL, "0", "0", 2, SETTINGS_SIMPLE}},
+diff --git a/selfdrive/controls/controlsd.py b/selfdrive/controls/controlsd.py
+index eb3eee27b..9a380aedd 100644
+--- a/selfdrive/controls/controlsd.py
++++ b/selfdrive/controls/controlsd.py
+@@ -18,6 +18,8 @@ from opendbc.car.nissan.values import CAR as NISSAN_CAR
+ from opendbc.car.vehicle_model import VehicleModel
+ from openpilot.selfdrive.controls.lib.drive_helpers import (
+   MAX_LATERAL_JERK,
++  ModelCurvatureLead,
++  accord_curvature_lead_active,
+   clip_curvature,
+   get_kona_non_scc_lateral_active,
+   get_lateral_active,
+@@ -400,6 +402,7 @@ class Controls:
+     self.desired_curvature = 0.0
+     self.lc_smooth_release = 0.0
+     self.lane_centering = LaneCenteringController()
++    self.model_curvature_lead = ModelCurvatureLead()
+     self.lc_entry_sign = 0.0
+     self.lc_arrest_jerk_factor = 1.0
+     self.turn_hold_curvature = 0.0
+@@ -570,6 +573,7 @@ class Controls:
+     if not CC.latActive:
+       self.LaC.reset()
+       self.lane_centering.reset()
++      self.model_curvature_lead.reset(self.curvature)
+     tesla_pedal_override = self.CP.brand == "tesla" and bool(CS.gasPressed)
+     if not CC.longActive and not tesla_pedal_override:
+       self.LoC.reset()
+@@ -592,6 +596,21 @@ class Controls:
+     else:
+       new_desired_curvature = model_v2.action.desiredCurvature if CC.latActive else self.curvature
+ 
++    # Accord: slope-continuous reconstruction of the 20 Hz model curvature at the 100 Hz tick.
++    # modelV2 publishes at 20 Hz and SubMaster does not interpolate, so the plan reaches the PID as a
++    # zero-order-hold staircase whose steps land on the camera frame clock -- a phase-locked ~20 Hz
++    # comb on the steering command. This advances the held value along the model's own last slope
++    # instead of freezing it. It is not a filter: the value at every model-frame instant is the
++    # model's own, |H| >= 1 everywhere, and the group delay is BELOW the hold's through the band the
++    # driver feels. clip_curvature below still applies the full ISO envelope and binds less often.
++    # `lateralManeuverPlan` is a maneuver-test source, not the 20 Hz camera stream, so it is excluded:
++    # its values do not belong to `model_v2.frameId` and must not be differenced against each other.
++    if accord_curvature_lead_active(CC.latActive, self.starpilot_toggles,
++                                    self.sm.valid['lateralManeuverPlan']):
++      new_desired_curvature = self.model_curvature_lead.update(new_desired_curvature,
++                                                               int(model_v2.frameId),
++                                                               self.starpilot_toggles.accord_curvature_lead_gain)
++
+     # Low-speed turn-intent hold (see CURVATURE_HOLD_* above). Curvature sign convention
+     # here is positive for RIGHT turns (pauseturn log: left turn at +148 deg steering
+     # angle logs desiredCurvature -0.07), so the blinker maps right=+1, left=-1.
+diff --git a/selfdrive/controls/lib/drive_helpers.py b/selfdrive/controls/lib/drive_helpers.py
+index 8a2a1881f..63362321a 100644
+--- a/selfdrive/controls/lib/drive_helpers.py
++++ b/selfdrive/controls/lib/drive_helpers.py
+@@ -101,6 +101,19 @@ def get_kona_non_scc_lateral_active(enabled: bool, active: bool, always_on_later
+   return not (aol_rising_edge and steering_pressed)
+ 
+ 
++def accord_curvature_lead_active(lat_active: bool, starpilot_toggles, maneuver_plan_valid: bool) -> bool:
++  """Whether ModelCurvatureLead runs this frame (see the call site in controlsd.state_control).
++
++  Two gates, both of them necessary:
++    * lateral must be active -- there is no command to reshape otherwise;
++    * `lateralManeuverPlan` is a maneuver-test source, not the 20 Hz camera stream, so its values do
++      not belong to `model_v2.frameId` and must not be differenced against each other;
++  """
++  return (bool(lat_active)
++          and bool(getattr(starpilot_toggles, "accord_curvature_lead", False))
++          and not bool(maneuver_plan_valid))
++
++
+ def curv_from_psis(psi_target, psi_rate, vego, action_t):
+   vego = np.clip(vego, MIN_SPEED, np.inf)
+   curv_from_psi = psi_target / (vego * action_t)
+@@ -110,3 +123,70 @@ def get_curvature_from_plan(yaws, yaw_rates, t_idxs, vego, action_t):
+   psi_target = np.interp(action_t, t_idxs, yaws)
+   psi_rate = yaw_rates[0]
+   return curv_from_psis(psi_target, psi_rate, vego, action_t)
++
++
++class ModelCurvatureLead:
++  """Slope-continuous reconstruction of the 20 Hz model curvature at the 100 Hz control rate.
++
++  `modelV2` publishes `action.desiredCurvature` at MODEL_FREQ = 20 Hz; controlsd runs at 100 Hz and
++  reads the latest message with no interpolation, so the plan reaches the controller as a pure
++  ZERO-ORDER-HOLD staircase whose step discontinuities all land on the camera frame clock. That puts
++  a phase-locked comb on the steering command at ~20.0 Hz. This advances the held value along the
++  model's own most recent inter-frame slope instead of freezing it:
++
++      s[k] = v[k] - v[k-1]                        the model's own last step
++      a    = min(dt_since_frame / DT_MDL, 1.0)    elapsed fraction of one frame interval, saturating
++      out  = v[k] + gain * s[k] * a
++
++  This is NOT a filter. It is not a low-pass, it removes nothing, and it delays nothing:
++
++    * `out == v[k]` EXACTLY at every model-frame instant (`a` is 0 there), so no published model
++      value is ever attenuated, replaced or held back. Authority and connection are untouched.
++    * |H(f)| >= 1 at every frequency. Measured against the ideal continuous signal: 1.0003 at 0.1 Hz,
++      1.031 at 1 Hz, 1.111 at 2 Hz for gain = 1.0.
++    * group delay 0.04 ms at 0.1 Hz and 3.3 ms at 1 Hz for gain = 1.0, against the 20.0 ms that the
++      zero-order hold costs today -- LAG-NEGATIVE relative to current behaviour through the band the
++      driver feels. Above ~3.2 Hz the extrapolator's own phase error exceeds the hold's; at gain 0.75
++      the crossover is ~3.5 Hz and the residual is bounded by a few ms either way.
++    * a model-frame DROP is handled twice over: `a` saturates at 1.0 so the output freezes rather
++      than running away, and a frame-id gap other than 1 zeroes the slope entirely for that frame,
++      which is exactly today's zero-order hold.
++    * the output is bounded by ONE model step: it stays inside [v[k] - |s[k]|, v[k] + |s[k]|] for any
++      gain <= 1, for any gap length, by construction rather than by a clamp.
++
++  Everything downstream is unchanged. `clip_curvature` still applies the full ISO lateral jerk and
++  lateral acceleration envelope to the result, and it binds LESS often, not more (measured 0.0079 ->
++  0.0034 on route 39, 0.0349 -> 0.0276 on route 63), because the step is spread over five ticks
++  instead of landing on one.
++
++  Measurement, both routes, gain 0.75: the curvature's 18-22 Hz content falls 10.7 / 10.0 dB and the
++  0xE4 command's camera-locked energy fraction R2_deb falls 0.648 -> 0.387 and 0.622 -> 0.401 (66 %
++  and 63 % of the camera-locked leg removed). See
++  accord-eps-torque-mod/docs/research/FORK-COMB-RECONSTRUCTION-2026-09-13.md.
++  """
++
++  def __init__(self):
++    self.reset()
++
++  def reset(self, curvature: float = 0.0) -> None:
++    self.frame_id = None
++    self.value = float(curvature)
++    self.step = 0.0
++    self.elapsed = 0.0
++
++  def update(self, curvature: float, frame_id: int, gain: float, dt: float = DT_CTRL) -> float:
++    curvature = float(curvature)
++    if frame_id != self.frame_id:
++      # Only two CONSECUTIVE model frames carry a usable one-frame slope. The first frame after a
++      # reset does not (self.value is then the engage-time curvature, not a published model value,
++      # so differencing against it would extrapolate the engage jump), and neither does a frame
++      # arriving after a drop. Both revert to today's zero-order hold for that frame.
++      consecutive = self.frame_id is not None and frame_id - self.frame_id == 1
++      self.step = curvature - self.value if consecutive else 0.0
++      self.value = curvature
++      self.frame_id = int(frame_id)
++      self.elapsed = 0.0
++    else:
++      self.elapsed += dt
++    lead = min(self.elapsed / DT_MDL, 1.0)
++    return self.value + float(np.clip(gain, 0.0, 1.0)) * self.step * lead
+diff --git a/selfdrive/controls/tests/test_model_curvature_lead.py b/selfdrive/controls/tests/test_model_curvature_lead.py
+new file mode 100644
+index 000000000..f023d06f6
+--- /dev/null
++++ b/selfdrive/controls/tests/test_model_curvature_lead.py
+@@ -0,0 +1,227 @@
++"""ModelCurvatureLead -- the slope-continuous reconstruction of the 20 Hz model curvature at the
++100 Hz control tick (the Accord camera-comb fix, AccordCurvatureLead).
++
++Every number asserted here is reproduced by
++accord-eps-torque-mod/rlog-tools/studies/grind/fork_comb_reconstruction.py.
++"""
++import numpy as np
++import pytest
++
++from openpilot.common.realtime import DT_CTRL, DT_MDL
++from openpilot.selfdrive.controls.lib.drive_helpers import ModelCurvatureLead
++
++NHOLD = int(round(DT_MDL / DT_CTRL))          # 5 controlsd ticks per model frame
++F_MODEL = 1.0 / DT_MDL                        # 20 Hz
++
++
++def _run(values, gain, holds=None, frame_ids=None):
++  """Drive the reconstruction tick by tick. Returns (output per tick, tick index of each frame)."""
++  lead = ModelCurvatureLead()
++  holds = [NHOLD] * len(values) if holds is None else holds
++  frame_ids = list(range(len(values))) if frame_ids is None else frame_ids
++  out, frame_ticks, n = [], [], 0
++  for v, h, fid in zip(values, holds, frame_ids):
++    frame_ticks.append(n)
++    for _ in range(h):
++      out.append(lead.update(v, fid, gain))
++      n += 1
++  return np.array(out), np.array(frame_ticks)
++
++
++def _zoh(values, holds=None):
++  holds = [NHOLD] * len(values) if holds is None else holds
++  return np.repeat(np.asarray(values, float), holds)
++
++
++# ----------------------------------------------------------------------------------------------
++# 1. AUTHORITY -- the model's own value is delivered unchanged at every model-frame instant
++# ----------------------------------------------------------------------------------------------
++@pytest.mark.parametrize("gain", [0.0, 0.25, 0.5, 0.75, 1.0])
++def test_model_frame_values_are_preserved_exactly(gain):
++  rng = np.random.default_rng(20260913)
++  v = np.cumsum(rng.standard_normal(500)) * 1e-3
++  out, ticks = _run(v, gain)
++  assert np.array_equal(out[ticks], v), "a published model value was altered at its own frame instant"
++
++
++def test_zero_gain_is_bit_identical_to_todays_hold():
++  rng = np.random.default_rng(7)
++  v = np.cumsum(rng.standard_normal(400)) * 1e-3
++  out, _ = _run(v, 0.0)
++  assert np.array_equal(out, _zoh(v)), "gain 0.0 must reproduce the zero-order hold exactly"
++
++
++def test_gain_is_clamped_to_unit_interval():
++  v = [0.0, 0.01, 0.02]
++  hi, _ = _run(v, 5.0)
++  one, _ = _run(v, 1.0)
++  lo, _ = _run(v, -3.0)
++  zero, _ = _run(v, 0.0)
++  assert np.array_equal(hi, one)
++  assert np.array_equal(lo, zero)
++
++
++# ----------------------------------------------------------------------------------------------
++# 2. LAG -- the reconstruction must never be slower than today's hold in the band the driver feels
++# ----------------------------------------------------------------------------------------------
++def _transfer(gain, f, n_frames=4000):
++  """Complex gain at f, referenced to the IDEAL CONTINUOUS sinusoid on the same 100 Hz grid."""
++  tk = np.arange(n_frames) * DT_MDL
++  v = np.cos(2 * np.pi * f * tk)
++  out, _ = _run(v, gain)
++  t = np.arange(len(out)) * DT_CTRL
++  w = np.hanning(len(t))
++  e = np.exp(-2j * np.pi * f * t) * w
++  ideal = np.cos(2 * np.pi * f * t)
++  return (out * e).sum() / (ideal * e).sum()
++
++
++def _group_delay(gain, f, df=0.05):
++  return -np.angle(_transfer(gain, f + df) / _transfer(gain, f - df)) / (2 * np.pi * 2 * df)
++
++
++@pytest.mark.parametrize("gain", [0.5, 0.75, 1.0])
++def test_no_lag_at_1hz_and_faster_than_the_hold(gain):
++  """A 1 Hz sinusoid sampled at 20 Hz. The hold costs exactly DT_MDL/2 + DT_CTRL/2 = 20 ms of group
++  delay; the reconstruction must cost materially less, and must never cost more."""
++  zoh = _group_delay(0.0, 1.0)
++  assert zoh == pytest.approx(0.020, abs=2e-4), "the zero-order hold's own group delay moved"
++  g = _group_delay(gain, 1.0)
++  assert g < zoh, "the reconstruction must not be slower than today's hold at 1 Hz"
++  # the lead scales with the gain: the residual lag at 1 Hz is about (1 - gain) * 20 ms
++  assert g <= (1.0 - gain) * zoh + 0.004, f"residual lag at 1 Hz is {g * 1e3:.2f} ms for gain {gain}"
++  # gain 1.0 is the zero-lag limit: 3.3 ms against the hold's 20.0 ms
++  if gain == 1.0:
++    assert g == pytest.approx(0.0033, abs=5e-4)
++
++
++@pytest.mark.parametrize("f", [0.1, 0.25, 0.5, 1.0, 2.0, 3.0])
++def test_never_attenuates_and_never_lags_more_than_the_hold(f):
++  """|H| >= 1 everywhere is what makes this legal: it is not a filter and it costs no authority."""
++  for gain in (0.5, 0.75, 1.0):
++    H = _transfer(gain, f)
++    assert abs(H) >= 1.0 - 1e-9, f"gain {gain} attenuates at {f} Hz (|H| = {abs(H):.6f})"
++    assert _group_delay(gain, f) <= _group_delay(0.0, f) + 1e-6, \
++      f"gain {gain} is slower than the hold at {f} Hz"
++
++
++def test_lag_crossover_is_above_3hz_and_is_recorded_not_hidden():
++  """Extrapolation is not free: above a crossover frequency the predictor's own phase error exceeds
++  the hold's 20 ms and it becomes the slower of the two. Measured crossover: ~3.5 Hz at gain 0.75 and
++  ~3.2 Hz at gain 1.0, where the plan carries little energy (modeld low-passes its action at 1.59 Hz,
++  modeld.py:415). This test pins those numbers so a future change cannot move them silently."""
++  zoh = _group_delay(0.0, 1.0)
++  for gain, f_lo, f_hi in ((0.75, 3.0, 4.5), (1.0, 2.5, 4.0)):
++    assert _group_delay(gain, f_lo) < zoh, f"gain {gain} already slower than the hold at {f_lo} Hz"
++    assert _group_delay(gain, f_hi) > zoh, f"gain {gain} still faster than the hold at {f_hi} Hz"
++
++
++def test_never_attenuates_even_past_the_lag_crossover():
++  """|H| >= 1 is unconditional -- past the crossover the reconstruction costs phase, never authority."""
++  for gain in (0.5, 0.75, 1.0):
++    for f in (4.0, 5.0, 7.0):
++      assert abs(_transfer(gain, f)) >= 1.0 - 1e-9
++
++
++# ----------------------------------------------------------------------------------------------
++# 3. BOUND -- the output never leaves the interval its own two model frames define
++# ----------------------------------------------------------------------------------------------
++@pytest.mark.parametrize("gain", [0.5, 0.75, 1.0])
++def test_output_is_bounded_by_one_model_step(gain):
++  """v_next is not available causally, so the bound is stated on the causal triple
++  {v[k-1], v[k], v[k] + s[k]} -- i.e. the output stays inside [v[k] - |s[k]|, v[k] + |s[k]|]."""
++  rng = np.random.default_rng(11)
++  v = np.cumsum(rng.standard_normal(600)) * 1e-3
++  v[300] += 0.05                                    # a large step
++  v[301] -= 0.05                                    # and an immediate reversal
++  out, ticks = _run(v, gain)
++  s = np.diff(v, prepend=v[0])
++  for k, n0 in enumerate(ticks):
++    seg = out[n0:n0 + NHOLD]
++    lo, hi = v[k] - abs(s[k]), v[k] + abs(s[k])
++    assert seg.min() >= lo - 1e-15 and seg.max() <= hi + 1e-15, \
++      f"frame {k} left [v-|s|, v+|s|]"
++
++
++def test_dropped_frame_freezes_instead_of_running_away():
++  """A held frame must not keep ramping. `lead` saturates at 1.0 after one model interval."""
++  v = [0.0, 0.01, 0.02]
++  out, _ = _run(v, 1.0, holds=[NHOLD, NHOLD, 40])   # 400 ms with no new frame
++  tail = out[2 * NHOLD:]
++  assert tail[:NHOLD] == pytest.approx([0.02, 0.022, 0.024, 0.026, 0.028])
++  assert np.allclose(tail[NHOLD:], 0.03), "the output must freeze one model step past the last frame"
++  assert tail.max() <= 0.02 + abs(0.02 - 0.01) + 1e-15
++
++
++def test_frame_id_gap_disables_the_slope_for_that_frame():
++  """A skipped camera frame carries no usable one-frame slope, so that frame reverts to the hold."""
++  out, _ = _run([0.0, 0.01, 0.02], 1.0, frame_ids=[10, 11, 13])
++  assert np.allclose(out[2 * NHOLD:], 0.02)
++
++
++def test_first_frame_after_reset_does_not_extrapolate_the_engage_jump():
++  """reset() stores the CURRENT curvature, not a published model value. Differencing the first model
++  frame against it would extrapolate the engage jump forward, so the first frame reverts to the hold."""
++  lead = ModelCurvatureLead()
++  lead.reset(0.0)
++  out = [lead.update(0.05, 0, 1.0) for _ in range(NHOLD)]
++  assert np.allclose(out, 0.05), "the first frame after a reset must not carry a slope"
++
++
++def test_reset_clears_the_slope():
++  lead = ModelCurvatureLead()
++  for fid, v in enumerate([0.0, 0.01, 0.02]):
++    for _ in range(NHOLD):
++      lead.update(v, fid, 1.0)
++  lead.reset(0.02)
++  assert lead.update(0.03, 99, 1.0) == pytest.approx(0.03)
++  assert lead.update(0.03, 99, 1.0) == pytest.approx(0.03), "no slope may survive a reset"
++
++
++# ----------------------------------------------------------------------------------------------
++# 4. THE POINT -- the 20 Hz staircase energy is reduced
++# ----------------------------------------------------------------------------------------------
++def _image_amplitude(out, f_b, half=1.0):
++  """Energy in the reconstruction image at the model clock, F_MODEL +/- f_b. The sampled sequence
++  carries nothing above F_MODEL/2, so ALL of this is the staircase artefact -- i.e. the comb."""
++  t = np.arange(len(out)) * DT_CTRL
++  w = np.hanning(len(t))
++  return float(np.hypot(*[2 * abs(((out - out.mean()) * w * np.exp(-2j * np.pi * fi * t)).sum()) / w.sum()
++                          for fi in (F_MODEL - f_b, F_MODEL + f_b)]))
++
++
++@pytest.mark.parametrize("f_b,min_db", [(0.25, 12.0), (0.5, 9.0), (1.0, 5.0)])
++def test_camera_clock_comb_is_reduced(f_b, min_db):
++  """A baseband tone at f_b appears at 20 +/- f_b Hz purely because the plan is held. The
++  reconstruction must cut that image, and monotonically in the gain."""
++  n_frames = 8000
++  tk = np.arange(n_frames) * DT_MDL
++  v = np.cos(2 * np.pi * f_b * tk)
++  base = _image_amplitude(_zoh(v), f_b)
++  prev = base
++  for gain in (0.5, 0.75, 1.0):
++    out, _ = _run(v, gain)
++    img = _image_amplitude(out, f_b)
++    assert img < prev, f"gain {gain} did not reduce the comb further than the gain below it"
++    prev = img
++  db = 20 * np.log10(prev / base)
++  assert db <= -min_db, f"gain 1.0 cut the {F_MODEL - f_b:.2f}/{F_MODEL + f_b:.2f} Hz image by only {db:.1f} dB"
++
++
++def test_second_difference_knot_shrinks_on_a_real_shaped_plan():
++  """The staircase's second difference is one impulse of size |s[k]| per camera frame. The
++  reconstruction replaces it with |s[k+1] - s[k]|, which is smaller on a plan that is smooth at the
++  model rate -- and modeld low-passes its own action at 1.59 Hz before publishing (modeld.py:415),
++  so the real plan is."""
++  rng = np.random.default_rng(3)
++  raw = np.cumsum(rng.standard_normal(4000)) * 1e-3
++  alpha = 1 - np.exp(-DT_MDL / 0.1)                  # modeld's LAT_SMOOTH_SECONDS = 0.1 s
++  v = np.empty_like(raw)
++  acc = 0.0
++  for i, x in enumerate(raw):
++    acc = alpha * x + (1 - alpha) * acc
++    v[i] = acc
++  zoh = _zoh(v)
++  out, _ = _run(v, 1.0)
++  d2 = lambda x: x[2:] - 2 * x[1:-1] + x[:-2]        # noqa: E731
++  assert np.sqrt(np.mean(d2(out) ** 2)) < np.sqrt(np.mean(d2(zoh) ** 2))
+diff --git a/starpilot/common/assets/device_settings_layout.json b/starpilot/common/assets/device_settings_layout.json
+index 50e4c1a67..f0837a942 100644
+--- a/starpilot/common/assets/device_settings_layout.json
++++ b/starpilot/common/assets/device_settings_layout.json
+@@ -4836,6 +4836,34 @@
+         ],
+         "settings_tier": "simple"
+       },
++      {
++        "key": "AccordCurvatureLead",
++        "label": "Accord: Model Curvature Lead",
++        "description": "Advance the 20 Hz model curvature along its own last slope between camera frames instead of holding it, at the 100 Hz control tick. Not a filter: the value at every model frame is the model's own, nothing is delayed or attenuated, and the group delay is lower than the hold's. Removes most of the camera-clock comb from the steering command. Off by default -- it has not been driven yet.",
++        "data_type": "bool",
++        "ui_type": "toggle",
++        "is_parent_toggle": true,
++        "vehicle_makes": [
++          "Honda"
++        ],
++        "settings_tier": "simple"
++      },
++      {
++        "key": "AccordCurvatureLeadGain",
++        "label": "Accord: Curvature Lead Gain",
++        "description": "Fraction of the model's own last inter-frame step carried forward between frames. 0.00 is exactly today's zero-order hold. 0.75 measured best over the 12-26 Hz band; 1.00 removes the most 20 Hz comb but adds the most 5-18 Hz content.",
++        "data_type": "float",
++        "ui_type": "numeric",
++        "min": 0.00,
++        "max": 1.00,
++        "step": 0.05,
++        "precision": 2,
++        "parent_key": "AccordCurvatureLead",
++        "vehicle_makes": [
++          "Honda"
++        ],
++        "settings_tier": "simple"
++      },
+       {
+         "key": "AccordEpsGainScale",
+         "label": "Accord: EPS Gain Scale",
+diff --git a/starpilot/common/safe_mode.py b/starpilot/common/safe_mode.py
+index 88c39a90a..05d986d5d 100644
+--- a/starpilot/common/safe_mode.py
++++ b/starpilot/common/safe_mode.py
+@@ -56,6 +56,8 @@ SAFE_MODE_MANAGED_KEYS = (
+   "AccordFFRateGain",
+   "AccordTorqueKi",
+   "AccordTurnFFTaper",
++  "AccordCurvatureLead",
++  "AccordCurvatureLeadGain",
+   "AccordEpsGainScale",
+   "AccordEpsSpringScale",
+   "CameraOffset",
+diff --git a/starpilot/common/starpilot_variables.py b/starpilot/common/starpilot_variables.py
+index bda6469a3..47e221f7c 100644
+--- a/starpilot/common/starpilot_variables.py
++++ b/starpilot/common/starpilot_variables.py
+@@ -819,6 +819,14 @@ class StarPilotVariables:
+     toggle.accord_ff_rate_gain = self.get_value("AccordFFRateGain", cast=float, condition=is_honda_accord and known("AccordFFRateGain"), default=0.5, min=0.0, max=1.5)
+     toggle.accord_torque_ki = self.get_value("AccordTorqueKi", cast=float, condition=is_honda_accord and known("AccordTorqueKi"), default=0.30, min=0.05, max=1.0)
+     toggle.accord_turn_ff_taper = self.get_value("AccordTurnFFTaper", condition=is_honda_accord and known("AccordTurnFFTaper"), default=False)
++    # Slope-continuous reconstruction of the 20 Hz model curvature at the 100 Hz control tick. Not a
++    # filter: the value at every model-frame instant is the model's own, |H| >= 1 at every frequency,
++    # and the group delay is BELOW the zero-order hold's through the band the driver feels. Default
++    # OFF pending a drive. The gain is the fraction of the model's own last inter-frame step that is
++    # carried forward; 0.0 reproduces today's hold exactly, 0.75 is the measured optimum over the
++    # 12-26 Hz band, 1.0 removes the most comb but costs the most 5-18 Hz.
++    toggle.accord_curvature_lead = self.get_value("AccordCurvatureLead", condition=is_honda_accord and known("AccordCurvatureLead"), default=False)
++    toggle.accord_curvature_lead_gain = self.get_value("AccordCurvatureLeadGain", cast=float, condition=is_honda_accord and known("AccordCurvatureLeadGain"), default=0.75, min=0.0, max=1.0)
+     toggle.accord_eps_gain_scale = self.get_value("AccordEpsGainScale", cast=float, condition=is_honda_accord and known("AccordEpsGainScale"), default=1.0, min=0.5, max=2.0)
+     toggle.accord_eps_spring_scale = self.get_value("AccordEpsSpringScale", cast=float, condition=is_honda_accord and known("AccordEpsSpringScale"), default=1.0, min=0.0, max=2.0)
+     honda_pid_lateral = toggle.car_make == "honda" and CP.lateralTuning.which() == "pid" and not is_angle_car

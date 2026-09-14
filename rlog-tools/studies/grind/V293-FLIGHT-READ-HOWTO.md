@@ -28,49 +28,42 @@ and a faster spectral floor would silently move the comparison.
 
 ### 0. Exposure and the fork toggles — is the drive attributable at all?
 
-**The switch is a Testing Ground, not a param.** On the device it is **Galaxy → Testing Ground → slot 9
-"Accord EPS Torque Mode" → variant B** ("B - Torque mode (V293+ only)"; A is the installed rate-servo
-tune). The selection lives in `/data/testing_grounds/slots.json`. `AccordEpsTorqueMode` and the
-`AccordTorqueMode*` family **no longer exist** — `common/params_keys.h` carries a comment where the key
-used to be. So that row on the scorecard is **informational only**: `absent` is expected and carries no
-information, while a *value* would mean the device is running a pre-rework fork.
-
-Three readings, of which **two are gates**:
+**The fork side is a toggle config, not code** (2026-09-13, the operator's call — the preset param and the
+Testing Ground 9 slot that preceded it were both undone; Dom `4247cb09e` carries nothing torque-mode-specific).
+The config is `analysis-2020accord/reference/toggle-config_V293_torque_mode.json`, restored through Galaxy;
+it sets `AccordRatePlantFF` 0, `SteerKP` 0.3, `AccordTorqueKi` 0.15, `SteerFriction` 0.0, `SteerLatAccel` 6.0
+and pins `ForceAutoTuneOff` 1 / `AdvancedLateralTune` 1 / `AccordTurnFFTaper` 0. The scorecard attributes the
+drive from the wire — three gates and one informational row:
 
 | reading | source | role |
 |---|---|---|
-| `AccordEpsTorqueMode` | `initData.params` | **informational** — absent by design |
-| `epsTorqueMode` duty | `starpilotLateralState`, 100 Hz | **GATE**: must read `1.000`. Measured `0.000` over 75 374 frames on r6f_v292, the pre-V293 control. |
-| median `f / desiredLateralAccel` | `controlsState…torqueState` | **GATE**: `≥ 0.75`. The only one that reads the **control path** rather than a stored setting. |
-| Testing Ground slot / variant | `customReserved9` | reported — must read slot `9` variant `B`, and the scorecard says whether it agrees with the duty gate |
+| the config, key by key | `initData.params` (logged once, at process start) | **GATE `toggle`**: every key must match. `Accord*` keys are **absent when at their `params_keys.h` default** (measured on r6f), so absence reads as the default — `AccordRatePlantFF` absent means the rate-plant FF is ON. |
+| `Kp` at 100 Hz | `controlsState…torqueState`: median `p / error` | **GATE `kp`**: must read `0.300 ± 0.03`. The fork logs `pid_log.error = error_with_lsf` and calls `pid.update(pid_log.error, …)`, whose `p = k_p · error`, so the ratio IS the `SteerKP` toggle on every active frame. Measured on r6f_v292: **0.9000 over 42 905 frames, IQR [0.9000, 0.9000], 100 % within 5 %** — the installed tune, read exactly. This survives a mid-route toggle change; `initData` does not. |
+| median `f / desiredLateralAccel` | `controlsState…torqueState` | **GATE `branch`**: `≥ 0.75`. The only read of the feedforward branch itself. |
+| Testing Ground slot / variant | `customReserved9` | **informational** — no slot is the torque mode; shown for the record (r6f: slot 1 / A, "ACC Bolt Long Tune"). |
 
-🛑 **Two cereal schema collisions, and neither reading works without a patch.** The kit declares union
-slot `@137` as `epsTelemetry :Custom.EpsTelemetry` and `@116` as `modelDataV2SP :Custom.ModelDataV2SP`.
-The fork declares the *same two slots with the same two struct ids* as `starpilotLateralState
-:Custom.StarPilotLateralState` (`0xc2243c65e0340384`) and `customReserved9 :Custom.CustomReserved9`
-(`0xa1680744031fdb2d`). The field layouts share nothing — nine V31P-V2 gate flags against eight
-floats/bools plus `epsTorqueMode @8`, and one enum against six Text/UInt64 fields carrying the Testing
-Ground selection. This script builds a **patched copy** of the schema under `_scratch/cereal_fork/` and
-loads it with `capnp.load()`; the kit's own schema is never modified. **Any other kit script that reads
-`epsTelemetry` or `modelDataV2SP` from a 2026-09 rlog is reading garbage.**
+🛑 **Two cereal schema collisions, and the informational row needs a patch.** The kit declares union slot
+`@137` as `epsTelemetry :Custom.EpsTelemetry` and `@116` as `modelDataV2SP :Custom.ModelDataV2SP`. The
+fork declares the *same two slots with the same two struct ids* as `starpilotLateralState
+:Custom.StarPilotLateralState` (`0xc2243c65e0340384`, eight floats/bools) and `customReserved9
+:Custom.CustomReserved9` (`0xa1680744031fdb2d`, six Text/UInt64 fields carrying the Testing Ground
+selection). This script builds a **patched copy** of the schema under `_scratch/cereal_fork/` (rebuilt
+automatically when the patched structs change) and loads it with `capnp.load()`; the kit's own schema is
+never modified. **Any other kit script that reads `epsTelemetry` or `modelDataV2SP` from a 2026-09 rlog is
+reading garbage.** The three gates do not need the patch — `initData` and `torqueState` are stock schema.
 
-The Testing Ground selection **is** on the wire: `the_galaxy` publishes `slotId`, `slotName`, `variant`,
-`variantLabel`, `reason` and `wallTimeNanos` on a heartbeat and on every manual change. Decoded on
-r6f_v292 it reads *slot 1 variant A, "ACC Bolt Long Tune / A - Installed tune"* over 51 frames — real
-text, which is the proof the patched struct decodes rather than producing plausible noise. If the
-selection changes mid-route the scorecard says so and lists every pair it saw.
-
-The `f/D` ratio deserves its own note, because the obvious statistic does not work. Under torque mode
-friction ships at 0, so `f = desiredLateralAccel` exactly and the ratio is `1.000`; the rate-plant branch
+The `f/D` ratio deserves its own note, because the obvious statistic does not work. Under the torque config
+friction is 0, so `f = desiredLateralAccel` exactly and the ratio is `1.000`; the rate-plant branch
 scales it down. Measured pooled medians on four routes that are **not** torque mode: r6c 0.32, r6d 0.24,
 r6e 0.40, r6f 0.31, worst single `|D|` band 0.58. The gate at 0.75 sits about 1.3× above the worst
 observation and 1.3× below the expected 1.000. **The whole-route regression slope of f on D is not usable
 as a gate** — it reads 0.21–0.64 on those same four routes. The ratio is the statistic; the slope is
 printed only as context.
 
-If the toggle reads OFF with V293 in the ECU, the band scores below are **not a build contrast** and the
-mismatch is the feedforward-starved *and* high-gain-feedback state, which is not merely sluggish
-(`ADV-V293-D` §4.4).
+If the config reads as the installed tune with V293 in the ECU, the band scores below are **not a build
+contrast** and the mismatch is the feedforward-starved *and* high-gain-feedback state, which is not merely
+sluggish (`ADV-V293-D` §4.4). Restore `toggle-config_V293_torque_mode.json` and restart openpilot before
+reading anything else.
 
 ### 1. The edit-live identity — the control that decides attribution
 
@@ -256,10 +249,11 @@ Score a V292 route as if it were V293 and confirm the tool says so:
 python rlog-tools/studies/grind/v293_flight_read.py r6f_v292 --build V293
 ```
 
-It should fire the identity FAIL (R² −0.561), the toggle FAIL (`epsTorqueMode` duty 0.000), the branch
-FAIL (median f/D 0.294), the ring FAIL (×1.25), and **five REVERT triggers** — F7 6.30, tap ripple/level
-0.339, absolute ripple ×2.23, the 1–4 Hz outer loop at 5–10 m/s, and 13–17 Hz ×1.81. The Testing Ground
-row reports slot 1 variant A, agreeing with the duty gate that this is not torque mode. If it returns
+It should fire the identity FAIL (R² −0.561), the toggle FAIL (`initData`: `AccordRatePlantFF` absent = 1,
+`SteerKP` 0.9, `AccordTorqueKi` absent = 0.30, `SteerFriction` 0.01), the kp FAIL (Kp 0.900 at 100 Hz over
+42 905 frames — the installed tune), the branch FAIL (median f/D 0.294), the ring FAIL (×1.25), and **five
+REVERT triggers** — F7 6.30, tap ripple/level 0.339, absolute ripple ×2.23, the 1–4 Hz outer loop at
+5–10 m/s, and 13–17 Hz ×1.81. The Testing Ground row reports slot 1 variant A, informational. If it returns
 anything resembling a pass on that route, stop and fix the instrument before reading a real drive.
 
 Everything the script writes lands under `rlog-tools/studies/grind/_scratch/`. It reads rlogs and images

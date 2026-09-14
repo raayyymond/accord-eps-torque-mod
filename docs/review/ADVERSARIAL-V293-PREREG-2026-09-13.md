@@ -1,5 +1,11 @@
 # ADVERSARIAL PASS — V293 (TORQUE MODE on the V282 base), pre-registration
 
+> **2026-09-13, later:** the "fork preset (Testing Ground 9 …)" in the verdict below is the mechanism of the
+> day; the fork side is now a Galaxy **toggle config** with the same five values
+> (`analysis-2020accord/reference/toggle-config_V293_torque_mode.json`: rate-plant FF OFF / LAF 6.0 /
+> friction 0.00 / Kp 0.3 / Ki 0.15), no fork code — the operator rejected the slot as he had rejected the
+> param. Clause dispositions unchanged. Card: `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
+
 **Written by the orchestrator BEFORE the V293 image existed and BEFORE any adversary was briefed.** Same
 contract as `ADVERSARIAL-V292-PREREG-2026-09-13.md`: four independent agents, disjoint surfaces, each
 re-deriving from the BUILT IMAGE, never from the build script's constants or the orchestrator's brief; the

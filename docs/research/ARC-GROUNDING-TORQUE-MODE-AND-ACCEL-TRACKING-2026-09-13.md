@@ -47,10 +47,11 @@ conclusion independently), that the 5–9 Hz rise is **gated** rather than merel
 **contains** torque mode and adds electronic inertia on top, and the inertia term **needs a code cave** —
 this kit's only bricking class. Reasoning: `docs/traces/TRACE-2026-09-13-lkas-pid-tracked-quantity.md` §4.
 
-**What the fork side shipped instead:** one selection — **Testing Ground 9, "Accord EPS Torque Mode",
-variant B** (uncommitted, ships on A) — replacing four toggles the operator had to keep consistent by
-hand. It shipped first as a param, `AccordEpsTorqueMode`, and was reworked onto the slot the same day;
-all five params are gone. Card: `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
+**What the fork side is:** a Galaxy **toggle config**, `analysis-2020accord/reference/toggle-config_V293_torque_mode.json`
+(rate-plant FF off, Kp 0.3, Ki 0.15, friction 0.00, LAF 6.0) — and **no fork code**. It shipped first as a
+param (`AccordEpsTorqueMode`), then as Testing Ground 9, and the operator rejected both the same day
+(*"way too complicated for what should just be a toggle config file"*), so the fork commit was undone.
+Card: `docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md`.
 
 ---
 

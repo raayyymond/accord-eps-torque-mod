@@ -312,6 +312,14 @@ monotonically with that arm.
 
 ## 4. D4 — THE FORK PRESET
 
+🛑 **SUPERSEDED AGAIN, later still on 2026-09-13.** The Testing Ground 9 rework described in the note
+below was itself undone by the operator; the fork side is a Galaxy **toggle config**
+(`toggle-config_V293_torque_mode.json`) and Dom carries no torque-mode code. Read §4 with: *"OFF"* → the
+installed toggle values (`AccordRatePlantFF` 1, `SteerKP` 0.9 …); *"ON"* → the config restored; the
+curvature-lead gate is moot (that patch is not in the fork); `epsTorqueMode @8` never shipped; and
+**D4's Safe Mode reasoning CARRIES again** — all ten config keys are in `SAFE_MODE_MANAGED_KEYS`, so a trip
+resets the tune, i.e. forces the torque config OFF.
+
 🛑 **SUPERSEDED IN ITS MECHANISM, NOT IN ITS VERDICT — 2026-09-13, later the same day.** Everything in
 §4 below was scored against the fork patch as it stood at the time: a param, `AccordEpsTorqueMode`,
 plus four `AccordTorqueMode*` sliders. **That patch was reworked onto Testing Ground 9 ("Accord EPS
