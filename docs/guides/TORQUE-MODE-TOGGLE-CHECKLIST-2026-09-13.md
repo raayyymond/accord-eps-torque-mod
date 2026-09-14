@@ -1,4 +1,4 @@
-# EPS torque mode — the checklist for the REV-2 drive (fork tables + toggle config), and for reverting
+# EPS torque mode — the checklist for the REV-3 drive (§0), the REV-2 drive (§A), and for reverting
 
 **Updated 2026-09-13 night, after the first V293 drive (route 70).** The firmware **stays V293**; nothing is flashed.
 What changes is the FORK: its Accord plant tables (code) and a rev-2 toggle config. Rev 1 of this checklist (flash
@@ -13,6 +13,29 @@ V293, restore the rev-1 config) is what route 70 flew; it is kept below as the f
 | `…/toggle-config_V282_rate_servo_REVERT.json` | the installed rate-servo tune — only with a V282-class image AND the old tables (fork revert of `66cf4454a`) |
 | `tools/make_galaxy_toggle_config.py` | regenerates all of them; `--decode <file>` prints any Galaxy backup |
 | `rlog-tools/studies/grind/v293_flight_read.py` (v2) | the scorer for the drive; `V293-FLIGHT-READ-HOWTO.md` explains every row |
+
+## 0. REV 3 (2026-09-14, after route 71) — fork `e8e62f0e1` + `toggle-config_V293_torque_mode_r3.json`
+
+**Rev 2 flew (route 71) and the operator scored it loose / jerky at low speed / oscillating at high speed; the
+data says a 2.34 Hz limit cycle on hard curves above 20 m/s (the `SteerFriction` relay pumping the 2 Hz steering
+mode), stiction rings at low speed, and a hold map ×3–5 too small below 10 m/s.** Rev 3 is fork CODE (five new
+`Accord*` params) plus a 20-key config. Handoff: `HANDOFF-2026-09-14-v293-rev2-flew-2hz-limit-cycle-rev3-hold-map-rate-loop.md`.
+
+1. **Fork `Dom` ≥ `e8e62f0e1` on the device.** Confirm `git -C /data/openpilot log -1 --oneline` shows it and
+   `grep -c AccordRateLoopGain /data/openpilot/common/params_keys.h` prints 1.
+2. 🛑 **Rebuild Params** (Galaxy → System Tools → Rebuild Params, or the fork's `docs/how-to/rebuild-params-on-device.md`).
+   The five new keys (`AccordHoldMap`, `AccordFrictionHyst`, `AccordRateLoopGain`, `AccordErrorNotchQ`,
+   `AccordRefFilter`) must be in the compiled params library or Galaxy cannot write them and `known()` skips every
+   read (the code then runs the declared defaults — the same values — but the restore of `SteerFriction 0` /
+   `AccordTorqueKi 0.6` may fail with it; verify from `initData.params` on the first segment).
+3. **Galaxy → toggle backup → Restore → `toggle-config_V293_torque_mode_r3.json`** (20 keys: rev 2's values,
+   `SteerFriction` 0.0, `AccordTorqueKi` 0.6, the five new keys at 1 / 0.015 / 0.0006 / 1.0 / 0.12). Restart openpilot.
+4. Drive. Watch: a NEW line at 3–4 Hz (the rate loop's own phase crossover) → `AccordRateLoopGain` 0.0003 or 0;
+   a late or darty turn-in → `AccordRefFilter` 0.08 (or `SteerDelay` 0.3); over-holding into low-speed turns →
+   `AccordEpsSpringScale` 0.8. Anything else → **`toggle-config_V293_torque_mode_r3_REVERT_to_r2.json`** + restart
+   (rev 2's state exactly: the five new keys off, relay 0.011, Ki 0.3).
+5. Score: `python rlog-tools/studies/grind/v293_flight_read.py <route> --config analysis-2020accord/reference/toggle-config_V293_torque_mode_r3.decoded.json`
+   (the scorer's fork-commit gate wants `e8e62f0e1`), then `v293r2_extract.py <tag>=<route>` + `v293r2_read.py <tag>`.
 
 ## 🛑 THE ONE RULE
 

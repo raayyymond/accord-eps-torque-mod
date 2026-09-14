@@ -4,7 +4,7 @@
 > boxes and the 84 finding/correction blocks that used to follow it are ARCHIVED under `docs/archive/` (pointers
 > at the end of this file). They are a record, not a briefing; nothing was retracted by the moves.
 
-## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-13 night (**V293 FLEW. No classic grinding or stuttering (operator). The plant is a SPRING + Coulomb friction; the fork's model was wrong, not the tune. FIX = FORK: plant tables re-identified in code + a rev-2 toggle config. Nothing flashed, nothing sent.**)
+## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-14 (**V293 stays. REV 2 FLEW (route 71) — loose / jerky at low speed / a 2.34 Hz limit cycle on hard curves at speed. Root causes measured: the `SteerFriction` relay pumping a lightly damped 2 Hz STEERING MODE through a ~60 ms loop; a hold map ×3–5 too small below 10 m/s and ×0.6 above 20; stiction + the lsf-driven P at low speed. FIX = FORK REV 3 (`Dom` `e8e62f0e1`): measured hold map, hysteresis friction FF, a 100 Hz rate loop, a speed-scheduled error notch, reference shaping + `toggle-config_V293_torque_mode_r3.json`. Nothing flashed, nothing sent.**)
 
 **ON THE CAR: V293** — torque mode (cal-only on V282; **image**
 `f75e77cf0ba9d93b5302196877e59c6a41deae4983afc09ade99c5b766e1db17` · **rwd** `ac4723865378ff37…`, exactly one on
@@ -15,7 +15,27 @@ than the cached `a6`, and `00000070` was reused from an August route; key everyt
 The edit-live identity **HOLDS** (|427 tap| vs the image surface **R² 0.986**, resid 22 counts, sign(T) = +sign(cmd)):
 the EPS rate loop is dead on the wire.
 
-> 🛑 **THE VERDICT (2026-09-13 night): V293 STAYS IN THE CAR. The operator's score, verbatim — *"I did not
+> 🛑 **THE VERDICT (2026-09-14): V293 STAYS IN THE CAR; THE FORK GOES TO REV 3.** Route 71 (rev 2: `66cf4454a` +
+> the rev-2 config, attributed on the wire: Kp 0.8500, LAF 14.0000) — the operator: *"does not feel like StarPilot has
+> accurately modeled my EPS + car dynamics"*, *"loose on most straights or slight bends"*, *"on hard curves at low speed
+> the steering wheel jerks to correct itself"*, *"at high speed … worse and with more oscillation/resonance"*. The wire:
+> a **2.34 Hz, ±6° limit cycle** on every sustained curve above 20 m/s (rate +22.5 dB, cmd ±300 counts, the relay
+> flipping every half cycle); **20 rate bursts/min** of 84–442 deg/s in low-speed hard curves (stiction → ramp → snap,
+> the honda limiter capped); tracking gain **0.83 / 0.93 / 0.99 / 1.12** by band; the scorer's ratchet REVERT trigger
+> fired (dwells 9.1 vs 4.6 /min at 10–20). Re-identified: the steering system has a **mode at √(k(v)/J)/2π = 1.0–2.1 Hz,
+> J ≈ 8e-5 torque/(deg/s²), ζ 0.2–0.35**, and the loop delay is ~60 ms (3 + 13 + 30–45 ms measured); the static hold
+> torque is a **saturating spring** (0.020 static friction + k(v)·sat(v)·tanh(θ/sat)), ×3–5 the rev-2 tables below
+> 10 m/s at 5–35°, ×0.6–0.7 above 17–25 m/s. **Rev 3 (fork `e8e62f0e1` + `toggle-config_V293_torque_mode_r3.json`):**
+> `AccordHoldMap` (the measured map) · `AccordFrictionHyst` 0.015 (hysteresis on the desired angle; `SteerFriction` → 0)
+> · `AccordRateLoopGain` 0.0006 (the 100 Hz inner loop, tapered above 12 m/s) · `AccordErrorNotchQ` 1.0 (notch at the
+> mode) · `AccordRefFilter` 0.12 · `AccordTorqueKi` 0.6. Simulated on the identified plant: no cycle over b / J / delay
+> ×1.5 / spring ×0.7–1.4; step overshoot 80–110 % → 30–45 %; Ms 4–30 → 1.9–2.6. **Order: fork, REBUILD PARAMS, config,
+> restart** (`docs/guides/TORQUE-MODE-TOGGLE-CHECKLIST-2026-09-13.md` §0). Handoff:
+> `docs/handoffs/2026-09/HANDOFF-2026-09-14-v293-rev2-flew-2hz-limit-cycle-rev3-hold-map-rate-loop.md`. **Page:** https://claude.ai/code/artifact/08d2f4e0-44b8-43a0-9fb8-128eedef58e0
+> (signal flow, the hold-map and loop LERPs before/after, the simulated consequences, the risk). Tests not run on
+> this host — run `pytest selfdrive/controls/tests/test_latcontrol.py -k accord` before the drive.**
+>
+> *(superseded 2026-09-13 night box, kept for the record:)* 🛑 **THE VERDICT (2026-09-13 night): V293 STAYS IN THE CAR. The operator's score, verbatim — *"I did not
 > experience any classic grinding or stuttering."* · *"steering felt ratchety, like the wheel did not move smoothly
 > but only snapped between angles rather than smoothly moving between them"* · *"Sometimes steering felt loose and
 > then sometimes there was oversteer and other times on hard transients, it would overshoot then correct

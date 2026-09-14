@@ -1,0 +1,22 @@
+{
+  "AccordRatePlantFF": true,
+  "AccordEpsSpringScale": 1.0,
+  "AccordEpsGainScale": 1.0,
+  "AccordFFRateGain": 0.5,
+  "SteerFriction": 0.011,
+  "SteerLatAccel": 14.0,
+  "SteerKP": 0.85,
+  "AccordTorqueKi": 0.3,
+  "KeepLearnedLatAccelOffset": false,
+  "SteerDelay": 0.2,
+  "UseAutoSteerDelay": false,
+  "ForceAutoTuneOff": true,
+  "ForceAutoTune": false,
+  "AdvancedLateralTune": true,
+  "AccordTurnFFTaper": false,
+  "AccordHoldMap": false,
+  "AccordFrictionHyst": 0.0,
+  "AccordRateLoopGain": 0.0,
+  "AccordErrorNotchQ": 0.0,
+  "AccordRefFilter": 0.0
+}

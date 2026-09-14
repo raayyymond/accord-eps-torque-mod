@@ -39,7 +39,7 @@ needed.
 4. **guides/EPS-FLASH-RUNBOOK.md** + **guides/RED-PANDA-EPS-SETUP.md** — the physical red-panda + comma-harness rig (car-agnostic hardware/procedure, still the setup in use).
 5. 🛑 **START WITH `STATE.md`, then `BUILD-LINEAGE.md` (RULES 3–13), then the LATEST handoff.**
    ✅ **CORRECTED 2026-09-13 — everything below this sub-item about "what is on the car" is STALE.**
-   - **THE LATEST HANDOFF IS `handoffs/2026-09/HANDOFF-2026-09-13-V292-FLEW-REVERT-V293-TORQUE-MODE-BUILT.md`.**
+   - **THE LATEST HANDOFF IS `handoffs/2026-09/HANDOFF-2026-09-14-v293-rev2-flew-2hz-limit-cycle-rev3-hold-map-rate-loop.md`** (2026-09-14: V293 rev 2 flew on route 71 — a 2.34 Hz limit cycle at speed, stiction rings at low speed, the hold map ×3–5 wrong; FORK REV 3 shipped: hold map, hysteresis friction FF, 100 Hz rate loop, error notch, reference shaping + `toggle-config_V293_torque_mode_r3.json`). Before it: `HANDOFF-2026-09-13-v293-flew-plant-is-a-spring.md`, then `HANDOFF-2026-09-13-V292-FLEW-REVERT-V293-TORQUE-MODE-BUILT.md`.
    - **ON THE CAR: V292 — flown 2026-09-13 and a REVERT by its own pre-registration; the fallback is V282.
      V293 (torque mode) is BUILT, NOT FLOWN and NOT CLEARED.** `STATE.md`'s decision box is the authority.
    - 🛑 **`BUILD-LINEAGE.md` IS FOUR FILES:** the entry file (RULES, struck levers, Parts 2–4, every
@@ -176,7 +176,7 @@ arc only — the V57→V68 grinding thread — because that is what a next sessi
 🛑 **THIS LIST IS STALE — its newest entry is 2026-08-12 and the build on the car is V289 rev 1
 (2026-09-09).** The V101→V289 arc was never backfilled here. **Use `docs/STATE.md`'s decision box and the
 dated files in `docs/handoffs/2026-09/` as the authoritative chain until this section is extended.**
-Newest handoff: [handoffs/2026-09/HANDOFF-2026-09-09-V289-FLEW-THE-RING-MOVED-TO-16HZ-H1-FALSIFIED-V290.md](handoffs/2026-09/HANDOFF-2026-09-09-V289-FLEW-THE-RING-MOVED-TO-16HZ-H1-FALSIFIED-V290.md)
+Newest handoff: [handoffs/2026-09/HANDOFF-2026-09-14-v293-rev2-flew-2hz-limit-cycle-rev3-hold-map-rate-loop.md](handoffs/2026-09/HANDOFF-2026-09-14-v293-rev2-flew-2hz-limit-cycle-rev3-hold-map-rate-loop.md)
 — **V289's notch worked (18–22 Hz band empty, 0/1414 windows) and RELOCATED the ring to a pre-existing
 15–17 Hz pole; H1 and H2 both falsified; V290 designed, scored and NOT CUT — the operator chose "Neither —
 revert to V282 and stop here."** Cumulative non-stock delta of what goes on the car:

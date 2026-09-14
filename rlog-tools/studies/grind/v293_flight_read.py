@@ -164,11 +164,15 @@ PARAMS_DEFAULTS = {
     "AccordFFRateGain": "0.5", "AccordEpsGainScale": "1.0", "AccordEpsSpringScale": "1.0",
     "AccordVariableSteerRatio": "1", "ForceAutoTuneOff": "1", "ForceAutoTune": "0",
     "AdvancedLateralTune": "1", "KeepLearnedLatAccelOffset": "1", "UseAutoSteerDelay": "1",
+    # rev-3 keys (fork 2026-09-14): the V293 torque-mode terms, declared defaults = the rev-3 flight values
+    "AccordHoldMap": "1", "AccordFrictionHyst": "0.015", "AccordRateLoopGain": "0.0006",
+    "AccordErrorNotchQ": "1.0", "AccordRefFilter": "0.12",
 }
 # keys we read but never gate on -- printed as context beneath the config table
 CONTEXT_KEYS = ("SteerRatio", "SteerDelay", "UseAutoSteerDelay", "AccordVariableSteerRatio",
                 "AccordFFRateGain", "AccordEpsGainScale", "AccordEpsSpringScale",
                 "KeepLearnedLatAccelOffset", "ForceTorqueController", "ForceAutoTune",
+                "AccordHoldMap", "AccordFrictionHyst", "AccordRateLoopGain", "AccordErrorNotchQ", "AccordRefFilter",
                 "GitCommit", "GitBranch")
 
 # 🛑 WHICH FORK COMMIT A CONFIG NEEDS.  The rev-2 config sets AccordEpsSpringScale 1.0 and
@@ -183,6 +187,14 @@ CONFIG_FORK_COMMIT = {
         want="9622aee9f", forbid="4247cb09e",
         why="the rev-2 config's spring/gain scales are 1.0 because the Accord plant tables were "
             "REPLACED IN FORK CODE at 9622aee9f; on 4247cb09e those scales multiply the OLD tables"),
+    # rev 3 (2026-09-14): the five new Accord* keys are CONSUMED only by e8e62f0e1 and later; on 66cf4454a the
+    # params library does not know them (Galaxy may refuse the restore, or the keys sit unread), the code path is
+    # rev 2 with SteerFriction 0 and Ki 0.6 -- a silently different drive.
+    "toggle-config_V293_torque_mode_r3.decoded.json": dict(
+        want="e8e62f0e1", forbid="66cf4454a",
+        why="the rev-3 config's AccordHoldMap / AccordFrictionHyst / AccordRateLoopGain / AccordErrorNotchQ / "
+            "AccordRefFilter keys only exist in fork code from e8e62f0e1; on 66cf4454a they are unknown to the "
+            "params library and the controller runs rev 2 with the relay off"),
 }
 
 

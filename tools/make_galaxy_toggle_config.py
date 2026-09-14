@@ -137,9 +137,52 @@ TORQUE_MODE_R2 = {
     "AccordTurnFFTaper": False,
 }
 
+# REV 3 -- from the second V293 drive (route 71, rev 2 flown).  REQUIRES the fork at or after the 2026-09-14
+# commit that adds the five Accord* keys below (hold map, hysteresis friction FF, 100 Hz rate loop, error notch,
+# reference filter) -- on an older fork those keys are unknown to the params library and silently read their
+# defaults, which are the same values, but the CODE that consumes them is absent, so the drive would be rev 2
+# with SteerFriction 0 and Ki 0.6.  Attribute from initData.GitCommit.  Design: accord-eps-torque-mod
+# docs/handoffs/2026-09/HANDOFF-2026-09-14-v293-rev3-*.md.
+TORQUE_MODE_R3 = {
+    "AccordRatePlantFF": True,
+    "AccordHoldMap": True,            # measured saturating hold map (code) instead of the linear k/G tables
+    "AccordEpsSpringScale": 1.0,
+    "AccordEpsGainScale": 1.0,
+    "AccordFFRateGain": 0.5,
+    "AccordFrictionHyst": 0.015,      # static-friction feedforward (hysteresis on the desired angle)
+    "SteerFriction": 0.0,             # the error relay OFF: it limit-cycled the 2 Hz steering mode at 2.34 Hz on route 71
+    "AccordRateLoopGain": 0.0006,     # 100 Hz rate loop, torque per deg/s, tapered above 12 m/s
+    "AccordErrorNotchQ": 1.0,         # notch on the P/I error at the mode frequency (1.0-2.1 Hz by speed)
+    "AccordRefFilter": 0.12,          # 2 x 0.12 s reference shaping on the setpoint
+    "SteerLatAccel": 14.0,
+    "SteerKP": 0.85,
+    "AccordTorqueKi": 0.6,            # 0.3 -> 0.6: the 'loose' recovery time on straights halves; margins unchanged
+    "KeepLearnedLatAccelOffset": False,
+    "SteerDelay": 0.2,
+    "UseAutoSteerDelay": False,
+    # pins, as rev 1 / rev 2
+    "ForceAutoTuneOff": True,
+    "ForceAutoTune": False,
+    "AdvancedLateralTune": True,
+    "AccordTurnFFTaper": False,
+}
+
+# REV 3 -> REV 2 revert: the same keys back at their rev-2 values (the five new keys go to their OFF values,
+# which is also what the old code path does when the keys are absent).
+TORQUE_MODE_R3_REVERT_TO_R2 = dict(TORQUE_MODE_R2, **{
+    "AccordHoldMap": False, "AccordFrictionHyst": 0.0, "AccordRateLoopGain": 0.0,
+    "AccordErrorNotchQ": 0.0, "AccordRefFilter": 0.0,
+})
+
+# keys added to the fork AFTER the 2026-09-10 backup (so the typo guard cannot see them): the rev-3 set,
+# declared in common/params_keys.h by the 2026-09-14 fork commit.  Galaxy's restore writes them like any other key.
+NEW_KEYS_SINCE_BACKUP = {"AccordHoldMap", "AccordFrictionHyst", "AccordRateLoopGain", "AccordErrorNotchQ", "AccordRefFilter"}
+
 FILES = (
     ("toggle-config_V293_torque_mode", TORQUE_MODE),
     ("toggle-config_V293_torque_mode_r2", TORQUE_MODE_R2),
+    ("toggle-config_V293_torque_mode_r3", TORQUE_MODE_R3),
+    ("toggle-config_V293_torque_mode_r3_REVERT_to_r2", TORQUE_MODE_R3_REVERT_TO_R2),
     ("toggle-config_V282_rate_servo_REVERT", RATE_SERVO_REVERT),
 )
 
@@ -187,13 +230,13 @@ def main(argv):
     print("codec positive control: OK (526-key 2026-09-10 backup round-trips)")
     for stem, values in FILES:
         for k in values:
-            assert k in backup, "%s is not a key the operator's backup carries -- typo?" % k
+            assert k in backup or k in NEW_KEYS_SINCE_BACKUP, "%s is not a key the operator's backup carries -- typo?" % k
         out = galaxy_file(values)
         assert decode_parameters(out["data"]) == values
         p = os.path.join(REF, stem + ".json")
         json.dump(out, open(p, "w", encoding="utf-8"), indent=2)
         json.dump(values, open(os.path.join(REF, stem + ".decoded.json"), "w", encoding="utf-8"), indent=2)
-        changed = {k: (backup[k], v) for k, v in values.items() if backup[k] != v}
+        changed = {k: (backup.get(k, "<new key>"), v) for k, v in values.items() if backup.get(k) != v}
         print("wrote %s.json (+ .decoded.json): %d keys; differs from the 2026-09-10 backup in %d: %s"
               % (stem, len(values), len(changed), changed))
     return 0
