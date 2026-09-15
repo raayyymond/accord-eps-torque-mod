@@ -4,7 +4,7 @@
 > boxes and the 84 finding/correction blocks that used to follow it are ARCHIVED under `docs/archive/` (pointers
 > at the end of this file). They are a record, not a briefing; nothing was retracted by the moves.
 
-## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-14 evening (**V293 stays. REV 3 FLEW (routes 72 + 73): route 72 ran rev 3 as written and was "loose" at speed because the LOOP (Ki 0.6 / LAF 14, ~1.4 s) could not absorb a hold feedforward that is wrong by 20–70 % from road to road; route 73 secretly ran `SteerFriction 0.212` — the fork's stock-param sync back-filled the config's explicit 0.0 — a 10×-Kp relay that tracked 2.5× tighter and chattered at 4 Hz ("jerky on hard turns"). FIX = FORK REV 4 (`Dom` `f4e314da6` + `08a5a7064`): speed-scheduled Ki (`AccordTorqueKiHigh` 2.5 from 18 m/s, 0.6 below 8), the relay OFF under the hysteresis FF, the stock-sync fix, the 28 m/s hold knot ×1.2 + `toggle-config_V293_torque_mode_r4.json`. Deployed to the device (pulled, params rebuilt, 21 keys written, rebooted; tests pass on the comma). Nothing flashed, nothing sent.**)
+## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-15 (**V293 stays. REV 4 FLEW (route `00000075--6c8687d5bd`, 803 s engaged, `Dom 08a5a706`): the Ki schedule fixed the tracking GAIN at speed (0.74–0.80 → 0.97–0.98) but the planner error is still 20–30 % of the signal, 50–70 % of it below 0.3 Hz, the integrator carrying a third of the torque; the hard-turn jerk is the lightly damped 2–2.7 Hz closed-loop wheel mode (bursts every 0.53 s, command +6.9 dB at 1.95 Hz). FIX = FORK REV 5 (`Dom e44b6cd31` + `toggle-config_V293_torque_mode_r5.json`): a model-based DISTURBANCE OBSERVER (`AccordDobHz` 0.6) added to the feedforward, Ki 0.3 flat (schedule OFF), Kp 1.0, Kv 1e-3, rate filter 0.03→0.01 s, the observer on the wire. Deployed to the device (pulled, params rebuilt, 22 keys written, rebooted). Nothing flashed, nothing sent.** Previous verdict, 2026-09-14 evening: REV 3 FLEW (routes 72 + 73): route 72 ran rev 3 as written and was "loose" at speed because the LOOP (Ki 0.6 / LAF 14, ~1.4 s) could not absorb a hold feedforward that is wrong by 20–70 % from road to road; route 73 secretly ran `SteerFriction 0.212` — the fork's stock-param sync back-filled the config's explicit 0.0 — a 10×-Kp relay that tracked 2.5× tighter and chattered at 4 Hz ("jerky on hard turns"). FIX = FORK REV 4 (`Dom` `f4e314da6` + `08a5a7064`): speed-scheduled Ki (`AccordTorqueKiHigh` 2.5 from 18 m/s, 0.6 below 8), the relay OFF under the hysteresis FF, the stock-sync fix, the 28 m/s hold knot ×1.2 + `toggle-config_V293_torque_mode_r4.json`. Deployed to the device (pulled, params rebuilt, 21 keys written, rebooted; tests pass on the comma). Nothing flashed, nothing sent.**)
 
 **ON THE CAR: V293** — torque mode (cal-only on V282; **image**
 `f75e77cf0ba9d93b5302196877e59c6a41deae4983afc09ade99c5b766e1db17` · **rwd** `ac4723865378ff37…`, exactly one on
@@ -15,7 +15,37 @@ than the cached `a6`, and `00000070` was reused from an August route; key everyt
 The edit-live identity **HOLDS** (|427 tap| vs the image surface **R² 0.986**, resid 22 counts, sign(T) = +sign(cmd)):
 the EPS rate loop is dead on the wire.
 
-> 🛑 **THE VERDICT (2026-09-14 evening): V293 STAYS IN THE CAR; THE FORK GOES TO REV 4.** Routes 72 + 73 (rev 3, `e8e62f0e1`, Kp 0.8500 /
+> 🛑 **THE VERDICT (2026-09-15): V293 STAYS IN THE CAR; THE FORK GOES TO REV 5 — THE DISTURBANCE OBSERVER.** Route 75
+> (`75604b0a432fdc89_00000075--6c8687d5bd`, 2026-09-14 22:43–22:57, rev 4 attributed on the wire: `08a5a706`/Dom, Kp 0.8500, LAF 14.0000,
+> `AccordTorqueKiHigh 2.5`) — the operator: *"still a little loose; still jerky on hard turns; not as smooth, confident and well-controlled as the
+> 1 kHz inner loop; the command has to overshoot to get over friction."* The wire (vs route 72, rev 3): tracking gain 15–22 / >22 m/s **0.80 / 0.74 →
+> 0.98 / 0.97**, turn hold >22 m/s 0.75 → 0.99 — rev 4 did its job — but rms error is still 0.19–0.30 of the signal, **49–69 % of it below 0.3 Hz and
+> 17–34 % in 0.3–1 Hz**, and the integrator carries **0.29–0.33** of the torque. **The hard-turn jerk is the lightly damped 2–2.7 Hz closed-loop wheel
+> mode**: at v<10 the wheel moves in 0.12 s bursts spaced 0.53 s, the torque command has a +6.9 dB line at 1.95 Hz; at 10–20 m/s des→act |H| = 2.28 at 2 Hz
+> (coh 0.99). Zero stiction dwells. **Plant damping by speed: the free fit gives b 0.0005–0.0009 torque/(deg/s) below 15 m/s on BOTH drives** (the rev-3/4
+> "mode" world) and ~0.004 only above 22; the 09-13 ident's b is BELIEF below 20 m/s. **Why a 100 Hz loop cannot linearise friction here: the ~60 ms round
+> trip, not the rate** — static stiffness 1 + Kp_t/k = 1.7; a rate damper's phase −(ωTd + atan ωRC) crosses −90° at ≈2.8 Hz (RC 0.03) so it damps below and
+> pumps 3–5 Hz (the +2.6..+4 dB hump on every drive). **Rev 5 (fork `e44b6cd31`, `toggle-config_V293_torque_mode_r5.json`):** `HondaAccordDisturbanceObserver`
+> — w = hold(θ) + b(v)θ' + Jθ'' − u(t−0.06) from the measured wheel state and the controller's own delayed output, two poles at `AccordDobHz` **0.6**, clip ±0.3,
+> fade 3→6 m/s, held while safety-limited / driver holds, reset on engage, ADDED to the feedforward; the model's b is the fork's 1/G(v) ON PURPOSE (below the
+> corner it installs the model's damping whatever the plant has; above it the mismatch de-damps the 2 Hz mode — the reason for 0.6 not 0.8). Ki **0.3 flat**
+> (`AccordTorqueKiHigh 0`), Kp **1.0**, Kv **1e-3**, `HONDA_ACCORD_RATE_LOOP_RC` **0.01** s. Sim (five worlds: b ×0.15–8, hold ×1.5, delays ×1.5, J ×1.5), speed-
+> averaged: planner-step overshoot 0.51 → 0.20, 0.03-torque disturbance |e|@1 s 0.074 → 0.029, hard-turn hold error 0.219 → 0.086 m/s²; cost +9..+22 % 1.6–3 Hz
+> wheel-rate energy in hard turns IF the plant is the lightly damped one; the one loss = hold ×1.5 at 19–26 m/s where rev 4's Ki 2.5 winds faster.
+> **Rejected with numbers:** Kp 1.2/DOB 0.8 (+40..+150 % mode energy, rang with delays ×1.5) · observer model b 0.0006 (hold error 0.5–0.8 in the identified
+> world) · a model-PREDICTED rate damper (DIVERGENT at 26 m/s under b mismatch, T3 179–462°, and biased in stiction) · notch ×1.35 (unstable) · dither (not
+> proposed: sits on the 7 Hz ripple). **Wire instrument:** `starpilotLateralState.accordObserverTorque/.accordObserverFrozen` (@8/@9); the kit's flight read
+> decodes and prints them. **Device:** pulled to `e44b6cd31`, params rebuilt (`AccordDobHz` known), 22 keys written and read back, rebooted 00:38; schema and
+> observer import on the device. Tests on the comma: 254 pass, 2 pre-existing (Bolt/Palisade). **`SteerFriction` read 0.212 on route 75 after 0.0 on route 74
+> 20 min earlier** (both post-fix): the file was rewritten ~30 s into a boot (mtimes of boot-time writes on this device read 2026-07-28 08:05 — the clock is not
+> yet set), a Sonnet trace found no writer whose blast radius matches, an offroad reboot tonight did NOT back-fill (0.0 survived) → the remaining suspect needs
+> ignition-on; functionally moot (relay off under `AccordFrictionHyst`), the flight read flags it. **Next drive: `v293_flight_read.py <tag> --config …_r5.decoded.json`
+> then `v293r5_observer_read.py <tag> r75_v293r4` (pre-registered O1–O5 in its docstring); revert = `_r5_REVERT_to_r4`; if O2/O3 pass and O4 (jerk) fails →
+> `AccordDobHz 0.4` / `SteerKP 0.85` by CONFIG.** Handoff: `docs/handoffs/2026-09/HANDOFF-2026-09-15-v293-rev4-flew-r75-rev5-disturbance-observer.md`.
+> **Page:** https://claude.ai/artifact/8Bc1Xqt9qeFhsDLbayqK2H (signal flow with the observer drawn, Q(f), Re Q, the damping budget, step/disturbance/hard-turn
+> traces before/after, the Ki/Kv LERPs, the robustness table, the risk, the pre-registered read).
+>
+> *(superseded 2026-09-14 evening box, kept for the record:)* 🛑 **THE VERDICT (2026-09-14 evening): V293 STAYS IN THE CAR; THE FORK GOES TO REV 4.** Routes 72 + 73 (rev 3, `e8e62f0e1`, Kp 0.8500 /
 > LAF 14.0000 on the wire) — the operator: *"better than rev 2; still feels a little loose; still jerky on hard turns; still doesn't feel as good
 > as the 1 kHz inner loop did."* The wire: **route 72** planner-tracking gain **0.80 / 0.74** at 15–22 / >22 m/s, lag **0.5 s**, |H|(0.2 Hz) 0.66–0.76,
 > 79–83 % of the error below 0.3 Hz, the feedforward supplying 68–76 % of the torque and P+I the rest in the SAME direction — the rev-3 map
@@ -560,7 +590,14 @@ plant has — with tables that were identified on the V280–V292 RATE loop and 
    "×33–72 engagement gating" is a presence RATE and the amplitude ratio is ×4.5.
 
 ### ✈ NEXT — in order
-1. ⭐ **THE OPERATOR FLIES REV 2 (his call):** device fork → `66cf4454a`, restore `toggle-config_V293_torque_mode_r2.json`,
+0. ⭐ **THE OPERATOR FLIES REV 5 (2026-09-15):** the device already carries `e44b6cd31` + the r5 config (rebooted). Score with
+   `v293_flight_read.py <tag> --config toggle-config_V293_torque_mode_r5.decoded.json` (attribution: commit `e44b6cd31`, `AccordDobHz 0.6`,
+   Kp 1.0000 on the wire, the OBSERVER line non-zero, `SteerFriction 0.0`) then `v293r5_observer_read.py <tag> r75_v293r4` (O1 on the wire ·
+   O2 loose · O3 confident · O4 jerky · O5 sensible; revert triggers in its docstring). **He scores loose / jerky / confident in his words.**
+   If O2/O3 pass and O4 fails: `AccordDobHz 0.4` and/or `SteerKP 0.85` by config. If the observer pins at ±0.3 or a 0.6–1.5 Hz oscillation
+   appears: `toggle-config_V293_torque_mode_r5_REVERT_to_r4.json`. The next lever after a good rev 5 is the identification of b(v) per speed
+   (it decides whether the model-predicted damper can ever be safe) — not firmware.
+1. *(superseded by 0)* ⭐ **THE OPERATOR FLIES REV 2 (his call):** device fork → `66cf4454a`, restore `toggle-config_V293_torque_mode_r2.json`,
    restart; drive the same kind of route as route 70 (low-speed manoeuvres, a motorway stretch, a few hard
    transients); score with `v293_flight_read.py <route> --config …_r2.decoded.json`; **he scores the four symptoms in
    his words.** Revert triggers unchanged (darty/loose, one-sided pull, oscillation, grinding) plus "ratchet worse

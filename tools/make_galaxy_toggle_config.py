@@ -196,10 +196,36 @@ TORQUE_MODE_R4 = dict(TORQUE_MODE_R3, **{
 # REV 4 -> REV 3 revert: the new key off (flat Ki 0.6), everything else the rev-3 values.
 TORQUE_MODE_R4_REVERT_TO_R3 = dict(TORQUE_MODE_R3, **{"AccordTorqueKiHigh": 0.0})
 
+# REV 5 (2026-09-15, after route 75 = the real rev-4 drive): the DISTURBANCE OBSERVER replaces the integrator as the
+# thing that takes out the hold-map / crown / friction residual.  Route 75 read: tracking gain 0.97-0.98 at every speed
+# (rev 4 fixed the 0.74-0.80 of rev 3) but the planner error is still 20-30 % of the signal, 50-70 % of it below 0.3 Hz
+# and a further 17-34 % in 0.3-1 Hz -- the band a P loop through a 60 ms round trip cannot stiffen (static stiffness
+# 1 + Kp_t/k = 1.7) and the integrator only reaches at its own 0.2-0.5 Hz corner (the catch-up the operator feels).
+# The observer estimates the unmodelled torque from the measured wheel state and the controller's own delayed output,
+# w = hold(angle) + b(v) rate + J acc - u(t - 0.06), two poles at AccordDobHz, added to the feedforward.  Its loop
+# closes through the MODEL MISMATCH only, so the corner sits above the integrator's without reference-path lag.
+# Design (kit v293r5_design*.py, five plant worlds incl. b x0.15-8, hold x1.5, delays x1.5, J x1.5): planner-step
+# overshoot 0.40-0.61 -> 0.16-0.25, hard-turn hold error -60..-80 %, 0.03-torque disturbance residual at 1 s
+# 0.04-0.10 -> 0.00-0.03 m/s^2; cost = up to +45 % 1.6-3 Hz wheel-rate energy in hard turns IF the plant is the lightly
+# damped one (the observer's model damping is the fork's 1/G(v); above its corner that mismatch de-damps the mode), which
+# is why the corner is 0.6 Hz not 0.8 and Kp 1.0 not 1.2.  Ki drops to 0.3 flat (no schedule): the observer does its job
+# 3-5x faster and without the variable delay the operator asked to avoid.  Kv 1e-3 (was 6e-4) damps 1-2.8 Hz.
+# A model-PREDICTED rate damper was tested and REJECTED (divergent under damping mismatch at 26 m/s).
+TORQUE_MODE_R5 = dict(TORQUE_MODE_R4, **{
+    "AccordDobHz": 0.6,               # disturbance observer corner (Hz); 0 = off (rev-4 behaviour)
+    "SteerKP": 1.0,                   # 0.85 -> 1.0 (1.2 buys little more and costs mode energy)
+    "AccordTorqueKi": 0.3,            # 0.6 -> 0.3 flat: the observer replaces the slow integral action
+    "AccordTorqueKiHigh": 0.0,        # schedule OFF (was 2.5 from 18 m/s)
+    "AccordRateLoopGain": 0.001,      # 6e-4 -> 1e-3 torque per deg/s of wheel-rate error (tapered above 12 m/s as before)
+})
+
+# REV 5 -> REV 4 revert: observer off, rev-4 gains back.
+TORQUE_MODE_R5_REVERT_TO_R4 = dict(TORQUE_MODE_R4, **{"AccordDobHz": 0.0})
+
 # keys added to the fork AFTER the 2026-09-10 backup (so the typo guard cannot see them): the rev-3 set,
 # declared in common/params_keys.h by the 2026-09-14 fork commit.  Galaxy's restore writes them like any other key.
 NEW_KEYS_SINCE_BACKUP = {"AccordHoldMap", "AccordFrictionHyst", "AccordRateLoopGain", "AccordErrorNotchQ", "AccordRefFilter",
-                         "AccordTorqueKiHigh"}
+                         "AccordTorqueKiHigh", "AccordDobHz"}
 
 FILES = (
     ("toggle-config_V293_torque_mode", TORQUE_MODE),
@@ -208,6 +234,8 @@ FILES = (
     ("toggle-config_V293_torque_mode_r3_REVERT_to_r2", TORQUE_MODE_R3_REVERT_TO_R2),
     ("toggle-config_V293_torque_mode_r4", TORQUE_MODE_R4),
     ("toggle-config_V293_torque_mode_r4_REVERT_to_r3", TORQUE_MODE_R4_REVERT_TO_R3),
+    ("toggle-config_V293_torque_mode_r5", TORQUE_MODE_R5),
+    ("toggle-config_V293_torque_mode_r5_REVERT_to_r4", TORQUE_MODE_R5_REVERT_TO_R4),
     ("toggle-config_V282_rate_servo_REVERT", RATE_SERVO_REVERT),
 )
 

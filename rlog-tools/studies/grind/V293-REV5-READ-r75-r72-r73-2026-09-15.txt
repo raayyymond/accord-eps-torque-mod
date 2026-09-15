@@ -1,0 +1,225 @@
+
+========================================================================================================================
+N0. ATTRIBUTION  tag r75_v293r4  route 75604b0a432fdc89_00000075--6c8687d5bd  15 segments
+    GitCommit                  08a5a706498479679e1af2cc8fd565fe9faf04ad
+    GitBranch                  Dom
+    SteerFriction              0.2120497077703476
+    SteerFrictionStock         0.2120497077703476
+    AccordTorqueKi             0.6
+    AccordTorqueKiHigh         2.5
+    SteerKP                    0.85
+    SteerLatAccel              14.0
+    AccordFrictionHyst         0.015
+    AccordRateLoopGain         0.0006
+    AccordErrorNotchQ          1.0
+    AccordRefFilter            0.12
+    AccordHoldMap              1
+    UseAutoSteerDelay          1
+    SteerDelay                 0.2
+    KeepLearnedLatAccelOffset  0
+    Kp = median p/err 0.850   LAF = median -(p+i+f)/out 14.00
+    liveDelay median 0.280 s (min 0.280 max 0.280)
+    engaged 803 s, hands-off 758 s;  by band: 4-8 146 s  8-15 335 s  15-22 132 s  >22 85 s
+
+N1. DAMPING -- is there a 2 Hz mode?  joint-IO transfer torque -> angle (instrument z = planner desire), hands-off, v 15-30
+    3 stretches, 168 s, v med 19.9, a 0.0115 torque/deg; |H| normalised at 0.2-0.4 Hz (meas DC ~ 53.4 deg/torque vs 1/a 86.7)
+      f Hz |  |H|meas coh zu coh zy |  b=.0006  b=ident | direct
+      0.29 |    0.899   0.90   0.83 |    0.990    1.050 |  0.869
+      0.39 |    1.101   0.70   0.59 |    1.010    0.950 |  0.971
+      0.59 |    1.393   0.64   0.38 |    1.069    0.771 |  1.369
+      0.78 |    1.894   0.27   0.22 |    1.162    0.633 |  1.552
+      0.98 |    5.068   0.09   0.32 |    1.296    0.531 |  0.627
+      1.27 |    7.416   0.06   0.49 |    1.581    0.421 |  0.781
+      1.56 |   99.559   0.00   0.33 |    1.800    0.346 |  0.641
+      1.86 |    7.359   0.10   0.51 |    1.529    0.291 |  0.811
+      2.25 |    1.724   0.36   0.24 |    0.936    0.239 |  1.384
+      2.64 |    2.776   0.13   0.29 |    0.594    0.200 |  1.016
+      3.03 |    2.099   0.24   0.33 |    0.410    0.171 |  1.013
+      3.52 |    2.758   0.17   0.42 |    0.282    0.143 |  0.658
+    peak |H| in 1.5-2.6 Hz / |H| at 0.3 Hz:  measured 99.56   model b=.0006 1.80   model b=ident 0.35   (coh zy in band med 0.37)
+    closed loop planner->actual |H|: 0.2 Hz 0.99  0.5 Hz 1.19  1.0 Hz 0.92  1.5 Hz 0.81  2.0 Hz 1.06  2.5 Hz 1.07
+
+N2. STICTION / BREAKAWAY  (hands-off; dwell = |rate| < 0.5 deg/s for >= 0.3 s while |planner error| > 0.05 m/s^2; jump = |rate| > 4 deg/s within 0.3 s)
+    band   |    min  ev/min |  dwell s  du wind du/F.015 | jump deg jump/ask |    P@brk    I@brk    F@brk
+    4-8    |    2.4     0.0 |
+    8-15   |    5.6     0.0 |
+    15-22  |    2.2     0.0 |
+    >22    |    1.4     0.0 |
+    hard turns (|planner| > 1.5 m/s^2 or |angle| > 60 deg): 0.5-5 Hz rate rms, |rate|>80 bursts/min, reversals/min, honda-cap frames
+    v<10      59 s | rate rms  55.2 deg/s | bursts  135.2 /min | reversals   24.2 /min | cap 1.3 %
+    10-20     16 s | rate rms  23.6 deg/s | bursts  153.5 /min | reversals   46.0 /min | cap 0.0 %
+
+N3. THE INTEGRATOR and the 0.2-1 Hz band  (hands-off curves |planner| > 0.3 m/s^2 at v > 15)
+    4-8    | |i| share 0.35  |p| share 0.14  |f| share 0.51 | rms i 0.430 p 0.278 f 1.979 (lat-accel units)
+    8-15   | |i| share 0.29  |p| share 0.12  |f| share 0.59 | rms i 0.265 p 0.151 f 1.057 (lat-accel units)
+    15-22  | |i| share 0.29  |p| share 0.09  |f| share 0.61 | rms i 0.390 p 0.107 f 1.096 (lat-accel units)
+    >22    | |i| share 0.34  |p| share 0.13  |f| share 0.54 | rms i 0.259 p 0.073 f 0.554 (lat-accel units)
+    curves > 15 m/s, 5 stretches 61 s: planner-error rms by band  <0.2 0.078 | 0.2-0.4 0.082 | 0.4-0.8 0.058 | 0.8-1.5 0.049 | >1.5 0.045  m/s^2
+    i-term rms by band                                 <0.2 0.110 | 0.2-0.4 0.087 | 0.4-0.8 0.037 | 0.8-1.5 0.024
+    error spectrum peak in 0.2-1 Hz at 0.29 Hz, 0.6 dB above the 0.1-0.2 Hz median
+
+N4. COMMAND-PROPORTIONAL FRICTION  residual r = u(t-Td) - [hold(th) + b_id th' + J th''] on hands-off stretches >= 4 s, 5 Hz LPF;
+    r ~ c0 + cF sign(th') + cU sign(th')|u| + cB th'|u| + cS hold(th)   (cU < 0 = the EPS adds torque along the motion in proportion to |u|)
+    4-8    n  10042 | c0 +0.0040  F +0.0082  cU +0.0522  cB -0.00411  cS +0.036 | R2 0.280 | F-only fit: F -0.0032  cS +0.063 R2 0.031 | rms u 0.120, med |u| 0.025
+    8-15   n  33190 | c0 +0.0029  F +0.0106  cU +0.0412  cB -0.01100  cS +0.213 | R2 0.540 | F-only fit: F -0.0010  cS +0.187 R2 0.104 | rms u 0.067, med |u| 0.016
+    15-22  n  12866 | c0 +0.0091  F +0.0183  cU +0.0282  cB -0.02509  cS +0.180 | R2 0.495 | F-only fit: F +0.0053  cS +0.149 R2 0.091 | rms u 0.066, med |u| 0.028
+    >22    n   8435 | c0 +0.0042  F +0.0108  cU +0.1261  cB -0.04703  cS -0.052 | R2 0.108 | F-only fit: F +0.0105  cS -0.047 R2 0.089 | rms u 0.030, med |u| 0.009
+
+N5. ROAD CROWN  low-frequency (0.5 Hz LPF) residual u - hold(th) vs roll, hands-off, still-ish (|rate| < 10 deg/s)
+    4-8      107 s | roll med +1.71 deg (IQR +0.97..+2.25) | res = +0.0250 -0.824*roll(rad) +0.084*hold | R2 0.14 | rms res 0.0449 -> after roll 0.0416
+    8-15     299 s | roll med +1.78 deg (IQR +1.32..+2.20) | res = +0.0136 -0.351*roll(rad) +0.310*hold | R2 0.22 | rms res 0.0351 -> after roll 0.0308
+    15-22    121 s | roll med +1.82 deg (IQR +0.87..+2.13) | res = +0.0127 -0.422*roll(rad) +0.320*hold | R2 0.30 | rms res 0.0361 -> after roll 0.0301
+    >22       83 s | roll med +1.73 deg (IQR +1.42..+2.23) | res = +0.0231 -0.802*roll(rad) +0.382*hold | R2 0.40 | rms res 0.0270 -> after roll 0.0209
+
+N6. TRACKING vs THE PLANNER (hands-off, stretches >= 10 s): gain (lstsq act on des), lag (ncc), rms error, |H| coh at 0.2 Hz; error energy by band
+    band   |     s |  gain  lag s  rms e |  |H|.2  coh.2 | error energy <0.3 / 0.3-1 / >1 Hz %
+    4-8    |    11 |  0.51   0.47  0.051 |   0.75   1.00 |   63 /   11 /    2
+    8-15   |   214 |  0.94   0.29  0.114 |   0.88   0.96 |   63 /   21 /    3
+    15-22  |   103 |  1.00   0.09  0.165 |   0.93   0.79 |   52 /   22 /   12
+    >22    |    80 |  0.96   0.45  0.139 |   0.96   0.95 |   68 /   17 /    2
+
+========================================================================================================================
+N0. ATTRIBUTION  tag r72_v293r3  route 75604b0a432fdc89_00000072--8001fc3048  16 segments
+    GitCommit                  e8e62f0e194bd5f9999f43e723595137e8cceb5b
+    GitBranch                  Dom
+    SteerFriction              0.0
+    SteerFrictionStock         0.2120497077703476
+    AccordTorqueKi             0.6
+    AccordTorqueKiHigh         ABSENT
+    SteerKP                    0.85
+    SteerLatAccel              14.0
+    AccordFrictionHyst         0.015
+    AccordRateLoopGain         0.0006
+    AccordErrorNotchQ          1.0
+    AccordRefFilter            0.12
+    AccordHoldMap              1
+    UseAutoSteerDelay          1
+    SteerDelay                 0.2
+    KeepLearnedLatAccelOffset  0
+    Kp = median p/err 0.850   LAF = median -(p+i+f)/out 14.00
+    liveDelay median 0.274 s (min 0.274 max 0.274)
+    engaged 627 s, hands-off 573 s;  by band: 4-8 91 s  8-15 116 s  15-22 108 s  >22 204 s
+
+N1. DAMPING -- is there a 2 Hz mode?  joint-IO transfer torque -> angle (instrument z = planner desire), hands-off, v 15-30
+    6 stretches, 239 s, v med 24.3, a 0.0140 torque/deg; |H| normalised at 0.2-0.4 Hz (meas DC ~ 34.0 deg/torque vs 1/a 71.4)
+      f Hz |  |H|meas coh zu coh zy |  b=.0006  b=ident | direct
+      0.29 |    0.993   0.98   0.91 |    0.992    1.045 |  0.980
+      0.39 |    1.007   0.94   0.83 |    1.008    0.955 |  0.964
+      0.59 |    0.999   0.86   0.68 |    1.059    0.788 |  0.914
+      0.78 |    1.054   0.53   0.31 |    1.136    0.654 |  0.804
+      0.98 |    0.407   0.27   0.03 |    1.249    0.552 |  0.194
+      1.27 |    1.216   0.26   0.21 |    1.508    0.441 |  0.537
+      1.56 |    2.391   0.25   0.40 |    1.854    0.364 |  0.513
+      1.86 |   11.786   0.02   0.33 |    1.941    0.308 |  0.185
+      2.25 |    1.264   0.46   0.20 |    1.318    0.254 |  0.695
+      2.64 |    1.238   0.28   0.12 |    0.814    0.214 |  0.470
+      3.03 |    1.558   0.17   0.17 |    0.546    0.183 |  0.505
+      3.52 |    0.719   0.27   0.06 |    0.366    0.154 |  0.538
+    peak |H| in 1.5-2.6 Hz / |H| at 0.3 Hz:  measured 11.79   model b=.0006 1.98   model b=ident 0.36   (coh zy in band med 0.32)
+    closed loop planner->actual |H|: 0.2 Hz 0.75  0.5 Hz 0.81  1.0 Hz 0.11  1.5 Hz 0.52  2.0 Hz 0.72  2.5 Hz 0.55
+
+N2. STICTION / BREAKAWAY  (hands-off; dwell = |rate| < 0.5 deg/s for >= 0.3 s while |planner error| > 0.05 m/s^2; jump = |rate| > 4 deg/s within 0.3 s)
+    band   |    min  ev/min |  dwell s  du wind du/F.015 | jump deg jump/ask |    P@brk    I@brk    F@brk
+    4-8    |    1.5     0.0 |
+    8-15   |    1.9     0.0 |
+    15-22  |    1.8     0.0 |
+    >22    |    3.4     0.0 |
+    hard turns (|planner| > 1.5 m/s^2 or |angle| > 60 deg): 0.5-5 Hz rate rms, |rate|>80 bursts/min, reversals/min, honda-cap frames
+    v<10      47 s | rate rms  46.6 deg/s | bursts  154.6 /min | reversals   27.1 /min | cap 1.6 %
+
+N3. THE INTEGRATOR and the 0.2-1 Hz band  (hands-off curves |planner| > 0.3 m/s^2 at v > 15)
+    4-8    | |i| share 0.26  |p| share 0.16  |f| share 0.58 | rms i 0.353 p 0.335 f 2.104 (lat-accel units)
+    8-15   | |i| share 0.36  |p| share 0.13  |f| share 0.51 | rms i 0.301 p 0.146 f 0.764 (lat-accel units)
+    15-22  | |i| share 0.41  |p| share 0.12  |f| share 0.47 | rms i 0.299 p 0.090 f 0.480 (lat-accel units)
+    >22    | |i| share 0.33  |p| share 0.15  |f| share 0.52 | rms i 0.176 p 0.089 f 0.414 (lat-accel units)
+
+N4. COMMAND-PROPORTIONAL FRICTION  residual r = u(t-Td) - [hold(th) + b_id th' + J th''] on hands-off stretches >= 4 s, 5 Hz LPF;
+    r ~ c0 + cF sign(th') + cU sign(th')|u| + cB th'|u| + cS hold(th)   (cU < 0 = the EPS adds torque along the motion in proportion to |u|)
+    4-8    n   6039 | c0 -0.0089  F +0.0192  cU -0.0276  cB -0.00410  cS +0.069 | R2 0.546 | F-only fit: F -0.0178  cS +0.041 R2 0.070 | rms u 0.162, med |u| 0.031
+    8-15   n   9901 | c0 +0.0001  F +0.0057  cU +0.2139  cB -0.01486  cS +0.268 | R2 0.527 | F-only fit: F +0.0080  cS +0.412 R2 0.290 | rms u 0.053, med |u| 0.010
+    15-22  n   9871 | c0 +0.0063  F +0.0167  cU +0.1655  cB -0.04661  cS +0.628 | R2 0.490 | F-only fit: F +0.0179  cS +0.612 R2 0.456 | rms u 0.031, med |u| 0.008
+    >22    n  20390 | c0 +0.0003  F +0.0124  cU +0.2621  cB -0.10130  cS +0.576 | R2 0.608 | F-only fit: F +0.0131  cS +0.569 R2 0.549 | rms u 0.022, med |u| 0.007
+
+N5. ROAD CROWN  low-frequency (0.5 Hz LPF) residual u - hold(th) vs roll, hands-off, still-ish (|rate| < 10 deg/s)
+    4-8       62 s | roll med +2.43 deg (IQR +2.16..+2.62) | res = -0.0046 -0.005*roll(rad) +0.112*hold | R2 0.04 | rms res 0.0411 -> after roll 0.0400
+    8-15     109 s | roll med +2.28 deg (IQR +1.95..+2.61) | res = +0.0250 -0.706*roll(rad) +0.244*hold | R2 0.17 | rms res 0.0320 -> after roll 0.0291
+    15-22    107 s | roll med +2.00 deg (IQR +0.44..+2.43) | res = +0.0151 -0.395*roll(rad) +0.543*hold | R2 0.30 | rms res 0.0303 -> after roll 0.0237
+    >22      203 s | roll med +2.09 deg (IQR +1.67..+2.44) | res = +0.0079 -0.327*roll(rad) +0.481*hold | R2 0.30 | rms res 0.0217 -> after roll 0.0179
+
+N6. TRACKING vs THE PLANNER (hands-off, stretches >= 10 s): gain (lstsq act on des), lag (ncc), rms error, |H| coh at 0.2 Hz; error energy by band
+    band   |     s |  gain  lag s  rms e |  |H|.2  coh.2 | error energy <0.3 / 0.3-1 / >1 Hz %
+    4-8    |    14 |  0.87   0.02  0.231 |   1.06   1.00 |   39 /   33 /   12
+    8-15   |    49 |  0.86   0.00  0.089 |   0.79   0.94 |   47 /   37 /    4
+    15-22  |    72 |  0.58   0.46  0.097 |   0.78   0.87 |   83 /    8 /    1
+    >22    |   188 |  0.68   0.53  0.137 |   0.74   0.96 |   80 /   11 /    2
+
+========================================================================================================================
+N0. ATTRIBUTION  tag r73_v293r3  route 75604b0a432fdc89_00000073--79fd149dd8  11 segments
+    GitCommit                  e8e62f0e194bd5f9999f43e723595137e8cceb5b
+    GitBranch                  Dom
+    SteerFriction              0.2120497077703476
+    SteerFrictionStock         0.2120497077703476
+    AccordTorqueKi             0.6
+    AccordTorqueKiHigh         ABSENT
+    SteerKP                    0.85
+    SteerLatAccel              14.0
+    AccordFrictionHyst         0.015
+    AccordRateLoopGain         0.0006
+    AccordErrorNotchQ          1.0
+    AccordRefFilter            0.12
+    AccordHoldMap              1
+    UseAutoSteerDelay          1
+    SteerDelay                 0.2
+    KeepLearnedLatAccelOffset  0
+    Kp = median p/err 0.850   LAF = median -(p+i+f)/out 14.00
+    liveDelay median 0.274 s (min 0.274 max 0.277)
+    engaged 599 s, hands-off 428 s;  by band: 4-8 11 s  8-15 81 s  15-22 231 s  >22 95 s
+
+N1. DAMPING -- is there a 2 Hz mode?  joint-IO transfer torque -> angle (instrument z = planner desire), hands-off, v 15-30
+    7 stretches, 230 s, v med 19.3, a 0.0112 torque/deg; |H| normalised at 0.2-0.4 Hz (meas DC ~ 29.7 deg/torque vs 1/a 88.9)
+      f Hz |  |H|meas coh zu coh zy |  b=.0006  b=ident | direct
+      0.29 |    1.119   0.77   0.84 |    0.990    1.050 |  0.947
+      0.39 |    0.881   0.71   0.75 |    1.010    0.950 |  0.696
+      0.59 |    0.767   0.64   0.66 |    1.071    0.769 |  0.583
+      0.78 |    0.592   0.36   0.33 |    1.165    0.631 |  0.348
+      0.98 |    0.327   0.13   0.06 |    1.302    0.528 |  0.239
+      1.27 |    1.025   0.09   0.22 |    1.587    0.419 |  0.512
+      1.56 |    1.097   0.18   0.37 |    1.777    0.344 |  0.593
+      1.86 |    7.947   0.00   0.20 |    1.471    0.289 |  0.584
+      2.25 |    0.615   0.09   0.11 |    0.895    0.237 |  0.169
+      2.64 |    0.264   0.27   0.05 |    0.571    0.198 |  0.340
+      3.03 |    0.421   0.04   0.04 |    0.396    0.169 |  0.245
+      3.52 |    0.208   0.08   0.03 |    0.273    0.141 |  0.326
+    peak |H| in 1.5-2.6 Hz / |H| at 0.3 Hz:  measured 7.95   model b=.0006 1.78   model b=ident 0.34   (coh zy in band med 0.12)
+    closed loop planner->actual |H|: 0.2 Hz 0.96  0.5 Hz 1.01  1.0 Hz 0.36  1.5 Hz 0.92  2.0 Hz 0.29  2.5 Hz 0.20
+
+N2. STICTION / BREAKAWAY  (hands-off; dwell = |rate| < 0.5 deg/s for >= 0.3 s while |planner error| > 0.05 m/s^2; jump = |rate| > 4 deg/s within 0.3 s)
+    band   |    min  ev/min |  dwell s  du wind du/F.015 | jump deg jump/ask |    P@brk    I@brk    F@brk
+    8-15   |    1.3     0.0 |
+    15-22  |    3.9     0.0 |
+    >22    |    1.6     0.0 |
+    hard turns (|planner| > 1.5 m/s^2 or |angle| > 60 deg): 0.5-5 Hz rate rms, |rate|>80 bursts/min, reversals/min, honda-cap frames
+    v<10      50 s | rate rms  84.2 deg/s | bursts  222.3 /min | reversals  104.0 /min | cap 24.3 %
+    10-20     20 s | rate rms  27.5 deg/s | bursts  203.9 /min | reversals  174.4 /min | cap 10.8 %
+
+N3. THE INTEGRATOR and the 0.2-1 Hz band  (hands-off curves |planner| > 0.3 m/s^2 at v > 15)
+    8-15   | |i| share 0.19  |p| share 0.04  |f| share 0.77 | rms i 0.099 p 0.031 f 0.998 (lat-accel units)
+    15-22  | |i| share 0.31  |p| share 0.04  |f| share 0.65 | rms i 0.118 p 0.023 f 0.478 (lat-accel units)
+    >22    | |i| share 0.35  |p| share 0.04  |f| share 0.61 | rms i 0.163 p 0.022 f 0.498 (lat-accel units)
+
+N4. COMMAND-PROPORTIONAL FRICTION  residual r = u(t-Td) - [hold(th) + b_id th' + J th''] on hands-off stretches >= 4 s, 5 Hz LPF;
+    r ~ c0 + cF sign(th') + cU sign(th')|u| + cB th'|u| + cS hold(th)   (cU < 0 = the EPS adds torque along the motion in proportion to |u|)
+    8-15   n   6103 | c0 -0.0088  F +0.0107  cU +0.1318  cB -0.01808  cS +0.482 | R2 0.412 | F-only fit: F +0.0130  cS +0.493 R2 0.390 | rms u 0.034, med |u| 0.012
+    15-22  n  22534 | c0 -0.0034  F +0.0057  cU +0.4553  cB -0.04943  cS +0.261 | R2 0.357 | F-only fit: F +0.0158  cS +0.330 R2 0.276 | rms u 0.026, med |u| 0.008
+    >22    n   9368 | c0 -0.0009  F +0.0110  cU +0.2882  cB -0.05415  cS +0.262 | R2 0.345 | F-only fit: F +0.0163  cS +0.301 R2 0.322 | rms u 0.024, med |u| 0.008
+
+N5. ROAD CROWN  low-frequency (0.5 Hz LPF) residual u - hold(th) vs roll, hands-off, still-ish (|rate| < 10 deg/s)
+    8-15      75 s | roll med +2.24 deg (IQR +1.99..+2.83) | res = +0.0059 -0.444*roll(rad) +0.478*hold | R2 0.41 | rms res 0.0380 -> after roll 0.0272
+    15-22    228 s | roll med +2.12 deg (IQR +1.34..+2.48) | res = +0.0114 -0.566*roll(rad) +0.325*hold | R2 0.21 | rms res 0.0268 -> after roll 0.0228
+    >22       94 s | roll med +1.94 deg (IQR +0.68..+2.54) | res = +0.0149 -0.618*roll(rad) +0.368*hold | R2 0.18 | rms res 0.0249 -> after roll 0.0219
+
+N6. TRACKING vs THE PLANNER (hands-off, stretches >= 10 s): gain (lstsq act on des), lag (ncc), rms error, |H| coh at 0.2 Hz; error energy by band
+    band   |     s |  gain  lag s  rms e |  |H|.2  coh.2 | error energy <0.3 / 0.3-1 / >1 Hz %
+    8-15   |    14 |  0.68   0.45  0.030 |   0.86   1.00 |   70 /   17 /    5
+    15-22  |   208 |  0.94   0.17  0.041 |   0.98   0.98 |   40 /   35 /   15
+    >22    |    88 |  0.98   0.24  0.051 |   0.98   0.99 |   33 /   39 /   16

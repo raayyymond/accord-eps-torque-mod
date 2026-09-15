@@ -187,9 +187,25 @@ class Cfg:
                  gain_scale=1.0, plant_ff_on=True, g_v=None, k_v=None, lat_delay=0.30,
                  il_ka=None, il_kd=None, il_tau=0.03, il_rate_src="wire",
                  err_tau=0.0, fric_ff=0.0, fric_ff_w0=8.0, fric_hyst=0.0, fric_band=3.0,
-                 hold_fn=None, ref_tau=0.0, notch_q=0.0, notch_fn=None, kv_taper=None):
+                 hold_fn=None, ref_tau=0.0, notch_q=0.0, notch_fn=None, kv_taper=None,
+                 dob_fc=0.0, dob_td=0.06, dob_b=None, dob_J=1.0e-4, dob_use_J=True, dob_max=0.3, dob_hold_fn=None, il_pred_td=0.0, il_pred_F=0.0):
         """notch_q > 0: a 2nd-order notch at notch_fn(v) Hz (Q = notch_q) on the lsf-inflated error before P and I.
-        kv_taper(v): multiplier on il_kd (rate-loop gain) by speed."""
+        kv_taper(v): multiplier on il_kd (rate-loop gain) by speed.
+        dob_fc > 0: a model-based DISTURBANCE OBSERVER (rev-5 candidate, 2026-09-15).  Every frame the unmodelled
+        torque is estimated from the measured angle/rate and the controller's own past output,
+            r = hold_m(phi_m) + dob_b(v) * rate_m + dob_J * acc_m - u(t - dob_td),
+        low-passed by two cascaded first-order filters at dob_fc Hz (Q(s)), clipped to +-dob_max, and ADDED to the
+        feedforward (torque frame of the plant), so the FF level error, the road-crown offset and the friction
+        the hysteresis term missed are cancelled at the Q bandwidth instead of the integrator's.  dob_b(v) = torque
+        per deg/s of the MODEL (None = the fork's 1/G(v)); dob_hold_fn = the model's hold map (None = hold_fn).
+        Frozen (held) while the output is rate-limited or the driver presses; reset on engage."""
+        self.dob_fc, self.dob_td, self.dob_b, self.dob_J, self.dob_use_J, self.dob_max = dob_fc, dob_td, dob_b, dob_J, dob_use_J, dob_max
+        self.dob_hold_fn = dob_hold_fn
+        # il_pred_td > 0: the rate loop closes on a MODEL-PREDICTED wheel rate (rev-5 candidate, 2026-09-15): the measured
+        # (phi, rate) is propagated il_pred_td seconds forward through the observer's model (hold map, dob_b, dob_J,
+        # Coulomb il_pred_F) driven by the controller's own outputs still in flight, so the damper acts at the phase
+        # the wheel will have when the torque lands instead of 60-90 ms behind it.
+        self.il_pred_td, self.il_pred_F = il_pred_td, il_pred_F
         self.notch_q, self.notch_fn, self.kv_taper = notch_q, notch_fn, kv_taper
         """ref_tau: two cascaded first-order LPFs (s each) on the setpoint in the Accord branch (reference shaping)."""
         self.ref_tau = ref_tau
@@ -274,6 +290,15 @@ class Sim:
         self.il_t = 0.0
         self.rel_t = 0.0
         self.pf_t = 0.0
+        # disturbance observer state
+        ndob = max(int(round(self.c.dob_td / self.dt)), 1)
+        self.dob_uhist = [0.0] * ndob
+        self.dob_f1 = FOF(0.0, 1.0 / (2 * np.pi * max(self.c.dob_fc, 1e-3)), self.dt)
+        self.dob_f2 = FOF(0.0, 1.0 / (2 * np.pi * max(self.c.dob_fc, 1e-3)), self.dt)
+        self.dob_prev_rate = 0.0
+        self.dob_acc_f = FOF(0.0, 0.05, self.dt)
+        self.dob_t = 0.0
+        self.dob_r = 0.0
 
     def _angle_des(self, setpoint):
         curv_des = setpoint / max(self.v ** 2, 1.0)
@@ -302,6 +327,7 @@ class Sim:
             self.ref_f1.x = fut; self.ref_f2.x = fut
             u = 0.0
             self.last_tq = 0.0
+            self.dob_f1.x = 0.0; self.dob_f2.x = 0.0; self.dob_t = 0.0; self.dob_prev_rate = rate_m; self.dob_acc_f.x = 0.0
         else:
             nd = int(np.clip(c.lat_delay / dt, 1, len(self.buf)))
             exp_la = self.buf[-nd] * self.v ** 2
@@ -358,10 +384,47 @@ class Sim:
                 if c.il_ka is not None or c.il_kd is not None:
                     # inner loop in the steering-angle frame (+left): ang_des vs the measured angle (kit frame = -phi)
                     e_a = ang_des - (-phi_m)
-                    e_r = r - (-rate_m)
+                    rate_use = rate_m
+                    if c.il_pred_td > 0.0:
+                        hold_p = c.dob_hold_fn if c.dob_hold_fn is not None else c.hold_fn
+                        b_p = c.dob_b(self.v) if c.dob_b is not None else 1.0 / float(np.interp(self.v, G_BP, G_V))
+                        n_p = max(int(round(c.il_pred_td / dt)), 1)
+                        hist = list(self.dob_uhist[-n_p:]) if n_p <= len(self.dob_uhist) else ([self.dob_uhist[0]] * (n_p - len(self.dob_uhist)) + list(self.dob_uhist))
+                        ph, rt = phi_m, rate_m
+                        for uk in hist:
+                            sp = -hold_p(-ph, self.v) if hold_p is not None else self.a * ph
+                            Dp = uk - sp - b_p * rt
+                            if c.il_pred_F > 0.0:
+                                if abs(rt) < 1e-6 and abs(Dp) <= c.il_pred_F:
+                                    acc = 0.0
+                                else:
+                                    acc = (Dp - math.copysign(c.il_pred_F, rt if abs(rt) >= 1e-6 else Dp)) / c.dob_J
+                            else:
+                                acc = Dp / c.dob_J
+                            rt += acc * dt
+                            ph += rt * dt
+                        rate_use = rt
+                    self.rate_pred = rate_use
+                    e_r = r - (-rate_use)
                     kdv = (c.il_kd(self.v) if c.il_kd else 0.0) * (c.kv_taper(self.v) if c.kv_taper else 1.0)
                     il_raw = (c.il_ka(self.v) if c.il_ka else 0.0) * e_a + kdv * e_r
                     il = -self.il_f.update(il_raw) if c.il_tau > 0 else -il_raw
+                if c.dob_fc > 0.0:
+                    # model-based disturbance observer on the MEASURED state and the controller's own delayed output
+                    hold_m = c.dob_hold_fn if c.dob_hold_fn is not None else c.hold_fn
+                    spring_m = hold_m(-phi_m, self.v) if hold_m is not None else self.a * phi_m
+                    spring_m = -spring_m if hold_m is not None else spring_m     # hold_fn is in the kit angle frame (= -phi)
+                    b_m = c.dob_b(self.v) if c.dob_b is not None else 1.0 / float(np.interp(self.v, G_BP, G_V))
+                    acc_m = self.dob_acc_f.update((rate_m - self.dob_prev_rate) / dt)
+                    self.dob_prev_rate = rate_m
+                    r_res = spring_m + b_m * rate_m + (c.dob_J * acc_m if c.dob_use_J else 0.0) - self.dob_uhist[0]
+                    self.dob_r = r_res
+                    if not (self.limited or pressed):
+                        w_hat = self.dob_f2.update(self.dob_f1.update(r_res))
+                    else:
+                        w_hat = self.dob_f2.x
+                    self.dob_t = float(np.clip(-w_hat, -c.dob_max, c.dob_max))
+                    il += self.dob_t
                 self.il_t = il; self.pf_t = pf; self.rel_t = fr_t
                 ff_t = pf + fr_t + il
             else:
@@ -379,6 +442,7 @@ class Sim:
             out = float(np.clip(p + self.i + f, -c.LAF, c.LAF))
             u = out / c.LAF
             self.p, self.f, self.e = p, f, err
+        self.dob_uhist.append(u); self.dob_uhist.pop(0)     # the controller's own output, for the observer
         # honda rate limiter, applied to actuators.torque = -u
         at = -u
         at_l = float(np.clip(at, self.last_tq - STEER_DELTA_PER_FRAME, self.last_tq + STEER_DELTA_PER_FRAME))
@@ -411,17 +475,17 @@ class Sim:
 
 
 def run(cfg, v, curv_fn, T=40.0, band=None, phi0=0.0, active_fn=None, dist_fn=None, **kw):
-    """columns: t, u, phi, meas, i, phidot, plant_ff, relay, inner, p"""
+    """columns: t, u, phi, meas, i, phidot, plant_ff, relay, inner, p, dob"""
     s = Sim(cfg, v, band=band, **kw)
     s.reset(phi0)
     n = int(T / DT)
-    out = np.zeros((n, 10))
+    out = np.zeros((n, 11))
     for j in range(n):
         t = j * DT
         act = True if active_fn is None else active_fn(t)
         s.dist = dist_fn(t) if dist_fn is not None else 0.0
         u, phi, meas = s.step(curv_fn(t), active=act)
-        out[j] = (t, u, phi, meas, s.i if act else 0.0, s.phidot, s.pf_t, s.rel_t, s.il_t, getattr(s, "p", 0.0))
+        out[j] = (t, u, phi, meas, s.i if act else 0.0, s.phidot, s.pf_t, s.rel_t, s.il_t, getattr(s, "p", 0.0), s.dob_t)
     return out
 
 

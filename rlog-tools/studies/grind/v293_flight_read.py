@@ -124,6 +124,10 @@ FORK_STRUCT = """struct EpsTelemetry @0xc2243c65e0340384 {
   frictionJerkDeadzone @5 :Float32;
   lowSpeedFactor @6 :Float32;
   unwindDetected @7 :Bool;
+  # rev 5 (fork 2026-09-15): the disturbance observer's term as ADDED to the feedforward (torque frame) and its hold flag.
+  # Appended fields: an rlog from an older fork decodes them as 0 / false.
+  accordObserverTorque @8 :Float32;
+  accordObserverFrozen @9 :Bool;
 }"""
 # 🛑 A SECOND COLLISION, same shape.  The kit declares `modelDataV2SP @116 :Custom.ModelDataV2SP`
 # (struct id 0xa1680744031fdb2d, one enum field); the FORK declares the same slot and the same struct
@@ -169,13 +173,15 @@ PARAMS_DEFAULTS = {
     "AccordErrorNotchQ": "1.0", "AccordRefFilter": "0.12",
     # rev-4 key (fork f4e314da6, 2026-09-14): the integral gain from 18 m/s; declared default = the rev-4 flight value
     "AccordTorqueKiHigh": "2.5",
+    # rev-5 key (fork 2026-09-15): the disturbance observer's corner; declared default = the rev-5 flight value
+    "AccordDobHz": "0.6",
 }
 # keys we read but never gate on -- printed as context beneath the config table
 CONTEXT_KEYS = ("SteerRatio", "SteerDelay", "UseAutoSteerDelay", "AccordVariableSteerRatio",
                 "AccordFFRateGain", "AccordEpsGainScale", "AccordEpsSpringScale",
                 "KeepLearnedLatAccelOffset", "ForceTorqueController", "ForceAutoTune",
                 "AccordHoldMap", "AccordFrictionHyst", "AccordRateLoopGain", "AccordErrorNotchQ", "AccordRefFilter",
-                "AccordTorqueKiHigh", "GitCommit", "GitBranch")
+                "AccordTorqueKiHigh", "AccordDobHz", "GitCommit", "GitBranch")
 
 # 🛑 WHICH FORK COMMIT A CONFIG NEEDS.  The rev-2 config sets AccordEpsSpringScale 1.0 and
 # AccordEpsGainScale 1.0 NOT because no correction is wanted, but because the correction moved INTO
@@ -205,6 +211,13 @@ CONFIG_FORK_COMMIT = {
         why="the rev-4 config's AccordTorqueKiHigh (Ki 2.5 from 18 m/s) exists only in fork code from f4e314da6, "
             "which also gates the SteerFriction relay off under AccordFrictionHyst and stops the stock-param sync "
             "from back-filling an explicit SteerFriction 0.0 (route 73 ran 0.212 that way)"),
+    # rev 5 (2026-09-15, after route 75): AccordDobHz (the disturbance observer) is CONSUMED only from the rev-5 fork
+    # commit; on 08a5a7064 the key is unknown and the controller runs rev 4 with Kp 1.0 / Ki 0.3 flat / Kv 1e-3 and
+    # NO observer -- a looser drive than either revision, and every other gate would pass it.
+    "toggle-config_V293_torque_mode_r5.decoded.json": dict(
+        want=("e44b6cd31",), forbid="08a5a7064",
+        why="the rev-5 config's AccordDobHz (disturbance observer, 0.6 Hz) exists only in fork code from the rev-5 "
+            "commit; on 08a5a7064 the key is unknown and the drive is rev 4's loop with the rev-5 gains and no observer"),
 }
 
 
@@ -646,7 +659,7 @@ def build_cs_cache(tag, prefix=None, force=False):
     pr("  building the CONTROL-PATH cache for %s (%d segments, one pass; cached in _scratch/) ..."
        % (tag, len(segs)))
     C = {k: [] for k in ("t_cs",) + CS_FIELDS + ("des_curv", "curv")}
-    C.update({k: [] for k in ("t_sp", "sp_ff", "sp_active", "sp_lsf")})
+    C.update({k: [] for k in ("t_sp", "sp_ff", "sp_active", "sp_lsf", "sp_dob", "sp_dobfrozen")})
     C.update({k: [] for k in ("t_ltp", "ltp_off", "ltp_fac", "ltp_fric", "ltp_valid")})
     C.update({k: [] for k in ("t_lpar", "roll")})
     for p in segs:
@@ -694,6 +707,8 @@ def build_cs_cache(tag, prefix=None, force=False):
                     C["sp_ff"].append(float(s.feedforward))
                     C["sp_active"].append(1.0 if s.active else 0.0)
                     C["sp_lsf"].append(float(s.lowSpeedFactor))
+                    C["sp_dob"].append(float(getattr(s, "accordObserverTorque", 0.0)))
+                    C["sp_dobfrozen"].append(1.0 if getattr(s, "accordObserverFrozen", False) else 0.0)
                 except Exception:
                     pass
             elif w == "liveTorqueParameters":
@@ -1379,8 +1394,9 @@ def sym_grid(tag, prefix=None):
         for k in CS_FIELDS + ("des_curv", "curv"):
             g[k] = zoh(C["t_cs"], C[k])
         for nm, tk, vk in (("sp_ff", "t_sp", "sp_ff"), ("sp_lsf", "t_sp", "sp_lsf"),
+                           ("sp_dob", "t_sp", "sp_dob"), ("sp_dobfrozen", "t_sp", "sp_dobfrozen"),
                            ("roll", "t_lpar", "roll")):
-            g[nm] = zoh(C[tk], C[vk]) if len(C[tk]) else np.full(len(ta), np.nan)
+            g[nm] = zoh(C[tk], C[vk]) if (vk in C and len(C[tk])) else np.full(len(ta), np.nan)
         g["ltp_off"] = np.asarray(C["ltp_off"], float)
         g["ltp_valid"] = np.asarray(C["ltp_valid"], float)
         fin = np.isfinite(g["la_des"]) & np.isfinite(g["la_act"])
@@ -1856,6 +1872,18 @@ def print_scorecard(S, refs):
     # --- the FORK COMMIT: the config's scales only mean what they say on the right code -----------
     fc = CONFIG_FORK_COMMIT.get(os.path.basename(CONFIG_PATH))
     gc = str(P.get("GitCommit") or "")
+    # rev 5: the disturbance observer on the wire (starpilotLateralState.accordObserverTorque / ...Frozen).
+    dob = g.get("sp_dob"); frz = g.get("sp_dobfrozen")
+    if dob is not None and np.isfinite(dob).any() and np.nanmax(np.abs(dob)) > 0:
+        act = g["eng"] & np.isfinite(dob) & np.isfinite(g["f"]) & (np.abs(g["out"]) > 1e-3)
+        f_t = np.abs(g["f"]) / max(S["laf"], 1e-6) if "laf" in S else np.abs(g["f"]) / 14.0
+        pr("   OBSERVER (rev 5)           = on the wire: |dob| median %.4f p90 %.4f torque, share of |f| %.2f, frozen %.1f %% of active frames, sign(dob)=sign(f) %.2f"
+           % (np.nanmedian(np.abs(dob[act])), np.nanpercentile(np.abs(dob[act]), 90),
+              float(np.nanmedian(np.abs(dob[act]) / np.maximum(f_t[act], 1e-4))),
+              100.0 * float(np.nanmean(frz[act])) if frz is not None else float("nan"),
+              float(np.mean(np.sign(dob[act]) == np.sign(-g["out"][act])))))
+    elif dob is not None:
+        pr("   OBSERVER (rev 5)           = not on the wire (all zero / absent): AccordDobHz 0 or a pre-rev-5 fork")
     pr("   fork GitCommit             = %s   branch %s"
        % (gc[:12] or "ABSENT", P.get("GitBranch") or "?"))
     if fc:
