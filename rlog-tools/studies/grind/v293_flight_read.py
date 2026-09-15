@@ -167,13 +167,15 @@ PARAMS_DEFAULTS = {
     # rev-3 keys (fork 2026-09-14): the V293 torque-mode terms, declared defaults = the rev-3 flight values
     "AccordHoldMap": "1", "AccordFrictionHyst": "0.015", "AccordRateLoopGain": "0.0006",
     "AccordErrorNotchQ": "1.0", "AccordRefFilter": "0.12",
+    # rev-4 key (fork f4e314da6, 2026-09-14): the integral gain from 18 m/s; declared default = the rev-4 flight value
+    "AccordTorqueKiHigh": "2.5",
 }
 # keys we read but never gate on -- printed as context beneath the config table
 CONTEXT_KEYS = ("SteerRatio", "SteerDelay", "UseAutoSteerDelay", "AccordVariableSteerRatio",
                 "AccordFFRateGain", "AccordEpsGainScale", "AccordEpsSpringScale",
                 "KeepLearnedLatAccelOffset", "ForceTorqueController", "ForceAutoTune",
                 "AccordHoldMap", "AccordFrictionHyst", "AccordRateLoopGain", "AccordErrorNotchQ", "AccordRefFilter",
-                "GitCommit", "GitBranch")
+                "AccordTorqueKiHigh", "GitCommit", "GitBranch")
 
 # 🛑 WHICH FORK COMMIT A CONFIG NEEDS.  The rev-2 config sets AccordEpsSpringScale 1.0 and
 # AccordEpsGainScale 1.0 NOT because no correction is wanted, but because the correction moved INTO
@@ -195,6 +197,14 @@ CONFIG_FORK_COMMIT = {
         why="the rev-3 config's AccordHoldMap / AccordFrictionHyst / AccordRateLoopGain / AccordErrorNotchQ / "
             "AccordRefFilter keys only exist in fork code from e8e62f0e1; on 66cf4454a they are unknown to the "
             "params library and the controller runs rev 2 with the relay off"),
+    # rev 4 (2026-09-14, routes 72+73): AccordTorqueKiHigh is CONSUMED only from f4e314da6 (08a5a7064 = the same code
+    # plus its test fix); on e8e62f0e1 the key is unknown (flat Ki 0.6), the SteerFriction relay is still live under
+    # the hysteresis FF, and the stock-param sync can back-fill SteerFriction 0.0 with the stock 0.212 (route 73).
+    "toggle-config_V293_torque_mode_r4.decoded.json": dict(
+        want=("08a5a7064", "f4e314da6"), forbid="e8e62f0e1",
+        why="the rev-4 config's AccordTorqueKiHigh (Ki 2.5 from 18 m/s) exists only in fork code from f4e314da6, "
+            "which also gates the SteerFriction relay off under AccordFrictionHyst and stops the stock-param sync "
+            "from back-filling an explicit SteerFriction 0.0 (route 73 ran 0.212 that way)"),
 }
 
 
@@ -1851,7 +1861,7 @@ def print_scorecard(S, refs):
     if fc:
         pr("     🛑 %s." % fc["why"])
         pr("     The rlog CANNOT read the tables, only the commit, so this is a COMMIT check: it")
-        pr("     wants %s and must NOT be %s." % (fc["want"], fc["forbid"]))
+        pr("     wants %s and must NOT be %s." % (" or ".join(fc["want"]) if isinstance(fc["want"], (tuple, list)) else fc["want"], fc["forbid"]))
         if not gc:
             verdicts.append(("FAIL", "fork commit", "initData carries no GitCommit -- the fork build "
                                                     "cannot be attributed, and %s" % fc["why"]))
@@ -1861,14 +1871,14 @@ def print_scorecard(S, refs):
                              "then the one the identification measured as 1.4-2.6x too small, and "
                              "every other gate would pass a silently wrong drive."
                              % (gc[:9], fc["why"])))
-        elif gc.startswith(fc["want"]):
+        elif gc.startswith(tuple(fc["want"]) if isinstance(fc["want"], (tuple, list)) else fc["want"]):
             verdicts.append(("PASS", "fork commit", "GitCommit %s -- the commit carrying the replaced "
                                                     "Accord plant tables" % gc[:9]))
         else:
             verdicts.append(("REPORT", "fork commit",
                              "GitCommit %s is neither the expected %s nor the forbidden %s -- the "
                              "tables cannot be verified from the rlog; check the fork tree before "
-                             "reading the plant-FF rows" % (gc[:9], fc["want"], fc["forbid"])))
+                             "reading the plant-FF rows" % (gc[:9], " or ".join(fc["want"]) if isinstance(fc["want"], (tuple, list)) else fc["want"], fc["forbid"])))
     verdicts += branch_block(S, refs)
     if build == "V293":
         # THREE ATTRIBUTION GATES on the fork side, none of them a code flag: the initData config

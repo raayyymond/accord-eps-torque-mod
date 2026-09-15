@@ -174,15 +174,40 @@ TORQUE_MODE_R3_REVERT_TO_R2 = dict(TORQUE_MODE_R2, **{
     "AccordErrorNotchQ": 0.0, "AccordRefFilter": 0.0,
 })
 
+# REV 4 -- from the third V293 session (routes 72 + 73, rev 3 flown, 2026-09-14).  REQUIRES the fork at or after the
+# 2026-09-14 rev-4 commit (AccordTorqueKiHigh + the stock-sync fix + the relay gate).  What the two drives measured:
+#   * route 72 (rev 3 exactly as written): the hold feedforward supplied 68-76 % of the torque at 8-30 m/s and the
+#     P/I loop (Kp 0.85, Ki 0.6 through LAF 14) took ~2 s to make up the rest -> tracking 0.74-0.80 of the planner
+#     at 0.2 Hz, 0.5 s lag = the operator's "loose".  The map's error is route-dependent (crown / wind / speed law:
+#     x1.1-1.25 on routes 70/71, x1.3-1.7 on 72/73 at 4-12 deg), so the INTEGRAL gain, not the map, must absorb it.
+#   * route 73 ran with SteerFriction = 0.212 (the stock value, back-filled by the fork's stock-param sync because
+#     an explicit 0.0 counted as "unset"): a ~10x-Kp relay that tracked 2.5x better (rms 0.04-0.05 m/s^2) but
+#     chattered at 4-4.7 Hz and put 21 % of hard-turn frames at the Honda rate cap = "jerky on hard turns".
+# Design (kit v293r4_design.py, the identified plant): Ki 2.5 from 18 m/s cuts the 2 s residual of a 0.03-torque
+# bias from 0.11-0.12 to 0.005-0.013 m/s^2 with Ms unchanged (1.75); Ki must stay 0.6 below 8 m/s (the lsf already
+# multiplies it x7 there; 2.5 rings the 1 Hz mode).  Kp stays 0.85: 1.1 buys 6 % and costs PM 103 -> 62 deg at 26 m/s;
+# 1.6 gives Ms 4.  UseAutoSteerDelay follows the operator's own 2026-09-14 choice (liveDelay read 0.274 s).
+TORQUE_MODE_R4 = dict(TORQUE_MODE_R3, **{
+    "AccordTorqueKiHigh": 2.5,        # integral gain from 18 m/s (AccordTorqueKi 0.6 below 8 m/s, linear between)
+    "SteerFriction": 0.0,             # unchanged; the fork now keeps an explicit 0.0 AND ignores the relay under the hysteresis FF
+    "UseAutoSteerDelay": True,        # the operator turned live delay learning on (routes 72/73: 0.274 s)
+})
+
+# REV 4 -> REV 3 revert: the new key off (flat Ki 0.6), everything else the rev-3 values.
+TORQUE_MODE_R4_REVERT_TO_R3 = dict(TORQUE_MODE_R3, **{"AccordTorqueKiHigh": 0.0})
+
 # keys added to the fork AFTER the 2026-09-10 backup (so the typo guard cannot see them): the rev-3 set,
 # declared in common/params_keys.h by the 2026-09-14 fork commit.  Galaxy's restore writes them like any other key.
-NEW_KEYS_SINCE_BACKUP = {"AccordHoldMap", "AccordFrictionHyst", "AccordRateLoopGain", "AccordErrorNotchQ", "AccordRefFilter"}
+NEW_KEYS_SINCE_BACKUP = {"AccordHoldMap", "AccordFrictionHyst", "AccordRateLoopGain", "AccordErrorNotchQ", "AccordRefFilter",
+                         "AccordTorqueKiHigh"}
 
 FILES = (
     ("toggle-config_V293_torque_mode", TORQUE_MODE),
     ("toggle-config_V293_torque_mode_r2", TORQUE_MODE_R2),
     ("toggle-config_V293_torque_mode_r3", TORQUE_MODE_R3),
     ("toggle-config_V293_torque_mode_r3_REVERT_to_r2", TORQUE_MODE_R3_REVERT_TO_R2),
+    ("toggle-config_V293_torque_mode_r4", TORQUE_MODE_R4),
+    ("toggle-config_V293_torque_mode_r4_REVERT_to_r3", TORQUE_MODE_R4_REVERT_TO_R3),
     ("toggle-config_V282_rate_servo_REVERT", RATE_SERVO_REVERT),
 )
 

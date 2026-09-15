@@ -176,7 +176,7 @@ arc only — the V57→V68 grinding thread — because that is what a next sessi
 🛑 **THIS LIST IS STALE — its newest entry is 2026-08-12 and the build on the car is V289 rev 1
 (2026-09-09).** The V101→V289 arc was never backfilled here. **Use `docs/STATE.md`'s decision box and the
 dated files in `docs/handoffs/2026-09/` as the authoritative chain until this section is extended.**
-Newest handoff: [handoffs/2026-09/HANDOFF-2026-09-14-v293-rev2-flew-2hz-limit-cycle-rev3-hold-map-rate-loop.md](handoffs/2026-09/HANDOFF-2026-09-14-v293-rev2-flew-2hz-limit-cycle-rev3-hold-map-rate-loop.md)
+Newest handoff: [handoffs/2026-09/HANDOFF-2026-09-14-v293-rev3-flew-r72-r73-loose-is-a-slow-loop-rev4-ki-schedule.md](handoffs/2026-09/HANDOFF-2026-09-14-v293-rev3-flew-r72-r73-loose-is-a-slow-loop-rev4-ki-schedule.md) — **V293 rev 3 flew (routes 72+73): "loose" is the fork loop's low-frequency gain, route 73 secretly ran a 0.212 friction relay; rev 4 shipped (Ki schedule, relay gate, stock-sync fix).** Previous: [HANDOFF-2026-09-14-v293-rev2-flew-2hz-limit-cycle-rev3-hold-map-rate-loop.md](handoffs/2026-09/HANDOFF-2026-09-14-v293-rev2-flew-2hz-limit-cycle-rev3-hold-map-rate-loop.md)
 — **V289's notch worked (18–22 Hz band empty, 0/1414 windows) and RELOCATED the ring to a pre-existing
 15–17 Hz pole; H1 and H2 both falsified; V290 designed, scored and NOT CUT — the operator chose "Neither —
 revert to V282 and stop here."** Cumulative non-stock delta of what goes on the car:

@@ -1,0 +1,78 @@
+
+==== r72_v293r3  commit e8e62f0e1  SteerFriction 0.0  LAF 14.0
+  band |  <0.3 Hz: f/u slope  (p+i)/u | 0.3-1 Hz: f/u   | rms u  rms f  rms p  rms i (LPF 0.5) | map(ang) slope per stretch: median [p25 p75], n | f_t vs map(ang_des) slope
+  1-8   |     0.92     0.10            |     0.87       | 0.153 0.145 0.032 0.026 |  1.12 [0.90 2.40] n 11 |  1.02
+  8-15  |     0.76     0.24            |     0.82       | 0.062 0.049 0.010 0.021 |  1.88 [1.29 2.27] n  6 |  0.84
+  15-22 |     0.68     0.32            |     0.82       | 0.046 0.033 0.006 0.016 |  2.16 [1.66 2.55] n  7 |  1.17
+  >22   |     0.73     0.27            |     0.81       | 0.036 0.028 0.006 0.012 |  1.63 [1.49 1.76] n  6 |  1.12
+
+==== r73_v293r3  commit e8e62f0e1  SteerFriction 0.2120497077703476  LAF 14.0
+  band |  <0.3 Hz: f/u slope  (p+i)/u | 0.3-1 Hz: f/u   | rms u  rms f  rms p  rms i (LPF 0.5) | map(ang) slope per stretch: median [p25 p75], n | f_t vs map(ang_des) slope
+  1-8   |     0.95     0.05            |     0.93       | 0.030 0.028 0.001 0.001 |  3.39 [ nan  nan] n  1 |  3.20
+  8-15  |     0.92     0.08            |     0.95       | 0.032 0.031 0.001 0.006 |  2.25 [1.81 2.56] n  3 |  2.03
+  15-22 |     0.93     0.07            |     0.95       | 0.031 0.030 0.001 0.007 |  1.61 [1.34 2.05] n 11 |  1.32
+  >22   |     1.01    -0.01            |     0.99       | 0.027 0.029 0.001 0.011 |  1.28 [1.23 1.34] n  2 |  1.50
+  relay 0.212 reconstructed: rms 0.0952 torque, |relay| >= 0.1 duty 21.7 %, sign flips 239.0 /min; effective small-signal gain 9.9 (LAF units) vs Kp 0.85
+
+==== r71_v293r2  commit 66cf4454a  SteerFriction 0.011  LAF 14.0
+  band |  <0.3 Hz: f/u slope  (p+i)/u | 0.3-1 Hz: f/u   | rms u  rms f  rms p  rms i (LPF 0.5) | map(ang) slope per stretch: median [p25 p75], n | f_t vs map(ang_des) slope
+  1-8   |     0.50     0.50            |     0.61       | 0.086 0.049 0.029 0.039 |  1.41 [1.04 2.22] n  6 |  0.37
+  8-15  |     0.80     0.20            |     0.71       | 0.093 0.076 0.016 0.025 |  1.25 [1.06 1.82] n 17 |  0.84
+  15-22 |     0.85     0.15            |     0.77       | 0.078 0.066 0.007 0.014 |  1.48 [1.26 1.62] n  8 |  1.12
+  >22   |     1.23    -0.23            |     0.86       | 0.065 0.083 0.009 0.025 |  1.00 [0.98 1.02] n  2 |  1.53
+
+==== r70_v293  commit 4247cb09e  SteerFriction 0.0  LAF 6.0
+  band |  <0.3 Hz: f/u slope  (p+i)/u | 0.3-1 Hz: f/u   | rms u  rms f  rms p  rms i (LPF 0.5) | map(ang) slope per stretch: median [p25 p75], n | f_t vs map(ang_des) slope
+  1-8   |     1.05    -0.05            |     0.10       | 0.064 0.068 0.009 0.004 |  0.40 [ nan  nan] n  1 |  0.43
+  8-15  |     0.77     0.23            |     0.44       | 0.053 0.048 0.014 0.024 |  1.43 [1.16 2.39] n  9 |  0.84
+  15-22 |     0.95     0.05            |     0.81       | 0.062 0.060 0.008 0.014 |  1.36 [1.22 1.86] n 14 |  1.24
+  >22   |     1.11    -0.11            |     0.85       | 0.047 0.054 0.006 0.013 |  1.45 [1.33 1.74] n  7 |  1.56
+
+#### hold level
+
+==== r72_v293r3  commit e8e62f0e1  roll median +2.20 deg
+  8-15    81 s | u = 0.97*map -0.0046 (all, n 8073) | left -0.32 +0.0773 | right 1.04 +0.0220 | with roll: 0.98*map -1.342*roll(rad) +0.0498
+        still cells (u/map): 4-8L 0.078/0.045=1.75(  7s)  4-8R 0.052/0.054=0.97(  5s)  8-15L 0.118/0.072=1.64(  5s)
+  15-22   99 s | u = 1.57*map +0.0034 (all, n 9919) | left 1.18 +0.0227 | right nan +nan | with roll: 1.56*map -0.477*roll(rad) +0.0159
+        still cells (u/map): 4-8L 0.105/0.066=1.59( 14s)  8-15L 0.137/0.080=1.71(  1s)
+  >22    204 s | u = 1.56*map -0.0026 (all, n 20426) | left 1.72 -0.0124 | right nan +nan | with roll: 1.56*map -0.317*roll(rad) +0.0079
+        still cells (u/map): 4-8L 0.099/0.061=1.61(  4s)
+
+==== r73_v293r3  commit e8e62f0e1  roll median +2.14 deg
+  8-15    36 s | u = 2.07*map -0.0088 (all, n 3649) | left nan +nan | right 0.89 -0.0376 | with roll: 1.98*map -0.331*roll(rad) +0.0042
+        still cells (u/map): 4-8L 0.056/0.047=1.17(  2s)  4-8R 0.090/0.046=1.94(  9s)  8-15R 0.109/0.076=1.44(  1s)
+  15-22  216 s | u = 1.29*map -0.0057 (all, n 21597) | left 3.01 -0.0841 | right 0.90 -0.0199 | with roll: 1.34*map -0.559*roll(rad) +0.0115
+        still cells (u/map): 4-8L 0.062/0.052=1.20(  3s)  4-8R 0.083/0.057=1.45(  4s)  8-15R 0.104/0.092=1.12(  3s)
+  >22     88 s | u = 1.19*map -0.0065 (all, n 8810) | left nan +nan | right nan +nan | with roll: 1.41*map -0.509*roll(rad) +0.0110
+        still cells (u/map): 
+
+==== r71_v293r2  commit 66cf4454a  roll median +1.74 deg
+  8-15   279 s | u = 1.11*map -0.0041 (all, n 27896) | left 1.01 +0.0115 | right 0.87 -0.0277 | with roll: 1.11*map -0.533*roll(rad) +0.0128
+        still cells (u/map): 4-8L 0.051/0.041=1.26( 18s)  4-8R 0.067/0.044=1.54( 21s)  8-15L 0.117/0.075=1.56( 12s)  8-15R 0.119/0.079=1.52( 18s)  15-25L 0.165/0.146=1.13(  3s)  15-25R 0.128/0.130=0.99(  3s)  25-45L 0.179/0.148=1.21(  7s)  25-45R 0.177/0.177=1.00(  3s)
+  15-22  164 s | u = 1.24*map +0.0022 (all, n 16448) | left 1.02 +0.0191 | right 1.43 +0.0134 | with roll: 1.26*map -0.330*roll(rad) +0.0103
+        still cells (u/map): 4-8L 0.080/0.060=1.33( 40s)  4-8R 0.054/0.047=1.15( 41s)  8-15L 0.119/0.093=1.28( 13s)  8-15R 0.111/0.088=1.26( 11s)
+  >22     97 s | u = 0.96*map -0.0028 (all, n 9720) | left 1.20 -0.0258 | right 1.10 +0.0232 | with roll: 1.31*map -0.600*roll(rad) +0.0111
+        still cells (u/map): 4-8L 0.060/0.084=0.71(  6s)  4-8R 0.072/0.100=0.72(  1s)  8-15R 0.164/0.169=0.97( 11s)
+
+==== r70_v293  commit 4247cb09e  roll median +0.00 deg
+  8-15    98 s | u = 1.10*map -0.0107 (all, n 9804) | left 1.06 -0.0233 | right 1.23 -0.0157 | with roll: 1.10*map +0.000*roll(rad) -0.0107
+        still cells (u/map): 4-8L 0.037/0.050=0.74( 11s)  4-8R 0.084/0.048=1.76( 21s)  8-15L 0.067/0.089=0.75(  7s)  8-15R 0.104/0.083=1.25(  4s)  15-25L 0.107/0.142=0.75(  2s)  25-45L 0.199/0.183=1.09(  2s)
+  15-22  264 s | u = 1.24*map -0.0033 (all, n 26407) | left 1.26 +0.0003 | right 1.10 -0.0042 | with roll: 1.24*map +0.000*roll(rad) -0.0033
+        still cells (u/map): 4-8L 0.082/0.058=1.41( 46s)  4-8R 0.077/0.060=1.29( 34s)  8-15L 0.129/0.099=1.31( 16s)  8-15R 0.102/0.090=1.14(  7s)  25-45R 0.228/0.188=1.21(  2s)
+  >22    190 s | u = 1.16*map -0.0094 (all, n 19048) | left 1.05 +0.0100 | right 1.05 +0.0047 | with roll: 1.16*map +0.000*roll(rad) -0.0094
+        still cells (u/map): 4-8L 0.110/0.093=1.17( 10s)  4-8R 0.085/0.097=0.88(  4s)  8-15L 0.130/0.106=1.23(  5s)  8-15R 0.147/0.132=1.11(  3s)
+
+#### low-speed Ki check
+low-speed Ki check, NEED 1.0 / 1.5 plants;  T1 |e| at 2 s, rms;  T3 tail pk-pk;  entry: 5 m/s 0->200 deg-equivalent (2.5 m/s^2) peak rate, angle overshoot
+--- NEED x1.0
+  Ki 0.3 | v 5: e2s 0.031 rms 0.029 pkpk 0.86 | v 7: e2s 0.051 rms 0.048 pkpk 0.80 | v 9: e2s 0.067 rms 0.064 pkpk 0.57 | v12: e2s 0.089 rms 0.087 pkpk 0.18 | v15: e2s 0.114 rms 0.116 pkpk 0.21 | entry5: pk rate 461, angle ov +20%, meas ov +20%
+  Ki 0.6 | v 5: e2s 0.028 rms 0.025 pkpk 0.65 | v 7: e2s 0.045 rms 0.042 pkpk 0.87 | v 9: e2s 0.059 rms 0.057 pkpk 1.16 | v12: e2s 0.075 rms 0.076 pkpk 0.28 | v15: e2s 0.093 rms 0.100 pkpk 0.34 | entry5: pk rate 470, angle ov +22%, meas ov +22%
+  Ki 1.0 | v 5: e2s 0.017 rms 0.020 pkpk 1.73 | v 7: e2s 0.030 rms 0.035 pkpk 0.58 | v 9: e2s 0.043 rms 0.049 pkpk 0.62 | v12: e2s 0.061 rms 0.067 pkpk 0.32 | v15: e2s 0.074 rms 0.089 pkpk 0.44 | entry5: pk rate 482, angle ov +24%, meas ov +24%
+  Ki 1.5 | v 5: e2s 0.008 rms 0.017 pkpk 2.57 | v 7: e2s 0.017 rms 0.029 pkpk 1.28 | v 9: e2s 0.026 rms 0.041 pkpk 1.06 | v12: e2s 0.039 rms 0.056 pkpk 0.86 | v15: e2s 0.046 rms 0.074 pkpk 0.68 | entry5: pk rate 498, angle ov +26%, meas ov +27%
+  Ki 2.5 | v 5: e2s 0.003 rms 0.014 pkpk 36.43 | v 7: e2s 0.004 rms 0.024 pkpk 1.26 | v 9: e2s 0.008 rms 0.032 pkpk 1.13 | v12: e2s 0.013 rms 0.045 pkpk 0.83 | v15: e2s 0.016 rms 0.059 pkpk 0.59 | entry5: pk rate 524, angle ov +30%, meas ov +31%
+--- NEED x1.5
+  Ki 0.3 | v 5: e2s 0.026 rms 0.024 pkpk 4.51 | v 7: e2s 0.041 rms 0.039 pkpk 3.24 | v 9: e2s 0.054 rms 0.053 pkpk 2.37 | v12: e2s 0.068 rms 0.068 pkpk 1.86 | v15: e2s 0.090 rms 0.091 pkpk 1.25 | entry5: pk rate 379, angle ov +4%, meas ov +2%
+  Ki 0.6 | v 5: e2s 0.023 rms 0.021 pkpk 0.79 | v 7: e2s 0.036 rms 0.035 pkpk 0.84 | v 9: e2s 0.047 rms 0.046 pkpk 0.37 | v12: e2s 0.059 rms 0.061 pkpk 0.42 | v15: e2s 0.076 rms 0.081 pkpk 0.35 | entry5: pk rate 385, angle ov +5%, meas ov +5%
+  Ki 1.0 | v 5: e2s 0.018 rms 0.018 pkpk 0.90 | v 7: e2s 0.030 rms 0.031 pkpk 0.63 | v 9: e2s 0.038 rms 0.040 pkpk 0.64 | v12: e2s 0.049 rms 0.053 pkpk 0.28 | v15: e2s 0.069 rms 0.076 pkpk 0.06 | entry5: pk rate 400, angle ov +8%, meas ov +8%
+  Ki 1.5 | v 5: e2s 0.010 rms 0.015 pkpk 2.01 | v 7: e2s 0.019 rms 0.026 pkpk 1.30 | v 9: e2s 0.028 rms 0.036 pkpk 0.80 | v12: e2s 0.036 rms 0.046 pkpk 0.51 | v15: e2s 0.049 rms 0.064 pkpk 0.34 | entry5: pk rate 419, angle ov +12%, meas ov +11%
+  Ki 2.5 | v 5: e2s 0.003 rms 0.012 pkpk 16.15 | v 7: e2s 0.007 rms 0.020 pkpk 1.33 | v 9: e2s 0.012 rms 0.028 pkpk 1.46 | v12: e2s 0.019 rms 0.039 pkpk 0.94 | v15: e2s 0.022 rms 0.051 pkpk 0.55 | entry5: pk rate 454, angle ov +18%, meas ov +18%

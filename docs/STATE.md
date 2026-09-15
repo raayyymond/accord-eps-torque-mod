@@ -4,7 +4,7 @@
 > boxes and the 84 finding/correction blocks that used to follow it are ARCHIVED under `docs/archive/` (pointers
 > at the end of this file). They are a record, not a briefing; nothing was retracted by the moves.
 
-## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-14 (**V293 stays. REV 2 FLEW (route 71) — loose / jerky at low speed / a 2.34 Hz limit cycle on hard curves at speed. Root causes measured: the `SteerFriction` relay pumping a lightly damped 2 Hz STEERING MODE through a ~60 ms loop; a hold map ×3–5 too small below 10 m/s and ×0.6 above 20; stiction + the lsf-driven P at low speed. FIX = FORK REV 3 (`Dom` `e8e62f0e1`): measured hold map, hysteresis friction FF, a 100 Hz rate loop, a speed-scheduled error notch, reference shaping + `toggle-config_V293_torque_mode_r3.json`. Nothing flashed, nothing sent.**)
+## ✈ THE DECISION, IN ONE PLACE — updated 2026-09-14 evening (**V293 stays. REV 3 FLEW (routes 72 + 73): route 72 ran rev 3 as written and was "loose" at speed because the LOOP (Ki 0.6 / LAF 14, ~1.4 s) could not absorb a hold feedforward that is wrong by 20–70 % from road to road; route 73 secretly ran `SteerFriction 0.212` — the fork's stock-param sync back-filled the config's explicit 0.0 — a 10×-Kp relay that tracked 2.5× tighter and chattered at 4 Hz ("jerky on hard turns"). FIX = FORK REV 4 (`Dom` `f4e314da6` + `08a5a7064`): speed-scheduled Ki (`AccordTorqueKiHigh` 2.5 from 18 m/s, 0.6 below 8), the relay OFF under the hysteresis FF, the stock-sync fix, the 28 m/s hold knot ×1.2 + `toggle-config_V293_torque_mode_r4.json`. Deployed to the device (pulled, params rebuilt, 21 keys written, rebooted; tests pass on the comma). Nothing flashed, nothing sent.**)
 
 **ON THE CAR: V293** — torque mode (cal-only on V282; **image**
 `f75e77cf0ba9d93b5302196877e59c6a41deae4983afc09ade99c5b766e1db17` · **rwd** `ac4723865378ff37…`, exactly one on
@@ -15,7 +15,28 @@ than the cached `a6`, and `00000070` was reused from an August route; key everyt
 The edit-live identity **HOLDS** (|427 tap| vs the image surface **R² 0.986**, resid 22 counts, sign(T) = +sign(cmd)):
 the EPS rate loop is dead on the wire.
 
-> 🛑 **THE VERDICT (2026-09-14): V293 STAYS IN THE CAR; THE FORK GOES TO REV 3.** Route 71 (rev 2: `66cf4454a` +
+> 🛑 **THE VERDICT (2026-09-14 evening): V293 STAYS IN THE CAR; THE FORK GOES TO REV 4.** Routes 72 + 73 (rev 3, `e8e62f0e1`, Kp 0.8500 /
+> LAF 14.0000 on the wire) — the operator: *"better than rev 2; still feels a little loose; still jerky on hard turns; still doesn't feel as good
+> as the 1 kHz inner loop did."* The wire: **route 72** planner-tracking gain **0.80 / 0.74** at 15–22 / >22 m/s, lag **0.5 s**, |H|(0.2 Hz) 0.66–0.76,
+> 79–83 % of the error below 0.3 Hz, the feedforward supplying 68–76 % of the torque and P+I the rest in the SAME direction — the rev-3 map
+> under-delivers at speed and the I loop is too slow. The map's level error is ROUTE-DEPENDENT (×1.1–1.25 on its own fitting routes 70/71,
+> ×1.3–1.7 on 72/73, left/right ×3 apart on 73): only the integrator can carry it. **Route 73 ran `SteerFriction = 0.2120497` (stock)** because
+> `_sync_stock_param` treated the config's explicit 0.0 as UNSET — relay rms 0.095 torque, 239 flips/min, gain 9.9 vs Kp 0.85: rms error 2.5×
+> lower but a 3.8–4.7 Hz chatter line, 66 rate reversals/min, 21 % of hard-turn frames at the Honda rate cap. Rev 3 did what it was for (no
+> 2.34 Hz cycle, no 2 Hz line, low-speed rate roughness 47 vs 60/86 deg/s). The operator turned live delay learning on himself (0.274 s).
+> **Rev 4 (fork `f4e314da6` + `08a5a7064`, `toggle-config_V293_torque_mode_r4.json`):** `AccordTorqueKiHigh` 2.5 (Ki schedule 0.6 below 8 m/s →
+> 2.5 from 18; flat 2.5 rings the 1 Hz mode 16–36° at 5 m/s) · the SteerFriction relay dead under `AccordFrictionHyst > 0` · an explicit 0.0 is
+> never back-filled · `HOLD_K_V[28 m/s]` 0.0134 → 0.0160. Simulated: 2 s residual of a 0.03-torque bias at 19–26 m/s 0.11–0.12 → 0.005–0.013 m/s²,
+> Ms 1.75 unchanged. Rejected with numbers: Kp 1.1/1.6, Ki 2.5 flat, ref 0.08, map ×1.3. **Device carries it** (`/data/params/d` read back;
+> `SteerFriction 0.0` survives the start-up sync). Tests on the comma: 72 pass + lateral 193/195 (2 pre-existing). **Next drive: check
+> `SteerFriction 0.0` in initData FIRST**, then `v293_flight_read.py … --config …_r4.decoded.json` + `v293r3_read.py <tag> r72_v293r3`; success =
+> gain 0.95–1.05, |H|(0.2) ≥ 0.9, lag ≤ 0.3 s at 15–30 m/s; a 0.3–0.8 Hz hunt → `AccordTorqueKiHigh 1.5`; else the `_REVERT_to_r3` file. The
+> residual (the first 0.5 s after a disturbance, delay-limited) is the 1 kHz EPS loop's — firmware is the next lever only if rev 4 tracks and he
+> still says "not confident". Handoff: `docs/handoffs/2026-09/HANDOFF-2026-09-14-v293-rev3-flew-r72-r73-loose-is-a-slow-loop-rev4-ki-schedule.md`.
+> **Page:** https://claude.ai/artifact/MS72a2oMecgGmj4x2yqsGg (signal flow with the edits, Ki / hold-map / relay LERPs before and after, the
+> simulated disturbance recovery, the risk).
+>
+> *(superseded 2026-09-14 morning box, kept for the record:)* 🛑 **THE VERDICT (2026-09-14 morning): V293 STAYS IN THE CAR; THE FORK GOES TO REV 3.** Route 71 (rev 2: `66cf4454a` +
 > the rev-2 config, attributed on the wire: Kp 0.8500, LAF 14.0000) — the operator: *"does not feel like StarPilot has
 > accurately modeled my EPS + car dynamics"*, *"loose on most straights or slight bends"*, *"on hard curves at low speed
 > the steering wheel jerks to correct itself"*, *"at high speed … worse and with more oscillation/resonance"*. The wire:

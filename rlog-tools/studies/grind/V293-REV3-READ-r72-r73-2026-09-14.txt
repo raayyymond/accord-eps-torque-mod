@@ -1,0 +1,464 @@
+======================================================================================================================
+V293 REV-3 READ   tag r72_v293r3   route 75604b0a432fdc89_00000072--8001fc3048   16 segments
+======================================================================================================================
+
+S0. ATTRIBUTION FROM THE WIRE
+    GitCommit                    e8e62f0e194bd5f9999f43e723595137e8cceb5b
+    GitBranch                    Dom
+    AccordRatePlantFF            1
+    AccordHoldMap                1
+    AccordFrictionHyst           0.015
+    AccordRateLoopGain           0.0006
+    AccordErrorNotchQ            1.0
+    AccordRefFilter              0.12
+    SteerFriction                0.0
+    SteerLatAccel                14.0
+    SteerKP                      0.85
+    AccordTorqueKi               0.6
+    AccordFFRateGain             0.5
+    AccordEpsSpringScale         1.0
+    AccordEpsGainScale           1.0
+    KeepLearnedLatAccelOffset    0
+    SteerDelay                   0.2
+    SteerRatio                   16.88
+    AccordVariableSteerRatio     1
+    Kp = median p/err = 0.8500 (IQR 0.8500..0.8500)   LAF = median -(p+i+f)/out = 14.0000 (IQR 14.0000..14.0000)
+    0x18F rate vs d(angle)/dt corr -0.982 -> rate put in the +left angle frame
+
+S1. EXPOSURE
+    wall 928 s   laterally engaged 627 s   hands-off (0.5 s buffer) 573 s   pressed-while-engaged 29.1 s
+    engaged speed p05/p50/p95/max 2.0 / 15.3 / 29.2 / 31.0 m/s;  by band: 1-8 169 s  8-15 122 s  15-22 116 s  >22 209 s
+    |planner lat accel| > 1.5 m/s^2 engaged: 14 s;  > 2.5: 3 s;  |angle| > 30 deg: 56 s
+
+S2. TRACKING  (goal metric: planner desire desiredCurvature*v^2 vs actual; also vs the shaped setpoint the PID saw)
+    band       s | rms(plan) rms(set)  rms|la| |  gain pl gain set | lag pl lag set | |H| / coh plan->act @ 0.2 0.5 1.0 2.0 Hz
+    1-8      135 |    0.143    0.084    0.648 |    0.964    0.977 |   0.00   0.00 | 0.97/0.97  0.64/0.47  0.49/0.22  0.51/0.53
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   18 /   46 /   26 /    1 %   (dc offset -0.023 m/s^2)
+    8-15     116 |    0.116    0.084    0.382 |    0.982    0.950 |   0.11   0.00 | 0.88/0.93  0.80/0.64  1.08/0.34  0.84/0.58
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   56 /   29 /    5 /    1 %   (dc offset +0.007 m/s^2)
+    15-22    108 |    0.107    0.083    0.233 |    0.796    0.828 |   0.46   0.18 | 0.66/0.80  0.80/0.58  0.56/0.23  0.83/0.64
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   79 /   12 /    2 /    1 %   (dc offset +0.004 m/s^2)
+    >22      204 |    0.138    0.099    0.231 |    0.738    0.787 |   0.52   0.23 | 0.76/0.93  0.90/0.60  0.20/0.04  0.71/0.37
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   83 /   11 /    1 /    0 %   (dc offset +0.000 m/s^2)
+    turn-hold actual/planner (|plan| 0.8-1.5 / >1.5 m/s^2, |d plan/dt| < 0.5 m/s^3):
+      1-8    1.030 (n 249)   0.966 (n 578)
+      8-15      -         -   
+      15-22     -         -   
+      >22    0.754 (n 208)      -   
+
+S3. THE 2 Hz MODE AND THE 3-5 Hz RATE-LOOP CROSSOVER  (Welch 1024, prominence dB above the log-log shoulders)
+    stratum: curve = |planner| > 1.0 m/s^2, straight = |planner| < 0.4; hands-off stretches >= 6 s
+    band   stratum      s | rate 1.6-3 Hz          cmd 1.6-3 Hz           ang 1.6-3 Hz           | rate 3-5.5 Hz         
+    1-8    straight    74 | 1.66 Hz  -2.2 dB rms  2.14 | 1.66 Hz  -0.0 dB rms 23.65 | 1.66 Hz  -0.2 dB rms  1.10 | 3.12 Hz  +2.0 dB rms  1.89
+    8-15   straight    70 | 2.73 Hz  +3.7 dB rms  0.85 | 1.86 Hz  -0.7 dB rms  6.57 | 1.66 Hz  +1.7 dB rms  0.11 | 3.32 Hz  +1.5 dB rms  0.81
+    15-22  straight    77 | 1.66 Hz  +3.2 dB rms  0.41 | 1.66 Hz  +0.2 dB rms  5.65 | 1.66 Hz  +2.0 dB rms  0.04 | 4.98 Hz  +4.2 dB rms  0.49
+    >22    straight   124 | 1.66 Hz  +3.4 dB rms  0.34 | 1.66 Hz  +0.6 dB rms  3.87 | 1.66 Hz  +1.4 dB rms  0.04 | 3.42 Hz  +0.1 dB rms  0.26
+
+S4. HARD-TURN JERKINESS
+    v<10   hard turns    20 s: |rate| > 80 deg/s bursts  81.3 /min;  rate sign reversals  12.0 /min;  0.5-5 Hz rate rms  47.2 deg/s;  |d rate/dt| p90    750 deg/s^2;  cmd step p99   68 counts;  honda cap (|step| >= 120) 0.3 %
+    stall -> ramp (> 400 counts) -> snap (> 100 deg/s) events at v < 10, |plan| > 0.8: 0 in 24 s = 0.0 /min
+
+S5. WHERE THE TORQUE COMES FROM (torque units = output/LAF)
+    band   |  f shr  p shr  i shr |  med|f|  med|p|  med|i| | |i|>0.2 %
+    1-8    |  0.537  0.210  0.253 |   0.040   0.013   0.016 |      0.0
+    8-15   |  0.512  0.143  0.345 |   0.027   0.006   0.016 |      0.0
+    15-22  |  0.469  0.133  0.397 |   0.022   0.005   0.018 |      0.0
+    >22    |  0.518  0.157  0.325 |   0.018   0.005   0.009 |      0.0
+
+S6. REPLAY OF THE FEEDFORWARD FROM THE WIRE  (angle_des from the shaped setpoint through the fork's SR map + roll comp)
+    band   | rms hold rms move rms hyst   rms rl |    rms f rms resid       R2
+    1-8    |   0.1635   0.0393   0.0127   0.0257 |   0.1780   0.0037    1.000
+    8-15   |   0.0556   0.0117   0.0114   0.0035 |   0.0553   0.0006    1.000
+    15-22  |   0.0287   0.0043   0.0088   0.0013 |   0.0355   0.0003    1.000
+    >22    |   0.0230   0.0043   0.0086   0.0004 |   0.0295   0.0002    1.000
+    rate loop: |rl| p50/p90 0.0005/0.0072 torque; fraction of frames where rl opposes the measured rate (damping): 0.73; ades_rate rms 23.8 vs rate_meas rms 27.5 deg/s (engaged)
+    angle_des - angle (hands-off): rms 5.10 deg, median +0.51, p90 |.| 4.14;  by band: 1-8 9.51  8-15 2.16  15-22 1.06  >22 0.79
+
+S7. THE PLANT MODEL'S RESIDUAL  (u(t - Td) = hold(th) + b th' + J th'' + F sign(th') + u0; hands-off stretches >= 4 s, 5 Hz LPF)
+    19 stretches, 559 s;  fork constants: J 8.0e-05, b (mode) 0.0006, F (hyst) 0.015
+    band       v     n | fork map: rms resid / rms u, R2 (b,J,F fixed) | free fit a(t/deg) b(t/dps) J(t/dps2) F       | R2 free
+    1-8      4.8    14 |   0.0454 /   0.1443  R2  0.901              |  0.00246  0.00084  1.01e-04  0.0065 |  0.853   fork hold slope at op 0.00343
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   49 /   22 /   10 /    8 %
+    8-15    12.5    10 |   0.0328 /   0.0649  R2  0.744              |  0.00440  0.00092  6.40e-05  0.0081 |  0.649   fork hold slope at op 0.00917
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   55 /    8 /   12 /   18 %
+    15-22   17.0     8 |   0.0270 /   0.0458  R2  0.653              |  0.01572  0.00379  7.28e-05  0.0060 |  0.785   fork hold slope at op 0.01013
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   56 /    6 /    9 /   24 %
+    >22     25.7     4 |   0.0219 /   0.0372  R2  0.654              |  0.02293  0.00432  1.26e-04  0.0046 |  0.856   fork hold slope at op 0.01333
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   57 /    3 /    8 /   28 %
+    hold-map check (hands-off, |rate| < 15 deg/s, 1 Hz LPF): median u / map(th) by |angle| cell and band
+      1-8     3- 12:  2.88 (  28s)  12- 25:  1.21 (   5s)  45- 90:  1.27 (   2s)  90-400:  1.03 (   3s)
+      8-15    3- 12:  1.61 (  23s)  12- 25:  1.35 (   2s)
+      15-22   3- 12:  1.51 (  17s)
+      >22     3- 12:  1.76 (  13s)
+
+S8. STRAIGHT-LINE LOOSENESS  (hands-off, |planner| < 0.4 m/s^2, v >= 8, stretches >= 10 s)
+    8-15      47 s: angle wander 0.05-0.5 Hz rms 6.07 deg;  planner error rms 0.05-0.5 Hz 0.072, 0.5-3 Hz 0.023 m/s^2;  loop stiffness 0.0160 torque/deg (fork hold slope 0.0093)
+    15-22     58 s: angle wander 0.05-0.5 Hz rms 0.79 deg;  planner error rms 0.05-0.5 Hz 0.081, 0.5-3 Hz 0.017 m/s^2;  loop stiffness 0.0271 torque/deg (fork hold slope 0.0103)
+    >22      116 s: angle wander 0.05-0.5 Hz rms 0.72 deg;  planner error rms 0.05-0.5 Hz 0.099, 0.5-3 Hz 0.025 m/s^2;  loop stiffness 0.0279 torque/deg (fork hold slope 0.0134)
+======================================================================================================================
+V293 REV-3 READ   tag r73_v293r3   route 75604b0a432fdc89_00000073--79fd149dd8   11 segments
+======================================================================================================================
+
+S0. ATTRIBUTION FROM THE WIRE
+    GitCommit                    e8e62f0e194bd5f9999f43e723595137e8cceb5b
+    GitBranch                    Dom
+    AccordRatePlantFF            1
+    AccordHoldMap                1
+    AccordFrictionHyst           0.015
+    AccordRateLoopGain           0.0006
+    AccordErrorNotchQ            1.0
+    AccordRefFilter              0.12
+    SteerFriction                0.2120497077703476
+    SteerLatAccel                14.0
+    SteerKP                      0.85
+    AccordTorqueKi               0.6
+    AccordFFRateGain             0.5
+    AccordEpsSpringScale         1.0
+    AccordEpsGainScale           1.0
+    KeepLearnedLatAccelOffset    0
+    SteerDelay                   0.2
+    SteerRatio                   16.88
+    AccordVariableSteerRatio     1
+    Kp = median p/err = 0.8500 (IQR 0.8500..0.8500)   LAF = median -(p+i+f)/out = 14.0000 (IQR 14.0000..14.0000)
+    0x18F rate vs d(angle)/dt corr -0.983 -> rate put in the +left angle frame
+
+S1. EXPOSURE
+    wall 658 s   laterally engaged 599 s   hands-off (0.5 s buffer) 428 s   pressed-while-engaged 66.6 s
+    engaged speed p05/p50/p95/max 3.1 / 16.0 / 27.3 / 31.4 m/s;  by band: 1-8 109 s  8-15 140 s  15-22 244 s  >22 102 s
+    |planner lat accel| > 1.5 m/s^2 engaged: 31 s;  > 2.5: 20 s;  |angle| > 30 deg: 79 s
+
+S2. TRACKING  (goal metric: planner desire desiredCurvature*v^2 vs actual; also vs the shaped setpoint the PID saw)
+    band       s | rms(plan) rms(set)  rms|la| |  gain pl gain set | lag pl lag set | |H| / coh plan->act @ 0.2 0.5 1.0 2.0 Hz
+    8-15      81 |    0.047    0.029    0.577 |    0.981    0.983 |   0.30   0.12 | 0.92/0.98  0.86/0.66  1.10/0.89  0.38/0.56
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   65 /   14 /    9 /    4 %   (dc offset -0.009 m/s^2)
+    15-22    231 |    0.043    0.026    0.173 |    0.979    0.981 |   0.17   0.00 | 0.97/0.97  0.95/0.74  0.54/0.26  0.46/0.21
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   43 /   35 /   11 /    5 %   (dc offset -0.000 m/s^2)
+    >22       95 |    0.054    0.031    0.228 |    0.969    0.978 |   0.24   0.00 | 0.98/0.99  1.02/0.87  0.69/0.50  0.15/0.02
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   36 /   40 /   13 /    4 %   (dc offset -0.000 m/s^2)
+    turn-hold actual/planner (|plan| 0.8-1.5 / >1.5 m/s^2, |d plan/dt| < 0.5 m/s^3):
+      1-8       -         -   
+      8-15      -      0.986 (n 203)
+      15-22     -         -   
+      >22       -         -   
+
+S3. THE 2 Hz MODE AND THE 3-5 Hz RATE-LOOP CROSSOVER  (Welch 1024, prominence dB above the log-log shoulders)
+    stratum: curve = |planner| > 1.0 m/s^2, straight = |planner| < 0.4; hands-off stretches >= 6 s
+    band   stratum      s | rate 1.6-3 Hz          cmd 1.6-3 Hz           ang 1.6-3 Hz           | rate 3-5.5 Hz         
+    8-15   straight    36 | 1.66 Hz  -2.6 dB rms  0.97 | 1.86 Hz  -3.1 dB rms 15.51 | 1.66 Hz  -1.3 dB rms  0.09 | 3.81 Hz  +9.6 dB rms  2.29
+    15-22  straight   197 | 1.66 Hz  -1.0 dB rms  0.61 | 1.66 Hz  -3.7 dB rms 12.48 | 1.66 Hz  -0.3 dB rms  0.10 | 4.69 Hz  +5.6 dB rms  1.06
+    >22    straight    56 | 1.66 Hz  +3.8 dB rms  0.34 | 1.66 Hz  +0.8 dB rms 14.61 | 1.66 Hz  +0.5 dB rms  0.07 | 4.10 Hz  +3.9 dB rms  0.34
+
+S4. HARD-TURN JERKINESS
+    v<10   hard turns    25 s: |rate| > 80 deg/s bursts 125.8 /min;  rate sign reversals  66.5 /min;  0.5-5 Hz rate rms  80.3 deg/s;  |d rate/dt| p90   1659 deg/s^2;  cmd step p99  246 counts;  honda cap (|step| >= 120) 21.0 %
+    10-20  hard turns    21 s: |rate| > 40 deg/s bursts 105.5 /min;  rate sign reversals  68.4 /min;  0.5-5 Hz rate rms  27.7 deg/s;  |d rate/dt| p90   1031 deg/s^2;  cmd step p99  193 counts;  honda cap (|step| >= 120) 10.7 %
+    stall -> ramp (> 400 counts) -> snap (> 100 deg/s) events at v < 10, |plan| > 0.8: 0 in 31 s = 0.0 /min
+
+S5. WHERE THE TORQUE COMES FROM (torque units = output/LAF)
+    band   |  f shr  p shr  i shr |  med|f|  med|p|  med|i| | |i|>0.2 %
+    1-8    |  0.758  0.170  0.072 |   0.174   0.020   0.004 |      0.0
+    8-15   |  0.810  0.066  0.124 |   0.055   0.002   0.004 |      0.0
+    15-22  |  0.654  0.046  0.301 |   0.019   0.001   0.007 |      0.0
+    >22    |  0.626  0.043  0.331 |   0.023   0.001   0.007 |      0.0
+
+S6. REPLAY OF THE FEEDFORWARD FROM THE WIRE  (angle_des from the shaped setpoint through the fork's SR map + roll comp)
+    band   | rms hold rms move rms hyst   rms rl |    rms f rms resid       R2
+    1-8    |   0.2233   0.0634   0.0134   0.0546 |   0.2981   0.1730    0.605
+    8-15   |   0.1075   0.0147   0.0108   0.0224 |   0.1896   0.1078    0.674
+    15-22  |   0.0233   0.0047   0.0094   0.0042 |   0.0507   0.0347    0.522
+    >22    |   0.0227   0.0035   0.0079   0.0014 |   0.0478   0.0386    0.302
+    rate loop: |rl| p50/p90 0.0004/0.0418 torque; fraction of frames where rl opposes the measured rate (damping): 0.89; ades_rate rms 31.1 vs rate_meas rms 46.2 deg/s (engaged)
+    angle_des - angle (hands-off): rms 4.35 deg, median +0.47, p90 |.| 0.95;  by band: 1-8 12.46  8-15 0.83  15-22 0.57  >22 0.55
+
+S7. THE PLANT MODEL'S RESIDUAL  (u(t - Td) = hold(th) + b th' + J th'' + F sign(th') + u0; hands-off stretches >= 4 s, 5 Hz LPF)
+    13 stretches, 418 s;  fork constants: J 8.0e-05, b (mode) 0.0006, F (hyst) 0.015
+    band       v     n | fork map: rms resid / rms u, R2 (b,J,F fixed) | free fit a(t/deg) b(t/dps) J(t/dps2) F       | R2 free
+    1-8      4.3     2 |   0.0549 /   0.0949  R2  0.665              |  0.00607  0.00099  1.22e-04  0.0091 |  0.805   fork hold slope at op 0.00302
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   11 /   11 /   24 /   47 %
+    8-15    13.3     9 |   0.0254 /   0.0438  R2  0.665              |  0.01386  0.00187  1.14e-04  0.0079 |  0.812   fork hold slope at op 0.00928
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   38 /   14 /   13 /   25 %
+    15-22   17.9    10 |   0.0225 /   0.0354  R2  0.597              |  0.01359  0.00157  1.20e-04  0.0086 |  0.653   fork hold slope at op 0.01049
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   37 /   12 /   13 /   31 %
+    >22     26.7     3 |   0.0211 /   0.0321  R2  0.570              |  0.01922  0.00626  1.46e-04  0.0040 |  0.716   fork hold slope at op 0.01336
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   41 /   10 /   11 /   30 %
+    hold-map check (hands-off, |rate| < 15 deg/s, 1 Hz LPF): median u / map(th) by |angle| cell and band
+      1-8     3- 12:  3.03 (   4s)
+      8-15    3- 12:  2.06 (  16s)  45- 90:  1.36 (   2s)
+      15-22   3- 12:  1.64 (  19s)
+      >22     3- 12:  1.50 (   3s)
+
+S8. STRAIGHT-LINE LOOSENESS  (hands-off, |planner| < 0.4 m/s^2, v >= 8, stretches >= 10 s)
+    8-15      14 s: angle wander 0.05-0.5 Hz rms 0.72 deg;  planner error rms 0.05-0.5 Hz 0.025, 0.5-3 Hz 0.016 m/s^2;  loop stiffness 0.1075 torque/deg (fork hold slope 0.0093)
+    15-22    189 s: angle wander 0.05-0.5 Hz rms 0.73 deg;  planner error rms 0.05-0.5 Hz 0.031, 0.5-3 Hz 0.021 m/s^2;  loop stiffness 0.0466 torque/deg (fork hold slope 0.0107)
+    >22       56 s: angle wander 0.05-0.5 Hz rms 0.43 deg;  planner error rms 0.05-0.5 Hz 0.035, 0.5-3 Hz 0.029 m/s^2;  loop stiffness 0.0113 torque/deg (fork hold slope 0.0134)
+======================================================================================================================
+V293 REV-3 READ   tag r71_v293r2   route 75604b0a432fdc89_00000071--f2c9d073a3   18 segments
+======================================================================================================================
+
+S0. ATTRIBUTION FROM THE WIRE
+    GitCommit                    66cf4454abe8c61b186f8668814b32ad6c4581f0
+    GitBranch                    Dom
+    AccordRatePlantFF            1
+    AccordHoldMap                ABSENT
+    AccordFrictionHyst           ABSENT
+    AccordRateLoopGain           ABSENT
+    AccordErrorNotchQ            ABSENT
+    AccordRefFilter              ABSENT
+    SteerFriction                0.011
+    SteerLatAccel                14.0
+    SteerKP                      0.85
+    AccordTorqueKi               0.3
+    AccordFFRateGain             0.5
+    AccordEpsSpringScale         1.0
+    AccordEpsGainScale           1.0
+    KeepLearnedLatAccelOffset    0
+    SteerDelay                   0.2
+    SteerRatio                   16.88
+    AccordVariableSteerRatio     1
+    Kp = median p/err = 0.8500 (IQR 0.8500..0.8500)   LAF = median -(p+i+f)/out = 14.0000 (IQR 14.0000..14.0000)
+    0x18F rate vs d(angle)/dt corr -0.981 -> rate put in the +left angle frame
+
+S1. EXPOSURE
+    wall 1028 s   laterally engaged 883 s   hands-off (0.5 s buffer) 800 s   pressed-while-engaged 49.2 s
+    engaged speed p05/p50/p95/max 2.6 / 10.6 / 28.8 / 30.5 m/s;  by band: 1-8 244 s  8-15 349 s  15-22 183 s  >22 100 s
+    |planner lat accel| > 1.5 m/s^2 engaged: 54 s;  > 2.5: 9 s;  |angle| > 30 deg: 86 s
+
+S2. TRACKING  (goal metric: planner desire desiredCurvature*v^2 vs actual; also vs the shaped setpoint the PID saw)
+    band       s | rms(plan) rms(set)  rms|la| |  gain pl gain set | lag pl lag set | |H| / coh plan->act @ 0.2 0.5 1.0 2.0 Hz
+    1-8      190 |    0.102    0.103    0.424 |    0.850    0.841 |   0.00   0.00 | 0.84/0.97  1.38/0.77  0.85/0.35  0.62/0.37
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   77 /   17 /    4 /    1 %   (dc offset -0.007 m/s^2)
+    8-15     334 |    0.134    0.134    0.525 |    0.914    0.908 |   0.02   0.01 | 0.95/0.94  0.92/0.77  1.00/0.43  0.73/0.08
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   60 /   16 /   20 /    1 %   (dc offset -0.010 m/s^2)
+    15-22    172 |    0.136    0.134    0.645 |    1.017    1.012 |   0.00   0.00 | 0.92/0.93  0.94/0.87  0.76/0.55  1.00/0.55
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   36 /   14 /   46 /    2 %   (dc offset +0.009 m/s^2)
+    >22       98 |    0.171    0.165    0.976 |    1.123    1.119 |   0.00   0.00 | 1.12/0.96  1.44/0.65  1.22/0.35  0.70/0.22
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   55 /   16 /   22 /    5 %   (dc offset -0.004 m/s^2)
+    turn-hold actual/planner (|plan| 0.8-1.5 / >1.5 m/s^2, |d plan/dt| < 0.5 m/s^3):
+      1-8    0.828 (n 336)   0.880 (n 331)
+      8-15   0.823 (n 1363)   0.982 (n 815)
+      15-22  0.939 (n 1611)   1.162 (n 278)
+      >22    1.129 (n 323)   1.092 (n 898)
+
+S3. THE 2 Hz MODE AND THE 3-5 Hz RATE-LOOP CROSSOVER  (Welch 1024, prominence dB above the log-log shoulders)
+    stratum: curve = |planner| > 1.0 m/s^2, straight = |planner| < 0.4; hands-off stretches >= 6 s
+    band   stratum      s | rate 1.6-3 Hz          cmd 1.6-3 Hz           ang 1.6-3 Hz           | rate 3-5.5 Hz         
+    1-8    straight    94 | 2.15 Hz  +5.9 dB rms  3.50 | 1.66 Hz  +0.4 dB rms 14.85 | 1.66 Hz  -0.4 dB rms  0.91 | 3.52 Hz  +1.2 dB rms  1.86
+    8-15   straight   183 | 2.15 Hz  +2.8 dB rms  1.60 | 1.66 Hz  -0.7 dB rms 11.27 | 1.66 Hz  -1.0 dB rms  0.24 | 3.03 Hz  +2.1 dB rms  1.40
+    15-22  straight    24 | 1.95 Hz  +7.0 dB rms  0.67 | 1.66 Hz  -0.2 dB rms  6.92 | 1.95 Hz  +6.6 dB rms  0.07 | 3.52 Hz  +2.3 dB rms  0.55
+    >22    straight    63 | 2.15 Hz  +6.3 dB rms  0.75 | 1.66 Hz  +5.2 dB rms 14.45 | 1.95 Hz  +3.7 dB rms  0.08 | 4.00 Hz  +0.6 dB rms  0.45
+    curves at 8-15  0.5-3 Hz band-passed rms: rate  42.6 deg/s   angle 5.65 deg   cmd   139 counts   (7 s)
+    curves at >22   0.5-3 Hz band-passed rms: rate   8.2 deg/s   angle 0.80 deg   cmd    54 counts   (13 s)
+
+S4. HARD-TURN JERKINESS
+    v<10   hard turns    48 s: |rate| > 80 deg/s bursts  82.9 /min;  rate sign reversals  17.6 /min;  0.5-5 Hz rate rms  59.9 deg/s;  |d rate/dt| p90    862 deg/s^2;  cmd step p99  148 counts;  honda cap (|step| >= 120) 11.7 %
+    10-20  hard turns    15 s: |rate| > 40 deg/s bursts 158.3 /min;  rate sign reversals  36.5 /min;  0.5-5 Hz rate rms  39.5 deg/s;  |d rate/dt| p90    962 deg/s^2;  cmd step p99  117 counts;  honda cap (|step| >= 120) 1.0 %
+    >20    hard turns    23 s: |rate| > 40 deg/s bursts 105.5 /min;  rate sign reversals  66.0 /min;  0.5-5 Hz rate rms  28.4 deg/s;  |d rate/dt| p90    956 deg/s^2;  cmd step p99   77 counts;  honda cap (|step| >= 120) 0.0 %
+    stall -> ramp (> 400 counts) -> snap (> 100 deg/s) events at v < 10, |plan| > 0.8: 1 in 60 s = 1.0 /min
+
+S5. WHERE THE TORQUE COMES FROM (torque units = output/LAF)
+    band   |  f shr  p shr  i shr |  med|f|  med|p|  med|i| | |i|>0.2 %
+    1-8    |  0.345  0.306  0.349 |   0.020   0.020   0.020 |      0.0
+    8-15   |  0.498  0.191  0.311 |   0.025   0.009   0.013 |      0.0
+    15-22  |  0.686  0.107  0.208 |   0.052   0.006   0.014 |      0.0
+    >22    |  0.570  0.123  0.307 |   0.028   0.005   0.014 |      0.0
+
+S6. REPLAY OF THE FEEDFORWARD FROM THE WIRE  (angle_des from the shaped setpoint through the fork's SR map + roll comp)
+    band   | rms hold rms move rms hyst   rms rl |    rms f rms resid       R2
+    1-8    |   0.0641   0.0518   0.0000   0.0000 |   0.0874   0.0092    0.989
+    8-15   |   0.0683   0.0129   0.0000   0.0000 |   0.0738   0.0073    0.990
+    15-22  |   0.0818   0.0063   0.0000   0.0000 |   0.0828   0.0058    0.995
+    >22    |   0.0921   0.0062   0.0000   0.0000 |   0.0909   0.0054    0.996
+    angle_des - angle (hands-off): rms 4.77 deg, median +0.59, p90 |.| 7.10;  by band: 1-8 8.15  8-15 3.83  15-22 1.52  >22 1.27
+
+S7. THE PLANT MODEL'S RESIDUAL  (u(t - Td) = hold(th) + b th' + J th'' + F sign(th') + u0; hands-off stretches >= 4 s, 5 Hz LPF)
+    23 stretches, 787 s;  fork constants: J 8.0e-05, b (mode) 0.0006, F (hyst) 0.000
+    band       v     n | fork map: rms resid / rms u, R2 (b,J,F fixed) | free fit a(t/deg) b(t/dps) J(t/dps2) F       | R2 free
+    1-8      6.0    15 |   0.0450 /   0.0902  R2  0.751              |  0.00226  0.00122  7.70e-05  0.0038 |  0.706   fork hold slope at op 0.00438
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   59 /   17 /    9 /    3 %
+    8-15    11.2    20 |   0.0319 /   0.0896  R2  0.873              |  0.00511  0.00071  8.19e-05  0.0085 |  0.816   fork hold slope at op 0.00820
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   68 /   13 /    7 /    4 %
+    15-22   17.7     8 |   0.0269 /   0.0777  R2  0.881              |  0.01199  0.00054  8.62e-05  0.0095 |  0.922   fork hold slope at op 0.00989
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   60 /   17 /   10 /    4 %
+    >22     26.3     2 |   0.0217 /   0.0663  R2  0.892              |  0.01362  0.00071  8.31e-05  0.0071 |  0.911   fork hold slope at op 0.01334
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   61 /   17 /   10 /    2 %
+    hold-map check (hands-off, |rate| < 15 deg/s, 1 Hz LPF): median u / map(th) by |angle| cell and band
+      1-8     3- 12:  2.70 (  46s)  12- 25:  1.21 (   3s)  25- 45:  0.92 (   2s)  90-400:  1.12 (   2s)
+      8-15    3- 12:  1.56 (  85s)  12- 25:  1.12 (  12s)  25- 45:  1.20 (  10s)  45- 90:  1.17 (   4s)
+      15-22   3- 12:  1.30 ( 121s)  12- 25:  1.18 (   2s)
+      >22     3- 12:  1.05 (  15s)  12- 25:  1.25 (   5s)
+
+S8. STRAIGHT-LINE LOOSENESS  (hands-off, |planner| < 0.4 m/s^2, v >= 8, stretches >= 10 s)
+    8-15     137 s: angle wander 0.05-0.5 Hz rms 2.04 deg;  planner error rms 0.05-0.5 Hz 0.062, 0.5-3 Hz 0.016 m/s^2;  loop stiffness 0.0137 torque/deg (fork hold slope 0.0077)
+    15-22     17 s: angle wander 0.05-0.5 Hz rms 0.47 deg;  planner error rms 0.05-0.5 Hz 0.045, 0.5-3 Hz 0.017 m/s^2;  loop stiffness 0.0263 torque/deg (fork hold slope 0.0101)
+    >22       48 s: angle wander 0.05-0.5 Hz rms 0.82 deg;  planner error rms 0.05-0.5 Hz 0.052, 0.5-3 Hz 0.034 m/s^2;  loop stiffness -0.0040 torque/deg (fork hold slope 0.0134)
+======================================================================================================================
+V293 REV-3 READ   tag r70_v293   route 75604b0a432fdc89_00000070--717f5a7866   19 segments
+======================================================================================================================
+
+S0. ATTRIBUTION FROM THE WIRE
+    GitCommit                    4247cb09ef5722325483259dbe644a220c6a8daf
+    GitBranch                    Dom
+    AccordRatePlantFF            0
+    AccordHoldMap                ABSENT
+    AccordFrictionHyst           ABSENT
+    AccordRateLoopGain           ABSENT
+    AccordErrorNotchQ            ABSENT
+    AccordRefFilter              ABSENT
+    SteerFriction                0.0
+    SteerLatAccel                6.0
+    SteerKP                      0.3
+    AccordTorqueKi               0.15
+    AccordFFRateGain             0.5
+    AccordEpsSpringScale         1.0
+    AccordEpsGainScale           1.0
+    KeepLearnedLatAccelOffset    1
+    SteerDelay                   0.2
+    SteerRatio                   16.88
+    AccordVariableSteerRatio     1
+    Kp = median p/err = 0.3000 (IQR 0.3000..0.3000)   LAF = median -(p+i+f)/out = 6.0000 (IQR 6.0000..6.0000)
+    0x18F rate vs d(angle)/dt corr -0.983 -> rate put in the +left angle frame
+
+S1. EXPOSURE
+    wall 1136 s   laterally engaged 858 s   hands-off (0.5 s buffer) 765 s   pressed-while-engaged 51.6 s
+    engaged speed p05/p50/p95/max 2.5 / 16.9 / 25.0 / 26.6 m/s;  by band: 1-8 140 s  8-15 187 s  15-22 320 s  >22 199 s
+    |planner lat accel| > 1.5 m/s^2 engaged: 29 s;  > 2.5: 9 s;  |angle| > 30 deg: 48 s
+
+S2. TRACKING  (goal metric: planner desire desiredCurvature*v^2 vs actual; also vs the shaped setpoint the PID saw)
+    band       s | rms(plan) rms(set)  rms|la| |  gain pl gain set | lag pl lag set | |H| / coh plan->act @ 0.2 0.5 1.0 2.0 Hz
+    8-15     157 |    0.096    0.093    0.400 |    0.992    0.979 |   0.11   0.10 | 0.86/0.93  0.72/0.70  1.13/0.58  1.95/0.55
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   66 /   16 /   11 /    2 %   (dc offset +0.006 m/s^2)
+    15-22    296 |    0.116    0.114    0.496 |    1.067    1.060 |   0.05   0.04 | 1.03/0.94  1.01/0.79  1.10/0.64  1.21/0.40
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   76 /   13 /    6 /    1 %   (dc offset +0.010 m/s^2)
+    >22      196 |    0.117    0.113    0.437 |    1.126    1.115 |   0.19   0.17 | 1.17/0.93  1.49/0.69  1.21/0.50  1.95/0.48
+           planner-error energy share <0.3 / 0.3-1 / 1-3 / >3 Hz:   67 /   17 /    8 /    2 %   (dc offset +0.005 m/s^2)
+    turn-hold actual/planner (|plan| 0.8-1.5 / >1.5 m/s^2, |d plan/dt| < 0.5 m/s^3):
+      1-8    1.005 (n 236)      -   
+      8-15   0.934 (n 305)      -   
+      15-22  1.057 (n 2244)      -   
+      >22    1.142 (n 1200)      -   
+
+S3. THE 2 Hz MODE AND THE 3-5 Hz RATE-LOOP CROSSOVER  (Welch 1024, prominence dB above the log-log shoulders)
+    stratum: curve = |planner| > 1.0 m/s^2, straight = |planner| < 0.4; hands-off stretches >= 6 s
+    band   stratum      s | rate 1.6-3 Hz          cmd 1.6-3 Hz           ang 1.6-3 Hz           | rate 3-5.5 Hz         
+    8-15   straight    77 | 2.15 Hz  +2.8 dB rms  2.03 | 1.76 Hz  +1.2 dB rms 12.46 | 1.66 Hz  -0.2 dB rms  0.40 | 3.12 Hz  +4.1 dB rms  1.46
+    15-22  straight   124 | 2.44 Hz  +6.1 dB rms  1.15 | 1.76 Hz  +0.4 dB rms  7.69 | 1.66 Hz  +0.9 dB rms  0.14 | 3.03 Hz  -0.6 dB rms  0.76
+    >22    straight   142 | 1.86 Hz  +3.1 dB rms  0.56 | 1.66 Hz  -0.8 dB rms  6.83 | 1.86 Hz  +2.0 dB rms  0.07 | 3.22 Hz  +0.5 dB rms  0.42
+
+S4. HARD-TURN JERKINESS
+    v<10   hard turns    20 s: |rate| > 80 deg/s bursts 107.5 /min;  rate sign reversals  49.1 /min;  0.5-5 Hz rate rms  85.6 deg/s;  |d rate/dt| p90   1298 deg/s^2;  cmd step p99  245 counts;  honda cap (|step| >= 120) 13.9 %
+    10-20  hard turns    24 s: |rate| > 40 deg/s bursts  70.0 /min;  rate sign reversals  47.5 /min;  0.5-5 Hz rate rms  26.8 deg/s;  |d rate/dt| p90    713 deg/s^2;  cmd step p99   75 counts;  honda cap (|step| >= 120) 0.1 %
+    >20    hard turns    11 s: |rate| > 40 deg/s bursts  16.6 /min;  rate sign reversals   5.5 /min;  0.5-5 Hz rate rms   8.5 deg/s;  |d rate/dt| p90    294 deg/s^2;  cmd step p99   30 counts;  honda cap (|step| >= 120) 0.0 %
+    stall -> ramp (> 400 counts) -> snap (> 100 deg/s) events at v < 10, |plan| > 0.8: 0 in 24 s = 0.0 /min
+
+S5. WHERE THE TORQUE COMES FROM (torque units = output/LAF)
+    band   |  f shr  p shr  i shr |  med|f|  med|p|  med|i| | |i|>0.2 %
+    1-8    |  0.417  0.265  0.318 |   0.054   0.027   0.047 |      0.0
+    8-15   |  0.502  0.166  0.333 |   0.053   0.012   0.032 |      0.0
+    15-22  |  0.555  0.073  0.373 |   0.065   0.006   0.041 |      0.0
+    >22    |  0.566  0.052  0.382 |   0.068   0.003   0.048 |      0.0
+
+S6. REPLAY OF THE FEEDFORWARD FROM THE WIRE  (angle_des from the shaped setpoint through the fork's SR map + roll comp)
+    band   | rms hold rms move rms hyst   rms rl |    rms f rms resid       R2
+    1-8    |   0.0651   0.0516   0.0000   0.0000 |   0.1243   0.0930    0.230
+    8-15   |   0.0817   0.0158   0.0000   0.0000 |   0.1032   0.0591    0.634
+    15-22  |   0.0785   0.0072   0.0000   0.0000 |   0.1003   0.0552    0.614
+    >22    |   0.0444   0.0043   0.0000   0.0000 |   0.0785   0.0636   -0.143
+    angle_des - angle (hands-off): rms 2.49 deg, median -0.40, p90 |.| 3.25;  by band: 1-8 5.40  8-15 2.28  15-22 1.35  >22 0.97
+
+S7. THE PLANT MODEL'S RESIDUAL  (u(t - Td) = hold(th) + b th' + J th'' + F sign(th') + u0; hands-off stretches >= 4 s, 5 Hz LPF)
+    27 stretches, 738 s;  fork constants: J 8.0e-05, b (mode) 0.0006, F (hyst) 0.000
+    band       v     n | fork map: rms resid / rms u, R2 (b,J,F fixed) | free fit a(t/deg) b(t/dps) J(t/dps2) F       | R2 free
+    1-8      4.9    19 |   0.0524 /   0.1067  R2  0.759              |  0.00228  0.00134  9.33e-05  0.0083 |  0.736   fork hold slope at op 0.00348
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   60 /   15 /    9 /    3 %
+    8-15    12.0    19 |   0.0309 /   0.0674  R2  0.790              |  0.00689  0.00208  8.38e-05  0.0060 |  0.747   fork hold slope at op 0.00877
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   63 /   19 /    4 /    3 %
+    15-22   18.9    13 |   0.0271 /   0.0668  R2  0.835              |  0.01169  0.00124  8.10e-05  0.0088 |  0.859   fork hold slope at op 0.01096
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   73 /   11 /    3 /    1 %
+    >22     22.8     4 |   0.0216 /   0.0500  R2  0.814              |  0.01568  0.00154  9.09e-05  0.0071 |  0.882   fork hold slope at op 0.01317
+           residual energy <0.3 / 0.3-1 / 1-3 / >3 Hz:   71 /   14 /    2 /    1 %
+    hold-map check (hands-off, |rate| < 15 deg/s, 1 Hz LPF): median u / map(th) by |angle| cell and band
+      1-8     3- 12:  2.37 (  29s)  12- 25:  1.29 (   4s)
+      8-15    3- 12:  1.48 (  54s)  12- 25:  0.78 (   5s)  25- 45:  1.09 (   2s)
+      15-22   3- 12:  1.37 ( 122s)  12- 25:  1.06 (   3s)  25- 45:  1.22 (   2s)
+      >22     3- 12:  1.11 (  26s)
+
+S8. STRAIGHT-LINE LOOSENESS  (hands-off, |planner| < 0.4 m/s^2, v >= 8, stretches >= 10 s)
+    8-15      32 s: angle wander 0.05-0.5 Hz rms 2.51 deg;  planner error rms 0.05-0.5 Hz 0.049, 0.5-3 Hz 0.013 m/s^2;  loop stiffness 0.0088 torque/deg (fork hold slope 0.0084)
+    15-22     96 s: angle wander 0.05-0.5 Hz rms 0.80 deg;  planner error rms 0.05-0.5 Hz 0.054, 0.5-3 Hz 0.018 m/s^2;  loop stiffness 0.0031 torque/deg (fork hold slope 0.0111)
+    >22      136 s: angle wander 0.05-0.5 Hz rms 0.64 deg;  planner error rms 0.05-0.5 Hz 0.045, 0.5-3 Hz 0.021 m/s^2;  loop stiffness 0.0047 torque/deg (fork hold slope 0.0133)
+
+======================================================================================================================
+S9. CROSS-ROUTE COMPARISON
+======================================================================================================================
+                                                     r72_v293r3    r73_v293r3    r71_v293r2      r70_v293
+    commit                                            e8e62f0e1     e8e62f0e1     66cf4454a     4247cb09e
+    Kp / LAF / Ki                                  0.85/14/0.60  0.85/14/0.60  0.85/14/0.30   0.30/6/0.15
+    engaged s                                               627           599           883           858
+    rms planner error 1-8                                 0.143             -         0.102             -
+    rms planner error 8-15                                0.116         0.047         0.134         0.096
+    rms planner error 15-22                               0.107         0.043         0.136         0.116
+    rms planner error >22                                 0.138         0.054         0.171         0.117
+    rms shaped-setpoint error 1-8                         0.084             -         0.103             -
+    rms shaped-setpoint error 8-15                        0.084         0.029         0.134         0.093
+    rms shaped-setpoint error 15-22                       0.083         0.026         0.134         0.114
+    rms shaped-setpoint error >22                         0.099         0.031         0.165         0.113
+    tracking gain planner 1-8                             0.964             -         0.850             -
+    tracking gain planner 8-15                            0.982         0.981         0.914         0.992
+    tracking gain planner 15-22                           0.796         0.979         1.017         1.067
+    tracking gain planner >22                             0.738         0.969         1.123         1.126
+    lag planner->actual s 1-8                              0.00             -          0.00             -
+    lag planner->actual s 8-15                             0.11          0.30          0.02          0.11
+    lag planner->actual s 15-22                            0.46          0.17          0.00          0.05
+    lag planner->actual s >22                              0.52          0.24          0.00          0.19
+    planner-error share 1-3 Hz % 1-8                         26             -             4             -
+    planner-error share 1-3 Hz % 8-15                         5             9            20            11
+    planner-error share 1-3 Hz % 15-22                        2            11            46             6
+    planner-error share 1-3 Hz % >22                          1            13            22             8
+    turn-hold act/plan 0.8-1.5 1-8                        1.030             -         0.828         1.005
+    turn-hold act/plan 0.8-1.5 8-15                           -             -         0.823         0.934
+    turn-hold act/plan 0.8-1.5 15-22                          -             -         0.939         1.057
+    turn-hold act/plan 0.8-1.5 >22                        0.754             -         1.129         1.142
+    curve 0.5-3 Hz rate rms deg/s 1-8                         -             -             -             -
+    curve 0.5-3 Hz rate rms deg/s 8-15                        -             -          42.6             -
+    curve 0.5-3 Hz rate rms deg/s 15-22                       -             -             -             -
+    curve 0.5-3 Hz rate rms deg/s >22                         -             -           8.2             -
+    curve 0.5-3 Hz angle rms deg 1-8                          -             -             -             -
+    curve 0.5-3 Hz angle rms deg 8-15                         -             -          5.65             -
+    curve 0.5-3 Hz angle rms deg 15-22                        -             -             -             -
+    curve 0.5-3 Hz angle rms deg >22                          -             -          0.80             -
+    hard-turn rate bursts /min v<10                        81.3         125.8          82.9         107.5
+    hard-turn rate bursts /min 10-20                          -         105.5         158.3          70.0
+    hard-turn rate bursts /min >20                            -             -         105.5          16.6
+    hard-turn 0.5-5 Hz rate rms v<10                       47.2          80.3          59.9          85.6
+    hard-turn 0.5-5 Hz rate rms 10-20                         -          27.7          39.5          26.8
+    hard-turn 0.5-5 Hz rate rms >20                           -             -          28.4           8.5
+    stall-ramp-snap /min (v<10)                             0.0           0.0           1.0           0.0
+    integrator share 1-8                                   0.25          0.07          0.35          0.32
+    integrator share 8-15                                  0.34          0.12          0.31          0.33
+    integrator share 15-22                                 0.40          0.30          0.21          0.37
+    integrator share >22                                   0.32          0.33          0.31          0.38
+    plant resid/rms u (fork map) 1-8                       0.31          0.58          0.50          0.49
+    plant resid/rms u (fork map) 8-15                      0.51          0.58          0.36          0.46
+    plant resid/rms u (fork map) 15-22                     0.59          0.63          0.35          0.41
+    plant resid/rms u (fork map) >22                       0.59          0.66          0.33          0.43
+    free-fit a torque/deg 1-8                           0.00246       0.00607       0.00226       0.00228
+    free-fit a torque/deg 8-15                          0.00440       0.01386       0.00511       0.00689
+    free-fit a torque/deg 15-22                         0.01572       0.01359       0.01199       0.01169
+    free-fit a torque/deg >22                           0.02293       0.01922       0.01362       0.01568
+    fork hold slope at op 1-8                           0.00343       0.00302       0.00438       0.00348
+    fork hold slope at op 8-15                          0.00917       0.00928       0.00820       0.00877
+    fork hold slope at op 15-22                         0.01013       0.01049       0.00989       0.01096
+    fork hold slope at op >22                           0.01333       0.01336       0.01334       0.01317
+    free-fit b torque/(deg/s) 1-8                       0.00084       0.00099       0.00122       0.00134
+    free-fit b torque/(deg/s) 8-15                      0.00092       0.00187       0.00071       0.00208
+    free-fit b torque/(deg/s) 15-22                     0.00379       0.00157       0.00054       0.00124
+    free-fit b torque/(deg/s) >22                       0.00432       0.00626       0.00071       0.00154
+    free-fit J torque/(deg/s2) 1-8                      1.0e-04       1.2e-04       7.7e-05       9.3e-05
+    free-fit J torque/(deg/s2) 8-15                     6.4e-05       1.1e-04       8.2e-05       8.4e-05
+    free-fit J torque/(deg/s2) 15-22                    7.3e-05       1.2e-04       8.6e-05       8.1e-05
+    free-fit J torque/(deg/s2) >22                      1.3e-04       1.5e-04       8.3e-05       9.1e-05
+    straight angle wander rms deg 8-15                     6.07          0.72          2.04          2.51
+    straight angle wander rms deg 15-22                    0.79          0.73          0.47          0.80
+    straight angle wander rms deg >22                      0.72          0.43          0.82          0.64
+    straight loop stiffness t/deg 8-15                   0.0160        0.1075        0.0137        0.0088
+    straight loop stiffness t/deg 15-22                  0.0271        0.0466        0.0263        0.0031
+    straight loop stiffness t/deg >22                    0.0279        0.0113       -0.0040        0.0047
