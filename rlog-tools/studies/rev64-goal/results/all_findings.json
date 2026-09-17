@@ -1,0 +1,486 @@
+[
+ {
+  "id": "holdsat-unidentified-at-speed",
+  "mechanism": "HONDA_ACCORD_HOLD_SAT_DEG = 19.3 + 546*exp(-v/3.01) is a 3-parameter form fitted jointly across all speeds. Its high-speed asymptote (a = 19.3 deg) is therefore set almost entirely by the LOW-speed cells, where the data is rich (route 76 reaches 120+ deg below 9 m/s). Above 15 m/s the fit had two median cells total, and route 76 adds nothing: it never exceeds 15.1 deg above 15 m/s. The one remaining shape constraint is degenerate with the co-fitted static-friction intercept.",
+  "explains_notes": [
+   3,
+   4,
+   5
+  ],
+  "magnitude": "PRE-REGISTERED FAIL CONDITION MET. Route 76, ALL samples (engaged or not): 15-22 m/s n=15,902, max |angle| 15.1 deg, 0 samples >20 deg; 22-40 m/s n=19,972, max 10.8 deg, 0 samples >20 deg. Engaged+quasi-static (|rate|<15 deg/s): 15-22 m/s n=15,556 with exactly 1 sample >15 deg. Fit provenance (docs/handoffs/2026-09/HANDOFF-2026-09-14-v293-rev2-... section 2d): the only cells above 15 m/s are 8 deg / 29 deg at v_med 17.3, and 8 deg / 12 deg at v_med 28. Solving tanh(x)/x = slope-ratio on that 17.3 m/s pair gives sat = 21.7 / 26.0 / 31.4 / 43.5 deg for a static-friction intercept of 0.005 / 0.020 / 0.030 / 0.040 torque -- sat is fully traded against an intercept the same handoff calls uncertain by 2x(0.02-0.04). The kit's own handoff already states: 'The hold map above 15 m/s beyond 25 deg ... is extrapolated (BELIEF)'.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "numpy over analysis-2020accord/_scratch/cache/tau/r76_v293_ident.npz (sa_deg, vego, sr_deg, cs_active x lat_active resampled onto the carState clock); scripts holdmap_hist.py and holdmap_fix.py section A. Provenance by grep of the fork git history (git log -S HONDA_ACCORD_HOLD_SAT_DEG -> e8e62f0e only; HOLD_K_V -> e8e62f0e + afbe5fb4) plus the kit handoff and memory note accord-v293-rev2-flew-route71-....md.",
+  "proposed_fix": "No fix by itself -- this is the licence to change sat(v) on physics, since no measurement above 15 m/s contradicts it. It also fixes what to instrument: route 76 cannot score any large-angle change, so the next drive needs at least one sustained >25 deg hold above 15 m/s (a highway on-ramp held) or the edit is uninterpretable.",
+  "fix_risk": "none (a null)",
+  "confidence": 0.95,
+  "stream": "holdmap"
+ },
+ {
+  "id": "physics-says-no-saturation-at-20deg",
+  "mechanism": "Steady-state bicycle model with a Fiala brush front tyre, using openpilot's own HONDA_ACCORD CarSpecs (mass 1487+136 kg, L 2.83, centerToFront 0.39L, tireStiffnessFactor 0.8467 through scale_tire_stiffness -> Cf 183,657 N/rad), sR 16.88, mechanical trail 30 mm + pneumatic trail 28 mm. Front-axle aligning torque Mz = Fyf*(t_m + t_p(alpha_f)) is near-linear in steering angle until the front slip angle approaches the slide slip (2.73 deg). That happens at a FIXED lateral acceleration, so the saturation ANGLE scales as 1/v^2 -- not as a + b*exp(-v/c).",
+  "explains_notes": [
+   3,
+   4,
+   5
+  ],
+  "magnitude": "Physics delivered-fraction-of-linear at 19 m/s: 0.961 / 0.918 / 0.831 / 0.649 at 10 / 20 / 40 / 80 deg. Fitted tanh at the same points: 0.926 / 0.766 / 0.488 / 0.253. The angle at which physics reaches the map's own saturation point (tanh(1)/1 = 0.7616) is 328 / 132 / 56 / 31 deg at 8 / 12.5 / 19 / 26 m/s, versus the fitted 57.6 / 27.9 / 20.3 / 19.4 deg -- a factor 5.7 / 4.7 / 2.8 / 1.6. Mz PEAKS at 394 / 191 / 111 / 82 deg_sw. The product v^2 * theta_sat = 2.07e4 +/- 2% over 8-26 m/s, i.e. saturation at a_y = 5.1-7.2 m/s^2, which the planner (~2.5-3 m/s^2) never reaches. Independent shape check that does NOT assume the Nm-per-command scale: physics small-angle slope normalised at 19 m/s vs k(v)/k(19) gives ratio 1.04 / 1.11 / 1.21 at 20 / 23 / 28 m/s but 0.79 / 0.59 / 0.49 / 0.45 at 15 / 12.5 / 10 / 8 -- the aligning-torque model explains the fitted k(v) above ~17.5 m/s and explains less than half of it below 10 m/s.",
+  "evidence_or_belief": "BELIEF",
+  "method": "scratchpad/holdmap_physics2.py -- brentq root-solve of the steady-state slip balance per (angle, speed), Fiala brush Fy and pneumatic trail, scipy. Vehicle constants read from /home/user/starpilot/opendbc/car/honda/values.py and opendbc/car/__init__.py (scale_tire_stiffness, VehicleDynamicsParams); steer ratio 16.88 confirmed from liveParameters in the route-76 cache (median 16.8800). The shape-vs-speed agreement above 17.5 m/s is EVIDENCE that this is the right mechanism there; the large-angle highway prediction itself has no measurement behind it, hence BELIEF.",
+  "proposed_fix": "See holdsat-floor-fix.",
+  "fix_risk": "n/a",
+  "confidence": 0.8,
+  "stream": "holdmap"
+ },
+ {
+  "id": "lowspeed-saturation-is-real-and-is-a-different-mechanism",
+  "mechanism": "Below ~9 m/s the hold torque is dominated by a term the aligning-torque model does NOT explain (tyre scrub about the kingpin / geometric restoring), which genuinely saturates with angle and decays with speed. The single-tanh fit has ONE sat(v) shared by both components, so the low-speed cells set the saturation scale and the exponential then carries that scale up to highway speed, where the component that caused it has vanished. That is the fit artifact -- not the saturation itself.",
+  "explains_notes": [
+   3
+  ],
+  "magnitude": "Route 76, engaged, quasi-static (|rate|<20 deg/s, not pressed), 5-9 m/s (v_med 7.3, sat = 67.7 deg): at 55-80 deg (n=157) delivered/(map+0.020 friction) = 1.02 and delivered/(linear+friction) = 0.74; at 80-120 deg (n=268) 1.11 and 0.73. So at low speed the tanh is right to within ~10% and a linear law is wrong by 27%. Meanwhile the physics aligning torque accounts for only 0.45 of the fitted small-angle slope at 8 m/s and 0.07 at 2 m/s (normalised at 19 m/s) -- more than half the low-speed hold is non-aligning.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "scratchpad/holdmap_lowspeed.py -- median of sign(angle)*controlsState.output per (|angle|, speed) cell, engaged and quasi-static, compared against k(v)*sat(v)*tanh and against k(v)*angle, both plus the 0.020 intercept the map was fitted with. Cross-checked with the odd-symmetrised version (holdmap_regress.py) which cancels road crown: 4-8 m/s, 50-80 deg, u_odd 0.3040 vs map 0.2696 vs linear 0.3819. The EVIDENCE mark covers the saturation itself; naming the extra term scrub/geometry is BELIEF.",
+  "proposed_fix": "Any fix MUST leave v <= ~8.5 m/s byte-identical. That is what the floor form below does.",
+  "fix_risk": "n/a",
+  "confidence": 0.85,
+  "stream": "holdmap"
+ },
+ {
+  "id": "holdsat-floor-fix",
+  "mechanism": "At any angle the map's own saturation has reached, the feedforward supplies only a fraction of the restoring torque the plant needs, and the fraction FALLS as the angle grows. The shortfall is a restoring-torque deficit that scales with angle -- the car behaves as if the caster is not being paid for. It is then carried by P (a standing angle error), by the disturbance observer (two 0.6 Hz poles, ~1 s), and by the integrator (tau 7.3 s) -- a lagged, non-smooth catch-up on every large-angle entry and exit, and a feedforward whose INCREMENTAL stiffness during an angle sweep is well under the plant's.",
+  "explains_notes": [
+   3,
+   4,
+   5
+  ],
+  "magnitude": "At 19 m/s with rev 6.4 as flown (k*level = 0.016066 torque/deg, sat 20.3 deg), deficit vs the physics law: 0.0487 / 0.0772 / 0.1277 / 0.2205 torque at 20 / 24 / 30 / 40 deg (= 2.11 / 2.53 / 3.16 / 4.21 m/s^2). Delivered/needed = 0.835 / 0.778 / 0.697 / 0.587. At the planner's 2.5 m/s^2 (24 deg) that is a 22% hold shortfall. With Kp=1.0, LAF=14, lsf=0.189 as flown, P alone leaves 3.97 deg (0.42 m/s^2, 17%) of steady under-turn at 24 deg and 11.3 deg (1.19 m/s^2) at 40 deg; the integrator time constant is 7.3 s and the DOB covers it 10-90% in ~1.0 s (clip 0.30 torque, so it saturates beyond ~36 deg at 19 m/s). Note-5 number: at 24 deg / 19 m/s the map's incremental stiffness is k*sech^2(24/20.3) = 0.00505 torque/deg against the plant's ~0.01263 -- the feedforward supplies 40% of the incremental torque during a medium/large-angle sweep. At 26 m/s the deficits are 0.038 / 0.066 / 0.113 at 20 / 24 / 30 deg; at 12.5 m/s 0.024 / 0.039 / 0.070. NOT a straight-road effect: at 5 deg / 19 m/s the fitted and physics fractions are 0.9805 and 0.981 -- identical, so this does NOT explain note 2.",
+  "evidence_or_belief": "BELIEF",
+  "method": "scratchpad/holdmap_fix.py sections C and D. The controller-side arithmetic is EVIDENCE (gains, lsf, tau, DOB corner and clip read from the fork source and from route 76's flown params in rlog-tools/studies/grind/_scratch/v293_flight_read_r76_v293.json: SteerKP 1.0, AccordTorqueKi 0.3, AccordTorqueKiHigh 0.0, SteerLatAccel 14.0, AccordDobHz 0.6, AccordFrictionHyst 0.015, SteerRatio 16.88; lsf formula from latcontrol_torque.py:339). The deficit SIZE is BELIEF because it rests on the physics law, which has no highway large-angle measurement behind it. Integrator tau = (k_plant_local + Kp/LAF*dAy/dtheta)*LAF/(Ki*(1+lsf/Kp)*dAy/dtheta).",
+  "proposed_fix": "A SATURATION FLOOR, gated. In latcontrol_vehicle_tunes.py add: HONDA_ACCORD_HOLD_SAT_PHYS_K = 2.07e4 (deg*(m/s)^2, saturation at a fixed a_y, from the bicycle+Fiala derivation); HONDA_ACCORD_HOLD_SAT_FLOOR_CAP_DEG = 60.0; HONDA_ACCORD_HOLD_MAX_TORQUE = 0.55. In get_honda_accord_hold_sat_deg: s = a + b*exp(-v/c); if the toggle is on, s = max(s, min(HONDA_ACCORD_HOLD_SAT_PHYS_K / max(v,1.0)**2, HONDA_ACCORD_HOLD_SAT_FLOOR_CAP_DEG)). Clip the return of get_honda_accord_hold_torque to +/-HONDA_ACCORD_HOLD_MAX_TORQUE. Toggle name: AccordHoldSatFloor (default ON; off = the rev 3-6.4 sat exactly). Resulting sat(v): 93.7 / 60 / 60 / 60 / 60 / 57.3 / 42.8 / 30.6 / 23.0 deg at 6 / 8 / 10 / 12.5 / 15 / 19 / 22 / 26 / 30 m/s. BELOW 8.47 m/s NOTHING CHANGES (the fitted exponential is already above the floor), so every measurement this stream has -- the 5-9 m/s cells -- is preserved exactly. The delivered surface then tracks the physics law to within 5% at 10-40 deg at 12.5/19/26 m/s (holdmap_fix.py section C). k(v) and HONDA_ACCORD_HOLD_LEVEL_V are untouched: level sets the SLOPE (fitted at 2-12 deg, still valid) and sat sets the SHAPE, so this is orthogonal to rev 6 and 6.4. get_honda_accord_mode_hz is untouched (it reads k, not sat), so the error notch does not move. The DOB reads the same hold_torque_fn (latcontrol_vehicle_tunes.py:2728), so the feedforward and the observer's internal model move together -- the same coupling rev 6.4 required.",
+  "fix_risk": "REAL, STATE IT BEFORE THE DRIVE. (1) Authority: with the floor and no ceiling the hold term's asymptote at 19 m/s goes 0.326 -> 0.921 torque (HONDA_ACCORD_FF_ANGLE_LIMIT_DEG is 400, so the asymptote IS the effective ceiling today). That is why HONDA_ACCORD_HOLD_MAX_TORQUE = 0.55 is part of the fix: 0.55 still leaves >30% headroom above the planner's 3.0 m/s^2 at every speed (3.0 m/s^2 needs 0.423 at 19, 0.354 at 26, 0.474 at 12.5) while capping the unexercised tail. (2) At angles the planner actually uses, hold torque rises 25-35% at 20-30 deg and 4-5% at 10 deg; if the physics law errs in the over-delivering direction this is over-turning on curve entry, which nothing takes back. Sized SHORT on purpose: the 60 deg cap keeps 12.5-15 m/s well inside the physics 0.762-point (132 / 92 deg). (3) 8-12 m/s is the least-supported band of the change (floor 60 vs fitted 39-28); route 76's 311 quasi-static samples >20 deg there scatter +/-20% and cannot adjudicate -- consider capping the floor at 45 deg for a first flight. (4) UNINTERPRETABLE WITHOUT A LARGE-ANGLE DRIVE: nothing in route 76's regime exercises this edit. The drive must include sustained >25 deg holds above 15 m/s and the telemetry must log angle alongside the hold term, or the result is a null by construction.",
+  "confidence": 0.7,
+  "stream": "holdmap"
+ },
+ {
+  "id": "k-of-v-still-under-slopes-above-20ms",
+  "mechanism": "The physics aligning-torque slope grows faster with speed than the fitted k(v) does above ~17.5 m/s, even after rev 6.4's level. Secondary to the main finding and scale-anchored, so weak.",
+  "explains_notes": [
+   3
+  ],
+  "magnitude": "Physics small-angle slope normalised at 19 m/s rises 0.675 -> 1.751 from 15 to 28 m/s (x2.59); rev 6.4's levelled k rises 0.01235 -> 0.02320 (x1.88). Shortfall grows to ~27% at 28 m/s if the physics shape is right. The rev-4 lineage note already reasoned toward v^1.0 and deliberately stopped short of v^2; physics here says roughly v^1.3 over 15-28 m/s.",
+  "evidence_or_belief": "BELIEF",
+  "method": "holdmap_physics2.py final table, cross-multiplied by HONDA_ACCORD_HOLD_LEVEL_V. No route-76 measurement discriminates: engaged angles above 22 m/s top out at 10.8 deg.",
+  "proposed_fix": "Do NOT ship with the sat floor -- one lever per drive. If the sat-floor flight is clean, a follow-up raising HONDA_ACCORD_HOLD_K_V[28 m/s] 0.0160 -> ~0.0185 is the next candidate.",
+  "fix_risk": "Confounds the sat-floor experiment if shipped together; over-holding at 26-31 m/s if the scale anchor is wrong.",
+  "confidence": 0.4,
+  "stream": "holdmap"
+ },
+ {
+  "id": "rate-ff-half-globally",
+  "mechanism": "get_honda_accord_rate_plant_ff's move term is rate_gain*angle_des_rate/G(v) with rate_gain 0.5, and 1/G(v) IS the identified viscous coefficient b(v) (0.00413 vs b_ident 0.00410 at 19 m/s; 0.00345 vs 0.00366 at 12; 0.00535 vs 0.00489 at 26). So the feedforward is a deliberate half-strength plant inverse on the only term that leads the motion. The shortfall is handed to P and I, which act through a 0.286 s learned delay, so the wheel falls behind and is then caught up -- lag-then-catch-up, which is what a rate transient feels like.",
+  "explains_notes": [
+   5,
+   4
+  ],
+  "magnitude": "At the peak of measured rate transients the FF move term supplies 0.422 / 0.426 / 0.435 of the model-requested motion (p90 events at 8-15 / 15-22 / >22 m/s) and 0.440 / 0.446 / 0.444 at p99. Torque deficit at the peak: 0.0150 (p90, 15-22 m/s), 0.0217 (p99), 0.0421 / 0.108 at 8-15 m/s. That deficit is a rate error of deficit*G, i.e. the wheel falls 1.1-1.6 deg behind at 15-26 m/s and ~10 deg at 8-15 m/s over the transient's own duration. Route 76's logged |P| rises from 0.0058 to 0.0110 torque in those windows (delta 0.0052), so P covers about a third of the p90 deficit; the rate loop's desired-rate half covers at most another 0.0050, and the remainder shows as tracking error. METHOD: chain reconstruction (ratexfer_chain.py) validated against route 76's LOGGED desiredLateralAccel at R^2 = 1.0000, rms residual 0.0013 m/s^2 against sd 0.5199 (wrong-constant controls give 16-76x larger residual); event census and deficit arithmetic in ratexfer_main.py / ratexfer_deficit.py.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "Read the code path (latcontrol_torque.py:621-700, latcontrol_vehicle_tunes.py:2574-2605). Rebuilt the rev-6.4 setpoint chain (delay buffer -> 4.0 Hz jerk LPF -> setpoint = expected + jerk*D -> two 0.06 s ref poles -> curv_des -> VM.get_steer_from_curvature with the variable steer ratio at the MEASURED angle -> 100 Hz difference -> 0.10 s FirstOrderFilter) from route 76's raw desiredCurvature; validated the identical rev-5 chain against the logged setpoint. Compared 1/G(v) against the kit's band-fit b (minlaw_simlib BANDS, report F1). Files: ratexfer_lib.py, ratexfer_chain.py, ratexfer_main.py (sections B/D), ratexfer_deficit.py (sections G/H/I).",
+  "proposed_fix": "Speed-schedule the gain instead of halving it everywhere. Add HONDA_ACCORD_FF_RATE_GAIN_BP = [8.0, 12.0] and HONDA_ACCORD_FF_RATE_GAIN_V = [0.50, 0.70], with get_honda_accord_ff_rate_gain(v_ego, gain_high) = np.interp(v, BP, [0.50, gain_high]); the existing AccordFFRateGain toggle sets the HIGH knot only, so the low-speed regime keeps the 0.50 its evidence actually covers, and setting the toggle to 0.50 is an exact revert to today. Ship it together with the RC change below (they were simulated as a pair).",
+  "fix_risk": "1.6-3 Hz activity rises. In the ident world on the t8 2.5 m/s^2 turn ramp at 19 m/s the pair (0.70, rc 0.05) takes 1.6-3 Hz wheel-rate chatter from 0.628 to 0.784 deg/s rms, +25 % -- exactly at the kit's pre-registered 25 % FAIL gate. Peak hold error is UNCHANGED (0.2480 -> 0.2480, one quantum) and break-out t50 improves 0.47 -> 0.39 s. Gain 0.85 at rc 0.10 was rejected: chatter +34 % AND hold error +34 %, failing the gate on both. In the 'mode' world (b = 0.0006, the estimate the brief flags as stiction-biased low) hold error rises from a very small base (0.069 -> 0.101, +46 %) while turn tracking rms improves 13 %. Instrument to watch on the next drive: the 1.6-3 Hz band rms of carState.steeringRateDeg -- already on the wire, no new logging needed.",
+  "confidence": 0.85,
+  "stream": "ratexfer"
+ },
+ {
+  "id": "ff-rate-filter-costs-phase-not-magnitude",
+  "mechanism": "HONDA_ACCORD_FF_RATE_RC = 0.10 s is a 1.59 Hz pole on a signal that is already the derivative of a twice-filtered (0.06 s) setpoint, so it is redundant smoothing -- the same class of error rev 6 corrected one stage upstream when it moved the jerk LPF from 1.2 Hz to 4.0 Hz, on the adjacent line, and did not revisit. Its cost is almost entirely PHASE: it eats ~96 ms out of the delay compensation the stage above just built.",
+  "explains_notes": [
+   5,
+   4
+  ],
+  "magnitude": "Exact discrete response (openpilot FirstOrderFilter, dt=0.01): |H| 0.998 / 0.981 / 0.950 / 0.835 and group lag 99.8 / 98.7 / 96.4 / 87.8 ms at 0.1 / 0.3 / 0.5 / 1.0 Hz. Route 76's engaged desired-rate spectrum above 15 m/s: 73 % of the variance below 0.3 Hz, 95 % below 1.22 Hz. Variance-weighted |H| = 0.959, variance-weighted group lag = 96.5 ms. So of the total move-term under-delivery, the GAIN costs 50 % of magnitude and the filter costs 4 %; the filter owns essentially all of the ~96 ms phase error. Halving RC to 0.05 s in the closed-loop replay (ident world, 8 route-76 windows 14.5-26 m/s) at gain 0.70: rms error 0.1181 -> 0.1102, lag 0.240 -> 0.225 s, over-delivery gain 1.175 -> 1.163 (i.e. the shorter pole buys lag WITHOUT adding over-delivery, unlike raising the gain further).",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "Exact discrete transfer function of the openpilot one-pole (ratexfer_lib.fof_response, not the continuous approximation). Welch PSD of the reconstructed d(angle_des)/dt on 4 contiguous engaged runs >20 s above 15 m/s, 276 s total (ratexfer_main.py section C). Closed-loop numbers from ratexfer_sim4.py.",
+  "proposed_fix": "HONDA_ACCORD_FF_RATE_RC 0.10 -> 0.05, exposed as a NEW toggle AccordFFRateRC (params_keys.h default \"0.10\" so Safe Mode restores today's behaviour) -- per the operator's standing rule, gate it, do not just edit the constant. Simulated best pair: AccordFFRateGain 0.70 (above 12 m/s) + AccordFFRateRC 0.05.",
+  "fix_risk": "Same 1.6-3 Hz cost as above; the two levers are not additive in risk (0.70 + rc 0.05 has LOWER hold error than 0.85 + rc 0.10 and better tracking). Secondary risk: angle_des is built with the steer ratio evaluated at the measured angle, so measured-angle noise reaches the move term; a shorter pole passes more of it. Measured below -- it is small.",
+  "confidence": 0.8,
+  "stream": "ratexfer"
+ },
+ {
+  "id": "move-limit-never-binds-above-8",
+  "mechanism": "np.interp CLAMPS above the last breakpoint, so get_honda_accord_ff_move_torque_limit returns 1.40 for every speed >= 10 m/s (1.40 at 15, 19, 26 and 35 m/s -- confirmed, not extrapolated). The clamp is therefore a live, speed-scheduled guard that already covers the low-speed rail case the 0.5 gain was chosen to prevent, which makes the global halving redundant at speed.",
+  "explains_notes": [
+   5
+  ],
+  "magnitude": "Route 76, engaged, v > 8 m/s: max |move| = 0.106 at gain 0.5, 0.213 at gain 1.0, 0.319 at 1.5, 0.426 at 2.0 -- against a limit of 1.40, i.e. 6.6x headroom at gain 1.0. Zero frames at the limit at any of those gains (0.0000 %). Below 8 m/s (101 s engaged): max 0.259 at gain 0.5, 0.518 at gain 1.0, against a limit of 1.00; also never binds on this route, though route 70's demand is worse (the constant's own comment records max |ff| 1.133 there at gain 1.0).",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "ratexfer_main.py section E: np.interp evaluated at 5/8/9/10/15/19/26/35 m/s against the parsed HONDA_ACCORD_FF_MOVE_TORQUE_LIMIT_BP/_V, plus a frame-by-frame census of |rate_gain*raw_rate/G(v)| against the per-frame limit over route 76's engaged frames. Provenance of the 0.5: git log -S on the fork shows it was 0.5 at introduction (6dd9a552, 2026-09-07, on the OLD V280-V292 tables, comment 'a 1.0 over-drives entries on the plant', no measurement); the current comment's justification, and the adversarial finding behind it (docs/review/ADV-REV2-FORK-PACKAGE-2026-09-13.md section 2), are an EVIDENCE table whose every row is below 8 m/s (rail events at 3-6 m/s, roundabout cell v<10 and |angle|>40 deg). That document explicitly concedes the package's '1/G IS the measured viscous term so 1.0 is model-consistent' rationale 'is true for the plant's steady viscous term'.",
+  "proposed_fix": "No code change of its own -- this is the finding that licenses the speed schedule in rate-ff-half-globally. State it on the close-out page: the 0.5 is a low-speed anti-rail hedge applied globally, and the guard for that regime already exists and is speed-scheduled.",
+  "fix_risk": "None on its own. The one thing it does NOT license is raising the gain BELOW 8-10 m/s, where route 70 (not route 76) is the binding evidence and the hold term -- which has no clamp at all -- is the larger part of the rail.",
+  "confidence": 0.92,
+  "stream": "ratexfer"
+ },
+ {
+  "id": "no-inertia-term-in-ff",
+  "mechanism": "CONFIRMED: get_honda_accord_rate_plant_ff returns hold_torque + move_torque and nothing else. HONDA_ACCORD_EPS_INERTIA (8e-5) is read ONLY by get_honda_accord_mode_hz (sqrt(k/J)/2pi) and by HondaAccordDisturbanceObserver's internal model (residual = u_delayed - (spring + b*rate + J*acc)). There is no J*angle_acc anywhere in the feedforward, and none in the 100 Hz rate loop either.",
+  "explains_notes": [
+   5
+  ],
+  "magnitude": "If added as J*d(angle_des_rate)/dt: |J*acc| p99 = 0.0083 torque at 8-15 m/s, 0.0019 at 15-22, 0.0019 at >22 (derivative of the FILTERED desired rate; on the raw rate p99 is 0.025 / 0.0041 / 0.0030). Against the move term's own p99 of 0.081 / 0.0147 / 0.0174 that is 11-13 %, and against the measured p90 transient deficit of 0.0150 at 15-22 m/s it is 13 %. In closed-loop simulation, adding it at gain 1.0 / rc 0.05 changed route-replay rms by -3.2 % (mode world) and -1.8 % (ident), with slightly LOWER 1.6-3 Hz chatter -- real but an order of magnitude smaller than the rate-gain lever.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "Read every use of HONDA_ACCORD_EPS_INERTIA in the fork (grep across selfdrive/). Magnitudes in ratexfer_main.py section F. The sim arm required patching the kit's simulator, which has no FF inertia term either: ratexfer_simlib.py adds Cfg(ff_J=...) and the one line pf += -(ff_J * d(r)/dt).",
+  "proposed_fix": "Do NOT add it in this pass. It is ~12 % of a deficit whose other 88 % is a constant already exposed as a toggle, and J = 8e-5 is itself a weakly grounded number (it sets get_honda_accord_mode_hz, which the notch depends on). Revisit only after the rate gain is raised and re-measured on the car.",
+  "fix_risk": "Adding it now would confound the rate-gain read on the next drive -- two levers on the same path, one short symptomatic drive.",
+  "confidence": 0.9,
+  "stream": "ratexfer"
+ },
+ {
+  "id": "midband-overdelivery",
+  "mechanism": "On straight engaged roads the fork delivers ~20% MORE lateral acceleration than the model asks for, across the whole 0.08-0.25 Hz (4-12 s) band. Each lane-centring nudge overshoots; the model then commands back the other way. That back-and-forth is the operator's 5-10 s weave. It is measured against the LOGGED setpoint (pid_log.desiredLateralAccel, already post-ref-filter and post-jerk-filter), so it is an inner-loop property and cannot be a feature of the plan.",
+  "explains_notes": [
+   2
+  ],
+  "magnitude": "|la_act/la_des| band-averaged over 0.08-0.25 Hz on contiguous straight engaged runs, v>15 m/s: rev 5 (route 76) = 1.030; rev 6.4 = 1.221 / 1.203 (route 6c, 55.8 s and 184.0 s runs) and 1.191 (route 6d, 116.8 s run). Coherence 0.94-0.99 at 0.098-0.254 Hz. The three rev 6.4 runs span 22.6-27.2 m/s on two different routes and agree to +/-1.5%, against rev 5's run-to-run scatter of 0.84-1.24. Band-limited tracking error (la_des - la_act) in the same band: rev 5 0.0746 m/s2, rev 6.4 0.0307 / 0.0270 m/s2 -- rev 6.4 tracks 2.5x better in absolute terms, but its residual is now a SYSTEMATIC overshoot rather than random mistracking. Confound closed: learned steerRatio 16.88 (r76) vs 16.84 (r6c/r6d), stiffnessFactor 1.000 on all three, so la_act is computed identically across routes.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "Welch cross-spectrum la_des -> la_act, 51.2 s Hann windows (0.0195 Hz resolution achieved), 50% overlap, linear detrend, computed PER CONTIGUOUS RUN and length-weighted -- runs are never concatenated. Runs defined as: cs_active, vEgo>15 m/s, 6 s moving-average |desiredCurvature| < 0.0012 1/m, contiguous >= 40 s. Data: prebuilt caches _scratch/cache/tau/{r76_v293,r6c_rev64,r6d_rev64}_ident.npz. IMPORTANT CORRECTION TO THE BRIEF: routes 0000006c and 0000006d ARE on this container (14 segments each, analysis-2020accord/rlogs/) and their initData gitCommit is 84766cdc = rev 6.4 exactly, so this is a MEASUREMENT of rev 6.4 on the car, not a simulation. Route 76's initData gitCommit is e44b6cd3 = rev 5, as the brief said. Scripts: limitcycle_02_spectra.py, limitcycle_03_inner_outer.py, limitcycle_06_instrument.py.",
+  "proposed_fix": "This finding is the measurement, not the fix -- see hold-level-double-count. The reusable instrument is limitcycle_06_instrument.py: it reports LC_gain (band gain), LC_err (band-limited tracking error, m/s2) and LC_ang (band-limited steering angle, deg) per run and length-weighted. Target LC_gain = 1.00. Rev 5's values, as asked: LC_err 0.0746 m/s2, LC_ang 1.408 deg, LC_gain 1.030 over 246 s of straight engaged running.",
+  "fix_risk": "n/a (instrument only; read-only on logs).",
+  "confidence": 0.9,
+  "stream": "limitcycle"
+ },
+ {
+  "id": "hold-level-double-count",
+  "mechanism": "Two separate corrections were sized independently against the same deficit and then shipped together. (1) The rev 6.1 friction-hysteresis band schedule cut HONDA_ACCORD_FRICTION_HYST_BAND from a flat 3.0 deg to 0.96 deg at 19 m/s and 0.60 at 26. honda_accord_friction_hysteresis is z += d(angle_des)*F/band clipped to +/-F -- a play operator whose fundamental is an EXACT zero-phase linear spring of F/band torque/deg while unsaturated. At the 1.0-2.1 deg desired-angle amplitudes actually seen on straights, rev 5's 3.0 deg band never saturated, so it delivered a clean 0.0050 torque/deg SPRING. Narrowing the band saturates it and roughly doubles its in-phase stiffness (and adds +15 to +38 deg of lead). (2) rev 6 then raised HONDA_ACCORD_HOLD_LEVEL_V to 1.30 and rev 6.4 to 1.45 on the argument that the hold map read low by x1.4-1.65 -- but that regression credited the whole deficit to the hold map and did not count the stiffness the hysteresis spring was already supplying. The two corrections add, and the same levelled map also goes into the disturbance observer's internal model, so the observer cannot take it back.",
+  "explains_notes": [
+   2,
+   3,
+   4
+  ],
+  "magnitude": "In-phase feedforward stiffness on the desired angle, band-limited to 0.08-0.25 Hz, replayed with BOTH parameter sets on each run's own measured angle trace (route 6c/6d runs): rev 5 params 0.01718 / 0.01985 / 0.01717 torque/deg; rev 6.4 params 0.02520 / 0.02988 / 0.02601 -- a rise of x1.47 / x1.51 / x1.51, weighted x1.50. TERM SPLIT of that rise: hold level alone x1.35, hysteresis band alone x1.02-x1.16; the hold level is 75% and 67% of the rev 6.4 total on the two long runs. Against the measured plant spring k_TRUE = Re(S_u,theta / S_theta,theta) over 0.10-0.25 Hz = 0.0219 / 0.0234 / 0.0246 torque/deg (coherence 0.94-0.96), the rev 5 model was 0.79 of true (UNDER by ~25%) and the rev 6.4 model is 1.19 of true (OVER by ~19%). That 1.19 matches the independently measured closed-loop over-delivery of 1.19-1.21 to within 2% -- two unrelated estimators agreeing. Counterfactuals, length-weighted on the rev 6.4 routes: keeping the band schedule, the hold level that makes model == true is 1.16 (per-run 1.20 / 1.03 / 1.34); AccordFrictionHystBand OFF with level 1.45 gives 1.06; AccordHoldLevel OFF with the band schedule on gives 0.91.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "limitcycle_10_doublecount.py replays get_honda_accord_hold_torque(level=True/False) and honda_accord_friction_hysteresis(band=sched/3.0) -- imported live from /home/user/starpilot/selfdrive/controls/lib/latcontrol_vehicle_tunes.py, not re-typed -- over each run's measured steeringAngleDeg, band-passes at 0.08-0.25 Hz (4th-order zero-phase Butterworth, 1.5-period edge discard) and divides by the band-limited angle rms. k_TRUE from the cross-spectrum of steeringAngleDeg against carControl torque; at 0.2 Hz the inertia term is 0.6% of k (mode is sqrt(k/J)/2pi = 2.1 Hz) and plant Coulomb friction is pure quadrature, so the REAL part is the spring. The exact hysteresis describing function was computed NUMERICALLY by simulating the shipped operator, not assumed (limitcycle_09_hystdf.py): rev 5 at A=1.26-2.14 deg gives 0.00500 torque/deg at +0.0 deg phase; rev 6.4 at A=1.01-1.82 deg gives 0.0078-0.0159 torque/deg at +15 to +38 deg. WHAT IS BELIEF RATHER THAN EVIDENCE HERE: the x1.50 stiffness rise and the 75/25 term split are EVIDENCE (deterministic replay of the shipped functions on the flown traces). The absolute 'x1.19 too stiff' and the 1.16 target level are BELIEF -- a second estimator (time-domain least squares u ~ k*theta + b*theta' + J*theta'' on the band-passed traces, limitcycle_11_verify_k.py) returns 0.74-0.88 of the cross-spectral k_TRUE on five runs and flips sign on the shortest (42.6 s) run, so per-run plant stiffness carries 25-35% method spread.",
+  "proposed_fix": "Back off ONE of the two, not both, and keep both gated. Minimal and already-gated: lower only the HIGH knot of HONDA_ACCORD_HOLD_LEVEL_V from 1.45 to 1.15-1.20 (leave the 12.5 m/s knot at 1.15, leave HONDA_ACCORD_HOLD_LEVEL_BP alone). This automatically moves the feedforward AND the observer's internal model together, because latcontrol_torque.py passes the same hold_fn into HondaAccordDisturbanceObserver.update -- the coordinated move the rev 6 comment itself requires. The existing AccordHoldLevel toggle still gates the whole term off, so nothing is deleted. Keep the rev 6.1 band schedule: it serves the small-signal resolution floor the operator asked for, and it is only 25% of the excess. ZERO-CODE FIRST EXPERIMENT, if a drive is cheaper than a patch: set the existing AccordFrictionHystBand toggle to 0 (restores the flat 3.0 deg band) and re-run limitcycle_06_instrument.py -- predicted LC_gain 1.06 against the measured 1.19-1.21. Either way the acceptance test is LC_gain -> 1.00 +/- 0.05 with LC_err not rising above ~0.030 m/s2.",
+  "fix_risk": "Lowering the hold level partially reverts what rev 6.4 shipped to close the FINE-band (0.25-0.60 Hz) deficit, so the fine band could re-open. Two things bound that risk: the rev 6.4 fine-band figure of 0.86->0.95 was a BENCH simulation, whereas ON THE CAR the fine band now OVER-delivers at 1.31-1.32 (see fine-band-also-over), so there is headroom in the same direction; and 1.15-1.20 still leaves the level well above rev 5's 1.00, which measured 0.79 of the true spring. Second risk: the level is speed-scheduled and all my straight-road data is 17-27 m/s -- there are NO straight engaged runs >= 30 s below 12.5 m/s on any of the three routes, so the low-speed knot is untested here and must not be touched. Do not reach for AccordEpsSpringScale instead: it is global across speed and would push the already-correct low-speed map below rev 5, and a global 1.3 was already falsified at 12 m/s.",
+  "confidence": 0.75,
+  "stream": "limitcycle"
+ },
+ {
+  "id": "fine-band-also-over",
+  "mechanism": "The same feedforward over-stiffness that produces the MID-band overshoot continues into the FINE band, so rev 6.4 over-delivers there too. This matters because the fine band is what rev 6.4 was tuned to fix, and the bench predicted an UNDER-delivery of 0.95; on the car it is an OVER-delivery. It also means backing the hold level off does not trade the fine band away.",
+  "explains_notes": [
+   2,
+   4
+  ],
+  "magnitude": "|la_act| / |la_des| band-averaged over 0.25-0.60 Hz on the same straight engaged runs: rev 5 = 1.06; rev 6.4 = 1.32 (r6c) and 1.31 (r6d). For comparison the bench figure quoted in the HONDA_ACCORD_HOLD_LEVEL_V comment for rev 6.4 was a delivered fraction of 0.95-0.97 at 19-26 m/s. Same runs, same method, same window as the MID-band number.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "Same Welch machinery as midband-overdelivery, band 0.25-0.60 Hz; limitcycle_02_spectra.py. This is the ratio of rms magnitudes, not the coherent transfer, so it includes any incoherent motion in that band -- but the coherent |H| was checked and agrees: 1.20-1.37 at 0.293-0.488 Hz on r6c and 0.97-1.18 on r6d. r6d's 0.391 Hz point has coherence 0.75, so treat the fine-band number as +/-0.1.",
+  "proposed_fix": "No separate fix. Use it as the guard-rail on the hold-level reduction: after the change, LC_gain in 0.25-0.60 Hz should fall toward 1.0 from 1.31, not below ~0.95.",
+  "fix_risk": "Interpretation risk only -- an rms ratio over-reads when incoherent noise is present.",
+  "confidence": 0.85,
+  "stream": "limitcycle"
+ },
+ {
+  "id": "ratelimit-falsified",
+  "mechanism": "The Honda \u00b13/frame\u00b7DT_CTRL = \u00b10.03 unit-torque limiter (opendbc/car/honda/carcontroller.py:321, values.py:39-40) essentially never binds on this car. `steer_limited_by_safety` (controlsd.py:930) therefore almost never freezes the integrator or the disturbance observer, and no ramp-then-catch-up saturation artefact exists in the delivered command.",
+  "explains_notes": [
+   4
+  ],
+  "magnitude": "steer_limited_by_safety TRUE on 0.105% of 51,499 engaged frames (54 frames), 44 rising edges = 5.1/min, median burst 1 frame; 0.094% at |angle|>20 deg. Per-frame command request slew: p50 0.00071, p99 0.0104, p99.9 0.0234, MAX 0.0294 against the 0.030 cap. On the 0xE4 wire: |dcmd| p50 3 counts, p99 38, MAX 120 of the 122.88-count cap; 2 frames of 47,253 above 90% of cap; ZERO at cap.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "Three independent routes, all agreeing. (1) DIRECT: starpilotLateralState.accordObserverFrozen == (steer_limited_by_safety OR steeringPressed) by construction at latcontrol_torque.py:688, so SL = frozen & ~steeringPressed - read from rlog-tools/studies/grind/_scratch/cs_r76_v293.npz sp_dobfrozen. (2) RAW: carControl.actuators.torque vs carOutput.actuatorsOutput.torque parsed from all 19 route-76 rlog segments (scratchpad/jerk_raw_cc.npy). (3) WIRE: 0xE4 STEERING_CONTROL counts, jerk_01_ratelimit.py. Caveat: route 76 flew rev 5; rev 6.4's faster jerk filter (1.2->4.0 Hz) raises the simulated large-angle slew p99.9 from 0.0188 to 0.0281 and puts 0.029% of >20 deg frames at the cap - still negligible.",
+  "proposed_fix": "None. This kills the stream's top hypothesis; do not spend a build on the rate limiter. If anything is done, fix `steer_limited_by_safety` itself: controlsd compares this frame's request against a carOutput from an earlier cycle, so when the limiter is not binding it degenerates to a command-slew detector at 0.01/frame rather than a saturation detector.",
+  "fix_risk": "n/a",
+  "confidence": 0.95,
+  "stream": "jerk"
+ },
+ {
+  "id": "rateloop-dominates-command-jerk",
+  "mechanism": "The 100 Hz rate loop (`inner_torque = -(z + rate_loop_gain*(angle_des_rate - rate_meas))`, latcontrol_torque.py ~line 663) feeds the MEASURED wheel rate back through a filter that is barely a filter (HONDA_ACCORD_RATE_LOOP_RC = 0.01 s at dt = 0.01 -> alpha = 0.5, a 15.9 Hz pole) at a flown gain of 0.001 torque per deg/s. It therefore echoes the wheel's own acceleration straight into the command. At the flown gain its disturbance-sensitivity peak sits at 3.8-3.9 Hz, and its min(1, 12/v) taper is INACTIVE below 12 m/s - which on route 76 is where every single |angle|>20 deg frame occurs.",
+  "explains_notes": [
+   4,
+   5,
+   2
+  ],
+  "magnitude": "46.9% of the per-frame command-slew VARIANCE at |angle|>20 deg (rms 0.00388 torque/frame = 0.39 torque/s, of 0.566 total); next term is P at 9.1%. Band rms of the command at |angle|>20 deg: rate loop is 0.0157 of the 0.0211 total in 1.5-3.0 Hz (74%) and 0.0080 of 0.0110 in 3-8 Hz (73%). 2.7x (large angle) to 5.0x (small angle) of that slew comes from the MEASURED-rate half, not the desired-rate half. Flown AccordRateLoopGain = 0.001 = 1.67x the 0.0006 code default the fork's own margin note was computed at; re-derived sensitivity peak Ms = 2.00 / 2.06 / 2.15 / 2.22 at 5 / 8 / 10 / 12 m/s (light-damping world b = 0.0006) against 1.45-1.52 at 0.0006, gain margin +6.4 dB vs +10.8 dB. Above the taper knee Ms falls to 1.66 (19 m/s) and 1.49 (26 m/s). In the ident world (b = 1/G(v)) Ms is only 1.28-1.48, so the severity is damping-world dependent.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "EVIDENCE for the decomposition; the Ms/gain-margin consequence is BELIEF because it depends on which damping world is real. Replay of latcontrol_torque.py's Accord branch on route 76's recorded inputs, VALIDATED BIT-EXACT against the flown rev-5 log: setpoint corr 1.0000 (rms diff 0.0004), pid.p corr 1.0000, pid.f corr 1.0000, and reconstructed u vs logged -pid_log.output corr 1.0000 with rms diff 0.0009 against a signal of rms 0.1037. Scripts scratchpad/jerk_lib.py + jerk_run.py + jerk_03_terms.py. Margins re-derived from the fork's own plant constants in jerk_06_rlmargin.py (J = HONDA_ACCORD_EPS_INERTIA, b, k, Td = 0.06, RC = 0.01). The same ranking holds in the rev-5 EVIDENCE run (rate loop 52.7% at large angle), so it does not depend on the rev-6.4 extrapolation.",
+  "proposed_fix": "Two independent, toggleable knobs, both already exposed: (a) AccordRateLoopGain 0.001 -> 0.0006, the value HONDA_ACCORD_RATE_LOOP_RC's own comment budgeted the -180 deg crossing at; (b) HONDA_ACCORD_RATE_LOOP_TAPER_V 12.0 -> ~6.0, so the full gain is never applied in the low-speed large-angle regime where Ms peaks. Optionally (c) HONDA_ACCORD_RATE_LOOP_RC 0.01 -> 0.02, which costs ~0.5 Hz of damping bandwidth and buys 0.4-0.7 dB of margin plus a halving of the >8 Hz injection. Do (a) or (b) first, not both, so the drive is interpretable. Instrument: the delivered-jerk table from scratchpad/jerk_instrument.py, plus 1.5-3 Hz and 3-8 Hz command band rms.",
+  "fix_risk": "The rate loop is the only electronic damper the EPS lost in torque mode. Peak |L| at the wheel mode falls from 1.66 to 1.00 at 8 m/s when the gain goes 0.001 -> 0.0006, so the 1.1-1.8 Hz ring will grow. Lowering the taper knee instead keeps full damping at highway speed and only softens it below 6 m/s - lower risk, smaller effect.",
+  "confidence": 0.8,
+  "stream": "jerk"
+ },
+ {
+  "id": "ff-stiffness-collapse-large-angle",
+  "mechanism": "At large angle the feedforward loses almost all incremental slope. hold(a,v) = k*level*sat*tanh(a/sat) has dH/da = k*level*sech^2(a/sat), and sat(v) is only 20-23 deg above 15 m/s, so the map flattens inside the angles a corner actually uses. What remains is the friction-hysteresis ramp, which is steeper than the map by an order of magnitude but only lasts band/2 of desired-angle travel before it clips to +/-friction. A large-angle correction therefore gets a steep ramp for its first half-degree and then almost nothing - a slope break inside a single correction - leaving the rest to P through a 60 ms round trip.",
+  "explains_notes": [
+   3,
+   4,
+   5
+  ],
+  "magnitude": "sat(v) = 57.6 / 29.4 / 23.0 / 20.3 / 19.4 deg at 8 / 12 / 15 / 19 / 26 m/s. At 19 m/s dH/da is 50% down by 17.9 deg and 90% down by 36.9 deg. Fraction of the incremental authority carried by feedforward (vs Kp = 1.0 in lat-accel space / LAF = 14): 68% at 0-2 deg -> 24% at 20-45 deg -> 1% at 45-90 deg at 19 m/s; 75% -> 51% -> 10% at 12 m/s. Hysteresis slope = AccordFrictionHyst/band = 0.0156 torque/deg at 19 m/s = 13.8x the hold map's 0.00113 at 40 deg, but saturates after band/2 = 0.48 deg. Ratio of the two FF slopes inside vs outside the band = 1.97x at 19 m/s, 2.16x at 26; z measured SATURATED on 47.9% of engaged frames under rev 6.4 constants, up from 22.6% under rev 5, with 70.9 saturation-boundary crossings per minute.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "EVIDENCE for the map arithmetic and the measured authority split; the claim that the real tyre aligning torque keeps growing past sat(v) is BELIEF - the fork's own comment calls the saturated tail above 15 m/s 'unexercised BELIEF'. scratchpad/jerk_07_holdsat.py: closed-form dH/da from the shipped HONDA_ACCORD_HOLD_* constants, plus the measured route-76 split of |delivered command| into hold FF / P / I / DOB by |angle| band (rev-5 EVIDENCE run). z saturation rate from the bit-exact replay, jerk_04_triggers.py.",
+  "proposed_fix": "Two candidates, both minimal and both gateable. (1) Give dH/da a floor: add a small LINEAR term to get_honda_accord_hold_torque, hold = k*(sat*tanh(a/sat)*(1-w) + a*w) with w ~0.10-0.15, behind a toggle - it is a no-op on-centre and only restores slope past sat. (2) Make HONDA_ACCORD_FRICTION_HYST_BAND a function of |angle_des| as well as speed, widening it where the hold map has flattened, so the term stops being the dominant FF slope exactly where it saturates soonest. Do NOT raise sat(v) globally - that moves the on-centre hold too.",
+  "fix_risk": "Either change RAISES feedforward authority at large angle, which is the over-turning direction. Size it from the delivered-surface curve read off the built config, and cap the added slope at the measured hold-map on-centre stiffness. The band change also moves the spring/friction threshold that rev 6.1 was tuned around, so it needs the small-signal gain re-checked (route-76 world, 0.05 m/s^2 at 0.2 Hz).",
+  "confidence": 0.72,
+  "stream": "jerk"
+ },
+ {
+  "id": "steeringpressed-chatter-i-decay",
+  "mechanism": "`if self.prev_steering_pressed and not CS.steeringPressed: self.pid.i *= self.steer_release_i_decay` (0.8) applies a 20% cut to the integrator in ONE frame on every steeringPressed falling edge, and the same edge freezes/unfreezes the disturbance observer and the integrator. On this car steeringPressed chatters: it is a plain threshold, and at large angle the driver's hand rests on the rim.",
+  "explains_notes": [
+   4
+  ],
+  "magnitude": "125 steeringPressed bursts in 515 s of engaged driving; 47% of bursts are <=5 frames (<=50 ms), median 6 frames. steeringPressed is TRUE on 24.1% of |angle|>20 deg engaged frames (14.4% at 5-20 deg, 3.8% at 0-5 deg). Release rate 28.2/min at |angle|>20 deg; the resulting single-frame torque step there is median 0.00059, p90 0.0069, MAX 0.0173 unit torque = 71 counts of 0xE4 = 58% of the whole per-frame rate-limit budget delivered in one frame. The DOB (which carries 0.019-0.035 torque median at these angles, comparable to the entire P term) freezes and unfreezes on the same edges.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "carState.steeringPressed and controlsState.lateralControlState.torqueState.i from route 76 (cache tau/r76_v293_ident.npz + grind/cs_r76_v293.npz), edge-detected on the 100 Hz controlsState grid; step size computed as 0.2*|i|/latAccelFactor with the flown SteerLatAccel = 14.0. Script scratchpad/jerk_08_rank.py and its release-edge block.",
+  "proposed_fix": "Debounce steeringPressed for the LATERAL state machine only: require it to have been low for >=100 ms before the release decay fires, and spread the 0.8 decay over ~0.2 s (a per-frame factor of 0.8^(dt/0.2)) instead of one frame. Gate both behind a toggle; do not delete the decay.",
+  "fix_risk": "Low. A briefly-fought integrator unwinds slightly slower after a genuine long hold. Does not change any gain or any feedforward.",
+  "confidence": 0.8,
+  "stream": "jerk"
+ },
+ {
+  "id": "steeringrate-lsb-8x-wrong",
+  "mechanism": "HONDA_ACCORD_RATE_LOOP_RC's comment sizes the rate loop's quantisation injection as '0.125 deg/s per LSB ... 1e-3 * 0.125 = 1e-4 torque'. The signal the loop actually reads is carState.steeringRateDeg, which Honda carstate takes from STEERING_SENSORS.STEER_ANGLE_RATE - DBC scale -1.0, i.e. 1.0 deg/s per LSB, 8x coarser. The 0.125 figure belongs to an EPS-internal probe field, not to carState.",
+  "explains_notes": [
+   2,
+   4
+  ],
+  "magnitude": "opendbc/dbc/honda_accord_2017_can_ext_generated.dbc:370 `SG_ STEER_ANGLE_RATE : 23|16@0- (-1,0)`; confirmed on route 76 - the smallest positive step of carState.steeringRateDeg over the whole route is exactly 1.0000 deg/s (angle LSB 0.1000 deg). At AccordRateLoopGain 0.001 each LSB step is 1.0e-3 torque = 4.1 counts of 0xE4, against the comment's 1e-4. Through the alpha = 0.5 filter the quantisation noise contributes ~1.7e-4 torque/frame rms, which is ~27% of the rate loop's total command slew at |angle|<5 deg and ~4% at |angle|>20 deg.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "DBC signal definition read directly from the fork's opendbc; LSB confirmed empirically as the min positive diff of the unique |steeringRateDeg| values across route 76 (analysis-2020accord/_scratch/cache/tau/r76_v293_ident.npz, field sr_deg). Filter noise propagation computed analytically (q^2/12 through alpha/(2-alpha)).",
+  "proposed_fix": "Correct the comment, and if AccordRateLoopGain stays at 0.001 raise HONDA_ACCORD_RATE_LOOP_RC 0.01 -> 0.02 s (alpha 0.5 -> 0.333), which halves the quantisation injection for 0.4-0.7 dB of extra gain margin and ~0.5 Hz less damping bandwidth.",
+  "fix_risk": "Low, but it is the same knob as the rate-loop gain - change one of them per build, not both, or the drive cannot attribute the result.",
+  "confidence": 0.9,
+  "stream": "jerk"
+ },
+ {
+  "id": "refilter-jerklp-are-one-term",
+  "mechanism": "The delay-compensation stage is H_A(s) = e^-sD + F_j(s)(1 - e^-sD), an EXACT canceller that is identically 1 at every frequency when F_j == 1. All of its lag and all of its gain bump come from F_j (HONDA_ACCORD_JERK_LP_HZ) alone. AccordRefFilter then sits downstream adding pure lag AND holding down the bump F_j leaves. Retire both together and the whole setpoint path becomes the identity; retire either alone and you get a regression.",
+  "explains_notes": [
+   2,
+   4
+  ],
+  "magnitude": "Exact discrete TFs, dt=0.01, D=liveDelay 0.286 s. rev 6.4 AS FLOWN (Fj 4.0, ref 0.06): |H| 1.006/1.035/1.027 and group delay 122/131/160 ms at 0.15/0.40/1.00 Hz, peak |H| 1.061 at 0.71 Hz. Fj OFF + ref OFF: |H| = 1.000 and gd = 0.0 ms at EVERY frequency, and at D = 0.20 and 0.40 s as well. Weighted over the whole command the ref filter is -17.1 deg at 0.40 Hz = 63% of the fork's entire -27.0 deg budget there, and -40.8 deg at 1.00 Hz.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "prune_setpoint_sweep.py / prune_lag.py / prune_ledger.py \u2014 discrete transfer functions written from the fork's own FirstOrderFilter recurrence (alpha = dt/(rc+dt)) and from latcontrol_torque.py L300-327, swept 0.05-3 Hz and evaluated at three D values. Share weighting from prune_shares.py (route-76 replay).",
+  "proposed_fix": "Ship the two as ONE gated change: a new toggle AccordJerkLpHz (default high enough to be a pass-through, e.g. 20 Hz, with 4.0 reachable = today's behaviour) alongside AccordRefFilter, and set AccordRefFilter 0.0 in the rev-7 config. Neither constant is deleted; both stay reachable from Galaxy. Do NOT gate the ref filter off without raising Fj (see finding jerklp-gain-bump-at-1hz).",
+  "fix_risk": "Two, both measured. (1) Command ripple: the entire >4 Hz content of raw_lateral_jerk is 0.0071 m/s^2 of setpoint = 0.0011 torque at 19 m/s = 4.5 counts of 0xE4, a tenth of the friction break-out. Low. (2) UNWIND_D_DES_THRESHOLD -1.0 m/s^3 was calibrated behind these smoothers \u2014 see finding unwind-threshold-owned-by-the-smoother. That one must be re-sited in the same change or the integrator freezes 3% of the time.",
+  "confidence": 0.88,
+  "stream": "prune"
+ },
+ {
+  "id": "jerklp-gain-bump-at-1hz",
+  "mechanism": "With F_j at 4.0 Hz the delay-compensation stage has a +19.9% GAIN PEAK at 1.06 Hz \u2014 a 1 Hz component of the model's demand is commanded 20% too big. AccordRefFilter is currently the only thing holding that to +6.1%. A setpoint over-commanded at 1 Hz on a stick-slip plant is delivered as a break-out step, which is what 'jerky' means.",
+  "explains_notes": [
+   4,
+   5
+  ],
+  "magnitude": "Stage A alone, peak |H_A|: 1.381 at 0.92 Hz (Fj 1.2, pre-rev-6), 1.199 at 1.06 Hz (Fj 4.0, FLOWN), 1.110 at 1.09 Hz (Fj 8.0), 1.000 flat (Fj pass-through). Cascaded with ref 0.06 the flown peak is 1.061 at 0.71 Hz; with ref OFF and Fj 4.0 it is 1.199 at 1.06 Hz \u2014 i.e. gating the ref filter alone TRIPLES the overshoot.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "prune_setpoint_sweep.py, exact discrete TFs of the fork's own constants, 400-point log sweep 0.05-3 Hz, repeated at D = 0.20 / 0.286 / 0.40 s.",
+  "proposed_fix": "Covered by the paired change above: raising Fj removes the bump at source. If the operator wants only one lever this drive, raise Fj and LEAVE AccordRefFilter at 0.06 \u2014 that configuration (Fj 20, ref 0.06) is |H| 0.998/0.987/0.897 with 120/121/123 ms, i.e. flatter than flown at the same lag and no new ripple path into the unwind detector.",
+  "fix_risk": "Fj-only is strictly safer than the pair: it changes no threshold calibration and adds the same 4.5 counts. It leaves 120 ms of ref-filter lag on the table.",
+  "confidence": 0.9,
+  "stream": "prune"
+ },
+ {
+  "id": "dob-liability-already-retired-by-rev64",
+  "mechanism": "The observer's only loop is through model mismatch: L_dob = -Q(s)\u00b7m\u00b7(P_true/P_model)\u00b7e^-sD with m = hold_true/hold_model - 1. Raising the hold level 1.00 -> 1.45 collapsed m from ~0.50 to ~0.03, so the observer no longer partly cancels the spring. The rev-5 case for retiring it (that it carried the feedforward late) is dead \u2014 it now costs almost nothing and still does the one job nothing else does.",
+  "explains_notes": [
+   2
+  ],
+  "magnitude": "Sensitivity 1/(1+L_dob) at 0.15 Hz: rev 5 (model 1.00, true 1.50) |S| 1.333 \u2220-12.5 deg; rev 6 (1.30) 1.117 \u2220-4.2; rev 6.4 (1.45) 1.027 \u2220-0.9. Across the full \u00b140% route scatter (true 1.05-1.80) rev 6.4 stays within |S| 0.76-1.18 and \u2220+8.1 to -6.4 deg. Independently on the wire: the rev-6.4 hold-level increment is rms 0.218/0.252 of the command at 15-22 / >22 m/s against the rev-5 observer's own 0.545/0.585 \u2014 the map took over 40-43% of what the observer was carrying. Its remaining value: it rejects 51% of a 0.15 Hz disturbance (rej 0.486) but only 3% at 0.40 Hz (0.971).",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "prune_dob.py \u2014 loop derived from HondaAccordDisturbanceObserver.update() line by line, Q as the fork's two cascaded FirstOrderFilters at 0.6 Hz, D_rt = HONDA_ACCORD_DOB_DELAY 0.06. Wire shares from prune_shares.py, route-76 hands-off engaged frames (n = 46,887).",
+  "proposed_fix": "KEEP AccordDobHz 0.6 unchanged. No fix. Record that it is now cheap so no future session re-proposes retiring it on the rev-5 argument. If anything, it is the term that should absorb the \u00b130-40% route scatter rather than the map.",
+  "fix_risk": "None \u2014 no change proposed. The one thing to watch: if a future session raises the hold level further and OVER-shoots the true level, m goes negative and the observer starts adding stiffness (|S| 0.76 at true 1.05), which reads as over-holding.",
+  "confidence": 0.85,
+  "stream": "prune"
+ },
+ {
+  "id": "ki-and-dob-are-two-slow-paths-on-one-error",
+  "mechanism": "AccordTorqueKi 0.30 and AccordDobHz 0.6 both correct the same slow tracking error, with corners 12x apart (0.048 Hz vs 0.6 Hz). The integrator is now the SECOND-largest lag at 0.15 Hz \u2014 the MID band where the operator's 5-10 s oscillation lives \u2014 while carrying 3.4-4.2% of the MID-band command. The observer does the same job an order of magnitude faster and, since rev 6.4, almost free.",
+  "explains_notes": [
+   2
+  ],
+  "magnitude": "PI zero vs P alone at v=19 (lsf 0.285): -17.7 deg / +1.049 gain at 0.15 Hz, -6.8 deg at 0.40, -2.7 at 1.00. Weighted by the P/I path's 0.25 share of the FINE-band command that is -4.4 deg at 0.15 Hz, second only to the ref filter's -6.5. I's own rms share of the band-passed command at 15-22 / >22 m/s: MID 0.042/0.042, FINE 0.041/0.037. Broadband 0.064/0.063.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "prune_lag.py (exact PI transfer function with the fork's live lsf inflation, LOW_SPEED_X/Y at v=19) and prune_shares.py (route-76 replay, pid_log.i converted lat-accel -> torque by SteerLatAccel 14, 2nd-order Butterworth band-pass). NOTE: the phase and the shares are EVIDENCE; that this pair is the mechanism behind the operator's 5-10 s oscillation is BELIEF \u2014 route 76 flew rev 5, so no rev-6.4 drive data exists to test it.",
+  "proposed_fix": "Halve AccordTorqueKi 0.30 -> 0.15 in the rev-7 config (already a Galaxy toggle, no code change, and 0.15 is the existing stock_value in params_keys.h so the sync path is proven). That moves the PI zero to 0.024 Hz: -9.1 deg instead of -17.7 at 0.15 Hz. Do NOT take it to 0 \u2014 it is the only term that catches a latAccelOffset the observer's model would absorb as plant. This is a GATE-DOWN, not a deletion; AccordTorqueKi 0.30 stays one toggle away.",
+  "fix_risk": "Slower recovery from a standing bias the observer cannot see (a real steering-angle offset). The prior battery measured Ki 0 as costing T1 disturbance residual 0.059 -> 0.062 at 1 s and IMPROVING hard-turn hold error 0.31 -> 0.18 \u2014 so the direction is benign, but that was on the rev-5 configuration, not rev 6.4. Halving rather than zeroing keeps the retreat short.",
+  "confidence": 0.7,
+  "stream": "prune"
+ },
+ {
+  "id": "notch-guards-a-threat-removed-at-its-root",
+  "mechanism": "AccordErrorNotchQ was added at rev 3 for route 71's 2.34 Hz limit cycle. The prior audit established that the SteerFriction RELAY caused that cycle \u2014 and the relay is now off twice over: SteerFriction 0.0 in the config AND code-gated off whenever AccordFrictionHyst > 0 (latcontrol_torque.py L675). The notch is insurance against a threat already removed at its root, and it is paid for in exactly the band the operator calls jerky.",
+  "explains_notes": [
+   4,
+   5
+  ],
+  "magnitude": "Exact biquad, Q=1, f0 = get_honda_accord_mode_hz(v). At v=19 (f0 1.87 Hz): |H| 0.997/0.976/0.802 and -4.6/-12.6/-36.7 deg at 0.15/0.40/1.00 Hz. WORSE at low speed where large-angle work happens: v=8 (f0 1.28 Hz) |H| 0.450 and -63.2 deg at 1.00 Hz; v=12 |H| 0.733 and -42.9 deg. So on a medium transient at 8-12 m/s the notch removes 27-55% of P/I gain and adds 43-63 deg of lag. Its benefit, from the prior Welch measurement on the logged error: the notch band carries 0.5-3.0% of the error energy P and I consume.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "prune_lag.py \u2014 exact transfer function of the fork's own biquad coefficients (HondaAccordErrorNotch.update, bilinear k = tan(pi f0 dt)), evaluated at f0 for v = 8/12/19/26. The relay being doubly off was read directly at HEAD 84766cdc (latcontrol_torque.py L675 plus the flown config). CAVEAT: the 0.5-3.0% error-energy figure is INHERITED from the prior minaudit Welch analysis and I did not re-derive it \u2014 that part is BELIEF for me.",
+  "proposed_fix": "Set AccordErrorNotchQ 1.0 -> 0.0 in the rev-7 config. It is already a Galaxy toggle with stock_value 0.0 and the code path `q <= 0` is an explicit primed pass-through (HondaAccordErrorNotch.update), so this is a config-only change with a one-toggle retreat. NOT a deletion \u2014 the class, the constant and the speed schedule all stay.",
+  "fix_risk": "If the 1-2.3 Hz mode does re-appear, it re-appears with the notch off. Two things bound that: the relay that drove it is gone, and the rate loop (untapered below 12 m/s, where the notch costs most) is the damper that remains. Watch for chatter on hard curves above 20 m/s on the first drive; the retreat is one toggle.",
+  "confidence": 0.72,
+  "stream": "prune"
+ },
+ {
+  "id": "ffrategain-derating-redundant-with-the-move-clip",
+  "mechanism": "AccordFFRateGain 0.5 halves the identified viscous feedforward globally. Its stated reason is that at 1.0 the feedforward exceeded full scale for 0.34 s BELOW 8 m/s on route 70's planner-limited demand. But HONDA_ACCORD_FF_MOVE_TORQUE_LIMIT was added afterwards to solve exactly that, and it is targeted (1.0 at <=8 m/s, 1.4 from 10). Two mechanisms now guard one failure, and the one still doing the guarding is the global de-rating that costs authority everywhere \u2014 including at the speeds where the operator reports rate transients are mishandled.",
+  "explains_notes": [
+   5,
+   4
+  ],
+  "magnitude": "At 19 m/s G = 242 deg/s per unit torque, so the move term delivers rate_gain\u00b7rate/G = 0.062 torque for a 30 deg/s desired rate instead of the identified 0.124 \u2014 a factor of 2. The clip it is redundant with never came close to binding: route-76 census max |move| 0.171 against a limit of 1.0-1.4. The move term's share of the command is 0.10-0.18 at speed, so doubling it adds 0.10-0.18 of command in the FEEDFORWARD, at exactly zero phase cost.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "Fork constants read at HEAD 84766cdc (HONDA_ACCORD_FF_RATE_GAIN and its comment, HONDA_ACCORD_FF_MOVE_TORQUE_LIMIT_BP/V and its comment, HONDA_ACCORD_EPS_G_V interpolated at 19 m/s); move-term share from prune_shares.py and the prior minaudit wire read. CAVEAT: the redundancy and the arithmetic are EVIDENCE; that raising it improves note 5 is BELIEF \u2014 no rev-6.4 drive exists to test it, and the 0.171 clip census is inherited from the prior minaudit.",
+  "proposed_fix": "Do not raise it flat \u2014 SCHEDULE it, or walk it from the road. AccordFFRateGain is already a Galaxy float toggle, so the zero-code option is to fly 0.75 next drive and 1.0 after if it does not over-turn. The code option, if a schedule is wanted, is one interp keyed on speed (0.5 below 10 m/s where the clip's own reason lives, 1.0 above 15) beside the existing HONDA_ACCORD_FF_MOVE_TORQUE_LIMIT_BP.",
+  "fix_risk": "Over-delivery on rate transients -> overshoot on corner entry. Bounded by the existing move-torque clip, which is the whole point. Below 8 m/s nothing should change; that is where the 0.5 was earned. The toggle makes the retreat immediate.",
+  "confidence": 0.62,
+  "stream": "prune"
+ },
+ {
+  "id": "viscous-term-never-got-the-level-correction",
+  "mechanism": "Rev 6 and 6.4 levelled the HOLD map (x1.15/1.45) from a regression fitted on STILL-WHEEL data \u2014 the constant's own comment says 'measured hands-off with the wheel still (|rate| < 15 deg/s, 1 Hz LPF)'. The viscous term b = 1/G(v) came from the SAME first-order joint fit that read the hold low, but it has never been levelled, because the measurement that found the error excludes moving frames by construction. If b is low by the same factor the hold was, the move term at rate_gain 0.5 delivers 0.5/1.45 = 0.34 of the true viscous torque.",
+  "explains_notes": [
+   4,
+   5,
+   3
+  ],
+  "magnitude": "Compounding factor 2.9x under-delivery on the MOVE path (0.5 de-rating x 1.45 unlevelled b), against a hold path that is now correct to within a few percent. That asymmetry \u2014 a correct hold and a 3x-light move term \u2014 is the shape of 'holds an angle fine, handles rate transients badly, feels jerky on large angles'.",
+  "evidence_or_belief": "BELIEF",
+  "method": "Read HONDA_ACCORD_HOLD_K_V / HONDA_ACCORD_HOLD_LEVEL_V / HONDA_ACCORD_EPS_G_V and their comment blocks at HEAD 84766cdc. What is EVIDENCE: the still-wheel gate (|rate| < 15 deg/s) is stated in the HONDA_ACCORD_HOLD_V_BP comment, so the measurement that produced the 1.45 level structurally cannot speak to b. What is BELIEF: that b is in fact low by a similar factor. Untested.",
+  "proposed_fix": "Settle it before flying it: re-run the hands-off regression on route 76 with the |rate| gate INVERTED (moving frames only, |rate| > 20 deg/s), regress u - hold_levelled(angle,v) on rate, and compare the recovered b against 1/G(v). Read-only, on data already cached (r76_v293.npz carries cs_rate, cs_ang, cs_tq, vego). If b comes back x1.3-1.6 low, the fix is a level on HONDA_ACCORD_EPS_G_V mirroring HONDA_ACCORD_HOLD_LEVEL_V \u2014 and it must reach the observer's b_model in the same edit, exactly as rev 6 did for the hold.",
+  "fix_risk": "None from the measurement. If a level is then shipped, the risk is the same shape as rev 6.4's: over-delivering the move term where the route scatter runs the other way. Same mitigation \u2014 under-correct and let the observer carry the rest. Shipping it WITHOUT the observer's b_model moving too is the known failure mode (rev 6 documented that correcting only the observer rings the hold-and-kick test 0.33 -> 3.89 deg).",
+  "confidence": 0.5,
+  "stream": "prune"
+ },
+ {
+  "id": "unwind-threshold-owned-by-the-smoother",
+  "mechanism": "unwind_detected freezes the integrator when d(setpoint)/dt < -1.0 m/s^3 and |setpoint| < 0.3. That derivative is taken AFTER both smoothers, so the -1.0 threshold is implicitly calibrated on a filtered signal. This is a hidden dependency: gating AccordRefFilter off changes what the threshold means. Exactly the operator's 'lag we added is lag we own' in reverse \u2014 a threshold tuned behind a filter is a threshold that filter now owns.",
+  "explains_notes": [],
+  "magnitude": "Engaged hands-off frames >3 m/s on route 76 (n = 46,887) where unwind_detected fires: rev 6.4 as flown 53 frames (0.113%); Fj 4.0 + ref OFF 1,160 (2.474%); Fj 20 + ref OFF 969 (2.067%); Fj OFF + ref OFF 1,373 (2.928%). A 20-26x increase. The 0.1-percentile of d(setpoint)/dt goes -2.15 -> -5.00 m/s^3.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "prune_unwind.py \u2014 reconstructs the setpoint chain (delay buffer, jerk clip, jerk LP, ref filter) from route 76's own des_curv and vEgo, runs each candidate configuration, and counts the predicate exactly as latcontrol_torque.py L331-332 writes it.",
+  "proposed_fix": "Ship it WITH the ref-filter change, not after: either take the unwind detector's rate from the PRE-ref-filter setpoint (one line, and it is the quantity the threshold was meant to describe), or re-site UNWIND_D_DES_THRESHOLD to the same percentile of the new signal (-1.0 -> about -4.5 m/s^3). The first is preferable \u2014 it makes the threshold independent of the smoother rather than re-tuned to it.",
+  "fix_risk": "Low either way. Erring in the safe direction (threshold too negative) just restores today's behaviour; too shallow freezes the integrator on real unwinds, which is what the freeze exists for.",
+  "confidence": 0.82,
+  "stream": "prune"
+ },
+ {
+  "id": "dead-in-the-flown-config",
+  "mechanism": "Six Accord-adjacent code paths are computed every frame and consumed by nothing in the flown configuration. They cost no lag, so none of this is urgent \u2014 it is the answer to 'should rev 7 come out smaller'.",
+  "explains_notes": [],
+  "magnitude": "AccordTurnFFTaper: toggle false AND the `ff` it scales is discarded (ff_torque = plant_ff + friction_torque + inner_torque, and friction_torque is 0 whenever AccordFrictionHyst > 0, which it is at 0.015) \u2014 dead twice. AccordTorqueKiHigh 0.0: get_honda_accord_torque_ki returns ki_low flat, so the whole rev-4 speed schedule and HONDA_ACCORD_KI_SCHEDULE_V_BP never execute (verified by executing the function at 5/8/12/19/26 m/s). AccordEpsGainScale / AccordEpsSpringScale 1.0: identity. The D path: pid._k_d is the class default 0.0, so measurement_rate, its 2.0 Hz filter and its \u00b12.5 clip are computed and multiplied by zero every frame. AccordDither 0.0: get_honda_accord_dither returns 0 at its first branch. MAX_LAT_JERK_UP 2.5 binds on 21 of 46,887 engaged frames (0.04%), max lead lost 0.31 m/s^2.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "Read latcontrol_torque.py and latcontrol_vehicle_tunes.py at HEAD 84766cdc against the flown config toggle-config_V293_torque_mode_r64.decoded.json; the Ki-schedule and rate-loop-taper branches executed directly (prune_lag.py tail); the jerk-clip census is prune_clips.py on route 76.",
+  "proposed_fix": "Nothing to gate \u2014 these are already off. The only rev-7 action worth taking is documentary: a one-line 'DEAD in the flown config' note beside AccordTurnFFTaper and the Ki schedule so no future session tunes a constant that never runs. Explicitly NOT proposing deletion of any of them.",
+  "fix_risk": "None.",
+  "confidence": 0.9,
+  "stream": "prune"
+ },
+ {
+  "id": "rate-loop-cannot-be-the-answer-to-note-5",
+  "mechanism": "The 100 Hz rate loop is the term whose job note 5 describes, and it is structurally unable to do it: get_honda_accord_rate_loop_gain tapers the gain by 12/v above 12 m/s precisely because the 60 ms round trip turns rate feedback into negative stiffness at the 2 Hz mode. It is cheap and it should stay, but it must not be raised to chase note 5.",
+  "explains_notes": [
+   5
+  ],
+  "magnitude": "Effective gain 0.001 below 12 m/s, 0.000632 at 19, 0.000462 at 26 \u2014 so it needs 12 / 19 / 26 deg/s of rate error to make the 0.012 torque that breaks friction. Its share of the FINE-band (0.25-0.60 Hz) command at 15-22 / >22 m/s is 0.067 / 0.031, and its own filter costs only -1.4 deg at 0.40 Hz. The gain that would reach break-out at 1 deg/s is 0.012, against a gain-margin ceiling of 0.0016-0.0059 where its phase passes -180 deg (3.5-4 Hz) \u2014 2 to 7x over.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "prune_lag.py (exact filter TF) and prune_shares.py (route-76 band-passed shares); get_honda_accord_rate_loop_gain executed directly at 5/8/12/19/26 m/s. CAVEAT: the 0.0016-0.0059 margin ceiling is the constant's own documented loop-delay budget (measured on route 71), inherited not re-derived.",
+  "proposed_fix": "KEEP AccordRateLoopGain 0.001 unchanged, and record explicitly that it is NOT the lever for note 5 so it is not raised. The authority note 5 needs comes from the feedforward's move term (findings ffrategain-derating-redundant-with-the-move-clip and viscous-term-never-got-the-level-correction), which is open loop and therefore has no margin ceiling.",
+  "fix_risk": "None \u2014 no change proposed.",
+  "confidence": 0.8,
+  "stream": "prune"
+ },
+ {
+  "id": "instr-suite-built",
+  "mechanism": "Three standalone instruments plus a shared conventions module now exist. instr_common.py reuses the band metric's exact conventions (t_cs grid, np.interp resampling, engaged = cs_active & ~steeringPressed, run-break at gap > 4/FS, minimum-length filter) and derives the desired STEERING ANGLE from the wire with no vehicle model: since la_act is affine in the steering angle, sa_des = sa_act + (la_des - la_act)/S(v) and the roll compensation and learned angle offset cancel exactly. S(v) is measured from 200 ms differences, forward and reverse regressions bracketing it.",
+  "explains_notes": [
+   3,
+   4,
+   5
+  ],
+  "magnitude": "3 scripts + 1 library, 68 KB total. 11 asserted controls, all passing. S(v) measured at -0.0174/-0.0472/-0.0875/-0.1334/-0.1725 m/s^2 per deg at 7.5/12.7/17.0/22.5/27.3 m/s, fwd/rev bracket 5.8% = the systematic uncertainty on every degree-valued number.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "Scripts run end to end on r76_v293, r6c_rev64, r6d_rev64. Controls asserted in-process (assert, not print). Outputs in scratchpad/instr_out_*.txt and instr_*.json.",
+  "proposed_fix": "N/A - this is the deliverable. Run `python3 instr_<name>.py <cache-tag>` before and after any build; the controls run first every time, so a broken metric cannot silently report.",
+  "fix_risk": "None (read-only analysis). Risk if misused: the degree-valued numbers carry a 5.8% systematic from S(v); do not quote them to three digits.",
+  "confidence": 0.95,
+  "stream": "instr"
+ },
+ {
+  "id": "jerk-is-downstream-of-the-command",
+  "mechanism": "The operator's note 4 (\"very jerky, not smooth and gradual\") is NOT in the commanded torque. The discrete jerk-event census finds essentially no jumps in the fork's output torque, but a high and angle-increasing rate of jumps in the DELIVERED lateral accel. The commanded-to-delivered roughness ratio rms(d la_act/dt)/rms(d la_model/dt) is ~1.2-1.6 near centre and rises to ~1.9-2.7 by 5-10 deg of wheel angle. The plant converts a smooth command into stick-slip motion; this is the Coulomb-friction backlash already on record, now measured in jerk units.",
+  "explains_notes": [
+   4
+  ],
+  "magnitude": "Census at 15-34 m/s, engaged, 0.020 per-frame threshold, 200 ms refractory: cmd_rate events/min = 0.0 (rev5 r76, 305 s), 0.0 (rev6.4 r6c, 298 s), 0.0 (rev6.4 r6d, 296 s). lat_jerk events/min = 50.0 / 38.7 / 27.6 on the same routes. By |angle| (rev6.4 r6d, 15-34 m/s, middle threshold): cmd 0.00 ev/min in every bin; lat_jerk 17.4 -> 60.1 -> 62.1 -> 115.5 ev/min for |angle| 0-2 / 2-5 / 5-10 / 10-20 deg. Roughness ratio vs the model (rev6.4 r6d, 15-20 m/s): 1.16+-0.40 / 1.51+-0.47 / 2.03+-0.57 / 1.88+-0.78 over the same angle bins; rev5 r76 at 15-20 m/s: 1.50+-0.32 / 1.33+-0.32 / 1.91+-0.83 / 2.03. Quantisation floor of the lat_jerk channel is 0.015-0.030 m/s^3 against measured RMS 0.21-1.44, i.e. 10-100x above the floor.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "instr_jerk.py. Census on the RAW per-frame difference (an SG filter smears a step - control N2 asserts the continuous channel sees only 12% of a step the census recovers exactly). Controls P1 (40 injected steps recovered 40/40, size within 1%), N1 (0 false alarms on carrier+noise), P3 (sinusoid RMS within 0.4% of a*2*pi*f/sqrt(2)). Bin counts and bootstrap-over-runs CIs printed for every statistic.",
+  "proposed_fix": "No fork change can remove friction-driven stick-slip; the lever is the already-shipped AccordDither (currently 0.0 = off on both rev 6.4 routes, verified from initData) and the AccordFrictionHystBand schedule. This instrument is the missing measurement for sizing AccordDither: raise it and watch the lat_jerk event rate in the 5-10 deg bin, which is the bin with signal and counts.",
+  "fix_risk": "Dither adds a continuous excitation; it can raise the very lat_jerk rate it is meant to smooth. That is exactly why it must be measured, not assumed. AccordDither already defaults to 0.0 and is toggleable, so nothing is deleted.",
+  "confidence": 0.85,
+  "stream": "instr"
+ },
+ {
+  "id": "rate-gain-falls-with-frequency-not-with-size",
+  "mechanism": "Note 5 is a BANDWIDTH statement, not an amplitude statement. Against the MODEL demand (desiredCurvature*v^2, post-lane-centring, pre delay-compensation and pre reference-filter), the lag-aligned rate-tracking gain falls monotonically with the transient's characteristic frequency on all three routes. Against the controller's OWN setpoint (cs_la_des = `setpoint`, post reference filter) the gain is ~1.0. So the loss is in the setpoint-shaping stage plus the plant, not in the torque loop - consistent with the prior finding that the torque loop tracks its setpoint faithfully and that what it is handed is late.",
+  "explains_notes": [
+   5,
+   3
+  ],
+  "magnitude": "Frequency-matched blocks (fixed f_char edges), vs the MODEL, gain [boot95 over episodes] / lag s: rev5 r76: 0.969+-0.125 / 0.481 (<0.4 Hz, n=42), 0.885+-0.060 / 0.498 (0.4-0.8, n=80), 0.727+-0.125 / 0.432 (0.8-1.6, n=87), 0.634+-0.125 / 0.313 (>1.6, n=130). rev6.4 r6c: 1.181/0.233 (n=19), 0.784/0.317 (n=61), 0.591/0.352 (n=128), 0.473/0.346 (n=221). rev6.4 r6d: 1.186/0.207 (n=27), 1.023/0.263 (n=78), 0.812/0.328 (n=105), 0.563/0.306 (n=202). Against the SETPOINT instead, rev5 r76 gains are 1.16/0.96/1.06 by size class - i.e. ~1.0. REV 6.4 LAG IMPROVEMENT IS REAL: 0.481 -> 0.207-0.233 s below 0.4 Hz, 0.498 -> 0.263-0.317 s at 0.4-0.8 Hz. Rate OVERSHOOT (achieved peak / commanded peak over the lag-aligned episode) rev5 1.63/1.80/1.24 by size class vs a 37 s circular-shift surrogate null of 0.81.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "instr_rate_tracking.py, fixed-overlap cross-correlation. Controls: P3 identity gain 1.0000 lag 0.0000; P1 delay 0.30 s gain 0.80 recovered as 0.8000/0.3000 in every class; P2 single-frequency 1-pole tau=0.25 s matches EXACT theory |H|=1/sqrt(1+(2 pi f tau)^2) within 1.7% and phase delay atan(2 pi f tau)/(2 pi f) within 4 ms at 0.10/0.30/1.00 Hz. Route provenance verified by me from each route's initData GitCommit (84766cdc for 6c/6d, e44b6cd3 for 76).",
+  "proposed_fix": "The gain deficit at 0.8-1.6 Hz (0.47-0.81 on every route) is the target, and it is a GAIN loss not a delay loss, so shortening delay further will not close it. The two candidate levers are the two cascaded AccordRefFilter poles (0.06 s each, already halved in rev 6) and the friction-band schedule. Before touching either, use the f_char-binned block as the acceptance metric - it is the only one that is not confounded by amplitude.",
+  "fix_risk": "Reducing AccordRefFilter toward 0 was already refuted for a different reason (linearised step overshoot 0.3%->51.4% at b=0.0006, and the plant damping at 1-3 Hz is UNIDENTIFIED). Do not propose ref_filter=0 on the strength of this finding alone. Route-to-route spread between r6c and r6d (0.591 vs 0.812 in the same band) exceeds either bootstrap CI, so a single-route comparison of one band is NOT decisive.",
+  "confidence": 0.8,
+  "stream": "instr"
+ },
+ {
+  "id": "caster-untestable-no-quasi-static-large-angle-data",
+  "mechanism": "Instrument 1 is built and separates the three defects that could produce the operator's note 3 (fractional shortfall = caster/hold-map-too-low; constant shortfall = friction/resolution floor; left-right asymmetry = camber/angle offset). But route 76 contains ZERO quasi-static frames above 20 deg of wheel angle and only 1.45 s between 5 and 20 deg. Every large-angle frame on the route is a TRANSIENT (median |rate| 35-52 deg/s above 20 deg). The caster hypothesis therefore cannot be tested as a hold error on this data; note 3 and note 5 are the same regime.",
+  "explains_notes": [
+   3
+  ],
+  "magnitude": "Engaged-frame census, route 76, |angle| bin -> engaged s / quasi-static s (|rate|<2.5 deg/s held 0.3 s): 0-2 -> 274.8/104.6, 2-5 -> 129.1/28.4, 5-10 -> 32.9/1.02, 10-20 -> 18.6/0.43, 20-40 -> 7.1/0.00, 40-90 -> 11.2/0.00, 90-400 -> 13.9/0.00. Decomposition slopes where data exists: 15-20 m/s +0.111 +-0.342, 20-25 m/s -0.112 +-0.237, 25-32 m/s -0.125 +-0.805 deg lost per deg commanded - every CI spans zero, so NO fractional shortfall is resolved. What IS resolved: at |angle| 0-2 deg the achieved/commanded angle ratio is 0.79-0.82 at 20-32 m/s (the known resolution floor), while at 2-5 deg it is 1.03-1.26, i.e. slight OVER-turn.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "instr_hold_error.py. Quasi-static threshold 2.5 deg/s justified from the fork's own constants: the FF move term 0.5*rate/G(v) reaches 10% of the hold term k(v)*sat(v)*tanh(5/sat) at 2.27-2.73 deg/s for v>=8 m/s; swept at 1.25/2.5/5.0 and the slope sign is not stable under the sweep. Controls A/B/C/D inject null, 15% caster, 3 deg friction floor and 3 deg angle bias and the instrument recovers slope 0.000/0.150/0.000/-0.001, intercept 0.000/0.000/3.000/0.050, L-R asymmetry 0.000/-0.048/0.000/6.000 - the three defects are separated, not confused.",
+  "proposed_fix": "Do NOT propose a caster/self-centring compensation term on the strength of the operator's note alone - there is no measurement supporting it. Two options: (a) ask the operator for one short route with sustained large-angle holds (a slow roundabout or a parking-lot circle at 8-15 m/s, engaged, hands off, 20+ deg held for several seconds each way), which would populate the empty bins; or (b) accept that note 3 is the transient finding above and treat it there.",
+  "fix_risk": "The risk here is a fix with no instrument - exactly what the project's standing law forbids. Adding a caster term now would be a blind dose against an unmeasured quantity.",
+  "confidence": 0.9,
+  "stream": "instr"
+ },
+ {
+  "id": "cs-la-des-is-the-setpoint-not-the-model",
+  "mechanism": "cs_la_des in every cache is LateralTorqueState.desiredLateralAccel, which latcontrol_torque.py:839 assigns from `setpoint` - i.e. AFTER the delay compensation AND after the two cascaded Accord reference-filter poles (the code comment at line 321 says so explicitly: \"the logged desiredLateralAccel is the shaped one\"). Any metric built on cs_la_des measures tracking of the controller's own setpoint, not of the model's demand. The raw model demand is available as cs_des_curv * v^2. The difference is material: measured against the setpoint the rate gain is ~1.0; against the model it is 0.47-0.81 in the 0.8-1.6 Hz band.",
+  "explains_notes": [
+   2,
+   5
+  ],
+  "magnitude": "Same episodes, rev5 r76, gain by size class: vs SETPOINT 1.160 / 0.959 / 1.059; vs MODEL 0.759 / 0.782 / 1.067. Lag: vs SETPOINT 0.306 / 0.257 / 0.100 s; vs MODEL 0.418 / 0.427 / 0.444 s. So the shaping stage accounts for ~0.15-0.34 s of lag and ~0.18-0.20 of gain on small/medium transients.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "Read from the fork source (selfdrive/controls/lib/latcontrol_torque.py lines 321 and 839) and confirmed numerically by running instr_rate_tracking.py in both modes on the same episodes. All three instruments now carry both channels (lam/sa_mod/lam_rate in instr_common, mod_jerk and ROUGH_m in instr_jerk, REF switch in instr_rate_tracking).",
+  "proposed_fix": "Re-read the existing FINE/MID band claims with this in mind. The handoff's \"fine-band delivery 0.86 -> 0.95 of the model's demand\" is computed from cs_la_des and is therefore delivery of the SETPOINT, not of the model. The shaping is near-unity below 1 Hz by design (|H| 1.025-1.07), so the distinction is small in the FINE band but is NOT small above 0.8 Hz.",
+  "fix_risk": "None to change; the risk is leaving it, because an acceptance metric that measures a controller against its own filtered setpoint cannot see a filter that is costing delivery.",
+  "confidence": 0.9,
+  "stream": "instr"
+ },
+ {
+  "id": "xcorr-sliding-overlap-lag-bias",
+  "mechanism": "A cross-correlation lag estimator that slides the overlap window (the natural implementation, and the one I wrote first) biases the estimated lag LOW when the signal contains a substantial fraction of a cycle, because truncating a partial cycle changes the correlation as much as the lag does. Holding the reference segment fixed at [K, n-K) for every trial lag removes the bias entirely.",
+  "explains_notes": [
+   5
+  ],
+  "magnitude": "Measured on the exact-theory control P2: sliding overlap read lag 0.2225 s and 0.2084 s where theory gives 0.2480 s and 0.2336 s at 0.10 and 0.30 Hz - a constant 25 ms low. Fixed overlap reads 0.2479 s and 0.2328 s, i.e. within 1 ms and 1 ms. On a pure-delay control the fixed-overlap version reads 0.3000 s for an injected 0.300 s.",
+  "evidence_or_belief": "EVIDENCE",
+  "method": "instr_rate_tracking.py control P2, three frequencies, against the closed-form 1-pole phase delay atan(2*pi*f*tau)/(2*pi*f). The bias was found by the control, not by inspection - it is why the control was written with an exact prediction instead of a plausibility range.",
+  "proposed_fix": "If any other script in this kit estimates a lag by cross-correlation, check whether it slides the overlap. 25 ms is ~8% of this system's 0.29 s liveDelay and would matter in a phase budget.",
+  "fix_risk": "None; the fixed-overlap version needs a longer padded window (1.8 s here), which drops episodes shorter than ~0.2 s. That trade is stated in the script.",
+  "confidence": 0.95,
+  "stream": "instr"
+ }
+]
