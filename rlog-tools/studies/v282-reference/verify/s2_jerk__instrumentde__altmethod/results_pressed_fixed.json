@@ -1,0 +1,32 @@
+{
+  "00000064--ce6b0b0ebb": {
+    "height_n": 10,
+    "height_pressed": 4,
+    "prom_n": 10,
+    "prom_pressed": 4
+  },
+  "00000065--b9f78988bd": {
+    "height_n": 17,
+    "height_pressed": 10,
+    "prom_n": 18,
+    "prom_pressed": 10
+  },
+  "0000006c--2bc842dbac": {
+    "height_n": 27,
+    "height_pressed": 9,
+    "prom_n": 27,
+    "prom_pressed": 9
+  },
+  "0000006c--68c6e94b17": {
+    "height_n": 11,
+    "height_pressed": 3,
+    "prom_n": 11,
+    "prom_pressed": 3
+  },
+  "0000006d--05e83bb04f": {
+    "height_n": 13,
+    "height_pressed": 5,
+    "prom_n": 13,
+    "prom_pressed": 6
+  }
+}

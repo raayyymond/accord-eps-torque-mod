@@ -1,0 +1,2311 @@
+{
+ "V282": {
+  "A15_2.5-5": {
+   "ho_s": 20.68999999999998,
+   "raw_s": 43.48999999999979,
+   "ho2_s": 5.890000000000004,
+   "ach_ho_s": 26.11999999999992,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 2.290000000000001,
+    "00000065--b9f78988bd": 5.799999999999998,
+    "0000006c--2bc842dbac": 12.59999999999998
+   },
+   "events_all": 4,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 1,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 0
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.4757415497815608,
+   "reference_ok": false,
+   "share_dom": 0.6089898501691635
+  },
+  "A15_5-8": {
+   "ho_s": 37.739999999999725,
+   "raw_s": 73.70999999999927,
+   "ho2_s": 10.239999999999924,
+   "ach_ho_s": 41.09999999999972,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 5.990000000000004,
+    "00000065--b9f78988bd": 4.0100000000000025,
+    "0000006c--2bc842dbac": 27.739999999999718
+   },
+   "events_all": 13,
+   "events_ho": 3,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 3
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.5120065120065134,
+   "reference_ok": true,
+   "share_dom": 0.7350291467938506
+  },
+  "A15_8-15": {
+   "ho_s": 59.89000000000044,
+   "raw_s": 78.76999999999948,
+   "ho2_s": 37.85000000000192,
+   "ach_ho_s": 64.81999999999947,
+   "n_routes": 2,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 1.330000000000001,
+    "00000065--b9f78988bd": 3.9400000000000026,
+    "0000006c--2bc842dbac": 54.62000000000044
+   },
+   "events_all": 9,
+   "events_ho": 5,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 5
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.7603148406753946,
+   "reference_ok": true,
+   "share_dom": 0.9120053431290706
+  },
+  "A45_2.5-5": {
+   "ho_s": 10.069999999999997,
+   "raw_s": 27.62999999999985,
+   "ho2_s": 0.8900000000000003,
+   "ach_ho_s": 10.519999999999998,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 1.4800000000000009,
+    "00000065--b9f78988bd": 1.4700000000000004,
+    "0000006c--2bc842dbac": 7.119999999999996
+   },
+   "events_all": 3,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.3644589214621807,
+   "reference_ok": false,
+   "share_dom": 0.7070506454816284
+  },
+  "A45_5-8": {
+   "ho_s": 20.099999999999866,
+   "raw_s": 47.72999999999951,
+   "ho2_s": 1.5800000000000007,
+   "ach_ho_s": 21.87999999999985,
+   "n_routes": 2,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 3.3800000000000026,
+    "00000065--b9f78988bd": 1.540000000000001,
+    "0000006c--2bc842dbac": 15.179999999999865
+   },
+   "events_all": 11,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.421118793211818,
+   "reference_ok": false,
+   "share_dom": 0.7552238805970132
+  },
+  "A45_8-15": {
+   "ho_s": 3.3800000000000017,
+   "raw_s": 11.699999999999937,
+   "ho2_s": 1.0300000000000005,
+   "ach_ho_s": 4.339999999999994,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 0.0,
+    "00000065--b9f78988bd": 1.1000000000000003,
+    "0000006c--2bc842dbac": 2.2800000000000016
+   },
+   "events_all": 2,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.2888888888888906,
+   "reference_ok": false,
+   "share_dom": 0.6745562130177516
+  },
+  "A90_2.5-5": {
+   "ho_s": 5.929999999999994,
+   "raw_s": 20.39999999999985,
+   "ho2_s": 0.16,
+   "ach_ho_s": 6.299999999999997,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 1.4800000000000009,
+    "00000065--b9f78988bd": 1.0600000000000005,
+    "0000006c--2bc842dbac": 3.3899999999999935
+   },
+   "events_all": 3,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.2906862745098058,
+   "reference_ok": false,
+   "share_dom": 0.5716694772344008
+  },
+  "A90_5-8": {
+   "ho_s": 11.80999999999991,
+   "raw_s": 31.71999999999963,
+   "ho2_s": 0.8700000000000006,
+   "ach_ho_s": 13.459999999999884,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 1.3800000000000008,
+    "00000065--b9f78988bd": 1.1700000000000006,
+    "0000006c--2bc842dbac": 9.25999999999991
+   },
+   "events_all": 8,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 1
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.372320302648173,
+   "reference_ok": false,
+   "share_dom": 0.7840812870448756
+  },
+  "A90_8-15": {
+   "ho_s": 0.0,
+   "raw_s": 0.04,
+   "ho2_s": 0.0,
+   "ach_ho_s": 0.0,
+   "n_routes": 0,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 0.0,
+    "00000065--b9f78988bd": 0.0,
+    "0000006c--2bc842dbac": 0.0
+   },
+   "events_all": 1,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.0,
+   "reference_ok": false,
+   "share_dom": 0.0
+  },
+  "R10_2.5-5": {
+   "ho_s": 33.14999999999961,
+   "raw_s": 42.14999999999951,
+   "ho2_s": 19.999999999999776,
+   "ach_ho_s": 32.299999999999635,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 7.4699999999999065,
+    "00000065--b9f78988bd": 7.759999999999937,
+    "0000006c--2bc842dbac": 17.919999999999764
+   },
+   "events_all": 31,
+   "events_ho": 23,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 5,
+    "00000065--b9f78988bd": 1,
+    "0000006c--2bc842dbac": 17
+   },
+   "n_routes_events_ho": 3,
+   "hands_off_frac": 0.786476868327402,
+   "reference_ok": true,
+   "share_dom": 0.5405731523378575
+  },
+  "R10_5-8": {
+   "ho_s": 29.35999999999972,
+   "raw_s": 44.02999999999951,
+   "ho2_s": 11.159999999999942,
+   "ach_ho_s": 26.52999999999979,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 6.529999999999976,
+    "00000065--b9f78988bd": 7.879999999999913,
+    "0000006c--2bc842dbac": 14.94999999999983
+   },
+   "events_all": 23,
+   "events_ho": 14,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 2,
+    "00000065--b9f78988bd": 3,
+    "0000006c--2bc842dbac": 9
+   },
+   "n_routes_events_ho": 3,
+   "hands_off_frac": 0.6668180785827855,
+   "reference_ok": false,
+   "share_dom": 0.5091961852861027
+  },
+  "R10_8-15": {
+   "ho_s": 36.47999999999948,
+   "raw_s": 49.349999999999355,
+   "ho2_s": 14.019999999999879,
+   "ach_ho_s": 30.019999999999612,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 4.399999999999979,
+    "00000065--b9f78988bd": 7.949999999999922,
+    "0000006c--2bc842dbac": 24.129999999999576
+   },
+   "events_all": 50,
+   "events_ho": 27,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 2,
+    "00000065--b9f78988bd": 7,
+    "0000006c--2bc842dbac": 18
+   },
+   "n_routes_events_ho": 3,
+   "hands_off_frac": 0.739209726443768,
+   "reference_ok": true,
+   "share_dom": 0.6614583333333311
+  },
+  "R40_2.5-5": {
+   "ho_s": 7.319999999999995,
+   "raw_s": 21.049999999999855,
+   "ho2_s": 0.7400000000000002,
+   "ach_ho_s": 7.029999999999998,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 1.1100000000000005,
+    "00000065--b9f78988bd": 1.0200000000000005,
+    "0000006c--2bc842dbac": 5.189999999999994
+   },
+   "events_all": 20,
+   "events_ho": 3,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 3
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.34774346793349387,
+   "reference_ok": false,
+   "share_dom": 0.7090163934426227
+  },
+  "R40_5-8": {
+   "ho_s": 16.909999999999876,
+   "raw_s": 39.249999999999574,
+   "ho2_s": 1.6100000000000008,
+   "ach_ho_s": 17.209999999999862,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 2.140000000000001,
+    "00000065--b9f78988bd": 2.450000000000001,
+    "0000006c--2bc842dbac": 12.319999999999872
+   },
+   "events_all": 33,
+   "events_ho": 5,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 1,
+    "00000065--b9f78988bd": 1,
+    "0000006c--2bc842dbac": 3
+   },
+   "n_routes_events_ho": 3,
+   "hands_off_frac": 0.43082802547770854,
+   "reference_ok": false,
+   "share_dom": 0.728562980484918
+  },
+  "R40_8-15": {
+   "ho_s": 1.2400000000000004,
+   "raw_s": 4.210000000000003,
+   "ho2_s": 0.21000000000000002,
+   "ach_ho_s": 1.5300000000000007,
+   "n_routes": 0,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 0.0,
+    "00000065--b9f78988bd": 0.21000000000000002,
+    "0000006c--2bc842dbac": 1.0300000000000005
+   },
+   "events_all": 5,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 1,
+    "0000006c--2bc842dbac": 0
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.2945368171021377,
+   "reference_ok": false,
+   "share_dom": 0.8306451612903226
+  }
+ },
+ "V282old": {
+  "A15_2.5-5": {
+   "ho_s": 36.72999999999981,
+   "raw_s": 59.33999999999949,
+   "ho2_s": 12.009999999999991,
+   "ach_ho_s": 33.659999999999854,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000039--f56039af87": 22.919999999999824,
+    "0000003a--283a39a1d6": 3.370000000000002,
+    "0000003c--927965c2b4": 10.439999999999989
+   },
+   "events_all": 3,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.618975396022921,
+   "reference_ok": true,
+   "share_dom": null
+  },
+  "A15_5-8": {
+   "ho_s": 45.829999999999714,
+   "raw_s": 66.60999999999945,
+   "ho2_s": 15.669999999999897,
+   "ach_ho_s": 50.41999999999972,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000039--f56039af87": 25.299999999999784,
+    "0000003a--283a39a1d6": 8.949999999999987,
+    "0000003c--927965c2b4": 11.579999999999947
+   },
+   "events_all": 7,
+   "events_ho": 3,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 2,
+    "0000003a--283a39a1d6": 1,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.6880348296051658,
+   "reference_ok": true,
+   "share_dom": null
+  },
+  "A15_8-15": {
+   "ho_s": 27.679999999999794,
+   "raw_s": 46.439999999999586,
+   "ho2_s": 12.749999999999917,
+   "ach_ho_s": 34.839999999999726,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000039--f56039af87": 17.229999999999823,
+    "0000003a--283a39a1d6": 3.3800000000000017,
+    "0000003c--927965c2b4": 7.06999999999997
+   },
+   "events_all": 9,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 1,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.5960378983634806,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_2.5-5": {
+   "ho_s": 21.92999999999987,
+   "raw_s": 42.879999999999555,
+   "ho2_s": 3.1000000000000014,
+   "ach_ho_s": 22.989999999999856,
+   "n_routes": 2,
+   "per_route_s": {
+    "00000039--f56039af87": 15.209999999999864,
+    "0000003a--283a39a1d6": 1.540000000000001,
+    "0000003c--927965c2b4": 5.180000000000003
+   },
+   "events_all": 2,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.5114272388059724,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_5-8": {
+   "ho_s": 24.03999999999989,
+   "raw_s": 39.98999999999967,
+   "ho2_s": 6.660000000000005,
+   "ach_ho_s": 26.4099999999999,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000039--f56039af87": 11.629999999999956,
+    "0000003a--283a39a1d6": 4.8699999999999894,
+    "0000003c--927965c2b4": 7.539999999999944
+   },
+   "events_all": 4,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.6011502875718951,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_8-15": {
+   "ho_s": 10.63999999999996,
+   "raw_s": 19.67999999999989,
+   "ho2_s": 5.519999999999976,
+   "ach_ho_s": 11.879999999999953,
+   "n_routes": 2,
+   "per_route_s": {
+    "00000039--f56039af87": 4.4999999999999885,
+    "0000003a--283a39a1d6": 1.6300000000000008,
+    "0000003c--927965c2b4": 4.5099999999999705
+   },
+   "events_all": 3,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.540650406504066,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_2.5-5": {
+   "ho_s": 16.839999999999865,
+   "raw_s": 33.47999999999957,
+   "ho2_s": 2.450000000000001,
+   "ach_ho_s": 16.329999999999853,
+   "n_routes": 2,
+   "per_route_s": {
+    "00000039--f56039af87": 12.649999999999864,
+    "0000003a--283a39a1d6": 0.5800000000000003,
+    "0000003c--927965c2b4": 3.6100000000000025
+   },
+   "events_all": 2,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.50298685782557,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_5-8": {
+   "ho_s": 16.439999999999884,
+   "raw_s": 27.90999999999972,
+   "ho2_s": 3.8200000000000025,
+   "ach_ho_s": 18.919999999999895,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000039--f56039af87": 6.659999999999954,
+    "0000003a--283a39a1d6": 3.3499999999999885,
+    "0000003c--927965c2b4": 6.429999999999943
+   },
+   "events_all": 4,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.5890361877463293,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_8-15": {
+   "ho_s": 0.9100000000000005,
+   "raw_s": 2.110000000000001,
+   "ho2_s": 0.6100000000000002,
+   "ach_ho_s": 1.4400000000000004,
+   "n_routes": 0,
+   "per_route_s": {
+    "00000039--f56039af87": 0.0,
+    "0000003a--283a39a1d6": 0.9100000000000005,
+    "0000003c--927965c2b4": 0.0
+   },
+   "events_all": 2,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.4312796208530805,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_2.5-5": {
+   "ho_s": 27.899999999999707,
+   "raw_s": 36.669999999999575,
+   "ho2_s": 13.679999999999865,
+   "ach_ho_s": 24.029999999999788,
+   "n_routes": 2,
+   "per_route_s": {
+    "00000039--f56039af87": 18.149999999999775,
+    "0000003a--283a39a1d6": 0.8100000000000004,
+    "0000003c--927965c2b4": 8.939999999999934
+   },
+   "events_all": 14,
+   "events_ho": 11,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 10,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 1
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.760839923643306,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_5-8": {
+   "ho_s": 34.819999999999595,
+   "raw_s": 45.80999999999943,
+   "ho2_s": 17.71999999999981,
+   "ach_ho_s": 31.009999999999714,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000039--f56039af87": 20.28999999999971,
+    "0000003a--283a39a1d6": 5.819999999999972,
+    "0000003c--927965c2b4": 8.709999999999908
+   },
+   "events_all": 37,
+   "events_ho": 31,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 20,
+    "0000003a--283a39a1d6": 2,
+    "0000003c--927965c2b4": 9
+   },
+   "n_routes_events_ho": 3,
+   "hands_off_frac": 0.7600960488976213,
+   "reference_ok": true,
+   "share_dom": null
+  },
+  "R10_8-15": {
+   "ho_s": 33.6499999999996,
+   "raw_s": 50.27999999999934,
+   "ho2_s": 12.709999999999932,
+   "ach_ho_s": 36.87999999999954,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000039--f56039af87": 19.089999999999726,
+    "0000003a--283a39a1d6": 7.4699999999999145,
+    "0000003c--927965c2b4": 7.089999999999957
+   },
+   "events_all": 57,
+   "events_ho": 25,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 14,
+    "0000003a--283a39a1d6": 7,
+    "0000003c--927965c2b4": 4
+   },
+   "n_routes_events_ho": 3,
+   "hands_off_frac": 0.6692521877486086,
+   "reference_ok": true,
+   "share_dom": null
+  },
+  "R40_2.5-5": {
+   "ho_s": 15.849999999999909,
+   "raw_s": 28.95999999999972,
+   "ho2_s": 3.650000000000002,
+   "ach_ho_s": 13.499999999999929,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000039--f56039af87": 9.509999999999906,
+    "0000003a--283a39a1d6": 2.4600000000000017,
+    "0000003c--927965c2b4": 3.8800000000000026
+   },
+   "events_all": 31,
+   "events_ho": 9,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 7,
+    "0000003a--283a39a1d6": 1,
+    "0000003c--927965c2b4": 1
+   },
+   "n_routes_events_ho": 3,
+   "hands_off_frac": 0.5473066298342563,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_5-8": {
+   "ho_s": 22.67999999999989,
+   "raw_s": 36.36999999999968,
+   "ho2_s": 3.560000000000002,
+   "ach_ho_s": 21.329999999999917,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000039--f56039af87": 8.279999999999953,
+    "0000003a--283a39a1d6": 6.879999999999992,
+    "0000003c--927965c2b4": 7.5199999999999445
+   },
+   "events_all": 24,
+   "events_ho": 7,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 3,
+    "0000003a--283a39a1d6": 3,
+    "0000003c--927965c2b4": 1
+   },
+   "n_routes_events_ho": 3,
+   "hands_off_frac": 0.623590871597473,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_8-15": {
+   "ho_s": 3.270000000000002,
+   "raw_s": 5.870000000000003,
+   "ho2_s": 0.19,
+   "ach_ho_s": 4.110000000000002,
+   "n_routes": 0,
+   "per_route_s": {
+    "00000039--f56039af87": 1.7400000000000009,
+    "0000003a--283a39a1d6": 1.3400000000000007,
+    "0000003c--927965c2b4": 0.19
+   },
+   "events_all": 7,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000039--f56039af87": 1,
+    "0000003a--283a39a1d6": 1,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.5570698466780238,
+   "reference_ok": false,
+   "share_dom": null
+  }
+ },
+ "T64": {
+  "A15_2.5-5": {
+   "ho_s": 20.679999999999914,
+   "raw_s": 27.59999999999988,
+   "ho2_s": 12.639999999999954,
+   "ach_ho_s": 19.829999999999966,
+   "n_routes": 2,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 7.389999999999992,
+    "0000006d--05e83bb04f": 13.289999999999921
+   },
+   "events_all": 2,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 0,
+    "0000006d--05e83bb04f": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.7492753623188407,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A15_5-8": {
+   "ho_s": 23.229999999999976,
+   "raw_s": 28.54999999999992,
+   "ho2_s": 14.590000000000003,
+   "ach_ho_s": 20.699999999999953,
+   "n_routes": 2,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 14.269999999999971,
+    "0000006d--05e83bb04f": 8.960000000000006
+   },
+   "events_all": 2,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 1,
+    "0000006d--05e83bb04f": 1
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.8136602451838894,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A15_8-15": {
+   "ho_s": 7.219999999999999,
+   "raw_s": 16.099999999999927,
+   "ho2_s": 4.710000000000003,
+   "ach_ho_s": 7.929999999999996,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 1.5500000000000005,
+    "0000006d--05e83bb04f": 5.669999999999998
+   },
+   "events_all": 3,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 0,
+    "0000006d--05e83bb04f": 1
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.4484472049689461,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_2.5-5": {
+   "ho_s": 9.149999999999986,
+   "raw_s": 15.639999999999956,
+   "ho2_s": 3.3600000000000017,
+   "ach_ho_s": 9.969999999999997,
+   "n_routes": 2,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 3.490000000000002,
+    "0000006d--05e83bb04f": 5.659999999999984
+   },
+   "events_all": 1,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 0,
+    "0000006d--05e83bb04f": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.5850383631713563,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_5-8": {
+   "ho_s": 12.649999999999975,
+   "raw_s": 17.429999999999918,
+   "ho2_s": 6.1200000000000045,
+   "ach_ho_s": 14.399999999999949,
+   "n_routes": 2,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 8.429999999999973,
+    "0000006d--05e83bb04f": 4.220000000000002
+   },
+   "events_all": 2,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 1,
+    "0000006d--05e83bb04f": 1
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.725760183591511,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_8-15": {
+   "ho_s": 3.3800000000000017,
+   "raw_s": 9.769999999999964,
+   "ho2_s": 2.210000000000001,
+   "ach_ho_s": 3.8100000000000023,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 1.3800000000000008,
+    "0000006d--05e83bb04f": 2.000000000000001
+   },
+   "events_all": 2,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 0,
+    "0000006d--05e83bb04f": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.34595701125895745,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_2.5-5": {
+   "ho_s": 2.6500000000000012,
+   "raw_s": 7.799999999999978,
+   "ho2_s": 0.4000000000000001,
+   "ach_ho_s": 3.0600000000000023,
+   "n_routes": 0,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 1.4700000000000009,
+    "0000006d--05e83bb04f": 1.1800000000000006
+   },
+   "events_all": 0,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 0,
+    "0000006d--05e83bb04f": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.33974358974359087,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_5-8": {
+   "ho_s": 8.349999999999971,
+   "raw_s": 12.29999999999992,
+   "ho2_s": 2.580000000000002,
+   "ach_ho_s": 9.639999999999949,
+   "n_routes": 2,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 5.66999999999997,
+    "0000006d--05e83bb04f": 2.6800000000000015
+   },
+   "events_all": 2,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 1,
+    "0000006d--05e83bb04f": 1
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.6788617886178883,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_8-15": {
+   "ho_s": 0.9800000000000004,
+   "raw_s": 2.7200000000000015,
+   "ho2_s": 0.6100000000000003,
+   "ach_ho_s": 0.3600000000000001,
+   "n_routes": 0,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 0.9600000000000004,
+    "0000006d--05e83bb04f": 0.02
+   },
+   "events_all": 2,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 0,
+    "0000006d--05e83bb04f": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.36029411764705876,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_2.5-5": {
+   "ho_s": 16.439999999999905,
+   "raw_s": 19.449999999999882,
+   "ho2_s": 12.119999999999951,
+   "ach_ho_s": 9.469999999999972,
+   "n_routes": 2,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 5.7799999999999905,
+    "0000006d--05e83bb04f": 10.659999999999913
+   },
+   "events_all": 4,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 2,
+    "0000006d--05e83bb04f": 0
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.8452442159383036,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_5-8": {
+   "ho_s": 14.05999999999992,
+   "raw_s": 14.869999999999916,
+   "ho2_s": 9.009999999999952,
+   "ach_ho_s": 10.679999999999948,
+   "n_routes": 2,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 5.520000000000004,
+    "0000006d--05e83bb04f": 8.539999999999917
+   },
+   "events_all": 9,
+   "events_ho": 7,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 3,
+    "0000006d--05e83bb04f": 4
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.9455279085406859,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_8-15": {
+   "ho_s": 15.28999999999984,
+   "raw_s": 20.899999999999785,
+   "ho2_s": 13.159999999999876,
+   "ach_ho_s": 18.31999999999979,
+   "n_routes": 2,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 4.719999999999966,
+    "0000006d--05e83bb04f": 10.569999999999874
+   },
+   "events_all": 19,
+   "events_ho": 10,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 4,
+    "0000006d--05e83bb04f": 6
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.7315789473684209,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_2.5-5": {
+   "ho_s": 5.340000000000003,
+   "raw_s": 9.13999999999998,
+   "ho2_s": 2.110000000000001,
+   "ach_ho_s": 6.890000000000005,
+   "n_routes": 2,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 2.0500000000000016,
+    "0000006d--05e83bb04f": 3.290000000000002
+   },
+   "events_all": 14,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 1,
+    "0000006d--05e83bb04f": 1
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.584245076586435,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_5-8": {
+   "ho_s": 12.119999999999974,
+   "raw_s": 16.269999999999925,
+   "ho2_s": 7.510000000000005,
+   "ach_ho_s": 14.28999999999995,
+   "n_routes": 2,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 7.2099999999999715,
+    "0000006d--05e83bb04f": 4.910000000000003
+   },
+   "events_all": 12,
+   "events_ho": 7,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 4,
+    "0000006d--05e83bb04f": 3
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.7449293177627554,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_8-15": {
+   "ho_s": 1.1800000000000006,
+   "raw_s": 1.6700000000000008,
+   "ho2_s": 1.1200000000000006,
+   "ach_ho_s": 1.1400000000000006,
+   "n_routes": 0,
+   "per_route_s": {
+    "0000006c--68c6e94b17": 0.4000000000000001,
+    "0000006d--05e83bb04f": 0.7800000000000005
+   },
+   "events_all": 5,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "0000006c--68c6e94b17": 0,
+    "0000006d--05e83bb04f": 1
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.7065868263473054,
+   "reference_ok": false,
+   "share_dom": null
+  }
+ },
+ "T64B": {
+  "A15_2.5-5": {
+   "ho_s": 11.70999999999992,
+   "raw_s": 18.51999999999981,
+   "ho2_s": 5.780000000000003,
+   "ach_ho_s": 11.249999999999883,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 11.70999999999992
+   },
+   "events_all": 1,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.6322894168466543,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A15_5-8": {
+   "ho_s": 21.569999999999816,
+   "raw_s": 24.47999999999977,
+   "ho2_s": 9.859999999999971,
+   "ach_ho_s": 21.249999999999815,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 21.569999999999816
+   },
+   "events_all": 2,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.8811274509803929,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A15_8-15": {
+   "ho_s": 34.799999999999564,
+   "raw_s": 37.08999999999952,
+   "ho2_s": 16.699999999999847,
+   "ach_ho_s": 36.4799999999995,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 34.799999999999564
+   },
+   "events_all": 5,
+   "events_ho": 4,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 4
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9382582906443789,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_2.5-5": {
+   "ho_s": 9.59999999999992,
+   "raw_s": 15.909999999999812,
+   "ho2_s": 3.7000000000000024,
+   "ach_ho_s": 10.069999999999881,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 9.59999999999992
+   },
+   "events_all": 1,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.6033940917661869,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_5-8": {
+   "ho_s": 17.069999999999816,
+   "raw_s": 19.97999999999977,
+   "ho2_s": 6.389999999999969,
+   "ach_ho_s": 17.759999999999813,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 17.069999999999816
+   },
+   "events_all": 2,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.854354354354355,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_8-15": {
+   "ho_s": 13.419999999999892,
+   "raw_s": 14.739999999999863,
+   "ho2_s": 3.920000000000003,
+   "ach_ho_s": 14.479999999999835,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 13.419999999999892
+   },
+   "events_all": 3,
+   "events_ho": 3,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 3
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9104477611940309,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_2.5-5": {
+   "ho_s": 8.669999999999918,
+   "raw_s": 13.619999999999814,
+   "ho2_s": 3.040000000000002,
+   "ach_ho_s": 9.359999999999882,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 8.669999999999918
+   },
+   "events_all": 1,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.636563876651985,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_5-8": {
+   "ho_s": 13.079999999999853,
+   "raw_s": 15.289999999999807,
+   "ho2_s": 3.8799999999999786,
+   "ach_ho_s": 12.549999999999862,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 13.079999999999853
+   },
+   "events_all": 2,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.8554610856769141,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_8-15": {
+   "ho_s": 1.9700000000000013,
+   "raw_s": 1.9700000000000013,
+   "ho2_s": 0.26000000000000006,
+   "ach_ho_s": 0.5200000000000001,
+   "n_routes": 0,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 1.9700000000000013
+   },
+   "events_all": 2,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 1.0,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_2.5-5": {
+   "ho_s": 9.349999999999907,
+   "raw_s": 10.399999999999892,
+   "ho2_s": 7.789999999999931,
+   "ach_ho_s": 3.799999999999994,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 9.349999999999907
+   },
+   "events_all": 2,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.899038461538462,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_5-8": {
+   "ho_s": 15.089999999999804,
+   "raw_s": 16.189999999999785,
+   "ho2_s": 10.199999999999866,
+   "ach_ho_s": 12.22999999999986,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 15.089999999999804
+   },
+   "events_all": 19,
+   "events_ho": 19,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 19
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9320568252007415,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_8-15": {
+   "ho_s": 30.6599999999995,
+   "raw_s": 33.99999999999954,
+   "ho2_s": 18.379999999999736,
+   "ach_ho_s": 31.79999999999946,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 30.6599999999995
+   },
+   "events_all": 27,
+   "events_ho": 19,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 19
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9017647058823505,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_2.5-5": {
+   "ho_s": 7.399999999999937,
+   "raw_s": 13.44999999999984,
+   "ho2_s": 3.060000000000002,
+   "ach_ho_s": 9.51999999999988,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 7.399999999999937
+   },
+   "events_all": 12,
+   "events_ho": 6,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 6
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.5501858736059498,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_5-8": {
+   "ho_s": 12.68999999999987,
+   "raw_s": 14.249999999999837,
+   "ho2_s": 7.269999999999969,
+   "ach_ho_s": 13.479999999999848,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 12.68999999999987
+   },
+   "events_all": 8,
+   "events_ho": 6,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 6
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.8905263157894747,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_8-15": {
+   "ho_s": 5.759999999999986,
+   "raw_s": 5.759999999999986,
+   "ho2_s": 2.1000000000000014,
+   "ach_ho_s": 6.379999999999976,
+   "n_routes": 1,
+   "per_route_s": {
+    "0000006e--6ca3e014fd": 5.759999999999986
+   },
+   "events_all": 5,
+   "events_ho": 4,
+   "per_route_events_ho": {
+    "0000006e--6ca3e014fd": 4
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 1.0,
+   "reference_ok": false,
+   "share_dom": null
+  }
+ },
+ "T5": {
+  "A15_2.5-5": {
+   "ho_s": 5.269999999999998,
+   "raw_s": 7.05999999999997,
+   "ho2_s": 2.1700000000000017,
+   "ach_ho_s": 3.280000000000002,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 5.269999999999998
+   },
+   "events_all": 0,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.7464589235127507,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A15_5-8": {
+   "ho_s": 17.479999999999958,
+   "raw_s": 22.249999999999872,
+   "ho2_s": 9.190000000000005,
+   "ach_ho_s": 17.47999999999994,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 17.479999999999958
+   },
+   "events_all": 5,
+   "events_ho": 3,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 3
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.7856179775280925,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A15_8-15": {
+   "ho_s": 6.4799999999999445,
+   "raw_s": 7.219999999999945,
+   "ho2_s": 3.2799999999999883,
+   "ach_ho_s": 7.429999999999952,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 6.4799999999999445
+   },
+   "events_all": 1,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 1
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.8975069252077554,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_2.5-5": {
+   "ho_s": 3.2799999999999967,
+   "raw_s": 4.629999999999969,
+   "ho2_s": 0.18,
+   "ach_ho_s": 3.280000000000002,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 3.2799999999999967
+   },
+   "events_all": 0,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.7084233261339133,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_5-8": {
+   "ho_s": 12.589999999999957,
+   "raw_s": 15.969999999999903,
+   "ho2_s": 4.570000000000004,
+   "ach_ho_s": 13.849999999999936,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 12.589999999999957
+   },
+   "events_all": 4,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.7883531621790879,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_8-15": {
+   "ho_s": 0.2900000000000001,
+   "raw_s": 0.7900000000000003,
+   "ho2_s": 0.0,
+   "ach_ho_s": 0.5100000000000001,
+   "n_routes": 0,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 0.2900000000000001
+   },
+   "events_all": 0,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.3670886075949367,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_2.5-5": {
+   "ho_s": 3.2799999999999967,
+   "raw_s": 4.629999999999969,
+   "ho2_s": 0.18,
+   "ach_ho_s": 2.940000000000002,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 3.2799999999999967
+   },
+   "events_all": 0,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.7084233261339133,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_5-8": {
+   "ho_s": 7.5099999999999625,
+   "raw_s": 9.749999999999925,
+   "ho2_s": 1.4000000000000008,
+   "ach_ho_s": 6.429999999999962,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 7.5099999999999625
+   },
+   "events_all": 3,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 1
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.7702564102564123,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_8-15": {
+   "ho_s": 0.2900000000000001,
+   "raw_s": 0.7900000000000003,
+   "ho2_s": 0.0,
+   "ach_ho_s": 0.2900000000000001,
+   "n_routes": 0,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 0.2900000000000001
+   },
+   "events_all": 0,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.3670886075949367,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_2.5-5": {
+   "ho_s": 3.249999999999994,
+   "raw_s": 3.7199999999999935,
+   "ho2_s": 2.4699999999999935,
+   "ach_ho_s": 1.3200000000000007,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 3.249999999999994
+   },
+   "events_all": 2,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.8736559139784945,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_5-8": {
+   "ho_s": 12.679999999999907,
+   "raw_s": 14.179999999999875,
+   "ho2_s": 9.999999999999932,
+   "ach_ho_s": 9.839999999999941,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 12.679999999999907
+   },
+   "events_all": 6,
+   "events_ho": 4,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 4
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.8942172073342749,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_8-15": {
+   "ho_s": 13.789999999999795,
+   "raw_s": 14.679999999999781,
+   "ho2_s": 10.369999999999868,
+   "ach_ho_s": 13.189999999999808,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 13.789999999999795
+   },
+   "events_all": 15,
+   "events_ho": 12,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 12
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9393732970027249,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_2.5-5": {
+   "ho_s": 2.249999999999996,
+   "raw_s": 3.5299999999999687,
+   "ho2_s": 0.08,
+   "ach_ho_s": 1.9800000000000015,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 2.249999999999996
+   },
+   "events_all": 5,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 1
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.6373937677053869,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_5-8": {
+   "ho_s": 7.16999999999998,
+   "raw_s": 10.999999999999925,
+   "ho2_s": 3.8400000000000025,
+   "ach_ho_s": 8.209999999999969,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 7.16999999999998
+   },
+   "events_all": 9,
+   "events_ho": 4,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 4
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.6518181818181844,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_8-15": {
+   "ho_s": 0.5700000000000002,
+   "raw_s": 1.0700000000000005,
+   "ho2_s": 0.45000000000000007,
+   "ach_ho_s": 1.3900000000000006,
+   "n_routes": 0,
+   "per_route_s": {
+    "00000076--d0b7ea7e4d": 0.5700000000000002
+   },
+   "events_all": 1,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000076--d0b7ea7e4d": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.5327102803738317,
+   "reference_ok": false,
+   "share_dom": null
+  }
+ },
+ "T4": {
+  "A15_2.5-5": {
+   "ho_s": 17.709999999999837,
+   "raw_s": 22.839999999999755,
+   "ho2_s": 7.169999999999996,
+   "ach_ho_s": 15.999999999999856,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 17.709999999999837
+   },
+   "events_all": 4,
+   "events_ho": 3,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 3
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.7753940455341518,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A15_5-8": {
+   "ho_s": 22.959999999999788,
+   "raw_s": 24.139999999999773,
+   "ho2_s": 16.539999999999885,
+   "ach_ho_s": 22.67999999999981,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 22.959999999999788
+   },
+   "events_all": 2,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9511184755592379,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A15_8-15": {
+   "ho_s": 23.979999999999766,
+   "raw_s": 26.07999999999972,
+   "ho2_s": 14.819999999999924,
+   "ach_ho_s": 26.73999999999971,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 23.979999999999766
+   },
+   "events_all": 5,
+   "events_ho": 5,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 5
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9194785276073628,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_2.5-5": {
+   "ho_s": 13.64999999999985,
+   "raw_s": 18.539999999999765,
+   "ho2_s": 4.9699999999999935,
+   "ach_ho_s": 13.339999999999854,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 13.64999999999985
+   },
+   "events_all": 3,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.7362459546925578,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_5-8": {
+   "ho_s": 13.829999999999853,
+   "raw_s": 15.009999999999835,
+   "ho2_s": 9.439999999999925,
+   "ach_ho_s": 15.039999999999843,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 13.829999999999853
+   },
+   "events_all": 2,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9213857428381083,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A45_8-15": {
+   "ho_s": 11.539999999999901,
+   "raw_s": 13.239999999999865,
+   "ho2_s": 5.0000000000000036,
+   "ach_ho_s": 11.629999999999896,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 11.539999999999901
+   },
+   "events_all": 2,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.871601208459216,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_2.5-5": {
+   "ho_s": 13.099999999999849,
+   "raw_s": 17.219999999999764,
+   "ho2_s": 4.419999999999994,
+   "ach_ho_s": 12.699999999999854,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 13.099999999999849
+   },
+   "events_all": 3,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.7607433217189331,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_5-8": {
+   "ho_s": 10.159999999999883,
+   "raw_s": 10.76999999999987,
+   "ho2_s": 6.889999999999934,
+   "ach_ho_s": 10.669999999999883,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 10.159999999999883
+   },
+   "events_all": 2,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 2
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9433611884865372,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "A90_8-15": {
+   "ho_s": 0.6500000000000001,
+   "raw_s": 0.6500000000000001,
+   "ho2_s": 0.08,
+   "ach_ho_s": 0.6000000000000001,
+   "n_routes": 0,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 0.6500000000000001
+   },
+   "events_all": 1,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 1
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 1.0,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_2.5-5": {
+   "ho_s": 14.559999999999825,
+   "raw_s": 16.949999999999775,
+   "ho2_s": 8.669999999999916,
+   "ach_ho_s": 7.459999999999956,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 14.559999999999825
+   },
+   "events_all": 8,
+   "events_ho": 8,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 8
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.8589970501474936,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_5-8": {
+   "ho_s": 16.35999999999979,
+   "raw_s": 17.339999999999772,
+   "ho2_s": 12.579999999999853,
+   "ach_ho_s": 12.409999999999876,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 16.35999999999979
+   },
+   "events_all": 22,
+   "events_ho": 22,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 22
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9434832756632067,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R10_8-15": {
+   "ho_s": 31.350000000000055,
+   "raw_s": 32.18000000000006,
+   "ho2_s": 24.15999999999987,
+   "ach_ho_s": 24.509999999999614,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 31.350000000000055
+   },
+   "events_all": 19,
+   "events_ho": 18,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 18
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9742075823492853,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_2.5-5": {
+   "ho_s": 7.269999999999925,
+   "raw_s": 10.209999999999877,
+   "ho2_s": 3.489999999999993,
+   "ach_ho_s": 9.039999999999893,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 7.269999999999925
+   },
+   "events_all": 14,
+   "events_ho": 5,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 5
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.7120470127326164,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_5-8": {
+   "ho_s": 13.30999999999986,
+   "raw_s": 13.969999999999846,
+   "ho2_s": 9.279999999999925,
+   "ach_ho_s": 14.689999999999843,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 13.30999999999986
+   },
+   "events_all": 10,
+   "events_ho": 8,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 8
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.9527559055118116,
+   "reference_ok": false,
+   "share_dom": null
+  },
+  "R40_8-15": {
+   "ho_s": 5.829999999999986,
+   "raw_s": 6.609999999999969,
+   "ho2_s": 4.130000000000003,
+   "ach_ho_s": 7.859999999999954,
+   "n_routes": 1,
+   "per_route_s": {
+    "00000075--6c8687d5bd": 5.829999999999986
+   },
+   "events_all": 8,
+   "events_ho": 6,
+   "per_route_events_ho": {
+    "00000075--6c8687d5bd": 6
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.8819969742813938,
+   "reference_ok": false,
+   "share_dom": null
+  }
+ },
+ "V282pool": {
+  "A15_2.5-5": {
+   "ho_s": 57.419999999999796,
+   "raw_s": 102.82999999999927,
+   "ho2_s": 17.899999999999995,
+   "ach_ho_s": 59.779999999999774,
+   "n_routes": 6,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 2.290000000000001,
+    "00000065--b9f78988bd": 5.799999999999998,
+    "0000006c--2bc842dbac": 12.59999999999998,
+    "00000039--f56039af87": 22.919999999999824,
+    "0000003a--283a39a1d6": 3.370000000000002,
+    "0000003c--927965c2b4": 10.439999999999989
+   },
+   "events_all": 7,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 1,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 0,
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.5583973548575338,
+   "reference_ok": true,
+   "share_dom": 0.2194357366771164
+  },
+  "A15_5-8": {
+   "ho_s": 83.56999999999944,
+   "raw_s": 140.3199999999987,
+   "ho2_s": 25.90999999999982,
+   "ach_ho_s": 91.51999999999944,
+   "n_routes": 6,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 5.990000000000004,
+    "00000065--b9f78988bd": 4.0100000000000025,
+    "0000006c--2bc842dbac": 27.739999999999718,
+    "00000039--f56039af87": 25.299999999999784,
+    "0000003a--283a39a1d6": 8.949999999999987,
+    "0000003c--927965c2b4": 11.579999999999947
+   },
+   "events_all": 20,
+   "events_ho": 6,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 3,
+    "00000039--f56039af87": 2,
+    "0000003a--283a39a1d6": 1,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 3,
+   "hands_off_frac": 0.5955672748004576,
+   "reference_ok": true,
+   "share_dom": 0.33193729807347017
+  },
+  "A15_8-15": {
+   "ho_s": 87.57000000000023,
+   "raw_s": 125.20999999999907,
+   "ho2_s": 50.600000000001835,
+   "ach_ho_s": 99.6599999999992,
+   "n_routes": 5,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 1.330000000000001,
+    "00000065--b9f78988bd": 3.9400000000000026,
+    "0000006c--2bc842dbac": 54.62000000000044,
+    "00000039--f56039af87": 17.229999999999823,
+    "0000003a--283a39a1d6": 3.3800000000000017,
+    "0000003c--927965c2b4": 7.06999999999997
+   },
+   "events_all": 18,
+   "events_ho": 6,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 5,
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 1,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 2,
+   "hands_off_frac": 0.6993850331443247,
+   "reference_ok": true,
+   "share_dom": 0.6237295877583681
+  },
+  "A45_2.5-5": {
+   "ho_s": 31.999999999999865,
+   "raw_s": 70.50999999999941,
+   "ho2_s": 3.9900000000000015,
+   "ach_ho_s": 33.509999999999856,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 1.4800000000000009,
+    "00000065--b9f78988bd": 1.4700000000000004,
+    "0000006c--2bc842dbac": 7.119999999999996,
+    "00000039--f56039af87": 15.209999999999864,
+    "0000003a--283a39a1d6": 1.540000000000001,
+    "0000003c--927965c2b4": 5.180000000000003
+   },
+   "events_all": 5,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 0,
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.45383633527159456,
+   "reference_ok": true,
+   "share_dom": 0.2225000000000008
+  },
+  "A45_5-8": {
+   "ho_s": 44.13999999999976,
+   "raw_s": 87.71999999999917,
+   "ho2_s": 8.240000000000006,
+   "ach_ho_s": 48.28999999999975,
+   "n_routes": 5,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 3.3800000000000026,
+    "00000065--b9f78988bd": 1.540000000000001,
+    "0000006c--2bc842dbac": 15.179999999999865,
+    "00000039--f56039af87": 11.629999999999956,
+    "0000003a--283a39a1d6": 4.8699999999999894,
+    "0000003c--927965c2b4": 7.539999999999944
+   },
+   "events_all": 15,
+   "events_ho": 2,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 2,
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.5031919744642063,
+   "reference_ok": true,
+   "share_dom": 0.3439057544177605
+  },
+  "A45_8-15": {
+   "ho_s": 14.019999999999962,
+   "raw_s": 31.37999999999983,
+   "ho2_s": 6.549999999999976,
+   "ach_ho_s": 16.219999999999946,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 0.0,
+    "00000065--b9f78988bd": 1.1000000000000003,
+    "0000006c--2bc842dbac": 2.2800000000000016,
+    "00000039--f56039af87": 4.4999999999999885,
+    "0000003a--283a39a1d6": 1.6300000000000008,
+    "0000003c--927965c2b4": 4.5099999999999705
+   },
+   "events_all": 5,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 0,
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.446781389420014,
+   "reference_ok": false,
+   "share_dom": 0.1626248216833101
+  },
+  "A90_2.5-5": {
+   "ho_s": 22.76999999999986,
+   "raw_s": 53.87999999999942,
+   "ho2_s": 2.610000000000001,
+   "ach_ho_s": 22.62999999999985,
+   "n_routes": 3,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 1.4800000000000009,
+    "00000065--b9f78988bd": 1.0600000000000005,
+    "0000006c--2bc842dbac": 3.3899999999999935,
+    "00000039--f56039af87": 12.649999999999864,
+    "0000003a--283a39a1d6": 0.5800000000000003,
+    "0000003c--927965c2b4": 3.6100000000000025
+   },
+   "events_all": 5,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 0,
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.4226057906458817,
+   "reference_ok": false,
+   "share_dom": 0.14888010540184515
+  },
+  "A90_5-8": {
+   "ho_s": 28.249999999999797,
+   "raw_s": 59.62999999999935,
+   "ho2_s": 4.690000000000003,
+   "ach_ho_s": 32.37999999999978,
+   "n_routes": 4,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 1.3800000000000008,
+    "00000065--b9f78988bd": 1.1700000000000006,
+    "0000006c--2bc842dbac": 9.25999999999991,
+    "00000039--f56039af87": 6.659999999999954,
+    "0000003a--283a39a1d6": 3.3499999999999885,
+    "0000003c--927965c2b4": 6.429999999999943
+   },
+   "events_all": 12,
+   "events_ho": 1,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 1,
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 1,
+   "hands_off_frac": 0.4737548213986266,
+   "reference_ok": false,
+   "share_dom": 0.32778761061946815
+  },
+  "A90_8-15": {
+   "ho_s": 0.9100000000000005,
+   "raw_s": 2.1500000000000012,
+   "ho2_s": 0.6100000000000002,
+   "ach_ho_s": 1.4400000000000004,
+   "n_routes": 0,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 0.0,
+    "00000065--b9f78988bd": 0.0,
+    "0000006c--2bc842dbac": 0.0,
+    "00000039--f56039af87": 0.0,
+    "0000003a--283a39a1d6": 0.9100000000000005,
+    "0000003c--927965c2b4": 0.0
+   },
+   "events_all": 3,
+   "events_ho": 0,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 0,
+    "00000039--f56039af87": 0,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 0,
+   "hands_off_frac": 0.4232558139534883,
+   "reference_ok": false,
+   "share_dom": 0.0
+  },
+  "R10_2.5-5": {
+   "ho_s": 61.049999999999315,
+   "raw_s": 78.81999999999908,
+   "ho2_s": 33.679999999999644,
+   "ach_ho_s": 56.32999999999942,
+   "n_routes": 5,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 7.4699999999999065,
+    "00000065--b9f78988bd": 7.759999999999937,
+    "0000006c--2bc842dbac": 17.919999999999764,
+    "00000039--f56039af87": 18.149999999999775,
+    "0000003a--283a39a1d6": 0.8100000000000004,
+    "0000003c--927965c2b4": 8.939999999999934
+   },
+   "events_all": 45,
+   "events_ho": 34,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 5,
+    "00000065--b9f78988bd": 1,
+    "0000006c--2bc842dbac": 17,
+    "00000039--f56039af87": 10,
+    "0000003a--283a39a1d6": 0,
+    "0000003c--927965c2b4": 1
+   },
+   "n_routes_events_ho": 5,
+   "hands_off_frac": 0.7745496066988077,
+   "reference_ok": true,
+   "share_dom": 0.29352989352989295
+  },
+  "R10_5-8": {
+   "ho_s": 64.17999999999931,
+   "raw_s": 89.83999999999894,
+   "ho2_s": 28.87999999999975,
+   "ach_ho_s": 57.5399999999995,
+   "n_routes": 6,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 6.529999999999976,
+    "00000065--b9f78988bd": 7.879999999999913,
+    "0000006c--2bc842dbac": 14.94999999999983,
+    "00000039--f56039af87": 20.28999999999971,
+    "0000003a--283a39a1d6": 5.819999999999972,
+    "0000003c--927965c2b4": 8.709999999999908
+   },
+   "events_all": 60,
+   "events_ho": 45,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 2,
+    "00000065--b9f78988bd": 3,
+    "0000006c--2bc842dbac": 9,
+    "00000039--f56039af87": 20,
+    "0000003a--283a39a1d6": 2,
+    "0000003c--927965c2b4": 9
+   },
+   "n_routes_events_ho": 6,
+   "hands_off_frac": 0.714381121994658,
+   "reference_ok": true,
+   "share_dom": 0.2329386101589279
+  },
+  "R10_8-15": {
+   "ho_s": 70.12999999999907,
+   "raw_s": 99.62999999999869,
+   "ho2_s": 26.72999999999981,
+   "ach_ho_s": 66.89999999999915,
+   "n_routes": 6,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 4.399999999999979,
+    "00000065--b9f78988bd": 7.949999999999922,
+    "0000006c--2bc842dbac": 24.129999999999576,
+    "00000039--f56039af87": 19.089999999999726,
+    "0000003a--283a39a1d6": 7.4699999999999145,
+    "0000003c--927965c2b4": 7.089999999999957
+   },
+   "events_all": 107,
+   "events_ho": 52,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 2,
+    "00000065--b9f78988bd": 7,
+    "0000006c--2bc842dbac": 18,
+    "00000039--f56039af87": 14,
+    "0000003a--283a39a1d6": 7,
+    "0000003c--927965c2b4": 4
+   },
+   "n_routes_events_ho": 6,
+   "hands_off_frac": 0.7039044464518719,
+   "reference_ok": true,
+   "share_dom": 0.3440752887494638
+  },
+  "R40_2.5-5": {
+   "ho_s": 23.169999999999906,
+   "raw_s": 50.00999999999958,
+   "ho2_s": 4.390000000000002,
+   "ach_ho_s": 20.529999999999927,
+   "n_routes": 4,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 1.1100000000000005,
+    "00000065--b9f78988bd": 1.0200000000000005,
+    "0000006c--2bc842dbac": 5.189999999999994,
+    "00000039--f56039af87": 9.509999999999906,
+    "0000003a--283a39a1d6": 2.4600000000000017,
+    "0000003c--927965c2b4": 3.8800000000000026
+   },
+   "events_all": 51,
+   "events_ho": 12,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 0,
+    "0000006c--2bc842dbac": 3,
+    "00000039--f56039af87": 7,
+    "0000003a--283a39a1d6": 1,
+    "0000003c--927965c2b4": 1
+   },
+   "n_routes_events_ho": 4,
+   "hands_off_frac": 0.46330733853229555,
+   "reference_ok": false,
+   "share_dom": 0.2239965472593878
+  },
+  "R40_5-8": {
+   "ho_s": 39.58999999999976,
+   "raw_s": 75.61999999999925,
+   "ho2_s": 5.170000000000003,
+   "ach_ho_s": 38.53999999999978,
+   "n_routes": 6,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 2.140000000000001,
+    "00000065--b9f78988bd": 2.450000000000001,
+    "0000006c--2bc842dbac": 12.319999999999872,
+    "00000039--f56039af87": 8.279999999999953,
+    "0000003a--283a39a1d6": 6.879999999999992,
+    "0000003c--927965c2b4": 7.5199999999999445
+   },
+   "events_all": 57,
+   "events_ho": 12,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 1,
+    "00000065--b9f78988bd": 1,
+    "0000006c--2bc842dbac": 3,
+    "00000039--f56039af87": 3,
+    "0000003a--283a39a1d6": 3,
+    "0000003c--927965c2b4": 1
+   },
+   "n_routes_events_ho": 6,
+   "hands_off_frac": 0.5235387463633979,
+   "reference_ok": true,
+   "share_dom": 0.3111896943672631
+  },
+  "R40_8-15": {
+   "ho_s": 4.5100000000000025,
+   "raw_s": 10.080000000000005,
+   "ho2_s": 0.4,
+   "ach_ho_s": 5.640000000000002,
+   "n_routes": 0,
+   "per_route_s": {
+    "00000064--ce6b0b0ebb": 0.0,
+    "00000065--b9f78988bd": 0.21000000000000002,
+    "0000006c--2bc842dbac": 1.0300000000000005,
+    "00000039--f56039af87": 1.7400000000000009,
+    "0000003a--283a39a1d6": 1.3400000000000007,
+    "0000003c--927965c2b4": 0.19
+   },
+   "events_all": 12,
+   "events_ho": 3,
+   "per_route_events_ho": {
+    "00000064--ce6b0b0ebb": 0,
+    "00000065--b9f78988bd": 1,
+    "0000006c--2bc842dbac": 0,
+    "00000039--f56039af87": 1,
+    "0000003a--283a39a1d6": 1,
+    "0000003c--927965c2b4": 0
+   },
+   "n_routes_events_ho": 3,
+   "hands_off_frac": 0.44742063492063494,
+   "reference_ok": false,
+   "share_dom": 0.22838137472283812
+  }
+ }
+}

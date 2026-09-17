@@ -1,0 +1,79 @@
+{
+ "00000064--ce6b0b0ebb": {
+  "group": "V282",
+  "n_raw_peaks_active_v3_8": 10,
+  "n_pressed_at_peak": 4,
+  "n_notpressed_at_peak": 6,
+  "n_full_window_usable_events_v_lt8": 0
+ },
+ "00000065--b9f78988bd": {
+  "group": "V282",
+  "n_raw_peaks_active_v3_8": 18,
+  "n_pressed_at_peak": 10,
+  "n_notpressed_at_peak": 8,
+  "n_full_window_usable_events_v_lt8": 1
+ },
+ "0000006c--2bc842dbac": {
+  "group": "V282",
+  "n_raw_peaks_active_v3_8": 27,
+  "n_pressed_at_peak": 9,
+  "n_notpressed_at_peak": 18,
+  "n_full_window_usable_events_v_lt8": 2
+ },
+ "00000039--f56039af87": {
+  "group": "V282old",
+  "n_raw_peaks_active_v3_8": 24,
+  "n_pressed_at_peak": 5,
+  "n_notpressed_at_peak": 19,
+  "n_full_window_usable_events_v_lt8": 7
+ },
+ "0000003a--283a39a1d6": {
+  "group": "V282old",
+  "n_raw_peaks_active_v3_8": 7,
+  "n_pressed_at_peak": 1,
+  "n_notpressed_at_peak": 6,
+  "n_full_window_usable_events_v_lt8": 2
+ },
+ "0000003c--927965c2b4": {
+  "group": "V282old",
+  "n_raw_peaks_active_v3_8": 15,
+  "n_pressed_at_peak": 4,
+  "n_notpressed_at_peak": 11,
+  "n_full_window_usable_events_v_lt8": 1
+ },
+ "0000006c--68c6e94b17": {
+  "group": "T64",
+  "n_raw_peaks_active_v3_8": 9,
+  "n_pressed_at_peak": 2,
+  "n_notpressed_at_peak": 7,
+  "n_full_window_usable_events_v_lt8": 2
+ },
+ "0000006d--05e83bb04f": {
+  "group": "T64",
+  "n_raw_peaks_active_v3_8": 13,
+  "n_pressed_at_peak": 4,
+  "n_notpressed_at_peak": 9,
+  "n_full_window_usable_events_v_lt8": 5
+ },
+ "0000006e--6ca3e014fd": {
+  "group": "T64B",
+  "n_raw_peaks_active_v3_8": 21,
+  "n_pressed_at_peak": 3,
+  "n_notpressed_at_peak": 18,
+  "n_full_window_usable_events_v_lt8": 8
+ },
+ "00000076--d0b7ea7e4d": {
+  "group": "T5",
+  "n_raw_peaks_active_v3_8": 14,
+  "n_pressed_at_peak": 3,
+  "n_notpressed_at_peak": 11,
+  "n_full_window_usable_events_v_lt8": 3
+ },
+ "00000075--6c8687d5bd": {
+  "group": "T4",
+  "n_raw_peaks_active_v3_8": 19,
+  "n_pressed_at_peak": 7,
+  "n_notpressed_at_peak": 12,
+  "n_full_window_usable_events_v_lt8": 8
+ }
+}

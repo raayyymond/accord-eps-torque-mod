@@ -1,0 +1,16 @@
+segments 68
+lt15 ff      p 20  GC ff->rate band 0.109 [0.051,0.180] (frac 0.10)   rate->ff 0.001 [0.001,0.014] (frac 0.00)   td 0.070/0.008
+lt15 dob     p 20  GC dob->rate band 0.067 [0.044,0.114] (frac 0.06)   rate->dob 0.680 [0.488,0.966] (frac 0.49)   td 0.086/0.640
+lt15 rl_fb   p 20  GC rl_fb->rate band 0.025 [0.008,0.073] (frac 0.03)   rate->rl_fb 0.078 [0.044,0.150] (frac 0.08)   td 0.071/0.171
+lt15 u_log   p 20  GC u_log->rate band 0.229 [0.128,0.329] (frac 0.20)   rate->u_log 0.175 [0.131,0.305] (frac 0.16)   td 0.211/0.175
+lt15 p_meas  p 20  GC p_meas->rate band 0.058 [0.031,0.094] (frac 0.06)   rate->p_meas 0.939 [0.737,1.132] (frac 0.61)   td 0.170/0.919
+lt15 fb      p 20  GC fb->rate band 0.121 [0.076,0.192] (frac 0.11)   rate->fb 0.186 [0.127,0.260] (frac 0.17)   td 0.231/0.313
+lt15 u_e4    p 20  GC u_e4->rate band 0.228 [0.142,0.333] (frac 0.20)   rate->u_e4 0.290 [0.209,0.467] (frac 0.25)   td 0.230/0.321
+ge15 ff      p 20  GC ff->rate band 0.218 [0.029,0.416] (frac 0.20)   rate->ff 0.015 [0.012,0.091] (frac 0.01)   td 0.130/0.005
+ge15 dob     p 20  GC dob->rate band 0.210 [0.119,0.334] (frac 0.19)   rate->dob 0.714 [0.458,1.062] (frac 0.51)   td 0.132/0.951
+ge15 rl_fb   p 20  GC rl_fb->rate band 0.065 [0.042,0.187] (frac 0.06)   rate->rl_fb 0.081 [0.026,0.358] (frac 0.08)   td 0.045/0.086
+ge15 u_log   p 20  GC u_log->rate band 0.298 [0.105,0.544] (frac 0.26)   rate->u_log 0.033 [0.023,0.140] (frac 0.03)   td 0.297/0.195
+ge15 p_meas  p 20  GC p_meas->rate band 0.110 [0.048,0.180] (frac 0.10)   rate->p_meas 0.696 [0.484,0.996] (frac 0.50)   td 0.184/0.663
+ge15 fb      p 20  GC fb->rate band 0.184 [0.100,0.423] (frac 0.17)   rate->fb 0.190 [0.146,0.361] (frac 0.17)   td 0.206/0.294
+ge15 u_e4    p 20  GC u_e4->rate band 0.313 [0.125,0.555] (frac 0.27)   rate->u_e4 0.043 [0.032,0.212] (frac 0.04)   td 0.303/0.348
+controls {'neg_rate_to_ff': 0.0013136763879550086, 'ff_to_rate': 0.10876411426928714, 'pos_min': 0.0783114209736025, 'pass_neg': True, 'pass_pos': True}

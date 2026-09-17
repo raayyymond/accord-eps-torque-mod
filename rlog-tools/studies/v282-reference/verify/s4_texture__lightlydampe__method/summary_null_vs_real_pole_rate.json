@@ -1,0 +1,20 @@
+{
+ "null_zeta_med": 0.2122,
+ "null_frac_lt_0p2": 0.408,
+ "null_poles_per_10s": 0.9854,
+ "null_f_med": 3.567,
+ "real_poles_per_10s": {
+  "r64": 0.9512195121951219,
+  "r65": 0.9375,
+  "r6c_V282": 0.9197080291970803,
+  "r39": 0.8333333333333334,
+  "r3a": 1.0,
+  "r3c": 0.925,
+  "r6c_T64": 1.0,
+  "r6d_T64": 0.9795918367346939,
+  "r6e_T64B": 1.064516129032258,
+  "r76_T5": 1.027027027027027,
+  "r75_T4": 1.0303030303030303
+ },
+ "note": "real pole rate is ~0.83-1.06/10s in EVERY route of every group; synthetic null (zero true resonance) gives 0.985/10s -- statistically indistinguishable, i.e. AR(10) on a 250-sample record places ~1 pole in the 1.5-4Hz sub-band almost regardless of input"
+}

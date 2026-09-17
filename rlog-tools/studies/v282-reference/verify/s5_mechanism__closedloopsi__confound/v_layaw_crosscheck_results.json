@@ -1,0 +1,122 @@
+{
+ "0000006c--68c6e94b17": {
+  "group": "T64",
+  "la_yaw_finite_std": 0.0,
+  "bands": {
+   "b015": {
+    "act": 1.297,
+    "pose": 1.188,
+    "coh_act": 0.96,
+    "coh_pose": 0.94
+   },
+   "b030": {
+    "act": 1.306,
+    "pose": 1.307,
+    "coh_act": 0.9,
+    "coh_pose": 0.89
+   },
+   "b060": {
+    "act": 1.208,
+    "pose": 1.607,
+    "coh_act": 0.77,
+    "coh_pose": 0.79
+   }
+  }
+ },
+ "0000006d--05e83bb04f": {
+  "group": "T64",
+  "la_yaw_finite_std": 0.0,
+  "bands": {
+   "b015": {
+    "act": 1.286,
+    "pose": 1.202,
+    "coh_act": 0.95,
+    "coh_pose": 0.91
+   },
+   "b030": {
+    "act": 1.326,
+    "pose": 1.335,
+    "coh_act": 0.94,
+    "coh_pose": 0.92
+   },
+   "b060": {
+    "act": 1.353,
+    "pose": 1.43,
+    "coh_act": 0.71,
+    "coh_pose": 0.67
+   }
+  }
+ },
+ "0000006e--6ca3e014fd": {
+  "group": "T64B",
+  "la_yaw_finite_std": 0.0,
+  "bands": {
+   "b015": {
+    "act": 1.093,
+    "pose": 1.065,
+    "coh_act": 0.95,
+    "coh_pose": 0.95
+   },
+   "b030": {
+    "act": 1.551,
+    "pose": 1.65,
+    "coh_act": 0.96,
+    "coh_pose": 0.96
+   },
+   "b060": {
+    "act": 1.662,
+    "pose": 1.957,
+    "coh_act": 0.84,
+    "coh_pose": 0.85
+   }
+  }
+ },
+ "00000076--d0b7ea7e4d": {
+  "group": "T5",
+  "la_yaw_finite_std": 0.0,
+  "bands": {
+   "b015": {
+    "act": 1.081,
+    "pose": 1.042,
+    "coh_act": 0.95,
+    "coh_pose": 0.94
+   },
+   "b030": {
+    "act": 1.128,
+    "pose": 1.146,
+    "coh_act": 0.84,
+    "coh_pose": 0.82
+   },
+   "b060": {
+    "act": 1.161,
+    "pose": 1.681,
+    "coh_act": 0.48,
+    "coh_pose": 0.65
+   }
+  }
+ },
+ "00000075--6c8687d5bd": {
+  "group": "T4",
+  "la_yaw_finite_std": 0.0,
+  "bands": {
+   "b015": {
+    "act": 1.049,
+    "pose": 1.018,
+    "coh_act": 0.96,
+    "coh_pose": 0.95
+   },
+   "b030": {
+    "act": 1.55,
+    "pose": 1.531,
+    "coh_act": 0.94,
+    "coh_pose": 0.94
+   },
+   "b060": {
+    "act": 1.48,
+    "pose": 1.603,
+    "coh_act": 0.6,
+    "coh_pose": 0.63
+   }
+  }
+ }
+}

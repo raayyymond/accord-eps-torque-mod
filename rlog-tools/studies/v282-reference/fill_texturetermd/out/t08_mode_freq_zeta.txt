@@ -1,0 +1,13 @@
+CONTROL zeta_true 0.100 f_true 2.80 | E1 f 2.61 zeta 0.119 rawpk 2.73 | E4 f 2.86 zeta 0.129
+CONTROL zeta_true 0.200 f_true 2.80 | E1 f 2.48 zeta 0.227 rawpk 2.93 | E4 f 2.87 zeta 0.204
+CONTROL zeta_true 0.400 f_true 2.80 | E1 f 2.29 zeta 0.501 rawpk 2.64 | E4 f 3.04 zeta 0.381
+E1 zeta FAIL | E1 freq FAIL | E4 FAIL
+DATA (3, 8) runs 7 100s  E1 f0 2.17 [2.11,2.34]  raw peak 2.54 [2.53,3.32]  zeta(E1) 0.21  per group T64:1.20/4.30(n2) T64B:2.13/2.54(n2) T4:2.32/2.73(n2)
+DATA (8, 15) runs 35 696s  E1 f0 2.19 [2.12,2.27]  raw peak 3.03 [2.83,3.12]  zeta(E1) 0.30  per group T64:1.86/4.59(n14) T64B:2.25/3.03(n9) T5:2.05/2.73(n3) T4:2.20/2.93(n9)
+DATA (15, 22) runs 24 594s  E1 f0 1.79 [1.67,1.99]  raw peak 2.73 [2.63,2.83]  zeta(E1) 0.32  per group T64:1.94/2.93(n13) T64B:1.96/2.73(n3) T5:1.21/2.83(n3) T4:1.77/2.64(n5)
+DATA (22, 40) runs 14 580s  E1 f0 1.85 [1.68,1.96]  raw peak 2.73 [1.76,2.93]  zeta(E1) 0.37  per group T64:1.98/1.76(n3) T64B:1.44/2.73(n2) T5:1.87/2.25(n7) T4:1.76/2.73(n2)
+E4 DATA v3_8       f0 2.42 [1.45,3.19] zeta 1.10 [0.83,1.45] tau 73 ms  coh(ff,rate) band 0.33
+E4 DATA lt15_large f0 2.33 [2.12,2.95] zeta 0.96 [0.69,1.40] tau 72 ms  coh(ff,rate) band 0.29
+E4 DATA turns_s3   f0 2.46 [2.10,3.38] zeta 0.95 [0.62,1.39] tau 74 ms  coh(ff,rate) band 0.29
+E4 DATA v8_15      f0 1.71 [1.59,2.67] zeta 0.24 [0.13,0.66] tau 103 ms  coh(ff,rate) band 0.01
+E4 DATA ge15       f0 1.73 [1.62,1.80] zeta 0.15 [0.01,0.24] tau 0 ms  coh(ff,rate) band 0.08

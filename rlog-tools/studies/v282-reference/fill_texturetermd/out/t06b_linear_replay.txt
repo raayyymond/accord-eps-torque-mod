@@ -1,0 +1,555 @@
+0000006c--68c6e94b17 T64 10
+0000006d--05e83bb04f T64 21
+0000006e--6ca3e014fd T64B 38
+00000076--d0b7ea7e4d T5 51
+00000075--6c8687d5bd T4 66
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+
+== lt15_small / ALL  1019 s  meas band rms 2.91
+   J1e-4_b1.2e-3|u_e4           best d 110 ms corr +0.697 rms_ratio 0.66 proj +0.456 | corr@50 +0.427 @80 +0.637 @110 +0.697 | proj@50 +0.279 @80 +0.417
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.698 rms_ratio 0.66 proj +0.458 | corr@50 +0.369 @80 +0.607 @110 +0.698 | proj@50 +0.241 @80 +0.398
+   J1e-4_b1.2e-3|ff             best d  90 ms corr +0.075 rms_ratio 0.41 proj +0.031 | corr@50 +0.058 @80 +0.073 @110 +0.073 | proj@50 +0.024 @80 +0.030
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.779 rms_ratio 0.54 proj +0.422 | corr@50 +0.338 @80 +0.635 @110 +0.773 | proj@50 +0.183 @80 +0.343
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.642 rms_ratio 0.17 proj +0.112 | corr@50 +0.506 @80 +0.633 @110 +0.613 | proj@50 +0.088 @80 +0.111
+   J1e-4_b1.2e-3|rl_fb          best d 140 ms corr +0.722 rms_ratio 0.48 proj +0.350 | corr@50 +0.111 @80 +0.452 @110 +0.667 | proj@50 +0.054 @80 +0.219
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.511 rms_ratio 0.13 proj +0.067 | corr@50 +0.276 @80 +0.082 @110 -0.102 | proj@50 +0.036 @80 +0.011
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.567 rms_ratio 0.01 proj +0.006 | corr@50 +0.433 @80 +0.249 @110 +0.035 | proj@50 +0.005 @80 +0.003
+   J1e-4_b6e-4|u_e4             best d  90 ms corr +0.642 rms_ratio 1.00 proj +0.639 | corr@50 +0.506 @80 +0.631 @110 +0.620 | proj@50 +0.501 @80 +0.627
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.686 rms_ratio 0.82 proj +0.566 | corr@50 +0.117 @80 +0.441 @110 +0.641 | proj@50 +0.096 @80 +0.363
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.714 rms_ratio 0.51 proj +0.365 | corr@50 +0.559 @80 +0.701 @110 +0.689 | proj@50 +0.285 @80 +0.358
+   J3e-5_b5e-4(s5-like)|u_e4    best d 140 ms corr +0.607 rms_ratio 1.92 proj +1.162 | corr@50 -0.051 @80 +0.279 @110 +0.514 | proj@50 -0.098 @80 +0.534
+
+== lt15_small / T64  342 s  meas band rms 2.12
+   J1e-4_b1.2e-3|u_e4           best d 110 ms corr +0.631 rms_ratio 0.83 proj +0.522 | corr@50 +0.391 @80 +0.579 @110 +0.631 | proj@50 +0.325 @80 +0.480
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.631 rms_ratio 0.83 proj +0.524 | corr@50 +0.340 @80 +0.551 @110 +0.631 | proj@50 +0.283 @80 +0.458
+   J1e-4_b1.2e-3|ff             best d  40 ms corr +0.124 rms_ratio 0.64 proj +0.080 | corr@50 +0.124 @80 +0.108 @110 +0.073 | proj@50 +0.080 @80 +0.069
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.758 rms_ratio 0.63 proj +0.475 | corr@50 +0.258 @80 +0.572 @110 +0.740 | proj@50 +0.161 @80 +0.359
+   J1e-4_b1.2e-3|p_meas         best d 100 ms corr +0.527 rms_ratio 0.22 proj +0.114 | corr@50 +0.378 @80 +0.507 @110 +0.518 | proj@50 +0.081 @80 +0.109
+   J1e-4_b1.2e-3|rl_fb          best d 140 ms corr +0.724 rms_ratio 0.60 proj +0.434 | corr@50 +0.016 @80 +0.381 @110 +0.631 | proj@50 +0.010 @80 +0.229
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.681 rms_ratio 0.19 proj +0.129 | corr@50 +0.363 @80 +0.104 @110 -0.143 | proj@50 +0.068 @80 +0.019
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.415 rms_ratio 0.01 proj +0.003 | corr@50 +0.310 @80 +0.169 @110 +0.008 | proj@50 +0.003 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  90 ms corr +0.566 rms_ratio 1.30 proj +0.734 | corr@50 +0.447 @80 +0.556 @110 +0.546 | proj@50 +0.580 @80 +0.722
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.623 rms_ratio 1.02 proj +0.633 | corr@50 +0.106 @80 +0.400 @110 +0.581 | proj@50 +0.108 @80 +0.406
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.645 rms_ratio 0.66 proj +0.424 | corr@50 +0.513 @80 +0.635 @110 +0.620 | proj@50 +0.338 @80 +0.418
+   J3e-5_b5e-4(s5-like)|u_e4    best d 150 ms corr +0.548 rms_ratio 2.33 proj +1.280 | corr@50 -0.078 @80 +0.225 @110 +0.448 | proj@50 -0.182 @80 +0.526
+
+== lt15_small / T64B  278 s  meas band rms 2.95
+   J1e-4_b1.2e-3|u_e4           best d 110 ms corr +0.683 rms_ratio 0.76 proj +0.522 | corr@50 +0.373 @80 +0.604 @110 +0.683 | proj@50 +0.283 @80 +0.460
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.682 rms_ratio 0.77 proj +0.523 | corr@50 +0.312 @80 +0.570 @110 +0.680 | proj@50 +0.237 @80 +0.434
+   J1e-4_b1.2e-3|ff             best d 140 ms corr +0.084 rms_ratio 0.50 proj +0.042 | corr@50 -0.004 @80 +0.042 @110 +0.073 | proj@50 -0.002 @80 +0.021
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.805 rms_ratio 0.59 proj +0.478 | corr@50 +0.334 @80 +0.650 @110 +0.798 | proj@50 +0.197 @80 +0.384
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.656 rms_ratio 0.17 proj +0.112 | corr@50 +0.554 @80 +0.656 @110 +0.601 | proj@50 +0.094 @80 +0.112
+   J1e-4_b1.2e-3|rl_fb          best d 140 ms corr +0.737 rms_ratio 0.59 proj +0.434 | corr@50 +0.051 @80 +0.420 @110 +0.662 | proj@50 +0.030 @80 +0.246
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.704 rms_ratio 0.18 proj +0.126 | corr@50 +0.400 @80 +0.143 @110 -0.105 | proj@50 +0.071 @80 +0.025
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.393 rms_ratio 0.01 proj +0.003 | corr@50 +0.302 @80 +0.181 @110 +0.045 | proj@50 +0.002 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d 100 ms corr +0.618 rms_ratio 1.18 proj +0.731 | corr@50 +0.459 @80 +0.599 @110 +0.605 | proj@50 +0.535 @80 +0.706
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.664 rms_ratio 0.97 proj +0.647 | corr@50 +0.057 @80 +0.395 @110 +0.610 | proj@50 +0.055 @80 +0.381
+   J1.5e-4_b1.2e-3|u_e4         best d 100 ms corr +0.703 rms_ratio 0.59 proj +0.417 | corr@50 +0.514 @80 +0.679 @110 +0.689 | proj@50 +0.303 @80 +0.402
+   J3e-5_b5e-4(s5-like)|u_e4    best d 140 ms corr +0.580 rms_ratio 2.27 proj +1.317 | corr@50 -0.098 @80 +0.237 @110 +0.480 | proj@50 -0.222 @80 +0.535
+
+== lt15_small / T5  58 s  meas band rms 3.57
+   J1e-4_b1.2e-3|u_e4           best d 110 ms corr +0.839 rms_ratio 0.61 proj +0.512 | corr@50 +0.488 @80 +0.759 @110 +0.839 | proj@50 +0.298 @80 +0.461
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.840 rms_ratio 0.61 proj +0.513 | corr@50 +0.415 @80 +0.719 @110 +0.840 | proj@50 +0.255 @80 +0.438
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.059 rms_ratio 0.18 proj +0.011 | corr@50 -0.022 @80 -0.013 @110 +0.007 | proj@50 -0.004 @80 -0.002
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.859 rms_ratio 0.59 proj +0.504 | corr@50 +0.370 @80 +0.703 @110 +0.855 | proj@50 +0.220 @80 +0.413
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.779 rms_ratio 0.16 proj +0.125 | corr@50 +0.659 @80 +0.779 @110 +0.711 | proj@50 +0.106 @80 +0.125
+   J1e-4_b1.2e-3|rl_fb          best d 130 ms corr +0.806 rms_ratio 0.57 proj +0.461 | corr@50 +0.114 @80 +0.498 @110 +0.746 | proj@50 +0.066 @80 +0.286
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.695 rms_ratio 0.15 proj +0.104 | corr@50 +0.311 @80 +0.012 @110 -0.261 | proj@50 +0.046 @80 +0.002
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.637 rms_ratio 0.00 proj +0.002 | corr@50 +0.389 @80 +0.143 @110 -0.116 | proj@50 +0.001 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  90 ms corr +0.799 rms_ratio 0.87 proj +0.698 | corr@50 +0.638 @80 +0.789 @110 +0.759 | proj@50 +0.549 @80 +0.687
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.828 rms_ratio 0.78 proj +0.646 | corr@50 +0.104 @80 +0.502 @110 +0.762 | proj@50 +0.083 @80 +0.394
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.858 rms_ratio 0.47 proj +0.400 | corr@50 +0.652 @80 +0.840 @110 +0.829 | proj@50 +0.304 @80 +0.391
+   J3e-5_b5e-4(s5-like)|u_e4    best d 150 ms corr +0.747 rms_ratio 1.84 proj +1.378 | corr@50 -0.090 @80 +0.309 @110 +0.612 | proj@50 -0.171 @80 +0.576
+
+== lt15_small / T4  340 s  meas band rms 3.41
+   J1e-4_b1.2e-3|u_e4           best d 100 ms corr +0.772 rms_ratio 0.50 proj +0.382 | corr@50 +0.514 @80 +0.723 @110 +0.769 | proj@50 +0.255 @80 +0.358
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.773 rms_ratio 0.50 proj +0.383 | corr@50 +0.455 @80 +0.694 @110 +0.773 | proj@50 +0.225 @80 +0.344
+   J1e-4_b1.2e-3|ff             best d  90 ms corr +0.116 rms_ratio 0.23 proj +0.027 | corr@50 +0.101 @80 +0.116 @110 +0.108 | proj@50 +0.023 @80 +0.027
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.771 rms_ratio 0.46 proj +0.351 | corr@50 +0.385 @80 +0.656 @110 +0.770 | proj@50 +0.175 @80 +0.298
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.681 rms_ratio 0.16 proj +0.110 | corr@50 +0.519 @80 +0.666 @110 +0.661 | proj@50 +0.083 @80 +0.108
+   J1e-4_b1.2e-3|rl_fb          best d 130 ms corr +0.786 rms_ratio 0.32 proj +0.250 | corr@50 +0.263 @80 +0.584 @110 +0.760 | proj@50 +0.084 @80 +0.186
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +nan rms_ratio 0.00 proj +0.000 | corr@50 +nan @80 +nan @110 +nan | proj@50 +0.000 @80 +0.000
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.710 rms_ratio 0.01 proj +0.010 | corr@50 +0.548 @80 +0.319 @110 +0.049 | proj@50 +0.008 @80 +0.004
+   J1e-4_b6e-4|u_e4             best d  90 ms corr +0.746 rms_ratio 0.72 proj +0.537 | corr@50 +0.611 @80 +0.737 @110 +0.714 | proj@50 +0.441 @80 +0.531
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.757 rms_ratio 0.63 proj +0.474 | corr@50 +0.190 @80 +0.526 @110 +0.722 | proj@50 +0.119 @80 +0.329
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.791 rms_ratio 0.39 proj +0.305 | corr@50 +0.650 @80 +0.783 @110 +0.754 | proj@50 +0.251 @80 +0.302
+   J3e-5_b5e-4(s5-like)|u_e4    best d 140 ms corr +0.676 rms_ratio 1.46 proj +0.984 | corr@50 +0.016 @80 +0.365 @110 +0.599 | proj@50 +0.024 @80 +0.530
+
+== lt15_large / ALL  72 s  meas band rms 14.76
+   J1e-4_b1.2e-3|u_e4           best d  80 ms corr +0.834 rms_ratio 0.62 proj +0.519 | corr@50 +0.732 @80 +0.834 @110 +0.762 | proj@50 +0.454 @80 +0.519
+   J1e-4_b1.2e-3|u_log          best d  90 ms corr +0.836 rms_ratio 0.63 proj +0.522 | corr@50 +0.690 @80 +0.828 @110 +0.791 | proj@50 +0.429 @80 +0.517
+   J1e-4_b1.2e-3|ff             best d   0 ms corr +0.369 rms_ratio 0.31 proj +0.113 | corr@50 +0.297 @80 +0.185 @110 +0.044 | proj@50 +0.093 @80 +0.059
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.845 rms_ratio 0.51 proj +0.430 | corr@50 +0.519 @80 +0.765 @110 +0.845 | proj@50 +0.262 @80 +0.388
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.792 rms_ratio 0.16 proj +0.127 | corr@50 +0.722 @80 +0.792 @110 +0.696 | proj@50 +0.116 @80 +0.127
+   J1e-4_b1.2e-3|rl_fb          best d 120 ms corr +0.805 rms_ratio 0.43 proj +0.349 | corr@50 +0.310 @80 +0.618 @110 +0.786 | proj@50 +0.133 @80 +0.266
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.438 rms_ratio 0.08 proj +0.035 | corr@50 +0.137 @80 -0.074 @110 -0.258 | proj@50 +0.011 @80 -0.006
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.510 rms_ratio 0.01 proj +0.005 | corr@50 +0.243 @80 +0.020 @110 -0.196 | proj@50 +0.002 @80 +0.000
+   J1e-4_b6e-4|u_e4             best d  70 ms corr +0.818 rms_ratio 0.79 proj +0.649 | corr@50 +0.795 @80 +0.801 @110 +0.648 | proj@50 +0.629 @80 +0.637
+   J5e-5_b1.2e-3|u_e4           best d 110 ms corr +0.820 rms_ratio 0.84 proj +0.688 | corr@50 +0.528 @80 +0.758 @110 +0.820 | proj@50 +0.440 @80 +0.633
+   J1.5e-4_b1.2e-3|u_e4         best d  70 ms corr +0.846 rms_ratio 0.48 proj +0.407 | corr@50 +0.803 @80 +0.838 @110 +0.702 | proj@50 +0.386 @80 +0.404
+   J3e-5_b5e-4(s5-like)|u_e4    best d 100 ms corr +0.768 rms_ratio 1.88 proj +1.441 | corr@50 +0.540 @80 +0.731 @110 +0.758 | proj@50 +1.002 @80 +1.364
+
+== lt15_large / T64B  26 s  meas band rms 13.66
+   J1e-4_b1.2e-3|u_e4           best d  90 ms corr +0.878 rms_ratio 0.69 proj +0.606 | corr@50 +0.709 @80 +0.871 @110 +0.823 | proj@50 +0.484 @80 +0.599
+   J1e-4_b1.2e-3|u_log          best d  90 ms corr +0.877 rms_ratio 0.69 proj +0.607 | corr@50 +0.653 @80 +0.855 @110 +0.850 | proj@50 +0.448 @80 +0.589
+   J1e-4_b1.2e-3|ff             best d  50 ms corr +0.159 rms_ratio 0.24 proj +0.039 | corr@50 +0.159 @80 +0.132 @110 +0.063 | proj@50 +0.039 @80 +0.033
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.904 rms_ratio 0.58 proj +0.523 | corr@50 +0.553 @80 +0.827 @110 +0.904 | proj@50 +0.315 @80 +0.473
+   J1e-4_b1.2e-3|p_meas         best d  70 ms corr +0.841 rms_ratio 0.16 proj +0.137 | corr@50 +0.815 @80 +0.820 @110 +0.637 | proj@50 +0.132 @80 +0.134
+   J1e-4_b1.2e-3|rl_fb          best d 120 ms corr +0.877 rms_ratio 0.55 proj +0.484 | corr@50 +0.298 @80 +0.655 @110 +0.855 | proj@50 +0.162 @80 +0.358
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.654 rms_ratio 0.12 proj +0.077 | corr@50 +0.168 @80 -0.164 @110 -0.445 | proj@50 +0.020 @80 -0.020
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.357 rms_ratio 0.01 proj +0.002 | corr@50 +0.205 @80 +0.049 @110 -0.119 | proj@50 +0.001 @80 +0.000
+   J1e-4_b6e-4|u_e4             best d  70 ms corr +0.865 rms_ratio 0.85 proj +0.737 | corr@50 +0.804 @80 +0.862 @110 +0.721 | proj@50 +0.685 @80 +0.735
+   J5e-5_b1.2e-3|u_e4           best d 110 ms corr +0.864 rms_ratio 0.96 proj +0.828 | corr@50 +0.453 @80 +0.753 @110 +0.864 | proj@50 +0.428 @80 +0.714
+   J1.5e-4_b1.2e-3|u_e4         best d  80 ms corr +0.892 rms_ratio 0.52 proj +0.468 | corr@50 +0.804 @80 +0.892 @110 +0.773 | proj@50 +0.418 @80 +0.468
+   J3e-5_b5e-4(s5-like)|u_e4    best d 100 ms corr +0.813 rms_ratio 2.14 proj +1.736 | corr@50 +0.482 @80 +0.743 @110 +0.812 | proj@50 +1.011 @80 +1.572
+
+== lt15_large / T5  8 s  meas band rms 12.59
+   J1e-4_b1.2e-3|u_e4           best d 100 ms corr +0.845 rms_ratio 0.68 proj +0.572 | corr@50 +0.581 @80 +0.791 @110 +0.844 | proj@50 +0.392 @80 +0.536
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.846 rms_ratio 0.68 proj +0.575 | corr@50 +0.520 @80 +0.760 @110 +0.846 | proj@50 +0.352 @80 +0.516
+   J1e-4_b1.2e-3|ff             best d  10 ms corr +0.273 rms_ratio 0.18 proj +0.048 | corr@50 +0.240 @80 +0.159 @110 +0.042 | proj@50 +0.042 @80 +0.028
+   J1e-4_b1.2e-3|fb             best d 130 ms corr +0.864 rms_ratio 0.60 proj +0.521 | corr@50 +0.380 @80 +0.682 @110 +0.844 | proj@50 +0.229 @80 +0.412
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.826 rms_ratio 0.16 proj +0.132 | corr@50 +0.685 @80 +0.817 @110 +0.794 | proj@50 +0.110 @80 +0.131
+   J1e-4_b1.2e-3|rl_fb          best d 150 ms corr +0.826 rms_ratio 0.58 proj +0.481 | corr@50 +0.120 @80 +0.474 @110 +0.722 | proj@50 +0.069 @80 +0.276
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.766 rms_ratio 0.14 proj +0.104 | corr@50 +0.353 @80 +0.034 @110 -0.268 | proj@50 +0.048 @80 +0.005
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.856 rms_ratio 0.00 proj +0.003 | corr@50 +0.534 @80 +0.216 @110 -0.118 | proj@50 +0.002 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  90 ms corr +0.850 rms_ratio 0.89 proj +0.756 | corr@50 +0.728 @80 +0.846 @110 +0.807 | proj@50 +0.646 @80 +0.752
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.810 rms_ratio 0.89 proj +0.721 | corr@50 +0.291 @80 +0.604 @110 +0.780 | proj@50 +0.257 @80 +0.536
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.875 rms_ratio 0.52 proj +0.459 | corr@50 +0.715 @80 +0.862 @110 +0.845 | proj@50 +0.375 @80 +0.452
+   J3e-5_b5e-4(s5-like)|u_e4    best d 130 ms corr +0.711 rms_ratio 2.04 proj +1.452 | corr@50 +0.250 @80 +0.531 @110 +0.688 | proj@50 +0.507 @80 +1.081
+
+== lt15_large / T4  33 s  meas band rms 16.53
+   J1e-4_b1.2e-3|u_e4           best d  70 ms corr +0.838 rms_ratio 0.57 proj +0.476 | corr@50 +0.792 @80 +0.834 @110 +0.716 | proj@50 +0.449 @80 +0.474
+   J1e-4_b1.2e-3|u_log          best d  80 ms corr +0.839 rms_ratio 0.57 proj +0.478 | corr@50 +0.762 @80 +0.839 @110 +0.754 | proj@50 +0.434 @80 +0.478
+   J1e-4_b1.2e-3|ff             best d   0 ms corr +0.498 rms_ratio 0.35 proj +0.173 | corr@50 +0.373 @80 +0.217 @110 +0.034 | proj@50 +0.130 @80 +0.077
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.822 rms_ratio 0.45 proj +0.366 | corr@50 +0.542 @80 +0.759 @110 +0.822 | proj@50 +0.240 @80 +0.337
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.781 rms_ratio 0.16 proj +0.123 | corr@50 +0.688 @80 +0.781 @110 +0.722 | proj@50 +0.109 @80 +0.123
+   J1e-4_b1.2e-3|rl_fb          best d 120 ms corr +0.828 rms_ratio 0.31 proj +0.257 | corr@50 +0.417 @80 +0.692 @110 +0.821 | proj@50 +0.128 @80 +0.214
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +nan rms_ratio 0.00 proj +0.000 | corr@50 +nan @80 +nan @110 +nan | proj@50 +0.000 @80 +0.000
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.579 rms_ratio 0.01 proj +0.007 | corr@50 +0.258 @80 +0.003 @110 -0.239 | proj@50 +0.003 @80 +0.000
+   J1e-4_b6e-4|u_e4             best d  60 ms corr +0.817 rms_ratio 0.73 proj +0.597 | corr@50 +0.817 @80 +0.767 @110 +0.578 | proj@50 +0.596 @80 +0.562
+   J5e-5_b1.2e-3|u_e4           best d 100 ms corr +0.833 rms_ratio 0.75 proj +0.625 | corr@50 +0.643 @80 +0.811 @110 +0.815 | proj@50 +0.481 @80 +0.608
+   J1.5e-4_b1.2e-3|u_e4         best d  60 ms corr +0.842 rms_ratio 0.45 proj +0.376 | corr@50 +0.832 @80 +0.809 @110 +0.636 | proj@50 +0.371 @80 +0.362
+   J3e-5_b5e-4(s5-like)|u_e4    best d  90 ms corr +0.796 rms_ratio 1.66 proj +1.320 | corr@50 +0.663 @80 +0.789 @110 +0.758 | proj@50 +1.096 @80 +1.308
+
+== turns_s3 / ALL  130 s  meas band rms 11.22
+   J1e-4_b1.2e-3|u_e4           best d  80 ms corr +0.834 rms_ratio 0.62 proj +0.515 | corr@50 +0.729 @80 +0.834 @110 +0.761 | proj@50 +0.448 @80 +0.515
+   J1e-4_b1.2e-3|u_log          best d  90 ms corr +0.835 rms_ratio 0.62 proj +0.517 | corr@50 +0.686 @80 +0.827 @110 +0.790 | proj@50 +0.423 @80 +0.511
+   J1e-4_b1.2e-3|ff             best d  10 ms corr +0.392 rms_ratio 0.33 proj +0.128 | corr@50 +0.324 @80 +0.209 @110 +0.063 | proj@50 +0.107 @80 +0.070
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.825 rms_ratio 0.51 proj +0.422 | corr@50 +0.483 @80 +0.737 @110 +0.825 | proj@50 +0.246 @80 +0.376
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.723 rms_ratio 0.17 proj +0.121 | corr@50 +0.645 @80 +0.723 @110 +0.646 | proj@50 +0.108 @80 +0.121
+   J1e-4_b1.2e-3|rl_fb          best d 130 ms corr +0.798 rms_ratio 0.43 proj +0.345 | corr@50 +0.289 @80 +0.604 @110 +0.778 | proj@50 +0.124 @80 +0.260
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.437 rms_ratio 0.08 proj +0.035 | corr@50 +0.139 @80 -0.072 @110 -0.256 | proj@50 +0.011 @80 -0.006
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.527 rms_ratio 0.01 proj +0.005 | corr@50 +0.284 @80 +0.073 @110 -0.138 | proj@50 +0.003 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  70 ms corr +0.797 rms_ratio 0.82 proj +0.652 | corr@50 +0.772 @80 +0.781 @110 +0.635 | proj@50 +0.630 @80 +0.641
+   J5e-5_b1.2e-3|u_e4           best d 110 ms corr +0.820 rms_ratio 0.83 proj +0.679 | corr@50 +0.517 @80 +0.754 @110 +0.820 | proj@50 +0.425 @80 +0.621
+   J1.5e-4_b1.2e-3|u_e4         best d  70 ms corr +0.844 rms_ratio 0.48 proj +0.404 | corr@50 +0.801 @80 +0.836 @110 +0.698 | proj@50 +0.382 @80 +0.400
+   J3e-5_b5e-4(s5-like)|u_e4    best d 100 ms corr +0.755 rms_ratio 1.86 proj +1.405 | corr@50 +0.503 @80 +0.708 @110 +0.749 | proj@50 +0.930 @80 +1.312
+
+== turns_s3 / T64  16 s  meas band rms 3.67
+   J1e-4_b1.2e-3|u_e4           best d  80 ms corr +0.731 rms_ratio 1.01 proj +0.740 | corr@50 +0.634 @80 +0.731 @110 +0.679 | proj@50 +0.633 @80 +0.740
+   J1e-4_b1.2e-3|u_log          best d  90 ms corr +0.732 rms_ratio 1.01 proj +0.737 | corr@50 +0.598 @80 +0.723 @110 +0.698 | proj@50 +0.593 @80 +0.727
+   J1e-4_b1.2e-3|ff             best d  30 ms corr +0.462 rms_ratio 1.08 proj +0.500 | corr@50 +0.453 @80 +0.392 @110 +0.284 | proj@50 +0.497 @80 +0.436
+   J1e-4_b1.2e-3|fb             best d 130 ms corr +0.510 rms_ratio 0.82 proj +0.416 | corr@50 +0.043 @80 +0.310 @110 +0.472 | proj@50 +0.035 @80 +0.253
+   J1e-4_b1.2e-3|p_meas         best d 200 ms corr +0.300 rms_ratio 0.44 proj +0.132 | corr@50 -0.040 @80 +0.076 @110 +0.167 | proj@50 -0.017 @80 +0.033
+   J1e-4_b1.2e-3|rl_fb          best d 130 ms corr +0.673 rms_ratio 0.61 proj +0.412 | corr@50 +0.099 @80 +0.441 @110 +0.639 | proj@50 +0.060 @80 +0.269
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.283 rms_ratio 0.19 proj +0.055 | corr@50 -0.081 @80 -0.280 @110 -0.410 | proj@50 -0.016 @80 -0.054
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.497 rms_ratio 0.02 proj +0.010 | corr@50 +0.394 @80 +0.243 @110 +0.051 | proj@50 +0.008 @80 +0.005
+   J1e-4_b6e-4|u_e4             best d  60 ms corr +0.658 rms_ratio 1.66 proj +1.091 | corr@50 +0.645 @80 +0.643 @110 +0.523 | proj@50 +1.066 @80 +1.070
+   J5e-5_b1.2e-3|u_e4           best d 110 ms corr +0.716 rms_ratio 1.31 proj +0.934 | corr@50 +0.404 @80 +0.634 @110 +0.716 | proj@50 +0.513 @80 +0.819
+   J1.5e-4_b1.2e-3|u_e4         best d  70 ms corr +0.745 rms_ratio 0.78 proj +0.584 | corr@50 +0.712 @80 +0.736 @110 +0.616 | proj@50 +0.554 @80 +0.579
+   J3e-5_b5e-4(s5-like)|u_e4    best d 120 ms corr +0.587 rms_ratio 3.59 proj +2.107 | corr@50 +0.258 @80 +0.476 @110 +0.580 | proj@50 +0.903 @80 +1.690
+
+== turns_s3 / T64B  47 s  meas band rms 10.39
+   J1e-4_b1.2e-3|u_e4           best d  90 ms corr +0.883 rms_ratio 0.69 proj +0.613 | corr@50 +0.712 @80 +0.875 @110 +0.830 | proj@50 +0.489 @80 +0.606
+   J1e-4_b1.2e-3|u_log          best d  90 ms corr +0.882 rms_ratio 0.70 proj +0.613 | corr@50 +0.655 @80 +0.859 @110 +0.857 | proj@50 +0.452 @80 +0.595
+   J1e-4_b1.2e-3|ff             best d  50 ms corr +0.220 rms_ratio 0.26 proj +0.056 | corr@50 +0.220 @80 +0.188 @110 +0.108 | proj@50 +0.056 @80 +0.049
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.897 rms_ratio 0.58 proj +0.519 | corr@50 +0.531 @80 +0.812 @110 +0.897 | proj@50 +0.304 @80 +0.466
+   J1e-4_b1.2e-3|p_meas         best d  70 ms corr +0.806 rms_ratio 0.17 proj +0.134 | corr@50 +0.771 @80 +0.790 @110 +0.627 | proj@50 +0.128 @80 +0.132
+   J1e-4_b1.2e-3|rl_fb          best d 130 ms corr +0.873 rms_ratio 0.55 proj +0.479 | corr@50 +0.282 @80 +0.644 @110 +0.849 | proj@50 +0.153 @80 +0.350
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.660 rms_ratio 0.12 proj +0.077 | corr@50 +0.189 @80 -0.139 @110 -0.421 | proj@50 +0.022 @80 -0.016
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.394 rms_ratio 0.01 proj +0.003 | corr@50 +0.248 @80 +0.100 @110 -0.057 | proj@50 +0.002 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  70 ms corr +0.829 rms_ratio 0.92 proj +0.759 | corr@50 +0.772 @80 +0.826 @110 +0.696 | proj@50 +0.704 @80 +0.758
+   J5e-5_b1.2e-3|u_e4           best d 110 ms corr +0.871 rms_ratio 0.96 proj +0.833 | corr@50 +0.450 @80 +0.755 @110 +0.871 | proj@50 +0.424 @80 +0.715
+   J1.5e-4_b1.2e-3|u_e4         best d  80 ms corr +0.896 rms_ratio 0.53 proj +0.473 | corr@50 +0.808 @80 +0.896 @110 +0.779 | proj@50 +0.424 @80 +0.473
+   J3e-5_b5e-4(s5-like)|u_e4    best d 110 ms corr +0.815 rms_ratio 2.15 proj +1.754 | corr@50 +0.460 @80 +0.733 @110 +0.815 | proj@50 +0.970 @80 +1.554
+
+== turns_s3 / T5  18 s  meas band rms 9.88
+   J1e-4_b1.2e-3|u_e4           best d 100 ms corr +0.854 rms_ratio 0.65 proj +0.557 | corr@50 +0.574 @80 +0.798 @110 +0.852 | proj@50 +0.374 @80 +0.520
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.855 rms_ratio 0.65 proj +0.560 | corr@50 +0.509 @80 +0.765 @110 +0.855 | proj@50 +0.333 @80 +0.500
+   J1e-4_b1.2e-3|ff             best d   0 ms corr +0.245 rms_ratio 0.16 proj +0.039 | corr@50 +0.202 @80 +0.127 @110 +0.025 | proj@50 +0.033 @80 +0.020
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.869 rms_ratio 0.60 proj +0.519 | corr@50 +0.384 @80 +0.696 @110 +0.855 | proj@50 +0.231 @80 +0.417
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.816 rms_ratio 0.16 proj +0.131 | corr@50 +0.684 @80 +0.811 @110 +0.772 | proj@50 +0.110 @80 +0.130
+   J1e-4_b1.2e-3|rl_fb          best d 140 ms corr +0.834 rms_ratio 0.57 proj +0.478 | corr@50 +0.134 @80 +0.501 @110 +0.748 | proj@50 +0.077 @80 +0.287
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.753 rms_ratio 0.13 proj +0.098 | corr@50 +0.323 @80 -0.005 @110 -0.309 | proj@50 +0.042 @80 -0.001
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.829 rms_ratio 0.00 proj +0.003 | corr@50 +0.505 @80 +0.194 @110 -0.131 | proj@50 +0.002 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  90 ms corr +0.855 rms_ratio 0.87 proj +0.741 | corr@50 +0.733 @80 +0.853 @110 +0.804 | proj@50 +0.630 @80 +0.738
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.824 rms_ratio 0.86 proj +0.707 | corr@50 +0.257 @80 +0.593 @110 +0.789 | proj@50 +0.221 @80 +0.509
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.880 rms_ratio 0.50 proj +0.442 | corr@50 +0.713 @80 +0.868 @110 +0.845 | proj@50 +0.358 @80 +0.436
+   J3e-5_b5e-4(s5-like)|u_e4    best d 130 ms corr +0.724 rms_ratio 1.99 proj +1.438 | corr@50 +0.171 @80 +0.486 @110 +0.680 | proj@50 +0.342 @80 +0.968
+
+== turns_s3 / T4  49 s  meas band rms 13.78
+   J1e-4_b1.2e-3|u_e4           best d  70 ms corr +0.837 rms_ratio 0.55 proj +0.461 | corr@50 +0.791 @80 +0.831 @110 +0.708 | proj@50 +0.436 @80 +0.458
+   J1e-4_b1.2e-3|u_log          best d  80 ms corr +0.837 rms_ratio 0.55 proj +0.462 | corr@50 +0.762 @80 +0.837 @110 +0.747 | proj@50 +0.420 @80 +0.462
+   J1e-4_b1.2e-3|ff             best d   0 ms corr +0.533 rms_ratio 0.35 proj +0.187 | corr@50 +0.398 @80 +0.232 @110 +0.039 | proj@50 +0.141 @80 +0.083
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.800 rms_ratio 0.44 proj +0.352 | corr@50 +0.506 @80 +0.731 @110 +0.800 | proj@50 +0.222 @80 +0.321
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.731 rms_ratio 0.16 proj +0.115 | corr@50 +0.630 @80 +0.731 @110 +0.684 | proj@50 +0.099 @80 +0.115
+   J1e-4_b1.2e-3|rl_fb          best d 120 ms corr +0.814 rms_ratio 0.31 proj +0.249 | corr@50 +0.390 @80 +0.672 @110 +0.806 | proj@50 +0.119 @80 +0.205
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +nan rms_ratio 0.00 proj +0.000 | corr@50 +nan @80 +nan @110 +nan | proj@50 +0.000 @80 +0.000
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.599 rms_ratio 0.01 proj +0.007 | corr@50 +0.303 @80 +0.058 @110 -0.182 | proj@50 +0.004 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  60 ms corr +0.810 rms_ratio 0.72 proj +0.581 | corr@50 +0.809 @80 +0.762 @110 +0.576 | proj@50 +0.580 @80 +0.548
+   J5e-5_b1.2e-3|u_e4           best d 100 ms corr +0.830 rms_ratio 0.72 proj +0.602 | corr@50 +0.639 @80 +0.810 @110 +0.812 | proj@50 +0.463 @80 +0.586
+   J1.5e-4_b1.2e-3|u_e4         best d  60 ms corr +0.840 rms_ratio 0.43 proj +0.364 | corr@50 +0.831 @80 +0.803 @110 +0.624 | proj@50 +0.360 @80 +0.349
+   J3e-5_b5e-4(s5-like)|u_e4    best d  90 ms corr +0.785 rms_ratio 1.59 proj +1.252 | corr@50 +0.641 @80 +0.776 @110 +0.749 | proj@50 +1.021 @80 +1.237
+
+== v3_8 / ALL  201 s  meas band rms 7.76
+   J1e-4_b1.2e-3|u_e4           best d  80 ms corr +0.834 rms_ratio 0.63 proj +0.524 | corr@50 +0.756 @80 +0.834 @110 +0.745 | proj@50 +0.474 @80 +0.524
+   J1e-4_b1.2e-3|u_log          best d  90 ms corr +0.832 rms_ratio 0.63 proj +0.525 | corr@50 +0.719 @80 +0.832 @110 +0.777 | proj@50 +0.451 @80 +0.524
+   J1e-4_b1.2e-3|ff             best d   0 ms corr +0.452 rms_ratio 0.37 proj +0.167 | corr@50 +0.346 @80 +0.199 @110 +0.024 | proj@50 +0.129 @80 +0.075
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.863 rms_ratio 0.50 proj +0.430 | corr@50 +0.511 @80 +0.767 @110 +0.863 | proj@50 +0.254 @80 +0.381
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.804 rms_ratio 0.16 proj +0.131 | corr@50 +0.709 @80 +0.804 @110 +0.741 | proj@50 +0.115 @80 +0.131
+   J1e-4_b1.2e-3|rl_fb          best d 130 ms corr +0.835 rms_ratio 0.41 proj +0.339 | corr@50 +0.317 @80 +0.633 @110 +0.811 | proj@50 +0.128 @80 +0.256
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.413 rms_ratio 0.06 proj +0.026 | corr@50 +0.120 @80 -0.094 @110 -0.281 | proj@50 +0.007 @80 -0.006
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.688 rms_ratio 0.01 proj +0.006 | corr@50 +0.339 @80 +0.053 @110 -0.225 | proj@50 +0.003 @80 +0.000
+   J1e-4_b6e-4|u_e4             best d  60 ms corr +0.822 rms_ratio 0.80 proj +0.658 | corr@50 +0.810 @80 +0.792 @110 +0.624 | proj@50 +0.648 @80 +0.635
+   J5e-5_b1.2e-3|u_e4           best d 100 ms corr +0.824 rms_ratio 0.84 proj +0.692 | corr@50 +0.570 @80 +0.777 @110 +0.818 | proj@50 +0.478 @80 +0.651
+   J1.5e-4_b1.2e-3|u_e4         best d  70 ms corr +0.838 rms_ratio 0.49 proj +0.410 | corr@50 +0.812 @80 +0.823 @110 +0.675 | proj@50 +0.397 @80 +0.404
+   J3e-5_b5e-4(s5-like)|u_e4    best d 100 ms corr +0.775 rms_ratio 1.90 proj +1.472 | corr@50 +0.577 @80 +0.749 @110 +0.760 | proj@50 +1.090 @80 +1.417
+
+== v3_8 / T64  50 s  meas band rms 2.95
+   J1e-4_b1.2e-3|u_e4           best d 100 ms corr +0.639 rms_ratio 0.83 proj +0.529 | corr@50 +0.491 @80 +0.621 @110 +0.627 | proj@50 +0.411 @80 +0.518
+   J1e-4_b1.2e-3|u_log          best d 100 ms corr +0.639 rms_ratio 0.83 proj +0.530 | corr@50 +0.450 @80 +0.604 @110 +0.635 | proj@50 +0.377 @80 +0.505
+   J1e-4_b1.2e-3|ff             best d   0 ms corr +0.184 rms_ratio 0.70 proj +0.128 | corr@50 +0.148 @80 +0.102 @110 +0.056 | proj@50 +0.102 @80 +0.070
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.761 rms_ratio 0.63 proj +0.478 | corr@50 +0.357 @80 +0.631 @110 +0.756 | proj@50 +0.228 @80 +0.404
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.435 rms_ratio 0.26 proj +0.113 | corr@50 +0.361 @80 +0.434 @110 +0.408 | proj@50 +0.095 @80 +0.113
+   J1e-4_b1.2e-3|rl_fb          best d 130 ms corr +0.811 rms_ratio 0.55 proj +0.447 | corr@50 +0.207 @80 +0.555 @110 +0.764 | proj@50 +0.115 @80 +0.311
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.511 rms_ratio 0.14 proj +0.071 | corr@50 +0.112 @80 -0.159 @110 -0.393 | proj@50 +0.015 @80 -0.022
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.377 rms_ratio 0.01 proj +0.004 | corr@50 +0.265 @80 +0.131 @110 -0.014 | proj@50 +0.003 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  80 ms corr +0.632 rms_ratio 1.15 proj +0.729 | corr@50 +0.584 @80 +0.632 @110 +0.561 | proj@50 +0.681 @80 +0.729
+   J5e-5_b1.2e-3|u_e4           best d 120 ms corr +0.610 rms_ratio 1.10 proj +0.668 | corr@50 +0.279 @80 +0.498 @110 +0.602 | proj@50 +0.306 @80 +0.550
+   J1.5e-4_b1.2e-3|u_e4         best d  80 ms corr +0.656 rms_ratio 0.64 proj +0.419 | corr@50 +0.576 @80 +0.656 @110 +0.607 | proj@50 +0.372 @80 +0.419
+   J3e-5_b5e-4(s5-like)|u_e4    best d 130 ms corr +0.521 rms_ratio 2.81 proj +1.462 | corr@50 +0.203 @80 +0.404 @110 +0.508 | proj@50 +0.571 @80 +1.147
+
+== v3_8 / T64B  53 s  meas band rms 7.49
+   J1e-4_b1.2e-3|u_e4           best d  80 ms corr +0.878 rms_ratio 0.70 proj +0.611 | corr@50 +0.755 @80 +0.878 @110 +0.790 | proj@50 +0.519 @80 +0.611
+   J1e-4_b1.2e-3|u_log          best d  90 ms corr +0.879 rms_ratio 0.70 proj +0.614 | corr@50 +0.704 @80 +0.871 @110 +0.825 | proj@50 +0.485 @80 +0.605
+   J1e-4_b1.2e-3|ff             best d  20 ms corr +0.271 rms_ratio 0.31 proj +0.085 | corr@50 +0.236 @80 +0.135 @110 -0.010 | proj@50 +0.076 @80 +0.044
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.928 rms_ratio 0.57 proj +0.531 | corr@50 +0.556 @80 +0.841 @110 +0.928 | proj@50 +0.314 @80 +0.476
+   J1e-4_b1.2e-3|p_meas         best d  70 ms corr +0.902 rms_ratio 0.15 proj +0.139 | corr@50 +0.865 @80 +0.886 @110 +0.707 | proj@50 +0.133 @80 +0.137
+   J1e-4_b1.2e-3|rl_fb          best d 120 ms corr +0.910 rms_ratio 0.53 proj +0.484 | corr@50 +0.306 @80 +0.678 @110 +0.887 | proj@50 +0.162 @80 +0.357
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.706 rms_ratio 0.10 proj +0.071 | corr@50 +0.193 @80 -0.187 @110 -0.515 | proj@50 +0.019 @80 -0.018
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.721 rms_ratio 0.00 proj +0.003 | corr@50 +0.311 @80 -0.046 @110 -0.391 | proj@50 +0.001 @80 -0.000
+   J1e-4_b6e-4|u_e4             best d  70 ms corr +0.869 rms_ratio 0.85 proj +0.739 | corr@50 +0.841 @80 +0.849 @110 +0.666 | proj@50 +0.710 @80 +0.725
+   J5e-5_b1.2e-3|u_e4           best d 100 ms corr +0.870 rms_ratio 0.97 proj +0.845 | corr@50 +0.522 @80 +0.797 @110 +0.870 | proj@50 +0.501 @80 +0.767
+   J1.5e-4_b1.2e-3|u_e4         best d  70 ms corr +0.885 rms_ratio 0.53 proj +0.467 | corr@50 +0.829 @80 +0.877 @110 +0.723 | proj@50 +0.434 @80 +0.465
+   J3e-5_b5e-4(s5-like)|u_e4    best d 100 ms corr +0.835 rms_ratio 2.20 proj +1.834 | corr@50 +0.561 @80 +0.793 @110 +0.820 | proj@50 +1.207 @80 +1.719
+
+== v3_8 / T5  16 s  meas band rms 7.91
+   J1e-4_b1.2e-3|u_e4           best d  90 ms corr +0.904 rms_ratio 0.66 proj +0.595 | corr@50 +0.718 @80 +0.888 @110 +0.876 | proj@50 +0.475 @80 +0.585
+   J1e-4_b1.2e-3|u_log          best d 100 ms corr +0.905 rms_ratio 0.66 proj +0.596 | corr@50 +0.663 @80 +0.867 @110 +0.893 | proj@50 +0.440 @80 +0.573
+   J1e-4_b1.2e-3|ff             best d  10 ms corr +0.475 rms_ratio 0.21 proj +0.098 | corr@50 +0.395 @80 +0.250 @110 +0.050 | proj@50 +0.082 @80 +0.051
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.898 rms_ratio 0.57 proj +0.512 | corr@50 +0.457 @80 +0.751 @110 +0.891 | proj@50 +0.265 @80 +0.433
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.884 rms_ratio 0.16 proj +0.139 | corr@50 +0.775 @80 +0.884 @110 +0.825 | proj@50 +0.123 @80 +0.139
+   J1e-4_b1.2e-3|rl_fb          best d 140 ms corr +0.861 rms_ratio 0.53 proj +0.457 | corr@50 +0.207 @80 +0.562 @110 +0.792 | proj@50 +0.112 @80 +0.302
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.755 rms_ratio 0.11 proj +0.081 | corr@50 +0.273 @80 -0.077 @110 -0.392 | proj@50 +0.029 @80 -0.008
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.864 rms_ratio 0.00 proj +0.003 | corr@50 +0.471 @80 +0.114 @110 -0.244 | proj@50 +0.002 @80 +0.000
+   J1e-4_b6e-4|u_e4             best d  70 ms corr +0.909 rms_ratio 0.83 proj +0.752 | corr@50 +0.850 @80 +0.909 @110 +0.791 | proj@50 +0.705 @80 +0.751
+   J5e-5_b1.2e-3|u_e4           best d 120 ms corr +0.882 rms_ratio 0.89 proj +0.781 | corr@50 +0.460 @80 +0.752 @110 +0.880 | proj@50 +0.411 @80 +0.670
+   J1.5e-4_b1.2e-3|u_e4         best d  80 ms corr +0.918 rms_ratio 0.51 proj +0.466 | corr@50 +0.817 @80 +0.918 @110 +0.837 | proj@50 +0.417 @80 +0.466
+   J3e-5_b5e-4(s5-like)|u_e4    best d 110 ms corr +0.845 rms_ratio 2.02 proj +1.705 | corr@50 +0.487 @80 +0.747 @110 +0.845 | proj@50 +0.991 @80 +1.514
+
+== v3_8 / T4  83 s  meas band rms 9.66
+   J1e-4_b1.2e-3|u_e4           best d  70 ms corr +0.833 rms_ratio 0.58 proj +0.485 | corr@50 +0.789 @80 +0.829 @110 +0.721 | proj@50 +0.459 @80 +0.484
+   J1e-4_b1.2e-3|u_log          best d  80 ms corr +0.835 rms_ratio 0.58 proj +0.487 | corr@50 +0.761 @80 +0.835 @110 +0.756 | proj@50 +0.444 @80 +0.487
+   J1e-4_b1.2e-3|ff             best d   0 ms corr +0.557 rms_ratio 0.38 proj +0.211 | corr@50 +0.410 @80 +0.234 @110 +0.031 | proj@50 +0.156 @80 +0.090
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.849 rms_ratio 0.45 proj +0.379 | corr@50 +0.518 @80 +0.756 @110 +0.849 | proj@50 +0.231 @80 +0.337
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.814 rms_ratio 0.16 proj +0.130 | corr@50 +0.683 @80 +0.806 @110 +0.782 | proj@50 +0.109 @80 +0.129
+   J1e-4_b1.2e-3|rl_fb          best d 130 ms corr +0.849 rms_ratio 0.31 proj +0.262 | corr@50 +0.384 @80 +0.675 @110 +0.830 | proj@50 +0.118 @80 +0.208
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +nan rms_ratio 0.00 proj +0.000 | corr@50 +nan @80 +nan @110 +nan | proj@50 +0.000 @80 +0.000
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.747 rms_ratio 0.01 proj +0.008 | corr@50 +0.369 @80 +0.065 @110 -0.230 | proj@50 +0.004 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  60 ms corr +0.819 rms_ratio 0.75 proj +0.615 | corr@50 +0.819 @80 +0.771 @110 +0.594 | proj@50 +0.615 @80 +0.581
+   J5e-5_b1.2e-3|u_e4           best d 100 ms corr +0.827 rms_ratio 0.76 proj +0.628 | corr@50 +0.641 @80 +0.803 @110 +0.813 | proj@50 +0.486 @80 +0.610
+   J1.5e-4_b1.2e-3|u_e4         best d  60 ms corr +0.837 rms_ratio 0.46 proj +0.385 | corr@50 +0.828 @80 +0.804 @110 +0.641 | proj@50 +0.381 @80 +0.371
+   J3e-5_b5e-4(s5-like)|u_e4    best d  90 ms corr +0.785 rms_ratio 1.68 proj +1.322 | corr@50 +0.645 @80 +0.774 @110 +0.756 | proj@50 +1.086 @80 +1.304
+
+== v8_15 / ALL  889 s  meas band rms 3.69
+   J1e-4_b1.2e-3|u_e4           best d 100 ms corr +0.737 rms_ratio 0.64 proj +0.472 | corr@50 +0.485 @80 +0.691 @110 +0.731 | proj@50 +0.309 @80 +0.442
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.737 rms_ratio 0.64 proj +0.474 | corr@50 +0.426 @80 +0.663 @110 +0.737 | proj@50 +0.273 @80 +0.425
+   J1e-4_b1.2e-3|ff             best d 130 ms corr +0.099 rms_ratio 0.33 proj +0.033 | corr@50 +0.023 @80 +0.066 @110 +0.093 | proj@50 +0.008 @80 +0.022
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.777 rms_ratio 0.54 proj +0.421 | corr@50 +0.397 @80 +0.671 @110 +0.777 | proj@50 +0.214 @80 +0.362
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.661 rms_ratio 0.17 proj +0.112 | corr@50 +0.575 @80 +0.661 @110 +0.590 | proj@50 +0.096 @80 +0.112
+   J1e-4_b1.2e-3|rl_fb          best d 130 ms corr +0.726 rms_ratio 0.50 proj +0.360 | corr@50 +0.166 @80 +0.493 @110 +0.688 | proj@50 +0.082 @80 +0.243
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.517 rms_ratio 0.13 proj +0.066 | corr@50 +0.251 @80 +0.045 @110 -0.148 | proj@50 +0.032 @80 +0.006
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.408 rms_ratio 0.01 proj +0.004 | corr@50 +0.302 @80 +0.158 @110 -0.007 | proj@50 +0.003 @80 +0.002
+   J1e-4_b6e-4|u_e4             best d  90 ms corr +0.681 rms_ratio 0.94 proj +0.638 | corr@50 +0.557 @80 +0.675 @110 +0.644 | proj@50 +0.520 @80 +0.632
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.718 rms_ratio 0.83 proj +0.594 | corr@50 +0.191 @80 +0.513 @110 +0.694 | proj@50 +0.156 @80 +0.422
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.758 rms_ratio 0.50 proj +0.377 | corr@50 +0.613 @80 +0.750 @110 +0.719 | proj@50 +0.303 @80 +0.372
+   J3e-5_b5e-4(s5-like)|u_e4    best d 130 ms corr +0.622 rms_ratio 1.89 proj +1.174 | corr@50 +0.069 @80 +0.383 @110 +0.579 | proj@50 +0.129 @80 +0.719
+
+== v8_15 / T64  297 s  meas band rms 2.22
+   J1e-4_b1.2e-3|u_e4           best d 110 ms corr +0.653 rms_ratio 0.81 proj +0.532 | corr@50 +0.384 @80 +0.589 @110 +0.653 | proj@50 +0.311 @80 +0.478
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.652 rms_ratio 0.82 proj +0.532 | corr@50 +0.329 @80 +0.559 @110 +0.652 | proj@50 +0.267 @80 +0.455
+   J1e-4_b1.2e-3|ff             best d  60 ms corr +0.118 rms_ratio 0.60 proj +0.070 | corr@50 +0.116 @80 +0.113 @110 +0.090 | proj@50 +0.069 @80 +0.068
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.767 rms_ratio 0.62 proj +0.475 | corr@50 +0.251 @80 +0.574 @110 +0.748 | proj@50 +0.156 @80 +0.356
+   J1e-4_b1.2e-3|p_meas         best d 100 ms corr +0.591 rms_ratio 0.19 proj +0.115 | corr@50 +0.426 @80 +0.569 @110 +0.579 | proj@50 +0.083 @80 +0.111
+   J1e-4_b1.2e-3|rl_fb          best d 140 ms corr +0.717 rms_ratio 0.61 proj +0.435 | corr@50 -0.005 @80 +0.361 @110 +0.617 | proj@50 -0.003 @80 +0.220
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.709 rms_ratio 0.19 proj +0.135 | corr@50 +0.389 @80 +0.125 @110 -0.127 | proj@50 +0.074 @80 +0.024
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.441 rms_ratio 0.01 proj +0.003 | corr@50 +0.325 @80 +0.181 @110 +0.013 | proj@50 +0.002 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  90 ms corr +0.581 rms_ratio 1.29 proj +0.747 | corr@50 +0.443 @80 +0.567 @110 +0.567 | proj@50 +0.568 @80 +0.729
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.648 rms_ratio 0.99 proj +0.640 | corr@50 +0.076 @80 +0.394 @110 +0.597 | proj@50 +0.075 @80 +0.387
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.667 rms_ratio 0.65 proj +0.431 | corr@50 +0.517 @80 +0.653 @110 +0.647 | proj@50 +0.333 @80 +0.422
+   J3e-5_b5e-4(s5-like)|u_e4    best d 150 ms corr +0.577 rms_ratio 2.24 proj +1.290 | corr@50 -0.125 @80 +0.206 @110 +0.457 | proj@50 -0.278 @80 +0.458
+
+== v8_15 / T64B  251 s  meas band rms 4.14
+   J1e-4_b1.2e-3|u_e4           best d 100 ms corr +0.763 rms_ratio 0.73 proj +0.555 | corr@50 +0.480 @80 +0.707 @110 +0.761 | proj@50 +0.347 @80 +0.512
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.766 rms_ratio 0.73 proj +0.559 | corr@50 +0.418 @80 +0.675 @110 +0.766 | proj@50 +0.304 @80 +0.491
+   J1e-4_b1.2e-3|ff             best d 160 ms corr +0.152 rms_ratio 0.37 proj +0.056 | corr@50 -0.026 @80 +0.049 @110 +0.111 | proj@50 -0.010 @80 +0.018
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.828 rms_ratio 0.59 proj +0.489 | corr@50 +0.427 @80 +0.717 @110 +0.828 | proj@50 +0.250 @80 +0.421
+   J1e-4_b1.2e-3|p_meas         best d  70 ms corr +0.693 rms_ratio 0.17 proj +0.119 | corr@50 +0.641 @80 +0.690 @110 +0.573 | proj@50 +0.110 @80 +0.119
+   J1e-4_b1.2e-3|rl_fb          best d 130 ms corr +0.775 rms_ratio 0.59 proj +0.455 | corr@50 +0.153 @80 +0.509 @110 +0.727 | proj@50 +0.089 @80 +0.296
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.664 rms_ratio 0.16 proj +0.108 | corr@50 +0.300 @80 +0.027 @110 -0.222 | proj@50 +0.049 @80 +0.004
+   J1e-4_b1.2e-3|i              best d  20 ms corr +0.254 rms_ratio 0.01 proj +0.002 | corr@50 +0.227 @80 +0.162 @110 +0.073 | proj@50 +0.002 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d  90 ms corr +0.703 rms_ratio 1.05 proj +0.737 | corr@50 +0.559 @80 +0.693 @110 +0.670 | proj@50 +0.584 @80 +0.725
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.746 rms_ratio 0.95 proj +0.712 | corr@50 +0.178 @80 +0.517 @110 +0.715 | proj@50 +0.168 @80 +0.490
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.787 rms_ratio 0.56 proj +0.441 | corr@50 +0.614 @80 +0.773 @110 +0.755 | proj@50 +0.343 @80 +0.433
+   J3e-5_b5e-4(s5-like)|u_e4    best d 130 ms corr +0.654 rms_ratio 2.18 proj +1.426 | corr@50 +0.085 @80 +0.411 @110 +0.612 | proj@50 +0.184 @80 +0.888
+
+== v8_15 / T5  51 s  meas band rms 4.65
+   J1e-4_b1.2e-3|u_e4           best d 120 ms corr +0.815 rms_ratio 0.65 proj +0.532 | corr@50 +0.395 @80 +0.682 @110 +0.810 | proj@50 +0.254 @80 +0.442
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.814 rms_ratio 0.66 proj +0.534 | corr@50 +0.322 @80 +0.635 @110 +0.798 | proj@50 +0.208 @80 +0.413
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.227 rms_ratio 0.15 proj +0.035 | corr@50 -0.163 @80 -0.090 @110 +0.004 | proj@50 -0.024 @80 -0.013
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.833 rms_ratio 0.62 proj +0.518 | corr@50 +0.309 @80 +0.638 @110 +0.814 | proj@50 +0.191 @80 +0.394
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.745 rms_ratio 0.16 proj +0.122 | corr@50 +0.589 @80 +0.734 @110 +0.713 | proj@50 +0.096 @80 +0.120
+   J1e-4_b1.2e-3|rl_fb          best d 140 ms corr +0.789 rms_ratio 0.62 proj +0.488 | corr@50 +0.048 @80 +0.423 @110 +0.685 | proj@50 +0.029 @80 +0.259
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.753 rms_ratio 0.16 proj +0.124 | corr@50 +0.385 @80 +0.086 @110 -0.202 | proj@50 +0.064 @80 +0.014
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.686 rms_ratio 0.00 proj +0.002 | corr@50 +0.488 @80 +0.260 @110 +0.005 | proj@50 +0.002 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d 100 ms corr +0.800 rms_ratio 0.94 proj +0.749 | corr@50 +0.574 @80 +0.763 @110 +0.792 | proj@50 +0.528 @80 +0.709
+   J5e-5_b1.2e-3|u_e4           best d 140 ms corr +0.786 rms_ratio 0.83 proj +0.649 | corr@50 +0.003 @80 +0.393 @110 +0.671 | proj@50 +0.003 @80 +0.321
+   J1.5e-4_b1.2e-3|u_e4         best d 100 ms corr +0.845 rms_ratio 0.50 proj +0.425 | corr@50 +0.580 @80 +0.795 @110 +0.841 | proj@50 +0.289 @80 +0.398
+   J3e-5_b5e-4(s5-like)|u_e4    best d 160 ms corr +0.686 rms_ratio 1.94 proj +1.333 | corr@50 -0.198 @80 +0.183 @110 +0.491 | proj@50 -0.383 @80 +0.354
+
+== v8_15 / T4  290 s  meas band rms 4.25
+   J1e-4_b1.2e-3|u_e4           best d  90 ms corr +0.778 rms_ratio 0.49 proj +0.382 | corr@50 +0.589 @80 +0.761 @110 +0.750 | proj@50 +0.288 @80 +0.373
+   J1e-4_b1.2e-3|u_log          best d 100 ms corr +0.778 rms_ratio 0.49 proj +0.384 | corr@50 +0.533 @80 +0.741 @110 +0.767 | proj@50 +0.262 @80 +0.365
+   J1e-4_b1.2e-3|ff             best d 110 ms corr +0.116 rms_ratio 0.19 proj +0.022 | corr@50 +0.060 @80 +0.101 @110 +0.116 | proj@50 +0.012 @80 +0.020
+   J1e-4_b1.2e-3|fb             best d 100 ms corr +0.744 rms_ratio 0.45 proj +0.335 | corr@50 +0.456 @80 +0.685 @110 +0.744 | proj@50 +0.205 @80 +0.308
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.654 rms_ratio 0.16 proj +0.104 | corr@50 +0.566 @80 +0.654 @110 +0.585 | proj@50 +0.089 @80 +0.104
+   J1e-4_b1.2e-3|rl_fb          best d 120 ms corr +0.765 rms_ratio 0.32 proj +0.245 | corr@50 +0.347 @80 +0.635 @110 +0.762 | proj@50 +0.110 @80 +0.202
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +nan rms_ratio 0.00 proj +0.000 | corr@50 +nan @80 +nan @110 +nan | proj@50 +0.000 @80 +0.000
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.509 rms_ratio 0.01 proj +0.007 | corr@50 +0.359 @80 +0.168 @110 -0.044 | proj@50 +0.005 @80 +0.002
+   J1e-4_b6e-4|u_e4             best d  80 ms corr +0.738 rms_ratio 0.69 proj +0.511 | corr@50 +0.654 @80 +0.738 @110 +0.659 | proj@50 +0.452 @80 +0.511
+   J5e-5_b1.2e-3|u_e4           best d 120 ms corr +0.755 rms_ratio 0.65 proj +0.487 | corr@50 +0.314 @80 +0.616 @110 +0.751 | proj@50 +0.201 @80 +0.396
+   J1.5e-4_b1.2e-3|u_e4         best d  80 ms corr +0.803 rms_ratio 0.38 proj +0.303 | corr@50 +0.705 @80 +0.803 @110 +0.720 | proj@50 +0.266 @80 +0.303
+   J3e-5_b5e-4(s5-like)|u_e4    best d 120 ms corr +0.653 rms_ratio 1.47 proj +0.957 | corr@50 +0.209 @80 +0.499 @110 +0.643 | proj@50 +0.304 @80 +0.728
+
+== ge15 / ALL  1228 s  meas band rms 2.70
+   J1e-4_b1.2e-3|u_e4           best d 120 ms corr +0.654 rms_ratio 0.53 proj +0.348 | corr@50 +0.340 @80 +0.554 @110 +0.651 | proj@50 +0.181 @80 +0.295
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.655 rms_ratio 0.53 proj +0.350 | corr@50 +0.287 @80 +0.522 @110 +0.643 | proj@50 +0.153 @80 +0.279
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.252 rms_ratio 0.37 proj +0.092 | corr@50 -0.201 @80 -0.090 @110 +0.024 | proj@50 -0.074 @80 -0.033
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.822 rms_ratio 0.40 proj +0.325 | corr@50 +0.510 @80 +0.740 @110 +0.822 | proj@50 +0.202 @80 +0.293
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.681 rms_ratio 0.20 proj +0.138 | corr@50 +0.603 @80 +0.681 @110 +0.626 | proj@50 +0.122 @80 +0.138
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.662 rms_ratio 0.38 proj +0.249 | corr@50 -0.159 @80 +0.175 @110 +0.446 | proj@50 -0.060 @80 +0.066
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.736 rms_ratio 0.24 proj +0.177 | corr@50 +0.576 @80 +0.375 @110 +0.139 | proj@50 +0.138 @80 +0.090
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.133 rms_ratio 0.02 proj +0.003 | corr@50 +0.034 @80 -0.054 @110 -0.146 | proj@50 +0.001 @80 -0.001
+   J1e-4_b6e-4|u_e4             best d 110 ms corr +0.599 rms_ratio 0.84 proj +0.505 | corr@50 +0.401 @80 +0.555 @110 +0.599 | proj@50 +0.338 @80 +0.468
+   J5e-5_b1.2e-3|u_e4           best d 150 ms corr +0.647 rms_ratio 0.59 proj +0.383 | corr@50 +0.022 @80 +0.331 @110 +0.551 | proj@50 +0.013 @80 +0.196
+   J1.5e-4_b1.2e-3|u_e4         best d 100 ms corr +0.664 rms_ratio 0.45 proj +0.296 | corr@50 +0.493 @80 +0.636 @110 +0.657 | proj@50 +0.220 @80 +0.284
+   J3e-5_b5e-4(s5-like)|u_e4    best d 170 ms corr +0.586 rms_ratio 1.16 proj +0.680 | corr@50 -0.221 @80 +0.098 @110 +0.371 | proj@50 -0.257 @80 +0.114
+
+== ge15 / T64  558 s  meas band rms 1.50
+   J1e-4_b1.2e-3|u_e4           best d 120 ms corr +0.535 rms_ratio 0.78 proj +0.415 | corr@50 +0.239 @80 +0.434 @110 +0.528 | proj@50 +0.185 @80 +0.336
+   J1e-4_b1.2e-3|u_log          best d 130 ms corr +0.537 rms_ratio 0.78 proj +0.419 | corr@50 +0.195 @80 +0.407 @110 +0.522 | proj@50 +0.152 @80 +0.317
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.236 rms_ratio 0.67 proj +0.159 | corr@50 -0.142 @80 -0.032 @110 +0.072 | proj@50 -0.096 @80 -0.021
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.794 rms_ratio 0.43 proj +0.345 | corr@50 +0.500 @80 +0.724 @110 +0.794 | proj@50 +0.216 @80 +0.314
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.688 rms_ratio 0.25 proj +0.173 | corr@50 +0.587 @80 +0.686 @110 +0.648 | proj@50 +0.147 @80 +0.172
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.576 rms_ratio 0.42 proj +0.241 | corr@50 -0.261 @80 +0.074 @110 +0.351 | proj@50 -0.109 @80 +0.031
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.792 rms_ratio 0.29 proj +0.232 | corr@50 +0.603 @80 +0.378 @110 +0.123 | proj@50 +0.177 @80 +0.111
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.308 rms_ratio 0.01 proj +0.002 | corr@50 +0.145 @80 -0.009 @110 -0.173 | proj@50 +0.001 @80 -0.000
+   J1e-4_b6e-4|u_e4             best d 120 ms corr +0.475 rms_ratio 1.28 proj +0.608 | corr@50 +0.252 @80 +0.408 @110 +0.474 | proj@50 +0.323 @80 +0.522
+   J5e-5_b1.2e-3|u_e4           best d 150 ms corr +0.529 rms_ratio 0.81 proj +0.429 | corr@50 -0.047 @80 +0.230 @110 +0.432 | proj@50 -0.038 @80 +0.186
+   J1.5e-4_b1.2e-3|u_e4         best d 100 ms corr +0.548 rms_ratio 0.68 proj +0.373 | corr@50 +0.391 @80 +0.519 @110 +0.545 | proj@50 +0.266 @80 +0.353
+   J3e-5_b5e-4(s5-like)|u_e4    best d 170 ms corr +0.461 rms_ratio 1.45 proj +0.668 | corr@50 -0.307 @80 -0.025 @110 +0.231 | proj@50 -0.444 @80 -0.036
+
+== ge15 / T64B  233 s  meas band rms 4.52
+   J1e-4_b1.2e-3|u_e4           best d 120 ms corr +0.710 rms_ratio 0.50 proj +0.358 | corr@50 +0.390 @80 +0.610 @110 +0.707 | proj@50 +0.197 @80 +0.307
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.711 rms_ratio 0.51 proj +0.360 | corr@50 +0.335 @80 +0.575 @110 +0.699 | proj@50 +0.170 @80 +0.292
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.313 rms_ratio 0.33 proj +0.104 | corr@50 -0.304 @80 -0.168 @110 -0.023 | proj@50 -0.101 @80 -0.056
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.871 rms_ratio 0.41 proj +0.354 | corr@50 +0.609 @80 +0.815 @110 +0.871 | proj@50 +0.248 @80 +0.331
+   J1e-4_b1.2e-3|p_meas         best d  70 ms corr +0.694 rms_ratio 0.20 proj +0.141 | corr@50 +0.660 @80 +0.691 @110 +0.596 | proj@50 +0.134 @80 +0.140
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.730 rms_ratio 0.41 proj +0.296 | corr@50 -0.175 @80 +0.174 @110 +0.467 | proj@50 -0.071 @80 +0.071
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.867 rms_ratio 0.27 proj +0.238 | corr@50 +0.679 @80 +0.445 @110 +0.168 | proj@50 +0.186 @80 +0.122
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.049 rms_ratio 0.01 proj +0.000 | corr@50 -0.100 @80 -0.203 @110 -0.294 | proj@50 -0.001 @80 -0.001
+   J1e-4_b6e-4|u_e4             best d 100 ms corr +0.663 rms_ratio 0.79 proj +0.521 | corr@50 +0.480 @80 +0.628 @110 +0.660 | proj@50 +0.377 @80 +0.494
+   J5e-5_b1.2e-3|u_e4           best d 150 ms corr +0.698 rms_ratio 0.58 proj +0.403 | corr@50 +0.060 @80 +0.375 @110 +0.599 | proj@50 +0.035 @80 +0.217
+   J1.5e-4_b1.2e-3|u_e4         best d 100 ms corr +0.727 rms_ratio 0.41 proj +0.298 | corr@50 +0.549 @80 +0.699 @110 +0.719 | proj@50 +0.225 @80 +0.287
+   J3e-5_b5e-4(s5-like)|u_e4    best d 170 ms corr +0.645 rms_ratio 1.19 proj +0.765 | corr@50 -0.181 @80 +0.150 @110 +0.427 | proj@50 -0.215 @80 +0.178
+
+== ge15 / T5  242 s  meas band rms 1.75
+   J1e-4_b1.2e-3|u_e4           best d 120 ms corr +0.749 rms_ratio 0.56 proj +0.416 | corr@50 +0.367 @80 +0.622 @110 +0.743 | proj@50 +0.204 @80 +0.346
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.749 rms_ratio 0.56 proj +0.417 | corr@50 +0.307 @80 +0.584 @110 +0.733 | proj@50 +0.172 @80 +0.326
+   J1e-4_b1.2e-3|ff             best d 180 ms corr +0.285 rms_ratio 0.26 proj +0.074 | corr@50 -0.061 @80 +0.061 @110 +0.170 | proj@50 -0.016 @80 +0.016
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.820 rms_ratio 0.43 proj +0.354 | corr@50 +0.347 @80 +0.650 @110 +0.806 | proj@50 +0.151 @80 +0.281
+   J1e-4_b1.2e-3|p_meas         best d 100 ms corr +0.698 rms_ratio 0.22 proj +0.156 | corr@50 +0.493 @80 +0.661 @110 +0.692 | proj@50 +0.110 @80 +0.148
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.606 rms_ratio 0.44 proj +0.265 | corr@50 -0.305 @80 +0.040 @110 +0.336 | proj@50 -0.134 @80 +0.017
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.812 rms_ratio 0.26 proj +0.210 | corr@50 +0.667 @80 +0.446 @110 +0.180 | proj@50 +0.173 @80 +0.115
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.309 rms_ratio 0.01 proj +0.002 | corr@50 +0.219 @80 +0.087 @110 -0.076 | proj@50 +0.001 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d 110 ms corr +0.705 rms_ratio 0.90 proj +0.637 | corr@50 +0.419 @80 +0.627 @110 +0.705 | proj@50 +0.379 @80 +0.567
+   J5e-5_b1.2e-3|u_e4           best d 150 ms corr +0.729 rms_ratio 0.59 proj +0.428 | corr@50 -0.045 @80 +0.312 @110 +0.584 | proj@50 -0.026 @80 +0.183
+   J1.5e-4_b1.2e-3|u_e4         best d 100 ms corr +0.751 rms_ratio 0.48 proj +0.363 | corr@50 +0.572 @80 +0.726 @110 +0.739 | proj@50 +0.277 @80 +0.351
+   J3e-5_b5e-4(s5-like)|u_e4    best d 180 ms corr +0.636 rms_ratio 1.03 proj +0.655 | corr@50 -0.424 @80 -0.081 @110 +0.257 | proj@50 -0.439 @80 -0.084
+
+== ge15 / T4  196 s  meas band rms 3.33
+   J1e-4_b1.2e-3|u_e4           best d 120 ms corr +0.676 rms_ratio 0.39 proj +0.263 | corr@50 +0.346 @80 +0.579 @110 +0.676 | proj@50 +0.135 @80 +0.225
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.678 rms_ratio 0.39 proj +0.266 | corr@50 +0.285 @80 +0.542 @110 +0.668 | proj@50 +0.112 @80 +0.213
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.222 rms_ratio 0.16 proj +0.035 | corr@50 -0.127 @80 -0.032 @110 +0.062 | proj@50 -0.020 @80 -0.005
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.740 rms_ratio 0.33 proj +0.241 | corr@50 +0.336 @80 +0.610 @110 +0.735 | proj@50 +0.110 @80 +0.199
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.709 rms_ratio 0.16 proj +0.113 | corr@50 +0.548 @80 +0.693 @110 +0.690 | proj@50 +0.087 @80 +0.110
+   J1e-4_b1.2e-3|rl_fb          best d 140 ms corr +0.674 rms_ratio 0.23 proj +0.158 | corr@50 +0.082 @80 +0.393 @110 +0.600 | proj@50 +0.019 @80 +0.092
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +nan rms_ratio 0.00 proj +0.000 | corr@50 +nan @80 +nan @110 +nan | proj@50 +0.000 @80 +0.000
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.225 rms_ratio 0.05 proj +0.011 | corr@50 +0.074 @80 -0.066 @110 -0.216 | proj@50 +0.004 @80 -0.003
+   J1e-4_b6e-4|u_e4             best d 100 ms corr +0.633 rms_ratio 0.59 proj +0.373 | corr@50 +0.423 @80 +0.591 @110 +0.633 | proj@50 +0.249 @80 +0.348
+   J5e-5_b1.2e-3|u_e4           best d 140 ms corr +0.654 rms_ratio 0.45 proj +0.297 | corr@50 +0.021 @80 +0.349 @110 +0.573 | proj@50 +0.009 @80 +0.159
+   J1.5e-4_b1.2e-3|u_e4         best d 100 ms corr +0.702 rms_ratio 0.32 proj +0.224 | corr@50 +0.508 @80 +0.672 @110 +0.694 | proj@50 +0.162 @80 +0.214
+   J3e-5_b5e-4(s5-like)|u_e4    best d 160 ms corr +0.557 rms_ratio 0.94 proj +0.525 | corr@50 -0.191 @80 +0.136 @110 +0.398 | proj@50 -0.180 @80 +0.128
+
+== v15_22 / ALL  670 s  meas band rms 3.38
+   J1e-4_b1.2e-3|u_e4           best d 120 ms corr +0.679 rms_ratio 0.50 proj +0.338 | corr@50 +0.341 @80 +0.568 @110 +0.673 | proj@50 +0.170 @80 +0.283
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.679 rms_ratio 0.50 proj +0.340 | corr@50 +0.285 @80 +0.533 @110 +0.664 | proj@50 +0.143 @80 +0.267
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.278 rms_ratio 0.30 proj +0.084 | corr@50 -0.245 @80 -0.124 @110 +0.003 | proj@50 -0.073 @80 -0.037
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.821 rms_ratio 0.39 proj +0.321 | corr@50 +0.491 @80 +0.730 @110 +0.821 | proj@50 +0.192 @80 +0.286
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.687 rms_ratio 0.19 proj +0.127 | corr@50 +0.611 @80 +0.687 @110 +0.628 | proj@50 +0.113 @80 +0.127
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.675 rms_ratio 0.38 proj +0.258 | corr@50 -0.136 @80 +0.197 @110 +0.466 | proj@50 -0.052 @80 +0.075
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.732 rms_ratio 0.23 proj +0.168 | corr@50 +0.568 @80 +0.368 @110 +0.133 | proj@50 +0.131 @80 +0.085
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.118 rms_ratio 0.02 proj +0.003 | corr@50 +0.024 @80 -0.062 @110 -0.151 | proj@50 +0.001 @80 -0.002
+   J1e-4_b6e-4|u_e4             best d 110 ms corr +0.625 rms_ratio 0.78 proj +0.490 | corr@50 +0.420 @80 +0.580 @110 +0.625 | proj@50 +0.330 @80 +0.455
+   J5e-5_b1.2e-3|u_e4           best d 150 ms corr +0.662 rms_ratio 0.57 proj +0.379 | corr@50 +0.015 @80 +0.331 @110 +0.559 | proj@50 +0.009 @80 +0.190
+   J1.5e-4_b1.2e-3|u_e4         best d 100 ms corr +0.703 rms_ratio 0.40 proj +0.284 | corr@50 +0.508 @80 +0.668 @110 +0.699 | proj@50 +0.205 @80 +0.270
+   J3e-5_b5e-4(s5-like)|u_e4    best d 160 ms corr +0.593 rms_ratio 1.17 proj +0.692 | corr@50 -0.213 @80 +0.109 @110 +0.382 | proj@50 -0.249 @80 +0.127
+
+== v15_22 / T64  293 s  meas band rms 1.36
+   J1e-4_b1.2e-3|u_e4           best d 130 ms corr +0.502 rms_ratio 0.87 proj +0.439 | corr@50 +0.159 @80 +0.370 @110 +0.484 | proj@50 +0.139 @80 +0.323
+   J1e-4_b1.2e-3|u_log          best d 130 ms corr +0.504 rms_ratio 0.88 proj +0.443 | corr@50 +0.113 @80 +0.339 @110 +0.474 | proj@50 +0.099 @80 +0.298
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.195 rms_ratio 0.71 proj +0.138 | corr@50 -0.100 @80 -0.006 @110 +0.076 | proj@50 -0.071 @80 -0.004
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.770 rms_ratio 0.45 proj +0.343 | corr@50 +0.297 @80 +0.603 @110 +0.757 | proj@50 +0.131 @80 +0.267
+   J1e-4_b1.2e-3|p_meas         best d 100 ms corr +0.653 rms_ratio 0.19 proj +0.125 | corr@50 +0.475 @80 +0.632 @110 +0.639 | proj@50 +0.090 @80 +0.120
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.589 rms_ratio 0.50 proj +0.295 | corr@50 -0.231 @80 +0.108 @110 +0.384 | proj@50 -0.114 @80 +0.054
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.776 rms_ratio 0.27 proj +0.210 | corr@50 +0.566 @80 +0.339 @110 +0.089 | proj@50 +0.154 @80 +0.092
+   J1e-4_b1.2e-3|i              best d  20 ms corr +0.308 rms_ratio 0.01 proj +0.002 | corr@50 +0.261 @80 +0.148 @110 -0.000 | proj@50 +0.001 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d 120 ms corr +0.435 rms_ratio 1.46 proj +0.633 | corr@50 +0.182 @80 +0.347 @110 +0.427 | proj@50 +0.265 @80 +0.504
+   J5e-5_b1.2e-3|u_e4           best d 150 ms corr +0.493 rms_ratio 0.95 proj +0.467 | corr@50 -0.114 @80 +0.166 @110 +0.378 | proj@50 -0.108 @80 +0.157
+   J1.5e-4_b1.2e-3|u_e4         best d 110 ms corr +0.534 rms_ratio 0.74 proj +0.394 | corr@50 +0.318 @80 +0.477 @110 +0.534 | proj@50 +0.235 @80 +0.352
+   J3e-5_b5e-4(s5-like)|u_e4    best d 170 ms corr +0.426 rms_ratio 1.78 proj +0.760 | corr@50 -0.328 @80 -0.048 @110 +0.204 | proj@50 -0.582 @80 -0.085
+
+== v15_22 / T64B  143 s  meas band rms 5.66
+   J1e-4_b1.2e-3|u_e4           best d 120 ms corr +0.742 rms_ratio 0.48 proj +0.353 | corr@50 +0.405 @80 +0.635 @110 +0.738 | proj@50 +0.193 @80 +0.302
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.742 rms_ratio 0.48 proj +0.356 | corr@50 +0.347 @80 +0.599 @110 +0.729 | proj@50 +0.167 @80 +0.287
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.364 rms_ratio 0.28 proj +0.101 | corr@50 -0.363 @80 -0.208 @110 -0.038 | proj@50 -0.100 @80 -0.058
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.875 rms_ratio 0.40 proj +0.352 | corr@50 +0.607 @80 +0.816 @110 +0.875 | proj@50 +0.245 @80 +0.329
+   J1e-4_b1.2e-3|p_meas         best d  70 ms corr +0.702 rms_ratio 0.19 proj +0.137 | corr@50 +0.670 @80 +0.697 @110 +0.597 | proj@50 +0.130 @80 +0.136
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.737 rms_ratio 0.41 proj +0.301 | corr@50 -0.169 @80 +0.181 @110 +0.474 | proj@50 -0.069 @80 +0.074
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.873 rms_ratio 0.27 proj +0.237 | corr@50 +0.679 @80 +0.442 @110 +0.162 | proj@50 +0.184 @80 +0.120
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.014 rms_ratio 0.00 proj +0.000 | corr@50 -0.134 @80 -0.231 @110 -0.314 | proj@50 -0.001 @80 -0.001
+   J1e-4_b6e-4|u_e4             best d 100 ms corr +0.702 rms_ratio 0.74 proj +0.516 | corr@50 +0.512 @80 +0.667 @110 +0.699 | proj@50 +0.377 @80 +0.490
+   J5e-5_b1.2e-3|u_e4           best d 150 ms corr +0.719 rms_ratio 0.56 proj +0.401 | corr@50 +0.060 @80 +0.384 @110 +0.615 | proj@50 +0.034 @80 +0.214
+   J1.5e-4_b1.2e-3|u_e4         best d 100 ms corr +0.770 rms_ratio 0.38 proj +0.292 | corr@50 +0.578 @80 +0.739 @110 +0.762 | proj@50 +0.219 @80 +0.280
+   J3e-5_b5e-4(s5-like)|u_e4    best d 170 ms corr +0.655 rms_ratio 1.17 proj +0.768 | corr@50 -0.180 @80 +0.155 @110 +0.435 | proj@50 -0.211 @80 +0.181
+
+== v15_22 / T5  117 s  meas band rms 1.94
+   J1e-4_b1.2e-3|u_e4           best d 130 ms corr +0.762 rms_ratio 0.59 proj +0.453 | corr@50 +0.292 @80 +0.580 @110 +0.739 | proj@50 +0.174 @80 +0.345
+   J1e-4_b1.2e-3|u_log          best d 130 ms corr +0.764 rms_ratio 0.60 proj +0.455 | corr@50 +0.227 @80 +0.535 @110 +0.722 | proj@50 +0.136 @80 +0.319
+   J1e-4_b1.2e-3|ff             best d 180 ms corr +0.313 rms_ratio 0.27 proj +0.085 | corr@50 -0.088 @80 +0.045 @110 +0.168 | proj@50 -0.024 @80 +0.012
+   J1e-4_b1.2e-3|fb             best d 130 ms corr +0.812 rms_ratio 0.47 proj +0.379 | corr@50 +0.246 @80 +0.577 @110 +0.773 | proj@50 +0.115 @80 +0.271
+   J1e-4_b1.2e-3|p_meas         best d 110 ms corr +0.728 rms_ratio 0.22 proj +0.157 | corr@50 +0.466 @80 +0.667 @110 +0.728 | proj@50 +0.101 @80 +0.144
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.605 rms_ratio 0.48 proj +0.290 | corr@50 -0.301 @80 +0.043 @110 +0.338 | proj@50 -0.146 @80 +0.021
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.807 rms_ratio 0.24 proj +0.197 | corr@50 +0.651 @80 +0.431 @110 +0.172 | proj@50 +0.159 @80 +0.105
+   J1e-4_b1.2e-3|i              best d  10 ms corr +0.312 rms_ratio 0.01 proj +0.002 | corr@50 +0.253 @80 +0.137 @110 -0.020 | proj@50 +0.001 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d 120 ms corr +0.708 rms_ratio 0.98 proj +0.697 | corr@50 +0.357 @80 +0.592 @110 +0.701 | proj@50 +0.352 @80 +0.583
+   J5e-5_b1.2e-3|u_e4           best d 160 ms corr +0.734 rms_ratio 0.64 proj +0.466 | corr@50 -0.136 @80 +0.235 @110 +0.536 | proj@50 -0.087 @80 +0.150
+   J1.5e-4_b1.2e-3|u_e4         best d 110 ms corr +0.784 rms_ratio 0.50 proj +0.393 | corr@50 +0.533 @80 +0.730 @110 +0.784 | proj@50 +0.268 @80 +0.366
+   J3e-5_b5e-4(s5-like)|u_e4    best d 190 ms corr +0.628 rms_ratio 1.13 proj +0.708 | corr@50 -0.496 @80 -0.156 @110 +0.190 | proj@50 -0.563 @80 -0.177
+
+== v15_22 / T4  117 s  meas band rms 4.22
+   J1e-4_b1.2e-3|u_e4           best d 120 ms corr +0.688 rms_ratio 0.37 proj +0.256 | corr@50 +0.339 @80 +0.582 @110 +0.686 | proj@50 +0.126 @80 +0.217
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.689 rms_ratio 0.38 proj +0.259 | corr@50 +0.276 @80 +0.543 @110 +0.677 | proj@50 +0.104 @80 +0.204
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.248 rms_ratio 0.13 proj +0.031 | corr@50 -0.200 @80 -0.095 @110 +0.019 | proj@50 -0.025 @80 -0.012
+   J1e-4_b1.2e-3|fb             best d 120 ms corr +0.740 rms_ratio 0.33 proj +0.242 | corr@50 +0.332 @80 +0.607 @110 +0.734 | proj@50 +0.109 @80 +0.199
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.715 rms_ratio 0.15 proj +0.109 | corr@50 +0.548 @80 +0.698 @110 +0.697 | proj@50 +0.084 @80 +0.107
+   J1e-4_b1.2e-3|rl_fb          best d 140 ms corr +0.680 rms_ratio 0.24 proj +0.160 | corr@50 +0.092 @80 +0.404 @110 +0.609 | proj@50 +0.022 @80 +0.095
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +nan rms_ratio 0.00 proj +0.000 | corr@50 +nan @80 +nan @110 +nan | proj@50 +0.000 @80 +0.000
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.210 rms_ratio 0.05 proj +0.010 | corr@50 +0.063 @80 -0.074 @110 -0.220 | proj@50 +0.003 @80 -0.003
+   J1e-4_b6e-4|u_e4             best d 110 ms corr +0.646 rms_ratio 0.56 proj +0.362 | corr@50 +0.427 @80 +0.602 @110 +0.646 | proj@50 +0.239 @80 +0.337
+   J5e-5_b1.2e-3|u_e4           best d 140 ms corr +0.656 rms_ratio 0.44 proj +0.292 | corr@50 +0.010 @80 +0.343 @110 +0.572 | proj@50 +0.004 @80 +0.153
+   J1.5e-4_b1.2e-3|u_e4         best d 100 ms corr +0.733 rms_ratio 0.30 proj +0.217 | corr@50 +0.516 @80 +0.696 @110 +0.727 | proj@50 +0.153 @80 +0.206
+   J3e-5_b5e-4(s5-like)|u_e4    best d 160 ms corr +0.554 rms_ratio 0.94 proj +0.521 | corr@50 -0.191 @80 +0.136 @110 +0.396 | proj@50 -0.181 @80 +0.128
+
+== v22p / ALL  558 s  meas band rms 1.52
+   J1e-4_b1.2e-3|u_e4           best d 110 ms corr +0.583 rms_ratio 0.70 proj +0.406 | corr@50 +0.350 @80 +0.521 @110 +0.583 | proj@50 +0.244 @80 +0.363
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.584 rms_ratio 0.70 proj +0.409 | corr@50 +0.306 @80 +0.497 @110 +0.582 | proj@50 +0.215 @80 +0.348
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.229 rms_ratio 0.63 proj +0.145 | corr@50 -0.119 @80 -0.009 @110 +0.089 | proj@50 -0.075 @80 -0.006
+   J1e-4_b1.2e-3|fb             best d 100 ms corr +0.835 rms_ratio 0.42 proj +0.349 | corr@50 +0.619 @80 +0.800 @110 +0.825 | proj@50 +0.259 @80 +0.334
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.707 rms_ratio 0.28 proj +0.201 | corr@50 +0.620 @80 +0.707 @110 +0.663 | proj@50 +0.177 @80 +0.201
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.576 rms_ratio 0.34 proj +0.195 | corr@50 -0.310 @80 +0.028 @110 +0.318 | proj@50 -0.105 @80 +0.010
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.772 rms_ratio 0.29 proj +0.227 | corr@50 +0.629 @80 +0.421 @110 +0.174 | proj@50 +0.185 @80 +0.124
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.242 rms_ratio 0.02 proj +0.005 | corr@50 +0.113 @80 +0.000 @110 -0.118 | proj@50 +0.002 @80 +0.000
+   J1e-4_b6e-4|u_e4             best d 110 ms corr +0.525 rms_ratio 1.13 proj +0.594 | corr@50 +0.344 @80 +0.484 @110 +0.525 | proj@50 +0.389 @80 +0.548
+   J5e-5_b1.2e-3|u_e4           best d 140 ms corr +0.589 rms_ratio 0.70 proj +0.409 | corr@50 +0.059 @80 +0.333 @110 +0.521 | proj@50 +0.041 @80 +0.232
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.576 rms_ratio 0.64 proj +0.370 | corr@50 +0.480 @80 +0.570 @110 +0.554 | proj@50 +0.308 @80 +0.366
+   J3e-5_b5e-4(s5-like)|u_e4    best d 170 ms corr +0.541 rms_ratio 1.13 proj +0.609 | corr@50 -0.271 @80 +0.031 @110 +0.303 | proj@50 -0.305 @80 +0.034
+
+== v22p / T64  264 s  meas band rms 1.64
+   J1e-4_b1.2e-3|u_e4           best d 120 ms corr +0.578 rms_ratio 0.69 proj +0.398 | corr@50 +0.319 @80 +0.502 @110 +0.578 | proj@50 +0.220 @80 +0.346
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.582 rms_ratio 0.69 proj +0.404 | corr@50 +0.276 @80 +0.477 @110 +0.575 | proj@50 +0.192 @80 +0.331
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.271 rms_ratio 0.64 proj +0.175 | corr@50 -0.178 @80 -0.053 @110 +0.068 | proj@50 -0.115 @80 -0.034
+   J1e-4_b1.2e-3|fb             best d 100 ms corr +0.841 rms_ratio 0.43 proj +0.358 | corr@50 +0.660 @80 +0.820 @110 +0.824 | proj@50 +0.281 @80 +0.350
+   J1e-4_b1.2e-3|p_meas         best d  80 ms corr +0.733 rms_ratio 0.29 proj +0.212 | corr@50 +0.660 @80 +0.733 @110 +0.672 | proj@50 +0.191 @80 +0.212
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.582 rms_ratio 0.35 proj +0.201 | corr@50 -0.302 @80 +0.039 @110 +0.328 | proj@50 -0.105 @80 +0.013
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +0.805 rms_ratio 0.31 proj +0.248 | corr@50 +0.630 @80 +0.405 @110 +0.147 | proj@50 +0.194 @80 +0.125
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.323 rms_ratio 0.01 proj +0.002 | corr@50 +0.090 @80 -0.090 @110 -0.266 | proj@50 +0.001 @80 -0.001
+   J1e-4_b6e-4|u_e4             best d 110 ms corr +0.527 rms_ratio 1.13 proj +0.595 | corr@50 +0.325 @80 +0.475 @110 +0.527 | proj@50 +0.366 @80 +0.535
+   J5e-5_b1.2e-3|u_e4           best d 140 ms corr +0.580 rms_ratio 0.69 proj +0.401 | corr@50 +0.023 @80 +0.301 @110 +0.499 | proj@50 +0.016 @80 +0.208
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.570 rms_ratio 0.63 proj +0.361 | corr@50 +0.457 @80 +0.559 @110 +0.557 | proj@50 +0.290 @80 +0.354
+   J3e-5_b5e-4(s5-like)|u_e4    best d 170 ms corr +0.528 rms_ratio 1.13 proj +0.599 | corr@50 -0.298 @80 +0.001 @110 +0.276 | proj@50 -0.339 @80 +0.001
+
+== v22p / T64B  90 s  meas band rms 1.42
+   J1e-4_b1.2e-3|u_e4           best d 110 ms corr +0.492 rms_ratio 0.97 proj +0.475 | corr@50 +0.294 @80 +0.441 @110 +0.492 | proj@50 +0.284 @80 +0.426
+   J1e-4_b1.2e-3|u_log          best d 120 ms corr +0.491 rms_ratio 0.97 proj +0.476 | corr@50 +0.255 @80 +0.419 @110 +0.490 | proj@50 +0.247 @80 +0.406
+   J1e-4_b1.2e-3|ff             best d 200 ms corr +0.190 rms_ratio 0.98 proj +0.187 | corr@50 -0.123 @80 -0.020 @110 +0.066 | proj@50 -0.121 @80 -0.020
+   J1e-4_b1.2e-3|fb             best d 100 ms corr +0.827 rms_ratio 0.49 proj +0.409 | corr@50 +0.651 @80 +0.804 @110 +0.814 | proj@50 +0.322 @80 +0.398
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.709 rms_ratio 0.34 proj +0.245 | corr@50 +0.618 @80 +0.706 @110 +0.674 | proj@50 +0.213 @80 +0.244
+   J1e-4_b1.2e-3|rl_fb          best d 180 ms corr +0.509 rms_ratio 0.32 proj +0.164 | corr@50 -0.371 @80 -0.045 @110 +0.239 | proj@50 -0.119 @80 -0.015
+   J1e-4_b1.2e-3|dob            best d  10 ms corr +0.771 rms_ratio 0.33 proj +0.254 | corr@50 +0.684 @80 +0.510 @110 +0.286 | proj@50 +0.225 @80 +0.168
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.485 rms_ratio 0.01 proj +0.005 | corr@50 +0.280 @80 +0.085 @110 -0.127 | proj@50 +0.003 @80 +0.001
+   J1e-4_b6e-4|u_e4             best d 110 ms corr +0.399 rms_ratio 1.59 proj +0.636 | corr@50 +0.244 @80 +0.361 @110 +0.399 | proj@50 +0.389 @80 +0.576
+   J5e-5_b1.2e-3|u_e4           best d 140 ms corr +0.498 rms_ratio 0.95 proj +0.475 | corr@50 +0.064 @80 +0.300 @110 +0.452 | proj@50 +0.061 @80 +0.286
+   J1.5e-4_b1.2e-3|u_e4         best d  90 ms corr +0.516 rms_ratio 0.88 proj +0.455 | corr@50 +0.423 @80 +0.508 @110 +0.501 | proj@50 +0.373 @80 +0.449
+   J3e-5_b5e-4(s5-like)|u_e4    best d 160 ms corr +0.458 rms_ratio 1.49 proj +0.682 | corr@50 -0.214 @80 +0.055 @110 +0.285 | proj@50 -0.317 @80 +0.081
+
+== v22p / T5  124 s  meas band rms 1.55
+   J1e-4_b1.2e-3|u_e4           best d 110 ms corr +0.757 rms_ratio 0.49 proj +0.373 | corr@50 +0.506 @80 +0.705 @110 +0.757 | proj@50 +0.249 @80 +0.347
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.760 rms_ratio 0.49 proj +0.375 | corr@50 +0.456 @80 +0.679 @110 +0.760 | proj@50 +0.225 @80 +0.335
+   J1e-4_b1.2e-3|ff             best d 170 ms corr +0.241 rms_ratio 0.24 proj +0.058 | corr@50 -0.016 @80 +0.089 @110 +0.173 | proj@50 -0.004 @80 +0.022
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.879 rms_ratio 0.37 proj +0.328 | corr@50 +0.543 @80 +0.795 @110 +0.879 | proj@50 +0.203 @80 +0.297
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.666 rms_ratio 0.23 proj +0.157 | corr@50 +0.530 @80 +0.654 @110 +0.644 | proj@50 +0.124 @80 +0.154
+   J1e-4_b1.2e-3|rl_fb          best d 170 ms corr +0.625 rms_ratio 0.36 proj +0.227 | corr@50 -0.319 @80 +0.035 @110 +0.342 | proj@50 -0.116 @80 +0.013
+   J1e-4_b1.2e-3|dob            best d  10 ms corr +0.827 rms_ratio 0.28 proj +0.231 | corr@50 +0.691 @80 +0.466 @110 +0.192 | proj@50 +0.193 @80 +0.130
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.312 rms_ratio 0.01 proj +0.002 | corr@50 +0.170 @80 +0.016 @110 -0.157 | proj@50 +0.001 @80 +0.000
+   J1e-4_b6e-4|u_e4             best d 100 ms corr +0.735 rms_ratio 0.77 proj +0.566 | corr@50 +0.544 @80 +0.706 @110 +0.726 | proj@50 +0.419 @80 +0.543
+   J5e-5_b1.2e-3|u_e4           best d 140 ms corr +0.754 rms_ratio 0.51 proj +0.382 | corr@50 +0.126 @80 +0.460 @110 +0.685 | proj@50 +0.064 @80 +0.233
+   J1.5e-4_b1.2e-3|u_e4         best d  80 ms corr +0.721 rms_ratio 0.45 proj +0.328 | corr@50 +0.638 @80 +0.721 @110 +0.669 | proj@50 +0.290 @80 +0.328
+   J3e-5_b5e-4(s5-like)|u_e4    best d 170 ms corr +0.684 rms_ratio 0.86 proj +0.591 | corr@50 -0.296 @80 +0.064 @110 +0.395 | proj@50 -0.255 @80 +0.055
+
+== v22p / T4  79 s  meas band rms 1.07
+   J1e-4_b1.2e-3|u_e4           best d 100 ms corr +0.659 rms_ratio 0.67 proj +0.441 | corr@50 +0.486 @80 +0.630 @110 +0.653 | proj@50 +0.326 @80 +0.422
+   J1e-4_b1.2e-3|u_log          best d 110 ms corr +0.657 rms_ratio 0.67 proj +0.440 | corr@50 +0.442 @80 +0.609 @110 +0.657 | proj@50 +0.296 @80 +0.408
+   J1e-4_b1.2e-3|ff             best d 130 ms corr +0.389 rms_ratio 0.49 proj +0.190 | corr@50 +0.199 @80 +0.315 @110 +0.378 | proj@50 +0.097 @80 +0.154
+   J1e-4_b1.2e-3|fb             best d 110 ms corr +0.761 rms_ratio 0.30 proj +0.231 | corr@50 +0.451 @80 +0.684 @110 +0.761 | proj@50 +0.138 @80 +0.209
+   J1e-4_b1.2e-3|p_meas         best d  90 ms corr +0.720 rms_ratio 0.26 proj +0.187 | corr@50 +0.613 @80 +0.715 @110 +0.685 | proj@50 +0.160 @80 +0.186
+   J1e-4_b1.2e-3|rl_fb          best d 160 ms corr +0.535 rms_ratio 0.18 proj +0.099 | corr@50 -0.216 @80 +0.104 @110 +0.358 | proj@50 -0.040 @80 +0.019
+   J1e-4_b1.2e-3|dob            best d   0 ms corr +nan rms_ratio 0.00 proj +0.000 | corr@50 +nan @80 +nan @110 +nan | proj@50 +0.000 @80 +0.000
+   J1e-4_b1.2e-3|i              best d   0 ms corr +0.483 rms_ratio 0.07 proj +0.035 | corr@50 +0.257 @80 +0.046 @110 -0.181 | proj@50 +0.019 @80 +0.003
+   J1e-4_b6e-4|u_e4             best d 100 ms corr +0.600 rms_ratio 1.05 proj +0.633 | corr@50 +0.451 @80 +0.578 @110 +0.593 | proj@50 +0.476 @80 +0.610
+   J5e-5_b1.2e-3|u_e4           best d 130 ms corr +0.675 rms_ratio 0.64 proj +0.430 | corr@50 +0.203 @80 +0.472 @110 +0.638 | proj@50 +0.130 @80 +0.301
+   J1.5e-4_b1.2e-3|u_e4         best d  80 ms corr +0.630 rms_ratio 0.66 proj +0.416 | corr@50 +0.584 @80 +0.630 @110 +0.570 | proj@50 +0.385 @80 +0.416
+   J3e-5_b5e-4(s5-like)|u_e4    best d 160 ms corr +0.639 rms_ratio 0.96 proj +0.617 | corr@50 -0.182 @80 +0.141 @110 +0.424 | proj@50 -0.176 @80 +0.137

@@ -1,0 +1,93 @@
+
+=== FULL POOL (as in original finding) : wrong-way fraction, release events, >=15 m/s, step>=0.2 (both channels) ===
+  V282     la_act   n= 84 model_slope +0.31/s achieved_slope +0.24/s wrong-way 0.04
+  V282     la_pose  n= 84 model_slope +0.31/s achieved_slope +0.29/s wrong-way 0.14
+  V282old  la_act   n= 13 model_slope +0.15/s achieved_slope -0.07/s wrong-way 0.15
+  V282old  la_pose  n= 13 model_slope +0.15/s achieved_slope +0.12/s wrong-way 0.15
+  T64      la_act   n= 19 model_slope +0.22/s achieved_slope -0.58/s wrong-way 0.42
+  T64      la_pose  n= 19 model_slope +0.22/s achieved_slope -0.47/s wrong-way 0.47
+  T64B     la_act   n= 18 model_slope +0.29/s achieved_slope -0.18/s wrong-way 0.17
+  T64B     la_pose  n= 18 model_slope +0.29/s achieved_slope -0.26/s wrong-way 0.22
+  T5       la_act   n= 26 model_slope +0.38/s achieved_slope -0.22/s wrong-way 0.38
+  T5       la_pose  n= 26 model_slope +0.38/s achieved_slope -0.33/s wrong-way 0.46
+  T4       la_act   n= 16 model_slope +0.45/s achieved_slope -0.00/s wrong-way 0.12
+  T4       la_pose  n= 16 model_slope +0.45/s achieved_slope -0.24/s wrong-way 0.38
+
+V282 routes: ['00000064--ce6b0b0ebb', '00000065--b9f78988bd', '0000006c--2bc842dbac']
+V282 routes EXCLUDING the dominant 2bc842dbac: ['00000064--ce6b0b0ebb', '00000065--b9f78988bd']
+
+=== V282 REF WITHOUT 2bc842dbac (83% of V282 events removed) : wrong-way fraction, release events, >=15 m/s, step>=0.2 (both channels) ===
+  V282     la_act   n= 15 model_slope +0.38/s achieved_slope +0.22/s wrong-way 0.07
+  V282     la_pose  n= 15 model_slope +0.38/s achieved_slope +0.46/s wrong-way 0.20
+  V282old  la_act   n= 13 model_slope +0.15/s achieved_slope -0.07/s wrong-way 0.15
+  V282old  la_pose  n= 13 model_slope +0.15/s achieved_slope +0.12/s wrong-way 0.15
+  T64      la_act   n= 19 model_slope +0.22/s achieved_slope -0.58/s wrong-way 0.42
+  T64      la_pose  n= 19 model_slope +0.22/s achieved_slope -0.47/s wrong-way 0.47
+  T64B     la_act   n= 18 model_slope +0.29/s achieved_slope -0.18/s wrong-way 0.17
+  T64B     la_pose  n= 18 model_slope +0.29/s achieved_slope -0.26/s wrong-way 0.22
+  T5       la_act   n= 26 model_slope +0.38/s achieved_slope -0.22/s wrong-way 0.38
+  T5       la_pose  n= 26 model_slope +0.38/s achieved_slope -0.33/s wrong-way 0.46
+  T4       la_act   n= 16 model_slope +0.45/s achieved_slope -0.00/s wrong-way 0.12
+  T4       la_pose  n= 16 model_slope +0.45/s achieved_slope -0.24/s wrong-way 0.38
+
+=== per-route breakdown, release events >=15 m/s, step>=0.2 ===
+  00000039--f56039af87     V282old  n=  7 wrong(act)=0.14 wrong(pose)=0.14 pre(act)=-0.027 pre(pose)=-0.096
+  0000003a--283a39a1d6     V282old  n=  4 wrong(act)=0.25 wrong(pose)=0.25 pre(act)=-0.152 pre(pose)=-0.160
+  0000003c--927965c2b4     n=  2 (too few)
+  00000064--ce6b0b0ebb     V282     n=  9 wrong(act)=0.00 wrong(pose)=0.11 pre(act)=-0.039 pre(pose)=+0.017
+  00000065--b9f78988bd     V282     n=  6 wrong(act)=0.17 wrong(pose)=0.33 pre(act)=-0.097 pre(pose)=-0.106
+  0000006c--2bc842dbac     V282     n= 69 wrong(act)=0.03 wrong(pose)=0.13 pre(act)=-0.034 pre(pose)=-0.070
+  0000006c--68c6e94b17     T64      n= 11 wrong(act)=0.55 wrong(pose)=0.55 pre(act)=-0.273 pre(pose)=-0.439
+  0000006d--05e83bb04f     T64      n=  8 wrong(act)=0.25 wrong(pose)=0.38 pre(act)=-0.377 pre(pose)=-0.416
+  0000006e--6ca3e014fd     T64B     n= 18 wrong(act)=0.17 wrong(pose)=0.22 pre(act)=-0.308 pre(pose)=-0.313
+  00000075--6c8687d5bd     T4       n= 16 wrong(act)=0.12 wrong(pose)=0.38 pre(act)=-0.243 pre(pose)=-0.284
+  00000076--d0b7ea7e4d     T5       n= 26 wrong(act)=0.38 wrong(pose)=0.46 pre(act)=-0.329 pre(pose)=-0.365
+
+=== D: matching-free, stratified by (type, vb, step-size within-group tercile) : pre/step, act channel ===
+  onset    vb=2 terc=0  V282: n=4 step=0.35 v=16.2 pre=-0.049
+                            T64B : n=4 step=0.26 v=17.1 pre=-0.157
+                            T4   : n=5 step=0.38 v=19.9 pre=-0.307
+  onset    vb=2 terc=1  V282: n=8 step=0.48 v=18.2 pre=-0.106
+                            T64B : n=4 step=0.51 v=18.2 pre=+0.025
+                            T5   : n=3 step=0.50 v=17.5 pre=+0.140
+                            T4   : n=7 step=0.59 v=19.3 pre=-0.188
+  onset    vb=3 terc=0  V282: n=22 step=0.30 v=30.1 pre=-0.106
+                            T64  : n=3 step=0.26 v=25.5 pre=-0.320
+                            T5   : n=8 step=0.41 v=28.3 pre=-0.350
+                            T4   : n=5 step=0.31 v=26.6 pre=-0.241
+  onset    vb=3 terc=1  V282: n=29 step=0.47 v=28.3 pre=-0.027
+                            T64  : n=4 step=0.51 v=23.1 pre=-0.070
+                            T5   : n=4 step=0.54 v=27.9 pre=-0.253
+  onset    vb=3 terc=2  V282: n=26 step=0.93 v=29.3 pre=-0.023
+                            T5   : n=4 step=0.65 v=23.8 pre=-0.468
+  release  vb=2 terc=0  V282: n=4 step=0.29 v=16.6 pre=-0.118
+                            T64  : n=4 step=0.29 v=18.6 pre=-0.517
+                            T64B : n=4 step=0.28 v=18.6 pre=-0.834
+                            T4   : n=6 step=0.37 v=18.0 pre=-0.347
+  release  vb=2 terc=1  V282: n=7 step=0.47 v=15.9 pre=-0.071
+                            T64B : n=3 step=0.45 v=19.5 pre=-0.265
+                            T5   : n=4 step=0.55 v=19.5 pre=-0.330
+  release  vb=3 terc=0  V282: n=32 step=0.31 v=30.1 pre=-0.047
+                            T64  : n=7 step=0.25 v=23.3 pre=-0.498
+                            T64B : n=5 step=0.32 v=27.8 pre=-0.510
+                            T5   : n=5 step=0.34 v=25.3 pre=-0.360
+  release  vb=3 terc=1  V282: n=13 step=0.43 v=28.8 pre=-0.029
+                            T64  : n=3 step=0.64 v=22.9 pre=-0.139
+                            T5   : n=11 step=0.52 v=25.8 pre=-0.331
+                            T4   : n=4 step=0.68 v=26.2 pre=-0.241
+  release  vb=3 terc=2  V282: n=23 step=0.83 v=29.2 pre=-0.033
+                            T5   : n=3 step=0.73 v=25.2 pre=-0.354
+
+=== E: V282old (secondary ref, different fork/days/roads, SAME EPS) as placebo, release >=15 m/s ===
+  V282     n= 84 wrong-way=0.04 pre/step=-0.036
+  V282old  n= 13 wrong-way=0.15 pre/step=-0.057
+
+=== matched paired diff (as original s2_stickslip 'pre'), >=15 m/s, la_pose channel ===
+  full               V282_vs_T64   n_pairs= 48 d(pose.pre)=-0.256 ev[-0.392,-0.128] rt[-0.392,-0.128]
+  full               V282_vs_T64B  n_pairs= 37 d(pose.pre)=-0.097 ev[-0.173,+0.036] rt[-0.173,+0.036]
+  full               V282_vs_T5    n_pairs= 49 d(pose.pre)=-0.221 ev[-0.275,-0.169] rt[-0.275,-0.169]
+  full               V282_vs_T4    n_pairs= 38 d(pose.pre)=-0.201 ev[-0.264,-0.044] rt[-0.264,-0.044]
+  excl-2bc842dbac    V282_vs_T64   n_pairs= 27 d(pose.pre)=-0.273 ev[-0.456,-0.085] rt[-0.456,-0.085]
+  excl-2bc842dbac    V282_vs_T64B  n_pairs= 24 d(pose.pre)=-0.070 ev[-0.298,+0.004] rt[-0.261,+0.004]
+  excl-2bc842dbac    V282_vs_T5    n_pairs= 26 d(pose.pre)=-0.260 ev[-0.315,-0.149] rt[-0.323,-0.149]
+  excl-2bc842dbac    V282_vs_T4    n_pairs= 23 d(pose.pre)=-0.198 ev[-0.326,-0.077] rt[-0.326,-0.077]

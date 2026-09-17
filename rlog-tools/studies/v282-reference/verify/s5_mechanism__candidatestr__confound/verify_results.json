@@ -1,0 +1,1032 @@
+{
+ "A_full|T64|v8-15": {
+  "n": 9,
+  "distinct_ref": 7,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd",
+   "0000006c--2bc842dbac"
+  ],
+  "v_torque": 10.31,
+  "v_ref": 9.74,
+  "adr_torque": 17.35,
+  "adr_ref": 17.77,
+  "ang_lag": {
+   "torque": 0.31,
+   "v282": 0.23,
+   "diff": 0.08,
+   "ci_pair": [
+    0.04,
+    0.13
+   ],
+   "ci_route_block": [
+    0.08,
+    0.13
+   ],
+   "n_ref_routes": 3
+  },
+  "ang_gain": {
+   "torque": 1.123,
+   "v282": 0.971,
+   "diff": 0.13,
+   "ci_pair": [
+    -0.165,
+    0.272
+   ],
+   "ci_route_block": [
+    -0.014,
+    0.166
+   ],
+   "n_ref_routes": 3
+  },
+  "hf": {
+   "torque": 6.97,
+   "v282": 1.297,
+   "diff": 5.226,
+   "ci_pair": [
+    3.046,
+    7.392
+   ],
+   "ci_route_block": [
+    3.046,
+    6.239
+   ],
+   "n_ref_routes": 3
+  },
+  "la_pose_lag": {
+   "torque": 0.18,
+   "v282": 0.1,
+   "diff": 0.01,
+   "ci_pair": [
+    -0.04,
+    0.24
+   ],
+   "ci_route_block": [
+    0.005,
+    0.22
+   ],
+   "n_ref_routes": 3
+  }
+ },
+ "A_full|T64|v15-99": {
+  "n": 34,
+  "distinct_ref": 24,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd",
+   "0000006c--2bc842dbac"
+  ],
+  "v_torque": 23.51,
+  "v_ref": 24.12,
+  "adr_torque": 4.65,
+  "adr_ref": 4.86,
+  "ang_lag": {
+   "torque": 0.31,
+   "v282": 0.14,
+   "diff": 0.15,
+   "ci_pair": [
+    0.085,
+    0.18
+   ],
+   "ci_route_block": [
+    0.11,
+    0.18
+   ],
+   "n_ref_routes": 3
+  },
+  "ang_gain": {
+   "torque": 1.243,
+   "v282": 0.981,
+   "diff": 0.289,
+   "ci_pair": [
+    0.232,
+    0.35
+   ],
+   "ci_route_block": [
+    0.204,
+    0.35
+   ],
+   "n_ref_routes": 3
+  },
+  "hf": {
+   "torque": 1.259,
+   "v282": 0.468,
+   "diff": 0.839,
+   "ci_pair": [
+    0.493,
+    0.996
+   ],
+   "ci_route_block": [
+    0.776,
+    0.949
+   ],
+   "n_ref_routes": 3
+  },
+  "la_pose_lag": {
+   "torque": 0.315,
+   "v282": 0.015,
+   "diff": 0.18,
+   "ci_pair": [
+    0.115,
+    0.31
+   ],
+   "ci_route_block": [
+    0.06,
+    0.24
+   ],
+   "n_ref_routes": 3
+  }
+ },
+ "B_nodom|T64|v8-15": {
+  "n": 5,
+  "distinct_ref": 2,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd"
+  ],
+  "v_torque": 13.61,
+  "v_ref": 13.94,
+  "adr_torque": 14.19,
+  "adr_ref": 12.2,
+  "ang_lag": {
+   "torque": 0.28,
+   "v282": 0.15,
+   "diff": 0.13,
+   "ci_pair": [
+    0.04,
+    0.16
+   ],
+   "ci_route_block": [
+    0.13,
+    0.13
+   ],
+   "n_ref_routes": 2
+  },
+  "ang_gain": {
+   "torque": 1.18,
+   "v282": 0.958,
+   "diff": 0.222,
+   "ci_pair": [
+    0.097,
+    0.259
+   ],
+   "ci_route_block": [
+    0.222,
+    0.222
+   ],
+   "n_ref_routes": 2
+  },
+  "hf": {
+   "torque": 4.114,
+   "v282": 1.068,
+   "diff": 3.046,
+   "ci_pair": [
+    2.175,
+    6.776
+   ],
+   "ci_route_block": [
+    2.901,
+    3.046
+   ],
+   "n_ref_routes": 2
+  },
+  "la_pose_lag": {
+   "torque": 0.32,
+   "v282": 0.1,
+   "diff": 0.22,
+   "ci_pair": [
+    0.08,
+    0.24
+   ],
+   "ci_route_block": [
+    0.22,
+    0.22
+   ],
+   "n_ref_routes": 2
+  }
+ },
+ "B_nodom|T64|v15-99": {
+  "n": 30,
+  "distinct_ref": 14,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd"
+  ],
+  "v_torque": 23.71,
+  "v_ref": 24.12,
+  "adr_torque": 4.41,
+  "adr_ref": 4.86,
+  "ang_lag": {
+   "torque": 0.32,
+   "v282": 0.14,
+   "diff": 0.18,
+   "ci_pair": [
+    0.13,
+    0.205
+   ],
+   "ci_route_block": [
+    0.17,
+    0.18
+   ],
+   "n_ref_routes": 2
+  },
+  "ang_gain": {
+   "torque": 1.241,
+   "v282": 0.931,
+   "diff": 0.288,
+   "ci_pair": [
+    0.248,
+    0.347
+   ],
+   "ci_route_block": [
+    0.218,
+    0.29
+   ],
+   "n_ref_routes": 2
+  },
+  "hf": {
+   "torque": 1.235,
+   "v282": 0.535,
+   "diff": 0.745,
+   "ci_pair": [
+    0.358,
+    0.897
+   ],
+   "ci_route_block": [
+    0.67,
+    1.045
+   ],
+   "n_ref_routes": 2
+  },
+  "la_pose_lag": {
+   "torque": 0.34,
+   "v282": 0.0,
+   "diff": 0.315,
+   "ci_pair": [
+    0.155,
+    0.375
+   ],
+   "ci_route_block": [
+    0.265,
+    0.315
+   ],
+   "n_ref_routes": 2
+  }
+ },
+ "C_full|T64B|v8-15": {
+  "n": 16,
+  "distinct_ref": 9,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd",
+   "0000006c--2bc842dbac"
+  ],
+  "v_torque": 10.38,
+  "v_ref": 10.07,
+  "adr_torque": 20.66,
+  "adr_ref": 20.45,
+  "ang_lag": {
+   "torque": 0.33,
+   "v282": 0.23,
+   "diff": 0.085,
+   "ci_pair": [
+    0.01,
+    0.14
+   ],
+   "ci_route_block": [
+    0.08,
+    0.1
+   ],
+   "n_ref_routes": 3
+  },
+  "ang_gain": {
+   "torque": 1.019,
+   "v282": 1.003,
+   "diff": -0.03,
+   "ci_pair": [
+    -0.076,
+    0.043
+   ],
+   "ci_route_block": [
+    -0.056,
+    0.043
+   ],
+   "n_ref_routes": 3
+  },
+  "hf": {
+   "torque": 7.532,
+   "v282": 2.1,
+   "diff": 4.448,
+   "ci_pair": [
+    3.118,
+    7.429
+   ],
+   "ci_route_block": [
+    2.64,
+    6.896
+   ],
+   "n_ref_routes": 3
+  },
+  "la_pose_lag": {
+   "torque": 0.11,
+   "v282": 0.0,
+   "diff": 0.025,
+   "ci_pair": [
+    -0.07,
+    0.22
+   ],
+   "ci_route_block": [
+    0.0,
+    0.17
+   ],
+   "n_ref_routes": 3
+  }
+ },
+ "C_nodom|T64B|v8-15": {
+  "n": 9,
+  "distinct_ref": 4,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd"
+  ],
+  "v_torque": 11.42,
+  "v_ref": 9.66,
+  "adr_torque": 18.63,
+  "adr_ref": 17.77,
+  "ang_lag": {
+   "torque": 0.32,
+   "v282": 0.17,
+   "diff": 0.14,
+   "ci_pair": [
+    0.08,
+    0.23
+   ],
+   "ci_route_block": [
+    0.08,
+    0.175
+   ],
+   "n_ref_routes": 2
+  },
+  "ang_gain": {
+   "torque": 1.025,
+   "v282": 1.018,
+   "diff": 0.007,
+   "ci_pair": [
+    -0.002,
+    0.109
+   ],
+   "ci_route_block": [
+    0.001,
+    0.109
+   ],
+   "n_ref_routes": 2
+  },
+  "hf": {
+   "torque": 4.469,
+   "v282": 1.297,
+   "diff": 3.172,
+   "ci_pair": [
+    2.369,
+    7.88
+   ],
+   "ci_route_block": [
+    2.64,
+    3.668
+   ],
+   "n_ref_routes": 2
+  },
+  "la_pose_lag": {
+   "torque": 0.3,
+   "v282": 0.14,
+   "diff": 0.17,
+   "ci_pair": [
+    0.0,
+    0.35
+   ],
+   "ci_route_block": [
+    0.05,
+    0.2
+   ],
+   "n_ref_routes": 2
+  }
+ },
+ "C_full|T64B|v15-99": {
+  "n": 33,
+  "distinct_ref": 21,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd",
+   "0000006c--2bc842dbac"
+  ],
+  "v_torque": 24.0,
+  "v_ref": 24.16,
+  "adr_torque": 7.96,
+  "adr_ref": 8.32,
+  "ang_lag": {
+   "torque": 0.3,
+   "v282": 0.13,
+   "diff": 0.16,
+   "ci_pair": [
+    0.11,
+    0.2
+   ],
+   "ci_route_block": [
+    0.15,
+    0.18
+   ],
+   "n_ref_routes": 3
+  },
+  "ang_gain": {
+   "torque": 1.121,
+   "v282": 1.004,
+   "diff": 0.147,
+   "ci_pair": [
+    0.027,
+    0.289
+   ],
+   "ci_route_block": [
+    0.027,
+    0.185
+   ],
+   "n_ref_routes": 3
+  },
+  "hf": {
+   "torque": 2.475,
+   "v282": 0.889,
+   "diff": 1.767,
+   "ci_pair": [
+    1.255,
+    2.413
+   ],
+   "ci_route_block": [
+    1.682,
+    2.241
+   ],
+   "n_ref_routes": 3
+  },
+  "la_pose_lag": {
+   "torque": 0.14,
+   "v282": 0.02,
+   "diff": 0.04,
+   "ci_pair": [
+    0.0,
+    0.19
+   ],
+   "ci_route_block": [
+    0.03,
+    0.45
+   ],
+   "n_ref_routes": 3
+  }
+ },
+ "C_nodom|T64B|v15-99": {
+  "n": 25,
+  "distinct_ref": 12,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd"
+  ],
+  "v_torque": 25.93,
+  "v_ref": 26.71,
+  "adr_torque": 6.42,
+  "adr_ref": 6.16,
+  "ang_lag": {
+   "torque": 0.33,
+   "v282": 0.22,
+   "diff": 0.11,
+   "ci_pair": [
+    0.03,
+    0.18
+   ],
+   "ci_route_block": [
+    0.105,
+    0.11
+   ],
+   "n_ref_routes": 2
+  },
+  "ang_gain": {
+   "torque": 1.176,
+   "v282": 1.052,
+   "diff": 0.134,
+   "ci_pair": [
+    0.026,
+    0.26
+   ],
+   "ci_route_block": [
+    0.13,
+    0.26
+   ],
+   "n_ref_routes": 2
+  },
+  "hf": {
+   "torque": 1.996,
+   "v282": 0.622,
+   "diff": 1.391,
+   "ci_pair": [
+    0.835,
+    2.406
+   ],
+   "ci_route_block": [
+    1.391,
+    1.56
+   ],
+   "n_ref_routes": 2
+  },
+  "la_pose_lag": {
+   "torque": 0.19,
+   "v282": 0.14,
+   "diff": 0.03,
+   "ci_pair": [
+    -0.04,
+    0.26
+   ],
+   "ci_route_block": [
+    0.02,
+    0.03
+   ],
+   "n_ref_routes": 2
+  }
+ },
+ "C_full|T5|v8-15": {
+  "n": 8,
+  "distinct_ref": 6,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "0000006c--2bc842dbac"
+  ],
+  "v_torque": 10.94,
+  "v_ref": 9.74,
+  "adr_torque": 27.47,
+  "adr_ref": 24.71,
+  "ang_lag": {
+   "torque": 0.42,
+   "v282": 0.25,
+   "diff": 0.215,
+   "ci_pair": [
+    0.08,
+    0.27
+   ],
+   "ci_route_block": [
+    0.17,
+    0.215
+   ],
+   "n_ref_routes": 2
+  },
+  "ang_gain": {
+   "torque": 1.094,
+   "v282": 0.971,
+   "diff": 0.143,
+   "ci_pair": [
+    -0.008,
+    0.227
+   ],
+   "ci_route_block": [
+    0.072,
+    0.143
+   ],
+   "n_ref_routes": 2
+  },
+  "hf": {
+   "torque": 6.54,
+   "v282": 1.744,
+   "diff": 4.637,
+   "ci_pair": [
+    3.25,
+    7.23
+   ],
+   "ci_route_block": [
+    4.637,
+    4.652
+   ],
+   "n_ref_routes": 2
+  },
+  "la_pose_lag": {
+   "torque": 0.275,
+   "v282": 0.085,
+   "diff": 0.115,
+   "ci_pair": [
+    0.015,
+    0.26
+   ],
+   "ci_route_block": [
+    0.06,
+    0.115
+   ],
+   "n_ref_routes": 2
+  }
+ },
+ "C_nodom|T5|v8-15": {
+  "n": 4,
+  "note": "too few pairs"
+ },
+ "C_full|T5|v15-99": {
+  "n": 42,
+  "distinct_ref": 24,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd",
+   "0000006c--2bc842dbac"
+  ],
+  "v_torque": 23.85,
+  "v_ref": 24.14,
+  "adr_torque": 6.32,
+  "adr_ref": 5.95,
+  "ang_lag": {
+   "torque": 0.575,
+   "v282": 0.14,
+   "diff": 0.395,
+   "ci_pair": [
+    0.36,
+    0.43
+   ],
+   "ci_route_block": [
+    0.38,
+    0.48
+   ],
+   "n_ref_routes": 3
+  },
+  "ang_gain": {
+   "torque": 1.093,
+   "v282": 0.973,
+   "diff": 0.128,
+   "ci_pair": [
+    0.076,
+    0.175
+   ],
+   "ci_route_block": [
+    0.122,
+    0.134
+   ],
+   "n_ref_routes": 3
+  },
+  "hf": {
+   "torque": 1.329,
+   "v282": 0.682,
+   "diff": 0.664,
+   "ci_pair": [
+    0.506,
+    0.883
+   ],
+   "ci_route_block": [
+    0.61,
+    0.819
+   ],
+   "n_ref_routes": 3
+  },
+  "la_pose_lag": {
+   "torque": 0.59,
+   "v282": 0.0,
+   "diff": 0.54,
+   "ci_pair": [
+    0.49,
+    0.605
+   ],
+   "ci_route_block": [
+    0.52,
+    0.63
+   ],
+   "n_ref_routes": 3
+  }
+ },
+ "C_nodom|T5|v15-99": {
+  "n": 39,
+  "distinct_ref": 16,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd"
+  ],
+  "v_torque": 23.43,
+  "v_ref": 21.78,
+  "adr_torque": 6.13,
+  "adr_ref": 5.69,
+  "ang_lag": {
+   "torque": 0.59,
+   "v282": 0.14,
+   "diff": 0.43,
+   "ci_pair": [
+    0.38,
+    0.46
+   ],
+   "ci_route_block": [
+    0.42,
+    0.53
+   ],
+   "n_ref_routes": 2
+  },
+  "ang_gain": {
+   "torque": 1.092,
+   "v282": 0.931,
+   "diff": 0.153,
+   "ci_pair": [
+    0.088,
+    0.205
+   ],
+   "ci_route_block": [
+    0.131,
+    0.167
+   ],
+   "n_ref_routes": 2
+  },
+  "hf": {
+   "torque": 1.287,
+   "v282": 0.622,
+   "diff": 0.644,
+   "ci_pair": [
+    0.533,
+    0.901
+   ],
+   "ci_route_block": [
+    0.616,
+    1.006
+   ],
+   "n_ref_routes": 2
+  },
+  "la_pose_lag": {
+   "torque": 0.59,
+   "v282": 0.02,
+   "diff": 0.55,
+   "ci_pair": [
+    0.48,
+    0.61
+   ],
+   "ci_route_block": [
+    0.53,
+    0.62
+   ],
+   "n_ref_routes": 2
+  }
+ },
+ "C_full|T4|v8-15": {
+  "n": 14,
+  "distinct_ref": 7,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "0000006c--2bc842dbac"
+  ],
+  "v_torque": 9.99,
+  "v_ref": 9.5,
+  "adr_torque": 47.15,
+  "adr_ref": 50.53,
+  "ang_lag": {
+   "torque": 0.34,
+   "v282": 0.3,
+   "diff": 0.06,
+   "ci_pair": [
+    -0.045,
+    0.165
+   ],
+   "ci_route_block": [
+    0.02,
+    0.06
+   ],
+   "n_ref_routes": 2
+  },
+  "ang_gain": {
+   "torque": 0.932,
+   "v282": 0.993,
+   "diff": -0.057,
+   "ci_pair": [
+    -0.128,
+    0.028
+   ],
+   "ci_route_block": [
+    -0.059,
+    -0.057
+   ],
+   "n_ref_routes": 2
+  },
+  "hf": {
+   "torque": 7.194,
+   "v282": 2.568,
+   "diff": 5.247,
+   "ci_pair": [
+    3.927,
+    7.533
+   ],
+   "ci_route_block": [
+    5.247,
+    5.426
+   ],
+   "n_ref_routes": 2
+  },
+  "la_pose_lag": {
+   "torque": 0.24,
+   "v282": 0.26,
+   "diff": 0.07,
+   "ci_pair": [
+    -0.26,
+    0.17
+   ],
+   "ci_route_block": [
+    0.06,
+    0.07
+   ],
+   "n_ref_routes": 2
+  }
+ },
+ "C_nodom|T4|v8-15": {
+  "n": 5,
+  "distinct_ref": 3,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd"
+  ],
+  "v_torque": 11.42,
+  "v_ref": 9.66,
+  "adr_torque": 14.74,
+  "adr_ref": 17.77,
+  "ang_lag": {
+   "torque": 0.38,
+   "v282": 0.17,
+   "diff": 0.17,
+   "ci_pair": [
+    0.1,
+    0.26
+   ],
+   "ci_route_block": [
+    0.17,
+    0.23
+   ],
+   "n_ref_routes": 2
+  },
+  "ang_gain": {
+   "torque": 1.139,
+   "v282": 1.018,
+   "diff": 0.175,
+   "ci_pair": [
+    -0.124,
+    0.247
+   ],
+   "ci_route_block": [
+    -0.087,
+    0.175
+   ],
+   "n_ref_routes": 2
+  },
+  "hf": {
+   "torque": 5.775,
+   "v282": 1.297,
+   "diff": 4.545,
+   "ci_pair": [
+    2.822,
+    6.275
+   ],
+   "ci_route_block": [
+    3.577,
+    4.545
+   ],
+   "n_ref_routes": 2
+  },
+  "la_pose_lag": {
+   "torque": 0.39,
+   "v282": 0.14,
+   "diff": 0.25,
+   "ci_pair": [
+    0.09,
+    0.37
+   ],
+   "ci_route_block": [
+    0.25,
+    0.28
+   ],
+   "n_ref_routes": 2
+  }
+ },
+ "C_full|T4|v15-99": {
+  "n": 33,
+  "distinct_ref": 20,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd",
+   "0000006c--2bc842dbac"
+  ],
+  "v_torque": 20.71,
+  "v_ref": 19.82,
+  "adr_torque": 7.27,
+  "adr_ref": 7.57,
+  "ang_lag": {
+   "torque": 0.47,
+   "v282": 0.14,
+   "diff": 0.31,
+   "ci_pair": [
+    0.25,
+    0.36
+   ],
+   "ci_route_block": [
+    0.29,
+    0.37
+   ],
+   "n_ref_routes": 3
+  },
+  "ang_gain": {
+   "torque": 1.087,
+   "v282": 0.997,
+   "diff": 0.113,
+   "ci_pair": [
+    0.011,
+    0.162
+   ],
+   "ci_route_block": [
+    -0.09,
+    0.131
+   ],
+   "n_ref_routes": 3
+  },
+  "hf": {
+   "torque": 1.823,
+   "v282": 0.791,
+   "diff": 0.987,
+   "ci_pair": [
+    0.797,
+    1.247
+   ],
+   "ci_route_block": [
+    0.408,
+    1.034
+   ],
+   "n_ref_routes": 3
+  },
+  "la_pose_lag": {
+   "torque": 0.41,
+   "v282": 0.0,
+   "diff": 0.4,
+   "ci_pair": [
+    0.2,
+    0.46
+   ],
+   "ci_route_block": [
+    0.23,
+    0.48
+   ],
+   "n_ref_routes": 3
+  }
+ },
+ "C_nodom|T4|v15-99": {
+  "n": 29,
+  "distinct_ref": 9,
+  "ref_routes": [
+   "00000064--ce6b0b0ebb",
+   "00000065--b9f78988bd"
+  ],
+  "v_torque": 20.71,
+  "v_ref": 19.22,
+  "adr_torque": 7.05,
+  "adr_ref": 6.86,
+  "ang_lag": {
+   "torque": 0.47,
+   "v282": 0.22,
+   "diff": 0.26,
+   "ci_pair": [
+    0.21,
+    0.35
+   ],
+   "ci_route_block": [
+    0.25,
+    0.285
+   ],
+   "n_ref_routes": 2
+  },
+  "ang_gain": {
+   "torque": 1.072,
+   "v282": 0.931,
+   "diff": 0.11,
+   "ci_pair": [
+    0.047,
+    0.239
+   ],
+   "ci_route_block": [
+    0.061,
+    0.139
+   ],
+   "n_ref_routes": 2
+  },
+  "hf": {
+   "torque": 1.823,
+   "v282": 0.622,
+   "diff": 1.287,
+   "ci_pair": [
+    1.019,
+    1.522
+   ],
+   "ci_route_block": [
+    1.287,
+    1.37
+   ],
+   "n_ref_routes": 2
+  },
+  "la_pose_lag": {
+   "torque": 0.43,
+   "v282": 0.14,
+   "diff": 0.2,
+   "ci_pair": [
+    -0.03,
+    0.401
+   ],
+   "ci_route_block": [
+    0.06,
+    0.36
+   ],
+   "n_ref_routes": 2
+  }
+ }
+}

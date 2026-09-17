@@ -1,0 +1,81 @@
+{
+ "part1_layaw_zero": {
+  "00000064--ce6b0b0ebb": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 90819,
+   "max_abs": 0.0
+  },
+  "00000065--b9f78988bd": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 81352,
+   "max_abs": 0.0
+  },
+  "0000006c--2bc842dbac": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 368343,
+   "max_abs": 0.0
+  },
+  "00000039--f56039af87": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 94405,
+   "max_abs": 0.0
+  },
+  "0000003a--283a39a1d6": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 72673,
+   "max_abs": 0.0
+  },
+  "0000003c--927965c2b4": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 73786,
+   "max_abs": 0.0
+  },
+  "0000006c--68c6e94b17": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 79924,
+   "max_abs": 0.0
+  },
+  "0000006d--05e83bb04f": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 82538,
+   "max_abs": 0.0
+  },
+  "0000006e--6ca3e014fd": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 85471,
+   "max_abs": 0.0
+  },
+  "00000076--d0b7ea7e4d": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 109521,
+   "max_abs": 0.0
+  },
+  "00000075--6c8687d5bd": {
+   "std_all": 0.0,
+   "std_usable": 0.0,
+   "nnan": 0,
+   "n": 86494,
+   "max_abs": 0.0
+  }
+ }
+}

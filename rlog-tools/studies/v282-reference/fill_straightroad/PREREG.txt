@@ -1,0 +1,35 @@
+PRE-REGISTRATION -- straight-road weave (note 2: "a tiny 5-10 s weave on straight roads"), written 2026-09-17
+BEFORE any weave-band number was computed. Extraction was running; no analysis output had been seen.
+
+SIGNALS (10 Hz resampled, inside straight runs)
+  y     car offset LEFT of lane centre, m      = -(yL(0)+yR(0))/2 from modelV2 laneLines[1],[2] (device y is +right)
+  psi   car heading LEFT relative to the lane   = slope of lane centre between x=0 and x=20 m (device frame)
+  kd    model desired curvature (controlsState.desiredCurvature), a_d = kd v^2
+  ka    achieved lateral accel la_pose (sign-checked against a_d)
+  e     tracking error a - a_d
+  I     fork integrator (torqueState.i); DOB = starpilotLateralState.accordObserverTorque (rev 5 / 6.4 only)
+  y_dem = band-passed double integral of a_d; y_err = band-passed double integral of e   (y_dem + y_err ~ y, minus road)
+
+KINEMATIC FACT used by every prediction: y'' = a - v^2 kappa_road. On a straight, y lags a by exactly 180 deg.
+  CONSEQUENCE (derived, not measured): the phase of kd relative to y is -(180 - phi_track) whenever kd is tracked
+  with lag phi_track, WHETHER kd is exogenous model noise OR the planner reacting to y (kd = -Ky y - Kpsi psi also
+  lies in (-180,-90)). The brief's "demand lags offset" phase test is therefore NOT identifying in closed loop at one
+  frequency. It is reported, with this caveat, and the discriminators below are used instead.
+
+PREDICTIONS
+ (a) DEMAND-DRIVEN (model / planner produces the weave, car tracks it):
+     a_d band rms on straights larger on torque than V282 at matched speed; kd->a |H| ~ 1.0, coherence high;
+     y_dem carries >~70% of y band power, y_err small; e band rms small relative to a_d.
+     Planner-in-loop sub-case additionally needs y (offset) larger with the same planner, i.e. kd tracks y.
+ (b) TRACKING ERROR (fork over-gain + lag): |H(a_d -> a)| in 0.08-0.25 Hz departs from 1 (over-delivery >1.1 or
+     lag >~20 deg) on torque but not V282; e band rms torque/V282 > 1; y_err is a large share of y;
+     coherence a_d->a still high (it is a linear defect).
+ (c) LIMIT CYCLE (integrator/DOB vs Coulomb friction): weave persists in the LOW-DEMAND half of straights
+     (a_d band rms below median) with a narrow spectral line in a / y; coherence a_d->a LOW (<0.5) in band;
+     I or DOB band rms large with sign reversals synchronised to the angle reversals (I/DOB leading angle by
+     ~90 deg, an integrator of the error); torque oscillation amplitude comparable to the friction level
+     (plant F ~0.011 output units; fork hysteresis F 0.015).
+ NULL: torque/V282 ratio of y band rms (and a band rms) with a route-cluster bootstrap 95% CI containing 1.0 and
+     the point within the MDE. MDE (80% power, alpha 0.05) = 2.8 x SE(log ratio) from the route bootstrap; with 3
+     V282 routes vs 5 torque routes, expected MDE ~ x1.5-2 -- a smaller effect cannot be excluded by these data.
+ FAIL of the whole instrument: y vs double-integral(a) coherence < 0.5 in band (lane offset not kinematic).

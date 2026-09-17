@@ -1,0 +1,525 @@
+0000006c--68c6e94b17 T64 runs 10
+0000006d--05e83bb04f T64 runs 22
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\fill_texturetermd\t06_replay.py:85: RuntimeWarning: overflow encountered in scalar multiply
+  if F > 0 and om != 0.0 and om * om_new < 0 and abs(ud + anc - spring) <= F:
+0000006e--6ca3e014fd T64B runs 39
+00000076--d0b7ea7e4d T5 runs 55
+00000075--6c8687d5bd T4 runs 73
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_function_base_impl.py:2887: RuntimeWarning: overflow encountered in dot
+  c = dot(X, X_T.conj())
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\_core\_methods.py:190: RuntimeWarning: overflow encountered in square
+  x = um.square(x, out=x)
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\fill_texturetermd\t06_replay.py:145: RuntimeWarning: overflow encountered in dot
+  gain=float(np.dot(x, y) / np.dot(x, x)), meas_rms=float(np.std(y)), sec=len(x) / 100)
+
+== lt15_small / ALL  meas band rms 3.22 deg/s  1185 s
+   IV|u_e4            corr +0.372 rms_ratio 0.72 gain +0.52  CI corr [+0.29,+0.46] rms [0.64,0.85]
+   IV|ff              corr -0.003 rms_ratio 16242682753353042712803858794877936467968.00 gain -0.00  CI corr [-0.02,-0.00] rms [281027544825448792064.00,27487578646710419142614955527142373326848.00]
+   IV|fb              corr +0.014 rms_ratio 137419618197430947807232.00 gain +0.00  CI corr [-0.06,+0.03] rms [15.24,265716187027546841284608.00]
+   IVF|u_e4           corr +0.401 rms_ratio 0.91 gain +0.44  CI corr [+0.31,+0.48] rms [0.78,1.07]
+   S5|u_e4            corr +0.524 rms_ratio 1.19 gain +0.44  CI corr [+0.46,+0.58] rms [1.05,1.33]
+   S5|ff              corr +0.000 rms_ratio inf gain +0.00
+   S5|fb              corr -0.013 rms_ratio 88459551337808820802022417816949472177005604717955158460806820753635892685148209424185163776.00 gain -0.00
+   S5Jlo|u_e4         corr +0.512 rms_ratio 1.18 gain +0.44
+   S5Jhi|u_e4         corr +0.528 rms_ratio 1.20 gain +0.44
+   NOM|u_e4           corr +0.429 rms_ratio 0.91 gain +0.47  CI corr [+0.35,+0.51] rms [0.80,1.06]
+   NOM|ff             corr -0.016 rms_ratio 142269033536257538415518699621547929073967424486332432384.00 gain -0.00
+   NOM|fb             corr +0.006 rms_ratio 5357002142884878122751044857364480.00 gain +0.00
+   IVd3|u_e4          corr +0.187 rms_ratio 0.73 gain +0.26
+   IVd8|u_e4          corr +0.567 rms_ratio 0.72 gain +0.79
+   IVnoanchor|u_e4    corr +0.390 rms_ratio 0.70 gain +0.56
+
+== lt15_small / T64  meas band rms 2.44 deg/s  392 s
+   IV|u_e4            corr +0.262 rms_ratio 0.84 gain +0.31
+   IV|ff              corr -0.026 rms_ratio 493768867407573680128.00 gain -0.00
+   IV|fb              corr -0.003 rms_ratio 2368414073127.05 gain -0.00
+   IVF|u_e4           corr +0.292 rms_ratio 1.08 gain +0.27
+   S5|u_e4            corr +0.450 rms_ratio 1.36 gain +0.33
+   S5|ff              corr -0.001 rms_ratio 130697707318043502222315754113225984049152000.00 gain -0.00
+   S5|fb              corr +0.001 rms_ratio 21318003106717164271484085101232332833030144.00 gain +0.00
+   S5Jlo|u_e4         corr +0.433 rms_ratio 1.33 gain +0.33
+   S5Jhi|u_e4         corr +0.458 rms_ratio 1.39 gain +0.33
+   NOM|u_e4           corr +0.361 rms_ratio 1.03 gain +0.35
+   NOM|ff             corr +0.026 rms_ratio 1976309382014430801817971458048.00 gain +0.00
+   NOM|fb             corr +0.003 rms_ratio 397269952113861568.00 gain +0.00
+   IVd3|u_e4          corr +0.067 rms_ratio 0.84 gain +0.08
+   IVd8|u_e4          corr +0.486 rms_ratio 0.84 gain +0.58
+   IVnoanchor|u_e4    corr +0.294 rms_ratio 0.78 gain +0.38
+
+== lt15_small / T64B  meas band rms 3.61 deg/s  311 s
+   IV|u_e4            corr +0.444 rms_ratio 0.84 gain +0.53
+   IV|ff              corr -0.006 rms_ratio 28276338742372581299607828287063232348160.00 gain -0.00
+   IV|fb              corr -0.063 rms_ratio 62913355.25 gain -0.00
+   IVF|u_e4           corr +0.450 rms_ratio 1.02 gain +0.44
+   S5|u_e4            corr +0.573 rms_ratio 1.33 gain +0.43
+   S5|ff              corr +0.000 rms_ratio inf gain +0.00
+   S5|fb              corr -0.005 rms_ratio 138426020437.72 gain -0.00
+   S5Jlo|u_e4         corr +0.568 rms_ratio 1.33 gain +0.43
+   S5Jhi|u_e4         corr +0.568 rms_ratio 1.32 gain +0.43
+   NOM|u_e4           corr +0.500 rms_ratio 1.05 gain +0.48
+   NOM|ff             corr -0.028 rms_ratio 247669376715075128537019891982156776504993148690361221120.00 gain -0.00
+   NOM|fb             corr -0.005 rms_ratio 78785291806040.30 gain -0.00
+   IVd3|u_e4          corr +0.285 rms_ratio 0.85 gain +0.34
+   IVd8|u_e4          corr +0.593 rms_ratio 0.83 gain +0.71
+   IVnoanchor|u_e4    corr +0.443 rms_ratio 0.83 gain +0.53
+
+== lt15_small / T5  meas band rms 3.65 deg/s  89 s
+   IV|u_e4            corr +0.274 rms_ratio 0.67 gain +0.41
+   IV|ff              corr -0.044 rms_ratio 1446495583303118018838528.00 gain -0.00
+   IV|fb              corr +0.046 rms_ratio 442399330396002209234944.00 gain +0.00
+   IVF|u_e4           corr +0.449 rms_ratio 0.86 gain +0.52
+   S5|u_e4            corr +0.594 rms_ratio 1.31 gain +0.45
+   S5|ff              corr +0.042 rms_ratio 19135617751677178532084176556264815478285959981211936275595767193539115682765187685284780703744.00 gain +0.00
+   S5|fb              corr -0.042 rms_ratio 284770570159160233085592003156496432662326917739320158408891127094619273864273542221152649216.00 gain -0.00
+   S5Jlo|u_e4         corr +0.582 rms_ratio 1.26 gain +0.46
+   S5Jhi|u_e4         corr +0.599 rms_ratio 1.33 gain +0.45
+   NOM|u_e4           corr +0.438 rms_ratio 0.80 gain +0.55
+   NOM|ff             corr +0.031 rms_ratio 209365202440383587322610335566790656.00 gain +0.00
+   NOM|fb             corr +0.019 rms_ratio 17247178343235228217419567214886912.00 gain +0.00
+   IVd3|u_e4          corr +0.033 rms_ratio 0.67 gain +0.05
+   IVd8|u_e4          corr +0.558 rms_ratio 0.66 gain +0.85
+   IVnoanchor|u_e4    corr +0.363 rms_ratio 0.61 gain +0.59
+
+== lt15_small / T4  meas band rms 3.46 deg/s  393 s
+   IV|u_e4            corr +0.415 rms_ratio 0.54 gain +0.76
+   IV|ff              corr -0.010 rms_ratio 572315108826766770176.00 gain -0.00
+   IV|fb              corr +0.040 rms_ratio 6.46 gain +0.01
+   IVF|u_e4           corr +0.429 rms_ratio 0.71 gain +0.61
+   S5|u_e4            corr +0.520 rms_ratio 0.92 gain +0.57
+   S5|ff              corr +0.014 rms_ratio 5264310431891706764926919927298142246228718587007854981236429972577999439003648.00 gain +0.00
+   S5|fb              corr +0.197 rms_ratio 1.46 gain +0.13
+   S5Jlo|u_e4         corr +0.501 rms_ratio 0.91 gain +0.55
+   S5Jhi|u_e4         corr +0.533 rms_ratio 0.92 gain +0.58
+   NOM|u_e4           corr +0.405 rms_ratio 0.72 gain +0.56
+   NOM|ff             corr -0.014 rms_ratio 382859055207602693980479815680.00 gain -0.00
+   NOM|fb             corr -0.017 rms_ratio 1935.95 gain -0.00
+   IVd3|u_e4          corr +0.206 rms_ratio 0.54 gain +0.38
+   IVd8|u_e4          corr +0.632 rms_ratio 0.55 gain +1.16
+   IVnoanchor|u_e4    corr +0.421 rms_ratio 0.54 gain +0.79
+
+== lt15_large / ALL  meas band rms 17.12 deg/s  110 s
+   IV|u_e4            corr +0.709 rms_ratio 0.74 gain +0.96  CI corr [+0.52,+0.80] rms [0.64,0.80]
+   IV|ff              corr +0.033 rms_ratio 187553788087.76 gain +0.00  CI corr [-0.01,+0.09] rms [1710.78,333954943845.10]
+   IV|fb              corr -0.056 rms_ratio 93737561.64 gain -0.00  CI corr [-0.11,+0.30] rms [0.61,190683389.03]
+   IVF|u_e4           corr +0.724 rms_ratio 0.91 gain +0.80  CI corr [+0.56,+0.80] rms [0.75,0.99]
+   S5|u_e4            corr +0.680 rms_ratio 1.58 gain +0.43  CI corr [+0.51,+0.81] rms [1.28,1.88]
+   S5|ff              corr -0.001 rms_ratio 1428083452923459132728008230292729953907774878219235694013095545289273612954831587131785216.00 gain -0.00
+   S5|fb              corr +0.012 rms_ratio 1284612409725569964799105620559547869928915730432.00 gain +0.00
+   S5Jlo|u_e4         corr +0.692 rms_ratio 1.60 gain +0.43
+   S5Jhi|u_e4         corr +0.657 rms_ratio 1.54 gain +0.43
+   NOM|u_e4           corr +0.772 rms_ratio 0.99 gain +0.78  CI corr [+0.64,+0.83] rms [0.86,1.07]
+   NOM|ff             corr -0.028 rms_ratio 2089413268253081862144.00 gain -0.00
+   NOM|fb             corr +0.022 rms_ratio 84171099605479.75 gain +0.00
+   IVd3|u_e4          corr +0.575 rms_ratio 0.74 gain +0.78
+   IVd8|u_e4          corr +0.790 rms_ratio 0.75 gain +1.05
+   IVnoanchor|u_e4    corr +0.744 rms_ratio 0.71 gain +1.05
+
+== lt15_large / T64  meas band rms 13.20 deg/s  12 s
+   IV|u_e4            corr +0.509 rms_ratio 0.82 gain +0.62
+   IV|ff              corr -0.029 rms_ratio 153562.28 gain -0.00
+   IV|fb              corr +0.258 rms_ratio 1.04 gain +0.25
+   IVF|u_e4           corr +0.585 rms_ratio 0.98 gain +0.60
+   S5|u_e4            corr +0.445 rms_ratio 2.33 gain +0.19
+   S5|ff              corr +0.067 rms_ratio 942095970173838557184.00 gain +0.00
+   S5|fb              corr -0.073 rms_ratio 115443013045402959872.00 gain -0.00
+   S5Jlo|u_e4         corr +0.495 rms_ratio 2.28 gain +0.22
+   S5Jhi|u_e4         corr +0.380 rms_ratio 2.36 gain +0.16
+   NOM|u_e4           corr +0.745 rms_ratio 1.01 gain +0.74
+   NOM|ff             corr +0.045 rms_ratio 780284643.77 gain +0.00
+   NOM|fb             corr +0.232 rms_ratio 2.07 gain +0.11
+   IVd3|u_e4          corr +0.347 rms_ratio 0.81 gain +0.43
+   IVd8|u_e4          corr +0.612 rms_ratio 0.85 gain +0.72
+   IVnoanchor|u_e4    corr +0.726 rms_ratio 0.64 gain +1.13
+
+== lt15_large / T64B  meas band rms 19.61 deg/s  40 s
+   IV|u_e4            corr +0.768 rms_ratio 0.80 gain +0.96
+   IV|ff              corr +0.063 rms_ratio 478039885.46 gain +0.00
+   IV|fb              corr -0.081 rms_ratio 135786128.46 gain -0.00
+   IVF|u_e4           corr +0.754 rms_ratio 0.98 gain +0.77
+   S5|u_e4            corr +0.819 rms_ratio 1.57 gain +0.52
+   S5|ff              corr -0.002 rms_ratio 2069264533973601856710588391870052258850992927832667398785675904756090876875440140918456320.00 gain -0.00
+   S5|fb              corr +0.300 rms_ratio 1.56 gain +0.19
+   S5Jlo|u_e4         corr +0.824 rms_ratio 1.61 gain +0.51
+   S5Jhi|u_e4         corr +0.803 rms_ratio 1.52 gain +0.53
+   NOM|u_e4           corr +0.803 rms_ratio 1.09 gain +0.74
+   NOM|ff             corr -0.066 rms_ratio 291234342974321.00 gain -0.00
+   NOM|fb             corr +0.032 rms_ratio 121954633086022.52 gain +0.00
+   IVd3|u_e4          corr +0.644 rms_ratio 0.79 gain +0.81
+   IVd8|u_e4          corr +0.824 rms_ratio 0.80 gain +1.03
+   IVnoanchor|u_e4    corr +0.787 rms_ratio 0.77 gain +1.02
+
+== lt15_large / T5  meas band rms 13.02 deg/s  12 s
+   IV|u_e4            corr +0.403 rms_ratio 0.76 gain +0.53
+   IV|ff              corr +0.111 rms_ratio 0.37 gain +0.30
+   IV|fb              corr +0.250 rms_ratio 0.70 gain +0.36
+   IVF|u_e4           corr +0.600 rms_ratio 0.76 gain +0.79
+   S5|u_e4            corr +0.470 rms_ratio 1.75 gain +0.27
+   S5|ff              corr -0.042 rms_ratio 315864338497011126710093730487693187868855189372928.00 gain -0.00
+   S5|fb              corr +0.048 rms_ratio 5124282875813586809928215036910335080275443187712.00 gain +0.00
+   S5Jlo|u_e4         corr +0.474 rms_ratio 1.72 gain +0.28
+   S5Jhi|u_e4         corr +0.462 rms_ratio 1.77 gain +0.26
+   NOM|u_e4           corr +0.621 rms_ratio 0.84 gain +0.74
+   NOM|ff             corr -0.005 rms_ratio 1.37 gain -0.00
+   NOM|fb             corr +0.305 rms_ratio 0.82 gain +0.37
+   IVd3|u_e4          corr +0.203 rms_ratio 0.75 gain +0.27
+   IVd8|u_e4          corr +0.600 rms_ratio 0.78 gain +0.77
+   IVnoanchor|u_e4    corr +0.514 rms_ratio 0.64 gain +0.80
+
+== lt15_large / T4  meas band rms 16.65 deg/s  46 s
+   IV|u_e4            corr +0.732 rms_ratio 0.65 gain +1.12
+   IV|ff              corr +0.052 rms_ratio 298562740928.85 gain +0.00
+   IV|fb              corr +0.306 rms_ratio 0.53 gain +0.58
+   IVF|u_e4           corr +0.737 rms_ratio 0.81 gain +0.91
+   S5|u_e4            corr +0.619 rms_ratio 1.38 gain +0.45
+   S5|ff              corr -0.028 rms_ratio 363545373582666402409973741327857515233280.00 gain -0.00
+   S5|fb              corr +0.392 rms_ratio 0.85 gain +0.46
+   S5Jlo|u_e4         corr +0.623 rms_ratio 1.41 gain +0.44
+   S5Jhi|u_e4         corr +0.607 rms_ratio 1.34 gain +0.45
+   NOM|u_e4           corr +0.766 rms_ratio 0.88 gain +0.87
+   NOM|ff             corr -0.045 rms_ratio 3325769675902651203584.00 gain -0.00
+   NOM|fb             corr +0.255 rms_ratio 1.33 gain +0.19
+   IVd3|u_e4          corr +0.597 rms_ratio 0.65 gain +0.92
+   IVd8|u_e4          corr +0.825 rms_ratio 0.65 gain +1.27
+   IVnoanchor|u_e4    corr +0.730 rms_ratio 0.64 gain +1.14
+
+== turns_s3 / ALL  meas band rms 13.46 deg/s  180 s
+   IV|u_e4            corr +0.710 rms_ratio 0.74 gain +0.95  CI corr [+0.50,+0.81] rms [0.63,0.82]
+   IV|ff              corr +0.009 rms_ratio 532132462937.83 gain +0.00  CI corr [-0.05,+0.20] rms [2.04,1064309289170.37]
+   IV|fb              corr +0.119 rms_ratio 1.15 gain +0.10  CI corr [+0.06,+0.19] rms [0.80,1.80]
+   IVF|u_e4           corr +0.719 rms_ratio 0.92 gain +0.78  CI corr [+0.58,+0.80] rms [0.77,1.02]
+   S5|u_e4            corr +0.708 rms_ratio 1.50 gain +0.47  CI corr [+0.55,+0.82] rms [1.22,1.75]
+   S5|ff              corr -0.000 rms_ratio 404615544053377237090804307222834590146592686122948544682561391729622108525447238415779102720.00 gain -0.00
+   S5|fb              corr +0.001 rms_ratio 329092695029415540104294406904336613464783416459264.00 gain +0.00
+   S5Jlo|u_e4         corr +0.714 rms_ratio 1.53 gain +0.47
+   S5Jhi|u_e4         corr +0.692 rms_ratio 1.46 gain +0.47
+   NOM|u_e4           corr +0.759 rms_ratio 1.01 gain +0.75  CI corr [+0.58,+0.84] rms [0.85,1.13]
+   NOM|ff             corr -0.001 rms_ratio 55754310551991532650496.00 gain -0.00
+   NOM|fb             corr +0.014 rms_ratio 14087.98 gain +0.00
+   IVd3|u_e4          corr +0.581 rms_ratio 0.74 gain +0.78
+   IVd8|u_e4          corr +0.784 rms_ratio 0.75 gain +1.05
+   IVnoanchor|u_e4    corr +0.730 rms_ratio 0.72 gain +1.01
+
+== turns_s3 / T64  meas band rms 7.04 deg/s  30 s
+   IV|u_e4            corr +0.586 rms_ratio 0.68 gain +0.86
+   IV|ff              corr +0.100 rms_ratio 4.87 gain +0.02
+   IV|fb              corr +0.065 rms_ratio 1.78 gain +0.04
+   IVF|u_e4           corr +0.725 rms_ratio 0.82 gain +0.88
+   S5|u_e4            corr +0.718 rms_ratio 1.33 gain +0.54
+   S5|ff              corr -0.001 rms_ratio 525964593.62 gain -0.00
+   S5|fb              corr +0.001 rms_ratio 63934203.49 gain +0.00
+   S5Jlo|u_e4         corr +0.714 rms_ratio 1.35 gain +0.53
+   S5Jhi|u_e4         corr +0.710 rms_ratio 1.28 gain +0.55
+   NOM|u_e4           corr +0.682 rms_ratio 0.98 gain +0.69
+   NOM|ff             corr +0.004 rms_ratio 8.15 gain +0.00
+   NOM|fb             corr +0.158 rms_ratio 4.35 gain +0.04
+   IVd3|u_e4          corr +0.381 rms_ratio 0.67 gain +0.56
+   IVd8|u_e4          corr +0.766 rms_ratio 0.69 gain +1.11
+   IVnoanchor|u_e4    corr +0.593 rms_ratio 0.67 gain +0.88
+
+== turns_s3 / T64B  meas band rms 15.81 deg/s  62 s
+   IV|u_e4            corr +0.774 rms_ratio 0.82 gain +0.94
+   IV|ff              corr +0.001 rms_ratio 2167.51 gain +0.00
+   IV|fb              corr +0.076 rms_ratio 1.18 gain +0.06
+   IVF|u_e4           corr +0.743 rms_ratio 1.03 gain +0.72
+   S5|u_e4            corr +0.812 rms_ratio 1.58 gain +0.51
+   S5|ff              corr -0.001 rms_ratio 585955621562462619261430829951918762411544537381059647499863571681055167497728424453246812160.00 gain -0.00
+   S5|fb              corr +0.126 rms_ratio 3.28 gain +0.04
+   S5Jlo|u_e4         corr +0.819 rms_ratio 1.62 gain +0.51
+   S5Jhi|u_e4         corr +0.795 rms_ratio 1.53 gain +0.52
+   NOM|u_e4           corr +0.803 rms_ratio 1.13 gain +0.71
+   NOM|ff             corr -0.006 rms_ratio 1949819.71 gain -0.00
+   NOM|fb             corr +0.020 rms_ratio 20407.38 gain +0.00
+   IVd3|u_e4          corr +0.662 rms_ratio 0.82 gain +0.81
+   IVd8|u_e4          corr +0.811 rms_ratio 0.83 gain +0.98
+   IVnoanchor|u_e4    corr +0.789 rms_ratio 0.80 gain +0.98
+
+== turns_s3 / T5  meas band rms 10.35 deg/s  24 s
+   IV|u_e4            corr +0.358 rms_ratio 0.75 gain +0.48
+   IV|ff              corr +0.106 rms_ratio 2.15 gain +0.05
+   IV|fb              corr +0.173 rms_ratio 1.83 gain +0.09
+   IVF|u_e4           corr +0.578 rms_ratio 0.80 gain +0.72
+   S5|u_e4            corr +0.498 rms_ratio 1.71 gain +0.29
+   S5|ff              corr -0.001 rms_ratio 71327927698957654355250532863323763949007451805712384.00 gain -0.00
+   S5|fb              corr +0.002 rms_ratio 1170095378279249392071956724069232170499094198878208.00 gain +0.00
+   S5Jlo|u_e4         corr +0.497 rms_ratio 1.66 gain +0.30
+   S5Jhi|u_e4         corr +0.495 rms_ratio 1.73 gain +0.29
+   NOM|u_e4           corr +0.591 rms_ratio 0.83 gain +0.71
+   NOM|ff             corr -0.025 rms_ratio 3.67 gain -0.01
+   NOM|fb             corr +0.079 rms_ratio 3.15 gain +0.03
+   IVd3|u_e4          corr +0.151 rms_ratio 0.74 gain +0.20
+   IVd8|u_e4          corr +0.573 rms_ratio 0.76 gain +0.75
+   IVnoanchor|u_e4    corr +0.482 rms_ratio 0.63 gain +0.76
+
+== turns_s3 / T4  meas band rms 14.33 deg/s  63 s
+   IV|u_e4            corr +0.720 rms_ratio 0.64 gain +1.12
+   IV|ff              corr +0.014 rms_ratio 843331097061.48 gain +0.00
+   IV|fb              corr +0.202 rms_ratio 0.79 gain +0.26
+   IVF|u_e4           corr +0.724 rms_ratio 0.82 gain +0.88
+   S5|u_e4            corr +0.621 rms_ratio 1.37 gain +0.45
+   S5|ff              corr +0.003 rms_ratio 82502624574289574128572409582303132759621632.00 gain +0.00
+   S5|fb              corr +0.287 rms_ratio 1.16 gain +0.25
+   S5Jlo|u_e4         corr +0.626 rms_ratio 1.40 gain +0.45
+   S5Jhi|u_e4         corr +0.606 rms_ratio 1.34 gain +0.45
+   NOM|u_e4           corr +0.748 rms_ratio 0.88 gain +0.85
+   NOM|ff             corr -0.001 rms_ratio 88356050356980286488576.00 gain -0.00
+   NOM|fb             corr +0.179 rms_ratio 1.85 gain +0.10
+   IVd3|u_e4          corr +0.589 rms_ratio 0.64 gain +0.92
+   IVd8|u_e4          corr +0.808 rms_ratio 0.65 gain +1.25
+   IVnoanchor|u_e4    corr +0.720 rms_ratio 0.63 gain +1.14
+
+== v3_8 / ALL  meas band rms 9.63 deg/s  308 s
+   IV|u_e4            corr +0.751 rms_ratio 0.75 gain +1.00  CI corr [+0.57,+0.84] rms [0.63,0.82]
+   IV|ff              corr -0.002 rms_ratio 10438869643892684941885821663698151800832.00 gain -0.00  CI corr [-0.01,-0.00] rms [108912112919674650624.00,14902390927768947025551372848119519641600.00]
+   IV|fb              corr -0.000 rms_ratio 666255220479.93 gain -0.00  CI corr [-0.00,+0.24] rms [0.65,1359662467314.53]
+   IVF|u_e4           corr +0.780 rms_ratio 0.90 gain +0.86  CI corr [+0.61,+0.85] rms [0.76,1.00]
+   S5|u_e4            corr +0.747 rms_ratio 1.21 gain +0.62  CI corr [+0.58,+0.87] rms [1.02,1.33]
+   S5|ff              corr +0.000 rms_ratio inf gain +0.00
+   S5|fb              corr -0.000 rms_ratio 5998381760545068309670069849315025382014976.00 gain -0.00
+   S5Jlo|u_e4         corr +0.734 rms_ratio 1.25 gain +0.59
+   S5Jhi|u_e4         corr +0.754 rms_ratio 1.16 gain +0.65
+   NOM|u_e4           corr +0.787 rms_ratio 1.02 gain +0.77  CI corr [+0.63,+0.85] rms [0.85,1.12]
+   NOM|ff             corr -0.002 rms_ratio 86428716755444608544677112550115501861837746503258472448.00 gain -0.00
+   NOM|fb             corr +0.001 rms_ratio 110318279160764336.00 gain +0.00
+   IVd3|u_e4          corr +0.634 rms_ratio 0.75 gain +0.85
+   IVd8|u_e4          corr +0.804 rms_ratio 0.75 gain +1.07
+   IVnoanchor|u_e4    corr +0.755 rms_ratio 0.74 gain +1.02
+
+== v3_8 / T64  meas band rms 5.91 deg/s  74 s
+   IV|u_e4            corr +0.545 rms_ratio 0.74 gain +0.73
+   IV|ff              corr -0.025 rms_ratio 460345069127434895360.00 gain -0.00
+   IV|fb              corr -0.001 rms_ratio 2208142274579.67 gain -0.00
+   IVF|u_e4           corr +0.690 rms_ratio 0.87 gain +0.79
+   S5|u_e4            corr +0.589 rms_ratio 1.54 gain +0.38
+   S5|ff              corr +0.001 rms_ratio 121791416020370481075731593298958242308685824.00 gain +0.00
+   S5|fb              corr -0.001 rms_ratio 19880182608018285888292349967657873904238592.00 gain -0.00
+   S5Jlo|u_e4         corr +0.586 rms_ratio 1.57 gain +0.37
+   S5Jhi|u_e4         corr +0.582 rms_ratio 1.50 gain +0.39
+   NOM|u_e4           corr +0.680 rms_ratio 1.02 gain +0.66
+   NOM|ff             corr +0.024 rms_ratio 1781682413446057211993503301632.00 gain +0.00
+   NOM|fb             corr +0.004 rms_ratio 365619410158821760.00 gain +0.00
+   IVd3|u_e4          corr +0.374 rms_ratio 0.73 gain +0.51
+   IVd8|u_e4          corr +0.669 rms_ratio 0.78 gain +0.86
+   IVnoanchor|u_e4    corr +0.603 rms_ratio 0.67 gain +0.90
+
+== v3_8 / T64B  meas band rms 12.28 deg/s  82 s
+   IV|u_e4            corr +0.836 rms_ratio 0.85 gain +0.99
+   IV|ff              corr -0.002 rms_ratio 15894695751647901735005490192407769120768.00 gain -0.00
+   IV|fb              corr +0.124 rms_ratio 0.81 gain +0.15
+   IVF|u_e4           corr +0.833 rms_ratio 1.02 gain +0.82
+   S5|u_e4            corr +0.854 rms_ratio 1.31 gain +0.65
+   S5|ff              corr +0.000 rms_ratio inf gain +0.00
+   S5|fb              corr +0.189 rms_ratio 1.46 gain +0.13
+   S5Jlo|u_e4         corr +0.847 rms_ratio 1.35 gain +0.63
+   S5Jhi|u_e4         corr +0.853 rms_ratio 1.25 gain +0.68
+   NOM|u_e4           corr +0.850 rms_ratio 1.18 gain +0.72
+   NOM|ff             corr -0.003 rms_ratio 131598446376581055516297256068818038896334869198457012224.00 gain -0.00
+   NOM|fb             corr +0.014 rms_ratio 8479038.27 gain +0.00
+   IVd3|u_e4          corr +0.751 rms_ratio 0.85 gain +0.89
+   IVd8|u_e4          corr +0.829 rms_ratio 0.85 gain +0.97
+   IVnoanchor|u_e4    corr +0.835 rms_ratio 0.84 gain +0.99
+
+== v3_8 / T5  meas band rms 7.84 deg/s  28 s
+   IV|u_e4            corr +0.597 rms_ratio 0.63 gain +0.94
+   IV|ff              corr +0.225 rms_ratio 0.60 gain +0.37
+   IV|fb              corr +0.306 rms_ratio 0.75 gain +0.41
+   IVF|u_e4           corr +0.671 rms_ratio 0.71 gain +0.95
+   S5|u_e4            corr +0.701 rms_ratio 0.96 gain +0.73
+   S5|ff              corr -0.062 rms_ratio 7.56 gain -0.01
+   S5|fb              corr +0.259 rms_ratio 1.81 gain +0.14
+   S5Jlo|u_e4         corr +0.662 rms_ratio 1.00 gain +0.66
+   S5Jhi|u_e4         corr +0.738 rms_ratio 0.92 gain +0.80
+   NOM|u_e4           corr +0.689 rms_ratio 0.81 gain +0.85
+   NOM|ff             corr -0.097 rms_ratio 1.93 gain -0.05
+   NOM|fb             corr +0.215 rms_ratio 2.05 gain +0.10
+   IVd3|u_e4          corr +0.360 rms_ratio 0.64 gain +0.57
+   IVd8|u_e4          corr +0.837 rms_ratio 0.63 gain +1.32
+   IVnoanchor|u_e4    corr +0.596 rms_ratio 0.64 gain +0.94
+
+== v3_8 / T4  meas band rms 9.79 deg/s  125 s
+   IV|u_e4            corr +0.726 rms_ratio 0.65 gain +1.12
+   IV|ff              corr -0.006 rms_ratio 344950314171734818816.00 gain -0.00
+   IV|fb              corr +0.310 rms_ratio 0.56 gain +0.55
+   IVF|u_e4           corr +0.762 rms_ratio 0.80 gain +0.95
+   S5|u_e4            corr +0.686 rms_ratio 1.05 gain +0.66
+   S5|ff              corr +0.009 rms_ratio 3171412542422361928770227376482864817445671824839679730132307918205490139496448.00 gain +0.00
+   S5|fb              corr +0.377 rms_ratio 0.74 gain +0.51
+   S5Jlo|u_e4         corr +0.664 rms_ratio 1.08 gain +0.61
+   S5Jhi|u_e4         corr +0.707 rms_ratio 1.00 gain +0.71
+   NOM|u_e4           corr +0.765 rms_ratio 0.87 gain +0.88
+   NOM|ff             corr -0.004 rms_ratio 230816165421226162788457512960.00 gain -0.00
+   NOM|fb             corr +0.012 rms_ratio 34.03 gain +0.00
+   IVd3|u_e4          corr +0.593 rms_ratio 0.65 gain +0.92
+   IVd8|u_e4          corr +0.819 rms_ratio 0.65 gain +1.26
+   IVnoanchor|u_e4    corr +0.721 rms_ratio 0.65 gain +1.11
+
+== v8_15 / ALL  meas band rms 4.05 deg/s  987 s
+   IV|u_e4            corr +0.372 rms_ratio 0.71 gain +0.52  CI corr [+0.26,+0.44] rms [0.62,0.82]
+   IV|ff              corr -0.004 rms_ratio 2872802673769447726080064714158007910400.00 gain -0.00  CI corr [-0.02,-0.00] rms [24497265148416335872.00,5426942907332996560003693785987512532992.00]
+   IV|fb              corr +0.013 rms_ratio 119893709340599010721792.00 gain +0.00  CI corr [-0.09,+0.02] rms [45270.65,210189023318555410563072.00]
+   IVF|u_e4           corr +0.380 rms_ratio 0.91 gain +0.42  CI corr [+0.29,+0.44] rms [0.76,1.06]
+   S5|u_e4            corr +0.552 rms_ratio 1.85 gain +0.30  CI corr [+0.43,+0.65] rms [1.34,2.21]
+   S5|ff              corr +0.000 rms_ratio inf gain +0.00
+   S5|fb              corr -0.011 rms_ratio 77177755106745956839512354061943354377327820598757324207759631266706106573265521455258402816.00 gain -0.00
+   S5Jlo|u_e4         corr +0.572 rms_ratio 1.83 gain +0.31
+   S5Jhi|u_e4         corr +0.519 rms_ratio 1.85 gain +0.28
+   NOM|u_e4           corr +0.468 rms_ratio 0.86 gain +0.54  CI corr [+0.40,+0.51] rms [0.79,0.95]
+   NOM|ff             corr -0.031 rms_ratio 46970816190419615549425883007565679540932897914973323264.00 gain -0.00
+   NOM|fb             corr +0.005 rms_ratio 4673798400405033179500415266324480.00 gain +0.00
+   IVd3|u_e4          corr +0.162 rms_ratio 0.71 gain +0.23
+   IVd8|u_e4          corr +0.595 rms_ratio 0.72 gain +0.83
+   IVnoanchor|u_e4    corr +0.427 rms_ratio 0.64 gain +0.67
+
+== v8_15 / T64  meas band rms 2.41 deg/s  330 s
+   IV|u_e4            corr +0.202 rms_ratio 0.93 gain +0.22
+   IV|ff              corr -0.003 rms_ratio 102675356139350999040.00 gain -0.00
+   IV|fb              corr -0.012 rms_ratio 492360584695.31 gain -0.00
+   IVF|u_e4           corr +0.181 rms_ratio 1.22 gain +0.15
+   S5|u_e4            corr +0.300 rms_ratio 2.26 gain +0.13
+   S5|ff              corr -0.010 rms_ratio 27541248439639755062791792778303351543562240.00 gain -0.00
+   S5|fb              corr +0.011 rms_ratio 4402506435382287173861033445925985720467456.00 gain +0.00
+   S5Jlo|u_e4         corr +0.334 rms_ratio 2.15 gain +0.16
+   S5Jhi|u_e4         corr +0.255 rms_ratio 2.36 gain +0.11
+   NOM|u_e4           corr +0.354 rms_ratio 1.01 gain +0.35
+   NOM|ff             corr +0.008 rms_ratio 683664082482958613082282131456.00 gain +0.00
+   NOM|fb             corr -0.003 rms_ratio 107580929685462352.00 gain -0.00
+   IVd3|u_e4          corr +0.017 rms_ratio 0.94 gain +0.02
+   IVd8|u_e4          corr +0.411 rms_ratio 0.92 gain +0.45
+   IVnoanchor|u_e4    corr +0.333 rms_ratio 0.78 gain +0.43
+
+== v8_15 / T64B  meas band rms 5.16 deg/s  269 s
+   IV|u_e4            corr +0.426 rms_ratio 0.73 gain +0.59
+   IV|ff              corr -0.006 rms_ratio 4318231853757676417058889286069776285696.00 gain -0.00
+   IV|fb              corr -0.126 rms_ratio 204918902.67 gain -0.00
+   IVF|u_e4           corr +0.419 rms_ratio 0.94 gain +0.45
+   S5|u_e4            corr +0.698 rms_ratio 1.84 gain +0.38
+   S5|ff              corr +0.000 rms_ratio inf gain +0.00
+   S5|fb              corr -0.004 rms_ratio 104287778657.22 gain -0.00
+   S5Jlo|u_e4         corr +0.711 rms_ratio 1.86 gain +0.38
+   S5Jhi|u_e4         corr +0.672 rms_ratio 1.81 gain +0.37
+   NOM|u_e4           corr +0.513 rms_ratio 0.89 gain +0.58
+   NOM|ff             corr -0.047 rms_ratio 70608610723063455173049145657750841833507991958346268672.00 gain -0.00
+   NOM|fb             corr +0.044 rms_ratio 188585889522273.50 gain +0.00
+   IVd3|u_e4          corr +0.194 rms_ratio 0.72 gain +0.27
+   IVd8|u_e4          corr +0.673 rms_ratio 0.73 gain +0.92
+   IVnoanchor|u_e4    corr +0.456 rms_ratio 0.68 gain +0.67
+
+== v8_15 / T5  meas band rms 4.56 deg/s  73 s
+   IV|u_e4            corr +0.146 rms_ratio 0.79 gain +0.19
+   IV|ff              corr -0.038 rms_ratio 1276107113163291034124288.00 gain -0.00
+   IV|fb              corr +0.041 rms_ratio 390284578233741668777984.00 gain +0.00
+   IVF|u_e4           corr +0.422 rms_ratio 0.89 gain +0.47
+   S5|u_e4            corr +0.460 rms_ratio 2.00 gain +0.23
+   S5|ff              corr +0.037 rms_ratio 16881291921346222579423799577870830136760396403031647314698673567164355140045793152423121911808.00 gain +0.00
+   S5|fb              corr -0.037 rms_ratio 251222467613563140808522827159283448416490691133898888589500048901906007827428997125441060864.00 gain -0.00
+   S5Jlo|u_e4         corr +0.463 rms_ratio 1.92 gain +0.24
+   S5Jhi|u_e4         corr +0.452 rms_ratio 2.05 gain +0.22
+   NOM|u_e4           corr +0.397 rms_ratio 0.84 gain +0.47
+   NOM|ff             corr +0.028 rms_ratio 184704335901900873464792479929729024.00 gain +0.00
+   NOM|fb             corr +0.017 rms_ratio 15215704098718489002922602758406144.00 gain +0.00
+   IVd3|u_e4          corr -0.059 rms_ratio 0.78 gain -0.08
+   IVd8|u_e4          corr +0.382 rms_ratio 0.81 gain +0.47
+   IVnoanchor|u_e4    corr +0.287 rms_ratio 0.63 gain +0.46
+
+== v8_15 / T4  meas band rms 4.20 deg/s  315 s
+   IV|u_e4            corr +0.485 rms_ratio 0.57 gain +0.86
+   IV|ff              corr -0.005 rms_ratio 148167880499969032192.00 gain -0.00
+   IV|fb              corr +0.037 rms_ratio 5.94 gain +0.01
+   IVF|u_e4           corr +0.431 rms_ratio 0.75 gain +0.57
+   S5|u_e4            corr +0.500 rms_ratio 1.66 gain +0.30
+   S5|ff              corr +0.004 rms_ratio 1370311616292725279039410735989556911285321570761065148414688244427120862822400.00 gain +0.00
+   S5|fb              corr +0.271 rms_ratio 1.51 gain +0.18
+   S5Jlo|u_e4         corr +0.519 rms_ratio 1.66 gain +0.31
+   S5Jhi|u_e4         corr +0.467 rms_ratio 1.64 gain +0.28
+   NOM|u_e4           corr +0.478 rms_ratio 0.78 gain +0.61
+   NOM|ff             corr -0.026 rms_ratio 98840783847654271386998800384.00 gain -0.00
+   NOM|fb             corr -0.016 rms_ratio 1780.75 gain -0.00
+   IVd3|u_e4          corr +0.285 rms_ratio 0.56 gain +0.51
+   IVd8|u_e4          corr +0.680 rms_ratio 0.57 gain +1.19
+   IVnoanchor|u_e4    corr +0.489 rms_ratio 0.52 gain +0.94
+
+== ge15 / ALL  meas band rms 2.67 deg/s  1294 s
+   IV|u_e4            corr +0.317 rms_ratio 0.54 gain +0.59  CI corr [+0.25,+0.38] rms [0.45,0.66]
+   IV|ff              corr +0.003 rms_ratio 1529360857849950877165746095297438679040.00 gain +0.00  CI corr [+0.00,+0.01] rms [4850605322219460608.00,3055283161693344133910821991687561150464.00]
+   IV|fb              corr -0.005 rms_ratio 646299835516359802880.00 gain -0.00  CI corr [-0.01,+0.12] rms [0.41,1310863633249510883328.00]
+   IVF|u_e4           corr +0.230 rms_ratio 0.60 gain +0.39  CI corr [+0.14,+0.32] rms [0.49,0.79]
+   S5|u_e4            corr +0.464 rms_ratio 1.43 gain +0.33  CI corr [+0.25,+0.61] rms [0.84,1.87]
+   S5|ff              corr -0.000 rms_ratio inf gain -0.00
+   S5|fb              corr -0.008 rms_ratio 32059369383832206828105387653766963316741794144680883504717262410174599153814287138422784.00 gain -0.00
+   S5Jlo|u_e4         corr +0.443 rms_ratio 1.37 gain +0.32
+   S5Jhi|u_e4         corr +0.488 rms_ratio 1.40 gain +0.35
+   NOM|u_e4           corr +0.220 rms_ratio 0.57 gain +0.39  CI corr [+0.13,+0.31] rms [0.47,0.74]
+   NOM|ff             corr +0.001 rms_ratio 2959978940746853848310992802023352686855617868840972457082880.00 gain +0.00
+   NOM|fb             corr +0.003 rms_ratio 2630360522854770165932663285570728872709404980529856512.00 gain +0.00
+   IVd3|u_e4          corr +0.103 rms_ratio 0.53 gain +0.19
+   IVd8|u_e4          corr +0.561 rms_ratio 0.54 gain +1.03
+   IVnoanchor|u_e4    corr +0.293 rms_ratio 0.53 gain +0.55
+
+== ge15 / T64  meas band rms 1.52 deg/s  573 s
+   IV|u_e4            corr +0.245 rms_ratio 0.75 gain +0.33
+   IV|ff              corr -0.023 rms_ratio 946375968354970624.00 gain -0.00
+   IV|fb              corr -0.006 rms_ratio 4848022506.15 gain -0.00
+   IVF|u_e4           corr +0.160 rms_ratio 0.98 gain +0.16
+   S5|u_e4            corr +0.239 rms_ratio 1.28 gain +0.19
+   S5|ff              corr +0.006 rms_ratio 136681693371202884186358123594196822523904.00 gain +0.00
+   S5|fb              corr -0.005 rms_ratio 16321610203934223568045617697434221150208.00 gain -0.00
+   S5Jlo|u_e4         corr +0.235 rms_ratio 1.17 gain +0.20
+   S5Jhi|u_e4         corr +0.241 rms_ratio 1.39 gain +0.17
+   NOM|u_e4           corr +0.155 rms_ratio 0.92 gain +0.17
+   NOM|ff             corr -0.017 rms_ratio 113129971738608012009406464.00 gain -0.00
+   NOM|fb             corr +0.005 rms_ratio 124978971151503.02 gain +0.00
+   IVd3|u_e4          corr +0.054 rms_ratio 0.74 gain +0.07
+   IVd8|u_e4          corr +0.464 rms_ratio 0.76 gain +0.61
+   IVnoanchor|u_e4    corr +0.252 rms_ratio 0.74 gain +0.34
+
+== ge15 / T64B  meas band rms 4.48 deg/s  242 s
+   IV|u_e4            corr +0.354 rms_ratio 0.51 gain +0.69
+   IV|ff              corr +0.005 rms_ratio 2105014578905460591063146995560229109760.00 gain +0.00
+   IV|fb              corr +0.131 rms_ratio 0.40 gain +0.33
+   IVF|u_e4           corr +0.330 rms_ratio 0.50 gain +0.66
+   S5|u_e4            corr +0.595 rms_ratio 1.74 gain +0.34
+   S5|ff              corr -0.000 rms_ratio inf gain -0.00
+   S5|fb              corr +0.477 rms_ratio 0.54 gain +0.88
+   S5Jlo|u_e4         corr +0.568 rms_ratio 1.69 gain +0.34
+   S5Jhi|u_e4         corr +0.629 rms_ratio 1.66 gain +0.38
+   NOM|u_e4           corr +0.316 rms_ratio 0.49 gain +0.64
+   NOM|ff             corr -0.005 rms_ratio 115038088446214664434648316723205899284158840884428800000.00 gain -0.00
+   NOM|fb             corr +0.005 rms_ratio 3620451351904042142032228379473078034361161940182499328.00 gain +0.00
+   IVd3|u_e4          corr +0.135 rms_ratio 0.51 gain +0.26
+   IVd8|u_e4          corr +0.607 rms_ratio 0.52 gain +1.17
+   IVnoanchor|u_e4    corr +0.299 rms_ratio 0.51 gain +0.58
+
+== ge15 / T5  meas band rms 1.71 deg/s  275 s
+   IV|u_e4            corr +0.362 rms_ratio 0.56 gain +0.64
+   IV|ff              corr +0.025 rms_ratio 17770878689860504256512.00 gain +0.00
+   IV|fb              corr -0.018 rms_ratio 2182945820290043871232.00 gain -0.00
+   IVF|u_e4           corr +0.182 rms_ratio 0.72 gain +0.25
+   S5|u_e4            corr +0.291 rms_ratio 1.05 gain +0.28
+   S5|ff              corr +0.024 rms_ratio 6612100173418616826498987495361533666101330905807408685353002122357100429318300708970168320.00 gain +0.00
+   S5|fb              corr -0.026 rms_ratio 108280369336429923285662417766307929431835209171542250255334743933598485512116675668869120.00 gain -0.00
+   S5Jlo|u_e4         corr +0.261 rms_ratio 0.94 gain +0.28
+   S5Jhi|u_e4         corr +0.338 rms_ratio 1.17 gain +0.29
+   NOM|u_e4           corr +0.172 rms_ratio 0.67 gain +0.26
+   NOM|ff             corr +0.034 rms_ratio 27119731736692795636232602255360.00 gain +0.00
+   NOM|fb             corr -0.031 rms_ratio 2564095807309706572782735720448.00 gain -0.00
+   IVd3|u_e4          corr +0.134 rms_ratio 0.56 gain +0.24
+   IVd8|u_e4          corr +0.623 rms_ratio 0.58 gain +1.08
+   IVnoanchor|u_e4    corr +0.375 rms_ratio 0.55 gain +0.68
+
+== ge15 / T4  meas band rms 3.29 deg/s  204 s
+   IV|u_e4            corr +0.300 rms_ratio 0.41 gain +0.73
+   IV|ff              corr +0.002 rms_ratio 5107693025177577472.00 gain +0.00
+   IV|fb              corr +0.066 rms_ratio 0.38 gain +0.17
+   IVF|u_e4           corr +0.166 rms_ratio 0.40 gain +0.41
+   S5|u_e4            corr +0.283 rms_ratio 0.63 gain +0.45
+   S5|ff              corr +0.001 rms_ratio 67353179389052924662842125491907394605892113905641212502244657913306240369457121078391341056.00 gain +0.00
+   S5|fb              corr +0.441 rms_ratio 0.42 gain +1.04
+   S5Jlo|u_e4         corr +0.256 rms_ratio 0.60 gain +0.43
+   S5Jhi|u_e4         corr +0.308 rms_ratio 0.66 gain +0.46
+   NOM|u_e4           corr +0.138 rms_ratio 0.38 gain +0.36
+   NOM|ff             corr +0.003 rms_ratio 6043229672292764918727901988186124629640249860033177010044928.00 gain +0.00
+   NOM|fb             corr +0.147 rms_ratio 0.29 gain +0.51
+   IVd3|u_e4          corr +0.065 rms_ratio 0.41 gain +0.16
+   IVd8|u_e4          corr +0.568 rms_ratio 0.42 gain +1.36
+   IVnoanchor|u_e4    corr +0.308 rms_ratio 0.40 gain +0.76

@@ -1,0 +1,542 @@
+[
+ {
+  "vb": "2-8",
+  "terc": "all",
+  "group": "V282",
+  "sec": 449.72,
+  "nroutes": 3,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 0.8325175040506718,
+  "rE_lapose_ci": [
+   0.7083665050430279,
+   1.2370402261979223
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000064--ce6b0b0ebb",
+    "rE_yaw": 1.0,
+    "sec": 59.6
+   },
+   {
+    "route": "00000065--b9f78988bd",
+    "rE_yaw": 1.0,
+    "sec": 58.84
+   },
+   {
+    "route": "0000006c--2bc842dbac",
+    "rE_yaw": 1.0,
+    "sec": 331.28
+   }
+  ]
+ },
+ {
+  "vb": "2-8",
+  "terc": "all",
+  "group": "T64",
+  "sec": 116.88,
+  "nroutes": 2,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 2.4569594346820973,
+  "rE_lapose_ci": [
+   1.2522718323441713,
+   2.9057699167408364
+  ],
+  "per_route_yaw": [
+   {
+    "route": "0000006c--68c6e94b17",
+    "rE_yaw": 1.0,
+    "sec": 57.88
+   },
+   {
+    "route": "0000006d--05e83bb04f",
+    "rE_yaw": 1.0,
+    "sec": 59.0
+   }
+  ]
+ },
+ {
+  "vb": "2-8",
+  "terc": "all",
+  "group": "T64B",
+  "sec": 131.96,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 1.0775535950099089,
+  "rE_lapose_ci": [
+   0.8009228048157628,
+   1.4318641920771042
+  ],
+  "per_route_yaw": [
+   {
+    "route": "0000006e--6ca3e014fd",
+    "rE_yaw": 1.0,
+    "sec": 131.96
+   }
+  ]
+ },
+ {
+  "vb": "2-8",
+  "terc": "all",
+  "group": "T5",
+  "sec": 49.56,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 2.946576514190095,
+  "rE_lapose_ci": [
+   1.9360930354029058,
+   3.9773579786667805
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000076--d0b7ea7e4d",
+    "rE_yaw": 1.0,
+    "sec": 49.56
+   }
+  ]
+ },
+ {
+  "vb": "2-8",
+  "terc": "all",
+  "group": "T4",
+  "sec": 179.88,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 1.8221020246337674,
+  "rE_lapose_ci": [
+   1.4772076636697224,
+   2.185323166761935
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000075--6c8687d5bd",
+    "rE_yaw": 1.0,
+    "sec": 179.88
+   }
+  ]
+ },
+ {
+  "vb": "2-8",
+  "terc": "hi",
+  "group": "V282",
+  "sec": 65.16,
+  "nroutes": 3,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 0.7777181612525348,
+  "rE_lapose_ci": [
+   0.6306309463137132,
+   0.909643661039303
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000064--ce6b0b0ebb",
+    "rE_yaw": 1.0,
+    "sec": 4.64
+   },
+   {
+    "route": "00000065--b9f78988bd",
+    "rE_yaw": 1.0,
+    "sec": 12.32
+   },
+   {
+    "route": "0000006c--2bc842dbac",
+    "rE_yaw": 1.0,
+    "sec": 48.2
+   }
+  ]
+ },
+ {
+  "vb": "2-8",
+  "terc": "hi",
+  "group": "T64",
+  "sec": 34.88,
+  "nroutes": 2,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 2.482094479991451,
+  "rE_lapose_ci": [
+   1.3192464646380817,
+   2.9357825621803606
+  ],
+  "per_route_yaw": [
+   {
+    "route": "0000006c--68c6e94b17",
+    "rE_yaw": 1.0,
+    "sec": 14.84
+   },
+   {
+    "route": "0000006d--05e83bb04f",
+    "rE_yaw": 1.0,
+    "sec": 20.04
+   }
+  ]
+ },
+ {
+  "vb": "2-8",
+  "terc": "hi",
+  "group": "T64B",
+  "sec": 57.44,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 1.0610866193497184,
+  "rE_lapose_ci": [
+   0.7627513154115084,
+   1.3988518197267097
+  ],
+  "per_route_yaw": [
+   {
+    "route": "0000006e--6ca3e014fd",
+    "rE_yaw": 1.0,
+    "sec": 57.44
+   }
+  ]
+ },
+ {
+  "vb": "2-8",
+  "terc": "hi",
+  "group": "T5",
+  "sec": 19.16,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 2.9312334339945845,
+  "rE_lapose_ci": [
+   1.9405795104453645,
+   4.0503862958886945
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000076--d0b7ea7e4d",
+    "rE_yaw": 1.0,
+    "sec": 19.16
+   }
+  ]
+ },
+ {
+  "vb": "2-8",
+  "terc": "hi",
+  "group": "T4",
+  "sec": 68.24,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 1.805184003283854,
+  "rE_lapose_ci": [
+   1.4322760824316012,
+   2.188566843293983
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000075--6c8687d5bd",
+    "rE_yaw": 1.0,
+    "sec": 68.24
+   }
+  ]
+ },
+ {
+  "vb": "8-15",
+  "terc": "all",
+  "group": "V282",
+  "sec": 754.32,
+  "nroutes": 3,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 0.9530237429078177,
+  "rE_lapose_ci": [
+   0.8618079816846236,
+   1.0662100332927302
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000064--ce6b0b0ebb",
+    "rE_yaw": 1.0,
+    "sec": 90.0
+   },
+   {
+    "route": "00000065--b9f78988bd",
+    "rE_yaw": 1.0,
+    "sec": 189.48
+   },
+   {
+    "route": "0000006c--2bc842dbac",
+    "rE_yaw": 1.0,
+    "sec": 474.84
+   }
+  ]
+ },
+ {
+  "vb": "8-15",
+  "terc": "all",
+  "group": "T64",
+  "sec": 366.68,
+  "nroutes": 2,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 1.434916569754387,
+  "rE_lapose_ci": [
+   1.2398127660485052,
+   1.5591107049868163
+  ],
+  "per_route_yaw": [
+   {
+    "route": "0000006c--68c6e94b17",
+    "rE_yaw": 1.0,
+    "sec": 173.84
+   },
+   {
+    "route": "0000006d--05e83bb04f",
+    "rE_yaw": 1.0,
+    "sec": 192.84
+   }
+  ]
+ },
+ {
+  "vb": "8-15",
+  "terc": "all",
+  "group": "T64B",
+  "sec": 297.48,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 2.044938213194277,
+  "rE_lapose_ci": [
+   1.5836994648166605,
+   2.3959852168175813
+  ],
+  "per_route_yaw": [
+   {
+    "route": "0000006e--6ca3e014fd",
+    "rE_yaw": 1.0,
+    "sec": 297.48
+   }
+  ]
+ },
+ {
+  "vb": "8-15",
+  "terc": "all",
+  "group": "T5",
+  "sec": 83.44,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 1.0769424331349604,
+  "rE_lapose_ci": [
+   0.6847408937163201,
+   2.144599108522612
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000076--d0b7ea7e4d",
+    "rE_yaw": 1.0,
+    "sec": 83.44
+   }
+  ]
+ },
+ {
+  "vb": "8-15",
+  "terc": "all",
+  "group": "T4",
+  "sec": 333.2,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 2.1024489827841966,
+  "rE_lapose_ci": [
+   1.5474367834568798,
+   2.4312902549778643
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000075--6c8687d5bd",
+    "rE_yaw": 1.0,
+    "sec": 333.2
+   }
+  ]
+ },
+ {
+  "vb": "8-15",
+  "terc": "hi",
+  "group": "V282",
+  "sec": 224.88,
+  "nroutes": 3,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 0.8815353125994758,
+  "rE_lapose_ci": [
+   0.7922976984010189,
+   1.0045951053843583
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000064--ce6b0b0ebb",
+    "rE_yaw": 1.0,
+    "sec": 33.88
+   },
+   {
+    "route": "00000065--b9f78988bd",
+    "rE_yaw": 1.0,
+    "sec": 50.96
+   },
+   {
+    "route": "0000006c--2bc842dbac",
+    "rE_yaw": 1.0,
+    "sec": 140.04
+   }
+  ]
+ },
+ {
+  "vb": "8-15",
+  "terc": "hi",
+  "group": "T64",
+  "sec": 125.72,
+  "nroutes": 2,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 1.4136044250008395,
+  "rE_lapose_ci": [
+   1.192142322312999,
+   1.5537474637361468
+  ],
+  "per_route_yaw": [
+   {
+    "route": "0000006c--68c6e94b17",
+    "rE_yaw": 1.0,
+    "sec": 55.28
+   },
+   {
+    "route": "0000006d--05e83bb04f",
+    "rE_yaw": 1.0,
+    "sec": 70.44
+   }
+  ]
+ },
+ {
+  "vb": "8-15",
+  "terc": "hi",
+  "group": "T64B",
+  "sec": 121.52,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 2.048188044917923,
+  "rE_lapose_ci": [
+   1.5088206081438211,
+   2.435428531349711
+  ],
+  "per_route_yaw": [
+   {
+    "route": "0000006e--6ca3e014fd",
+    "rE_yaw": 1.0,
+    "sec": 121.52
+   }
+  ]
+ },
+ {
+  "vb": "8-15",
+  "terc": "hi",
+  "group": "T5",
+  "sec": 36.24,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 0.9776797640839707,
+  "rE_lapose_ci": [
+   0.6395904570515056,
+   2.089044120016938
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000076--d0b7ea7e4d",
+    "rE_yaw": 1.0,
+    "sec": 36.24
+   }
+  ]
+ },
+ {
+  "vb": "8-15",
+  "terc": "hi",
+  "group": "T4",
+  "sec": 95.64,
+  "nroutes": 1,
+  "rE_layaw": 1.0,
+  "rE_layaw_ci": [
+   1.0,
+   1.0
+  ],
+  "rE_lapose_samepool": 2.1236177060994414,
+  "rE_lapose_ci": [
+   1.440585699831162,
+   2.4584010621142536
+  ],
+  "per_route_yaw": [
+   {
+    "route": "00000075--6c8687d5bd",
+    "rE_yaw": 1.0,
+    "sec": 95.64
+   }
+  ]
+ }
+]

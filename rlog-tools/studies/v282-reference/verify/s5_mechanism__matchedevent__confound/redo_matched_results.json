@@ -1,0 +1,1670 @@
+{
+ "T64|v8-15": {
+  "full": {
+   "n": 9,
+   "v_t": 10.309651149627953,
+   "v_ref": 9.74132366697065,
+   "adr_t": 17.353802768113226,
+   "adr_ref": 17.769147087586788,
+   "match_dist_med": 0.14105280281231528,
+   "t_routes": [
+    "0000006c--68c6e94b17",
+    "0000006d--05e83bb04f"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd",
+    "0000006c--2bc842dbac"
+   ],
+   "ang_lag": {
+    "t": 0.31,
+    "ref": 0.23,
+    "diff": 0.08,
+    "ci_event": [
+     0.06,
+     0.13
+    ],
+    "ci_routeblock": [
+     0.08,
+     0.12
+    ],
+    "n_t_routes": 2
+   },
+   "ang_gain": {
+    "t": 1.123,
+    "ref": 0.971,
+    "diff": 0.13,
+    "ci_event": [
+     -0.165,
+     0.272
+    ],
+    "ci_routeblock": [
+     0.004,
+     0.13
+    ],
+    "n_t_routes": 2
+   },
+   "ang_err_deg": {
+    "t": 2.887,
+    "ref": 1.661,
+    "diff": 1.226,
+    "ci_event": [
+     0.324,
+     3.529
+    ],
+    "ci_routeblock": [
+     1.103,
+     2.801
+    ],
+    "n_t_routes": 2
+   },
+   "rate_gain": {
+    "t": 1.124,
+    "ref": 0.894,
+    "diff": 0.186,
+    "ci_event": [
+     -0.016,
+     0.3
+    ],
+    "ci_routeblock": [
+     0.14,
+     0.186
+    ],
+    "n_t_routes": 2
+   },
+   "hf": {
+    "t": 6.97,
+    "ref": 1.297,
+    "diff": 5.226,
+    "ci_event": [
+     3.046,
+     7.392
+    ],
+    "ci_routeblock": [
+     4.383,
+     6.239
+    ],
+    "n_t_routes": 2
+   },
+   "la_pose_gain": {
+    "t": 1.083,
+    "ref": 1.037,
+    "diff": -0.001,
+    "ci_event": [
+     -0.129,
+     0.176
+    ],
+    "ci_routeblock": [
+     -0.093,
+     0.139
+    ],
+    "n_t_routes": 2
+   },
+   "la_pose_lag": {
+    "t": 0.18,
+    "ref": 0.1,
+    "diff": 0.01,
+    "ci_event": [
+     -0.04,
+     0.24
+    ],
+    "ci_routeblock": [
+     0.01,
+     0.045
+    ],
+    "n_t_routes": 2
+   },
+   "la_act_rough": {
+    "t": 0.385,
+    "ref": 0.162,
+    "diff": 0.222,
+    "ci_event": [
+     0.133,
+     0.339
+    ],
+    "ci_routeblock": [
+     0.222,
+     0.236
+    ],
+    "n_t_routes": 2
+   }
+  },
+  "loo": {
+   "n": 5,
+   "v_t": 13.614753061912896,
+   "v_ref": 13.94238506342408,
+   "adr_t": 14.190594905991071,
+   "adr_ref": 12.202447752208645,
+   "match_dist_med": 0.07849592475834755,
+   "t_routes": [
+    "0000006c--68c6e94b17",
+    "0000006d--05e83bb04f"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd"
+   ],
+   "ang_lag": {
+    "t": 0.28,
+    "ref": 0.15,
+    "diff": 0.13,
+    "ci_event": [
+     0.04,
+     0.16
+    ],
+    "ci_routeblock": [
+     0.09,
+     0.13
+    ],
+    "n_t_routes": 2
+   },
+   "ang_gain": {
+    "t": 1.18,
+    "ref": 0.958,
+    "diff": 0.222,
+    "ci_event": [
+     0.097,
+     0.259
+    ],
+    "ci_routeblock": [
+     0.212,
+     0.222
+    ],
+    "n_t_routes": 2
+   },
+   "ang_err_deg": {
+    "t": 2.306,
+    "ref": 1.027,
+    "diff": 1.226,
+    "ci_event": [
+     0.324,
+     1.467
+    ],
+    "ci_routeblock": [
+     0.895,
+     1.226
+    ],
+    "n_t_routes": 2
+   },
+   "rate_gain": {
+    "t": 1.143,
+    "ref": 0.956,
+    "diff": 0.186,
+    "ci_event": [
+     0.11,
+     0.3
+    ],
+    "ci_routeblock": [
+     0.186,
+     0.23
+    ],
+    "n_t_routes": 2
+   },
+   "hf": {
+    "t": 4.114,
+    "ref": 1.068,
+    "diff": 3.046,
+    "ci_event": [
+     2.175,
+     6.776
+    ],
+    "ci_routeblock": [
+     3.046,
+     4.476
+    ],
+    "n_t_routes": 2
+   },
+   "la_pose_gain": {
+    "t": 1.079,
+    "ref": 0.966,
+    "diff": 0.113,
+    "ci_event": [
+     -0.056,
+     0.186
+    ],
+    "ci_routeblock": [
+     0.029,
+     0.178
+    ],
+    "n_t_routes": 2
+   },
+   "la_pose_lag": {
+    "t": 0.32,
+    "ref": 0.1,
+    "diff": 0.22,
+    "ci_event": [
+     0.08,
+     0.24
+    ],
+    "ci_routeblock": [
+     0.115,
+     0.22
+    ],
+    "n_t_routes": 2
+   },
+   "la_act_rough": {
+    "t": 0.384,
+    "ref": 0.162,
+    "diff": 0.222,
+    "ci_event": [
+     0.113,
+     0.318
+    ],
+    "ci_routeblock": [
+     0.216,
+     0.222
+    ],
+    "n_t_routes": 2
+   }
+  }
+ },
+ "T64|v15-99": {
+  "full": {
+   "n": 34,
+   "v_t": 23.50914360001847,
+   "v_ref": 24.12186930736005,
+   "adr_t": 4.653921620045551,
+   "adr_ref": 4.861581619032462,
+   "match_dist_med": 0.1071777874752797,
+   "t_routes": [
+    "0000006c--68c6e94b17",
+    "0000006d--05e83bb04f"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd",
+    "0000006c--2bc842dbac"
+   ],
+   "ang_lag": {
+    "t": 0.31,
+    "ref": 0.14,
+    "diff": 0.15,
+    "ci_event": [
+     0.085,
+     0.185
+    ],
+    "ci_routeblock": [
+     0.09,
+     0.18
+    ],
+    "n_t_routes": 2
+   },
+   "ang_gain": {
+    "t": 1.243,
+    "ref": 0.981,
+    "diff": 0.289,
+    "ci_event": [
+     0.232,
+     0.352
+    ],
+    "ci_routeblock": [
+     0.285,
+     0.29
+    ],
+    "n_t_routes": 2
+   },
+   "ang_err_deg": {
+    "t": 0.79,
+    "ref": 0.31,
+    "diff": 0.482,
+    "ci_event": [
+     0.395,
+     0.564
+    ],
+    "ci_routeblock": [
+     0.395,
+     0.596
+    ],
+    "n_t_routes": 2
+   },
+   "rate_gain": {
+    "t": 1.104,
+    "ref": 0.9,
+    "diff": 0.26,
+    "ci_event": [
+     0.183,
+     0.307
+    ],
+    "ci_routeblock": [
+     0.183,
+     0.315
+    ],
+    "n_t_routes": 2
+   },
+   "hf": {
+    "t": 1.259,
+    "ref": 0.468,
+    "diff": 0.839,
+    "ci_event": [
+     0.581,
+     0.972
+    ],
+    "ci_routeblock": [
+     0.672,
+     1.364
+    ],
+    "n_t_routes": 2
+   },
+   "la_pose_gain": {
+    "t": 1.114,
+    "ref": 0.921,
+    "diff": 0.194,
+    "ci_event": [
+     0.159,
+     0.256
+    ],
+    "ci_routeblock": [
+     0.177,
+     0.204
+    ],
+    "n_t_routes": 2
+   },
+   "la_pose_lag": {
+    "t": 0.315,
+    "ref": 0.015,
+    "diff": 0.18,
+    "ci_event": [
+     0.12,
+     0.31
+    ],
+    "ci_routeblock": [
+     0.17,
+     0.23
+    ],
+    "n_t_routes": 2
+   },
+   "la_act_rough": {
+    "t": 0.354,
+    "ref": 0.209,
+    "diff": 0.138,
+    "ci_event": [
+     0.084,
+     0.21
+    ],
+    "ci_routeblock": [
+     0.113,
+     0.304
+    ],
+    "n_t_routes": 2
+   }
+  },
+  "loo": {
+   "n": 30,
+   "v_t": 23.708605538979732,
+   "v_ref": 24.12186930736005,
+   "adr_t": 4.409995890095043,
+   "adr_ref": 4.861581619032462,
+   "match_dist_med": 0.16763298468725032,
+   "t_routes": [
+    "0000006c--68c6e94b17",
+    "0000006d--05e83bb04f"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd"
+   ],
+   "ang_lag": {
+    "t": 0.32,
+    "ref": 0.14,
+    "diff": 0.18,
+    "ci_event": [
+     0.13,
+     0.205
+    ],
+    "ci_routeblock": [
+     0.17,
+     0.18
+    ],
+    "n_t_routes": 2
+   },
+   "ang_gain": {
+    "t": 1.241,
+    "ref": 0.931,
+    "diff": 0.288,
+    "ci_event": [
+     0.248,
+     0.347
+    ],
+    "ci_routeblock": [
+     0.281,
+     0.308
+    ],
+    "n_t_routes": 2
+   },
+   "ang_err_deg": {
+    "t": 0.783,
+    "ref": 0.293,
+    "diff": 0.477,
+    "ci_event": [
+     0.39,
+     0.559
+    ],
+    "ci_routeblock": [
+     0.408,
+     0.578
+    ],
+    "n_t_routes": 2
+   },
+   "rate_gain": {
+    "t": 1.095,
+    "ref": 0.869,
+    "diff": 0.248,
+    "ci_event": [
+     0.122,
+     0.291
+    ],
+    "ci_routeblock": [
+     0.22,
+     0.289
+    ],
+    "n_t_routes": 2
+   },
+   "hf": {
+    "t": 1.235,
+    "ref": 0.535,
+    "diff": 0.745,
+    "ci_event": [
+     0.369,
+     0.897
+    ],
+    "ci_routeblock": [
+     0.583,
+     0.855
+    ],
+    "n_t_routes": 2
+   },
+   "la_pose_gain": {
+    "t": 1.132,
+    "ref": 0.894,
+    "diff": 0.198,
+    "ci_event": [
+     0.172,
+     0.26
+    ],
+    "ci_routeblock": [
+     0.192,
+     0.201
+    ],
+    "n_t_routes": 2
+   },
+   "la_pose_lag": {
+    "t": 0.34,
+    "ref": 0.0,
+    "diff": 0.315,
+    "ci_event": [
+     0.155,
+     0.375
+    ],
+    "ci_routeblock": [
+     0.31,
+     0.36
+    ],
+    "n_t_routes": 2
+   },
+   "la_act_rough": {
+    "t": 0.337,
+    "ref": 0.21,
+    "diff": 0.131,
+    "ci_event": [
+     0.066,
+     0.168
+    ],
+    "ci_routeblock": [
+     0.125,
+     0.167
+    ],
+    "n_t_routes": 2
+   }
+  }
+ },
+ "T64B|v8-15": {
+  "full": {
+   "n": 16,
+   "v_t": 10.382801412051531,
+   "v_ref": 10.073268795121669,
+   "adr_t": 20.663456923042503,
+   "adr_ref": 20.44588975059085,
+   "match_dist_med": 0.13119875955332655,
+   "t_routes": [
+    "0000006e--6ca3e014fd"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd",
+    "0000006c--2bc842dbac"
+   ],
+   "ang_lag": {
+    "t": 0.33,
+    "ref": 0.23,
+    "diff": 0.085,
+    "ci_event": [
+     0.01,
+     0.14
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 1.019,
+    "ref": 1.003,
+    "diff": -0.03,
+    "ci_event": [
+     -0.076,
+     0.043
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 3.324,
+    "ref": 1.797,
+    "diff": 1.514,
+    "ci_event": [
+     1.034,
+     1.823
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 0.997,
+    "ref": 0.888,
+    "diff": 0.119,
+    "ci_event": [
+     -0.16,
+     0.236
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 7.532,
+    "ref": 2.1,
+    "diff": 4.448,
+    "ci_event": [
+     2.91,
+     8.029
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 1.055,
+    "ref": 1.03,
+    "diff": 0.034,
+    "ci_event": [
+     -0.022,
+     0.088
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.11,
+    "ref": 0.0,
+    "diff": 0.025,
+    "ci_event": [
+     -0.07,
+     0.22
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.452,
+    "ref": 0.241,
+    "diff": 0.211,
+    "ci_event": [
+     0.058,
+     0.423
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  },
+  "loo": {
+   "n": 9,
+   "v_t": 11.423968290424153,
+   "v_ref": 9.663741797622807,
+   "adr_t": 18.6292027985885,
+   "adr_ref": 17.769147087586788,
+   "match_dist_med": 0.19567079862290582,
+   "t_routes": [
+    "0000006e--6ca3e014fd"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd"
+   ],
+   "ang_lag": {
+    "t": 0.32,
+    "ref": 0.17,
+    "diff": 0.14,
+    "ci_event": [
+     0.08,
+     0.23
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 1.025,
+    "ref": 1.018,
+    "diff": 0.007,
+    "ci_event": [
+     -0.006,
+     0.109
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 3.182,
+    "ref": 1.661,
+    "diff": 1.521,
+    "ci_event": [
+     0.93,
+     1.718
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 1.092,
+    "ref": 0.98,
+    "diff": 0.118,
+    "ci_event": [
+     -0.058,
+     0.299
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 4.469,
+    "ref": 1.297,
+    "diff": 3.172,
+    "ci_event": [
+     2.369,
+     7.88
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 1.012,
+    "ref": 1.022,
+    "diff": -0.01,
+    "ci_event": [
+     -0.048,
+     0.029
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.3,
+    "ref": 0.14,
+    "diff": 0.17,
+    "ci_event": [
+     0.0,
+     0.35
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.309,
+    "ref": 0.138,
+    "diff": 0.171,
+    "ci_event": [
+     0.057,
+     0.263
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  }
+ },
+ "T64B|v15-99": {
+  "full": {
+   "n": 33,
+   "v_t": 23.997088074891913,
+   "v_ref": 24.15849509656549,
+   "adr_t": 7.955934218362426,
+   "adr_ref": 8.319346104771451,
+   "match_dist_med": 0.07440798838565062,
+   "t_routes": [
+    "0000006e--6ca3e014fd"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd",
+    "0000006c--2bc842dbac"
+   ],
+   "ang_lag": {
+    "t": 0.3,
+    "ref": 0.13,
+    "diff": 0.16,
+    "ci_event": [
+     0.11,
+     0.2
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 1.121,
+    "ref": 1.004,
+    "diff": 0.147,
+    "ci_event": [
+     0.027,
+     0.289
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 0.973,
+    "ref": 0.398,
+    "diff": 0.493,
+    "ci_event": [
+     0.408,
+     0.693
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 1.013,
+    "ref": 0.912,
+    "diff": 0.115,
+    "ci_event": [
+     -0.007,
+     0.278
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 2.475,
+    "ref": 0.889,
+    "diff": 1.767,
+    "ci_event": [
+     1.257,
+     2.414
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 1.016,
+    "ref": 0.99,
+    "diff": 0.021,
+    "ci_event": [
+     -0.001,
+     0.076
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.14,
+    "ref": 0.02,
+    "diff": 0.04,
+    "ci_event": [
+     0.0,
+     0.19
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.563,
+    "ref": 0.227,
+    "diff": 0.274,
+    "ci_event": [
+     0.169,
+     0.387
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  },
+  "loo": {
+   "n": 25,
+   "v_t": 25.929468923970976,
+   "v_ref": 26.707090252369817,
+   "adr_t": 6.415553814402486,
+   "adr_ref": 6.162599417627868,
+   "match_dist_med": 0.19449850075699432,
+   "t_routes": [
+    "0000006e--6ca3e014fd"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd"
+   ],
+   "ang_lag": {
+    "t": 0.33,
+    "ref": 0.22,
+    "diff": 0.11,
+    "ci_event": [
+     0.03,
+     0.18
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 1.176,
+    "ref": 1.052,
+    "diff": 0.134,
+    "ci_event": [
+     0.026,
+     0.247
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 0.779,
+    "ref": 0.301,
+    "diff": 0.455,
+    "ci_event": [
+     0.373,
+     0.683
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 1.013,
+    "ref": 0.961,
+    "diff": 0.064,
+    "ci_event": [
+     -0.058,
+     0.18
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 1.996,
+    "ref": 0.622,
+    "diff": 1.391,
+    "ci_event": [
+     0.835,
+     2.406
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 1.03,
+    "ref": 1.007,
+    "diff": 0.045,
+    "ci_event": [
+     -0.03,
+     0.106
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.19,
+    "ref": 0.14,
+    "diff": 0.03,
+    "ci_event": [
+     -0.04,
+     0.26
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.498,
+    "ref": 0.206,
+    "diff": 0.262,
+    "ci_event": [
+     0.183,
+     0.358
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  }
+ },
+ "T5|v8-15": {
+  "full": {
+   "n": 8,
+   "v_t": 10.939078251761178,
+   "v_ref": 9.74132366697065,
+   "adr_t": 27.473935152599367,
+   "adr_ref": 24.711637385474283,
+   "match_dist_med": 0.1404569928131224,
+   "t_routes": [
+    "00000076--d0b7ea7e4d"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "0000006c--2bc842dbac"
+   ],
+   "ang_lag": {
+    "t": 0.42,
+    "ref": 0.25,
+    "diff": 0.215,
+    "ci_event": [
+     0.08,
+     0.27
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 1.094,
+    "ref": 0.971,
+    "diff": 0.143,
+    "ci_event": [
+     -0.008,
+     0.227
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 4.684,
+    "ref": 1.673,
+    "diff": 2.213,
+    "ci_event": [
+     -0.8,
+     3.569
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 1.001,
+    "ref": 0.854,
+    "diff": 0.179,
+    "ci_event": [
+     -0.048,
+     0.347
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 6.54,
+    "ref": 1.744,
+    "diff": 4.637,
+    "ci_event": [
+     3.25,
+     7.23
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 1.08,
+    "ref": 1.091,
+    "diff": -0.023,
+    "ci_event": [
+     -0.174,
+     0.122
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.275,
+    "ref": 0.085,
+    "diff": 0.115,
+    "ci_event": [
+     0.015,
+     0.226
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.38,
+    "ref": 0.209,
+    "diff": 0.166,
+    "ci_event": [
+     0.082,
+     0.35
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  },
+  "loo": null
+ },
+ "T5|v15-99": {
+  "full": {
+   "n": 42,
+   "v_t": 23.85110443078581,
+   "v_ref": 24.14018220196277,
+   "adr_t": 6.321531758490673,
+   "adr_ref": 5.949310088793203,
+   "match_dist_med": 0.10234059254505411,
+   "t_routes": [
+    "00000076--d0b7ea7e4d"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd",
+    "0000006c--2bc842dbac"
+   ],
+   "ang_lag": {
+    "t": 0.575,
+    "ref": 0.14,
+    "diff": 0.395,
+    "ci_event": [
+     0.36,
+     0.43
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 1.093,
+    "ref": 0.973,
+    "diff": 0.128,
+    "ci_event": [
+     0.076,
+     0.174
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 1.516,
+    "ref": 0.326,
+    "diff": 1.116,
+    "ci_event": [
+     0.933,
+     1.213
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 0.971,
+    "ref": 0.906,
+    "diff": 0.07,
+    "ci_event": [
+     -0.003,
+     0.144
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 1.329,
+    "ref": 0.682,
+    "diff": 0.664,
+    "ci_event": [
+     0.519,
+     0.883
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 1.016,
+    "ref": 0.984,
+    "diff": 0.058,
+    "ci_event": [
+     0.018,
+     0.102
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.59,
+    "ref": 0.0,
+    "diff": 0.54,
+    "ci_event": [
+     0.49,
+     0.605
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.324,
+    "ref": 0.23,
+    "diff": 0.089,
+    "ci_event": [
+     0.032,
+     0.139
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  },
+  "loo": {
+   "n": 39,
+   "v_t": 23.432547008327894,
+   "v_ref": 21.77919458288228,
+   "adr_t": 6.133425568989645,
+   "adr_ref": 5.687078038618582,
+   "match_dist_med": 0.17321060736163651,
+   "t_routes": [
+    "00000076--d0b7ea7e4d"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd"
+   ],
+   "ang_lag": {
+    "t": 0.59,
+    "ref": 0.14,
+    "diff": 0.43,
+    "ci_event": [
+     0.37,
+     0.46
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 1.092,
+    "ref": 0.931,
+    "diff": 0.153,
+    "ci_event": [
+     0.088,
+     0.205
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 1.482,
+    "ref": 0.3,
+    "diff": 1.168,
+    "ci_event": [
+     0.919,
+     1.32
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 0.962,
+    "ref": 0.852,
+    "diff": 0.069,
+    "ci_event": [
+     0.014,
+     0.109
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 1.287,
+    "ref": 0.622,
+    "diff": 0.644,
+    "ci_event": [
+     0.541,
+     0.901
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 1.013,
+    "ref": 0.866,
+    "diff": 0.113,
+    "ci_event": [
+     0.038,
+     0.145
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.59,
+    "ref": 0.02,
+    "diff": 0.55,
+    "ci_event": [
+     0.48,
+     0.61
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.312,
+    "ref": 0.214,
+    "diff": 0.096,
+    "ci_event": [
+     0.059,
+     0.143
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  }
+ },
+ "T4|v8-15": {
+  "full": {
+   "n": 14,
+   "v_t": 9.990281291887488,
+   "v_ref": 9.499280584832754,
+   "adr_t": 47.15171650034948,
+   "adr_ref": 50.53208916191387,
+   "match_dist_med": 0.1740715074185558,
+   "t_routes": [
+    "00000075--6c8687d5bd"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "0000006c--2bc842dbac"
+   ],
+   "ang_lag": {
+    "t": 0.34,
+    "ref": 0.3,
+    "diff": 0.06,
+    "ci_event": [
+     -0.05,
+     0.17
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 0.932,
+    "ref": 0.993,
+    "diff": -0.057,
+    "ci_event": [
+     -0.142,
+     0.034
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 4.863,
+    "ref": 6.301,
+    "diff": 1.584,
+    "ci_event": [
+     -1.623,
+     1.962
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 1.027,
+    "ref": 0.987,
+    "diff": 0.063,
+    "ci_event": [
+     -0.055,
+     0.398
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 7.194,
+    "ref": 2.568,
+    "diff": 5.247,
+    "ci_event": [
+     3.282,
+     7.475
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 0.993,
+    "ref": 1.037,
+    "diff": -0.044,
+    "ci_event": [
+     -0.117,
+     -0.022
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.24,
+    "ref": 0.26,
+    "diff": 0.07,
+    "ci_event": [
+     -0.26,
+     0.17
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.621,
+    "ref": 0.257,
+    "diff": 0.346,
+    "ci_event": [
+     0.233,
+     0.551
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  },
+  "loo": {
+   "n": 5,
+   "v_t": 11.421824727833833,
+   "v_ref": 9.663741797622807,
+   "adr_t": 14.735789359449836,
+   "adr_ref": 17.769147087586788,
+   "match_dist_med": 0.18729265728419808,
+   "t_routes": [
+    "00000075--6c8687d5bd"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd"
+   ],
+   "ang_lag": {
+    "t": 0.38,
+    "ref": 0.17,
+    "diff": 0.17,
+    "ci_event": [
+     0.1,
+     0.26
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 1.139,
+    "ref": 1.018,
+    "diff": 0.175,
+    "ci_event": [
+     -0.124,
+     0.247
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 3.142,
+    "ref": 1.661,
+    "diff": 1.552,
+    "ci_event": [
+     0.829,
+     2.576
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 1.242,
+    "ref": 0.98,
+    "diff": 0.262,
+    "ci_event": [
+     -0.087,
+     0.561
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 5.775,
+    "ref": 1.297,
+    "diff": 4.545,
+    "ci_event": [
+     2.822,
+     6.275
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 0.935,
+    "ref": 1.022,
+    "diff": -0.086,
+    "ci_event": [
+     -0.216,
+     0.425
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.39,
+    "ref": 0.14,
+    "diff": 0.25,
+    "ci_event": [
+     0.09,
+     0.37
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.35,
+    "ref": 0.138,
+    "diff": 0.213,
+    "ci_event": [
+     0.1,
+     0.519
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  }
+ },
+ "T4|v15-99": {
+  "full": {
+   "n": 33,
+   "v_t": 20.70621107346613,
+   "v_ref": 19.824811455448753,
+   "adr_t": 7.269291902086827,
+   "adr_ref": 7.565165245828798,
+   "match_dist_med": 0.09439216210059166,
+   "t_routes": [
+    "00000075--6c8687d5bd"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd",
+    "0000006c--2bc842dbac"
+   ],
+   "ang_lag": {
+    "t": 0.47,
+    "ref": 0.14,
+    "diff": 0.31,
+    "ci_event": [
+     0.25,
+     0.36
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 1.087,
+    "ref": 0.997,
+    "diff": 0.113,
+    "ci_event": [
+     -0.011,
+     0.173
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 1.482,
+    "ref": 0.371,
+    "diff": 1.08,
+    "ci_event": [
+     0.738,
+     1.204
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 1.016,
+    "ref": 0.963,
+    "diff": 0.044,
+    "ci_event": [
+     -0.049,
+     0.183
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 1.823,
+    "ref": 0.791,
+    "diff": 0.987,
+    "ci_event": [
+     0.797,
+     1.273
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 1.018,
+    "ref": 1.007,
+    "diff": 0.033,
+    "ci_event": [
+     -0.089,
+     0.09
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.41,
+    "ref": 0.0,
+    "diff": 0.4,
+    "ci_event": [
+     0.2,
+     0.46
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.419,
+    "ref": 0.214,
+    "diff": 0.193,
+    "ci_event": [
+     0.158,
+     0.237
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  },
+  "loo": {
+   "n": 29,
+   "v_t": 20.70621107346613,
+   "v_ref": 19.221476878862997,
+   "adr_t": 7.046021624894472,
+   "adr_ref": 6.864601160162209,
+   "match_dist_med": 0.19352098033086423,
+   "t_routes": [
+    "00000075--6c8687d5bd"
+   ],
+   "ref_routes": [
+    "00000064--ce6b0b0ebb",
+    "00000065--b9f78988bd"
+   ],
+   "ang_lag": {
+    "t": 0.47,
+    "ref": 0.22,
+    "diff": 0.26,
+    "ci_event": [
+     0.21,
+     0.35
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_gain": {
+    "t": 1.072,
+    "ref": 0.931,
+    "diff": 0.11,
+    "ci_event": [
+     0.047,
+     0.239
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "ang_err_deg": {
+    "t": 1.481,
+    "ref": 0.355,
+    "diff": 1.097,
+    "ci_event": [
+     0.738,
+     1.266
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "rate_gain": {
+    "t": 1.002,
+    "ref": 0.856,
+    "diff": 0.146,
+    "ci_event": [
+     0.035,
+     0.224
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "hf": {
+    "t": 1.823,
+    "ref": 0.622,
+    "diff": 1.287,
+    "ci_event": [
+     1.021,
+     1.522
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_gain": {
+    "t": 1.019,
+    "ref": 0.921,
+    "diff": 0.142,
+    "ci_event": [
+     -0.007,
+     0.228
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_pose_lag": {
+    "t": 0.43,
+    "ref": 0.14,
+    "diff": 0.2,
+    "ci_event": [
+     -0.02,
+     0.4
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   },
+   "la_act_rough": {
+    "t": 0.414,
+    "ref": 0.187,
+    "diff": 0.238,
+    "ci_event": [
+     0.183,
+     0.309
+    ],
+    "ci_routeblock": null,
+    "n_t_routes": 1
+   }
+  }
+ }
+}

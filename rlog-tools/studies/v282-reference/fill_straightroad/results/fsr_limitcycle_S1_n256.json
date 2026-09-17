@@ -1,0 +1,82 @@
+{
+ "V282": {
+  "n_runs": 10,
+  "gain_through_fit": 0.8826625860197886,
+  "floor_rms": -0.02223543061304174,
+  "incoherent_share_of_achieved_power": 0.03462055436625993,
+  "dwell_frac": 0.10233320826558831,
+  "I_rms_over_out_rms": 0.12962646111274287,
+  "dob_rms_over_out_rms": null,
+  "Pt_rms_over_out_rms": 0.33554715591899986,
+  "Ft_rms_over_out_rms": 0.6784854964792443,
+  "low_demand_half": {
+   "n": 5,
+   "ad_rms": 0.06343444174623346,
+   "apose_rms": 0.05349152343192249
+  }
+ },
+ "V282old": {
+  "n_runs": 1,
+  "gain_through_fit": 1.4141891536146374,
+  "floor_rms": null,
+  "incoherent_share_of_achieved_power": 0.03958552583987858,
+  "dwell_frac": 0.05837310536529083,
+  "I_rms_over_out_rms": 0.16036216409706278,
+  "dob_rms_over_out_rms": null,
+  "Pt_rms_over_out_rms": 0.7993881357602193,
+  "Ft_rms_over_out_rms": 1.533097972563135,
+  "low_demand_half": {
+   "n": 1,
+   "ad_rms": 0.08924237081301019,
+   "apose_rms": 0.1262055928466145
+  }
+ },
+ "T64": {
+  "n_runs": 4,
+  "gain_through_fit": 1.1362004313191578,
+  "floor_rms": 0.009803721022578286,
+  "incoherent_share_of_achieved_power": 0.046309134470668215,
+  "dwell_frac": 0.20237374756236973,
+  "I_rms_over_out_rms": 0.03338748240947561,
+  "dob_rms_over_out_rms": 0.36507055936290467,
+  "Pt_rms_over_out_rms": 0.11129531898656808,
+  "Ft_rms_over_out_rms": 1.035905517480918,
+  "low_demand_half": {
+   "n": 2,
+   "ad_rms": 0.060520804270317585,
+   "apose_rms": 0.07080571555783494
+  }
+ },
+ "T5": {
+  "n_runs": 2,
+  "gain_through_fit": 1.1381488135932853,
+  "floor_rms": null,
+  "incoherent_share_of_achieved_power": 0.04938445323939048,
+  "dwell_frac": 0.13533293341331737,
+  "I_rms_over_out_rms": 0.0466115090524813,
+  "dob_rms_over_out_rms": 0.496802819400385,
+  "Pt_rms_over_out_rms": 0.18795246606953925,
+  "Ft_rms_over_out_rms": 0.9431014027291581,
+  "low_demand_half": {
+   "n": 1,
+   "ad_rms": 0.1030551637366544,
+   "apose_rms": 0.1327150212462962
+  }
+ },
+ "T64B": {
+  "n_runs": 1,
+  "gain_through_fit": 1.2442983107854846,
+  "floor_rms": null,
+  "incoherent_share_of_achieved_power": -6.884319333095638e-17,
+  "dwell_frac": 0.22064259311913562,
+  "I_rms_over_out_rms": 0.040136258280686496,
+  "dob_rms_over_out_rms": 0.6031228547378438,
+  "Pt_rms_over_out_rms": 0.17872616757205703,
+  "Ft_rms_over_out_rms": 0.9730131352373671,
+  "low_demand_half": {
+   "n": 1,
+   "ad_rms": 0.06972167102313018,
+   "apose_rms": 0.08675455747922216
+  }
+ }
+}

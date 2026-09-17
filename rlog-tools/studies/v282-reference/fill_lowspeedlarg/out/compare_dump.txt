@@ -1,0 +1,952 @@
+A15_2.5-5|mode_ratio_1.8-3Hz               V282:0.0656(n9/r2) V282old:0.042(n19/r3) V282pool:0.0445(n28/r5) V282_LOO:None(n1/r1) T64:0.2(n10/r2) T64B:0.24(n6/r1) T5:None(n2/r1) T4:0.254(n10/r1)
+       V282old-V282     diff -0.0236 CI [-0.101,+0.188] MDE 0.156 e/M 0.151    NOREF
+       T64-V282pool     diff +0.156 CI [+0.0521,+0.697] MDE 0.368 e/M 0.422 X0 refOK
+       T64-V282         diff +0.134 CI [+0.000318,+0.641] MDE 0.371 e/M 0.362 X0 NOREF
+       T64B-V282pool    diff +0.196 CI [+0.0151,+0.35] MDE 0.255 e/M 0.768 X0 refOK
+       T4-V282pool      diff +0.21 CI [+0.0802,+0.337] MDE 0.191 e/M 1.1 X0 refOK
+A15_2.5-5|hf_ratio_2-10Hz                  V282:0.124(n9/r2) V282old:0.133(n19/r3) V282pool:0.132(n28/r5) V282_LOO:None(n1/r1) T64:0.277(n10/r2) T64B:0.324(n6/r1) T5:None(n2/r1) T4:0.247(n10/r1)
+       V282old-V282     diff +0.00884 CI [-0.255,+0.187] MDE 0.32 e/M 0.0277    NOREF
+       T64-V282pool     diff +0.145 CI [-0.0202,+0.54] MDE 0.372 e/M 0.389    refOK
+       T64-V282         diff +0.153 CI [-0.15,+0.47] MDE 0.434 e/M 0.352    NOREF
+       T64B-V282pool    diff +0.192 CI [-0.0341,+0.312] MDE 0.291 e/M 0.66    refOK
+       T4-V282pool      diff +0.115 CI [-0.0318,+0.199] MDE 0.139 e/M 0.828    refOK
+A15_2.5-5|mode_rms_1.8-3Hz                 V282:2.15(n9/r2) V282old:1.6(n19/r3) V282pool:2.01(n28/r5) V282_LOO:None(n1/r1) T64:8.28(n10/r2) T64B:13.6(n6/r1) T5:None(n2/r1) T4:9.98(n10/r1)
+       V282old-V282     diff -0.55 CI [-2.2,+1.53] MDE 2.58 e/M 0.213    NOREF
+       T64-V282pool     diff +6.27 CI [+2.69,+15.6] MDE 9.73 e/M 0.645 X0 refOK
+       T64-V282         diff +6.13 CI [+2.37,+15.5] MDE 9.7 e/M 0.632 X0 NOREF
+       T64B-V282pool    diff +11.6 CI [+6.37,+16.4] MDE 8.07 e/M 1.43 X0 refOK
+       T4-V282pool      diff +7.97 CI [+6.35,+11.8] MDE 4.47 e/M 1.78 X0 refOK
+A15_2.5-5|hf_rms_2-10Hz                    V282:4.56(n9/r2) V282old:3.98(n19/r3) V282pool:4.27(n28/r5) V282_LOO:None(n1/r1) T64:10.2(n10/r2) T64B:17.6(n6/r1) T5:None(n2/r1) T4:11(n10/r1)
+       V282old-V282     diff -0.582 CI [-4.65,+2.1] MDE 4.92 e/M 0.118    NOREF
+       T64-V282pool     diff +5.98 CI [+2.8,+21.1] MDE 13.8 e/M 0.435 X0 refOK
+       T64-V282         diff +5.69 CI [+1.39,+21.3] MDE 14 e/M 0.405 X0 NOREF
+       T64B-V282pool    diff +13.3 CI [+6.17,+19.9] MDE 10.3 e/M 1.3 X0 refOK
+       T4-V282pool      diff +6.74 CI [+2.37,+10.8] MDE 6.07 e/M 1.11 X0 refOK
+A15_2.5-5|travel_conc                      V282:0.208(n9/r2) V282old:0.185(n19/r3) V282pool:0.189(n28/r5) V282_LOO:None(n1/r1) T64:0.245(n10/r2) T64B:0.174(n6/r1) T5:None(n2/r1) T4:0.191(n10/r1)
+       V282old-V282     diff -0.0232 CI [-0.351,+0.0613] MDE 0.363 e/M 0.064    NOREF
+       T64-V282pool     diff +0.0561 CI [-0.014,+0.178] MDE 0.156 e/M 0.359    refOK
+       T64-V282         diff +0.0374 CI [-0.277,+0.176] MDE 0.387 e/M 0.0966    NOREF
+       T64B-V282pool    diff -0.0156 CI [-0.0921,+0.0635] MDE 0.118 e/M 0.132    refOK
+       T4-V282pool      diff +0.0017 CI [-0.0727,+0.0578] MDE 0.096 e/M 0.0177    refOK
+A15_2.5-5|dwelljump_per100deg              V282:0.195(n9/r2) V282old:0.0942(n19/r3) V282pool:0.127(n28/r5) V282_LOO:None(n1/r1) T64:0.364(n10/r2) T64B:0(n6/r1) T5:None(n2/r1) T4:0(n10/r1)
+       V282old-V282     diff -0.101 CI [-0.739,+0.829] MDE 1.05 e/M 0.0964    NOREF
+       T64-V282pool     diff +0.237 CI [-0.453,+1.6] MDE 1.73 e/M 0.137    refOK
+       T64-V282         diff +0.169 CI [-0.558,+1.55] MDE 1.79 e/M 0.0941    NOREF
+       T64B-V282pool    diff -0.127 CI [-0.63,+0] MDE 0.49 e/M 0.259    refOK
+       T4-V282pool      diff -0.127 CI [-0.63,+0] MDE 0.49 e/M 0.259    refOK
+A15_2.5-5|turn_lag_build_excess            V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A15_2.5-5|turn_lag_unwind_excess           V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A15_2.5-5|turn_lag_build                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A15_2.5-5|turn_lag_unwind                  V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A15_2.5-5|turn_gain_build                  V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n1/r1) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A15_2.5-5|turn_gain_hold                   V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n1/r1) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:0.839(n3/r1)
+A15_2.5-5|turn_gain_unwind                 V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n1/r1) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:0.587(n3/r1)
+A15_2.5-5|turn_caster_bias                 V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n1/r1) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A15_2.5-5|turn_caster_bias_pose            V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n1/r1) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A15_2.5-5|turn_ret_overshoot               V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n1/r1) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:-0.00955(n3/r1)
+A15_2.5-5|turn_settle_s                    V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n1/r1) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:0.14(n3/r1)
+A15_2.5-5|turn_hf_rms                      V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n1/r1) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:11.2(n3/r1)
+A15_2.5-5|turn_mode_rms                    V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n1/r1) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:8.28(n3/r1)
+A15_5-8|mode_ratio_1.8-3Hz                 V282:0.044(n18/r3) V282old:0.0327(n26/r3) V282pool:0.0348(n44/r6) V282_LOO:None(n2/r2) T64:0.232(n15/r2) T64B:0.227(n14/r1) T5:0.352(n10/r1) T4:0.217(n18/r1)
+       V282old-V282     diff -0.0114 CI [-0.0455,+0.0419] MDE 0.0632 e/M 0.18    refOK
+       T64-V282pool     diff +0.197 CI [+0.0767,+0.446] MDE 0.315 e/M 0.628 X0 refOK
+       T64-V282         diff +0.188 CI [+0.0639,+0.446] MDE 0.318 e/M 0.593 X0 refOK
+       T64B-V282pool    diff +0.192 CI [+0.0866,+0.524] MDE 0.37 e/M 0.52 X0 refOK
+       T5-V282pool      diff +0.318 CI [+0.216,+0.577] MDE 0.263 e/M 1.21 X0 refOK
+       T4-V282pool      diff +0.182 CI [+0.0822,+0.383] MDE 0.206 e/M 0.885 X0 refOK
+A15_5-8|hf_ratio_2-10Hz                    V282:0.111(n18/r3) V282old:0.126(n26/r3) V282pool:0.124(n44/r6) V282_LOO:None(n2/r2) T64:0.323(n15/r2) T64B:0.355(n14/r1) T5:0.474(n10/r1) T4:0.251(n18/r1)
+       V282old-V282     diff +0.0158 CI [-0.11,+0.174] MDE 0.2 e/M 0.0788    refOK
+       T64-V282pool     diff +0.198 CI [-0.0105,+0.344] MDE 0.248 e/M 0.799    refOK
+       T64-V282         diff +0.212 CI [+0.00726,+0.399] MDE 0.254 e/M 0.834 X0 refOK
+       T64B-V282pool    diff +0.231 CI [+0.0339,+0.4] MDE 0.302 e/M 0.764 X0 refOK
+       T5-V282pool      diff +0.35 CI [+0.17,+0.524] MDE 0.264 e/M 1.33 X0 refOK
+       T4-V282pool      diff +0.126 CI [-0.0288,+0.311] MDE 0.259 e/M 0.489    refOK
+A15_5-8|mode_rms_1.8-3Hz                   V282:1.14(n18/r3) V282old:1.03(n26/r3) V282pool:1.09(n44/r6) V282_LOO:None(n2/r2) T64:8.64(n15/r2) T64B:10.1(n14/r1) T5:12.7(n10/r1) T4:9.89(n18/r1)
+       V282old-V282     diff -0.115 CI [-1.87,+0.536] MDE 1.96 e/M 0.0588    refOK
+       T64-V282pool     diff +7.55 CI [+4.36,+13] MDE 6.25 e/M 1.21 X0 refOK
+       T64-V282         diff +7.5 CI [+3.29,+12.8] MDE 6.5 e/M 1.15 X0 refOK
+       T64B-V282pool    diff +8.98 CI [+4.43,+18.3] MDE 11.3 e/M 0.792 X0 refOK
+       T5-V282pool      diff +11.6 CI [+4.67,+19.1] MDE 11.3 e/M 1.03 X0 refOK
+       T4-V282pool      diff +8.81 CI [+5.43,+14] MDE 7.12 e/M 1.24 X0 refOK
+A15_5-8|hf_rms_2-10Hz                      V282:3.97(n18/r3) V282old:3.2(n26/r3) V282pool:3.46(n44/r6) V282_LOO:None(n2/r2) T64:9.09(n15/r2) T64B:12.9(n14/r1) T5:15.4(n10/r1) T4:10.3(n18/r1)
+       V282old-V282     diff -0.774 CI [-4.96,+1.12] MDE 4.61 e/M 0.168    refOK
+       T64-V282pool     diff +5.63 CI [+1.88,+12.1] MDE 8.44 e/M 0.667 X0 refOK
+       T64-V282         diff +5.12 CI [-1.28,+11.7] MDE 9.3 e/M 0.551    refOK
+       T64B-V282pool    diff +9.46 CI [+5.27,+16.6] MDE 9.67 e/M 0.978 X0 refOK
+       T5-V282pool      diff +12 CI [+3.99,+17] MDE 10.2 e/M 1.18 X0 refOK
+       T4-V282pool      diff +6.81 CI [+4.84,+12.4] MDE 5.66 e/M 1.2 X0 refOK
+A15_5-8|travel_conc                        V282:0.191(n18/r3) V282old:0.194(n26/r3) V282pool:0.192(n44/r6) V282_LOO:None(n2/r2) T64:0.257(n15/r2) T64B:0.184(n14/r1) T5:0.235(n10/r1) T4:0.205(n18/r1)
+       V282old-V282     diff +0.00227 CI [-0.0558,+0.0761] MDE 0.104 e/M 0.0218    refOK
+       T64-V282pool     diff +0.0648 CI [-0.0486,+0.111] MDE 0.121 e/M 0.535    refOK
+       T64-V282         diff +0.0657 CI [-0.0543,+0.131] MDE 0.139 e/M 0.473    refOK
+       T64B-V282pool    diff -0.00822 CI [-0.0366,+0.109] MDE 0.11 e/M 0.0746    refOK
+       T5-V282pool      diff +0.0431 CI [-0.0103,+0.0919] MDE 0.0764 e/M 0.565    refOK
+       T4-V282pool      diff +0.0127 CI [-0.04,+0.0673] MDE 0.0711 e/M 0.179    refOK
+A15_5-8|dwelljump_per100deg                V282:0(n18/r3) V282old:0.0797(n26/r3) V282pool:0.0435(n44/r6) V282_LOO:None(n2/r2) T64:0.119(n15/r2) T64B:0.216(n14/r1) T5:0.228(n10/r1) T4:0.334(n18/r1)
+       V282old-V282     diff +0.0797 CI [+0,+0.405] MDE 0.313 e/M 0.255    refOK
+       T64-V282pool     diff +0.0759 CI [-0.201,+0.444] MDE 0.456 e/M 0.166    refOK
+       T64-V282         diff +0.119 CI [+0,+0.478] MDE 0.415 e/M 0.288    refOK
+       T64B-V282pool    diff +0.172 CI [-0.123,+0.558] MDE 0.477 e/M 0.361    refOK
+       T5-V282pool      diff +0.185 CI [-0.167,+0.69] MDE 0.626 e/M 0.295    refOK
+       T4-V282pool      diff +0.29 CI [-0.0403,+0.722] MDE 0.554 e/M 0.524    refOK
+A15_5-8|turn_lag_build_excess              V282:None(n2/r1) V282old:0.0896(n3/r2) V282pool:0.0896(n5/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n1/r1)
+A15_5-8|turn_lag_unwind_excess             V282:None(n2/r1) V282old:None(n2/r1) V282pool:0.000693(n4/r2) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n2/r1)
+A15_5-8|turn_lag_build                     V282:None(n2/r1) V282old:0.29(n3/r2) V282pool:0.29(n5/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n1/r1)
+A15_5-8|turn_lag_unwind                    V282:None(n2/r1) V282old:None(n2/r1) V282pool:0.201(n4/r2) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n2/r1)
+A15_5-8|turn_gain_build                    V282:None(n2/r1) V282old:1.19(n3/r2) V282pool:1.19(n5/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n1/r1)
+A15_5-8|turn_gain_hold                     V282:None(n2/r1) V282old:0.954(n3/r2) V282pool:0.954(n5/r3) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:0.879(n3/r1) T4:None(n1/r1)
+       T5-V282pool      diff -0.0742 CI [-0.527,+0.283] MDE 0.654 e/M 0.113    refOK
+A15_5-8|turn_gain_unwind                   V282:None(n2/r1) V282old:1.22(n3/r2) V282pool:1.13(n5/r3) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n2/r1)
+A15_5-8|turn_caster_bias                   V282:None(n1/r1) V282old:-0.0372(n3/r2) V282pool:-0.0178(n4/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n1/r1)
+A15_5-8|turn_caster_bias_pose              V282:None(n1/r1) V282old:0.00337(n3/r2) V282pool:0.0394(n4/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n1/r1)
+A15_5-8|turn_ret_overshoot                 V282:0.0247(n3/r1) V282old:None(n2/r1) V282pool:0.0265(n5/r2) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n2/r1)
+A15_5-8|turn_settle_s                      V282:0(n3/r1) V282old:None(n2/r1) V282pool:0.28(n5/r2) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n2/r1)
+A15_5-8|turn_hf_rms                        V282:4.38(n3/r1) V282old:2.56(n3/r2) V282pool:2.99(n6/r3) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:5(n3/r1) T4:None(n2/r1)
+       V282old-V282     diff -1.82 CI [-2.4,+2.27] MDE 4.4 e/M 0.414    NOREF
+       T5-V282pool      diff +2.01 CI [+0.0103,+11] MDE 11 e/M 0.183 X0 refOK
+A15_5-8|turn_mode_rms                      V282:2.37(n3/r1) V282old:0.782(n3/r2) V282pool:0.789(n6/r3) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:3.8(n3/r1) T4:None(n2/r1)
+       V282old-V282     diff -1.59 CI [-2.04,+0.268] MDE 2.37 e/M 0.671    NOREF
+       T5-V282pool      diff +3.01 CI [+1.38,+11.5] MDE 10.1 e/M 0.297 X0 refOK
+A15_8-15|mode_ratio_1.8-3Hz                V282:0.0568(n35/r3) V282old:0.0584(n16/r3) V282pool:0.0568(n51/r6) V282_LOO:None(n2/r2) T64:None(n2/r1) T64B:0.605(n25/r1) T5:0.534(n5/r1) T4:0.406(n17/r1)
+       V282old-V282     diff +0.00156 CI [-0.0473,+0.0641] MDE 0.0831 e/M 0.0187    refOK
+       T64B-V282pool    diff +0.548 CI [+0.315,+0.621] MDE 0.241 e/M 2.27 X0 refOK
+       T5-V282pool      diff +0.478 CI [+0.216,+0.526] MDE 0.188 e/M 2.55 X0 refOK
+       T4-V282pool      diff +0.349 CI [+0.204,+0.489] MDE 0.205 e/M 1.7 X0 refOK
+A15_8-15|hf_ratio_2-10Hz                   V282:0.203(n35/r3) V282old:0.167(n16/r3) V282pool:0.196(n51/r6) V282_LOO:None(n2/r2) T64:None(n2/r1) T64B:0.617(n25/r1) T5:0.45(n5/r1) T4:0.406(n17/r1)
+       V282old-V282     diff -0.0361 CI [-0.109,+0.0994] MDE 0.16 e/M 0.226    refOK
+       T64B-V282pool    diff +0.422 CI [+0.313,+0.578] MDE 0.185 e/M 2.28 X0 refOK
+       T5-V282pool      diff +0.255 CI [+0.165,+0.49] MDE 0.273 e/M 0.932 X0 refOK
+       T4-V282pool      diff +0.21 CI [+0.111,+0.378] MDE 0.183 e/M 1.15 X0 refOK
+A15_8-15|mode_rms_1.8-3Hz                  V282:0.373(n35/r3) V282old:0.67(n16/r3) V282pool:0.417(n51/r6) V282_LOO:None(n2/r2) T64:None(n2/r1) T64B:8.58(n25/r1) T5:9.24(n5/r1) T4:10(n17/r1)
+       V282old-V282     diff +0.297 CI [-0.983,+0.611] MDE 1.14 e/M 0.26    refOK
+       T64B-V282pool    diff +8.16 CI [+4.88,+11.7] MDE 4.88 e/M 1.67 X0 refOK
+       T5-V282pool      diff +8.83 CI [+6.57,+11.8] MDE 2.86 e/M 3.09 X0 refOK
+       T4-V282pool      diff +9.61 CI [+7.59,+11.8] MDE 3 e/M 3.2 X0 refOK
+A15_8-15|hf_rms_2-10Hz                     V282:1.39(n35/r3) V282old:2.19(n16/r3) V282pool:1.66(n51/r6) V282_LOO:None(n2/r2) T64:None(n2/r1) T64B:9.77(n25/r1) T5:9.31(n5/r1) T4:11.9(n17/r1)
+       V282old-V282     diff +0.802 CI [-1.28,+1.24] MDE 2.33 e/M 0.344    refOK
+       T64B-V282pool    diff +8.11 CI [+4.17,+12.1] MDE 5.07 e/M 1.6 X0 refOK
+       T5-V282pool      diff +7.65 CI [+5.43,+12.4] MDE 3.94 e/M 1.94 X0 refOK
+       T4-V282pool      diff +10.2 CI [+5.1,+11.5] MDE 3.88 e/M 2.64 X0 refOK
+A15_8-15|travel_conc                       V282:0.194(n35/r3) V282old:0.178(n16/r3) V282pool:0.19(n51/r6) V282_LOO:None(n2/r2) T64:None(n2/r1) T64B:0.32(n24/r1) T5:0.269(n5/r1) T4:0.276(n17/r1)
+       V282old-V282     diff -0.0158 CI [-0.0523,+0.0737] MDE 0.0972 e/M 0.162    refOK
+       T64B-V282pool    diff +0.13 CI [+0.0691,+0.243] MDE 0.122 e/M 1.06 X0 refOK
+       T5-V282pool      diff +0.0797 CI [+0.0273,+0.374] MDE 0.233 e/M 0.342 X0 refOK
+       T4-V282pool      diff +0.0864 CI [+0.0214,+0.249] MDE 0.161 e/M 0.537 X0 refOK
+A15_8-15|dwelljump_per100deg               V282:1.19(n35/r3) V282old:0(n16/r3) V282pool:0.627(n51/r6) V282_LOO:None(n2/r2) T64:None(n2/r1) T64B:1.88(n25/r1) T5:0(n5/r1) T4:0.169(n17/r1)
+       V282old-V282     diff -1.19 CI [-2.36,+0] MDE 2.21 e/M 0.54    refOK
+       T64B-V282pool    diff +1.26 CI [-0.268,+3.3] MDE 2.58 e/M 0.487    refOK
+       T5-V282pool      diff -0.627 CI [-1.61,+0] MDE 1.45 e/M 0.432    refOK
+       T4-V282pool      diff -0.458 CI [-1.45,+0.404] MDE 1.51 e/M 0.302    refOK
+A15_8-15|turn_lag_build_excess             V282:0.0214(n3/r1) V282old:None(n1/r1) V282pool:0.0299(n4/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:None(n2/r1) T5:None(n1/r1) T4:-0.00493(n5/r1)
+       T4-V282pool      diff -0.0348 CI [-0.326,+0.658] MDE 0.656 e/M 0.0531    refOK
+A15_8-15|turn_lag_unwind_excess            V282:-0.00558(n4/r1) V282old:None(n1/r1) V282pool:0.0572(n5/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:0.00558(n4/r1) T5:None(n1/r1) T4:0.0689(n5/r1)
+       T64B-V282pool    diff -0.0516 CI [-0.599,+0.194] MDE 0.648 e/M 0.0796    refOK
+       T4-V282pool      diff +0.0117 CI [-0.475,+0.2] MDE 0.615 e/M 0.019    refOK
+A15_8-15|turn_lag_build                    V282:0.221(n3/r1) V282old:None(n1/r1) V282pool:0.23(n4/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:None(n2/r1) T5:None(n1/r1) T4:0.275(n5/r1)
+       T4-V282pool      diff +0.0448 CI [-0.247,+0.747] MDE 0.677 e/M 0.0661    refOK
+A15_8-15|turn_lag_unwind                   V282:0.194(n4/r1) V282old:None(n1/r1) V282pool:0.257(n5/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:0.308(n4/r1) T5:None(n1/r1) T4:0.348(n5/r1)
+       T64B-V282pool    diff +0.0506 CI [-0.496,+0.276] MDE 0.643 e/M 0.0787    refOK
+       T4-V282pool      diff +0.0913 CI [-0.395,+0.28] MDE 0.62 e/M 0.147    refOK
+A15_8-15|turn_gain_build                   V282:1.09(n3/r1) V282old:None(n1/r1) V282pool:1.09(n4/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:None(n2/r1) T5:None(n1/r1) T4:1.15(n5/r1)
+       T4-V282pool      diff +0.0572 CI [-0.425,+0.426] MDE 0.594 e/M 0.0964    refOK
+A15_8-15|turn_gain_hold                    V282:1.02(n5/r1) V282old:None(n1/r1) V282pool:1.04(n6/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:0.943(n4/r1) T5:None(n1/r1) T4:0.957(n4/r1)
+       T64B-V282pool    diff -0.101 CI [-0.201,-0.0499] MDE 0.114 e/M 0.882 X0 refOK
+       T4-V282pool      diff -0.0869 CI [-0.208,+0.0452] MDE 0.187 e/M 0.466    refOK
+A15_8-15|turn_gain_unwind                  V282:1.01(n4/r1) V282old:None(n1/r1) V282pool:1.02(n5/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:1.02(n4/r1) T5:None(n1/r1) T4:1.13(n5/r1)
+       T64B-V282pool    diff +0.00442 CI [-0.282,+0.086] MDE 0.296 e/M 0.0149    refOK
+       T4-V282pool      diff +0.112 CI [-0.23,+0.441] MDE 0.519 e/M 0.216    refOK
+A15_8-15|turn_caster_bias                  V282:None(n2/r1) V282old:None(n1/r1) V282pool:-0.0292(n3/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:None(n2/r1) T5:None(n1/r1) T4:0.0626(n5/r1)
+       T4-V282pool      diff +0.0918 CI [+0.00804,+0.27] MDE 0.237 e/M 0.387 X0 refOK
+A15_8-15|turn_caster_bias_pose             V282:None(n2/r1) V282old:None(n1/r1) V282pool:-0.0577(n3/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:None(n2/r1) T5:None(n1/r1) T4:0.0303(n5/r1)
+       T4-V282pool      diff +0.088 CI [+0.015,+0.463] MDE 0.408 e/M 0.216 X0 refOK
+A15_8-15|turn_ret_overshoot                V282:0(n5/r1) V282old:None(n1/r1) V282pool:-0.0136(n6/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:0.0241(n4/r1) T5:None(n1/r1) T4:-0.0149(n5/r1)
+       T64B-V282pool    diff +0.0377 CI [-0.000255,+0.366] MDE 0.29 e/M 0.13    refOK
+       T4-V282pool      diff -0.00136 CI [-0.125,+0.129] MDE 0.189 e/M 0.00723    refOK
+A15_8-15|turn_settle_s                     V282:0(n5/r1) V282old:None(n1/r1) V282pool:0(n6/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:0.06(n4/r1) T5:None(n1/r1) T4:1.94(n5/r1)
+       T64B-V282pool    diff +0.06 CI [-2.83,+2.92] MDE 3.85 e/M 0.0156    refOK
+       T4-V282pool      diff +1.94 CI [-2.09,+2.64] MDE 4.17 e/M 0.465    refOK
+A15_8-15|turn_hf_rms                       V282:1.29(n5/r1) V282old:None(n1/r1) V282pool:1.31(n6/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:15.1(n4/r1) T5:None(n1/r1) T4:7.07(n5/r1)
+       T64B-V282pool    diff +13.8 CI [+5.29,+26.4] MDE 14.6 e/M 0.945 X0 refOK
+       T4-V282pool      diff +5.75 CI [+3.4,+12.7] MDE 5.64 e/M 1.02 X0 refOK
+A15_8-15|turn_mode_rms                     V282:0.426(n5/r1) V282old:None(n1/r1) V282pool:0.443(n6/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:12.4(n4/r1) T5:None(n1/r1) T4:7.67(n5/r1)
+       T64B-V282pool    diff +12 CI [+5.55,+30.4] MDE 17.4 e/M 0.692 X0 refOK
+       T4-V282pool      diff +7.23 CI [+4.06,+11.1] MDE 4.2 e/M 1.72 X0 refOK
+A45_2.5-5|mode_ratio_1.8-3Hz               V282:None(n4/r1) V282old:0.042(n11/r2) V282pool:0.042(n15/r3) V282_LOO:None(n0/r0) T64:0.136(n5/r2) T64B:0.192(n5/r1) T5:None(n1/r1) T4:0.199(n8/r1)
+       T64-V282pool     diff +0.0939 CI [+0.0244,+0.334] MDE 0.215 e/M 0.437 X0 refOK
+       T64B-V282pool    diff +0.15 CI [+0.00329,+0.339] MDE 0.25 e/M 0.602 X0 refOK
+       T4-V282pool      diff +0.157 CI [+0.0766,+0.251] MDE 0.173 e/M 0.905 X0 refOK
+A45_2.5-5|hf_ratio_2-10Hz                  V282:None(n4/r1) V282old:0.133(n11/r2) V282pool:0.133(n15/r3) V282_LOO:None(n0/r0) T64:0.22(n5/r2) T64B:0.295(n5/r1) T5:None(n1/r1) T4:0.235(n8/r1)
+       T64-V282pool     diff +0.0875 CI [-0.0831,+0.342] MDE 0.304 e/M 0.288    refOK
+       T64B-V282pool    diff +0.163 CI [-0.0607,+0.29] MDE 0.325 e/M 0.5    refOK
+       T4-V282pool      diff +0.102 CI [-0.0684,+0.175] MDE 0.149 e/M 0.688    refOK
+A45_2.5-5|mode_rms_1.8-3Hz                 V282:None(n4/r1) V282old:2.62(n11/r2) V282pool:2.75(n15/r3) V282_LOO:None(n0/r0) T64:8.67(n5/r2) T64B:15.7(n5/r1) T5:None(n1/r1) T4:10.5(n8/r1)
+       T64-V282pool     diff +5.92 CI [+0.504,+16.4] MDE 12.2 e/M 0.484 X0 refOK
+       T64B-V282pool    diff +13 CI [+4.9,+16.7] MDE 8.47 e/M 1.53 X0 refOK
+       T4-V282pool      diff +7.8 CI [+5.6,+13.3] MDE 5.71 e/M 1.37 X0 refOK
+A45_2.5-5|hf_rms_2-10Hz                    V282:None(n4/r1) V282old:5.61(n11/r2) V282pool:5.61(n15/r3) V282_LOO:None(n0/r0) T64:11.8(n5/r2) T64B:19.1(n5/r1) T5:None(n1/r1) T4:12.2(n8/r1)
+       T64-V282pool     diff +6.2 CI [-3.32,+28.9] MDE 21.3 e/M 0.29    refOK
+       T64B-V282pool    diff +13.5 CI [+5.62,+19.1] MDE 10.6 e/M 1.27 X0 refOK
+       T4-V282pool      diff +6.62 CI [+3.36,+10.8] MDE 5.35 e/M 1.24 X0 refOK
+A45_2.5-5|travel_conc                      V282:None(n4/r1) V282old:0.184(n11/r2) V282pool:0.184(n15/r3) V282_LOO:None(n0/r0) T64:0.259(n5/r2) T64B:0.171(n5/r1) T5:None(n1/r1) T4:0.188(n8/r1)
+       T64-V282pool     diff +0.0742 CI [-0.0433,+0.176] MDE 0.164 e/M 0.453    refOK
+       T64B-V282pool    diff -0.0137 CI [-0.0844,+0.0746] MDE 0.105 e/M 0.13    refOK
+       T4-V282pool      diff +0.00325 CI [-0.0687,+0.0572] MDE 0.0875 e/M 0.0372    refOK
+A45_2.5-5|dwelljump_per100deg              V282:None(n4/r1) V282old:0(n11/r2) V282pool:0(n15/r3) V282_LOO:None(n0/r0) T64:0.257(n5/r2) T64B:0(n5/r1) T5:None(n1/r1) T4:0(n8/r1)
+       T64-V282pool     diff +0.257 CI [+0,+1.23] MDE 1.23 e/M 0.209    refOK
+       T64B-V282pool    diff +0 CI [+0,+0] MDE 0 e/M None    refOK
+       T4-V282pool      diff +0 CI [+0,+0] MDE 0 e/M None    refOK
+A45_2.5-5|turn_lag_build_excess            V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A45_2.5-5|turn_lag_unwind_excess           V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A45_2.5-5|turn_lag_build                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A45_2.5-5|turn_lag_unwind                  V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A45_2.5-5|turn_gain_build                  V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A45_2.5-5|turn_gain_hold                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A45_2.5-5|turn_gain_unwind                 V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A45_2.5-5|turn_caster_bias                 V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A45_2.5-5|turn_caster_bias_pose            V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A45_2.5-5|turn_ret_overshoot               V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A45_2.5-5|turn_settle_s                    V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A45_2.5-5|turn_hf_rms                      V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A45_2.5-5|turn_mode_rms                    V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A45_5-8|mode_ratio_1.8-3Hz                 V282:0.0249(n7/r2) V282old:0.0245(n11/r3) V282pool:0.0247(n18/r5) V282_LOO:None(n1/r1) T64:0.359(n7/r2) T64B:0.188(n11/r1) T5:0.413(n8/r1) T4:0.252(n10/r1)
+       V282old-V282     diff -0.000403 CI [-0.0583,+0.0572] MDE 0.0715 e/M 0.00564    NOREF
+       T64-V282pool     diff +0.334 CI [+0.0481,+0.465] MDE 0.347 e/M 0.964 X0 refOK
+       T64-V282         diff +0.334 CI [+0.0379,+0.465] MDE 0.347 e/M 0.961 X0 NOREF
+       T64B-V282pool    diff +0.163 CI [+0.074,+0.535] MDE 0.353 e/M 0.463 X0 refOK
+       T5-V282pool      diff +0.388 CI [+0.264,+0.71] MDE 0.411 e/M 0.944 X0 refOK
+       T4-V282pool      diff +0.227 CI [+0.106,+0.47] MDE 0.287 e/M 0.79 X0 refOK
+A45_5-8|hf_ratio_2-10Hz                    V282:0.0839(n7/r2) V282old:0.0683(n11/r3) V282pool:0.0793(n18/r5) V282_LOO:None(n1/r1) T64:0.354(n7/r2) T64B:0.336(n11/r1) T5:0.51(n8/r1) T4:0.319(n10/r1)
+       V282old-V282     diff -0.0156 CI [-0.0962,+0.0604] MDE 0.119 e/M 0.131    NOREF
+       T64-V282pool     diff +0.275 CI [+0.00627,+0.437] MDE 0.296 e/M 0.93 X0 refOK
+       T64-V282         diff +0.271 CI [+0.00617,+0.432] MDE 0.298 e/M 0.908 X0 NOREF
+       T64B-V282pool    diff +0.256 CI [+0.0597,+0.399] MDE 0.314 e/M 0.818 X0 refOK
+       T5-V282pool      diff +0.431 CI [+0.256,+0.707] MDE 0.377 e/M 1.14 X0 refOK
+       T4-V282pool      diff +0.24 CI [+0.0498,+0.495] MDE 0.317 e/M 0.757 X0 refOK
+A45_5-8|mode_rms_1.8-3Hz                   V282:2.54(n7/r2) V282old:1.58(n11/r3) V282pool:1.69(n18/r5) V282_LOO:None(n1/r1) T64:16.2(n7/r2) T64B:11.5(n11/r1) T5:16(n8/r1) T4:13.2(n10/r1)
+       V282old-V282     diff -0.959 CI [-1.9,+1.36] MDE 2.34 e/M 0.41    NOREF
+       T64-V282pool     diff +14.5 CI [+6.29,+20.2] MDE 10.3 e/M 1.41 X0 refOK
+       T64-V282         diff +13.6 CI [+6.06,+19.4] MDE 10.3 e/M 1.33 X0 NOREF
+       T64B-V282pool    diff +9.81 CI [+3.47,+19.4] MDE 11.8 e/M 0.828 X0 refOK
+       T5-V282pool      diff +14.3 CI [+6.51,+19.4] MDE 10.1 e/M 1.42 X0 refOK
+       T4-V282pool      diff +11.5 CI [+6.88,+23.9] MDE 10.4 e/M 1.1 X0 refOK
+A45_5-8|hf_rms_2-10Hz                      V282:5.45(n7/r2) V282old:3.36(n11/r3) V282pool:4.51(n18/r5) V282_LOO:None(n1/r1) T64:15.4(n7/r2) T64B:11.7(n11/r1) T5:18(n8/r1) T4:12.7(n10/r1)
+       V282old-V282     diff -2.09 CI [-5.04,+1.23] MDE 5.03 e/M 0.415    NOREF
+       T64-V282pool     diff +10.9 CI [+3.78,+16.5] MDE 7.74 e/M 1.4 X0 refOK
+       T64-V282         diff +9.93 CI [+1.24,+14.5] MDE 8.23 e/M 1.21 X0 NOREF
+       T64B-V282pool    diff +7.15 CI [+3.52,+15.5] MDE 9.63 e/M 0.742 X0 refOK
+       T5-V282pool      diff +13.5 CI [+6.74,+17.6] MDE 8.16 e/M 1.65 X0 refOK
+       T4-V282pool      diff +8.21 CI [+4,+17.6] MDE 11 e/M 0.744 X0 refOK
+A45_5-8|travel_conc                        V282:0.159(n7/r2) V282old:0.164(n11/r3) V282pool:0.164(n18/r5) V282_LOO:None(n1/r1) T64:0.155(n7/r2) T64B:0.177(n11/r1) T5:0.243(n8/r1) T4:0.205(n10/r1)
+       V282old-V282     diff +0.00446 CI [-0.102,+0.119] MDE 0.159 e/M 0.0282    NOREF
+       T64-V282pool     diff -0.00821 CI [-0.109,+0.106] MDE 0.145 e/M 0.0565    refOK
+       T64-V282         diff -0.00392 CI [-0.11,+0.119] MDE 0.15 e/M 0.0262    NOREF
+       T64B-V282pool    diff +0.0134 CI [-0.0873,+0.104] MDE 0.118 e/M 0.114    refOK
+       T5-V282pool      diff +0.0792 CI [-0.0282,+0.111] MDE 0.113 e/M 0.7    refOK
+       T4-V282pool      diff +0.0414 CI [-0.0643,+0.082] MDE 0.107 e/M 0.388    refOK
+A45_5-8|dwelljump_per100deg                V282:0(n7/r2) V282old:0(n11/r3) V282pool:0(n18/r5) V282_LOO:None(n1/r1) T64:0(n7/r2) T64B:0.251(n11/r1) T5:0.269(n8/r1) T4:0.288(n10/r1)
+       V282old-V282     diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+       T64-V282pool     diff +0 CI [+0,+0] MDE 0 e/M None    refOK
+       T64-V282         diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+       T64B-V282pool    diff +0.251 CI [+0,+0.699] MDE 0.534 e/M 0.471    refOK
+       T5-V282pool      diff +0.269 CI [+0,+0.868] MDE 0.721 e/M 0.373    refOK
+       T4-V282pool      diff +0.288 CI [+0,+0.825] MDE 0.59 e/M 0.488    refOK
+A45_5-8|turn_lag_build_excess              V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n1/r1)
+A45_5-8|turn_lag_unwind_excess             V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n2/r1)
+A45_5-8|turn_lag_build                     V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n1/r1)
+A45_5-8|turn_lag_unwind                    V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n2/r1)
+A45_5-8|turn_gain_build                    V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n1/r1)
+A45_5-8|turn_gain_hold                     V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n1/r1)
+A45_5-8|turn_gain_unwind                   V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n2/r1)
+A45_5-8|turn_caster_bias                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A45_5-8|turn_caster_bias_pose              V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A45_5-8|turn_ret_overshoot                 V282:None(n2/r1) V282old:None(n0/r0) V282pool:None(n2/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n2/r1)
+A45_5-8|turn_settle_s                      V282:None(n2/r1) V282old:None(n0/r0) V282pool:None(n2/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n2/r1)
+A45_5-8|turn_hf_rms                        V282:None(n2/r1) V282old:None(n0/r0) V282pool:None(n2/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n2/r1)
+A45_5-8|turn_mode_rms                      V282:None(n2/r1) V282old:None(n0/r0) V282pool:None(n2/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n2/r1) T4:None(n2/r1)
+A45_8-15|mode_ratio_1.8-3Hz                V282:None(n1/r1) V282old:0.0833(n7/r3) V282pool:0.0815(n8/r4) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:0.652(n10/r1) T5:None(n0/r0) T4:0.429(n8/r1)
+       T64B-V282pool    diff +0.571 CI [+0.412,+0.729] MDE 0.219 e/M 2.6 X0 NOREF
+       T4-V282pool      diff +0.347 CI [+0.255,+0.466] MDE 0.139 e/M 2.51 X0 NOREF
+A45_8-15|hf_ratio_2-10Hz                   V282:None(n1/r1) V282old:0.162(n7/r3) V282pool:0.167(n8/r4) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:0.759(n10/r1) T5:None(n0/r0) T4:0.417(n8/r1)
+       T64B-V282pool    diff +0.592 CI [+0.375,+0.763] MDE 0.298 e/M 1.98 X0 NOREF
+       T4-V282pool      diff +0.25 CI [+0.132,+0.431] MDE 0.214 e/M 1.17 X0 NOREF
+A45_8-15|mode_rms_1.8-3Hz                  V282:None(n1/r1) V282old:0.662(n7/r3) V282pool:0.609(n8/r4) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:14.3(n10/r1) T5:None(n0/r0) T4:11.8(n8/r1)
+       T64B-V282pool    diff +13.7 CI [+10.1,+15.7] MDE 4.72 e/M 2.9 X0 NOREF
+       T4-V282pool      diff +11.2 CI [+8.97,+12.5] MDE 2.84 e/M 3.95 X0 NOREF
+A45_8-15|hf_rms_2-10Hz                     V282:None(n1/r1) V282old:2.31(n7/r3) V282pool:2.19(n8/r4) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:16.7(n10/r1) T5:None(n0/r0) T4:12.9(n8/r1)
+       T64B-V282pool    diff +14.5 CI [+8.57,+20.2] MDE 6.84 e/M 2.12 X0 NOREF
+       T4-V282pool      diff +10.7 CI [+9.54,+12.5] MDE 2.31 e/M 4.63 X0 NOREF
+A45_8-15|travel_conc                       V282:None(n1/r1) V282old:0.181(n7/r3) V282pool:0.196(n8/r4) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:0.278(n10/r1) T5:None(n0/r0) T4:0.269(n8/r1)
+       T64B-V282pool    diff +0.0825 CI [-0.0266,+0.17] MDE 0.126 e/M 0.653    NOREF
+       T4-V282pool      diff +0.0737 CI [-0.0266,+0.258] MDE 0.209 e/M 0.353    NOREF
+A45_8-15|dwelljump_per100deg               V282:None(n1/r1) V282old:0(n7/r3) V282pool:0(n8/r4) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:1.72(n10/r1) T5:None(n0/r0) T4:0.323(n8/r1)
+       T64B-V282pool    diff +1.72 CI [+0.241,+4.24] MDE 2.9 e/M 0.593 X0 NOREF
+       T4-V282pool      diff +0.323 CI [+0,+1.09] MDE 0.898 e/M 0.359    NOREF
+A45_8-15|turn_lag_build_excess             V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n1/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_lag_unwind_excess            V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0.0206(n3/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_lag_build                    V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n1/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_lag_unwind                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0.323(n3/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_gain_build                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n1/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_gain_hold                    V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0.914(n3/r1) T5:None(n0/r0) T4:None(n1/r1)
+A45_8-15|turn_gain_unwind                  V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0.976(n3/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_caster_bias                  V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n1/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_caster_bias_pose             V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n1/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_ret_overshoot                V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0.0168(n3/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_settle_s                     V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0(n3/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_hf_rms                       V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:18.5(n3/r1) T5:None(n0/r0) T4:None(n2/r1)
+A45_8-15|turn_mode_rms                     V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:14.8(n3/r1) T5:None(n0/r0) T4:None(n2/r1)
+A90_2.5-5|mode_ratio_1.8-3Hz               V282:None(n2/r1) V282old:0.0619(n8/r2) V282pool:0.06(n10/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0.192(n5/r1) T5:None(n1/r1) T4:0.199(n8/r1)
+       T64B-V282pool    diff +0.132 CI [-0.0511,+0.316] MDE 0.269 e/M 0.493    NOREF
+       T4-V282pool      diff +0.139 CI [-0.00926,+0.249] MDE 0.208 e/M 0.666    NOREF
+A90_2.5-5|hf_ratio_2-10Hz                  V282:None(n2/r1) V282old:0.218(n8/r2) V282pool:0.125(n10/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0.295(n5/r1) T5:None(n1/r1) T4:0.235(n8/r1)
+       T64B-V282pool    diff +0.17 CI [-0.198,+0.309] MDE 0.378 e/M 0.45    NOREF
+       T4-V282pool      diff +0.11 CI [-0.0986,+0.2] MDE 0.239 e/M 0.46    NOREF
+A90_2.5-5|mode_rms_1.8-3Hz                 V282:None(n2/r1) V282old:2.76(n8/r2) V282pool:2.78(n10/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:15.7(n5/r1) T5:None(n1/r1) T4:10.5(n8/r1)
+       T64B-V282pool    diff +12.9 CI [+4.85,+16.6] MDE 8.4 e/M 1.54 X0 NOREF
+       T4-V282pool      diff +7.77 CI [+4.74,+11.9] MDE 6 e/M 1.29 X0 NOREF
+A90_2.5-5|hf_rms_2-10Hz                    V282:None(n2/r1) V282old:6.2(n8/r2) V282pool:6.2(n10/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:19.1(n5/r1) T5:None(n1/r1) T4:12.2(n8/r1)
+       T64B-V282pool    diff +12.9 CI [+4.52,+18.9] MDE 10.5 e/M 1.23 X0 NOREF
+       T4-V282pool      diff +6.04 CI [+2.28,+10.5] MDE 6.02 e/M 1 X0 NOREF
+A90_2.5-5|travel_conc                      V282:None(n2/r1) V282old:0.194(n8/r2) V282pool:0.194(n10/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0.171(n5/r1) T5:None(n1/r1) T4:0.188(n8/r1)
+       T64B-V282pool    diff -0.0236 CI [-0.111,+0.0647] MDE 0.11 e/M 0.214    NOREF
+       T4-V282pool      diff -0.00664 CI [-0.0761,+0.0578] MDE 0.087 e/M 0.0764    NOREF
+A90_2.5-5|dwelljump_per100deg              V282:None(n2/r1) V282old:0(n8/r2) V282pool:0(n10/r3) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0(n5/r1) T5:None(n1/r1) T4:0(n8/r1)
+       T64B-V282pool    diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+       T4-V282pool      diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+A90_2.5-5|turn_lag_build_excess            V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A90_2.5-5|turn_lag_unwind_excess           V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_2.5-5|turn_lag_build                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A90_2.5-5|turn_lag_unwind                  V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_2.5-5|turn_gain_build                  V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A90_2.5-5|turn_gain_hold                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_2.5-5|turn_gain_unwind                 V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_2.5-5|turn_caster_bias                 V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A90_2.5-5|turn_caster_bias_pose            V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A90_2.5-5|turn_ret_overshoot               V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_2.5-5|turn_settle_s                    V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_2.5-5|turn_hf_rms                      V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_2.5-5|turn_mode_rms                    V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_5-8|mode_ratio_1.8-3Hz                 V282:None(n4/r2) V282old:0.0245(n7/r3) V282pool:0.0245(n11/r5) V282_LOO:None(n1/r1) T64:0.376(n5/r2) T64B:0.267(n7/r1) T5:None(n4/r1) T4:0.288(n9/r1)
+       T64-V282pool     diff +0.352 CI [+0.0438,+0.47] MDE 0.432 e/M 0.815 X0 NOREF
+       T64B-V282pool    diff +0.242 CI [+0.118,+0.539] MDE 0.636 e/M 0.381 X0 NOREF
+       T4-V282pool      diff +0.263 CI [+0.122,+0.666] MDE 0.332 e/M 0.792 X0 NOREF
+A90_5-8|hf_ratio_2-10Hz                    V282:None(n4/r2) V282old:0.0683(n7/r3) V282pool:0.074(n11/r5) V282_LOO:None(n1/r1) T64:0.354(n5/r2) T64B:0.343(n7/r1) T5:None(n4/r1) T4:0.347(n9/r1)
+       T64-V282pool     diff +0.28 CI [+0.00588,+0.443] MDE 0.302 e/M 0.928 X0 NOREF
+       T64B-V282pool    diff +0.269 CI [+0.0829,+0.411] MDE 0.329 e/M 0.819 X0 NOREF
+       T4-V282pool      diff +0.273 CI [+0.0497,+0.523] MDE 0.345 e/M 0.789 X0 NOREF
+A90_5-8|mode_rms_1.8-3Hz                   V282:None(n4/r2) V282old:1.58(n7/r3) V282pool:1.8(n11/r5) V282_LOO:None(n1/r1) T64:16.2(n5/r2) T64B:14.5(n7/r1) T5:None(n4/r1) T4:14.8(n9/r1)
+       T64-V282pool     diff +14.4 CI [+3.77,+19.9] MDE 12.6 e/M 1.14 X0 NOREF
+       T64B-V282pool    diff +12.7 CI [+6.1,+19.6] MDE 10.3 e/M 1.23 X0 NOREF
+       T4-V282pool      diff +13 CI [+7.62,+34.5] MDE 14.2 e/M 0.915 X0 NOREF
+A90_5-8|hf_rms_2-10Hz                      V282:None(n4/r2) V282old:3.36(n7/r3) V282pool:5.45(n11/r5) V282_LOO:None(n1/r1) T64:15.2(n5/r2) T64B:14.2(n7/r1) T5:None(n4/r1) T4:14.7(n9/r1)
+       T64-V282pool     diff +9.77 CI [+2.58,+15.1] MDE 7.45 e/M 1.31 X0 NOREF
+       T64B-V282pool    diff +8.74 CI [+3.81,+15.3] MDE 9.68 e/M 0.903 X0 NOREF
+       T4-V282pool      diff +9.21 CI [+2.94,+18.1] MDE 12.9 e/M 0.714 X0 NOREF
+A90_5-8|travel_conc                        V282:None(n4/r2) V282old:0.164(n7/r3) V282pool:0.163(n11/r5) V282_LOO:None(n1/r1) T64:0.155(n5/r2) T64B:0.191(n7/r1) T5:None(n4/r1) T4:0.21(n9/r1)
+       T64-V282pool     diff -0.00804 CI [-0.109,+0.106] MDE 0.163 e/M 0.0493    NOREF
+       T64B-V282pool    diff +0.0277 CI [-0.079,+0.138] MDE 0.14 e/M 0.198    NOREF
+       T4-V282pool      diff +0.0466 CI [-0.0683,+0.0787] MDE 0.116 e/M 0.402    NOREF
+A90_5-8|dwelljump_per100deg                V282:None(n4/r2) V282old:0(n7/r3) V282pool:0(n11/r5) V282_LOO:None(n1/r1) T64:0(n5/r2) T64B:0.466(n7/r1) T5:None(n4/r1) T4:0.324(n9/r1)
+       T64-V282pool     diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+       T64B-V282pool    diff +0.466 CI [+0,+1.3] MDE 0.984 e/M 0.473    NOREF
+       T4-V282pool      diff +0.324 CI [+0,+0.905] MDE 0.663 e/M 0.488    NOREF
+A90_5-8|turn_lag_build_excess              V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n1/r1)
+A90_5-8|turn_lag_unwind_excess             V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_5-8|turn_lag_build                     V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n1/r1)
+A90_5-8|turn_lag_unwind                    V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_5-8|turn_gain_build                    V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n1/r1)
+A90_5-8|turn_gain_hold                     V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n1/r1)
+A90_5-8|turn_gain_unwind                   V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n2/r1)
+A90_5-8|turn_caster_bias                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A90_5-8|turn_caster_bias_pose              V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n0/r0) T5:None(n0/r0) T4:None(n1/r1)
+A90_5-8|turn_ret_overshoot                 V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n2/r1)
+A90_5-8|turn_settle_s                      V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n2/r1)
+A90_5-8|turn_hf_rms                        V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n2/r1)
+A90_5-8|turn_mode_rms                      V282:None(n1/r1) V282old:None(n0/r0) V282pool:None(n1/r1) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:None(n0/r0) T5:None(n1/r1) T4:None(n2/r1)
+A90_8-15|mode_ratio_1.8-3Hz                V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n0/r0)
+A90_8-15|hf_ratio_2-10Hz                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n0/r0)
+A90_8-15|mode_rms_1.8-3Hz                  V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n0/r0)
+A90_8-15|hf_rms_2-10Hz                     V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n0/r0)
+A90_8-15|travel_conc                       V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n0/r0)
+A90_8-15|dwelljump_per100deg               V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n0/r0)
+A90_8-15|turn_lag_build_excess             V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n1/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_lag_unwind_excess            V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_lag_build                    V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n1/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_lag_unwind                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_gain_build                   V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n1/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_gain_hold                    V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_gain_unwind                  V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_caster_bias                  V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n1/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_caster_bias_pose             V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n1/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_ret_overshoot                V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_settle_s                     V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_hf_rms                       V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n1/r1)
+A90_8-15|turn_mode_rms                     V282:None(n0/r0) V282old:None(n0/r0) V282pool:None(n0/r0) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:None(n2/r1) T5:None(n0/r0) T4:None(n1/r1)
+R10_2.5-5|mode_ratio_1.8-3Hz               V282:0.0979(n44/r3) V282old:0.0881(n31/r3) V282pool:0.0932(n75/r6) V282_LOO:0.104(n14/r2) T64:0.372(n10/r2) T64B:0.392(n7/r1) T5:0.158(n6/r1) T4:0.298(n13/r1)
+       V282old-V282     diff -0.00984 CI [-0.0503,+0.0692] MDE 0.0771 e/M 0.128    refOK
+       T64-V282pool     diff +0.279 CI [+0.0805,+0.52] MDE 0.348 e/M 0.802 X0 refOK
+       T64-V282         diff +0.274 CI [+0.0764,+0.52] MDE 0.349 e/M 0.785 X0 refOK
+       T64-V282_LOO     diff +0.268 CI [+0.0652,+0.52] MDE 0.351 e/M 0.764 X0 NOREF
+       T64B-V282pool    diff +0.299 CI [+0.172,+0.431] MDE 0.235 e/M 1.27 X0 refOK
+       T5-V282pool      diff +0.0645 CI [-0.0292,+0.457] MDE 0.397 e/M 0.162    refOK
+       T4-V282pool      diff +0.205 CI [+0.0625,+0.295] MDE 0.225 e/M 0.91 X0 refOK
+R10_2.5-5|hf_ratio_2-10Hz                  V282:0.213(n44/r3) V282old:0.247(n31/r3) V282pool:0.227(n75/r6) V282_LOO:0.26(n14/r2) T64:0.381(n10/r2) T64B:0.449(n7/r1) T5:0.2(n6/r1) T4:0.356(n13/r1)
+       V282old-V282     diff +0.0344 CI [-0.0803,+0.135] MDE 0.152 e/M 0.227    refOK
+       T64-V282pool     diff +0.154 CI [-0.0224,+0.531] MDE 0.409 e/M 0.376    refOK
+       T64-V282         diff +0.168 CI [-0.00195,+0.554] MDE 0.412 e/M 0.408    refOK
+       T64-V282_LOO     diff +0.12 CI [-0.0598,+0.529] MDE 0.426 e/M 0.282    NOREF
+       T64B-V282pool    diff +0.222 CI [+0.0897,+0.384] MDE 0.233 e/M 0.955 X0 refOK
+       T5-V282pool      diff -0.0262 CI [-0.15,+0.354] MDE 0.366 e/M 0.0717    refOK
+       T4-V282pool      diff +0.13 CI [-0.00323,+0.196] MDE 0.161 e/M 0.807    refOK
+R10_2.5-5|mode_rms_1.8-3Hz                 V282:0.825(n44/r3) V282old:0.616(n31/r3) V282pool:0.668(n75/r6) V282_LOO:1.03(n14/r2) T64:3.08(n10/r2) T64B:2.19(n7/r1) T5:0.616(n6/r1) T4:1.67(n13/r1)
+       V282old-V282     diff -0.209 CI [-0.916,+0.252] MDE 0.779 e/M 0.268    refOK
+       T64-V282pool     diff +2.41 CI [+0.954,+8.82] MDE 4.98 e/M 0.484 X0 refOK
+       T64-V282         diff +2.25 CI [+0.754,+8.73] MDE 5.01 e/M 0.449 X0 refOK
+       T64-V282_LOO     diff +2.04 CI [+0.405,+8.48] MDE 5.04 e/M 0.405 X0 NOREF
+       T64B-V282pool    diff +1.52 CI [+0.43,+2.89] MDE 2.83 e/M 0.537 X0 refOK
+       T5-V282pool      diff -0.0522 CI [-0.606,+1.7] MDE 1.84 e/M 0.0284    refOK
+       T4-V282pool      diff +1 CI [-0.175,+2.5] MDE 2.57 e/M 0.389    refOK
+R10_2.5-5|hf_rms_2-10Hz                    V282:1.7(n44/r3) V282old:1.85(n31/r3) V282pool:1.77(n75/r6) V282_LOO:1.95(n14/r2) T64:4.88(n10/r2) T64B:2.29(n7/r1) T5:0.765(n6/r1) T4:2.87(n13/r1)
+       V282old-V282     diff +0.147 CI [-0.907,+0.883] MDE 1.22 e/M 0.12    refOK
+       T64-V282pool     diff +3.11 CI [-0.156,+8.21] MDE 5.72 e/M 0.543    refOK
+       T64-V282         diff +3.18 CI [-0.189,+7.99] MDE 5.77 e/M 0.551    refOK
+       T64-V282_LOO     diff +2.93 CI [-0.647,+7.37] MDE 5.79 e/M 0.506    NOREF
+       T64B-V282pool    diff +0.515 CI [-0.0441,+3.31] MDE 2.79 e/M 0.184    refOK
+       T5-V282pool      diff -1.01 CI [-1.59,+1.07] MDE 1.76 e/M 0.573    refOK
+       T4-V282pool      diff +1.1 CI [-0.755,+2.07] MDE 2.37 e/M 0.464    refOK
+R10_2.5-5|travel_conc                      V282:0.244(n44/r3) V282old:0.255(n31/r3) V282pool:0.246(n75/r6) V282_LOO:0.256(n14/r2) T64:0.372(n10/r2) T64B:0.389(n7/r1) T5:0.378(n5/r1) T4:0.458(n13/r1)
+       V282old-V282     diff +0.0103 CI [-0.0791,+0.0376] MDE 0.0863 e/M 0.119    refOK
+       T64-V282pool     diff +0.125 CI [-0.0247,+0.288] MDE 0.243 e/M 0.515    refOK
+       T64-V282         diff +0.127 CI [-0.0317,+0.284] MDE 0.25 e/M 0.51    refOK
+       T64-V282_LOO     diff +0.116 CI [-0.073,+0.284] MDE 0.264 e/M 0.439    NOREF
+       T64B-V282pool    diff +0.142 CI [+0.00653,+0.376] MDE 0.292 e/M 0.488 X0 refOK
+       T5-V282pool      diff +0.131 CI [-0.0221,+0.313] MDE 0.281 e/M 0.467    refOK
+       T4-V282pool      diff +0.211 CI [+0.0478,+0.331] MDE 0.249 e/M 0.847 X0 refOK
+R10_2.5-5|dwelljump_per100deg              V282:1.42(n44/r3) V282old:2.85(n31/r3) V282pool:1.99(n75/r6) V282_LOO:0.638(n14/r2) T64:2.3(n10/r2) T64B:1.87(n7/r1) T5:26.6(n6/r1) T4:2.77(n13/r1)
+       V282old-V282     diff +1.44 CI [-0.657,+7.19] MDE 5.6 e/M 0.256    refOK
+       T64-V282pool     diff +0.31 CI [-2.92,+9.74] MDE 9.36 e/M 0.0332    refOK
+       T64-V282         diff +0.883 CI [-2.32,+10.9] MDE 9.49 e/M 0.093    refOK
+       T64-V282_LOO     diff +1.66 CI [-1.76,+11.4] MDE 9.35 e/M 0.178    NOREF
+       T64B-V282pool    diff -0.116 CI [-3.06,+10.3] MDE 9.42 e/M 0.0123    refOK
+       T5-V282pool      diff +24.6 CI [+7.84,+37.1] MDE 20.2 e/M 1.22 X0 refOK
+       T4-V282pool      diff +0.779 CI [-2.3,+8.29] MDE 7.7 e/M 0.101    refOK
+R10_2.5-5|rate_lag_excess                  V282:0.06(n23/r3) V282old:0.09(n11/r2) V282pool:0.08(n34/r5) V282_LOO:0.045(n6/r2) T64:None(n2/r1) T64B:None(n2/r1) T5:None(n2/r1) T4:0.265(n8/r1)
+       V282old-V282     diff +0.03 CI [+0.01,+0.08] MDE 0.0534 e/M 0.562 X0 refOK
+       T4-V282pool      diff +0.185 CI [+0.115,+0.25] MDE 0.0814 e/M 2.28 X0 refOK
+R10_2.5-5|rate_lag                         V282:0.26(n23/r3) V282old:0.29(n11/r2) V282pool:0.28(n34/r5) V282_LOO:0.245(n6/r2) T64:None(n2/r1) T64B:None(n2/r1) T5:None(n2/r1) T4:0.545(n8/r1)
+       V282old-V282     diff +0.03 CI [+0.01,+0.08] MDE 0.0528 e/M 0.568 X0 refOK
+       T4-V282pool      diff +0.265 CI [+0.2,+0.325] MDE 0.0766 e/M 3.46 X0 refOK
+R10_2.5-5|rate_gain                        V282:0.652(n23/r3) V282old:0.72(n11/r2) V282pool:0.681(n34/r5) V282_LOO:0.652(n6/r2) T64:None(n2/r1) T64B:None(n2/r1) T5:None(n2/r1) T4:0.286(n8/r1)
+       V282old-V282     diff +0.0674 CI [-0.136,+0.238] MDE 0.266 e/M 0.253    refOK
+       T4-V282pool      diff -0.394 CI [-0.627,+0.228] MDE 0.581 e/M 0.679    refOK
+R10_2.5-5|rate_peak_ratio                  V282:0.867(n23/r3) V282old:0.897(n11/r2) V282pool:0.879(n34/r5) V282_LOO:0.862(n6/r2) T64:None(n2/r1) T64B:None(n2/r1) T5:None(n2/r1) T4:0.564(n8/r1)
+       V282old-V282     diff +0.0297 CI [-0.317,+0.194] MDE 0.375 e/M 0.0794    refOK
+       T4-V282pool      diff -0.314 CI [-0.661,+0.295] MDE 0.72 e/M 0.437    refOK
+R10_2.5-5|rate_overrun                     V282:0.2(n23/r3) V282old:0.263(n11/r2) V282pool:0.236(n34/r5) V282_LOO:0.105(n6/r2) T64:None(n1/r1) T64B:None(n2/r1) T5:None(n1/r1) T4:0.376(n8/r1)
+       V282old-V282     diff +0.063 CI [-0.0505,+0.233] MDE 0.215 e/M 0.293    refOK
+       T4-V282pool      diff +0.14 CI [-0.107,+0.554] MDE 0.511 e/M 0.275    refOK
+R10_2.5-5|rate_rough                       V282:0.122(n23/r3) V282old:0.135(n11/r2) V282pool:0.125(n34/r5) V282_LOO:0.158(n6/r2) T64:None(n2/r1) T64B:None(n2/r1) T5:None(n2/r1) T4:0.29(n8/r1)
+       V282old-V282     diff +0.0133 CI [-0.0661,+0.098] MDE 0.108 e/M 0.123    refOK
+       T4-V282pool      diff +0.164 CI [+0.00453,+0.272] MDE 0.204 e/M 0.808 X0 refOK
+R10_2.5-5|rate_travel_ratio                V282:0.954(n11/r3) V282old:1.01(n6/r1) V282pool:0.985(n17/r4) V282_LOO:0.988(n4/r2) T64:None(n2/r1) T64B:None(n2/r1) T5:None(n2/r1) T4:0.464(n5/r1)
+       V282old-V282     diff +0.0585 CI [-0.401,+0.403] MDE 0.574 e/M 0.102    refOK
+       T4-V282pool      diff -0.521 CI [-0.94,+0.69] MDE 1.34 e/M 0.389    refOK
+R10_2.5-5|rate_conc                        V282:0.273(n23/r3) V282old:0.235(n11/r2) V282pool:0.271(n34/r5) V282_LOO:0.292(n6/r2) T64:None(n2/r1) T64B:None(n2/r1) T5:None(n2/r1) T4:0.476(n8/r1)
+       V282old-V282     diff -0.0386 CI [-0.108,+0.0137] MDE 0.0893 e/M 0.433    refOK
+       T4-V282pool      diff +0.205 CI [+0.0554,+0.287] MDE 0.187 e/M 1.1 X0 refOK
+R10_2.5-5|rate_hf_per_peak                 V282:0.0996(n23/r3) V282old:0.119(n11/r2) V282pool:0.104(n34/r5) V282_LOO:0.119(n6/r2) T64:None(n2/r1) T64B:None(n2/r1) T5:None(n2/r1) T4:0.116(n8/r1)
+       V282old-V282     diff +0.0197 CI [-0.0451,+0.0767] MDE 0.0702 e/M 0.281    refOK
+       T4-V282pool      diff +0.0113 CI [-0.0446,+0.142] MDE 0.145 e/M 0.0782    refOK
+R10_2.5-5|rate_mode_per_peak               V282:0.0459(n23/r3) V282old:0.0334(n11/r2) V282pool:0.0375(n34/r5) V282_LOO:0.0372(n6/r2) T64:None(n2/r1) T64B:None(n2/r1) T5:None(n2/r1) T4:0.0732(n8/r1)
+       V282old-V282     diff -0.0124 CI [-0.0238,+0.0205] MDE 0.032 e/M 0.388    refOK
+       T4-V282pool      diff +0.0357 CI [+0.00364,+0.109] MDE 0.064 e/M 0.558 X0 refOK
+R10_5-8|mode_ratio_1.8-3Hz                 V282:0.0625(n33/r3) V282old:0.0687(n50/r3) V282pool:0.0657(n83/r6) V282_LOO:0.0594(n12/r2) T64:0.431(n18/r2) T64B:0.356(n24/r1) T5:0.283(n10/r1) T4:0.415(n30/r1)
+       V282old-V282     diff +0.00618 CI [-0.0538,+0.034] MDE 0.0604 e/M 0.102    NOREF
+       T64-V282pool     diff +0.365 CI [+0.17,+0.431] MDE 0.177 e/M 2.06 X0 refOK
+       T64-V282         diff +0.369 CI [+0.17,+0.43] MDE 0.183 e/M 2.01 X0 NOREF
+       T64-V282_LOO     diff +0.372 CI [+0.168,+0.437] MDE 0.19 e/M 1.96 X0 NOREF
+       T64B-V282pool    diff +0.291 CI [+0.25,+0.361] MDE 0.0793 e/M 3.67 X0 refOK
+       T5-V282pool      diff +0.217 CI [+0.113,+0.318] MDE 0.132 e/M 1.64 X0 refOK
+       T4-V282pool      diff +0.349 CI [+0.284,+0.498] MDE 0.143 e/M 2.44 X0 refOK
+R10_5-8|hf_ratio_2-10Hz                    V282:0.186(n33/r3) V282old:0.177(n50/r3) V282pool:0.181(n83/r6) V282_LOO:0.175(n12/r2) T64:0.467(n18/r2) T64B:0.486(n24/r1) T5:0.407(n10/r1) T4:0.508(n30/r1)
+       V282old-V282     diff -0.0091 CI [-0.124,+0.0503] MDE 0.118 e/M 0.0771    NOREF
+       T64-V282pool     diff +0.286 CI [+0.0601,+0.356] MDE 0.194 e/M 1.48 X0 refOK
+       T64-V282         diff +0.281 CI [+0.0595,+0.359] MDE 0.211 e/M 1.33 X0 NOREF
+       T64-V282_LOO     diff +0.292 CI [+0.0704,+0.393] MDE 0.241 e/M 1.21 X0 NOREF
+       T64B-V282pool    diff +0.305 CI [+0.189,+0.434] MDE 0.16 e/M 1.9 X0 refOK
+       T5-V282pool      diff +0.226 CI [+0.0824,+0.312] MDE 0.146 e/M 1.55 X0 refOK
+       T4-V282pool      diff +0.327 CI [+0.207,+0.407] MDE 0.138 e/M 2.37 X0 refOK
+R10_5-8|mode_rms_1.8-3Hz                   V282:0.763(n33/r3) V282old:0.676(n50/r3) V282pool:0.697(n83/r6) V282_LOO:0.777(n12/r2) T64:5.05(n18/r2) T64B:2.78(n24/r1) T5:3.04(n10/r1) T4:4.46(n30/r1)
+       V282old-V282     diff -0.0877 CI [-0.449,+0.211] MDE 0.474 e/M 0.185    NOREF
+       T64-V282pool     diff +4.35 CI [+1.67,+7.87] MDE 4.25 e/M 1.02 X0 refOK
+       T64-V282         diff +4.28 CI [+1.56,+7.93] MDE 4.27 e/M 1 X0 NOREF
+       T64-V282_LOO     diff +4.27 CI [+1.45,+7.85] MDE 4.29 e/M 0.995 X0 NOREF
+       T64B-V282pool    diff +2.09 CI [+0.987,+3.07] MDE 1.18 e/M 1.76 X0 refOK
+       T5-V282pool      diff +2.35 CI [+0.806,+3.91] MDE 2.24 e/M 1.05 X0 refOK
+       T4-V282pool      diff +3.76 CI [+1.83,+4.78] MDE 2.37 e/M 1.58 X0 refOK
+R10_5-8|hf_rms_2-10Hz                      V282:2.09(n33/r3) V282old:1.59(n50/r3) V282pool:1.84(n83/r6) V282_LOO:2.2(n12/r2) T64:4.9(n18/r2) T64B:3.97(n24/r1) T5:3.71(n10/r1) T4:4.96(n30/r1)
+       V282old-V282     diff -0.495 CI [-1.02,+0.0147] MDE 0.883 e/M 0.561    NOREF
+       T64-V282pool     diff +3.06 CI [+1.21,+5.34] MDE 2.88 e/M 1.06 X0 refOK
+       T64-V282         diff +2.81 CI [+1.03,+5.04] MDE 2.89 e/M 0.971 X0 NOREF
+       T64-V282_LOO     diff +2.7 CI [+0.874,+4.93] MDE 2.91 e/M 0.929 X0 NOREF
+       T64B-V282pool    diff +2.13 CI [+1.19,+2.94] MDE 1.13 e/M 1.89 X0 refOK
+       T5-V282pool      diff +1.87 CI [+0.791,+4.35] MDE 2.27 e/M 0.825 X0 refOK
+       T4-V282pool      diff +3.12 CI [+1.37,+3.83] MDE 2.01 e/M 1.56 X0 refOK
+R10_5-8|travel_conc                        V282:0.236(n33/r3) V282old:0.204(n50/r3) V282pool:0.217(n83/r6) V282_LOO:0.218(n12/r2) T64:0.361(n18/r2) T64B:0.391(n24/r1) T5:0.239(n10/r1) T4:0.38(n30/r1)
+       V282old-V282     diff -0.0311 CI [-0.068,+0.0678] MDE 0.115 e/M 0.27    NOREF
+       T64-V282pool     diff +0.144 CI [+0.0341,+0.183] MDE 0.113 e/M 1.27 X0 refOK
+       T64-V282         diff +0.125 CI [+0.0185,+0.201] MDE 0.122 e/M 1.03 X0 NOREF
+       T64-V282_LOO     diff +0.143 CI [+0.0377,+0.213] MDE 0.128 e/M 1.11 X0 NOREF
+       T64B-V282pool    diff +0.174 CI [+0.0954,+0.245] MDE 0.101 e/M 1.71 X0 refOK
+       T5-V282pool      diff +0.0224 CI [-0.0163,+0.0635] MDE 0.0554 e/M 0.404    refOK
+       T4-V282pool      diff +0.163 CI [+0.101,+0.235] MDE 0.094 e/M 1.73 X0 refOK
+R10_5-8|dwelljump_per100deg                V282:1.19(n33/r3) V282old:1.02(n50/r3) V282pool:1.09(n83/r6) V282_LOO:0.663(n12/r2) T64:1.76(n18/r2) T64B:2.35(n24/r1) T5:0(n10/r1) T4:3.57(n30/r1)
+       V282old-V282     diff -0.172 CI [-1.64,+3.29] MDE 3.46 e/M 0.0496    NOREF
+       T64-V282pool     diff +0.676 CI [-1.32,+4.52] MDE 3.95 e/M 0.171    refOK
+       T64-V282         diff +0.576 CI [-1.22,+4.48] MDE 4.09 e/M 0.141    NOREF
+       T64-V282_LOO     diff +1.1 CI [-0.966,+5.02] MDE 4.15 e/M 0.265    NOREF
+       T64B-V282pool    diff +1.26 CI [-0.906,+3.37] MDE 3.06 e/M 0.412    refOK
+       T5-V282pool      diff -1.09 CI [-2.43,-0.305] MDE 1.47 e/M 0.738 X0 refOK
+       T4-V282pool      diff +2.48 CI [-0.106,+6.59] MDE 4.78 e/M 0.52    refOK
+R10_5-8|rate_lag_excess                    V282:0.06(n14/r3) V282old:0.11(n31/r3) V282pool:0.09(n45/r6) V282_LOO:0.07(n5/r2) T64:0.000998(n7/r2) T64B:0.0578(n19/r1) T5:0.224(n4/r1) T4:0.18(n22/r1)
+       V282old-V282     diff +0.05 CI [-0.01,+0.11] MDE 0.08 e/M 0.625    NOREF
+       T64-V282pool     diff -0.089 CI [-0.199,+0.331] MDE 0.423 e/M 0.21    refOK
+       T64-V282         diff -0.059 CI [-0.174,+0.371] MDE 0.424 e/M 0.139    NOREF
+       T64-V282_LOO     diff -0.069 CI [-0.179,+0.341] MDE 0.421 e/M 0.164    NOREF
+       T64B-V282pool    diff -0.0322 CI [-0.147,+0.00779] MDE 0.132 e/M 0.243    refOK
+       T5-V282pool      diff +0.134 CI [+0.0642,+0.304] MDE 0.165 e/M 0.814 X0 refOK
+       T4-V282pool      diff +0.0904 CI [+0.0454,+0.155] MDE 0.0805 e/M 1.12 X0 refOK
+R10_5-8|rate_lag                           V282:0.26(n14/r3) V282old:0.31(n31/r3) V282pool:0.29(n45/r6) V282_LOO:0.27(n5/r2) T64:0.3(n7/r2) T64B:0.36(n19/r1) T5:0.51(n4/r1) T4:0.46(n22/r1)
+       V282old-V282     diff +0.05 CI [+0,+0.09] MDE 0.071 e/M 0.704    NOREF
+       T64-V282pool     diff +0.01 CI [-0.09,+0.44] MDE 0.424 e/M 0.0236    refOK
+       T64-V282         diff +0.04 CI [-0.07,+0.47] MDE 0.424 e/M 0.0943    NOREF
+       T64-V282_LOO     diff +0.03 CI [-0.0702,+0.45] MDE 0.424 e/M 0.0708    NOREF
+       T64B-V282pool    diff +0.07 CI [-0.04,+0.115] MDE 0.125 e/M 0.559    refOK
+       T5-V282pool      diff +0.22 CI [+0.15,+0.39] MDE 0.164 e/M 1.34 X0 refOK
+       T4-V282pool      diff +0.17 CI [+0.13,+0.235] MDE 0.0771 e/M 2.21 X0 refOK
+R10_5-8|rate_gain                          V282:0.738(n14/r3) V282old:0.732(n31/r3) V282pool:0.732(n45/r6) V282_LOO:0.754(n5/r2) T64:0.814(n7/r2) T64B:0.763(n19/r1) T5:0.896(n4/r1) T4:0.548(n22/r1)
+       V282old-V282     diff -0.00565 CI [-0.284,+0.145] MDE 0.353 e/M 0.016    NOREF
+       T64-V282pool     diff +0.0816 CI [-0.23,+0.79] MDE 0.906 e/M 0.0901    refOK
+       T64-V282         diff +0.076 CI [-0.208,+0.752] MDE 0.886 e/M 0.0857    NOREF
+       T64-V282_LOO     diff +0.0604 CI [-0.208,+0.779] MDE 0.892 e/M 0.0677    NOREF
+       T64B-V282pool    diff +0.0304 CI [-0.354,+0.228] MDE 0.386 e/M 0.0789    refOK
+       T5-V282pool      diff +0.164 CI [-0.383,+0.527] MDE 0.685 e/M 0.239    refOK
+       T4-V282pool      diff -0.184 CI [-0.359,+0.0933] MDE 0.328 e/M 0.562    refOK
+R10_5-8|rate_peak_ratio                    V282:0.859(n14/r3) V282old:0.869(n31/r3) V282pool:0.867(n45/r6) V282_LOO:0.852(n5/r2) T64:1.41(n7/r2) T64B:1.21(n19/r1) T5:1.46(n4/r1) T4:1.2(n22/r1)
+       V282old-V282     diff +0.00999 CI [-0.422,+0.122] MDE 0.466 e/M 0.0214    NOREF
+       T64-V282pool     diff +0.543 CI [-0.0766,+6.31] MDE 4.11 e/M 0.132    refOK
+       T64-V282         diff +0.55 CI [-0.105,+6.33] MDE 4.1 e/M 0.134    NOREF
+       T64-V282_LOO     diff +0.558 CI [-0.0983,+6.36] MDE 4.1 e/M 0.136    NOREF
+       T64B-V282pool    diff +0.344 CI [+0.0597,+0.915] MDE 0.565 e/M 0.609 X0 refOK
+       T5-V282pool      diff +0.593 CI [+0.184,+1.16] MDE 0.825 e/M 0.718 X0 refOK
+       T4-V282pool      diff +0.338 CI [-0.0113,+1.02] MDE 0.736 e/M 0.459    refOK
+R10_5-8|rate_overrun                       V282:0.209(n14/r3) V282old:0.266(n28/r3) V282pool:0.251(n42/r6) V282_LOO:0.13(n5/r2) T64:0.502(n6/r2) T64B:0.44(n18/r1) T5:0.424(n4/r1) T4:0.369(n22/r1)
+       V282old-V282     diff +0.0567 CI [-0.199,+0.276] MDE 0.365 e/M 0.156    NOREF
+       T64-V282pool     diff +0.251 CI [-0.275,+0.477] MDE 0.524 e/M 0.479    refOK
+       T64-V282         diff +0.293 CI [-0.26,+0.503] MDE 0.558 e/M 0.525    NOREF
+       T64-V282_LOO     diff +0.372 CI [-0.353,+0.539] MDE 0.599 e/M 0.621    NOREF
+       T64B-V282pool    diff +0.189 CI [-0.0701,+0.458] MDE 0.35 e/M 0.541    refOK
+       T5-V282pool      diff +0.173 CI [+0.0043,+0.456] MDE 0.337 e/M 0.513 X0 refOK
+       T4-V282pool      diff +0.119 CI [-0.0764,+0.289] MDE 0.269 e/M 0.44    refOK
+R10_5-8|rate_rough                         V282:0.107(n14/r3) V282old:0.138(n31/r3) V282pool:0.124(n45/r6) V282_LOO:0.108(n5/r2) T64:0.325(n7/r2) T64B:0.263(n19/r1) T5:0.346(n4/r1) T4:0.314(n22/r1)
+       V282old-V282     diff +0.0302 CI [-0.0496,+0.103] MDE 0.0949 e/M 0.319    NOREF
+       T64-V282pool     diff +0.201 CI [+0.0685,+0.489] MDE 0.341 e/M 0.59 X0 refOK
+       T64-V282         diff +0.218 CI [+0.0835,+0.521] MDE 0.345 e/M 0.632 X0 NOREF
+       T64-V282_LOO     diff +0.217 CI [+0.0249,+0.548] MDE 0.374 e/M 0.581 X0 NOREF
+       T64B-V282pool    diff +0.138 CI [+0.0821,+0.179] MDE 0.0691 e/M 2 X0 refOK
+       T5-V282pool      diff +0.221 CI [+0.11,+0.375] MDE 0.19 e/M 1.16 X0 refOK
+       T4-V282pool      diff +0.19 CI [+0.0625,+0.258] MDE 0.153 e/M 1.24 X0 refOK
+R10_5-8|rate_travel_ratio                  V282:1.18(n9/r3) V282old:0.882(n17/r3) V282pool:0.94(n26/r6) V282_LOO:0.993(n4/r2) T64:1.22(n4/r2) T64B:0.922(n16/r1) T5:0.811(n4/r1) T4:0.574(n14/r1)
+       V282old-V282     diff -0.298 CI [-0.455,+0.193] MDE 0.606 e/M 0.492    NOREF
+       T64-V282pool     diff +0.281 CI [-0.515,+1.09] MDE 1.04 e/M 0.27    refOK
+       T64-V282         diff +0.0415 CI [-0.805,+0.915] MDE 1.15 e/M 0.0361    NOREF
+       T64-V282_LOO     diff +0.228 CI [-0.571,+0.98] MDE 1.11 e/M 0.205    NOREF
+       T64B-V282pool    diff -0.0185 CI [-0.633,+0.21] MDE 0.638 e/M 0.029    refOK
+       T5-V282pool      diff -0.129 CI [-0.439,+0.343] MDE 0.513 e/M 0.252    refOK
+       T4-V282pool      diff -0.366 CI [-0.722,-0.00479] MDE 0.56 e/M 0.654 X0 refOK
+R10_5-8|rate_conc                          V282:0.235(n14/r3) V282old:0.264(n31/r3) V282pool:0.256(n45/r6) V282_LOO:0.233(n5/r2) T64:0.384(n7/r2) T64B:0.384(n19/r1) T5:0.304(n4/r1) T4:0.457(n22/r1)
+       V282old-V282     diff +0.0288 CI [-0.02,+0.0776] MDE 0.072 e/M 0.399    NOREF
+       T64-V282pool     diff +0.128 CI [+0.0609,+0.278] MDE 0.16 e/M 0.802 X0 refOK
+       T64-V282         diff +0.149 CI [+0.0795,+0.288] MDE 0.158 e/M 0.944 X0 NOREF
+       T64-V282_LOO     diff +0.152 CI [+0.0815,+0.292] MDE 0.158 e/M 0.961 X0 NOREF
+       T64B-V282pool    diff +0.128 CI [+0.0775,+0.184] MDE 0.0815 e/M 1.57 X0 refOK
+       T5-V282pool      diff +0.0476 CI [-0.0341,+0.105] MDE 0.106 e/M 0.448    refOK
+       T4-V282pool      diff +0.201 CI [+0.145,+0.26] MDE 0.0782 e/M 2.57 X0 refOK
+R10_5-8|rate_hf_per_peak                   V282:0.11(n14/r3) V282old:0.102(n31/r3) V282pool:0.102(n45/r6) V282_LOO:0.135(n5/r2) T64:0.322(n7/r2) T64B:0.237(n19/r1) T5:0.32(n4/r1) T4:0.228(n22/r1)
+       V282old-V282     diff -0.00801 CI [-0.0716,+0.056] MDE 0.0889 e/M 0.0901    NOREF
+       T64-V282pool     diff +0.221 CI [+0.0578,+0.483] MDE 0.295 e/M 0.747 X0 refOK
+       T64-V282         diff +0.213 CI [+0.0521,+0.485] MDE 0.302 e/M 0.705 X0 NOREF
+       T64-V282_LOO     diff +0.187 CI [+0.0307,+0.503] MDE 0.316 e/M 0.591 X0 NOREF
+       T64B-V282pool    diff +0.136 CI [+0.0536,+0.17] MDE 0.0861 e/M 1.58 X0 refOK
+       T5-V282pool      diff +0.218 CI [+0.144,+0.354] MDE 0.148 e/M 1.48 X0 refOK
+       T4-V282pool      diff +0.127 CI [+0.0471,+0.192] MDE 0.106 e/M 1.19 X0 refOK
+R10_5-8|rate_mode_per_peak                 V282:0.0303(n14/r3) V282old:0.0461(n31/r3) V282pool:0.0443(n45/r6) V282_LOO:0.0443(n5/r2) T64:0.311(n7/r2) T64B:0.14(n19/r1) T5:0.216(n4/r1) T4:0.169(n22/r1)
+       V282old-V282     diff +0.0157 CI [-0.0454,+0.0342] MDE 0.0587 e/M 0.268    NOREF
+       T64-V282pool     diff +0.267 CI [+0.0513,+0.455] MDE 0.314 e/M 0.849 X0 refOK
+       T64-V282         diff +0.281 CI [+0.0539,+0.462] MDE 0.317 e/M 0.886 X0 NOREF
+       T64-V282_LOO     diff +0.267 CI [+0.0132,+0.462] MDE 0.322 e/M 0.829 X0 NOREF
+       T64B-V282pool    diff +0.0959 CI [+0.0763,+0.171] MDE 0.0742 e/M 1.29 X0 refOK
+       T5-V282pool      diff +0.171 CI [+0.0412,+0.329] MDE 0.187 e/M 0.914 X0 refOK
+       T4-V282pool      diff +0.125 CI [+0.0948,+0.223] MDE 0.086 e/M 1.45 X0 refOK
+R10_8-15|mode_ratio_1.8-3Hz                V282:0.054(n58/r3) V282old:0.0474(n44/r3) V282pool:0.0511(n102/r6) V282_LOO:0.0628(n21/r2) T64:0.318(n20/r2) T64B:0.415(n37/r1) T5:0.311(n18/r1) T4:0.432(n38/r1)
+       V282old-V282     diff -0.00656 CI [-0.043,+0.0135] MDE 0.0379 e/M 0.173    refOK
+       T64-V282pool     diff +0.267 CI [+0.151,+0.44] MDE 0.181 e/M 1.47 X0 refOK
+       T64-V282         diff +0.264 CI [+0.145,+0.439] MDE 0.184 e/M 1.43 X0 refOK
+       T64-V282_LOO     diff +0.255 CI [+0.156,+0.427] MDE 0.187 e/M 1.36 X0 NOREF
+       T64B-V282pool    diff +0.364 CI [+0.265,+0.532] MDE 0.216 e/M 1.68 X0 refOK
+       T5-V282pool      diff +0.26 CI [+0.173,+0.406] MDE 0.166 e/M 1.57 X0 refOK
+       T4-V282pool      diff +0.381 CI [+0.247,+0.431] MDE 0.137 e/M 2.77 X0 refOK
+R10_8-15|hf_ratio_2-10Hz                   V282:0.158(n58/r3) V282old:0.146(n44/r3) V282pool:0.151(n102/r6) V282_LOO:0.142(n21/r2) T64:0.554(n20/r2) T64B:0.576(n37/r1) T5:0.43(n18/r1) T4:0.481(n38/r1)
+       V282old-V282     diff -0.0122 CI [-0.0581,+0.0298] MDE 0.0614 e/M 0.199    refOK
+       T64-V282pool     diff +0.403 CI [+0.323,+0.607] MDE 0.202 e/M 2 X0 refOK
+       T64-V282         diff +0.396 CI [+0.321,+0.601] MDE 0.202 e/M 1.96 X0 refOK
+       T64-V282_LOO     diff +0.412 CI [+0.332,+0.61] MDE 0.202 e/M 2.04 X0 NOREF
+       T64B-V282pool    diff +0.425 CI [+0.318,+0.54] MDE 0.147 e/M 2.89 X0 refOK
+       T5-V282pool      diff +0.279 CI [+0.203,+0.445] MDE 0.161 e/M 1.74 X0 refOK
+       T4-V282pool      diff +0.33 CI [+0.243,+0.445] MDE 0.165 e/M 2 X0 refOK
+R10_8-15|mode_rms_1.8-3Hz                  V282:0.47(n58/r3) V282old:0.481(n44/r3) V282pool:0.475(n102/r6) V282_LOO:0.54(n21/r2) T64:3.66(n20/r2) T64B:5.31(n37/r1) T5:3.88(n18/r1) T4:4.31(n38/r1)
+       V282old-V282     diff +0.0103 CI [-0.196,+0.145] MDE 0.239 e/M 0.0432    refOK
+       T64-V282pool     diff +3.19 CI [+2.51,+4.25] MDE 1.31 e/M 2.44 X0 refOK
+       T64-V282         diff +3.19 CI [+2.52,+4.23] MDE 1.31 e/M 2.44 X0 refOK
+       T64-V282_LOO     diff +3.12 CI [+2.47,+4.13] MDE 1.31 e/M 2.39 X0 NOREF
+       T64B-V282pool    diff +4.83 CI [+2.93,+7.88] MDE 3.55 e/M 1.36 X0 refOK
+       T5-V282pool      diff +3.4 CI [+2.13,+7.22] MDE 3.18 e/M 1.07 X0 refOK
+       T4-V282pool      diff +3.84 CI [+3.03,+5.31] MDE 1.84 e/M 2.08 X0 refOK
+R10_8-15|hf_rms_2-10Hz                     V282:1.58(n58/r3) V282old:1.66(n44/r3) V282pool:1.63(n102/r6) V282_LOO:1.39(n21/r2) T64:6.51(n20/r2) T64B:7.47(n37/r1) T5:6.88(n18/r1) T4:6.15(n38/r1)
+       V282old-V282     diff +0.0844 CI [-0.373,+0.585] MDE 0.688 e/M 0.123    refOK
+       T64-V282pool     diff +4.88 CI [+2.89,+6.41] MDE 3.21 e/M 1.52 X0 refOK
+       T64-V282         diff +4.93 CI [+2.9,+6.58] MDE 3.24 e/M 1.52 X0 refOK
+       T64-V282_LOO     diff +5.11 CI [+2.85,+6.63] MDE 3.28 e/M 1.56 X0 NOREF
+       T64B-V282pool    diff +5.84 CI [+3.64,+8.07] MDE 3.09 e/M 1.89 X0 refOK
+       T5-V282pool      diff +5.25 CI [+2.13,+6.88] MDE 3.43 e/M 1.53 X0 refOK
+       T4-V282pool      diff +4.52 CI [+2.88,+5.53] MDE 2.04 e/M 2.22 X0 refOK
+R10_8-15|travel_conc                       V282:0.195(n58/r3) V282old:0.189(n44/r3) V282pool:0.195(n102/r6) V282_LOO:0.207(n21/r2) T64:0.356(n20/r2) T64B:0.34(n37/r1) T5:0.298(n18/r1) T4:0.332(n38/r1)
+       V282old-V282     diff -0.00551 CI [-0.0523,+0.0274] MDE 0.0531 e/M 0.104    refOK
+       T64-V282pool     diff +0.161 CI [+0.0515,+0.251] MDE 0.155 e/M 1.04 X0 refOK
+       T64-V282         diff +0.161 CI [+0.0448,+0.25] MDE 0.158 e/M 1.02 X0 refOK
+       T64-V282_LOO     diff +0.148 CI [+0.0326,+0.235] MDE 0.16 e/M 0.927 X0 NOREF
+       T64B-V282pool    diff +0.145 CI [+0.0982,+0.197] MDE 0.0751 e/M 1.93 X0 refOK
+       T5-V282pool      diff +0.104 CI [+0.0731,+0.174] MDE 0.073 e/M 1.42 X0 refOK
+       T4-V282pool      diff +0.137 CI [+0.0715,+0.218] MDE 0.0934 e/M 1.47 X0 refOK
+R10_8-15|dwelljump_per100deg               V282:0.436(n58/r3) V282old:0(n44/r3) V282pool:0.232(n102/r6) V282_LOO:0.413(n21/r2) T64:1.12(n20/r2) T64B:2.4(n37/r1) T5:0(n18/r1) T4:1.11(n38/r1)
+       V282old-V282     diff -0.436 CI [-1.08,+0] MDE 0.838 e/M 0.52    refOK
+       T64-V282pool     diff +0.884 CI [-0.546,+2.74] MDE 2.63 e/M 0.336    refOK
+       T64-V282         diff +0.68 CI [-0.934,+2.65] MDE 2.72 e/M 0.25    refOK
+       T64-V282_LOO     diff +0.703 CI [-1.24,+2.64] MDE 2.91 e/M 0.242    NOREF
+       T64B-V282pool    diff +2.17 CI [+0.745,+4.15] MDE 2.45 e/M 0.887 X0 refOK
+       T5-V282pool      diff -0.232 CI [-0.643,+0] MDE 0.501 e/M 0.463    refOK
+       T4-V282pool      diff +0.88 CI [+0.0965,+1.94] MDE 1.3 e/M 0.677 X0 refOK
+R10_8-15|rate_lag_excess                   V282:0.05(n27/r3) V282old:0.07(n25/r3) V282pool:0.06(n52/r6) V282_LOO:0.04(n9/r2) T64:-0.014(n10/r2) T64B:-0.0522(n19/r1) T5:0.0842(n12/r1) T4:0.0404(n18/r1)
+       V282old-V282     diff +0.02 CI [-0.03,+0.13] MDE 0.124 e/M 0.162    refOK
+       T64-V282pool     diff -0.074 CI [-0.154,+0.0861] MDE 0.161 e/M 0.46    refOK
+       T64-V282         diff -0.064 CI [-0.129,+0.101] MDE 0.157 e/M 0.409    refOK
+       T64-V282_LOO     diff -0.054 CI [-0.119,+0.126] MDE 0.173 e/M 0.312    NOREF
+       T64B-V282pool    diff -0.112 CI [-0.197,-0.0572] MDE 0.119 e/M 0.947 X0 refOK
+       T5-V282pool      diff +0.0242 CI [-0.136,+0.139] MDE 0.235 e/M 0.103    refOK
+       T4-V282pool      diff -0.0196 CI [-0.2,+0.0854] MDE 0.184 e/M 0.106    refOK
+R10_8-15|rate_lag                          V282:0.25(n27/r3) V282old:0.27(n25/r3) V282pool:0.26(n52/r6) V282_LOO:0.24(n9/r2) T64:0.285(n10/r2) T64B:0.25(n19/r1) T5:0.37(n12/r1) T4:0.32(n18/r1)
+       V282old-V282     diff +0.02 CI [-0.03,+0.12] MDE 0.117 e/M 0.171    refOK
+       T64-V282pool     diff +0.025 CI [-0.0501,+0.18] MDE 0.148 e/M 0.168    refOK
+       T64-V282         diff +0.035 CI [-0.01,+0.18] MDE 0.15 e/M 0.233    refOK
+       T64-V282_LOO     diff +0.045 CI [-0.01,+0.205] MDE 0.167 e/M 0.27    NOREF
+       T64B-V282pool    diff -0.01 CI [-0.1,+0.04] MDE 0.121 e/M 0.0827    refOK
+       T5-V282pool      diff +0.11 CI [-0.045,+0.23] MDE 0.227 e/M 0.485    refOK
+       T4-V282pool      diff +0.06 CI [-0.12,+0.16] MDE 0.19 e/M 0.315    refOK
+R10_8-15|rate_gain                         V282:0.929(n27/r3) V282old:0.943(n25/r3) V282pool:0.932(n52/r6) V282_LOO:0.761(n9/r2) T64:1.06(n10/r2) T64B:0.992(n19/r1) T5:0.906(n12/r1) T4:0.808(n18/r1)
+       V282old-V282     diff +0.0139 CI [-0.239,+0.338] MDE 0.397 e/M 0.0351    refOK
+       T64-V282pool     diff +0.126 CI [-0.0863,+0.311] MDE 0.245 e/M 0.514    refOK
+       T64-V282         diff +0.129 CI [-0.0463,+0.36] MDE 0.269 e/M 0.48    refOK
+       T64-V282_LOO     diff +0.297 CI [+0.0508,+0.4] MDE 0.274 e/M 1.09 X0 NOREF
+       T64B-V282pool    diff +0.0595 CI [-0.141,+0.3] MDE 0.311 e/M 0.191    refOK
+       T5-V282pool      diff -0.0261 CI [-0.187,+0.205] MDE 0.253 e/M 0.103    refOK
+       T4-V282pool      diff -0.124 CI [-0.277,+0.171] MDE 0.313 e/M 0.396    refOK
+R10_8-15|rate_peak_ratio                   V282:1.04(n27/r3) V282old:1.01(n25/r3) V282pool:1.02(n52/r6) V282_LOO:0.916(n9/r2) T64:2.27(n10/r2) T64B:2.16(n19/r1) T5:1.65(n12/r1) T4:2.07(n18/r1)
+       V282old-V282     diff -0.0236 CI [-0.179,+0.266] MDE 0.319 e/M 0.074    refOK
+       T64-V282pool     diff +1.25 CI [+0.421,+2.09] MDE 1.15 e/M 1.08 X0 refOK
+       T64-V282         diff +1.24 CI [+0.404,+2.16] MDE 1.16 e/M 1.07 X0 refOK
+       T64-V282_LOO     diff +1.36 CI [+0.501,+2.17] MDE 1.16 e/M 1.17 X0 NOREF
+       T64B-V282pool    diff +1.14 CI [+0.843,+1.65] MDE 0.676 e/M 1.69 X0 refOK
+       T5-V282pool      diff +0.628 CI [+0.4,+1.22] MDE 0.539 e/M 1.17 X0 refOK
+       T4-V282pool      diff +1.05 CI [+0.672,+1.6] MDE 0.687 e/M 1.53 X0 refOK
+R10_8-15|rate_overrun                      V282:0.111(n26/r3) V282old:0.147(n25/r3) V282pool:0.145(n51/r6) V282_LOO:0.169(n9/r2) T64:0.347(n10/r2) T64B:0.549(n19/r1) T5:0.439(n10/r1) T4:0.201(n17/r1)
+       V282old-V282     diff +0.0367 CI [-0.0769,+0.192] MDE 0.189 e/M 0.194    refOK
+       T64-V282pool     diff +0.202 CI [+0.0691,+0.439] MDE 0.293 e/M 0.689 X0 refOK
+       T64-V282         diff +0.236 CI [+0.0716,+0.453] MDE 0.313 e/M 0.754 X0 refOK
+       T64-V282_LOO     diff +0.178 CI [+0.0378,+0.482] MDE 0.343 e/M 0.518 X0 NOREF
+       T64B-V282pool    diff +0.404 CI [+0.262,+0.829] MDE 0.43 e/M 0.939 X0 refOK
+       T5-V282pool      diff +0.294 CI [+0.0747,+0.729] MDE 0.47 e/M 0.626 X0 refOK
+       T4-V282pool      diff +0.0555 CI [-0.113,+0.299] MDE 0.302 e/M 0.184    refOK
+R10_8-15|rate_rough                        V282:0.0895(n27/r3) V282old:0.101(n25/r3) V282pool:0.0933(n52/r6) V282_LOO:0.0722(n9/r2) T64:0.467(n10/r2) T64B:0.398(n19/r1) T5:0.37(n12/r1) T4:0.353(n18/r1)
+       V282old-V282     diff +0.0117 CI [-0.0132,+0.0634] MDE 0.0515 e/M 0.228    refOK
+       T64-V282pool     diff +0.374 CI [+0.157,+0.529] MDE 0.246 e/M 1.52 X0 refOK
+       T64-V282         diff +0.378 CI [+0.165,+0.545] MDE 0.249 e/M 1.52 X0 refOK
+       T64-V282_LOO     diff +0.395 CI [+0.166,+0.548] MDE 0.253 e/M 1.56 X0 NOREF
+       T64B-V282pool    diff +0.305 CI [+0.246,+0.558] MDE 0.187 e/M 1.64 X0 refOK
+       T5-V282pool      diff +0.276 CI [+0.135,+0.377] MDE 0.165 e/M 1.67 X0 refOK
+       T4-V282pool      diff +0.26 CI [+0.18,+0.407] MDE 0.136 e/M 1.91 X0 refOK
+R10_8-15|rate_travel_ratio                 V282:1(n18/r3) V282old:1.13(n15/r3) V282pool:1.03(n33/r6) V282_LOO:0.82(n5/r2) T64:1.08(n9/r2) T64B:1.09(n17/r1) T5:1.05(n7/r1) T4:1.04(n15/r1)
+       V282old-V282     diff +0.132 CI [-0.0289,+0.587] MDE 0.481 e/M 0.275    refOK
+       T64-V282pool     diff +0.0526 CI [-0.422,+0.29] MDE 0.511 e/M 0.103    refOK
+       T64-V282         diff +0.0807 CI [-0.343,+0.438] MDE 0.548 e/M 0.147    refOK
+       T64-V282_LOO     diff +0.261 CI [-0.252,+0.508] MDE 0.526 e/M 0.497    NOREF
+       T64B-V282pool    diff +0.0636 CI [-0.0805,+0.305] MDE 0.265 e/M 0.24    refOK
+       T5-V282pool      diff +0.0217 CI [-0.27,+0.207] MDE 0.364 e/M 0.0596    refOK
+       T4-V282pool      diff +0.0156 CI [-0.312,+0.227] MDE 0.334 e/M 0.0465    refOK
+R10_8-15|rate_conc                         V282:0.236(n27/r3) V282old:0.236(n25/r3) V282pool:0.236(n52/r6) V282_LOO:0.26(n9/r2) T64:0.381(n10/r2) T64B:0.393(n19/r1) T5:0.352(n12/r1) T4:0.419(n18/r1)
+       V282old-V282     diff -0.000153 CI [-0.0389,+0.0437] MDE 0.0635 e/M 0.0024    refOK
+       T64-V282pool     diff +0.146 CI [+0.0649,+0.208] MDE 0.107 e/M 1.36 X0 refOK
+       T64-V282         diff +0.145 CI [+0.062,+0.224] MDE 0.119 e/M 1.22 X0 refOK
+       T64-V282_LOO     diff +0.122 CI [+0.0569,+0.228] MDE 0.126 e/M 0.963 X0 NOREF
+       T64B-V282pool    diff +0.157 CI [+0.0615,+0.225] MDE 0.11 e/M 1.43 X0 refOK
+       T5-V282pool      diff +0.117 CI [+0.0716,+0.18] MDE 0.0753 e/M 1.55 X0 refOK
+       T4-V282pool      diff +0.183 CI [+0.0914,+0.234] MDE 0.118 e/M 1.55 X0 refOK
+R10_8-15|rate_hf_per_peak                  V282:0.109(n27/r3) V282old:0.124(n25/r3) V282pool:0.113(n52/r6) V282_LOO:0.0869(n9/r2) T64:0.39(n10/r2) T64B:0.409(n19/r1) T5:0.3(n12/r1) T4:0.263(n18/r1)
+       V282old-V282     diff +0.0154 CI [-0.025,+0.0572] MDE 0.052 e/M 0.295    refOK
+       T64-V282pool     diff +0.277 CI [+0.127,+0.478] MDE 0.227 e/M 1.22 X0 refOK
+       T64-V282         diff +0.281 CI [+0.128,+0.481] MDE 0.227 e/M 1.24 X0 refOK
+       T64-V282_LOO     diff +0.303 CI [+0.146,+0.484] MDE 0.227 e/M 1.34 X0 NOREF
+       T64B-V282pool    diff +0.296 CI [+0.158,+0.333] MDE 0.15 e/M 1.98 X0 refOK
+       T5-V282pool      diff +0.187 CI [+0.11,+0.314] MDE 0.143 e/M 1.3 X0 refOK
+       T4-V282pool      diff +0.15 CI [+0.111,+0.238] MDE 0.111 e/M 1.34 X0 refOK
+R10_8-15|rate_mode_per_peak                V282:0.0321(n27/r3) V282old:0.0393(n25/r3) V282pool:0.0359(n52/r6) V282_LOO:0.0361(n9/r2) T64:0.261(n10/r2) T64B:0.27(n19/r1) T5:0.237(n12/r1) T4:0.205(n18/r1)
+       V282old-V282     diff +0.00724 CI [-0.00911,+0.0218] MDE 0.0217 e/M 0.333    refOK
+       T64-V282pool     diff +0.225 CI [+0.131,+0.305] MDE 0.131 e/M 1.72 X0 refOK
+       T64-V282         diff +0.229 CI [+0.132,+0.309] MDE 0.132 e/M 1.74 X0 refOK
+       T64-V282_LOO     diff +0.225 CI [+0.128,+0.305] MDE 0.132 e/M 1.71 X0 NOREF
+       T64B-V282pool    diff +0.234 CI [+0.148,+0.362] MDE 0.152 e/M 1.54 X0 refOK
+       T5-V282pool      diff +0.201 CI [+0.104,+0.273] MDE 0.133 e/M 1.51 X0 refOK
+       T4-V282pool      diff +0.169 CI [+0.119,+0.272] MDE 0.0995 e/M 1.7 X0 refOK
+R40_2.5-5|mode_ratio_1.8-3Hz               V282:0.0297(n5/r1) V282old:0.0355(n15/r3) V282pool:0.0336(n20/r4) V282_LOO:None(n0/r0) T64:0.161(n6/r2) T64B:0.19(n8/r1) T5:None(n1/r1) T4:0.241(n7/r1)
+       V282old-V282     diff +0.00578 CI [-0.0497,+0.0529] MDE 0.107 e/M 0.0542    NOREF
+       T64-V282pool     diff +0.128 CI [+0.0567,+0.482] MDE 0.288 e/M 0.443 X0 NOREF
+       T64-V282         diff +0.131 CI [+0.0557,+0.486] MDE 0.291 e/M 0.452 X0 NOREF
+       T64B-V282pool    diff +0.156 CI [+0.0627,+0.339] MDE 0.221 e/M 0.707 X0 NOREF
+       T4-V282pool      diff +0.208 CI [+0.0896,+0.262] MDE 0.199 e/M 1.05 X0 NOREF
+R40_2.5-5|hf_ratio_2-10Hz                  V282:0.0865(n5/r1) V282old:0.132(n15/r3) V282pool:0.114(n20/r4) V282_LOO:None(n0/r0) T64:0.216(n6/r2) T64B:0.239(n8/r1) T5:None(n1/r1) T4:0.244(n7/r1)
+       V282old-V282     diff +0.0454 CI [-0.0641,+0.194] MDE 0.158 e/M 0.288    NOREF
+       T64-V282pool     diff +0.102 CI [-0.0292,+0.389] MDE 0.288 e/M 0.352    NOREF
+       T64-V282         diff +0.129 CI [-0.00306,+0.424] MDE 0.285 e/M 0.453    NOREF
+       T64B-V282pool    diff +0.124 CI [-0.0137,+0.312] MDE 0.27 e/M 0.461    NOREF
+       T4-V282pool      diff +0.13 CI [+0.0134,+0.205] MDE 0.165 e/M 0.785 X0 NOREF
+R40_2.5-5|mode_rms_1.8-3Hz                 V282:2.76(n5/r1) V282old:2.47(n15/r3) V282pool:2.55(n20/r4) V282_LOO:None(n0/r0) T64:8.28(n6/r2) T64B:10.8(n8/r1) T5:None(n1/r1) T4:10.9(n7/r1)
+       V282old-V282     diff -0.284 CI [-3.08,+1.93] MDE 3.71 e/M 0.0766    NOREF
+       T64-V282pool     diff +5.73 CI [+2.91,+17.1] MDE 10.4 e/M 0.551 X0 NOREF
+       T64-V282         diff +5.52 CI [+1.92,+16.2] MDE 10.6 e/M 0.522 X0 NOREF
+       T64B-V282pool    diff +8.3 CI [+4.61,+14.9] MDE 7.69 e/M 1.08 X0 NOREF
+       T4-V282pool      diff +8.38 CI [+6.5,+14.7] MDE 8.4 e/M 0.998 X0 NOREF
+R40_2.5-5|hf_rms_2-10Hz                    V282:5.24(n5/r1) V282old:5.49(n15/r3) V282pool:5.36(n20/r4) V282_LOO:None(n0/r0) T64:10.2(n6/r2) T64B:13.7(n8/r1) T5:None(n1/r1) T4:11.7(n7/r1)
+       V282old-V282     diff +0.252 CI [-3.13,+3.09] MDE 4.3 e/M 0.0586    NOREF
+       T64-V282pool     diff +4.89 CI [+0.232,+29.3] MDE 22 e/M 0.222 X0 NOREF
+       T64-V282         diff +5.01 CI [+0.783,+29.7] MDE 22 e/M 0.228 X0 NOREF
+       T64B-V282pool    diff +8.34 CI [+3.11,+18.1] MDE 11 e/M 0.757 X0 NOREF
+       T4-V282pool      diff +6.37 CI [+3.75,+12] MDE 7.43 e/M 0.858 X0 NOREF
+R40_2.5-5|travel_conc                      V282:0.168(n5/r1) V282old:0.166(n15/r3) V282pool:0.167(n20/r4) V282_LOO:None(n0/r0) T64:0.236(n6/r2) T64B:0.218(n8/r1) T5:None(n1/r1) T4:0.186(n7/r1)
+       V282old-V282     diff -0.00184 CI [-0.161,+0.081] MDE 0.163 e/M 0.0112    NOREF
+       T64-V282pool     diff +0.0688 CI [-0.0125,+0.196] MDE 0.146 e/M 0.472    NOREF
+       T64-V282         diff +0.0679 CI [-0.0895,+0.201] MDE 0.194 e/M 0.351    NOREF
+       T64B-V282pool    diff +0.0509 CI [-0.0373,+0.203] MDE 0.191 e/M 0.266    NOREF
+       T4-V282pool      diff +0.0194 CI [-0.0378,+0.0628] MDE 0.0796 e/M 0.244    NOREF
+R40_2.5-5|dwelljump_per100deg              V282:0(n5/r1) V282old:0(n15/r3) V282pool:0(n20/r4) V282_LOO:None(n0/r0) T64:0.242(n6/r2) T64B:0(n8/r1) T5:None(n1/r1) T4:0(n7/r1)
+       V282old-V282     diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+       T64-V282pool     diff +0.242 CI [+0,+1.45] MDE 1.33 e/M 0.182    NOREF
+       T64-V282         diff +0.242 CI [+0,+1.45] MDE 1.33 e/M 0.182    NOREF
+       T64B-V282pool    diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+       T4-V282pool      diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+R40_2.5-5|rate_lag_excess                  V282:0.11(n3/r1) V282old:0.11(n9/r3) V282pool:0.11(n12/r4) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:-0.0572(n6/r1) T5:None(n1/r1) T4:0.25(n5/r1)
+       V282old-V282     diff +0 CI [-0.19,+0.05] MDE 0.221 e/M 0    NOREF
+       T64B-V282pool    diff -0.167 CI [-0.207,-0.122] MDE 0.0668 e/M 2.5 X0 NOREF
+       T4-V282pool      diff +0.14 CI [+0.0604,+0.18] MDE 0.0757 e/M 1.85 X0 NOREF
+R40_2.5-5|rate_lag                         V282:0.31(n3/r1) V282old:0.31(n9/r3) V282pool:0.31(n12/r4) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:0.245(n6/r1) T5:None(n1/r1) T4:0.53(n5/r1)
+       V282old-V282     diff +0 CI [-0.19,+0.05] MDE 0.221 e/M 0    NOREF
+       T64B-V282pool    diff -0.065 CI [-0.11,-0.02] MDE 0.0716 e/M 0.908 X0 NOREF
+       T4-V282pool      diff +0.22 CI [+0.12,+0.26] MDE 0.0827 e/M 2.66 X0 NOREF
+R40_2.5-5|rate_gain                        V282:0.692(n3/r1) V282old:0.777(n9/r3) V282pool:0.777(n12/r4) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:0.893(n6/r1) T5:None(n1/r1) T4:0.833(n5/r1)
+       V282old-V282     diff +0.0842 CI [-0.213,+0.543] MDE 0.558 e/M 0.151    NOREF
+       T64B-V282pool    diff +0.116 CI [-0.226,+0.319] MDE 0.38 e/M 0.306    NOREF
+       T4-V282pool      diff +0.0564 CI [-0.267,+0.308] MDE 0.421 e/M 0.134    NOREF
+R40_2.5-5|rate_peak_ratio                  V282:0.647(n3/r1) V282old:0.952(n9/r3) V282pool:0.864(n12/r4) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:1.37(n6/r1) T5:None(n1/r1) T4:0.869(n5/r1)
+       V282old-V282     diff +0.305 CI [-0.216,+0.38] MDE 0.477 e/M 0.639    NOREF
+       T64B-V282pool    diff +0.507 CI [-0.0493,+2.32] MDE 1.67 e/M 0.304    NOREF
+       T4-V282pool      diff +0.00507 CI [-0.126,+0.999] MDE 0.739 e/M 0.00686    NOREF
+R40_2.5-5|rate_overrun                     V282:None(n2/r1) V282old:0.14(n8/r3) V282pool:0.14(n10/r4) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:0.394(n6/r1) T5:None(n1/r1) T4:0.256(n5/r1)
+       T64B-V282pool    diff +0.254 CI [-0.167,+0.774] MDE 0.722 e/M 0.352    NOREF
+       T4-V282pool      diff +0.116 CI [-0.163,+0.82] MDE 0.633 e/M 0.183    NOREF
+R40_2.5-5|rate_rough                       V282:0.0747(n3/r1) V282old:0.0812(n9/r3) V282pool:0.078(n12/r4) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:0.188(n6/r1) T5:None(n1/r1) T4:0.188(n5/r1)
+       V282old-V282     diff +0.00642 CI [-0.056,+0.044] MDE 0.0797 e/M 0.0806    NOREF
+       T64B-V282pool    diff +0.11 CI [-0.00322,+0.252] MDE 0.246 e/M 0.448    NOREF
+       T4-V282pool      diff +0.11 CI [+0.043,+0.372] MDE 0.198 e/M 0.555 X0 NOREF
+R40_2.5-5|rate_travel_ratio                V282:None(n0/r0) V282old:0.972(n5/r2) V282pool:0.972(n5/r2) V282_LOO:None(n0/r0) T64:None(n0/r0) T64B:0.832(n6/r1) T5:None(n0/r0) T4:None(n2/r1)
+       T64B-V282pool    diff -0.14 CI [-0.552,+0.0777] MDE 0.451 e/M 0.311    NOREF
+R40_2.5-5|rate_conc                        V282:0.176(n3/r1) V282old:0.228(n9/r3) V282pool:0.226(n12/r4) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:0.224(n6/r1) T5:None(n1/r1) T4:0.204(n5/r1)
+       V282old-V282     diff +0.0523 CI [-0.143,+0.147] MDE 0.196 e/M 0.266    NOREF
+       T64B-V282pool    diff -0.0028 CI [-0.0765,+0.245] MDE 0.208 e/M 0.0134    NOREF
+       T4-V282pool      diff -0.0221 CI [-0.0937,+0.112] MDE 0.154 e/M 0.144    NOREF
+R40_2.5-5|rate_hf_per_peak                 V282:0.0421(n3/r1) V282old:0.0658(n9/r3) V282pool:0.0597(n12/r4) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:0.147(n6/r1) T5:None(n1/r1) T4:0.108(n5/r1)
+       V282old-V282     diff +0.0237 CI [-0.0846,+0.0769] MDE 0.119 e/M 0.2    NOREF
+       T64B-V282pool    diff +0.0877 CI [-0.0255,+0.329] MDE 0.265 e/M 0.331    NOREF
+       T4-V282pool      diff +0.048 CI [-0.032,+0.134] MDE 0.109 e/M 0.441    NOREF
+R40_2.5-5|rate_mode_per_peak               V282:0.0171(n3/r1) V282old:0.0195(n9/r3) V282pool:0.0183(n12/r4) V282_LOO:None(n0/r0) T64:None(n2/r2) T64B:0.114(n6/r1) T5:None(n1/r1) T4:0.114(n5/r1)
+       V282old-V282     diff +0.00244 CI [-0.0202,+0.0242] MDE 0.0295 e/M 0.0825    NOREF
+       T64B-V282pool    diff +0.0961 CI [+0.0123,+0.201] MDE 0.167 e/M 0.575 X0 NOREF
+       T4-V282pool      diff +0.0961 CI [+0.0134,+0.113] MDE 0.096 e/M 1 X0 NOREF
+R40_5-8|mode_ratio_1.8-3Hz                 V282:0.0315(n14/r3) V282old:0.0285(n18/r3) V282pool:0.0287(n32/r6) V282_LOO:0.0454(n6/r2) T64:0.101(n12/r2) T64B:0.161(n13/r1) T5:0.33(n8/r1) T4:0.217(n16/r1)
+       V282old-V282     diff -0.00302 CI [-0.038,+0.0188] MDE 0.0459 e/M 0.0657    NOREF
+       T64-V282pool     diff +0.0726 CI [+0.041,+0.338] MDE 0.257 e/M 0.283 X0 refOK
+       T64-V282         diff +0.0698 CI [+0.0244,+0.338] MDE 0.26 e/M 0.269 X0 NOREF
+       T64-V282_LOO     diff +0.056 CI [+0.00657,+0.329] MDE 0.262 e/M 0.214 X0 NOREF
+       T64B-V282pool    diff +0.133 CI [+0.0747,+0.522] MDE 0.27 e/M 0.491 X0 refOK
+       T5-V282pool      diff +0.301 CI [+0.148,+0.573] MDE 0.301 e/M 1 X0 refOK
+       T4-V282pool      diff +0.188 CI [+0.0879,+0.419] MDE 0.258 e/M 0.73 X0 refOK
+R40_5-8|hf_ratio_2-10Hz                    V282:0.0792(n14/r3) V282old:0.0655(n18/r3) V282pool:0.0756(n32/r6) V282_LOO:0.0802(n6/r2) T64:0.156(n12/r2) T64B:0.336(n13/r1) T5:0.416(n8/r1) T4:0.251(n16/r1)
+       V282old-V282     diff -0.0137 CI [-0.0816,+0.0444] MDE 0.0859 e/M 0.159    NOREF
+       T64-V282pool     diff +0.0807 CI [+0.00484,+0.293] MDE 0.215 e/M 0.375 X0 refOK
+       T64-V282         diff +0.0771 CI [-0.0028,+0.286] MDE 0.22 e/M 0.351    NOREF
+       T64-V282_LOO     diff +0.0761 CI [-0.0675,+0.28] MDE 0.237 e/M 0.321    NOREF
+       T64B-V282pool    diff +0.26 CI [+0.0693,+0.372] MDE 0.252 e/M 1.03 X0 refOK
+       T5-V282pool      diff +0.341 CI [+0.114,+0.498] MDE 0.339 e/M 1 X0 refOK
+       T4-V282pool      diff +0.175 CI [+0.0534,+0.494] MDE 0.311 e/M 0.563 X0 refOK
+R40_5-8|mode_rms_1.8-3Hz                   V282:2.28(n14/r3) V282old:1.43(n18/r3) V282pool:1.72(n32/r6) V282_LOO:2.14(n6/r2) T64:8.67(n12/r2) T64B:11.5(n13/r1) T5:12.7(n8/r1) T4:10.9(n16/r1)
+       V282old-V282     diff -0.849 CI [-1.5,+0.671] MDE 1.61 e/M 0.526    NOREF
+       T64-V282pool     diff +6.95 CI [+3.52,+14.6] MDE 8.76 e/M 0.793 X0 refOK
+       T64-V282         diff +6.39 CI [+3.24,+13.9] MDE 8.73 e/M 0.732 X0 NOREF
+       T64-V282_LOO     diff +6.53 CI [+3.36,+14.2] MDE 8.73 e/M 0.748 X0 NOREF
+       T64B-V282pool    diff +9.77 CI [+4.32,+16.1] MDE 11 e/M 0.89 X0 refOK
+       T5-V282pool      diff +11 CI [+4.29,+18.9] MDE 11.2 e/M 0.977 X0 refOK
+       T4-V282pool      diff +9.19 CI [+5.71,+14.4] MDE 6.65 e/M 1.38 X0 refOK
+R40_5-8|hf_rms_2-10Hz                      V282:4.41(n14/r3) V282old:4.32(n18/r3) V282pool:4.32(n32/r6) V282_LOO:4.13(n6/r2) T64:11.8(n12/r2) T64B:14.2(n13/r1) T5:15.4(n8/r1) T4:10.7(n16/r1)
+       V282old-V282     diff -0.0953 CI [-2.17,+1.07] MDE 2.48 e/M 0.0384    NOREF
+       T64-V282pool     diff +7.48 CI [+2.24,+11.6] MDE 7.3 e/M 1.02 X0 refOK
+       T64-V282         diff +7.38 CI [+2.16,+11.4] MDE 7.37 e/M 1 X0 NOREF
+       T64-V282_LOO     diff +7.67 CI [+2.45,+11.8] MDE 7.36 e/M 1.04 X0 NOREF
+       T64B-V282pool    diff +9.87 CI [+5.44,+17.1] MDE 11.1 e/M 0.886 X0 refOK
+       T5-V282pool      diff +11.1 CI [+1.95,+16.1] MDE 12 e/M 0.923 X0 refOK
+       T4-V282pool      diff +6.43 CI [+4.86,+14.7] MDE 6.67 e/M 0.963 X0 refOK
+R40_5-8|travel_conc                        V282:0.174(n14/r3) V282old:0.167(n18/r3) V282pool:0.167(n32/r6) V282_LOO:0.193(n6/r2) T64:0.176(n12/r2) T64B:0.177(n13/r1) T5:0.195(n8/r1) T4:0.196(n16/r1)
+       V282old-V282     diff -0.00701 CI [-0.0632,+0.0626] MDE 0.0916 e/M 0.0765    NOREF
+       T64-V282pool     diff +0.00908 CI [-0.043,+0.0832] MDE 0.0908 e/M 0.0999    refOK
+       T64-V282         diff +0.00207 CI [-0.0603,+0.0832] MDE 0.107 e/M 0.0194    NOREF
+       T64-V282_LOO     diff -0.017 CI [-0.0721,+0.0813] MDE 0.108 e/M 0.158    NOREF
+       T64B-V282pool    diff +0.0102 CI [-0.0317,+0.0621] MDE 0.0702 e/M 0.145    refOK
+       T5-V282pool      diff +0.0281 CI [-0.0249,+0.0919] MDE 0.0854 e/M 0.329    refOK
+       T4-V282pool      diff +0.0297 CI [-0.0335,+0.0644] MDE 0.0708 e/M 0.42    refOK
+R40_5-8|dwelljump_per100deg                V282:0(n14/r3) V282old:0(n18/r3) V282pool:0(n32/r6) V282_LOO:0(n6/r2) T64:0(n12/r2) T64B:0.0973(n13/r1) T5:0.22(n8/r1) T4:0.259(n16/r1)
+       V282old-V282     diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+       T64-V282pool     diff +0 CI [+0,+0] MDE 0 e/M None    refOK
+       T64-V282         diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+       T64-V282_LOO     diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+       T64B-V282pool    diff +0.0973 CI [+0,+0.341] MDE 0.284 e/M 0.342    refOK
+       T5-V282pool      diff +0.22 CI [+0,+0.734] MDE 0.614 e/M 0.359    refOK
+       T4-V282pool      diff +0.259 CI [+0,+0.635] MDE 0.446 e/M 0.581    refOK
+R40_5-8|rate_lag_excess                    V282:0.1(n5/r3) V282old:0.14(n7/r3) V282pool:0.12(n12/r6) V282_LOO:None(n2/r2) T64:0.031(n7/r2) T64B:-0.0472(n6/r1) T5:0.179(n4/r1) T4:0.195(n8/r1)
+       V282old-V282     diff +0.04 CI [+0.01,+0.1] MDE 0.0687 e/M 0.582 X0 NOREF
+       T64-V282pool     diff -0.089 CI [-0.174,+0.000998] MDE 0.142 e/M 0.625    refOK
+       T64-V282         diff -0.069 CI [-0.134,+0.021] MDE 0.138 e/M 0.499    NOREF
+       T64B-V282pool    diff -0.167 CI [-0.262,-0.0821] MDE 0.119 e/M 1.4 X0 refOK
+       T5-V282pool      diff +0.0592 CI [-0.146,+0.194] MDE 0.304 e/M 0.195    refOK
+       T4-V282pool      diff +0.0754 CI [-0.0396,+0.176] MDE 0.196 e/M 0.385    refOK
+R40_5-8|rate_lag                           V282:0.3(n5/r3) V282old:0.34(n7/r3) V282pool:0.32(n12/r6) V282_LOO:None(n2/r2) T64:0.33(n7/r2) T64B:0.255(n6/r1) T5:0.465(n4/r1) T4:0.475(n8/r1)
+       V282old-V282     diff +0.04 CI [+0.01,+0.1] MDE 0.0742 e/M 0.539 X0 NOREF
+       T64-V282pool     diff +0.01 CI [-0.07,+0.1] MDE 0.142 e/M 0.0703    refOK
+       T64-V282         diff +0.03 CI [-0.045,+0.12] MDE 0.139 e/M 0.216    NOREF
+       T64B-V282pool    diff -0.065 CI [-0.155,+0.0201] MDE 0.118 e/M 0.549    refOK
+       T5-V282pool      diff +0.145 CI [-0.0601,+0.28] MDE 0.299 e/M 0.485    refOK
+       T4-V282pool      diff +0.155 CI [+0.045,+0.26] MDE 0.197 e/M 0.786 X0 refOK
+R40_5-8|rate_gain                          V282:0.884(n5/r3) V282old:0.88(n7/r3) V282pool:0.882(n12/r6) V282_LOO:None(n2/r2) T64:0.881(n7/r2) T64B:0.759(n6/r1) T5:1.14(n4/r1) T4:0.764(n8/r1)
+       V282old-V282     diff -0.00407 CI [-0.145,+0.295] MDE 0.248 e/M 0.0164    NOREF
+       T64-V282pool     diff -0.000577 CI [-0.175,+0.305] MDE 0.295 e/M 0.00196    refOK
+       T64-V282         diff -0.00261 CI [-0.155,+0.343] MDE 0.35 e/M 0.00746    NOREF
+       T64B-V282pool    diff -0.123 CI [-0.392,+0.221] MDE 0.348 e/M 0.353    refOK
+       T5-V282pool      diff +0.256 CI [-0.0419,+1.1] MDE 0.788 e/M 0.325    refOK
+       T4-V282pool      diff -0.118 CI [-0.34,+0.0299] MDE 0.3 e/M 0.394    refOK
+R40_5-8|rate_peak_ratio                    V282:0.889(n5/r3) V282old:0.849(n7/r3) V282pool:0.87(n12/r6) V282_LOO:None(n2/r2) T64:1.08(n7/r2) T64B:0.99(n6/r1) T5:1.54(n4/r1) T4:0.921(n8/r1)
+       V282old-V282     diff -0.0397 CI [-0.137,+0.221] MDE 0.199 e/M 0.199    NOREF
+       T64-V282pool     diff +0.209 CI [+0.0676,+0.914] MDE 0.616 e/M 0.339 X0 refOK
+       T64-V282         diff +0.189 CI [+0.0422,+0.894] MDE 0.636 e/M 0.298 X0 NOREF
+       T64B-V282pool    diff +0.12 CI [-0.0977,+0.42] MDE 0.424 e/M 0.283    refOK
+       T5-V282pool      diff +0.667 CI [-0.0205,+1.03] MDE 0.734 e/M 0.908    refOK
+       T4-V282pool      diff +0.0508 CI [-0.0984,+0.3] MDE 0.28 e/M 0.181    refOK
+R40_5-8|rate_overrun                       V282:0.00173(n5/r3) V282old:0.0521(n7/r3) V282pool:0.0394(n12/r6) V282_LOO:None(n2/r2) T64:0.0547(n7/r2) T64B:0.143(n5/r1) T5:0.271(n3/r1) T4:0.113(n8/r1)
+       V282old-V282     diff +0.0503 CI [-0.101,+0.122] MDE 0.151 e/M 0.334    NOREF
+       T64-V282pool     diff +0.0153 CI [-0.0522,+0.365] MDE 0.284 e/M 0.0538    refOK
+       T64-V282         diff +0.053 CI [-0.0982,+0.377] MDE 0.292 e/M 0.181    NOREF
+       T64B-V282pool    diff +0.103 CI [-0.0051,+0.238] MDE 0.159 e/M 0.652    refOK
+       T5-V282pool      diff +0.232 CI [+0.11,+0.981] MDE 0.941 e/M 0.247 X0 refOK
+       T4-V282pool      diff +0.0734 CI [-0.0526,+0.257] MDE 0.261 e/M 0.281    refOK
+R40_5-8|rate_rough                         V282:0.0279(n5/r3) V282old:0.0448(n7/r3) V282pool:0.0411(n12/r6) V282_LOO:None(n2/r2) T64:0.149(n7/r2) T64B:0.163(n6/r1) T5:0.228(n4/r1) T4:0.153(n8/r1)
+       V282old-V282     diff +0.0169 CI [-0.0308,+0.0312] MDE 0.0346 e/M 0.488    NOREF
+       T64-V282pool     diff +0.108 CI [+0.0292,+0.25] MDE 0.161 e/M 0.668 X0 refOK
+       T64-V282         diff +0.121 CI [+0.0448,+0.257] MDE 0.164 e/M 0.736 X0 NOREF
+       T64B-V282pool    diff +0.122 CI [+0.0673,+0.172] MDE 0.075 e/M 1.62 X0 refOK
+       T5-V282pool      diff +0.187 CI [+0.0982,+0.488] MDE 0.298 e/M 0.628 X0 refOK
+       T4-V282pool      diff +0.112 CI [+0.0625,+0.212] MDE 0.103 e/M 1.09 X0 refOK
+R40_5-8|rate_travel_ratio                  V282:None(n2/r2) V282old:0.937(n6/r3) V282pool:0.95(n8/r5) V282_LOO:None(n1/r1) T64:0.827(n6/r2) T64B:0.824(n5/r1) T5:0.906(n4/r1) T4:0.754(n8/r1)
+       T64-V282pool     diff -0.123 CI [-0.165,+0.0022] MDE 0.137 e/M 0.897    refOK
+       T64B-V282pool    diff -0.126 CI [-0.232,-0.0518] MDE 0.112 e/M 1.13 X0 refOK
+       T5-V282pool      diff -0.0438 CI [-0.18,+0.213] MDE 0.322 e/M 0.136    refOK
+       T4-V282pool      diff -0.196 CI [-0.234,-0.0705] MDE 0.114 e/M 1.71 X0 refOK
+R40_5-8|rate_conc                          V282:0.178(n5/r3) V282old:0.2(n7/r3) V282pool:0.197(n12/r6) V282_LOO:None(n2/r2) T64:0.216(n7/r2) T64B:0.182(n6/r1) T5:0.221(n4/r1) T4:0.198(n8/r1)
+       V282old-V282     diff +0.022 CI [-0.0406,+0.0457] MDE 0.0661 e/M 0.334    NOREF
+       T64-V282pool     diff +0.0183 CI [-0.0124,+0.0545] MDE 0.0489 e/M 0.374    refOK
+       T64-V282         diff +0.0375 CI [-0.0149,+0.058] MDE 0.0575 e/M 0.651    NOREF
+       T64B-V282pool    diff -0.0156 CI [-0.0282,+0.0853] MDE 0.0882 e/M 0.176    refOK
+       T5-V282pool      diff +0.0239 CI [-0.00746,+0.0794] MDE 0.0607 e/M 0.395    refOK
+       T4-V282pool      diff +0.000774 CI [-0.0127,+0.0521] MDE 0.0499 e/M 0.0155    refOK
+R40_5-8|rate_hf_per_peak                   V282:0.0428(n5/r3) V282old:0.0348(n7/r3) V282pool:0.0349(n12/r6) V282_LOO:None(n2/r2) T64:0.149(n7/r2) T64B:0.147(n6/r1) T5:0.168(n4/r1) T4:0.105(n8/r1)
+       V282old-V282     diff -0.00793 CI [-0.0385,+0.0133] MDE 0.0402 e/M 0.197    NOREF
+       T64-V282pool     diff +0.114 CI [+0.0103,+0.183] MDE 0.131 e/M 0.867 X0 refOK
+       T64-V282         diff +0.106 CI [+0.00162,+0.189] MDE 0.137 e/M 0.777 X0 NOREF
+       T64B-V282pool    diff +0.112 CI [+0.0473,+0.171] MDE 0.0813 e/M 1.38 X0 refOK
+       T5-V282pool      diff +0.133 CI [+0.0754,+0.319] MDE 0.181 e/M 0.734 X0 refOK
+       T4-V282pool      diff +0.0697 CI [+0.0249,+0.134] MDE 0.0729 e/M 0.957 X0 refOK
+R40_5-8|rate_mode_per_peak                 V282:0.0149(n5/r3) V282old:0.0102(n7/r3) V282pool:0.0116(n12/r6) V282_LOO:None(n2/r2) T64:0.128(n7/r2) T64B:0.0956(n6/r1) T5:0.133(n4/r1) T4:0.0861(n8/r1)
+       V282old-V282     diff -0.00471 CI [-0.024,+0.0236] MDE 0.0292 e/M 0.161    NOREF
+       T64-V282pool     diff +0.116 CI [+0.0255,+0.202] MDE 0.141 e/M 0.826 X0 refOK
+       T64-V282         diff +0.113 CI [+0.0207,+0.196] MDE 0.142 e/M 0.798 X0 NOREF
+       T64B-V282pool    diff +0.084 CI [+0.0243,+0.168] MDE 0.106 e/M 0.794 X0 refOK
+       T5-V282pool      diff +0.122 CI [+0.0891,+0.321] MDE 0.165 e/M 0.737 X0 refOK
+       T4-V282pool      diff +0.0746 CI [+0.0351,+0.117] MDE 0.0667 e/M 1.12 X0 refOK
+R40_8-15|mode_ratio_1.8-3Hz                V282:None(n2/r2) V282old:0.0137(n6/r3) V282pool:0.0168(n8/r5) V282_LOO:None(n1/r1) T64:None(n2/r2) T64B:0.181(n9/r1) T5:None(n2/r1) T4:0.283(n10/r1)
+       T64B-V282pool    diff +0.164 CI [+0.0734,+0.605] MDE 0.34 e/M 0.482 X0 NOREF
+       T4-V282pool      diff +0.266 CI [+0.154,+0.388] MDE 0.151 e/M 1.76 X0 NOREF
+R40_8-15|hf_ratio_2-10Hz                   V282:None(n2/r2) V282old:0.0681(n6/r3) V282pool:0.079(n8/r5) V282_LOO:None(n1/r1) T64:None(n2/r2) T64B:0.25(n9/r1) T5:None(n2/r1) T4:0.339(n10/r1)
+       T64B-V282pool    diff +0.171 CI [+0.0829,+0.653] MDE 0.38 e/M 0.45 X0 NOREF
+       T4-V282pool      diff +0.26 CI [+0.111,+0.338] MDE 0.169 e/M 1.53 X0 NOREF
+R40_8-15|mode_rms_1.8-3Hz                  V282:None(n2/r2) V282old:0.528(n6/r3) V282pool:0.754(n8/r5) V282_LOO:None(n1/r1) T64:None(n2/r2) T64B:7.16(n9/r1) T5:None(n2/r1) T4:10.1(n10/r1)
+       T64B-V282pool    diff +6.41 CI [+1.87,+13.9] MDE 9 e/M 0.712 X0 NOREF
+       T4-V282pool      diff +9.36 CI [+7.15,+11] MDE 3.04 e/M 3.08 X0 NOREF
+R40_8-15|hf_rms_2-10Hz                     V282:None(n2/r2) V282old:2.93(n6/r3) V282pool:3.08(n8/r5) V282_LOO:None(n1/r1) T64:None(n2/r2) T64B:7.04(n9/r1) T5:None(n2/r1) T4:11.7(n10/r1)
+       T64B-V282pool    diff +3.96 CI [+2.45,+15.4] MDE 14.1 e/M 0.281 X0 NOREF
+       T4-V282pool      diff +8.62 CI [+3.37,+12.8] MDE 6.85 e/M 1.26 X0 NOREF
+R40_8-15|travel_conc                       V282:None(n2/r2) V282old:0.156(n6/r3) V282pool:0.156(n8/r5) V282_LOO:None(n1/r1) T64:None(n2/r2) T64B:0.197(n9/r1) T5:None(n2/r1) T4:0.253(n10/r1)
+       T64B-V282pool    diff +0.0416 CI [-0.0407,+0.109] MDE 0.11 e/M 0.377    NOREF
+       T4-V282pool      diff +0.0974 CI [-0.024,+0.223] MDE 0.159 e/M 0.611    NOREF
+R40_8-15|dwelljump_per100deg               V282:None(n2/r2) V282old:0(n6/r3) V282pool:0(n8/r5) V282_LOO:None(n1/r1) T64:None(n2/r2) T64B:0.243(n9/r1) T5:None(n2/r1) T4:0(n10/r1)
+       T64B-V282pool    diff +0.243 CI [+0,+0.926] MDE 0.739 e/M 0.328    NOREF
+       T4-V282pool      diff +0 CI [+0,+0] MDE 0 e/M None    NOREF
+R40_8-15|rate_lag_excess                   V282:None(n1/r1) V282old:None(n2/r2) V282pool:0.07(n3/r3) V282_LOO:None(n1/r1) T64:None(n1/r1) T64B:-0.0572(n4/r1) T5:None(n0/r0) T4:0.00542(n6/r1)
+       T64B-V282pool    diff -0.127 CI [-0.342,+0.00779] MDE 0.303 e/M 0.419    NOREF
+       T4-V282pool      diff -0.0646 CI [-0.3,+0.14] MDE 0.308 e/M 0.209    NOREF
+R40_8-15|rate_lag                          V282:None(n1/r1) V282old:None(n2/r2) V282pool:0.27(n3/r3) V282_LOO:None(n1/r1) T64:None(n1/r1) T64B:0.245(n4/r1) T5:None(n0/r0) T4:0.285(n6/r1)
+       T64B-V282pool    diff -0.025 CI [-0.24,+0.11] MDE 0.288 e/M 0.0869    NOREF
+       T4-V282pool      diff +0.015 CI [-0.215,+0.23] MDE 0.314 e/M 0.0477    NOREF
+R40_8-15|rate_gain                         V282:None(n1/r1) V282old:None(n2/r2) V282pool:0.941(n3/r3) V282_LOO:None(n1/r1) T64:None(n1/r1) T64B:0.865(n4/r1) T5:None(n0/r0) T4:1.12(n6/r1)
+       T64B-V282pool    diff -0.076 CI [-0.392,+0.548] MDE 0.622 e/M 0.122    NOREF
+       T4-V282pool      diff +0.182 CI [-0.189,+0.501] MDE 0.538 e/M 0.338    NOREF
+R40_8-15|rate_peak_ratio                   V282:None(n1/r1) V282old:None(n2/r2) V282pool:0.943(n3/r3) V282_LOO:None(n1/r1) T64:None(n1/r1) T64B:1.24(n4/r1) T5:None(n0/r0) T4:1.31(n6/r1)
+       T64B-V282pool    diff +0.299 CI [-0.233,+0.719] MDE 0.682 e/M 0.438    NOREF
+       T4-V282pool      diff +0.364 CI [-0.176,+0.689] MDE 0.552 e/M 0.659    NOREF
+R40_8-15|rate_overrun                      V282:None(n1/r1) V282old:None(n2/r2) V282pool:0.0234(n3/r3) V282_LOO:None(n1/r1) T64:None(n1/r1) T64B:0.313(n4/r1) T5:None(n0/r0) T4:0.139(n6/r1)
+       T64B-V282pool    diff +0.29 CI [+0.187,+1.35] MDE 0.823 e/M 0.352 X0 NOREF
+       T4-V282pool      diff +0.116 CI [-0.0209,+0.319] MDE 0.252 e/M 0.459    NOREF
+R40_8-15|rate_rough                        V282:None(n1/r1) V282old:None(n2/r2) V282pool:0.0469(n3/r3) V282_LOO:None(n1/r1) T64:None(n1/r1) T64B:0.267(n4/r1) T5:None(n0/r0) T4:0.278(n6/r1)
+       T64B-V282pool    diff +0.22 CI [+0.139,+0.272] MDE 0.0962 e/M 2.29 X0 NOREF
+       T4-V282pool      diff +0.232 CI [+0.106,+0.264] MDE 0.121 e/M 1.92 X0 NOREF
+R40_8-15|rate_travel_ratio                 V282:None(n0/r0) V282old:None(n2/r2) V282pool:None(n2/r2) V282_LOO:None(n0/r0) T64:None(n1/r1) T64B:0.889(n3/r1) T5:None(n0/r0) T4:0.843(n5/r1)
+R40_8-15|rate_conc                         V282:None(n1/r1) V282old:None(n2/r2) V282pool:0.176(n3/r3) V282_LOO:None(n1/r1) T64:None(n1/r1) T64B:0.251(n4/r1) T5:None(n0/r0) T4:0.248(n6/r1)
+       T64B-V282pool    diff +0.0748 CI [+0.00911,+0.159] MDE 0.102 e/M 0.733 X0 NOREF
+       T4-V282pool      diff +0.0716 CI [+0.00654,+0.169] MDE 0.128 e/M 0.561 X0 NOREF
+R40_8-15|rate_hf_per_peak                  V282:None(n1/r1) V282old:None(n2/r2) V282pool:0.0518(n3/r3) V282_LOO:None(n1/r1) T64:None(n1/r1) T64B:0.216(n4/r1) T5:None(n0/r0) T4:0.169(n6/r1)
+       T64B-V282pool    diff +0.164 CI [+0.108,+0.237] MDE 0.0901 e/M 1.82 X0 NOREF
+       T4-V282pool      diff +0.117 CI [+0.0361,+0.195] MDE 0.119 e/M 0.983 X0 NOREF
+R40_8-15|rate_mode_per_peak                V282:None(n1/r1) V282old:None(n2/r2) V282pool:0.0201(n3/r3) V282_LOO:None(n1/r1) T64:None(n1/r1) T64B:0.151(n4/r1) T5:None(n0/r0) T4:0.146(n6/r1)
+       T64B-V282pool    diff +0.13 CI [+0.0905,+0.182] MDE 0.0821 e/M 1.59 X0 NOREF
+       T4-V282pool      diff +0.126 CI [+0.078,+0.209] MDE 0.0819 e/M 1.54 X0 NOREF
