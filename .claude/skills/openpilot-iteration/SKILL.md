@@ -24,25 +24,24 @@ description: The development philosophy for iterating on the openpilot/StarPilot
 
 ## How to judge a change
 
-- **Measure the quantity the goal names**, in the band and at the amplitude where it lives. A convenient
-  proxy will rank candidates confidently and wrongly.
+- **Measure the quantity the goal names**, in the band and at the amplitude where it lives — a proxy
+  will rank candidates confidently and wrongly.
 - ⭐ **A metric that cannot separate the arms is our design failure, not a verdict on the arms.**
 - **Write the fail condition before the run and honour it when it fires.** A threshold with no physical
   floor gets that floor stated before the sweep, never after.
-- **Validate an instrument on a known answer first.** A method can pass its own checks and still be
+- **Validate an instrument on a known answer first** — a method can pass its own checks and still be
   wrong by an order of magnitude.
-- **Prefer the inert tap to the blind dose**, and **verify the crux yourself** — including a "no". A
-  wrong block costs as much as a bad ship.
+- **Prefer the inert tap to the blind dose**, and **verify the crux yourself, including a "no"**.
 
 ## How to be wrong well
 
 - **Mark EVIDENCE or BELIEF on every decision-bearing claim.** "I'm not sure, here's what I'd need" is
   always acceptable.
-- **Retract in place and loudly** — in the commit, the handoff, the page. A correction that lives only
-  in chat sends the next session down the same path.
+- **Retract in place and loudly** — commit, handoff, page. A correction living only in chat sends the
+  next session down the same path.
 - **An identical result across a swept parameter means the wrong mechanism**, not a weak effect.
-- **A deliberate under-correction is still a modelling error.** It relocates the error somewhere less
-  visible; it does not create margin.
+- **A deliberate under-correction is still a modelling error** — it relocates the error somewhere less
+  visible rather than creating margin.
 
 ## Working with the operator
 
