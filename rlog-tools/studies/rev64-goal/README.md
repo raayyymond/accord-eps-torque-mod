@@ -127,3 +127,46 @@ loop reads a **1.0 deg/s LSB** where its comment assumes 0.125. `rateloop-domina
 (1/3). `cs-la-des-is-the-setpoint-not-the-model` (1/3). `move-limit-never-binds-above-8` (0/3).
 `caster-untestable-no-quasi-static-large-angle-data` and `holdsat-unidentified-at-speed` — the
 large-angle question cannot be answered by any route we own.
+
+## ATTRIBUTION (2026-09-17, after the verification round)
+
+Analysis had failed twice to attribute the over-delivery (the FF reconstruction failed its gate at
+corr 0.74; `hold-level-double-count` fell 3/3 on a unit mismatch). A third approach works, because
+**P, I and F are all logged** — the band-limited command decomposes exactly, with no model at all.
+
+Control: `corr(P+I+F, cs_out) = -1.00000`, residual/signal `0.0000`, scale `-1/14` (= SteerLatAccel).
+
+| band | P | I | **F** |
+|---|---|---|---|
+| 0.15–0.30 Hz | −0.021 | +0.026 | **+0.995** |
+| 0.30–0.60 Hz | +0.070 | +0.023 | **+0.907** |
+
+⭐ **The over-delivery is 91–99% a FEEDFORWARD problem. P and I are not involved.** In a
+feedforward-dominated loop the closed-loop gain is ≈ model/plant, so a gain of 1.33 means the
+inverse-plant model is ~33% stiffer in-band than the plant actually is.
+
+Decomposing F itself (hold/move/hysteresis/rate-loop computed from the fork's own functions on
+logged signals; the observer run through the fork's actual `HondaAccordDisturbanceObserver` class):
+
+| term | 0.15–0.30 Hz | 0.30–0.60 Hz | cut needed to reach 1.000 alone |
+|---|---|---|---|
+| hold (×1.45 by AccordHoldLevel) | +0.262 | +0.225 | 82–111% of the term |
+| observer (AccordDobHz) | +0.328 | +0.239 | 66–105% |
+| friction hysteresis | +0.158 | +0.186 | 134–136% |
+| move (AccordFFRateGain) | +0.003 | −0.007 | — |
+| 100 Hz rate loop | −0.009 | −0.022 | — |
+
+⭐ **No single term is large enough to fix it.** That is why every single-term proposal was refuted.
+
+**`AccordHoldLevel` off moves 1.333 → ~1.24, not to 1.000** — it can only remove
+(1 − 1/1.45) = 31% of a term carrying 22–26%, i.e. ~7% of the command. The ARM-B config remains a
+valid *attribution* test but is **not a fix**; expect a partial move, and read it as such.
+
+⚠ LIMIT OF THIS DECOMPOSITION: the five modelled terms leave ~38% of F unexplained at 0.30–0.60 Hz.
+The likely remainder is `latAccelOffset` (which the code folds into `curv_des`, not added as a
+torque) and roll compensation, neither of which is reconstructed here. The exact P/I/F split above
+does **not** depend on that; only the within-F breakdown does.
+
+Note the rev 6 rationale in `latcontrol_vehicle_tunes.py` argued a low hold map "makes the observer
+carry 45–64% of the feedforward", and raised the level to collapse that loop. On rev 6.4's own
+flight data the observer still carries 24–33% of the band-limited feedforward.
