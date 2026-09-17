@@ -170,3 +170,50 @@ does **not** depend on that; only the within-F breakdown does.
 Note the rev 6 rationale in `latcontrol_vehicle_tunes.py` argued a low hold map "makes the observer
 carry 45–64% of the feedforward", and raised the level to collapse that loop. On rev 6.4's own
 flight data the observer still carries 24–33% of the band-limited feedforward.
+
+## THE DOSE (the decomposition, closed)
+
+The earlier within-F breakdown used a **pooled** empirical deg-per-curvature (2412) where the real
+`VehicleModel` gives 2961–3901 depending on speed. That was the dominant error — not roll.
+Rebuilt with the exact `angle_des` the controller computes
+(`VM.get_steer_from_curvature(-curv_des, v, roll)`, per-frame roll/steerRatio/stiffness from
+`liveParameters`), the reconstruction closes:
+
+**`corr(model, logged ff_torque) = +0.9999`, slope 1.002, residual/signal 0.011.**
+`latAccelOffset` is empirically **not in use** (including it drops the slope to 0.68–0.80).
+
+| term | 0.15–0.30 Hz | 0.30–0.60 Hz |
+|---|---|---|
+| hold | +0.438 | +0.423 |
+| friction hysteresis | +0.220 | +0.317 |
+| observer | +0.323 | +0.237 |
+| move | +0.021 | +0.030 |
+| rate loop | −0.005 | −0.014 |
+| **unexplained** | **+0.003** | **+0.007** |
+
+Doses simulated by rebuilding F under each candidate and projecting onto the measured band content
+(the hysteresis operator's nonlinearity and the observer's dynamics are simulated, not linearised):
+
+| candidate | 0.15–0.30 | 0.30–0.60 | code change |
+|---|---|---|---|
+| as flown (rev 6.4) | 1.275 | 1.333 | — |
+| **`AccordHoldLevel` OFF** | **1.158** | **1.062** | **none** |
+| `HOLD_LEVEL_V [1.15,1.10]` | 1.185 | 1.123 | 2 constants |
+| Hyst 0.015→0.008 | 1.134 | 1.098 | none |
+| HoldLevel OFF + Hyst 0.010 | 1.057 | **0.894** | none |
+| HoldLevel OFF + Hyst 0.008 | 1.017 | **0.827** | none |
+
+⭐ **`AccordHoldLevel` OFF is the best available change**: it closes ~2/3 of the FINE gap and ~40%
+of MID, needs **no code change**, and leaves both bands **above** 1.000. Every candidate that goes
+further does so by cutting the friction hysteresis, which drives FINE to 0.83–0.89 — under-delivery,
+which is the "loose" the operator ranks as the worst outcome.
+
+⚠ The hold level **cannot close the gap alone**: sweeping the constant across its whole range
+(1.45 → 1.00) only reaches 1.062. Landing at 1.000 requires the friction hysteresis as well, and
+that trade is not safe to make blind. Both predictions are OPEN LOOP — P and I refill part of any
+cut (they carry 2–9% in band), so the real result lands slightly **above** these, i.e. safer.
+
+**This corrects an earlier claim in this file**: `AccordHoldLevel` OFF was estimated to move 1.333
+to only ~1.24 and was called "not a fix". That estimate used the wrong `angle_des` and put the hold
+share at 0.225 instead of 0.423. It is a fix — and the same drive that applies it also tests the
+decomposition. Config: `reference/toggle-config_V293_r64_ARM-B_holdlevel-off.json`.
