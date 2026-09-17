@@ -87,3 +87,43 @@ it, none loads a route. `smallsig_33_validate.py` checks it against its own form
 - `results/` — instrument output and all 33 findings from the diagnostic streams.
 
 Caches live under `_scratch/cache/tau/` (gitignored, regenerate with `build_cache_rev64.py`).
+
+## Adversarial verification — 33 findings, 18 held, 15 overturned
+
+Every finding was attacked on three independent lenses, all briefed with the rev 6.4 data the
+original streams did not have. Change findings were attacked for false positives (arithmetic,
+premise/code-path, attribution); nulls were attacked for false **negatives** (statistical power,
+regime scope, alternative method). Verdicts in `results/verdict_tally.json`.
+
+**Every proposed rev 7 constant change was overturned.** `hold-level-double-count` (3/3),
+`ff-stiffness-collapse-large-angle` (3/3), `holdsat-floor-fix` (3/3),
+`viscous-term-never-got-the-level-correction` (3/3), `rate-ff-half-globally` (2/3),
+`ff-rate-filter-costs-phase-not-magnitude` (2/3). The diagnosis is solid; the prescriptions are not.
+**There is no rev 7 to ship from this session.**
+
+`hold-level-double-count` is the instructive one: its headline "1.19× too stiff" came from dividing
+a **sum of magnitudes** by a **real part** — different quantities. Under any self-consistent framing
+the number is 0.92–1.04, i.e. no over-stiffness, and the celebrated "two unrelated estimators
+agreeing to within 2%" was an artifact of that mismatch. What survives is only the *direction*:
+the hold level, not the band schedule, is where in-band stiffness moved (101% vs −1% of the
+in-phase rise). ⚠ Its k_TRUE is identified in **closed loop** from a signal containing the
+feedforward under test, so it cannot by construction show the model is stiffer than the plant.
+
+**Four of six nulls fell** — the reason to verify nulls at all:
+- `ratelimit-falsified` (3/3) — the null pooled all engaged frames, dominated by highway where the
+  limiter never binds. Conditioned on angle, the Honda rate limiter binds in **0.55% of frames at
+  10–20°** vs the 0.094% the pooled figure showed. Measured on rev 5 only; rev 6.4 was simulated.
+- `no-inertia-term-in-ff` (3/3) — "only 12% of the deficit" was computed for ≥8 m/s. On rev 6.4,
+  J·acc is **22% at 5–8 m/s and 44% at 0–5 m/s**, the regime holding 96% of large transients.
+- `physics-says-no-saturation-at-20deg` (2/2) — a steady-state Fiala curve never checked against
+  measured response. Event-based measurement at 20–22° gives 0.78–0.94 where physics says 0.92–0.99.
+- `instr-suite-built` (3/3) — the 11 positive controls only test synthetic injected defects.
+  ⚠ **On real rev 6.4 data the instruments have no power in the large-angle bins** (r6c: 0.0 s of
+  quasi-static data above 10°). They are correct code, not yet useful measurements.
+
+**What held and is decision-bearing:** `midband-overdelivery` (0/3, 3/3 CONFIRMED_ON_REV64) and
+`fine-band-also-over` (1/3, 3/3) — the defect is real. `steeringrate-lsb-8x-wrong` (1/3) — the rate
+loop reads a **1.0 deg/s LSB** where its comment assumes 0.125. `rateloop-dominates-command-jerk`
+(1/3). `cs-la-des-is-the-setpoint-not-the-model` (1/3). `move-limit-never-binds-above-8` (0/3).
+`caster-untestable-no-quasi-static-large-angle-data` and `holdsat-unidentified-at-speed` — the
+large-angle question cannot be answered by any route we own.
