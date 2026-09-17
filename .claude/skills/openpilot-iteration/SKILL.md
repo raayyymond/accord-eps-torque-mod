@@ -1,50 +1,36 @@
 ---
 name: openpilot-iteration
-description: The development philosophy for iterating on the openpilot/StarPilot lateral control fork — where control belongs, what makes a change worth shipping, how to judge one honestly, and how to be wrong well. Load before proposing, simulating, or shipping any fork-side control change.
+description: How the operator wants the openpilot/StarPilot lateral control fork developed — the architecture he's chosen, what he means by a good solution, what not to break, and how to run the work. Load before proposing, simulating, or shipping any fork-side control change.
 ---
 
-# How we develop the fork
+# Working on the fork
 
-## Where control belongs
+## The architecture he's chosen
 
-- **The EPS firmware is a pure torque map; control lives in openpilot.** Firmware changes are the only
-  bricking class this kit has — keep them minimal and prefer a fork-side answer.
-- **Do not move control back into the firmware** to buy bandwidth. If an inner loop is ever justified,
-  close it on angular **velocity**, not acceleration.
+- The EPS firmware is a **pure torque map**. openpilot does the control.
+- **Firmware changes are high-risk — keep them to an absolute minimum.**
+- **Don't put the 1 kHz loop back in the EPS.** If we ever do, compare the setpoint to angular
+  **velocity**, not acceleration.
 
-## What is worth shipping
+## What a good solution means to him
 
-- **Elegant and efficient, not merely robust and accurate.** Every term costs lag and a tuning surface;
-  one that cannot say what it buys does not ship.
-- **Prefer removing a term to adding one, and correcting a constant to either.**
-- 🛑 **Gate a feature; do not delete it to chase a symptom.** The fault is usually *where it was
-  applied*, not *that it exists*.
-- **A new build is not progress — an interpretable result is.** Each one spends a scarce drive.
-- **Ship with the instrument that can see the change, and the one toggle that takes it back.**
+- Eliminate **loose steering, understeer and oversteer**.
+- **Elegant and efficient**, not just robust, accurate and performant.
+- **Keep asking whether the changes we've already made are still necessary.** Lag we added is lag we own.
+- **Fine control of the wheel is the point.** Small steering demands have to actually reach the road.
 
-## How to judge a change
+## Don't break what works
 
-- **Measure the quantity the goal names**, in the band and at the amplitude where it lives — a proxy
-  will rank candidates confidently and wrongly.
-- ⭐ **A metric that cannot separate the arms is our design failure, not a verdict on the arms.**
-- **Write the fail condition before the run and honour it when it fires.** A threshold with no physical
-  floor gets that floor stated before the sweep, never after.
-- **Validate an instrument on a known answer first** — a method can pass its own checks and still be
-  wrong by an order of magnitude.
-- **Prefer the inert tap to the blind dose**, and **verify the crux yourself, including a "no"**.
+- **Don't delete a feature to fix a symptom — gate it.** He has overruled this twice.
+- **Lane centering stays.** It's toggleable and it does a real job when the model sees both lines.
+- **Don't pin something just to keep an instrument clean.** The car comes first.
+- Any model we fit has to **account for lane centering being on**.
 
-## How to be wrong well
+## Running the work
 
-- **Mark EVIDENCE or BELIEF on every decision-bearing claim.** "I'm not sure, here's what I'd need" is
-  always acceptable.
-- **Retract in place and loudly** — commit, handoff, page. A correction living only in chat sends the
-  next session down the same path.
-- **An identical result across a swept parameter means the wrong mechanism**, not a weak effect.
-- **A deliberate under-correction is still a modelling error** — it relocates the error somewhere less
-  visible rather than creating margin.
-
-## Working with the operator
-
-- **He scores symptoms; we score bands.** Report what moved, in his words, against the pre-registered read.
-- **State the risk before the drive** — what gained authority, by how much, and where.
-- **His overrides are data.** Re-examine the reasoning that produced the change, not just the line.
+- **Sonnet for trivial tasks, Opus for nuanced ones. Never Fable.**
+- **Tie subagent work together.** Feedback that arrives late still has to reach work already in flight.
+- StarPilot → `Dom`. This kit → `main`.
+- **Hand over the file he can actually use** — the encoded config, not just the readable copy.
+- **Say what you measured and what you're guessing.** Mark it.
+- **Keep it short.** Reports, docs, commit messages, this file.
