@@ -1,0 +1,33 @@
+=== 1) is actualLateralAccel just curvature * v^2 ? (max abs difference on engaged frames) ===
+  00000064--ce6b0b0ebb V282     max|act - curv*v^2| 8.054e-04   rms|act - pose| 0.0725   rms act 0.229
+  00000065--b9f78988bd V282     max|act - curv*v^2| 1.227e-03   rms|act - pose| 0.0530   rms act 0.232
+  0000006c--2bc842dbac V282     max|act - curv*v^2| 3.049e-03   rms|act - pose| 0.0791   rms act 0.561
+  00000039--f56039af87 V282old  max|act - curv*v^2| 2.754e-03   rms|act - pose| 0.0979   rms act 0.654
+  0000003a--283a39a1d6 V282old  max|act - curv*v^2| 7.716e-04   rms|act - pose| 0.0875   rms act 0.227
+  0000003c--927965c2b4 V282old  max|act - curv*v^2| 1.523e-03   rms|act - pose| 0.0871   rms act 0.266
+  0000006c--68c6e94b17 T64      max|act - curv*v^2| 8.180e-04   rms|act - pose| 0.0706   rms act 0.209
+  0000006d--05e83bb04f T64      max|act - curv*v^2| 1.930e-03   rms|act - pose| 0.0601   rms act 0.260
+  0000006e--6ca3e014fd T64B     max|act - curv*v^2| 4.447e-03   rms|act - pose| 0.1137   rms act 0.869
+  00000076--d0b7ea7e4d T5       max|act - curv*v^2| 1.011e-03   rms|act - pose| 0.0744   rms act 0.286
+  00000075--6c8687d5bd T4       max|act - curv*v^2| 5.065e-03   rms|act - pose| 0.1064   rms act 0.770
+
+=== 2) high-jerk event metrics, SAME events, two output channels ===
+group    route                   nev | gain_act lag_act err_act | gain_pose lag_pose err_pose | errAl_pose
+V282     00000064--ce6b0b0ebb      3 |    0.986   0.000   0.128 |     0.953    0.070    0.325 |      0.295
+V282     0000006c--2bc842dbac     35 |    0.995   0.000   0.071 |     0.980    0.000    0.162 |      0.162
+V282old  00000039--f56039af87      5 |    1.139   0.000   0.232 |     1.125    0.000    0.261 |      0.261
+V282old  0000003a--283a39a1d6      5 |    1.511   0.060   0.607 |     1.417    0.120    0.717 |      0.547
+V282old  0000003c--927965c2b4      5 |    1.622   0.010   0.704 |     1.540    0.150    0.790 |      0.619
+T64      0000006c--68c6e94b17      2 |    1.145   0.005   0.349 |     1.090    0.100    0.419 |      0.357
+T64      0000006d--05e83bb04f      3 |    1.051   0.030   0.337 |     1.044    0.120    0.444 |      0.376
+T64B     0000006e--6ca3e014fd     12 |    1.009   0.000   0.190 |     0.982    0.015    0.247 |      0.204
+T5       00000076--d0b7ea7e4d     10 |    1.068   0.420   0.573 |     1.051    0.530    0.693 |      0.333
+T4       00000075--6c8687d5bd     13 |    0.996   0.180   0.242 |     1.000    0.320    0.307 |      0.276
+
+  group medians (route-median of route medians):
+  V282     nev   38  gain_act 0.991  gain_pose 0.966  lag_act 0.000  lag_pose 0.035  err_pose 0.244  errAligned_pose 0.228
+  V282old  nev   15  gain_act 1.511  gain_pose 1.417  lag_act 0.010  lag_pose 0.120  err_pose 0.717  errAligned_pose 0.547
+  T64      nev    5  gain_act 1.098  gain_pose 1.067  lag_act 0.017  lag_pose 0.110  err_pose 0.431  errAligned_pose 0.366
+  T64B     nev   12  gain_act 1.009  gain_pose 0.982  lag_act 0.000  lag_pose 0.015  err_pose 0.247  errAligned_pose 0.204
+  T5       nev   10  gain_act 1.068  gain_pose 1.051  lag_act 0.420  lag_pose 0.530  err_pose 0.693  errAligned_pose 0.333
+  T4       nev   13  gain_act 0.996  gain_pose 1.000  lag_act 0.180  lag_pose 0.320  err_pose 0.307  errAligned_pose 0.276

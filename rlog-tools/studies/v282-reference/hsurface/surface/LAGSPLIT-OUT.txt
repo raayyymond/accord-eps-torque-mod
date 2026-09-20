@@ -1,0 +1,101 @@
+====================================================================================================================================
+0. EACH ROUTE'S OWN FLOWN LEAD: liveDelay.lateralDelay (s), read from that route's log. A lead difference
+   between the two builds is a PARAMETER difference, not a plant difference.
+====================================================================================================================================
+   V282       00000064--ce6b0b0ebb     lateralDelay median 0.2000 s  p5/p95 0.2000/0.2000  n 55750
+   V282       00000065--b9f78988bd     lateralDelay median 0.2000 s  p5/p95 0.2000/0.2000  n 59511
+   V282       0000006c--2bc842dbac     lateralDelay median 0.2000 s  p5/p95 0.2000/0.2000  n 304745
+   V282old    00000039--f56039af87     lateralDelay median 0.2000 s  p5/p95 0.2000/0.2000  n 80691
+   V282old    0000003a--283a39a1d6     lateralDelay median 0.2000 s  p5/p95 0.2000/0.2000  n 46335
+   V282old    0000003c--927965c2b4     lateralDelay median 0.2000 s  p5/p95 0.2000/0.2000  n 55150
+   T64F       0000006c--68c6e94b17     lateralDelay median 0.2990 s  p5/p95 0.2990/0.2990  n 57707
+   T64F       0000006d--05e83bb04f     lateralDelay median 0.2990 s  p5/p95 0.2990/0.2990  n 61656
+   T64F       0000006e--6ca3e014fd     lateralDelay median 0.3022 s  p5/p95 0.3022/0.3119  n 74043
+   TORQother  00000076--d0b7ea7e4d     lateralDelay median 0.2858 s  p5/p95 0.2858/0.2858  n 49015
+   TORQother  00000075--6c8687d5bd     lateralDelay median 0.2796 s  p5/p95 0.2796/0.2796  n 77737
+   TORQother  00000072--8001fc3048     lateralDelay median 0.2739 s  p5/p95 0.2739/0.2739  n 59510
+   TORQother  00000073--79fd149dd8     lateralDelay median 0.2739 s  p5/p95 0.2739/0.2769  n 52921
+   TORQother  00000070--717f5a7866     lateralDelay median 0.2000 s  p5/p95 0.2000/0.2000  n 80495
+   TORQother  00000071--f2c9d073a3     lateralDelay median 0.2000 s  p5/p95 0.2000/0.2000  n 83013
+
+====================================================================================================================================
+1. UNWRAPPED time-domain lag per leg, per speed bin, per band. Cross-correlation peak over +-800 ms of
+   band-passed signals, accumulated over every usable run >=20 s, normalised per run.
+   X->Z is the fork's own shaping (positive = the setpoint LAGS the plan; NEGATIVE = the fork LEADS).
+====================================================================================================================================
+
+   band 0.06-0.15 Hz
+      speed   group            X->Y model->achieved        X->Z model->setpoint     Z->Y setpoint->achieved   runs
+      0-8     V282        +330 ms  r+0.84           +0 ms  r+1.00         +340 ms  r+0.84         4
+      0-8     V282old     +740 ms  r+0.85           +0 ms  r+1.00         +730 ms  r+0.84         3
+      0-8     T64F        +800 ms  r+0.88          +90 ms  r+1.00         +800 ms  r+0.92         2
+      0-8     TORQother    -10 ms  r+0.91           +0 ms  r+0.96           +0 ms  r+0.98         3
+      8-15    V282        +280 ms  r+0.97           +0 ms  r+1.00         +330 ms  r+0.98         11
+      8-15    V282old     +530 ms  r+0.82          +30 ms  r+0.99         +440 ms  r+0.85         3
+      8-15    T64F        +400 ms  r+0.76           +0 ms  r+0.99         +270 ms  r+0.79         8
+      8-15    TORQother   +530 ms  r+0.90          +30 ms  r+0.99         +420 ms  r+0.89         12
+      15-22   V282        +460 ms  r+0.95           +0 ms  r+1.00         +470 ms  r+0.94         8
+      15-22   V282old     +590 ms  r+0.75          +20 ms  r+0.87         +380 ms  r+0.89         6
+      15-22   T64F        +320 ms  r+0.78           +0 ms  r+0.98         +220 ms  r+0.75         9
+      15-22   TORQother   +530 ms  r+0.92          +60 ms  r+0.99         +400 ms  r+0.93         20
+      22+     V282        +320 ms  r+0.98           +0 ms  r+1.00         +310 ms  r+0.98         12
+      22+     V282old     +260 ms  r+0.96           +0 ms  r+1.00         +260 ms  r+0.96         4
+      22+     T64F        +170 ms  r+0.98          +70 ms  r+1.00          +40 ms  r+0.99         4
+      22+     TORQother   +560 ms  r+0.86         +140 ms  r+0.99         +360 ms  r+0.89         12
+
+   band 0.15-0.30 Hz
+      speed   group            X->Y model->achieved        X->Z model->setpoint     Z->Y setpoint->achieved   runs
+      0-8     V282        +360 ms  r+0.82           +0 ms  r+1.00         +350 ms  r+0.82         4
+      0-8     V282old     +420 ms  r+0.89           +0 ms  r+1.00         +420 ms  r+0.89         3
+      0-8     T64F        +710 ms  r+0.94         +160 ms  r+0.99         +540 ms  r+0.95         2
+      0-8     TORQother   +330 ms  r+0.86         +120 ms  r+0.95         +120 ms  r+0.93         3
+      8-15    V282        +370 ms  r+0.96          +10 ms  r+1.00         +350 ms  r+0.97         11
+      8-15    V282old     +390 ms  r+0.96           +0 ms  r+1.00         +370 ms  r+0.96         3
+      8-15    T64F        +650 ms  r+0.92          +80 ms  r+0.99         +520 ms  r+0.93         8
+      8-15    TORQother   +430 ms  r+0.87         +100 ms  r+0.98         +270 ms  r+0.90         12
+      15-22   V282        +400 ms  r+0.94          +10 ms  r+1.00         +380 ms  r+0.94         8
+      15-22   V282old     +340 ms  r+0.91           +0 ms  r+0.98         +320 ms  r+0.94         6
+      15-22   T64F        +650 ms  r+0.90         +110 ms  r+0.99         +520 ms  r+0.90         9
+      15-22   TORQother   +560 ms  r+0.89         +140 ms  r+0.98         +400 ms  r+0.90         20
+      22+     V282        +290 ms  r+0.96          +20 ms  r+1.00         +270 ms  r+0.96         12
+      22+     V282old     +300 ms  r+0.97          +10 ms  r+1.00         +280 ms  r+0.97         4
+      22+     T64F        +400 ms  r+0.95         +110 ms  r+1.00         +280 ms  r+0.95         4
+      22+     TORQother   +590 ms  r+0.94         +210 ms  r+0.99         +370 ms  r+0.96         12
+
+   band 0.30-0.60 Hz
+      speed   group            X->Y model->achieved        X->Z model->setpoint     Z->Y setpoint->achieved   runs
+      0-8     V282        +310 ms  r+0.64          +30 ms  r+0.99         +280 ms  r+0.65         4
+      0-8     V282old     +340 ms  r+0.90          +20 ms  r+0.99         +290 ms  r+0.92         3
+      0-8     T64F        +390 ms  r+0.62         +130 ms  r+0.97         +240 ms  r+0.70         2
+      0-8     TORQother   +210 ms  r+0.83         +190 ms  r+0.93          +20 ms  r+0.91         3
+      8-15    V282        +300 ms  r+0.91          +50 ms  r+0.99         +240 ms  r+0.92         11
+      8-15    V282old     +360 ms  r+0.93          +50 ms  r+1.00         +310 ms  r+0.93         3
+      8-15    T64F        +410 ms  r+0.79         +120 ms  r+0.99         +280 ms  r+0.82         8
+      8-15    TORQother   +390 ms  r+0.74         +160 ms  r+0.94         +210 ms  r+0.78         12
+      15-22   V282        +340 ms  r+0.82          +50 ms  r+0.99         +280 ms  r+0.82         8
+      15-22   V282old     +360 ms  r+0.90          +50 ms  r+0.99         +300 ms  r+0.90         6
+      15-22   T64F        +570 ms  r+0.85         +140 ms  r+1.00         +430 ms  r+0.85         9
+      15-22   TORQother   +470 ms  r+0.84         +180 ms  r+0.94         +270 ms  r+0.85         20
+      22+     V282        +340 ms  r+0.89          +60 ms  r+1.00         +280 ms  r+0.90         12
+      22+     V282old     +310 ms  r+0.96          +60 ms  r+1.00         +260 ms  r+0.96         4
+      22+     T64F        +510 ms  r+0.92         +140 ms  r+1.00         +370 ms  r+0.92         4
+      22+     TORQother   +500 ms  r+0.86         +260 ms  r+0.96         +240 ms  r+0.89         12
+
+   band 0.60-1.20 Hz
+      speed   group            X->Y model->achieved        X->Z model->setpoint     Z->Y setpoint->achieved   runs
+      0-8     V282        +350 ms  r+0.85         +130 ms  r+1.00         +220 ms  r+0.86         4
+      0-8     V282old     +360 ms  r+0.81         +100 ms  r+0.96         +250 ms  r+0.83         3
+      0-8     T64F        +400 ms  r+0.70         +160 ms  r+0.98         +240 ms  r+0.69         2
+      0-8     TORQother   +450 ms  r+0.48         +290 ms  r+0.77         +170 ms  r+0.66         3
+      8-15    V282        +320 ms  r+0.86         +120 ms  r+0.99         +200 ms  r+0.87         11
+      8-15    V282old     +340 ms  r+0.70         +120 ms  r+0.99         +220 ms  r+0.70         3
+      8-15    T64F        +360 ms  r+0.66         +170 ms  r+0.99         +200 ms  r+0.67         8
+      8-15    TORQother   +360 ms  r+0.51         +220 ms  r+0.82         +160 ms  r+0.53         12
+      15-22   V282        +300 ms  r+0.79         +120 ms  r+0.99         +170 ms  r+0.77         8
+      15-22   V282old     +260 ms  r+0.81         +120 ms  r+0.98         +150 ms  r+0.80         6
+      15-22   T64F        +330 ms  r+0.68         +170 ms  r+0.99         +160 ms  r+0.68         9
+      15-22   TORQother   +340 ms  r+0.60         +240 ms  r+0.82         +140 ms  r+0.59         20
+      22+     V282        +290 ms  r+0.86         +120 ms  r+1.00         +170 ms  r+0.84         12
+      22+     V282old     +250 ms  r+0.86         +120 ms  r+0.99         +130 ms  r+0.85         4
+      22+     T64F        +310 ms  r+0.72         +170 ms  r+1.00         +150 ms  r+0.71         4
+      22+     TORQother   +300 ms  r+0.69         +320 ms  r+0.88           +0 ms  r+0.63         12

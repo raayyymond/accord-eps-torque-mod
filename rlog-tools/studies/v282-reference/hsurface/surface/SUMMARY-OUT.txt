@@ -1,0 +1,77 @@
+================================================================================================================================
+1. PER BAND, exposure-weighted (weights = torque-mode laterally-engaged seconds in that speed x amp cell)
+   dM = M_coh(torque) - M_coh(V282). The gain/phase/incoherent columns are each build's own component.
+================================================================================================================================
+band Hz     cells  exp cov  w.mean dM  exp% worse      |H| V/T    Mgain V/T   Mphase V/T     Minc V/T     M_al V/T   lag V/T ms
+0.06-0.15       3    20.3%     +0.087       17.6%  0.79/ 0.81  0.22/ 0.21  0.21/ 0.34  0.18/ 0.27  0.22/ 0.23   351/  527
+0.15-0.30       5    43.8%     +0.375       43.8%  0.85/ 1.02  0.15/ 0.12  0.48/ 0.87  0.26/ 0.33  0.16/ 0.13   341/  598
+0.30-0.60      10    92.1%     +0.360       92.1%  0.99/ 1.13  0.16/ 0.26  0.88/ 1.22  0.52/ 0.64  0.18/ 0.27   300/  423
+0.60-1.20      10    92.1%     +0.078       44.4%  1.27/ 1.34  0.42/ 0.50  1.67/ 1.73  0.69/ 1.21  0.48/ 0.69   312/  342
+1.20-2.40       9    88.2%     -0.099       23.6%  2.28/ 2.49  1.59/ 1.74  1.55/ 1.22  2.05/ 2.30  1.86/ 1.91   124/   87
+2.40-4.00       0   no admissible cell
+
+================================================================================================================================
+2. PER SPEED BIN, pooled over the TRACKING bands 0.06-1.20 Hz only (1.2-4 Hz excluded: the plan carries
+   almost no power there and the 2.4-4 Hz correlation is a zero-lag planner echo, not tracking)
+================================================================================================================================
+speed    cells  w.mean dM      |H| V/T    Mgain V/T   Mphase V/T     M_al V/T     Minc V/T   lag V/T ms   dlag
+0-8          2     +0.168  0.86/ 0.82  0.15/ 0.24  1.14/ 1.30  0.20/ 0.39  0.52/ 0.82   320/  397    +76
+8-15         6     +0.249  0.90/ 1.08  0.17/ 0.30  1.15/ 1.36  0.20/ 0.37  0.45/ 0.91   310/  378    +68
+15-22        8     +0.305  1.13/ 1.30  0.26/ 0.32  1.09/ 1.38  0.30/ 0.41  0.60/ 0.82   316/  455   +140
+22+         12     +0.184  1.16/ 1.20  0.36/ 0.36  0.90/ 1.10  0.39/ 0.41  0.46/ 0.58   319/  464   +145
+
+================================================================================================================================
+3. PER AMPLITUDE STRATUM, tracking bands only
+================================================================================================================================
+A1 <0.3   cells  11  dM +0.167   |H| 0.99/1.02   Mgain 0.30/0.26   Mphase 1.13/1.31   M_al 0.33/0.36   lag 357/473 ms
+A2 .3-1   cells   9  dM +0.308   |H| 1.12/1.25   Mgain 0.21/0.31   Mphase 0.94/1.23   M_al 0.24/0.36   lag 270/411 ms
+A3 >=1    cells   8  dM +0.357   |H| 1.17/1.62   Mgain 0.23/0.67   Mphase 1.01/1.23   M_al 0.26/0.69   lag 254/287 ms
+
+================================================================================================================================
+4. ADMISSIBILITY CENSUS
+================================================================================================================================
+   72 cells attempted (6 bands x 4 speed bins x 3 amplitude strata). 37 readable in both builds.
+    25 cells excluded: too few windows (n<6)                   (exposure they carry, summed over bands: 192.0%)
+    10 cells excluded: V282 has NO windows at all              (exposure they carry, summed over bands:  71.5%)
+
+   THE STRUCTURAL HOLES (no amount of re-analysis fixes these; they need a drive):
+      0.06-0.15  8-15   A1 <0.3  exposure 18.0%   V282 no windows; TORQ n2 coh0.99/flr0.95 surrnan bias0.02 lag874ms
+      0.06-0.15  0-8    A1 <0.3  exposure 13.9%   V282 n5 coh0.91/flr0.78 surr0.33 bias0.08 lag1555ms; TORQ no windows
+      0.15-0.30  0-8    A1 <0.3  exposure 13.9%   TORQ n2 coh1.00/flr0.95 surrnan bias0.03 lag534ms
+      0.06-0.15  15-22  A1 <0.3  exposure 12.0%   V282 n1 coh1.00/flr0.95 surrnan bias0.00 lag326ms; TORQ n2 coh0.98/flr0.95 surrnan bias0.08 lag749ms
+      0.06-0.15  8-15   A2 .3-1  exposure  9.1%   V282 no windows; TORQ n3 coh0.90/flr0.95 surrnan bias0.15 lag519ms
+      0.15-0.30  8-15   A2 .3-1  exposure  9.1%   V282 n2 coh0.97/flr0.95 surrnan bias0.07 lag310ms
+      0.06-0.15  0-8    A3 >=1   exposure  5.1%   V282 no windows; TORQ no windows
+      0.15-0.30  0-8    A3 >=1   exposure  5.1%   V282 no windows; TORQ n3 coh0.93/flr0.95 surrnan bias0.13 lag455ms
+      0.30-0.60  0-8    A3 >=1   exposure  5.1%   V282 no windows
+      0.60-1.20  0-8    A3 >=1   exposure  5.1%   V282 no windows
+      1.20-2.40  0-8    A3 >=1   exposure  5.1%   V282 n1 coh1.00/flr0.95 surrnan bias0.00 lag325ms phase-wrap-risk
+      2.40-4.00  0-8    A3 >=1   exposure  5.1%   V282 n1 coh1.00/flr0.95 surrnan bias0.00 lag37ms NONCAUSAL-BAND; TORQ n34 coh0.12/flr0.17 surr0.10 bias0.14 lag-105ms NONCAUSAL-BAND
+      0.06-0.15  8-15   A3 >=1   exposure  3.9%   V282 no windows; TORQ n5 coh0.99/flr0.78 surr0.25 bias0.05 lag209ms
+      0.06-0.15  15-22  A3 >=1   exposure  3.2%   V282 n2 coh0.99/flr0.95 surrnan bias0.04 lag369ms; TORQ no windows
+      0.06-0.15  0-8    A2 .3-1  exposure  2.8%   V282 no windows; TORQ no windows
+      0.15-0.30  0-8    A2 .3-1  exposure  2.8%   V282 n2 coh1.00/flr0.95 surrnan bias0.01 lag398ms; TORQ n1 coh1.00/flr0.95 surrnan bias0.00 lag716ms
+      0.30-0.60  0-8    A2 .3-1  exposure  2.8%   V282 n1 coh1.00/flr0.95 surrnan bias0.00 lag285ms; TORQ n6 coh0.69/flr0.78 surr1.06 bias0.65 lag230ms
+      0.60-1.20  0-8    A2 .3-1  exposure  2.8%   V282 n1 coh1.00/flr0.95 surrnan bias0.00 lag299ms; TORQ n6 coh0.70/flr0.78 surr0.76 bias0.74 lag423ms
+
+================================================================================================================================
+5. WORST SINGLE REGIME by exposure-weighted miss, tracking bands only
+================================================================================================================================
+   0.30-0.60  15-22  A1 <0.3  exposure 12.0%  score +0.0618  dM +0.513   |H| 0.96->1.21   lag 355->519 ms (+164)   M_al 0.13->0.21   Minc 0.74->0.64
+   0.30-0.60  15-22  A2 .3-1  exposure 11.5%  score +0.0547  dM +0.477   |H| 1.05->1.23   lag 246->403 ms (+156)   M_al 0.13->0.28   Minc 0.45->0.77
+   0.15-0.30  15-22  A1 <0.3  exposure 12.0%  score +0.0545  dM +0.453   |H| 0.78->1.14   lag 435->719 ms (+284)   M_al 0.23->0.18   Minc 0.28->0.32
+   0.30-0.60  8-15   A1 <0.3  exposure 18.0%  score +0.0545  dM +0.302   |H| 0.74->0.93   lag 322->431 ms (+109)   M_al 0.27->0.09   Minc 0.39->0.53
+   0.15-0.30  22+    A2 .3-1  exposure  8.8%  score +0.0391  dM +0.444   |H| 0.88->0.92   lag 220->549 ms (+329)   M_al 0.12->0.09   Minc 0.23->0.35
+   0.15-0.30  15-22  A2 .3-1  exposure 11.5%  score +0.0385  dM +0.336   |H| 0.93->1.05   lag 281->499 ms (+217)   M_al 0.08->0.06   Minc 0.22->0.36
+
+   collapsed to speed x amplitude (mean dM over the tracking bands present, with that cell's exposure):
+      v 15-22  A2 .3-1  exposure 11.5%  mean dM +0.346 over 3 band(s)  mean dlag +132 ms
+      v 8-15   A2 .3-1  exposure  9.1%  mean dM +0.368 over 2 band(s)  mean dlag +97 ms
+      v 15-22  A1 <0.3  exposure 12.0%  mean dM +0.241 over 3 band(s)  mean dlag +168 ms
+      v 0-8    A1 <0.3  exposure 13.9%  mean dM +0.168 over 2 band(s)  mean dlag +76 ms
+      v 8-15   A3 >=1   exposure  3.9%  mean dM +0.559 over 2 band(s)  mean dlag -20 ms
+      v 8-15   A1 <0.3  exposure 18.0%  mean dM +0.121 over 2 band(s)  mean dlag +72 ms
+      v 22+    A2 .3-1  exposure  8.8%  mean dM +0.239 over 4 band(s)  mean dlag +174 ms
+      v 15-22  A3 >=1   exposure  3.2%  mean dM +0.444 over 2 band(s)  mean dlag +30 ms
+      v 22+    A1 <0.3  exposure  8.8%  mean dM +0.137 over 4 band(s)  mean dlag +138 ms
+      v 22+    A3 >=1   exposure  2.7%  mean dM +0.159 over 4 band(s)  mean dlag +74 ms

@@ -1,0 +1,33 @@
+============================================================================================================================================
+LOW SPEED 0-8 m/s, the 20.48 s instrument.  Mechanism (c)'s own regime.
+  H_fork = model->setpoint   H_dwn = setpoint->achieved   H_tot = model->achieved  (lag in s)
+============================================================================================================================================
+  V282     00000064--ce6b0b0ebb       0 blocks
+  V282     00000065--b9f78988bd       0 blocks
+  V282     0000006c--2bc842dbac       9 blocks =   184 s   med |ang|    2.3 deg  med |cmd| 0.0299  med |i|/LAF 0.2262  med |f|/LAF 0.2382
+  TON      0000006c--68c6e94b17       0 blocks
+  TON      0000006d--05e83bb04f       1 blocks =    20 s   med |ang|    1.0 deg  med |cmd| 0.0291  med |i|/LAF 0.1342  med |f|/LAF 0.3747
+  TON      0000006e--6ca3e014fd       1 blocks =    20 s   med |ang|    3.6 deg  med |cmd| 0.0407  med |i|/LAF 0.0927  med |f|/LAF 0.5564
+  TON      00000076--d0b7ea7e4d       1 blocks =    20 s   med |ang|    2.6 deg  med |cmd| 0.0471  med |i|/LAF 0.0993  med |f|/LAF 0.4277
+  TOFF     00000075--6c8687d5bd       0 blocks
+  V282old  00000039--f56039af87       3 blocks =    61 s   med |ang|    3.4 deg  med |cmd| 0.0472  med |i|/LAF 0.2622  med |f|/LAF 0.2394
+  V282old  0000003a--283a39a1d6       0 blocks
+  V282old  0000003c--927965c2b4       0 blocks
+
+--- band 0.10-0.25 Hz, 0-8 m/s ---
+group     routes  blk   sec |                 H_fork |                  H_dwn |                  H_tot | pooled check
+V282           1    9   184 | H  1.03 coh 1.00 lag+0.00 | H  0.66 coh 0.88 lag+0.69 | H  0.68 coh 0.88 lag+0.69 | Hf*Hd  0.68  CI(H_tot)[0.51,0.85]
+          per-route H_tot: 0000006c:0.68(n9)
+TON            3    3    61 | H  0.98 coh 1.00 lag+0.12 | H  1.07 coh 0.97 lag+0.27 | H  1.04 coh 0.97 lag+0.39 | Hf*Hd  1.04  CI(H_tot)[0.62,1.15]
+          per-route H_tot: 0000006d:0.62(n1)  0000006e:1.15(n1)  00000076:0.98(n1)
+V282old        1    3    61 | H  1.05 coh 1.00 lag-0.01 | H  1.07 coh 0.97 lag+0.20 | H  1.13 coh 0.98 lag+0.19 | Hf*Hd  1.12  CI(H_tot)[1.10,1.24]
+          per-route H_tot: 00000039:1.13(n3)
+
+--- band 0.25-0.50 Hz, 0-8 m/s ---
+group     routes  blk   sec |                 H_fork |                  H_dwn |                  H_tot | pooled check
+V282           1    9   184 | H  1.12 coh 1.00 lag+0.03 | H  0.54 coh 0.74 lag+0.34 | H  0.60 coh 0.73 lag+0.37 | Hf*Hd  0.61  CI(H_tot)[0.47,0.93]
+          per-route H_tot: 0000006c:0.60(n9)
+TON            3    3    61 | H  1.04 coh 0.99 lag+0.14 | H  0.85 coh 0.84 lag+0.28 | H  0.90 coh 0.86 lag+0.43 | Hf*Hd  0.89  CI(H_tot)[0.43,1.55]
+          per-route H_tot: 0000006d:0.43(n1)  0000006e:0.86(n1)  00000076:1.55(n1)
+V282old        1    3    61 | H  1.16 coh 1.00 lag+0.04 | H  0.84 coh 0.88 lag+0.31 | H  0.97 coh 0.87 lag+0.35 | Hf*Hd  0.98  CI(H_tot)[0.72,1.18]
+          per-route H_tot: 00000039:0.97(n3)

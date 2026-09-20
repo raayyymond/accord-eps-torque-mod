@@ -1,0 +1,36 @@
+self-test OK: lag 0.25 s and gain 0.8 recovered; band |H| 0.8 recovered
+
+=== (a) band |H| with the study's own band_H, model -> la_pose, runs>=41 s, v>=15 ===
+   (nperseg is chosen INSIDE band_H from the shortest run in the list it is handed, so it is printed too)
+  0.08-0.25  V282 0.893(coh0.97,nps4096,nseg11)  V282old 1.370(coh0.95,nps4096,nseg4)  T64 1.090(coh0.96,nps4096,nseg3)  T64B 0.970(coh0.99,nps8192,nseg2)  T5 1.053(coh0.94,nps4096,nseg2)  T4 0.978(coh0.95,nps4096,nseg2)
+  0.15-0.30  V282 0.899(coh0.95,nps4096,nseg11)  V282old 1.343(coh0.96,nps4096,nseg4)  T64 1.168(coh0.93,nps4096,nseg3)  T64B 1.065(coh0.95,nps8192,nseg2)  T5 1.045(coh0.96,nps4096,nseg2)  T4 1.018(coh0.95,nps4096,nseg2)
+  0.30-0.60  V282 1.123(coh0.84,nps4096,nseg11)  V282old 1.448(coh0.91,nps4096,nseg4)  T64 1.305(coh0.89,nps4096,nseg3)  T64B 1.650(coh0.96,nps8192,nseg2)  T5 1.251(coh0.84,nps4096,nseg2)  T4 1.531(coh0.94,nps4096,nseg2)
+
+=== nperseg actually used per group (band_H's hidden, group-dependent choice) ===
+  V282     nseg  11  shortest   42.0 s  longest   579.7 s  => nperseg 4096 (41.0 s, df 0.0244 Hz)
+  V282old  nseg   4  shortest   45.1 s  longest   199.9 s  => nperseg 4096 (41.0 s, df 0.0244 Hz)
+  T64      nseg   3  shortest   55.5 s  longest   183.2 s  => nperseg 4096 (41.0 s, df 0.0244 Hz)
+  T64B     nseg   2  shortest   88.1 s  longest    97.2 s  => nperseg 8192 (81.9 s, df 0.0122 Hz)
+  T5       nseg   2  shortest   55.0 s  longest    78.3 s  => nperseg 4096 (41.0 s, df 0.0244 Hz)
+  T4       nseg   2  shortest   45.1 s  longest    98.1 s  => nperseg 4096 (41.0 s, df 0.0244 Hz)
+
+=== equal-footing control: force every group through the SAME nperseg by truncating every run to the global shortest, then re-run band_H ===
+  0.08-0.25 (nps 4096)  V282 0.892  V282old 1.424  T64 1.086  T64B 0.955  T5 1.040  T4 0.939
+  0.15-0.30 (nps 4096)  V282 0.898  V282old 1.379  T64 1.143  T64B 0.999  T5 1.044  T4 0.926
+  0.30-0.60 (nps 4096)  V282 1.054  V282old 1.528  T64 1.212  T64B 1.701  T5 1.277  T4 1.633
+
+=== (b) high-jerk events with the study's own finder and metrics ===
+  vmin 5.0:
+    V282     nev   40 (2 routes)  gain_act 0.991 [0.99,1.00]  gain_pose 0.975 [0.95,1.00]  lag_act 0.000  lag_pose 0.035
+    V282old  nev   23 (3 routes)  gain_act 1.402 [1.21,1.45]  gain_pose 1.297 [1.16,1.37]  lag_act 0.000  lag_pose 0.105
+    T64      nev   11 (2 routes)  gain_act 1.106 [1.09,1.12]  gain_pose 1.090 [1.08,1.10]  lag_act 0.007  lag_pose 0.035
+    T64B     nev   20 (1 routes)  gain_act 1.033 [1.03,1.03]  gain_pose 1.046 [1.05,1.05]  lag_act 0.000  lag_pose 0.000
+    T5       nev   13 (1 routes)  gain_act 1.063 [1.06,1.06]  gain_pose 1.067 [1.07,1.07]  lag_act 0.340  lag_pose 0.480
+    T4       nev   25 (1 routes)  gain_act 0.996 [1.00,1.00]  gain_pose 1.012 [1.01,1.01]  lag_act 0.000  lag_pose 0.000
+  vmin 15.0:
+    V282     nev   38 (2 routes)  gain_act 0.991 [0.99,0.99]  gain_pose 0.966 [0.95,0.98]  lag_act 0.000  lag_pose 0.035
+    V282old  nev   15 (3 routes)  gain_act 1.511 [1.14,1.62]  gain_pose 1.417 [1.13,1.54]  lag_act 0.010  lag_pose 0.120
+    T64      nev    5 (2 routes)  gain_act 1.098 [1.05,1.14]  gain_pose 1.067 [1.04,1.09]  lag_act 0.017  lag_pose 0.110
+    T64B     nev   12 (1 routes)  gain_act 1.009 [1.01,1.01]  gain_pose 0.982 [0.98,0.98]  lag_act 0.000  lag_pose 0.015
+    T5       nev   10 (1 routes)  gain_act 1.068 [1.07,1.07]  gain_pose 1.051 [1.05,1.05]  lag_act 0.420  lag_pose 0.530
+    T4       nev   13 (1 routes)  gain_act 0.996 [1.00,1.00]  gain_pose 1.000 [1.00,1.00]  lag_act 0.180  lag_pose 0.320

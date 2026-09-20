@@ -1,0 +1,112 @@
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\hsurface\adversary\a7_selection.py:140: RuntimeWarning: All-NaN axis encountered
+  f"spread {np.nanmax(loo)-np.nanmin(loo):.3f}")
+=== A. amplitude stratification: pooled |H| per group in terciles of the WINDOW's in-band demand RMS ===
+  band 0.08-0.25 Hz   global terciles at 0.0697 / 0.1531 m/s^2 in-band RMS
+    V282      low  n 27 H 0.728 coh 0.86  mid  n 31 H 0.864 coh 0.95  high n 35 H 0.912 coh 0.98
+    V282old   low  n  8 H 1.248 coh 0.84  mid  n  5 H 1.374 coh 0.97  high n  2 H 1.451 coh 0.98
+    T64       low  n  8 H 1.016 coh 0.86  mid  n  3 H 1.103 coh 0.97  high n  1 H 1.172 coh 1.00
+    T64B      low  n  1 H 1.177 coh 1.00  mid  n  2 H 1.245 coh 0.97  high n  3 H 0.979 coh 0.98
+    T5        low  n  0 H   --        mid  n  2 H 1.177 coh 0.96  high n  1 H 1.027 coh 1.00
+    T4        low  n  0 H   --        mid  n  2 H 0.984 coh 0.97  high n  2 H 0.988 coh 0.96
+
+  band 0.15-0.3 Hz   global terciles at 0.0511 / 0.0898 m/s^2 in-band RMS
+    V282      low  n 33 H 0.855 coh 0.86  mid  n 31 H 0.919 coh 0.93  high n 29 H 0.916 coh 0.96
+    V282old   low  n  7 H 1.243 coh 0.83  mid  n  5 H 1.310 coh 0.97  high n  3 H 1.416 coh 0.99
+    T64       low  n  4 H 1.290 coh 0.92  mid  n  6 H 1.243 coh 0.92  high n  2 H 1.146 coh 0.98
+    T64B      low  n  0 H   --        mid  n  2 H 1.273 coh 0.96  high n  4 H 1.048 coh 0.93
+    T5        low  n  0 H   --        mid  n  1 H 1.351 coh 1.00  high n  2 H 1.027 coh 0.99
+    T4        low  n  0 H   --        mid  n  0 H   --        high n  4 H 1.027 coh 0.94
+
+  band 0.3-0.6 Hz   global terciles at 0.0252 / 0.0397 m/s^2 in-band RMS
+    V282      low  n 38 H 1.268 coh 0.73  mid  n 35 H 1.229 coh 0.81  high n 20 H 1.143 coh 0.92
+    V282old   low  n  4 H 1.520 coh 0.89  mid  n  5 H 1.520 coh 0.89  high n  6 H 1.462 coh 0.94
+    T64       low  n  1 H 1.421 coh 1.00  mid  n  2 H 1.244 coh 0.87  high n  9 H 1.363 coh 0.91
+    T64B      low  n  1 H 1.474 coh 1.00  mid  n  1 H 1.691 coh 1.00  high n  4 H 1.707 coh 0.90
+    T5        low  n  0 H   --        mid  n  1 H 1.257 coh 1.00  high n  2 H 1.349 coh 0.88
+    T4        low  n  0 H   --        mid  n  1 H 1.489 coh 1.00  high n  3 H 1.540 coh 0.95
+
+=== A2. the same gap inside the OVERLAP: windows whose demand RMS lies in the range both groups populate ===
+  band 0.08-0.25: overlap [0.0328,0.1578]  V282 n 61 H 0.851  T64 n 10 H 1.110   gap +0.259   (all-window gap was computed in A2)
+      V282 demand RMS median 0.1171 (n93), T64 0.0481 (n12)
+  band 0.15-0.3: overlap [0.0224,0.1205]  V282 n 80 H 0.899  T64 n 12 H 1.205   gap +0.306   (all-window gap was computed in A2)
+      V282 demand RMS median 0.0645 (n93), T64 0.0628 (n12)
+  band 0.3-0.6: overlap [0.0243,0.0545]  V282 n 58 H 1.183  T64 n  8 H 1.426   gap +0.243   (all-window gap was computed in A2)
+      V282 demand RMS median 0.0282 (n93), T64 0.0529 (n12)
+
+=== B. run-level coherence gate: what does it select, and what does it move? ===
+  band 0.08-0.25: corr(run coherence, run demand RMS) = +0.646 over 17 runs with >=2 windows;  Spearman +0.657
+    V282     ungated n 93 H 0.899 | coh>=0.90 n 93 H 0.899  dH +0.000  median demand RMS 0.1715 -> 0.1715
+    V282old  ungated n 15 H 1.388 | coh>=0.90 n 15 H 1.388  dH +0.000  median demand RMS 0.0900 -> 0.0900
+    T64      ungated n 12 H 1.107 | coh>=0.90 n 12 H 1.107  dH +0.000  median demand RMS 0.0918 -> 0.0918
+    T64B     ungated n  6 H 1.008 | coh>=0.90 n  6 H 1.008  dH +0.000  median demand RMS 0.1964 -> 0.1964
+    T5       ungated n  3 H 1.064 | coh>=0.90 n  3 H 1.064  dH +0.000  median demand RMS 0.1274 -> 0.1274
+    T4       ungated n  4 H 0.987 | coh>=0.90 n  4 H 0.987  dH +0.000  median demand RMS 0.1699 -> 0.1699
+
+  band 0.15-0.3: corr(run coherence, run demand RMS) = +0.392 over 17 runs with >=2 windows;  Spearman +0.287
+    V282     ungated n 93 H 0.913 | coh>=0.90 n 93 H 0.913  dH +0.000  median demand RMS 0.0863 -> 0.0863
+    V282old  ungated n 15 H 1.370 | coh>=0.90 n 15 H 1.370  dH +0.000  median demand RMS 0.0721 -> 0.0721
+    T64      ungated n 12 H 1.205 | coh>=0.90 n 12 H 1.205  dH +0.000  median demand RMS 0.0788 -> 0.0788
+    T64B     ungated n  6 H 1.078 | coh>=0.90 n  6 H 1.078  dH +0.000  median demand RMS 0.1141 -> 0.1141
+    T5       ungated n  3 H 1.050 | coh>=0.90 n  3 H 1.050  dH +0.000  median demand RMS 0.1363 -> 0.1363
+    T4       ungated n  4 H 1.027 | coh>=0.90 n  4 H 1.027  dH +0.000  median demand RMS 0.1405 -> 0.1405
+
+  band 0.3-0.6: corr(run coherence, run demand RMS) = +0.697 over 17 runs with >=2 windows;  Spearman +0.672
+    V282     ungated n 93 H 1.192 | coh>=0.90 n 19 H 1.067  dH -0.125  median demand RMS 0.0326 -> 0.0355
+    V282old  ungated n 15 H 1.476 | coh>=0.90 n 15 H 1.476  dH +0.000  median demand RMS 0.0446 -> 0.0446
+    T64      ungated n 12 H 1.355 | coh>=0.90 n 12 H 1.355  dH +0.000  median demand RMS 0.0500 -> 0.0500
+    T64B     ungated n  6 H 1.699 | coh>=0.90 n  3 H 1.660  dH -0.039  median demand RMS 0.0416 -> 0.0482
+    T5       ungated n  3 H 1.333 | coh>=0.90 n  1 H 1.257  dH -0.076  median demand RMS 0.0377 -> 0.0292
+    T4       ungated n  4 H 1.534 | coh>=0.90 n  4 H 1.534  dH +0.000  median demand RMS 0.0480 -> 0.0480
+
+=== C. leave-one-route-out on each group's pooled |H| ===
+  0.08-0.25 V282     all 0.899  LORO ['0.900', '0.901', '0.874']  spread 0.027
+  0.08-0.25 V282old  all 1.388  LORO ['1.377', '1.427', '1.370']  spread 0.057
+  0.08-0.25 T64      all 1.107  LORO ['1.144', '1.087']  spread 0.057
+  0.08-0.25 T64B     all 1.008  LORO ['nan']  spread nan
+  0.08-0.25 T5       all 1.064  LORO ['nan']  spread nan
+  0.08-0.25 T4       all 0.987  LORO ['nan']  spread nan
+
+  0.15-0.3 V282     all 0.913  LORO ['0.913', '0.916', '0.894']  spread 0.022
+  0.15-0.3 V282old  all 1.370  LORO ['1.379', '1.343', '1.377']  spread 0.036
+  0.15-0.3 T64      all 1.205  LORO ['1.156', '1.234']  spread 0.077
+  0.15-0.3 T64B     all 1.078  LORO ['nan']  spread nan
+  0.15-0.3 T5       all 1.050  LORO ['nan']  spread nan
+  0.15-0.3 T4       all 1.027  LORO ['nan']  spread nan
+
+  0.3-0.6 V282     all 1.192  LORO ['1.202', '1.209', '1.063']  spread 0.146
+  0.3-0.6 V282old  all 1.476  LORO ['1.463', '1.555', '1.435']  spread 0.120
+  0.3-0.6 T64      all 1.355  LORO ['1.345', '1.361']  spread 0.016
+  0.3-0.6 T64B     all 1.699  LORO ['nan']  spread nan
+  0.3-0.6 T5       all 1.333  LORO ['nan']  spread nan
+  0.3-0.6 T4       all 1.534  LORO ['nan']  spread nan
+
+=== D. split-half noise floor (alternate windows, per group) ===
+  0.08-0.25 V282     halves 0.900 / 0.898  |diff| 0.003
+  0.08-0.25 V282old  halves 1.437 / 1.308  |diff| 0.129
+  0.08-0.25 T64      halves 1.075 / 1.139  |diff| 0.064
+  0.08-0.25 T64B     halves 1.003 / 1.019  |diff| 0.016
+  0.08-0.25 T5       halves 1.177 / 1.027  |diff| 0.150
+  0.08-0.25 T4       halves 0.988 / 0.984  |diff| 0.004
+
+  0.15-0.3 V282     halves 0.906 / 0.919  |diff| 0.013
+  0.15-0.3 V282old  halves 1.392 / 1.337  |diff| 0.055
+  0.15-0.3 T64      halves 1.217 / 1.194  |diff| 0.023
+  0.15-0.3 T64B     halves 1.005 / 1.171  |diff| 0.167
+  0.15-0.3 T5       halves 1.086 / 1.017  |diff| 0.069
+  0.15-0.3 T4       halves 1.002 / 1.084  |diff| 0.082
+
+  0.3-0.6 V282     halves 1.191 / 1.194  |diff| 0.003
+  0.3-0.6 V282old  halves 1.477 / 1.474  |diff| 0.003
+  0.3-0.6 T64      halves 1.341 / 1.370  |diff| 0.029
+  0.3-0.6 T64B     halves 1.584 / 1.795  |diff| 0.211
+  0.3-0.6 T5       halves 1.314 / 1.353  |diff| 0.040
+  0.3-0.6 T4       halves 1.436 / 1.713  |diff| 0.277
+
+=== E. anti-causal test: normalised cross-covariance of demand vs achieved, 0.15-0.60 Hz ===
+    (x LEADS y at positive lag; a feedforward-only chain has near-zero weight at negative lag)
+  V282     peak at  +300 ms (r +0.956)   sum(lag<0)/sum(lag>0) = +0.520   C(-500 ms) +0.362  C(+500 ms) +0.909
+  V282old  peak at  +330 ms (r +0.966)   sum(lag<0)/sum(lag>0) = +0.323   C(-500 ms) +0.147  C(+500 ms) +0.920
+  T64      peak at  +480 ms (r +0.940)   sum(lag<0)/sum(lag>0) = +0.073   C(-500 ms) -0.086  C(+500 ms) +0.939
+  T64B     peak at  +510 ms (r +0.932)   sum(lag<0)/sum(lag>0) = +0.143   C(-500 ms) -0.009  C(+500 ms) +0.932
+  T5       peak at  +700 ms (r +0.951)   sum(lag<0)/sum(lag>0) = -0.128   C(-500 ms) -0.242  C(+500 ms) +0.905
+  T4       peak at  +630 ms (r +0.945)   sum(lag<0)/sum(lag>0) = -0.014   C(-500 ms) -0.147  C(+500 ms) +0.924

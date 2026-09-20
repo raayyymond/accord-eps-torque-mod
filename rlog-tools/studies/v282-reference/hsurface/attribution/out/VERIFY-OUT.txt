@@ -1,0 +1,41 @@
+verify self-test OK: time-domain method recovers gain 1.355 (true 1.35) and lag 9 samples (true 9)
+
+================================================================================================================================
+A  controlsState.output -> 0xE4 on the bus, per route (1-10 Hz band, xcorr peak).  Same leg,
+   both builds?  The (a)=0 attribution needs this to be flat across builds.
+================================================================================================================================
+   V282  00000064--ce6b0b0ebb     lag   10 ms  peak corr +0.971  runs   5  e4/(-out) =   4104.5
+   V282  00000065--b9f78988bd     lag   20 ms  peak corr +0.781  runs   8  e4/(-out) =   4116.7
+   V282  0000006c--2bc842dbac     lag   10 ms  peak corr +0.864  runs  27  e4/(-out) =   4115.9
+   TON   0000006c--68c6e94b17     lag   10 ms  peak corr +0.997  runs   6  e4/(-out) =   4090.3
+   TON   0000006d--05e83bb04f     lag   10 ms  peak corr +0.995  runs   7  e4/(-out) =   4089.6
+   TON   0000006e--6ca3e014fd     lag   10 ms  peak corr +0.996  runs  13  e4/(-out) =   4090.9
+   TON   00000076--d0b7ea7e4d     lag   10 ms  peak corr +0.990  runs  10  e4/(-out) =   4090.1
+   TOFF  00000075--6c8687d5bd     lag   10 ms  peak corr +0.992  runs  11  e4/(-out) =   4090.4
+
+================================================================================================================================
+B  H_dwn (setpoint -> achieved) by the TIME-DOMAIN method, vs the spectral H_dwn from decomp.py.
+   gain = regression slope at the best lag, per >=40 s run (5 s of each end trimmed), median over runs.
+================================================================================================================================
+band        v       group   td gain  td lag ms  routes   runs
+0.10-0.25   0       V282      0.686        730       1      1
+0.10-0.25   15      V282      0.847        300       1      3
+0.10-0.25   15      TON       1.159        525       2      2
+0.10-0.25   15      TOFF      0.960        480       1      1
+0.10-0.25   22      V282      0.842        250       3     10
+0.10-0.25   22      TON       1.073        230       3      3
+0.10-0.25   22      TOFF      0.818        410       1      1
+0.25-0.50   0       V282      0.477        400       1      1
+0.25-0.50   15      V282      0.901        250       1      3
+0.25-0.50   15      TON       1.250        330       2      2
+0.25-0.50   15      TOFF      1.318        280       1      1
+0.25-0.50   22      V282      0.898        265       3     10
+0.25-0.50   22      TON       1.264        400       3      3
+0.25-0.50   22      TOFF      1.061        350       1      1
+0.50-1.00   0       V282      0.413        240       1      1
+0.50-1.00   15      V282      1.071        210       1      3
+0.50-1.00   15      TON       1.271        185       2      2
+0.50-1.00   15      TOFF      1.607        100       1      1
+0.50-1.00   22      V282      1.140        210       3     10
+0.50-1.00   22      TON       1.506        200       3      3
+0.50-1.00   22      TOFF      1.466         90       1      1

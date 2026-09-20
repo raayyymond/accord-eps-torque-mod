@@ -1,0 +1,44 @@
+================================================================================================================================
+SECTION P   HIGH-JERK EVENT TRACKING, STRATIFIED BY EVENT SIZE (time domain, no spectra)
+================================================================================================================================
+Events: local peaks of |d/dt of the 2 Hz-lowpassed model lateral accel| >= 0.8 m/s^3, v >= 5 m/s,
+whole [-1.5, +3.0] s window laterally engaged, hands off, no clock gap (v282cmp.jerk_events).
+Achieved = livePose yaw x v.  Strata are terciles of the event's own |step| pooled over groups.
+
+   |step| m/s2    group     n  med step  med jerk   gain   nrms  resid@1.5-2.5s   rail%  max|out|  med v
+     0.00-0.62     V282     8      0.27      0.85   0.95   0.46          +0.076    0.00     0.132   28.8
+     0.00-0.62  V282old    13      0.32      1.03   1.40   0.89          -0.229    0.00     0.218   25.8
+     0.00-0.62    TQall    23      0.24      0.93   1.03   0.98          +0.204    0.00     0.347   21.3
+
+     0.62-1.62     V282    21      1.29      0.94   0.97   0.30          -0.035    0.00     0.191   29.3
+     0.62-1.62  V282old     5      0.85      0.99   1.17   0.61          +0.124    0.00     0.512   16.7
+     0.62-1.62    TQall    18      0.88      0.97   1.05   0.52          +0.075    0.00     0.443   21.3
+
+     1.62-2.40     V282     8      1.87      1.12   1.03   0.22          -0.070    0.00     0.159   29.1
+     1.62-2.40  V282old     5      1.87      1.83   1.25   0.52          +0.148   20.00     1.000    8.6
+     1.62-2.40    TQall    17      2.05      1.33   1.08   0.35          -0.016    0.00     0.489    8.4
+
+    2.40-99.00     V282     3   -- n too thin --
+    2.40-99.00  V282old     0   -- n too thin --
+    2.40-99.00    TQall    11      2.79      1.58   1.01   0.37          -0.037    0.00     0.550    9.9
+
+Same, split by speed as well (>=15 m/s only -- the band the REPORT's event numbers came from):
+   |step| m/s2    group     n   gain   nrms    resid  max|out|
+     0.00-0.62     V282     8   0.95   0.46   +0.076     0.132
+     0.00-0.62    TQall    21   1.03   1.03   +0.204     0.226
+     0.62-1.62     V282    21   0.97   0.30   -0.035     0.191
+     0.62-1.62    TQall    13   1.04   0.54   +0.048     0.232
+     1.62-2.40     V282     8   1.03   0.22   -0.070     0.159
+
+Correlation of the tracking metrics with event size WITHIN each group (Spearman rho):
+   V282     n=  40  rho(|step|, gain ) = +0.332
+   V282     n=  40  rho(|step|, nrms ) = -0.662
+   V282old  n=  23  rho(|step|, gain ) = -0.293
+   V282old  n=  23  rho(|step|, nrms ) = -0.738
+   TQall    n=  69  rho(|step|, gain ) = +0.201
+   TQall    n=  69  rho(|step|, nrms ) = -0.825
+
+Number of events whose window contains ANY railed frame, and the largest |output| reached:
+   V282       40 events,   0 contain a railed frame, max |output| over all events 0.606
+   V282old    23 events,   1 contain a railed frame, max |output| over all events 1.000
+   TQall      69 events,   0 contain a railed frame, max |output| over all events 0.550

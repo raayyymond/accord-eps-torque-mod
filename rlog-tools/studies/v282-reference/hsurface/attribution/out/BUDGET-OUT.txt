@@ -1,0 +1,71 @@
+========================================================================================================================================================
+THE BUDGET.  H_dwn = setpoint -> achieved (the EPS+plant leg; the fork's demand shaping is divided out).
+  'gap' = H_dwn(group) - H_dwn(V282) at the same band x speed.  Coherence floor 0.5 on every route used.
+========================================================================================================================================================
+band        v        n rt  H_dwn V282  H_dwn TON     gap  H_dwn TOFF     gap || (a) max|dH| (b) max|dH|  (c) holdFF  (d) obs share  residual
+0.10-0.25   8-15    1/1        0.957      1.242  +0.285       0.955  -0.002 ||      0.000   0.00000  n/a (v>=8)          +1.01    +0.285
+0.10-0.25   15-22   1/2        0.879      1.088  +0.210          --    +nan ||      0.000   0.00000  n/a (v>=8)             --    +0.210
+0.10-0.25   22-40   3/3        0.856      1.075  +0.218          --    +nan ||      0.000   0.00000  n/a (v>=8)             --    +0.218
+0.25-0.50   8-15    1/1        0.881      1.067  +0.186       1.058  +0.178 ||      0.000   0.00000  n/a (v>=8)          +0.05    +0.186
+0.25-0.50   15-22   1/2        0.865      1.226  +0.361          --    +nan ||      0.000   0.00000  n/a (v>=8)             --    +0.361
+0.25-0.50   22-40   3/3        0.913      1.353  +0.439          --    +nan ||      0.000   0.00000  n/a (v>=8)             --    +0.439
+0.50-1.00   0-8     3/4        0.784      1.266  +0.482       1.629  +0.846 ||      0.000   0.00102 0.24 of cmd          -0.75    +0.481
+0.50-1.00   8-15    3/4        0.776      1.192  +0.415       1.343  +0.566 ||      0.000   0.00000  n/a (v>=8)          -0.36    +0.415
+0.50-1.00   15-22   2/4        0.965      1.375  +0.410       1.543  +0.578 ||      0.000   0.00000  n/a (v>=8)          -0.41    +0.410
+0.50-1.00   22-40   3/4        1.201      1.299  +0.098       1.346  +0.145 ||      0.000   0.00000  n/a (v>=8)          -0.49    +0.098
+1.00-2.00   0-8     2/1        0.749      1.327  +0.578          --    +nan ||      0.000   0.00102 0.24 of cmd             --    +0.577
+1.00-2.00   15-22   2/1        1.764      5.851  +4.087          --    +nan ||      0.000   0.00000  n/a (v>=8)             --    +4.087
+1.00-2.00   22-40   2/3        2.041      4.031  +1.990          --    +nan ||      0.000   0.00000  n/a (v>=8)             --    +1.990
+
+========================================================================================================================================================
+(a) DELAY -- the full algebra, so the zero is checkable.  |H| of a pure delay, and of the measured
+    actuation pole, at each band centre.  A delay's magnitude is 1 by construction; the pole is common
+    to both builds.  The phase column is what the delay DOES own, and it owns it EQUALLY on both builds.
+========================================================================================================================================================
+band         fc Hz  |e^-jwD|  |1/(1+jf/5)|  phase @55ms     @65     @75  phase delay s
+0.10-0.25    0.175     1.000        0.9994         -3.5    -4.1    -4.7          0.065
+0.25-0.50    0.375     1.000        0.9972         -7.4    -8.8   -10.1          0.065
+0.50-1.00    0.750     1.000        0.9889        -14.8   -17.6   -20.2          0.065
+1.00-2.00    1.500     1.000        0.9578        -29.7   -35.1   -40.5          0.065
+
+========================================================================================================================================================
+(b) SATURATION -- the bound, spelled out.  duty = railed seconds / laterally-engaged hands-off seconds.
+========================================================================================================================================================
+   TOFF  0-8     duty   0.0137 %   -> reach on a |H| of ~1 is at most 0.00014 (0.014 %)
+   TOFF  15-22   duty   0.0000 %   -> reach on a |H| of ~1 is at most 0.00000 (0.000 %)
+   TOFF  22-40   duty   0.0000 %   -> reach on a |H| of ~1 is at most 0.00000 (0.000 %)
+   TOFF  8-15    duty   0.0000 %   -> reach on a |H| of ~1 is at most 0.00000 (0.000 %)
+   TON   0-8     duty   0.1015 %   -> reach on a |H| of ~1 is at most 0.00102 (0.102 %)
+   TON   15-22   duty   0.0000 %   -> reach on a |H| of ~1 is at most 0.00000 (0.000 %)
+   TON   22-40   duty   0.0000 %   -> reach on a |H| of ~1 is at most 0.00000 (0.000 %)
+   TON   8-15    duty   0.0000 %   -> reach on a |H| of ~1 is at most 0.00000 (0.000 %)
+   V282  0-8     duty   2.2638 %   -> reach on a |H| of ~1 is at most 0.02264 (2.264 %)
+   V282  15-22   duty   0.0000 %   -> reach on a |H| of ~1 is at most 0.00000 (0.000 %)
+   V282  22-40   duty   0.0000 %   -> reach on a |H| of ~1 is at most 0.00000 (0.000 %)
+   V282  8-15    duty   0.0000 %   -> reach on a |H| of ~1 is at most 0.00000 (0.000 %)
+   THE REFERENCE RAILS 14-165x MORE THAN TORQUE MODE BELOW 8 m/s (2.26 % vs 0.14 %), so saturation
+   cannot be what makes torque mode worse than V282 anywhere -- and above 8 m/s neither build rails at all.
+
+========================================================================================================================================================
+(d) OBSERVER -- the contrast, and everything it is confounded with (all read from r75's own initData).
+========================================================================================================================================================
+   r75 (TOFF) differs from the TON routes in SIX ways, not one:  AccordDobHz ABSENT (observer off) ;
+   AccordTorqueKi 0.6 + AccordTorqueKiHigh 2.5 (a Ki SCHEDULE, vs a flat 0.3) ; SteerKP 0.85 (vs 1.0) ;
+   AccordRateLoopGain 0.0006 (vs 0.001) ; AccordRefFilter 0.12 (vs 0.06 on 6c/6d/6e) ;
+   SteerFriction 0.212 (vs 0.0 on 6c/6e/76 -- 6d also ran 0.212).  A single-route contrast across six
+   changes cannot assign a share to one of them; the column above is an UPPER bound on the observer's
+   share and it is the sum of all six.
+
+========================================================================================================================================================
+ADMISSIBILITY COST -- seconds of laterally-engaged hands-off data that entered a cell vs the seconds
+  that survived coh >= 0.55 and n >= 8.  Per band, per group.  (The frames are never 'thrown away' from
+  the drive; they are excluded from a |H| READING because the demand does not explain the output there.)
+========================================================================================================================================================
+band                              V282                       TON                      TOFF                   V282old
+                  sec in / sec adm / %      sec in / sec adm / %      sec in / sec adm / %      sec in / sec adm / %
+0.10-0.25        3215 /    2273 /   71%     1188 /     676 /   57%      225 /       0 /    0%      614 /       0 /    0%
+0.25-0.50        3236 /    2335 /   72%     1311 /     573 /   44%      205 /       0 /    0%      573 /       0 /    0%
+0.50-1.00        3850 /    2862 /   74%     2156 /    1290 /   60%      681 /     128 /   19%     1536 /     968 /   63%
+1.00-2.00        3850 /    1213 /   32%     2156 /     297 /   14%      666 /      51 /    8%     1536 /     507 /   33%
+1.50-3.50        3850 /     916 /   24%     2156 /     486 /   23%      655 /      72 /   11%     1536 /     420 /   27%
+2.00-4.00        3850 /     819 /   21%     2156 /     230 /   11%      655 /     133 /   20%     1536 /     364 /   24%
