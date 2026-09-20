@@ -1,0 +1,86 @@
+============================================================================================================================
+R2 CHECK -- the error notch centre vs the line set
+   v= 17.0 m/s   notch f0 = 1.792 Hz   closest line 1.60 Hz  separation 0.192 Hz
+   v= 22.2 m/s   notch f0 = 2.016 Hz   closest line 1.60 Hz  separation 0.416 Hz
+   v= 28.1 m/s   notch f0 = 2.251 Hz   closest line 1.60 Hz  separation 0.651 Hz
+
+============================================================================================================================
+R5 -- |T| at each line, per config.  A_req scales as 1/|T|, so the LAST column is the
+      factor by which a FIXED amplitude over-delivers if it is carried to that config.
+
+   v=17.0 m/s
+       f rev6.4 as flown         ARM-KP3  TierB kp8 Q.20 TierB kp16 Q.20   x vs rev6.4
+    0.88           0.616           1.120           1.456           1.256     2.36 (kp8)   2.04 (kp16)
+    0.98           0.545           0.848           1.211           1.193     2.22 (kp8)   2.19 (kp16)
+    1.17           0.019           0.019           0.032           0.066     1.73 (kp8)   3.51 (kp16)
+    1.27           0.246           0.211           0.327           0.524     1.33 (kp8)   2.13 (kp16)
+    1.46           0.131           0.107           0.172           0.301     1.32 (kp8)   2.31 (kp16)
+    1.56           0.145           0.119           0.186           0.310     1.28 (kp8)   2.14 (kp16)
+
+   v=22.2 m/s
+       f rev6.4 as flown         ARM-KP3  TierB kp8 Q.20 TierB kp16 Q.20   x vs rev6.4
+    0.88           0.410           0.834           1.398           1.297     3.41 (kp8)   3.17 (kp16)
+    0.98           0.333           0.594           1.137           1.308     3.41 (kp8)   3.93 (kp16)
+    1.17           0.285           0.388           0.644           0.898     2.26 (kp8)   3.15 (kp16)
+    1.27           0.215           0.247           0.384           0.572     1.78 (kp8)   2.66 (kp16)
+    1.46           0.108           0.103           0.169           0.295     1.57 (kp8)   2.75 (kp16)
+    1.56           0.127           0.116           0.190           0.328     1.49 (kp8)   2.58 (kp16)
+
+   v=28.1 m/s
+       f rev6.4 as flown         ARM-KP3  TierB kp8 Q.20 TierB kp16 Q.20   x vs rev6.4
+    0.88           0.379           0.832           1.331           1.239     3.51 (kp8)   3.27 (kp16)
+    0.98           0.338           0.716           1.403           1.373     4.15 (kp8)   4.06 (kp16)
+    1.17           0.245           0.371           0.624           0.866     2.55 (kp8)   3.54 (kp16)
+    1.27           0.151           0.198           0.330           0.524     2.19 (kp8)   3.47 (kp16)
+    1.46           0.191           0.198           0.322           0.526     1.69 (kp8)   2.76 (kp16)
+    1.56           0.181           0.180           0.289           0.466     1.60 (kp8)   2.58 (kp16)
+
+============================================================================================================================
+THE SPEC -- solved per speed bin on rev 6.4 as flown, T_tot=300 s, sigma_phi=8 deg, cap 0.08 m/s2/line
+
+   --- v = 17.0 m/s  (n=21 windows) ---
+    f Hz   A rms  cap    |T|  sigma      dU   angle    rate   latacc     yaw
+    0.88  0.0447       0.616    8.0  0.0031   0.260   1.438   0.0258   0.087
+    0.98  0.0365       0.545    8.0  0.0022   0.188   1.156   0.0194   0.065
+    1.17  0.0800  CAP  0.019   30.7  0.0049   0.014   0.104   0.0015   0.005
+    1.27  0.0424       0.246    8.0  0.0022   0.099   0.788   0.0112   0.038
+    1.46  0.0582       0.131    8.0  0.0019   0.072   0.662   0.0051   0.017
+    1.56  0.0447       0.145    8.0  0.0009   0.062   0.604   0.0066   0.022
+   BURST (20 s, crest 1.88):  probe  rms 0.1241  peak 0.2474 m/s2
+     command   rms 0.00629  peak 0.01538   -> rail margin 0.726   slew 0.00102/frame = 3.4% of 0.03, with ambient p99.9 31.0%
+     wheel     rms 0.312  peak 0.778 deg   (ambient rev6.4 0.436, V282 0.149)  -> in-band x1.230
+     lat accel rms 0.0313  peak 0.0834 m/s2   (ambient 0.0481)
+     yaw rate  rms 0.1053  peak 0.2809 deg/s
+     LANE      peak deviation 11.8 mm,  net offset at burst end -11.1 mm,  net lateral velocity -0.96 mm/s
+
+   --- v = 22.2 m/s  (n=42 windows) ---
+    f Hz   A rms  cap    |T|  sigma      dU   angle    rate   latacc     yaw
+    0.88  0.0458       0.410    8.0  0.0031   0.128   0.708   0.0197   0.051
+    0.98  0.0371       0.333    8.0  0.0024   0.085   0.519   0.0121   0.031
+    1.17  0.0335       0.285    8.0  0.0017   0.065   0.481   0.0089   0.023
+    1.27  0.0419       0.215    8.0  0.0018   0.062   0.492   0.0087   0.022
+    1.46  0.0454       0.108    8.0  0.0019   0.033   0.308   0.0072   0.019
+    1.56  0.0393       0.127    8.0  0.0014   0.034   0.335   0.0075   0.019
+   BURST (20 s, crest 1.96):  probe  rms 0.0937  peak 0.1973 m/s2
+     command   rms 0.00477  peak 0.01164   -> rail margin 0.729   slew 0.00075/frame = 2.5% of 0.03, with ambient p99.9 30.1%
+     wheel     rms 0.168  peak 0.400 deg   (ambient rev6.4 0.284, V282 0.116)  -> in-band x1.163
+     lat accel rms 0.0258  peak 0.0636 m/s2   (ambient 0.0485)
+     yaw rate  rms 0.0666  peak 0.1643 deg/s
+     LANE      peak deviation 10.4 mm,  net offset at burst end -9.6 mm,  net lateral velocity -0.51 mm/s
+
+   --- v = 28.1 m/s  (n=42 windows) ---
+    f Hz   A rms  cap    |T|  sigma      dU   angle    rate   latacc     yaw
+    0.88  0.0469       0.379    8.0  0.0030   0.086   0.477   0.0199   0.041
+    0.98  0.0359       0.338    8.0  0.0023   0.059   0.362   0.0123   0.025
+    1.17  0.0379       0.245    8.0  0.0020   0.045   0.332   0.0097   0.020
+    1.27  0.0529       0.151    8.0  0.0026   0.039   0.309   0.0067   0.014
+    1.46  0.0451       0.191    8.0  0.0023   0.042   0.385   0.0097   0.020
+    1.56  0.0416       0.181    8.0  0.0018   0.037   0.359   0.0077   0.016
+   BURST (20 s, crest 1.97):  probe  rms 0.1018  peak 0.2132 m/s2
+     command   rms 0.00552  peak 0.01140   -> rail margin 0.730   slew 0.00088/frame = 2.9% of 0.03, with ambient p99.9 30.6%
+     wheel     rms 0.128  peak 0.323 deg   (ambient rev6.4 0.182, V282 0.121)  -> in-band x1.223
+     lat accel rms 0.0279  peak 0.0671 m/s2   (ambient 0.0648)
+     yaw rate  rms 0.0570  peak 0.1369 deg/s
+     LANE      peak deviation 2.0 mm,  net offset at burst end +0.4 mm,  net lateral velocity +0.07 mm/s
+
+wrote p6_spec.json

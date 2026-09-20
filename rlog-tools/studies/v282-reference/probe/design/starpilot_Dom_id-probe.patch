@@ -1,0 +1,193 @@
+PROPOSED, NOT APPLIED.  Against openpilots/raayyymond-StarPilot/StarPilot @ Dom.
+Designed by the v282-reference probe/design stream, 2026-09-20.  I have no write access to the fork
+and did not work around that; the operator applies this himself.
+
+Numbers in the comments are MEASURED on T64 (routes 6c--68c6e94b17 + 6d--05e83bb04f), on the goal
+metric's own window set (laterally engaged, hands off, >= 15 m/s, contiguous runs >= 30 s,
+unsaturated, nperseg 1024).  Method and scripts:
+rlog-tools/studies/v282-reference/probe/design/d1..d10.
+
+--- a/selfdrive/controls/lib/latcontrol_vehicle_tunes.py
++++ b/selfdrive/controls/lib/latcontrol_vehicle_tunes.py
+@@ -385,6 +385,93 @@
+   return g * float(amplitude) * math.sin(2.0 * math.pi * HONDA_ACCORD_DITHER_HZ * frame * dt)
+
++# ---------------------------------------------------------------------------------------------------------------
++# Closed-loop IDENTIFICATION probe (AccordIdProbe, 2026-09-20).  READ-ONLY: it changes no gain, no filter and no
++# table.  It adds a known, periodic, zero-mean signal to the command so that the loop can be identified from the
++# drive instead of guessed, and every candidate SteerKP / notch-Q dose sized offline rather than flown.
++#
++# WHY.  Above ~1.0 Hz the only exogenous instrument this car has is the shaped setpoint Z, and the planner puts
++# almost nothing there: measured on T64, coh(Z, error) is 0.556 at 0.68 Hz, 0.194 at 0.98, 0.059 at 1.27, 0.116
++# at 1.56, and coh(Z, measurement) falls 0.76 -> 0.56 -> 0.25 -> 0.046 across the same bins.  The identified
++# plant phase is already non-physical there (it RISES with frequency, +120 deg at 0.68 Hz to +168 at 1.07, which
++# no delay-dominated plant can do), so the phase a higher gain would spend cannot be certified.  With this probe
++# the same bins are predicted to read 0.73 / 0.77 / 0.90 / 0.97.
++#
++# WHERE.  The COMMAND node, not the setpoint, for four measured reasons:
++#   1. the leg that fails first is the plant P, not the controller C -- C is known analytically from the flown
++#      SteerKP / LAF / Ki / notch, P is not;
++#   2. with the probe at the plant input, u_p = u_ctl + W and (1 + L) = S_WW / S_W,u_p EXACTLY -- one division,
++#      no plant model, no controller model, no unit chain.  |1 + L| IS the vector margin, the only statistic
++#      that orders the flown anchors;
++#   3. priced at the same target coherence it costs 16-21 % LESS command, wheel rate, path and wheel angle than
++#      a setpoint-node probe, because a setpoint probe must first fight the rate-plant feedforward that is
++#      cancelling it;
++#   4. this node already exists and is proven: it is where AccordDither is added, after pid_log.output is
++#      written, so the PID, the hysteresis, the rate loop and the observer are all blind to it.
++#
++# WHY A MULTISINE and not a chirp or a PRBS.  Scored through the study's own analysis (Hann/1024), a PRBS has
++# crest factor 1.00 and a chirp 1.41 against this multisine's 1.82, but a PRBS puts 18-29 % of its power in
++# 1.8-3.5 Hz and a chirp 9-12 %, and this car's command -> wheel-rate gain RISES from 102 deg/s per unit torque
++# at 0.68 Hz to 542 at 1.86 and 1146 at 4.3.  1.8-3.5 Hz is the shake band the operator already reports at x3.1
++# vs V282.  A multisine puts power on chosen bins and EXACTLY ZERO everywhere else, so this probe adds x1.000 to
++# the shake band and x1.000 to 0.15-0.60 Hz (where 98 % of the tracking gap lives) by construction, not by luck.
++# A chirp also fails the operational test: it needs an uninterrupted sweep, while a probe period equal to the
++# analysis window makes EVERY 10.24 s of data a complete measurement of the whole band.
++#
++# TONES.  Period is exactly 1024 samples = 10.24 s = the study's analysis window, so every tone lands exactly on
++# an FFT bin with no leakage beyond the Hann skirt, and the bins BETWEEN the tones carry the road alone -- a
++# free, in-situ noise floor and null distribution measured on the same windows.  3-bin spacing keeps the skirts
++# disjoint.  Per-tone amplitude is sized from the logs: A = max( sqrt(rho*S_uu)/|S| , sqrt(rho*S_mm)/|P*S| ) / 256
++# at rho = 7/3 (target coherence 0.70), all four right-hand quantities measured on T64's own windows.
++#
++# AMPLITUDE.  The toggle is the PEAK in unit torque, as AccordDither's is.  The designed dose is 0.0175 = 72
++# counts of 0xE4 = 88 % of the dither's already-accepted 0.02 ceiling, at a tenth of its frequency.  It moves
++# the rim 0.21 deg rms / 0.54 deg peak against a 0.1 deg quantiser and the measured 1.1-1.3 deg backlash band
++# 2F/k, and puts 0.10 m/s^2 rms of extra path motion into 0.6-1.8 Hz -- the same decade as the fork's own
++# 0.06-0.08 m/s^2 lane-centring corrections, which is the amplitude at which the answer is wanted, because the
++# identified small-signal gain of this plant is known to move x2.8 with amplitude.  Peak slew is 4.1 % of the
++# Honda +-0.03/frame limiter, so it can never reach it.
++#
++# HOW IT IS READ BACK.  No schema change.  The probe is added to the value RETURNED by update(), after
++# pid_log.output is written, and controlsd stores that return in carControl.actuators.torque.  So
++#       W(t) = carControl.actuators.torque - controlsState...torqueState.output
++# is the probe alone, exactly, from two channels already in the kit's cache (cc_torque, cs_out).  Measured on
++# T64 with the probe OFF that difference is median +7e-8, std 7e-5..1.1e-4, and its per-bin floor at the four
++# tone bins is 2.1e-6..5.3e-6 -- i.e. the probe will be known to 64-69 dB.
++HONDA_ACCORD_ID_PROBE_PERIOD = 1024                # samples at 100 Hz = 10.24 s = the analysis window
++HONDA_ACCORD_ID_PROBE_PEAK = 0.017546              # peak of the unit-amplitude table below
++HONDA_ACCORD_ID_PROBE_V_BP = [12.0, 15.0]          # m/s: linear arm, so the envelope cannot chatter at an edge
++HONDA_ACCORD_ID_PROBE_RAMP_S = 0.30                # s: ramp in/out, ~1/30 of the peak per frame
++# (bin, amplitude, phase rad).  Crest factor 1.815 after time-frequency swapping with the amplitude spectrum
++# held exactly; phases rotated so the period starts at a zero crossing (x[0] = -2.9e-5).
++HONDA_ACCORD_ID_PROBE_TONES = (
++  ( 7, 0.009926, +0.804261),   #  0.684 Hz, 40.6 counts of 0xE4
++  (10, 0.004997, +1.695385),   #  0.977 Hz, 20.4 counts
++  (13, 0.004823, -1.778602),   #  1.270 Hz, 19.7 counts
++  (16, 0.006338, +2.560431),   #  1.562 Hz, 25.9 counts
++)
++
++
++def get_honda_accord_id_probe(peak: float, frame: int, dt: float, v_ego: float = 0.0) -> float:
++  """One sample of the identification multisine, in unit torque, scaled so its PEAK equals `peak`.
++
++  Pure feedforward: the caller adds it to the torque that LEAVES the controller, so the PID, the hysteresis,
++  the rate loop and the disturbance observer never see it and it cannot enter any feedback state.  `frame`
++  counts only while the probe is armed and is reset on disengage, so the phase is reproducible from the engage
++  instant even without the logged read-back.
++  """
++  if peak <= 0.0:
++    return 0.0
++  arm = float(np.interp(v_ego, HONDA_ACCORD_ID_PROBE_V_BP, [0.0, 1.0]))
++  if arm <= 0.0:
++    return 0.0
++  k = int(frame) % HONDA_ACCORD_ID_PROBE_PERIOD
++  x = 0.0
++  for b, a, ph in HONDA_ACCORD_ID_PROBE_TONES:
++    x += a * math.cos(2.0 * math.pi * b * k / HONDA_ACCORD_ID_PROBE_PERIOD + ph)
++  return arm * x * float(peak) / HONDA_ACCORD_ID_PROBE_PEAK
++
+
+--- a/selfdrive/controls/lib/latcontrol_torque.py
++++ b/selfdrive/controls/lib/latcontrol_torque.py
+@@ -170,6 +170,9 @@
+       # rev 6.3: free-running frame counter for the friction-linearising dither
+       self.accord_dither_frame = 0
++      # 2026-09-20: identification probe (AccordIdProbe).  Counts only while armed and resets on disengage,
++      # so the phase is reproducible from the engage instant; the ramp keeps engage/disengage stepless.
++      self.accord_probe_frame = 0
++      self.accord_probe_ramp = 0.0
+     if self.is_palisade:
+
+@@ -288,6 +291,9 @@
+         self.accord_dob.reset(float(CS.steeringRateDeg))
+         self.accord_dob_torque = 0.0
++        # the probe restarts from phase zero on every engage, and its envelope from zero
++        self.accord_probe_frame = 0
++        self.accord_probe_ramp = 0.0
+     else:
+
+@@ -870,10 +876,25 @@
+     if self.is_honda_accord:
+       self.accord_dither_frame += 1
+       if active and not steer_limited_by_safety:
+         dither = get_honda_accord_dither(float(getattr(starpilot_toggles, "accord_dither", 0.0)),
+                                          self.accord_dither_frame, self.dt, output_torque,
+                                          bool(getattr(starpilot_toggles, "accord_dither_gate", True)))
+       else:
+         dither = 0.0
+-      return -output_torque + dither, 0.0, pid_log
++      # 2026-09-20: identification probe (AccordIdProbe, 0 = off = byte-for-byte the path above).  Added at the
++      # same node as the dither and under the same three interlocks -- engaged, hands off the wheel, and not
++      # while the Honda rate limiter is active, which would freeze the integrator and the observer.  Everything
++      # else is left to the OFFLINE window selection: every in-code gate is a multiplication in time, hence a
++      # convolution in frequency, which smears the probe off its bins and destroys the free noise floor that the
++      # inter-tone bins provide.  So there is no demand gate and no angle gate here, on purpose.
++      probe_on = (active and not steer_limited_by_safety and not CS.steeringPressed)
++      ramp_step = self.dt / max(HONDA_ACCORD_ID_PROBE_RAMP_S, self.dt)
++      self.accord_probe_ramp = float(np.clip(self.accord_probe_ramp + (ramp_step if probe_on else -ramp_step),
++                                             0.0, 1.0))
++      if self.accord_probe_ramp > 0.0:
++        self.accord_probe_frame += 1
++        probe = self.accord_probe_ramp * get_honda_accord_id_probe(
++          float(getattr(starpilot_toggles, "accord_id_probe", 0.0)),
++          self.accord_probe_frame, self.dt, CS.vEgo)
++      else:
++        self.accord_probe_frame = 0
++        probe = 0.0
++      return -output_torque + dither + probe, 0.0, pid_log
+
+--- a/common/params_keys.h
++++ b/common/params_keys.h
+@@ -423,6 +423,13 @@
+     {"AccordDitherGate", {PERSISTENT, BOOL, "1", "0", 2, SETTINGS_SIMPLE}},
++    // 2026-09-20: PEAK amplitude (unit torque) of the closed-loop identification multisine added to the Accord
++    // actuator torque.  0 = off.  Read-only: it changes no gain, filter or table -- it exists so the loop can be
++    // identified from a drive instead of guessed, and every SteerKP / notch dose sized offline.  0.0175 = 72
++    // counts of 0xE4, 88 % of the AccordDither ceiling at a tenth of its frequency, 4.1 % of the Honda
++    // 0.03/frame limiter, and EXACTLY ZERO power in 1.8-3.5 Hz (the shake band) and in 0.15-0.60 Hz.
++    // Ceiling 0.02 = the already-accepted dither ceiling.  Fly with AccordDither 0 so the read-back is clean.
++    {"AccordIdProbe", {PERSISTENT, FLOAT, "0.0", "0.0", 2, SETTINGS_SIMPLE}},
+
+--- a/starpilot/common/starpilot_variables.py
++++ b/starpilot/common/starpilot_variables.py
+@@ -846,6 +846,9 @@
+     toggle.accord_dither_gate = self.get_value("AccordDitherGate", cast=bool, condition=is_honda_accord and known("AccordDitherGate"), default=True)
++    # 2026-09-20: identification multisine peak (unit torque).  0 = off.  Same ceiling as the dither, because it
++    # is added at the same node; the designed dose is 0.0175.
++    toggle.accord_id_probe = self.get_value("AccordIdProbe", cast=float, condition=is_honda_accord and known("AccordIdProbe"), default=0.0, min=0.0, max=0.02)
+
+--- a/starpilot/common/safe_mode.py
++++ b/starpilot/common/safe_mode.py
+@@ -71,6 +71,7 @@
+   "AccordDitherGate",
++  "AccordIdProbe",
+
+--- a/starpilot/common/assets/device_settings_layout.json
++++ b/starpilot/common/assets/device_settings_layout.json
+   (new entry immediately after the AccordDither / AccordDitherGate pair)
++      {
++        "key": "AccordIdProbe",
++        "label": "Accord: Identification Probe Amplitude",
++        "description": "Peak amplitude, in unit torque, of a four-tone identification multisine (0.684 / 0.977 / 1.270 / 1.562 Hz, period exactly 10.24 s) added to the steering command. 0 = off. It changes no gain, no filter and no table: it exists so the steering loop can be MEASURED on a drive instead of guessed, and every candidate SteerKP or notch-Q dose sized offline rather than flown. Above about 1 Hz the only exogenous signal this car has is the planner's own setpoint, and the planner puts almost nothing there -- coherence between the setpoint and the loop error measures 0.056-0.19 at 0.98-1.27 Hz on the last drives, and the identified plant phase there RISES with frequency, which no delayed plant can do. With the probe on, those bins are predicted to read 0.77-0.90. Because it is a multisine and not a sweep or a noise sequence, it puts power on four chosen frequencies and exactly nothing anywhere else: zero added power in 1.8-3.5 Hz (the shake band) and zero in 0.15-0.60 Hz (where 98% of the tracking gap lives). The designed dose 0.0175 is 72 counts of 0xE4, 88% of the friction dither's ceiling at a tenth of its frequency and 4.1% of the Honda per-frame slew limiter; it moves the rim about 0.2 deg rms against a 1.1-1.3 deg friction band, and adds about 0.10 m/s2 rms of path motion in its own band -- the same size as openpilot's own lane-centring corrections, which is deliberately the amplitude at which the answer is wanted. Armed only above 12-15 m/s, only while laterally engaged, only hands-off, and never while the Honda rate limiter is active. Needs roughly 60 s of engaged hands-off motorway driving (one 60 s run or two 30 s runs). Set AccordDither to 0 while using it so the read-back is clean.",
++        "data_type": "float",
++        "ui_type": "slider",
++        "min": 0.0,
++        "max": 0.02,
++        "step": 0.0025,
++        "vehicle_makes": [
++          "Honda"
++        ],
++        "settings_tier": "simple"
++      },

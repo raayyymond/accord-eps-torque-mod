@@ -1,0 +1,80 @@
+==============================================================================================================================
+1. THE MOTION COST OF IDENTIFICATION  (equation (*)) -- what the wheel MUST move, whatever the config
+   lines: [0.85, 1.0, 1.15, 1.35, 1.55, 1.75] Hz   burst 20 s
+   angle RMS added over all 6 lines, deg, for a total usable exposure T_tot
+    v m/s  sigma_phi |    T=100s    T=200s    T=400s    T=800s |  ambient V282  ambient rev6.4
+     17.0        5.0 |     0.963     0.681     0.482     0.341 |         0.149           0.436
+     17.0        8.0 |     0.602     0.426     0.301     0.213 |         0.149           0.436
+     17.0       12.0 |     0.401     0.284     0.201     0.142 |         0.149           0.436
+     22.2        5.0 |     0.511     0.362     0.256     0.181 |         0.116           0.284
+     22.2        8.0 |     0.320     0.226     0.160     0.113 |         0.116           0.284
+     22.2       12.0 |     0.213     0.151     0.107     0.075 |         0.116           0.284
+     28.1        5.0 |     0.373     0.264     0.187     0.132 |         0.121           0.182
+     28.1        8.0 |     0.233     0.165     0.117     0.082 |         0.121           0.182
+     28.1       12.0 |     0.155     0.110     0.078     0.055 |         0.121           0.182
+
+==============================================================================================================================
+2. THE SAME BUDGET IN EVERY QUANTITY HE PERCEIVES  (T_tot = 300 s, sigma_phi = 8 deg)
+   per-line and total; 'peak' = Schroeder-phased multisine, crest factor 1.8 on the total
+
+   --- v = 17.0 m/s   n=21   k_map = 0.1056 (m/s2)/deg ---
+    f Hz  |P_ff|   motion   angle    rate   latacc     yaw  dev mm |    A_req m/s2, by config
+                     m/s2     deg   deg/s     m/s2   deg/s         | rev6.4 as f     ARM-KP3 TierB kp8 Q
+    0.88    9.02   0.0275   0.260   1.438   0.0258   0.087    0.85 |      0.0447      0.0246      0.0189
+    0.98    9.05   0.0199   0.188   1.156   0.0194   0.065    0.51 |      0.0365      0.0235      0.0164
+    1.17    0.31   0.0057   0.054   0.400   0.0056   0.019    0.10 |      0.3067      0.3082      0.1772
+    1.37    4.61   0.0089   0.085   0.727   0.0076   0.026    0.10 |      0.0482      0.0571      0.0365
+    1.56    7.01   0.0065   0.062   0.604   0.0066   0.022    0.07 |      0.0447      0.0547      0.0350
+    1.76    8.19   0.0064   0.060   0.665   0.0081   0.027    0.07 |      0.2289      0.2940      0.1766
+   TOTAL           0.0367   0.348   2.213   0.0352   0.119    1.01   (RMS over lines)
+    peak                    0.626   3.984   0.0634   0.214    1.81   (crest 1.8)
+   ambient rev6.4 0.6-2.0 Hz: angle 0.436 deg  rate 2.776 deg/s  latacc 0.0481 m/s2  yaw 0.162 deg/s
+   ambient V282   0.6-2.0 Hz: angle 0.149 deg  rate 0.820 deg/s  latacc 0.0226 m/s2  yaw 0.076 deg/s
+   probe / rev6.4 ambient, in band:  angle x1.279  rate x1.279  latacc x1.239
+
+   --- v = 22.2 m/s   n=42   k_map = 0.1462 (m/s2)/deg ---
+    f Hz  |P_ff|   motion   angle    rate   latacc     yaw  dev mm |    A_req m/s2, by config
+                     m/s2     deg   deg/s     m/s2   deg/s         | rev6.4 as f     ARM-KP3 TierB kp8 Q
+    0.88    6.12   0.0187   0.128   0.708   0.0197   0.051    0.65 |      0.0458      0.0225      0.0134
+    0.98    5.16   0.0124   0.085   0.519   0.0121   0.031    0.32 |      0.0371      0.0208      0.0109
+    1.17    5.62   0.0096   0.065   0.481   0.0089   0.023    0.16 |      0.0335      0.0246      0.0148
+    1.37    2.25   0.0065   0.044   0.382   0.0063   0.016    0.09 |      0.0648      0.0620      0.0377
+    1.56    3.69   0.0050   0.034   0.335   0.0075   0.019    0.08 |      0.0393      0.0431      0.0263
+    1.76   12.39   0.0081   0.055   0.610   0.0088   0.023    0.07 |      0.0344      0.0402      0.0255
+   TOTAL           0.0270   0.185   1.278   0.0280   0.072    0.75   (RMS over lines)
+    peak                    0.332   2.300   0.0505   0.130    1.36   (crest 1.8)
+   ambient rev6.4 0.6-2.0 Hz: angle 0.284 deg  rate 1.847 deg/s  latacc 0.0485 m/s2  yaw 0.125 deg/s
+   ambient V282   0.6-2.0 Hz: angle 0.116 deg  rate 0.664 deg/s  latacc 0.0371 m/s2  yaw 0.096 deg/s
+   probe / rev6.4 ambient, in band:  angle x1.193  rate x1.216  latacc x1.155
+
+   --- v = 28.1 m/s   n=42   k_map = 0.2060 (m/s2)/deg ---
+    f Hz  |P_ff|   motion   angle    rate   latacc     yaw  dev mm |    A_req m/s2, by config
+                     m/s2     deg   deg/s     m/s2   deg/s         | rev6.4 as f     ARM-KP3 TierB kp8 Q
+    0.88    5.97   0.0178   0.086   0.477   0.0199   0.041    0.65 |      0.0469      0.0214      0.0134
+    0.98    5.20   0.0121   0.059   0.362   0.0123   0.025    0.33 |      0.0359      0.0170      0.0087
+    1.17    4.75   0.0093   0.045   0.332   0.0097   0.020    0.18 |      0.0379      0.0250      0.0149
+    1.37    2.39   0.0092   0.045   0.385   0.0088   0.018    0.12 |      0.0723      0.0643      0.0386
+    1.56    4.28   0.0075   0.037   0.359   0.0077   0.016    0.08 |      0.0416      0.0417      0.0260
+    1.76    8.85   0.0088   0.043   0.470   0.0129   0.026    0.11 |      0.0306      0.0339      0.0215
+   TOTAL           0.0277   0.135   0.983   0.0307   0.063    0.77   (RMS over lines)
+    peak                    0.242   1.770   0.0552   0.113    1.39   (crest 1.8)
+   ambient rev6.4 0.6-2.0 Hz: angle 0.182 deg  rate 1.316 deg/s  latacc 0.0648 m/s2  yaw 0.132 deg/s
+   ambient V282   0.6-2.0 Hz: angle 0.121 deg  rate 0.688 deg/s  latacc 0.0573 m/s2  yaw 0.117 deg/s
+   probe / rev6.4 ambient, in band:  angle x1.244  rate x1.248  latacc x1.106
+
+==============================================================================================================================
+3. WHAT THE PROBE DOES TO THE GOAL METRIC ITSELF (J numerator), 0.15-2.4 Hz
+   v=17.0  in-band DEMAND rms 0.0935 m/s2   probe-driven Y rms 0.0352 m/s2   -> dJ = 0.1419  (the probe's own contribution to J)
+   v=22.2  in-band DEMAND rms 0.1117 m/s2   probe-driven Y rms 0.0280 m/s2   -> dJ = 0.0630  (the probe's own contribution to J)
+   v=28.1  in-band DEMAND rms 0.1277 m/s2   probe-driven Y rms 0.0307 m/s2   -> dJ = 0.0577  (the probe's own contribution to J)
+
+==============================================================================================================================
+4. LANE DEVIATION over ONE 20 s burst -- numeric double integral of the probe-driven lateral accel
+   waveform: Schroeder-phased multisine, phases referenced to the BURST CENTRE (even symmetry),
+   raised-cosine 2 s taper.  Even symmetry forces both moments of a(t) to zero, so the burst
+   leaves no net lateral velocity and no net lateral offset.
+   v=17.0  a_lat rms 0.0324 peak 0.0803 m/s2  crest 2.48 | peak lateral deviation    6.6 mm  end offset   +6.1 mm  end v_lat   +0.8 mm/s
+   v=22.2  a_lat rms 0.0261 peak 0.0646 m/s2  crest 2.47 | peak lateral deviation    4.8 mm  end offset   +4.2 mm  end v_lat   +0.6 mm/s
+   v=28.1  a_lat rms 0.0287 peak 0.0739 m/s2  crest 2.57 | peak lateral deviation    5.0 mm  end offset   +4.4 mm  end v_lat   +0.6 mm/s
+
+wrote p5_out.json
