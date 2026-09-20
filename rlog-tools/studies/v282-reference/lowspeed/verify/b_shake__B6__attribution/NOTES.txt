@@ -1,0 +1,49 @@
+Adversarial verification of finding B6 (b_shake, model-curvature source of low-speed 1.5-3.5 Hz
+demand content). Goal: break it. Result: NOT REFUTED.
+
+Method: wrote independent scripts (verify_b6b.py = model-angle-rate Welch RMS, verify_b6_sp.py =
+setpoint-angle-rate Welch RMS, verify_b6_gd.py = group delay), reading raw v282cmp caches directly
+(bypassing b04/b08/b09's own saved npz outputs entirely except for the group-delay cross-check,
+which also has a from-scratch version), reimplementing the windowing/formula from the b04/b08/b09
+source only as a spec, not by importing their code.
+
+Verified exactly (window counts AND rms/delay values matched to the printed precision):
+  - model-angle-rate: rev64 3-6=26.09 (mine 26.09, n=99), 6-8=10.66 (mine 10.66, n=92);
+    V282 3-6=5.60 (mine 5.596->5.60, n=166), matches out/b08_plan_source.txt exactly.
+  - setpoint-angle-rate: rev64 <3=8.60 3-6=11.11 6-8=4.58; V282 <3=5.99 3-6=4.96 6-8=3.16 -- all
+    exact matches, all window counts (n=49/99/92, n=139/166/127) exact matches.
+  - group delay rev64 <8 vs model: independently recomputed from raw cache = 229.06 ms (n=240
+    windows), matches the reported +229 ms [+209,+254] point estimate exactly.
+  - ratios in the finding (x4.7 at 3-6 for model content, ~1.4-2.2x for setpoint content) are
+    arithmetically correct given the above.
+
+A first pass using a naive time-domain (filtfilt + per-sample speed mask) RMS instead of the
+paper's Welch/window-mean-speed method gave a DIFFERENT ratio for V282 (~10.0 vs 5.6 the way the
+authors did it) -- this looked like a possible bug at first, but resolves once the window-based
+method (whole 256-sample window assigned to a bin by its MEAN speed, not per-sample) is replicated
+exactly: it reproduces the authors' numbers to 2 decimal places and their exact window counts. So
+this is a methodology-sensitivity, not evidence of an error in the finding; noted here as due
+diligence, not a finding.
+
+Not fully addressed by the finding (residual concern, not a refutation):
+  - Route/road confound. The V282 reference routes and the torque-mode routes are different drives
+    on different days; the finding's BELIEF line for WHY the model computes more 1.5-3.5 Hz demand
+    content on torque-mode routes lists "different fork/model version" and "camera loop reacting to
+    the car" but not "the torque-mode test routes simply had more/tighter low-speed maneuvering
+    than the V282 reference routes" as a candidate. T4 (independent fork rev, 30.1 at 3-6) tracks
+    rev64 (26.1) better than it tracks V282 (5.6), which argues against pure route idiosyncrasy
+    (two different torque-mode test sessions agree with each other and disagree with V282), but
+    does not rule out "all torque-mode-era test routes share road/route character distinct from the
+    V282-era reference routes." This is a real gap in the ATTRIBUTION story, but the finding is
+    already careful to mark causation of the model-content difference as BELIEF/cause-undecided,
+    so it is not overclaiming here.
+  - The group-delay result (wheel lags model by +229 ms) is itself evidence AGAINST the "camera
+    loop reacting to the wheel" (pure-echo) reading of the belief clause: if the model were simply
+    echoing wheel motion with a vision-pipeline lag, group delay should run negative (model lags
+    wheel), not the measured +229 ms (model leads). The finding does not make this point, but it
+    strengthens rather than weakens its case; noted for the record.
+
+Verdict: PLAUSIBLE / not refuted. Every load-bearing number in the finding reproduced independently
+from raw source (not from the authors' own saved intermediate files, except the group-delay sanity
+check which also has a from-scratch version). The causal "why does torque mode demand more" framing
+correctly stays at BELIEF and does not overreach into the route-confound gap identified above.

@@ -1,0 +1,87 @@
+{
+ "route": "00000075--6c8687d5bd",
+ "segs": [
+  "75604b0a432fdc89_00000075--6c8687d5bd--6--rlog.zst",
+  "75604b0a432fdc89_00000075--6c8687d5bd--7--rlog.zst",
+  "75604b0a432fdc89_00000075--6c8687d5bd--8--rlog.zst"
+ ],
+ "n": {
+  "cs": 17919,
+  "cc": 17924,
+  "sc": 17919,
+  "cb": 18000,
+  "ec": 17920
+ },
+ "angle_match_b01": 0.999944193314359,
+ "angle_match_b56": 0.999944193314359,
+ "cs_uses_latest_14A_when_moving": 0.9997650927883486,
+ "cs_uses_prev_14A_when_moving": 0.0002349072116513977,
+ "can_batch_to_carState_ms": [
+  2.3684837999894626,
+  2.5610409999217154,
+  2.808724000067286
+ ],
+ "carState_to_carControl_ms": [
+  4.365155999948911,
+  4.980052000064461,
+  6.140739400007077
+ ],
+ "sendcan_value_match": {
+  "cc_latest_before_send": {
+   "scale": -4092.172259208536,
+   "rms_resid_counts": 1.0073321756909484,
+   "rms_e4": 362.60282154857794,
+   "frac_within_2": 0.9998871586549312
+  },
+  "cc_one_earlier": {
+   "scale": -4091.8812202355566,
+   "rms_resid_counts": 5.061548791504525,
+   "rms_e4": 362.60282154857794,
+   "frac_within_2": 0.476303317535545
+  },
+  "cc_next_after_send": {
+   "scale": -4091.7826518995093,
+   "rms_resid_counts": 5.117888460167532,
+   "rms_e4": 362.60282154857794,
+   "frac_within_2": 0.4843714737079666
+  }
+ },
+ "carControl_to_sendcan_ms": [
+  4.479270999939899,
+  5.897942499984765,
+  7.518990050027695
+ ],
+ "D_ctl_log_ms_carState_used_to_sendcan": [
+  9.917523400036998,
+  10.498307250003336,
+  10.878984499981925,
+  11.377512999985129,
+  12.353638349964058
+ ],
+ "D_ctl_log_ms_mean": 11.002420159669972,
+ "latest_carState_to_sendcan_ms": [
+  0.7038019999754397,
+  0.9337500000015098,
+  1.3079445999835568
+ ],
+ "frac_cycles_command_from_previous_carState": 0.9997178966373279,
+ "frac_cycles_command_from_same_carState": 0.00016926201760324982,
+ "frac_cycles_command_2plus_back": 0.00011284134506883322,
+ "can_batch_of_sample_to_sendcan_ms": [
+  12.601830799974323,
+  13.45341199998984,
+  15.043034000001398
+ ],
+ "sendcan_to_echo_batch_ms": [
+  5.547343999978693,
+  6.457343999954901,
+  16.400312600035246
+ ],
+ "echo_value_match_frac": 0.9300184162062615,
+ "rate_field_match": [
+  0.999944193314359,
+  0.2941570400133936
+ ],
+ "rate_nonint_frac": 0.0,
+ "angle_step_min_nonzero": 0.0999908447265625
+}

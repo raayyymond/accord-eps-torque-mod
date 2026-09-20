@@ -1,0 +1,66 @@
+Adversarial verification of finding D2 (d_v282low__D2__attribution)
+Verdict: NOT REFUTED. residual_confidence 0.78 (author claimed 0.7).
+
+Checked against saved artifacts in d_v282low/:
+- d_matched.out / d_matched.json: every cited wheel-mode-band (1.8-3.5 Hz sr RMS)
+  cell in 2.5-8 and 8-15 m/s, both speed bands, rate bins (0,5)/(5,15)/(15,35)/(35,80),
+  reproduces to the digit against the claim (V282 0.54/1.27/2.11/3.2 deg/s;
+  torque 1.6-2.4/3.5-5.5/6.9-12.5/13.8-17.4 at <8 m/s; 1.5-2.2/4.6-6.3/10.9-12.3
+  at 8-15 m/s). V282old matches V282 in every cell (0.55/0.94/1.29). CONFIRMED.
+- d_analyze.out section D (dwell-then-jump): V282 n=76 jump p50 0.55 p90 1.417
+  frac>3deg 0.013 per100 2.353; torque p50 1.0-1.568, p90 2.85-11.567,
+  frac>3deg 0.077-0.35, per100 0.94-1.57. All match the claim. CONFIRMED.
+- d_analyze.out section E (events): rate_ratio medians V282 0.842 (n=9),
+  V282old 0.936 (n=11), torque range 1.154-1.908 across builds (n=3-11).
+  Matches claim's "0.84/0.94 vs 1.15-1.91". CONFIRMED.
+
+Independently reproduced (no saved script existed for these two sub-claims --
+see repro_frame_ratio_and_ceiling.py in this folder, run against the cached
+per-route RUNS arrays in d_v282low/data/*.npz):
+- Frame-level |sr|/|demand rate| where |demand rate|>40 deg/s, using sr5
+  (5 Hz low-pass, matching d_extract.py's own peak_rate_meas definition):
+  V282 median 0.870 (claim 0.86), V282old median 0.891 (claim 0.84, ~6% high --
+  minor, within plausible windowing/method variance), torque range 0.826-0.993
+  (claim "0.82-1.02" -- close, upper end not quite reached in this repro but
+  same order and same direction).
+- Ceiling on measured steering rate below 15 m/s (sr5): V282 151.1, V282old
+  151.0 deg/s -- matches claim "V282 never exceeded 151 deg/s" almost exactly.
+  Torque: T64 288.3, T64B 431.6, T5 237.9, T4 238.8 deg/s -- matches claim
+  "239-432 deg/s" almost exactly. CONFIRMED (with the 5 Hz filter method; a
+  raw/unfiltered sr gives slightly higher ceilings, e.g. V282 159.8, so the
+  151 figure is filter-method-dependent but reproducible under the pipeline's
+  own convention).
+- cmd_hf_over_lf (command HF/LF ratio) cross-check: V282 reads 0.224 in the
+  quiet cell vs torque's 0.044-0.066 -- V282's command is HIGHER in HF content
+  relative to its own LF level, not lower, supporting "the smoothness did not
+  come from a smoother command." In the other cells (A15/R10/ALL) V282 and
+  torque overlap or V282 is still not lower. Supports the attribution.
+- Coherence figures (section C, cmd_to_rate and desrate_to_cmd, 2.5-8 m/s):
+  V282 cmd_to_rate coh 0.97 @0.3-1.0 Hz, lag +5 to +40 ms in that band; V282
+  desrate_to_cmd coh 0.87 @0.3-1.0 Hz -- both match the stream summary's
+  "coherence 0.97 below 1 Hz... 5-40 ms lag" and "0.87 with the demand rate."
+  Torque cmd_to_rate coh 0.17-0.37 @0.3-1.0 Hz and 0.76-0.96 @2-4 Hz -- matches
+  "0.17-0.37 below 1 Hz... 0.8-0.96 at 2-4 Hz" (T64B/T4 read 0.76/0.77, just
+  under 0.8 -- rounding, not a material gap).
+
+One overreach flagged (in the stream summary, not the structured D2 claim
+itself): "the angle error against the model is the same on both EPS classes
+(CIs overlap) at small and medium steering rates" does not hold for every
+cell/build -- e.g. T5 err 3.87[3.04,4.62] vs V282 2.25[1.85,2.59] at 2.5-8 m/s
+rate(0,5) does NOT overlap (T5 tracks worse), and T64 err 1.66[1.51,1.81] vs
+V282 1.25[1.00,1.39] at 8-15 m/s rate(0,5) does NOT overlap either. Most
+cells do overlap, so the broad-strokes claim is directionally fine, but "the
+same... CIs overlap" is stated more absolutely than the per-cell data
+supports. This does not touch the D2 finding's own claim (which is entirely
+about the smoothness metrics), so it does not refute D2, but the orchestrator
+should not repeat "error tracking is equivalent, full stop" without that
+caveat.
+
+Attribution to operator complaints: plausible and consistent with prior
+memory (route 70/75: stick-slip = dwell-then-jump snap ~ 2F/k; rev4 hard-turn
+jerk = 2-2.7 Hz lightly damped wheel mode; 30 ms actuator latency). The
+1.8-3.5 Hz wheel-mode band cited here contains that 2-2.7 Hz mode, and the
+dwell-then-jump metric is the same s4 definition used in the route-70 stick-
+slip finding, so this is not a new, unrelated mechanism being invoked -- it's
+the same object measured demand-matched against a V282 baseline. No simpler
+alternative explanation was found in the artifacts reviewed.

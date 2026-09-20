@@ -1,0 +1,70 @@
+Adversarial verification of finding D5 (d_v282low__D5__attribution, lever-reach / attribution)
+Verdict: REFUTED (as stated). residual_confidence 0.15 (author claimed 0.45).
+
+D5 is explicitly a synthesis/judgement built on D1-D4, not a new measurement ("Nothing here
+comes from the simulator... the x1.5-2 figure is a judgement, not a computation"). I re-read the
+underlying artifacts D5 draws numbers from: d_v282low/d_analyze.out (sections A/C/D/E),
+d_v282low/d_results.json, a_stickslip/ss_extract.py, a_stickslip/out*/ss_analyze.json
+(the "matched" block), and the prior D2 verdict.
+
+QUALITATIVE STRUCTURE -- SURVIVES:
+- The PARTLY-REACHABLE argument (a 100 Hz torque loop carrying ~130 ms of phase lag at 2-4 Hz
+  cannot fully reject a 2-2.7 Hz lightly-damped wheel mode, only damp it) is physically sound and
+  its input numbers check out: cmd_to_rate lag at 2.0-4.0 Hz across all four torque builds and
+  both speed bands is 114-145 ms (T64 128/134, T64B 114/141, T5 144/145, T4 123/136 ms) -- "130 ms"
+  is a fair central estimate. The cited V282 wheel-mode-band levels (0.5/1.3/2.1/3.2 deg/s <8 m/s)
+  reproduce exactly against d_matched.out (already CONFIRMED in the D2 verify pass). The framing
+  "can at most stop exciting and add some damping, not reject" is a reasonable engineering read of
+  ~120 deg of loop-delay phase at the mode frequency, and the "x1.5-2" figure is honestly flagged
+  as a judgement call, not something I can independently falsify -- it is not refuted.
+
+TWO LOAD-BEARING NUMERIC PROBLEMS FOUND -- REFUTE THE FINDING AS WRITTEN:
+
+1. The REACHABLE tier's own justification cherry-picks the favorable speed cell.
+   - rate_ratio: D5 says "V282 0.84-0.94; torque over-drives at 1.15-1.9" and sets the reachable
+     target at "<=~1.0". But d_analyze.out section E shows V282's OWN rate_ratio median is 0.842 at
+     2.5-8 m/s (matches) yet 1.061 at 8-15 m/s (n=4, IQR [1.026,1.097]) -- V282 itself exceeds the
+     claimed "<=1.0" ceiling in that band. V282old is worse still: 0.936 (2.5-8) vs 1.093 (8-15,
+     n=6). So "match V282" does not actually imply "<=1.0" once both speed bands are counted; the
+     8-15 m/s cell was left out of the citation.
+   - overrun: D5's "<=~4 deg" target is grounded in V282's 2.5-8 m/s median (4.089 deg, matches),
+     but V282old's OWN 8-15 m/s median overrun is 9.752 deg (n=6) -- more than double the claimed
+     target and higher than several torque-mode cells (T4 4.449, T64B 5.089). The reference class
+     does not uniformly clear the bar D5 sets for it.
+   - des_to_angle lag at 0.3-1.0 Hz: D5's "no loss of the current 0.04-0.10 s" undercounts; T64 and
+     T5 both read 0.131-0.132 s in the 8-15 m/s cell, 32% over the stated 0.10 s ceiling.
+   These are all n=3-11 event counts (small-sample), which D5 does not flag for this tier the way
+   it flags small-n for the dwell-jump tier -- the REACHABLE tier is presented as more solid than
+   its own inputs support.
+
+2. The UNCERTAIN tier's actionable number, "dither acting faster than the dwell (at or under
+   0.12 s)," is NOT derived from any measured dwell-duration statistic. It traces to
+   a_stickslip/ss_extract.py line 19: `DWMIN = os.environ.get('DWMIN','20') # 20 = 0.20 s
+   (primary), 12 = the s4 0.12 s sensitivity` -- a minimum-duration THRESHOLD used to test whether
+   the dwell-then-jump census is robust to a stricter (shorter) qualifying window, not a measured
+   or derived physical dwell timescale. The actual measured median dwell durations, from
+   a_stickslip/out/ss_analyze.json's "matched" block, are 0.30-0.54 s on both classes: dwell_p50
+   torque 0.53 (T64) / 0.36 (T64B) / 0.53 (T4) s, dwell_p50 V282 0.36 / 0.30 / 0.30 s. The dwell
+   detector's own primary definition additionally requires dwells of >= 0.20 s to be counted at
+   all, so nothing in this dataset shows a 0.12 s dwell. "0.12 s" appears to have been picked up
+   from the wrong place (a same-named-adjacent robustness parameter) and repackaged as an
+   engineering requirement; the real number, if one wants "dither faster than the shortest typical
+   dwell," is close to 0.20-0.30 s -- 2 to 2.5x longer than what D5 states. This materially changes
+   what "untested, not falsified" would mean for a future dither design (a dither period near
+   0.12 s / ~8 Hz+ is a much harder ask than one near 0.2-0.3 s / ~3-5 Hz).
+
+No simpler alternative explanation for the operator's complaints was uncovered; this verification
+only concerns whether D5's specific reachability numbers are correctly sourced, not whether the
+underlying D1-D4 facts it builds on are right (those were separately reviewed and CONFIRMED).
+
+CORRECTED, for the record:
+- rate_ratio reachable target: V282 itself spans 0.84 (2.5-8 m/s) to ~1.06-1.09 (8-15 m/s, n=4-6,
+  small sample) -- "<=1.0" is optimistic for the 8-15 m/s band; a target of "<=~1.05-1.1" there
+  would better match what the reference class itself achieves.
+- overrun reachable target: V282-class spans ~4 deg (V282, 2.5-8 m/s) to ~9.8 deg (V282old,
+  8-15 m/s, n=6) -- "<=~4 deg" only characterizes the best cell, not the reference class as a
+  whole.
+- the UNCERTAIN tier's dither/friction-comp timing figure should read "at or under roughly
+  0.2-0.3 s" (the measured median dwell duration, 0.30-0.54 s torque / 0.30-0.36 s V282, and the
+  detector's own 0.20 s minimum-dwell floor), not "0.12 s" -- that number belongs to an unrelated
+  sensitivity-analysis parameter and should not be relayed as a design target.

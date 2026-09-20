@@ -1,0 +1,40 @@
+=== 0000006c--68c6e94b17 ===
+n carState=35479 controlsState=35504 carControl=35504 sendcan0xE4=34996
+cadence carState       median 9.917 ms  mean 10.047  p5 8.98 p95 11.35
+cadence controlsState  median 9.935 ms  mean 10.044  p5 8.31 p95 11.95
+cadence carControl     median 9.929 ms  mean 10.044  p5 8.31 p95 11.97
+cadence sendcan        median 9.958 ms  mean 10.046  p5 8.80 p95 11.51
+  cs_out == cc_torque at index offset +0: exact-equal fraction 1.00000  dt median +0.211 ms
+  cs_out == cc_torque at index offset +1: exact-equal fraction 0.29702  dt median -9.722 ms
+  cs_out == cc_torque at index offset -1: exact-equal fraction 0.29702  dt median +10.143 ms
+  nonzero-e4 sends: 24873 of 34996; carControl.torqueOutputCan nonzero frac 0.0000
+  e4 vs 0-back carControl.actuators.torque: LS scale -4043.416  |resid|<=1LSB 0.38435  rms resid    44.55   t_e4-t_cc median +5.663 ms
+  e4 vs 1-back carControl.actuators.torque: LS scale -4047.208  |resid|<=1LSB 0.16082  rms resid    39.84   t_e4-t_cc median +15.699 ms
+  e4 vs 2-back carControl.actuators.torque: LS scale -4047.608  |resid|<=1LSB 0.09444  rms resid    39.36   t_e4-t_cc median +25.758 ms
+  producer = 0-back carControl, |resid|<=1LSB 0.38435
+  LEG2 t(sendcan) - t(controlsState producing it): median 5.875 ms [p5 4.33, p95 7.51]
+  leg1 lag test (d(cs_err) vs -d(sa) of the L-back carState):
+    L=0: sign agreement 0.147 (|anti|=0.853)  corr -0.476
+    L=1: sign agreement 0.458 (|anti|=0.542)  corr -0.317
+    L=2: sign agreement 0.416 (|anti|=0.584)  corr -0.331
+    L=3: sign agreement 0.431 (|anti|=0.569)  corr -0.321
+  LEG1 consumed carState is L=0 back: t(controlsState)-t(carState) median 4.788 ms [p5 3.75, p95 6.12]
+  ==> D_ctl = LEG1 + LEG2 = 10.663 ms
+  ==> D_ctl end-to-end per send: median 10.899 ms  mean 11.024 [p5 9.95, p95 12.38]  n=24873
+  engaged hands-off only (n=22810): median 10.898 ms
+    v 0-8: 10.916 ms  n=4956
+    v 8-15: 10.904 ms  n=8288
+    v 15-99: 10.884 ms  n=9566
+  staleness of the send vs the NEWEST carState at send time (cycles): {0: 0.0, 1: 1.0, 2: 0.0}
+  naive 'latest carState' delta would read 0.947 ms
+  can frame census (addr,src)->n: {'0xE4/0': 1035, '0xE4/1': 857, '0xE4/2': 36180, '0xE4/128': 35140, '0xE4/129': 34990, '0xE4/193': 5, '0x14A/1': 36012, '0x18F/1': 36012, '0x1AB/1': 18007}
+    echo src 2: n=36180 first-batch-after-send delay median 6.337 ms p5 5.31 p95 9.19
+    echo src 128: n=35140 first-batch-after-send delay median 6.343 ms p5 5.32 p95 9.99
+    echo src 129: n=34990 first-batch-after-send delay median 6.329 ms p5 5.28 p95 16.32
+    can batch interval median 9.891 ms  p95 11.20  n=36016
+  carState.steeringAngleDeg == 0.1*i16(0x14A[0:2]) of the 0-back frame: frac|err|<0.001 0.00268  median |err| 2.4000 deg
+  carState.steeringAngleDeg == 0.1*i16(0x14A[0:2]) of the 1-back frame: frac|err|<0.001 0.00240  median |err| 2.4000 deg
+  carState.steeringAngleDeg == 0.1*i16(0x14A[0:2]) of the 2-back frame: frac|err|<0.001 0.00287  median |err| 2.4000 deg
+  0x14A EPS transmit period (LP fit) 9.7930 ms = 102.11 Hz; batch stamp minus true arrival: mean 282.833 median 290.929 p95 570.65 max 707.38 ms
+  ==> SAMPLE AGE at the carState stamp: mean 287.624 median 295.891 [p5 59.16, p95 574.16] ms
+  (0x14A batch stamp to carState publish: median 2.647 ms)

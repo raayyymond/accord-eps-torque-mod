@@ -1,0 +1,106 @@
+B4 adversarial verification (METHOD lens) -- summary
+=====================================================
+
+Finding under test: at 8-15 m/s the 1.5-3.5 Hz wheel shake is not planner-coherent
+(coh 0.03 vs V282 0.67); the whole command (0xE4) removes energy on balance at 30 ms
+lag (+4.80e-4 [+4.51,+5.12]); the logged disturbance observer is the dominant
+identified in-command feeder (-2.13e-4), with friction hysteresis (-0.08) and I
+(-0.04) smaller; setpoint-driven terms are ~0 (ffwd -0.05); unexplained energy is
+~13x V282's (incoherent rate rms 5.2 vs 0.40 deg/s).
+
+Method: independently re-implemented, NOT importing bs.py/b02/b07/b04/b05. Read the
+same raw inputs (fill_texturetermd/out/red_<route>.npz, b_shake/out/obs_<route>.npz,
+v282cmp cache) directly. Two different estimator implementations used:
+  1. A flat (non-chunked) whole-run b_eq estimator + 5s-block bootstrap, contrasted
+     against the original's 500-sample chunked accumulator.
+  2. A pooled-cross-spectrum coherence estimator (Pxx/Pyy/Pxy summed across all
+     Welch segments of all runs of all routes before dividing), contrasted against
+     scipy.signal.coherence() called separately per contiguous run.
+
+Results (script: scripts/verify_b4.py, full stdout below and in ../.. via rerun):
+
+Positive control (ctrl = -1e-3*sr, tau=0): every route reads EXACTLY +10.000e-4
+(want +10.00e-4). Sign convention confirmed independently.
+
+u_e4 (whole command, wire), 8-15 m/s, tau=30ms:
+  rev64 (6c,6d,6e) pooled: +4.84e-4 [+4.58,+5.08]   vs claimed +4.80 [+4.51,+5.12]  MATCH
+  obs-on (+T5)     pooled: +4.85e-4 [+4.60,+5.09]   vs claimed +4.80 [+4.55,+5.09]  MATCH
+  per-route: 6c +4.15/+4.99(2nd method), 6d +4.86, 6e +4.97, T5 +4.94
+             vs claimed 6c +3.53, 6d +4.31, 6e +4.96, T5 +4.85
+  -> same sign, same magnitude, individual routes differ by up to ~0.6e-4 (~15%
+     relative on 6c/6d) between a flat estimator and the original's 500-sample
+     chunked accumulator -- expected implementation sensitivity, not a sign or
+     order-of-magnitude problem. The group-pooled number (what the finding
+     actually quotes) reproduces within the original's own CI.
+
+dob_log (observer contribution = -logged accordObserverTorque), 8-15 m/s, tau=30ms:
+  rev64 pooled: -2.18e-4 [-2.32,-1.97]   vs claimed -2.13 [-2.26,-1.99]  MATCH
+  obs-on pooled: -2.17e-4 [-2.31,-1.99]  vs claimed -2.14 [-2.26,-2.02]  MATCH
+  per-route (run-restricted method): -2.14e-4 for 6c  vs claimed -2.24  MATCH (close)
+
+Secondary in-command feeders (rev64, run-restricted so all terms are jointly
+finite before band-passing -- see "NaN trap" below), tau=30ms:
+  hyst  -0.072e-4  vs claimed -0.08   MATCH
+  i     -0.040e-4  vs claimed -0.04   MATCH (exact)
+  p_meas +0.694e-4 vs claimed +0.58 [+0.50,+0.66]  same sign, slightly higher, within ~1 CI width
+
+Term-decomposition sanity (not previously re-checked by me): corr(p_log+i_log+f_log,
+u_log) = 0.99999999998 (essentially exact identity) and corr(u_log, u_e4) = 0.995 on
+route 6c's 8-15 m/s samples -- the replica sum used for every sub-term genuinely
+equals the logged pid_log.output, and the wire byte u_e4 tracks it closely. The
+term decomposition is not fabricated.
+
+Coherence (rate vs setpoint-desired-angle-rate), 8-15 m/s, 1.5-3.5 Hz band:
+  FIRST ATTEMPT (naive): scipy.signal.coherence() called once per contiguous run,
+    then averaged across runs -> rev64 0.22-0.26, "contradicting" the claimed 0.03.
+    ROOT CAUSE FOUND: for a 4-15s contiguous run with nperseg=256 (2.56s), 50%
+    overlap yields only 1-3 Welch segments per call; coherence computed from a
+    single segment is trivially 1.0 by construction (no averaging = no denominator
+    variance reduction), and averaging many such near-1.0 per-run estimates
+    inflates the group number. This is MY bug, not the finding's.
+  CORRECTED (pooled cross-spectra, same structure as v282cmp.band_H / b04):
+    accumulate Pxx, Pyy, Pxy across ALL Welch segments from ALL runs before
+    dividing, so no short run can dominate.
+      rev64 8-15: coh = 0.039  (55 runs, 425 Welch segments, 685 s)  vs claimed 0.03  MATCH
+      V282  8-15: coh = 0.692  (67 runs, 471 Welch segments, 826 s)  vs claimed 0.67  MATCH
+  -> confirms the qualitative claim (planner essentially decorrelated from the
+     8-15 m/s shake) is robust to estimator choice ONCE the estimator is built
+     correctly; also confirms the original pipeline used the correct (pooled,
+     low-bias) coherence estimator rather than the naive one.
+
+13x / incoherent-energy claim: independent total band-rate rms (bandpass +
+sosfiltfilt over masked+windowed runs, no chunking): rev64 8-15 = 4.75 deg/s,
+V282 8-15 = 0.64 deg/s (vs claimed rate column 5.26 / 0.70 -- close, same
+ballpark, difference from run-trimming/windowing choices). Using
+incoherent_rms = total_rms * sqrt(1 - coh): rev64 4.75*sqrt(1-0.039) = 4.66,
+V282 0.64*sqrt(1-0.692) = 0.355 -> ratio 13.1x, matching the claimed "13x
+larger" / "5.2 vs 0.40" almost exactly.
+
+Issues found (both were MY bugs during re-derivation, not the finding's):
+  1. dict-key mismatch (samples vs ms) in my first draft -- fixed before any
+     number was reported.
+  2. Naive per-run coherence averaging bias described above -- fixed, and its
+     correction is itself evidence the original estimator was built correctly
+     (band_H / b04 pools spectra before dividing, avoiding exactly this trap).
+  3. NaN-propagation trap: several sub-terms (hyst, i, p_sp, hold, rl_ff, move,
+     p_meas) are NaN outside engaged/replica-valid samples; sosfiltfilt (zero-
+     phase, non-causal) turns ONE NaN anywhere in an array into an all-NaN
+     output. My first pass band-passed whole 80k-sample arrays before masking
+     and got all-NaN results for those 7 terms. The ORIGINAL pipeline avoids
+     this correctly by building `fin` (all terms finite) BEFORE calling
+     V.runs(), so every run handed to bs.bp() is already NaN-free -- I had to
+     replicate that same run-restriction to get real numbers, which I then did
+     (see "Secondary in-command feeders" above) and it reproduced their table.
+
+Not independently re-derived here (out of scope for a METHOD-lens pass, or
+explicitly marked BELIEF in the finding itself): the physical explanation for
+where the unexplained energy comes from (road/tyre torque vs a >=60ms effective
+delay); the >=60ms group's -0.24e-4 reading, which the finding cites only as
+context.
+
+Verdict: every EVIDENCE-tagged number in B4 that was re-derivable from raw
+inputs reproduced under at least one independently-written estimator, most
+under two. Sign convention, term decomposition, and the coherence/incoherent-
+energy claim are solid. Per-route u_e4 values show the expected sensitivity to
+windowing/chunking choice but the group-pooled numbers the finding actually
+states are unaffected. FINDING NOT REFUTED.

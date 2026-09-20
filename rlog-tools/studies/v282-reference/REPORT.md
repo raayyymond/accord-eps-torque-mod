@@ -109,3 +109,64 @@ reference · firmware changes.
 - `v282cmp.event_metrics` lag is biased toward 0 on step windows.
 - The fork's `cereal/car.capnp` is a git symlink on Windows; pycapnp crashes on it. Use `fill_straightroad/forkparse.py`.
 - 0xE4 is sent on bus 1 on this car; `e4 ≈ −4089 × pid_log.output`.
+
+
+## Loop delay, resolved (2026-09-19) — and two of my own claims withdrawn
+
+Workflow `wf_eae14cc9-dc0`: four independent estimators, each required to recover a known 30 ms and 60 ms on a synthetic
+plant driven by the real logged command before its real-data number counted; then adjudication and an adversarial pass that
+re-derived the load-bearing legs by its own methods.
+
+| quantity | value | grade |
+|---|---|---|
+| D_ctl (measured sample -> its command on the bus) | **11.0 ms** [10.9, 11.1], flat in speed, same on V282 | EVIDENCE |
+| D_act floor at 2.5 Hz (0xE4 -> effect in carState) | **43.3 ms** = 24.8 ms transport + a 5 Hz pole | EVIDENCE for the legs it covers |
+| **D_loop at 2.5 Hz** | **54.3 ms floor; 72 ms if the unmeasured post-tap stage is ~18 ms. Working bracket 55-75, point 65.** | EVIDENCE + BELIEF |
+
+- ⭐ **WITHDRAWN: my 30 ms.** It was the peak of a 1-6 Hz cross-correlation of command against steering acceleration, which
+  equals the delay only if inertia dominates that band. It does not (the spring mode sits at 0.9-2.1 Hz inside it). Put a
+  KNOWN 30 ms through the same recipe and it returns **1 ms at J=1e-3 and 127 ms at J=8e-5**. The estimator also fails once
+  feedback and road disturbance are both present, which is how the car actually runs. It is a real plant-phase statistic, not
+  a delay.
+- **The fork's own 46-61 ms comment is essentially confirmed** — right in structure, mis-splitting ~5 ms in two legs, and the
+  best of the three inherited numbers. The measurement vindicates it rather than revising it.
+- ⭐ **WITHDRAWN: my inertia finding.** The cloud-session replay fit J = 8e-4..2e-3. Two estimators with passing controls put
+  **J = 5.7-7.3e-5 in every speed bin and band**, so the fork's `HONDA_ACCORD_EPS_INERTIA = 8e-5` is right within 25% and my
+  figure was ~15x too large. It was marked BELIEF and never acted on. The same fits put b at 7.1e-4 (<8 m/s) falling ~10x by
+  >=15 m/s, which also conflicts with the earlier "identified world b = 0.0018-0.0049"; unresolved, and the delay error in
+  that replay is the likely cause.
+- The 427-tap fit independently recovered the firmware's own output-lag cell (992/1024 = 5.05 Hz).
+
+### What the delay does to the low-speed rate-loop lever
+
+Fraction of `AccordRateLoopGain` that arrives as real rate-opposing damping, through D_loop in series with the 0.01 s rate filter:
+
+| D_loop @2.5 Hz | 1.8 Hz | 2.5 Hz | 3.5 Hz | 5 Hz | 6 Hz | damps below |
+|---|---|---|---|---|---|---|
+| 54.3 (floor) | +0.69 | **+0.47** | +0.16 | -0.20 | -0.34 | 4.08 Hz |
+| 72.3 (X=18 ms) | +0.55 | **+0.24** | -0.16 | -0.51 | -0.57 | 3.08 Hz |
+| a hypothetical 30 ms | +0.89 | +0.80 | +0.63 | +0.30 | +0.07 | 6.33 Hz |
+
+Independently reproduced by the adversary from its own measured FIR (+0.50 / +0.27 at the two brackets, boundary 4.06 / 3.11 Hz).
+
+**Verdict: a weak lever, not a dead one** — and the adversary was right to say the clean "dead" reading rests on the
+unmeasured 12-18 ms, not on the floor. It delivers 24-47% of nominal damping at the shake frequency, de-damps 4-6 Hz at every
+D_loop in the bracket, and the gain margin permits at most about x1.5 (0.0006 -> 0.0009). The pre-registered gate said
+~30 ms means room and ~60 ms closes it; the measurement landed on the closing side, so the low-speed candidate becomes
+reference shaping below 8 m/s (no added loop gain, delay-independent, reach ceiling about half the shake).
+
+Two fork constants re-read against the measurement: `HONDA_ACCORD_RATE_LOOP_RC = 0.01 s` **stands** (rev 5's 0.03 -> 0.01 was
+right, if slightly under-done). The comment "at 0.0012 it would cross" is **~2x pessimistic**: |L| at the 3.5-4.9 Hz crossing
+is 0.34-0.57 at 0.0012, i.e. gain margin 1.8-2.9, not a crossing.
+
+### ARM-D survives the delay question
+
+The logged observer torque feeds the 1.5-3.5 Hz band in **64 of 64 cells** — every tau from 0 to 120 ms, every speed bin,
+all four observer routes, with positive controls on the estimator. So ARM-D's rationale never depended on which delay was
+right. It is far stronger at speed (b_eq -2.5 to -3.4e-4 at >=15 m/s) than below 8 m/s (-0.2 to -1.4e-4), which is why it is
+a highway/mid-speed lever and why no low-speed arm can share its drive.
+
+⚠ Read `orch_observer_work.py`'s observer column only. Its "total cmd" column was challenged as sign-inconsistent; I checked
+and both columns are in the +left frame (cs_out = -output_torque = +left, confirmed by corr(e4, acceleration) < 0 with
+e4 = -4089*cs_out), so the columns agree — but at the measured 55-75 ms, not the 30 ms I first used, that column reads the
+whole command as FEEDING the band at >=15 m/s (-0.5 to -2.9e-4), which strengthens ARM-D rather than weakening it.

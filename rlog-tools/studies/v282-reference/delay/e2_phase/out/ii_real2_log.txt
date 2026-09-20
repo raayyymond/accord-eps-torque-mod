@@ -1,0 +1,30 @@
+0000006c--68c6e94b17|direct|v0-8|F0.01       n  4 D0   35.8 D1   33.5 bias  -2.2 Dcorr   38.0 J0 8.3e-05 b0 7.2e-04 k0 1.0e-05
+0000006c--68c6e94b17|direct|v0-8|F0.02       n  4 D0   35.8 D1   33.6 bias  -2.1 Dcorr   37.9 J0 8.3e-05 b0 7.2e-04 k0 1.0e-05
+0000006c--68c6e94b17|direct|v8-15|F0.01      n 15 D0   19.1 D1   11.3 bias  -7.8 Dcorr   26.9 J0 4.6e-05 b0 1.0e-06 k0 1.0e-05
+0000006c--68c6e94b17|direct|v8-15|F0.02      n 15 D0   19.1 D1    7.8 bias -11.3 Dcorr   30.4 J0 4.6e-05 b0 1.0e-06 k0 1.0e-05
+0000006c--68c6e94b17|direct|v15-99|F0.01 n 27 FAIL
+0000006c--68c6e94b17|direct|v15-99|F0.02 n 27 FAIL
+0000006d--05e83bb04f|direct|v0-8|F0.01 n 4 FAIL
+0000006d--05e83bb04f|direct|v0-8|F0.02 n 4 FAIL
+0000006d--05e83bb04f|direct|v8-15|F0.01      n 17 D0   17.2 D1   16.8 bias  -0.4 Dcorr   17.6 J0 4.4e-05 b0 1.0e-06 k0 1.0e-05
+0000006d--05e83bb04f|direct|v8-15|F0.02      n 17 D0   17.2 D1   16.7 bias  -0.5 Dcorr   17.7 J0 4.4e-05 b0 1.0e-06 k0 1.0e-05
+0000006d--05e83bb04f|direct|v15-99|F0.01 n 24 FAIL
+0000006d--05e83bb04f|direct|v15-99|F0.02 n 24 FAIL
+0000006e--6ca3e014fd|direct|v0-8|F0.01       n  8 D0   30.4 D1   29.9 bias  -0.5 Dcorr   30.9 J0 6.4e-05 b0 4.9e-04 k0 1.0e-05
+0000006e--6ca3e014fd|direct|v0-8|F0.02       n  8 D0   30.4 D1   31.4 bias  +0.9 Dcorr   29.5 J0 6.4e-05 b0 4.9e-04 k0 1.0e-05
+0000006e--6ca3e014fd|direct|v8-15|F0.01 n 25 FAIL
+0000006e--6ca3e014fd|direct|v8-15|F0.02      n 25 D0   19.1 D1    9.4 bias  -9.6 Dcorr   28.7 J0 5.0e-05 b0 1.0e-06 k0 1.0e-05
+0000006e--6ca3e014fd|direct|v15-99|F0.01     n 23 D0   12.3 D1   19.0 bias  +6.7 Dcorr    5.7 J0 3.0e-05 b0 1.0e-06 k0 1.0e-05
+0000006e--6ca3e014fd|direct|v15-99|F0.02 n 23 FAIL
+00000076--d0b7ea7e4d|direct|v0-8|F0.01       n  4 D0   16.0 D1   26.1 bias +10.1 Dcorr    5.9 J0 3.9e-05 b0 1.0e-06 k0 1.0e-05
+00000076--d0b7ea7e4d|direct|v0-8|F0.02       n  4 D0   16.0 D1   13.5 bias  -2.6 Dcorr   18.6 J0 3.9e-05 b0 1.0e-06 k0 1.0e-05
+00000076--d0b7ea7e4d|direct|v8-15|F0.01      n  5 D0   18.8 D1   16.0 bias  -2.8 Dcorr   21.6 J0 3.7e-05 b0 1.0e-06 k0 1.0e-05
+00000076--d0b7ea7e4d|direct|v8-15|F0.02      n  5 D0   18.8 D1   16.0 bias  -2.8 Dcorr   21.6 J0 3.7e-05 b0 1.0e-06 k0 1.0e-05
+00000076--d0b7ea7e4d|direct|v15-99|F0.01 n 24 FAIL
+00000076--d0b7ea7e4d|direct|v15-99|F0.02 n 24 FAIL
+00000075--6c8687d5bd|direct|v0-8|F0.01       n 13 D0   67.8 D1   65.8 bias  -2.0 Dcorr   69.7 J0 5.7e-05 b0 9.7e-04 k0 1.0e-05
+00000075--6c8687d5bd|direct|v0-8|F0.02       n 13 D0   67.8 D1   61.3 bias  -6.5 Dcorr   74.3 J0 5.7e-05 b0 9.7e-04 k0 1.0e-05
+00000075--6c8687d5bd|direct|v8-15|F0.01 n 28 FAIL
+00000075--6c8687d5bd|direct|v8-15|F0.02 n 28 FAIL
+00000075--6c8687d5bd|direct|v15-99|F0.01 n 17 FAIL
+00000075--6c8687d5bd|direct|v15-99|F0.02 n 17 FAIL

@@ -1,0 +1,55 @@
+D6 -- adversarial verification, POWER lens (false-negative hunt)
+==================================================================
+Method: re-derived every number independently from d_v282low's own per-route .npz cache (EV/BLK
+arrays), never from d_results.json / d_matched.json text or the stream summary's prose. Script:
+verify_d6_power.py, output: results.json.
+
+VERDICT: NOT REFUTED overall -- the central claim ("the V282 reference below 8 m/s is thin, and
+build-up vs unwind timing cannot be reliably compared on it") holds and is independently
+STRENGTHENED by a formal power calculation. But two of the finding's own supporting numbers are
+WRONG as stated and need correction.
+
+1. Event count n=9 (2 build-ups) below 8 m/s for V282 -- CONFIRMED exactly (re-derived: n=9,
+   n_build=2).
+
+2. "5 blocks at >45 deg with demand at 35-80 deg/s" -- CONFIRMED exactly (n=5, mean rate 58.6 deg/s
+   in that bin).
+
+3. "none above 45 deg at 15-35 deg/s" -- REFUTED as literally stated. Re-deriving the same block
+   mask WITHOUT d_matched.py's n>=5 reporting filter finds n=3 blocks in that cell, not zero.
+   d_matched.py silently drops any cell under 5 blocks from its printed table; the finding read
+   "not printed" as "no data exists." This is the same failure mode the finding itself is warning
+   about (a threshold hiding thin-but-real data) -- it should read "3 blocks, below the n>=5
+   reporting threshold" rather than "none."
+
+4. "V282 also appears rate-capped at ~151 deg/s (max on both V282 groups)" -- REFUTED. The two
+   groups do not share a ceiling:
+     - event-detected peak measured rate (<15 m/s): V282 max 108.2 deg/s, V282old max 151.0 deg/s
+     - raw |steering rate| (<15 m/s, and again restricted to <8 m/s): V282 max 159.8 deg/s,
+       V282old max 154.0 deg/s
+   151 is V282old's event-detected max alone; V282 never reaches it by that measure, and by the raw
+   measure V282 actually goes HIGHER (159.8) than 151, i.e. it is not capped there either. The
+   observation "same max value on both groups" that the BELIEF was built on does not reproduce.
+   cs_sat (controller output-saturation flag) is 0 in every cell in this regime too, which gives no
+   independent support for a servo ceiling being hit. This BELIEF should be dropped or re-derived
+   from a source that actually shows a shared ceiling -- as sized here, it is an artifact of picking
+   one particular rate definition (5 Hz-lowpassed event peak) and one particular group (V282old).
+
+5. t50_lag comparison (V282 0.31 s n=9 vs torque 0.16-0.29 s) -- the qualitative call ("IQRs wider
+   than the difference," "cannot be compared") is CONFIRMED and actually understated. Re-derived
+   Mann-Whitney U across all four torque groups gives p in [0.13, 0.60] -- none significant, as the
+   finding implies. More importantly, a minimum-detectable-effect calculation (rule-of-thumb
+   n=16/d^2 per group, alpha=.05, 80% power) shows this comparison could only reliably detect a
+   Cohen's d of ~1.3-1.9 at these sample sizes (n=9 vs n=3-11), while the OBSERVED effect sizes are
+   d~0.71-0.88 for T4/T64/T64B (mean differences of 0.38-0.57 s). A true difference of that
+   magnitude -- exactly what is plausible in this regime, per the finding's own numbers -- would
+   routinely fail to reach significance here. This is independent, quantitative support for D6's
+   core point: the V282-side null on build-up-vs-unwind timing is not evidence of no difference, it
+   is a straightforward case of an underpowered comparison.
+
+Net effect on the finding: the framing "the null is a power problem, treat V282's thin cells with
+caution" survives verification and is reinforced with a number (min detectable d ~1.3-1.9 vs
+observed d ~0.7-0.9). Two specific evidentiary claims inside it (the "none" at 15-35 deg/s, and the
+"151 deg/s on both groups" ceiling) are factually wrong as written and should be corrected or
+dropped; they do not carry the finding's main conclusion, which rests on the well-supported n=9
+event count and the (now power-quantified) IQR/difference comparison.

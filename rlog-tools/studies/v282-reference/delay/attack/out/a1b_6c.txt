@@ -1,0 +1,17 @@
+=== 0000006c--68c6e94b17  n(0x14A)=36012 ===
+  carState.sa vs 0x14A i16[0:2]*0.1 0-back: slope -1.00000 off +0.0000 resid rms 0.0016 deg  frac|r|<0.05 0.99997
+  carState.sa vs 0x14A i16[0:2]*0.1 1-back: slope -1.00000 off +0.0002 resid rms 0.2724 deg  frac|r|<0.05 0.78686
+  carState.sa vs 0x14A i16[2:4]*0.1 0-back: slope -0.06338 off +11.7593 resid rms 47.9417 deg  frac|r|<0.05 0.00011
+  carState.sa vs 0x14A i16[2:4]*0.1 1-back: slope -0.16280 off +11.7536 resid rms 47.9399 deg  frac|r|<0.05 0.00017
+  sign -1: carState.sa = -1 * 0.1 * i16(0x14A[0:2])
+    0-back: frac|err|<0.001 0.99997  median|err| 0.0000 deg
+    1-back: frac|err|<0.001 0.78686  median|err| 0.0000 deg
+    2-back: frac|err|<0.001 0.72144  median|err| 0.0000 deg
+  0x14A frames per can batch: {1: 0.974, 2: 0.026, 3: 0.0}
+  poll (can batch) interval median 9.8907 ms, mean 10.0493
+  0x14A inter-arrival (batch stamps) median 9.8918 ms
+  W= 100 windows=286: E[batch stamp - true arrival] = 0.002 ms-> 1.985 ms   (median 1.700)  fitted T 10.0388 ms
+  W= 200 windows=126: E[batch stamp - true arrival] = 0.003 ms-> 2.554 ms   (median 2.015)  fitted T 10.0398 ms
+  W= 400 windows=37: E[batch stamp - true arrival] = 0.004 ms-> 4.391 ms   (median 4.489)  fitted T 9.9993 ms
+  ==> SAMPLE AGE = E[lag] 2.554 + batch->carState 2.647 = 5.200 ms
+  uniform-phase prediction: half the poll interval 4.945 + 2.647 = 7.592 ms

@@ -1,0 +1,154 @@
+=== DWELL (stick-slip) episodes: build = s*(term[end]-term[start]) torque; level = s*term[end]; median [95% CI] ===
+
+T64 <8 m/s  n=17 (jump>=3deg: 5)  dwell_s 0.23  jump p50 1.53 p90 4.59 deg  |wheel angle| p50 2.2  demand rate in dwell p50 3.5 deg/s  err at break +1.64 deg
+   out|end| p50 0.045  dither gate(end) p50 0.70  gate>0.5 in 65%  z saturated (dwell frac) p50 0.08  z_end/F p50 +1.00  move clamp duty 0.00  ratelim duty 0.000  lsf p50 4.5  obs fade p50 0.76
+   term      build p50 [CI]                 level@break p50   share of |build out|
+   P        +0.0014 [-0.0005,+0.0037]     +0.0069          +0.16
+   I        +0.0003 [-0.0001,+0.0005]     +0.0020          +0.03
+   hold     +0.0023 [+0.0010,+0.0070]     +0.0095          +0.17
+   move     +0.0004 [-0.0006,+0.0020]     +0.0032          +0.07
+   z        +0.0000 [+0.0000,+0.0012]     +0.0150          +0.00
+   rate_t   +0.0006 [-0.0012,+0.0027]     +0.0030          +0.05
+   dob      +0.0047 [+0.0025,+0.0071]     +0.0066          +0.38
+   out      +0.0132 [+0.0103,+0.0159]     +0.0447          +1.00
+   jump>=3deg subset build p50: P +0.0037  I +0.0005  hold +0.0070  move +0.0004  z +0.0000  rate_t +0.0006  dob +0.0014  out +0.0140  dwell_s 0.14  gate_end 0.00  out_end 0.168
+
+T64 8-15 m/s  n=51 (jump>=3deg: 4)  dwell_s 0.19  jump p50 0.76 p90 2.13 deg  |wheel angle| p50 1.6  demand rate in dwell p50 1.4 deg/s  err at break +0.56 deg
+   out|end| p50 0.046  dither gate(end) p50 0.69  gate>0.5 in 73%  z saturated (dwell frac) p50 0.00  z_end/F p50 +0.91  move clamp duty 0.00  ratelim duty 0.000  lsf p50 0.7  obs fade p50 1.00
+   term      build p50 [CI]                 level@break p50   share of |build out|
+   P        -0.0006 [-0.0011,-0.0002]     +0.0021          -0.06
+   I        +0.0002 [+0.0001,+0.0003]     -0.0006          +0.02
+   hold     +0.0015 [+0.0009,+0.0030]     +0.0106          +0.27
+   move     -0.0000 [-0.0005,+0.0009]     +0.0019          +0.03
+   z        +0.0000 [+0.0000,+0.0002]     +0.0137          +0.00
+   rate_t   -0.0001 [-0.0005,+0.0006]     +0.0010          +0.03
+   dob      +0.0049 [+0.0040,+0.0072]     +0.0153          +0.60
+   out      +0.0083 [+0.0056,+0.0128]     +0.0329          +1.00
+   jump>=3deg subset build p50: P +0.0002  I +0.0001  hold +0.0088  move +0.0013  z +0.0000  rate_t -0.0005  dob +0.0082  out +0.0204  dwell_s 0.22  gate_end 0.62  out_end 0.056
+
+T64B <8 m/s  n=25 (jump>=3deg: 3)  dwell_s 0.26  jump p50 1.00 p90 2.92 deg  |wheel angle| p50 2.7  demand rate in dwell p50 1.9 deg/s  err at break +1.15 deg
+   out|end| p50 0.050  dither gate(end) p50 0.67  gate>0.5 in 56%  z saturated (dwell frac) p50 0.10  z_end/F p50 +0.86  move clamp duty 0.00  ratelim duty 0.000  lsf p50 2.7  obs fade p50 1.00
+   term      build p50 [CI]                 level@break p50   share of |build out|
+   P        -0.0004 [-0.0014,+0.0018]     +0.0051          +0.03
+   I        +0.0003 [-0.0000,+0.0006]     +0.0000          +0.04
+   hold     +0.0003 [-0.0009,+0.0021]     +0.0106          +0.09
+   move     +0.0008 [-0.0019,+0.0026]     +0.0012          +0.12
+   z        +0.0000 [-0.0013,+0.0007]     +0.0128          +0.04
+   rate_t   +0.0017 [-0.0018,+0.0026]     +0.0010          +0.13
+   dob      +0.0076 [+0.0037,+0.0133]     +0.0137          +0.55
+   out      +0.0134 [+0.0054,+0.0189]     +0.0497          +1.00
+   jump>=3deg subset build p50: P -0.0054  I +0.0002  hold +0.0018  move +0.0038  z +0.0028  rate_t +0.0041  dob +0.0042  out +0.0243  dwell_s 0.23  gate_end 0.67  out_end 0.050
+
+T64B 8-15 m/s  n=61 (jump>=3deg: 11)  dwell_s 0.22  jump p50 1.04 p90 4.50 deg  |wheel angle| p50 2.0  demand rate in dwell p50 2.5 deg/s  err at break +0.91 deg
+   out|end| p50 0.057  dither gate(end) p50 0.62  gate>0.5 in 66%  z saturated (dwell frac) p50 0.00  z_end/F p50 +0.94  move clamp duty 0.00  ratelim duty 0.000  lsf p50 1.0  obs fade p50 1.00
+   term      build p50 [CI]                 level@break p50   share of |build out|
+   P        +0.0001 [-0.0008,+0.0004]     +0.0048          +0.04
+   I        +0.0003 [+0.0002,+0.0004]     +0.0011          +0.02
+   hold     +0.0024 [+0.0019,+0.0035]     +0.0095          +0.23
+   move     -0.0001 [-0.0009,+0.0005]     +0.0037          +0.04
+   z        +0.0000 [+0.0000,+0.0007]     +0.0141          +0.05
+   rate_t   -0.0002 [-0.0009,+0.0002]     +0.0021          -0.00
+   dob      +0.0063 [+0.0046,+0.0077]     +0.0135          +0.52
+   out      +0.0106 [+0.0076,+0.0130]     +0.0504          +1.00
+   jump>=3deg subset build p50: P +0.0041  I +0.0002  hold +0.0078  move +0.0006  z +0.0000  rate_t +0.0005  dob +0.0113  out +0.0282  dwell_s 0.29  gate_end 0.00  out_end 0.217
+
+T5 <8 m/s  n=11 (jump>=3deg: 3)  dwell_s 0.23  jump p50 1.49 p90 3.71 deg  |wheel angle| p50 1.8  demand rate in dwell p50 5.9 deg/s  err at break +2.41 deg
+   out|end| p50 0.090  dither gate(end) p50 0.40  gate>0.5 in 45%  z saturated (dwell frac) p50 1.00  z_end/F p50 +1.00  move clamp duty 0.00  ratelim duty 0.000  lsf p50 12.7  obs fade p50 0.08
+   term      build p50 [CI]                 level@break p50   share of |build out|
+   P        +0.0045 [+0.0014,+0.0100]     +0.0072          +0.31
+   I        +0.0007 [-0.0000,+0.0015]     +0.0009          +0.08
+   hold     +0.0023 [+0.0013,+0.0035]     +0.0114          +0.27
+   move     +0.0005 [-0.0039,+0.0031]     +0.0049          +0.07
+   z        +0.0000 [+0.0000,+0.0000]     +0.0150          +0.00
+   rate_t   +0.0002 [-0.0041,+0.0035]     +0.0054          +0.01
+   dob      +0.0016 [+0.0001,+0.0078]     +0.0014          +0.02
+   out      +0.0089 [+0.0032,+0.0132]     +0.0900          +1.00
+   jump>=3deg subset build p50: P +0.0100  I -0.0000  hold +0.0068  move +0.0055  z +0.0000  rate_t +0.0047  dob +0.0008  out +0.0322  dwell_s 0.20  gate_end 0.09  out_end 0.137
+
+T5 8-15 m/s  n=8 (jump>=3deg: 0)  dwell_s 0.19  jump p50 1.42 p90 2.58 deg  |wheel angle| p50 2.6  demand rate in dwell p50 2.0 deg/s  err at break +1.01 deg
+   out|end| p50 0.074  dither gate(end) p50 0.50  gate>0.5 in 50%  z saturated (dwell frac) p50 0.59  z_end/F p50 +0.97  move clamp duty 0.00  ratelim duty 0.000  lsf p50 0.7  obs fade p50 1.00
+   term      build p50 [CI]                 level@break p50   share of |build out|
+   P        -0.0012 [-0.0029,+0.0017]     +0.0050          -0.20
+   I        +0.0005 [+0.0001,+0.0006]     +0.0014          +0.04
+   hold     +0.0039 [+0.0012,+0.0069]     +0.0163          +0.29
+   move     -0.0018 [-0.0028,+0.0020]     +0.0037          -0.18
+   z        +0.0000 [+0.0000,+0.0037]     +0.0146          +0.00
+   rate_t   -0.0012 [-0.0024,+0.0002]     +0.0015          -0.16
+   dob      +0.0083 [+0.0045,+0.0195]     +0.0257          +1.11
+   out      +0.0111 [+0.0044,+0.0199]     +0.0743          +1.00
+
+T4 <8 m/s  n=39 (jump>=3deg: 3)  dwell_s 0.20  jump p50 1.13 p90 2.99 deg  |wheel angle| p50 1.9  demand rate in dwell p50 4.0 deg/s  err at break +2.59 deg
+   out|end| p50 0.031  dither gate(end) p50 0.80  gate>0.5 in 69%  z saturated (dwell frac) p50 1.00  z_end/F p50 +1.00  move clamp duty 0.00  ratelim duty 0.000  lsf p50 3.5  obs fade p50 0.97
+   term      build p50 [CI]                 level@break p50   share of |build out|
+   P        +0.0021 [+0.0012,+0.0026]     +0.0089          +0.21
+   I        +0.0012 [+0.0006,+0.0017]     -0.0030          +0.08
+   hold     +0.0030 [+0.0024,+0.0039]     +0.0081          +0.30
+   move     +0.0008 [-0.0001,+0.0017]     +0.0044          +0.15
+   z        +0.0000 [+0.0000,+0.0002]     +0.0150          +0.00
+   rate_t   +0.0011 [+0.0003,+0.0015]     +0.0025          +0.12
+   dob      +0.0000 [+0.0000,+0.0000]     +0.0000          +0.00
+   out      +0.0095 [+0.0061,+0.0114]     +0.0224          +1.00
+   jump>=3deg subset build p50: P -0.0016  I -0.0026  hold +0.0082  move +0.0155  z +0.0086  rate_t +0.0094  dob +0.0000  out +0.0417  dwell_s 0.17  gate_end 0.27  out_end 0.110
+
+T4 8-15 m/s  n=49 (jump>=3deg: 2)  dwell_s 0.22  jump p50 0.84 p90 1.58 deg  |wheel angle| p50 1.6  demand rate in dwell p50 1.9 deg/s  err at break +1.48 deg
+   out|end| p50 0.037  dither gate(end) p50 0.75  gate>0.5 in 84%  z saturated (dwell frac) p50 0.32  z_end/F p50 +0.99  move clamp duty 0.00  ratelim duty 0.000  lsf p50 1.0  obs fade p50 1.00
+   term      build p50 [CI]                 level@break p50   share of |build out|
+   P        +0.0010 [+0.0005,+0.0013]     +0.0070          +0.09
+   I        +0.0018 [+0.0013,+0.0027]     +0.0016          +0.19
+   hold     +0.0035 [+0.0026,+0.0051]     +0.0060          +0.42
+   move     -0.0002 [-0.0008,+0.0002]     +0.0030          -0.02
+   z        +0.0004 [+0.0000,+0.0016]     +0.0148          +0.15
+   rate_t   +0.0003 [-0.0001,+0.0004]     +0.0012          +0.03
+   dob      +0.0000 [+0.0000,+0.0000]     +0.0000          +0.00
+   out      +0.0095 [+0.0064,+0.0118]     +0.0315          +1.00
+   jump>=3deg subset build p50: P +0.0127  I +0.0005  hold +0.0187  move -0.0069  z +0.0000  rate_t -0.0018  dob +0.0000  out +0.0233  dwell_s 0.35  gate_end 0.41  out_end 0.134
+
+=== SHAKE band 1.8-3.5 Hz, b_eq per term (torque per deg/s, >0 damps), tau 0/30/60 ms; and band rms of each term ===
+T64 2.5-5 (60 s)  band rate rms 3.90 deg/s
+   P: b30 -0.86 (b0 +0.66, b60 -2.15) rms 1.43  I: b30 -0.06 (b0 -0.06, b60 -0.05) rms 0.04  hold: b30 -0.67 (b0 -0.51, b60 -0.65) rms 0.61  move: b30 -1.32 (b0 -0.57, b60 -1.78) rms 1.80  z: b30 -0.42 (b0 -0.27, b60 -0.50) rms 0.64  rate_t: b30 +6.27 (b0 +9.02, b60 +2.01) rms 4.17  dob: b30 -0.52 (b0 -0.51, b60 -0.43) rms 0.30  out: b30 +1.86 (b0 +7.54, b60 -4.29) rms 6.79   [b x1e-4, rms x1e-3]
+T64 5-8 (28 s)  band rate rms 9.83 deg/s
+   P: b30 -1.42 (b0 +0.52, b60 -2.97) rms 3.94  I: b30 -0.07 (b0 -0.07, b60 -0.05) rms 0.08  hold: b30 -1.07 (b0 -0.63, b60 -1.24) rms 1.59  move: b30 -1.92 (b0 -0.20, b60 -3.15) rms 4.23  z: b30 -0.31 (b0 -0.06, b60 -0.48) rms 0.98  rate_t: b30 +5.27 (b0 +9.30, b60 -0.19) rms 10.94  dob: b30 -0.38 (b0 -0.42, b60 -0.26) rms 0.68  out: b30 -0.46 (b0 +8.25, b60 -9.08) rms 18.51   [b x1e-4, rms x1e-3]
+T64 8-15 (409 s)  band rate rms 3.85 deg/s
+   P: b30 +0.13 (b0 +1.37, b60 -1.10) rms 1.14  I: b30 -0.05 (b0 -0.04, b60 -0.05) rms 0.03  hold: b30 -0.15 (b0 -0.09, b60 -0.17) rms 0.39  move: b30 -0.35 (b0 -0.06, b60 -0.55) rms 0.71  z: b30 -0.14 (b0 -0.10, b60 -0.14) rms 0.36  rate_t: b30 +7.50 (b0 +9.52, b60 +3.85) rms 3.80  dob: b30 -1.58 (b0 -1.50, b60 -1.35) rms 0.68  out: b30 +4.89 (b0 +8.84, b60 -0.10) rms 4.65   [b x1e-4, rms x1e-3]
+T64B 5-8 (60 s)  band rate rms 6.87 deg/s
+   P: b30 -0.71 (b0 +0.64, b60 -1.87) rms 2.18  I: b30 -0.08 (b0 -0.10, b60 -0.05) rms 0.13  hold: b30 -0.25 (b0 -0.18, b60 -0.27) rms 0.46  move: b30 -1.39 (b0 -0.76, b60 -1.75) rms 1.85  z: b30 -0.13 (b0 +0.12, b60 -0.35) rms 0.84  rate_t: b30 +6.43 (b0 +8.77, b60 +2.82) rms 6.56  dob: b30 -0.91 (b0 -0.99, b60 -0.66) rms 0.82  out: b30 +2.54 (b0 +7.30, b60 -2.66) rms 8.87   [b x1e-4, rms x1e-3]
+T64B 8-15 (367 s)  band rate rms 7.37 deg/s
+   P: b30 -0.36 (b0 +1.08, b60 -1.71) rms 2.52  I: b30 -0.06 (b0 -0.06, b60 -0.05) rms 0.06  hold: b30 -0.75 (b0 -0.66, b60 -0.70) rms 1.09  move: b30 -1.59 (b0 -0.78, b60 -2.09) rms 2.56  z: b30 -0.35 (b0 -0.22, b60 -0.42) rms 0.77  rate_t: b30 +6.23 (b0 +8.79, b60 +2.26) rms 7.26  dob: b30 -1.36 (b0 -1.32, b60 -1.12) rms 1.17  out: b30 +1.28 (b0 +6.60, b60 -4.44) rms 10.63   [b x1e-4, rms x1e-3]
+T5 2.5-5 (7 s)  band rate rms 13.20 deg/s
+   P: b30 -2.13 (b0 -0.17, b60 -3.49) rms 5.36  I: b30 -0.06 (b0 -0.07, b60 -0.04) rms 0.13  hold: b30 -0.60 (b0 -0.43, b60 -0.61) rms 0.90  move: b30 -2.51 (b0 -0.84, b60 -3.52) rms 5.43  z: b30 -0.23 (b0 -0.07, b60 -0.33) rms 1.20  rate_t: b30 +4.59 (b0 +8.60, b60 -0.70) rms 13.76  dob: b30 -0.06 (b0 -0.08, b60 -0.02) rms 0.23  out: b30 -1.86 (b0 +6.28, b60 -9.52) rms 21.67   [b x1e-4, rms x1e-3]
+T5 5-8 (44 s)  band rate rms 7.64 deg/s
+   P: b30 +0.29 (b0 +1.49, b60 -0.94) rms 2.15  I: b30 -0.05 (b0 -0.04, b60 -0.05) rms 0.05  hold: b30 -0.07 (b0 -0.02, b60 -0.11) rms 0.29  move: b30 -0.06 (b0 +0.32, b60 -0.44) rms 0.97  z: b30 -0.04 (b0 +0.02, b60 -0.09) rms 0.42  rate_t: b30 +7.89 (b0 +9.98, b60 +4.12) rms 7.83  dob: b30 -1.60 (b0 -1.53, b60 -1.37) rms 1.31  out: b30 +5.85 (b0 +9.94, b60 +0.51) rms 9.34   [b x1e-4, rms x1e-3]
+T5 8-15 (92 s)  band rate rms 5.08 deg/s
+   P: b30 +0.58 (b0 +1.73, b60 -0.67) rms 1.43  I: b30 -0.05 (b0 -0.04, b60 -0.05) rms 0.03  hold: b30 -0.04 (b0 +0.00, b60 -0.08) rms 0.25  move: b30 +0.11 (b0 +0.26, b60 -0.05) rms 0.42  z: b30 -0.02 (b0 -0.03, b60 -0.01) rms 0.32  rate_t: b30 +7.95 (b0 +9.86, b60 +4.30) rms 5.10  dob: b30 -1.84 (b0 -1.73, b60 -1.58) rms 1.01  out: b30 +6.23 (b0 +9.83, b60 +1.28) rms 5.84   [b x1e-4, rms x1e-3]
+T4 2.5-5 (28 s)  band rate rms 2.91 deg/s
+   P: b30 -0.67 (b0 +0.75, b60 -1.92) rms 0.97  I: b30 -0.15 (b0 -0.14, b60 -0.13) rms 0.05  hold: b30 -0.34 (b0 -0.29, b60 -0.31) rms 0.23  move: b30 -1.32 (b0 -0.68, b60 -1.71) rms 0.86  z: b30 -1.16 (b0 -0.81, b60 -1.29) rms 0.49  rate_t: b30 +2.47 (b0 +4.32, b60 +0.13) rms 1.61  dob: b30 -0.00 (b0 -0.00, b60 -0.00) rms 0.00  out: b30 -1.64 (b0 +2.83, b60 -5.74) rms 3.29   [b x1e-4, rms x1e-3]
+T4 5-8 (11 s)  band rate rms 5.32 deg/s
+   P: b30 +0.26 (b0 +1.35, b60 -0.85) rms 1.42  I: b30 -0.12 (b0 -0.10, b60 -0.12) rms 0.07  hold: b30 +0.07 (b0 +0.06, b60 +0.06) rms 0.15  move: b30 +0.14 (b0 +0.13, b60 +0.12) rms 0.40  z: b30 +0.13 (b0 +0.23, b60 +0.00) rms 0.54  rate_t: b30 +3.56 (b0 +4.97, b60 +1.47) rms 2.88  dob: b30 -0.00 (b0 -0.00, b60 -0.00) rms 0.00  out: b30 +3.73 (b0 +6.49, b60 +0.30) rms 4.50   [b x1e-4, rms x1e-3]
+T4 8-15 (474 s)  band rate rms 5.80 deg/s
+   P: b30 +0.10 (b0 +1.26, b60 -1.06) rms 1.64  I: b30 -0.15 (b0 -0.12, b60 -0.14) rms 0.10  hold: b30 -0.18 (b0 -0.15, b60 -0.17) rms 0.35  move: b30 -0.58 (b0 -0.20, b60 -0.85) rms 1.08  z: b30 -0.22 (b0 -0.14, b60 -0.26) rms 0.51  rate_t: b30 +3.01 (b0 +4.69, b60 +0.73) rms 3.18  dob: b30 -0.00 (b0 -0.00, b60 -0.00) rms 0.00  out: b30 +1.62 (b0 +5.11, b60 -2.18) rms 5.45   [b x1e-4, rms x1e-3]
+
+=== FRAME duty, hands-off, per speed bin ===
+T64 2.5-5: 71 s (turn |angle_des|>=15: 21 s, trans |rate_des|>=40: 5 s) gate p50~0.71 turn 0.20 trans 0.20; gate>0.5 0.74; z sat 0.45 trans 0.98; clamp 0.000 trans 0.000; ratelim 0.003 trans 0.031; lsf 8.0; fade 0.34
+    rms all: P 0.030 I 0.022 hold 0.101 move 0.025 z 0.012 rate_t 0.017 dob 0.017 out 0.104 | trans: P 0.078 I 0.047 hold 0.264 move 0.080 z 0.015 rate_t 0.045 dob 0.029 out 0.221
+T64 5-8: 70 s (turn |angle_des|>=15: 24 s, trans |rate_des|>=40: 12 s) gate p50~0.55 turn 0.00 trans 0.02; gate>0.5 0.54; z sat 0.52 trans 1.00; clamp 0.000 trans 0.000; ratelim 0.000 trans 0.000; lsf 2.9; fade 1.00
+    rms all: P 0.029 I 0.025 hold 0.168 move 0.035 z 0.013 rate_t 0.019 dob 0.044 out 0.152 | trans: P 0.052 I 0.024 hold 0.277 move 0.083 z 0.015 rate_t 0.026 dob 0.050 out 0.200
+T64 8-15: 364 s (turn |angle_des|>=15: 7 s, trans |rate_des|>=40: 2 s) gate p50~0.75 turn 0.00 trans 0.48; gate>0.5 0.83; z sat 0.24 trans 1.00; clamp 0.000 trans 0.000; ratelim 0.000 trans 0.000; lsf 0.6; fade 1.00
+    rms all: P 0.009 I 0.008 hold 0.047 move 0.008 z 0.011 rate_t 0.005 dob 0.027 out 0.064 | trans: P 0.042 I 0.011 hold 0.177 move 0.070 z 0.015 rate_t 0.018 dob 0.048 out 0.116
+T64B 2.5-5: 46 s (turn |angle_des|>=15: 12 s, trans |rate_des|>=40: 6 s) gate p50~0.69 turn 0.00 trans 0.19; gate>0.5 0.68; z sat 0.44 trans 0.98; clamp 0.000 trans 0.000; ratelim 0.001 trans 0.005; lsf 10.0; fade 0.21
+    rms all: P 0.043 I 0.029 hold 0.162 move 0.036 z 0.012 rate_t 0.022 dob 0.015 out 0.131 | trans: P 0.099 I 0.060 hold 0.298 move 0.096 z 0.015 rate_t 0.041 dob 0.024 out 0.183
+T64B 5-8: 92 s (turn |angle_des|>=15: 22 s, trans |rate_des|>=40: 12 s) gate p50~0.58 turn 0.00 trans 0.00; gate>0.5 0.56; z sat 0.43 trans 0.99; clamp 0.000 trans 0.000; ratelim 0.001 trans 0.002; lsf 2.8; fade 1.00
+    rms all: P 0.018 I 0.019 hold 0.147 move 0.029 z 0.012 rate_t 0.018 dob 0.049 out 0.156 | trans: P 0.031 I 0.026 hold 0.274 move 0.077 z 0.015 rate_t 0.030 dob 0.078 out 0.263
+T64B 8-15: 296 s (turn |angle_des|>=15: 35 s, trans |rate_des|>=40: 6 s) gate p50~0.67 turn 0.00 trans 0.00; gate>0.5 0.70; z sat 0.35 trans 1.00; clamp 0.000 trans 0.000; ratelim 0.000 trans 0.000; lsf 1.0; fade 1.00
+    rms all: P 0.012 I 0.009 hold 0.077 move 0.014 z 0.011 rate_t 0.010 dob 0.035 out 0.101 | trans: P 0.041 I 0.010 hold 0.180 move 0.067 z 0.015 rate_t 0.023 dob 0.088 out 0.183
+T5 2.5-5: 24 s (turn |angle_des|>=15: 5 s, trans |rate_des|>=40: 2 s) gate p50~0.56 turn 0.08 trans 0.00; gate>0.5 0.59; z sat 0.49 trans 1.00; clamp 0.000 trans 0.000; ratelim 0.000 trans 0.000; lsf 12.8; fade 0.07
+    rms all: P 0.042 I 0.041 hold 0.130 move 0.020 z 0.012 rate_t 0.018 dob 0.016 out 0.113 | trans: P 0.088 I 0.115 hold 0.335 move 0.070 z 0.015 rate_t 0.049 dob 0.020 out 0.250
+T5 5-8: 41 s (turn |angle_des|>=15: 18 s, trans |rate_des|>=40: 6 s) gate p50~0.40 turn 0.00 trans 0.05; gate>0.5 0.42; z sat 0.66 trans 1.00; clamp 0.000 trans 0.000; ratelim 0.000 trans 0.000; lsf 2.7; fade 1.00
+    rms all: P 0.021 I 0.029 hold 0.172 move 0.032 z 0.013 rate_t 0.021 dob 0.043 out 0.190 | trans: P 0.026 I 0.024 hold 0.219 move 0.072 z 0.015 rate_t 0.023 dob 0.063 out 0.207
+T5 8-15: 85 s (turn |angle_des|>=15: 7 s, trans |rate_des|>=40: 2 s) gate p50~0.62 turn 0.00 trans 0.72; gate>0.5 0.61; z sat 0.43 trans 1.00; clamp 0.000 trans 0.000; ratelim 0.000 trans 0.000; lsf 0.8; fade 1.00
+    rms all: P 0.013 I 0.009 hold 0.058 move 0.016 z 0.012 rate_t 0.007 dob 0.032 out 0.087 | trans: P 0.049 I 0.005 hold 0.080 move 0.075 z 0.015 rate_t 0.017 dob 0.076 out 0.068
+T4 2.5-5: 61 s (turn |angle_des|>=15: 17 s, trans |rate_des|>=40: 6 s) gate p50~0.65 turn 0.00 trans 0.00; gate>0.5 0.61; z sat 0.45 trans 1.00; clamp 0.000 trans 0.000; ratelim 0.000 trans 0.000; lsf 9.2; fade 0.26
+    rms all: P 0.029 I 0.039 hold 0.172 move 0.023 z 0.012 rate_t 0.014 dob 0.000 out 0.177 | trans: P 0.066 I 0.087 hold 0.304 move 0.065 z 0.015 rate_t 0.025 dob 0.000 out 0.340
+T4 5-8: 121 s (turn |angle_des|>=15: 25 s, trans |rate_des|>=40: 12 s) gate p50~0.67 turn 0.00 trans 0.00; gate>0.5 0.67; z sat 0.52 trans 0.99; clamp 0.000 trans 0.000; ratelim 0.000 trans 0.000; lsf 2.8; fade 1.00
+    rms all: P 0.018 I 0.031 hold 0.121 move 0.026 z 0.013 rate_t 0.010 dob 0.000 out 0.116 | trans: P 0.027 I 0.032 hold 0.267 move 0.077 z 0.015 rate_t 0.015 dob 0.000 out 0.209
+T4 8-15: 334 s (turn |angle_des|>=15: 26 s, trans |rate_des|>=40: 6 s) gate p50~0.73 turn 0.00 trans 0.00; gate>0.5 0.75; z sat 0.37 trans 1.00; clamp 0.000 trans 0.000; ratelim 0.000 trans 0.000; lsf 1.0; fade 1.00
+    rms all: P 0.011 I 0.019 hold 0.068 move 0.014 z 0.011 rate_t 0.005 dob 0.000 out 0.086 | trans: P 0.029 I 0.036 hold 0.191 move 0.074 z 0.015 rate_t 0.014 dob 0.000 out 0.175

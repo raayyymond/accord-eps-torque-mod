@@ -1,0 +1,63 @@
+C1 attribution-lens verification notes (2026-09-17)
+
+1. Fork source cross-check (StarPilot @ latcontrol_vehicle_tunes.py):
+   HONDA_ACCORD_DOB_FADE_V_BP = [3.0, 6.0]  -> fade 0->1 over 3-6 m/s, CONFIRMED matches cl_recon.py's
+   DOB_FADE constant used in the reconstruction. So the observer is at FULL authority from 6 m/s, not
+   "barely reaching <8 m/s" as the orchestrator brief characterized it -- C1's correction of the brief
+   is confirmed against source, independent of the analysis scripts.
+   Sign chain (accordObserverTorque = -accord_dob_torque, update() returns +left estimate) also
+   confirmed against latcontrol_torque.py:850 and latcontrol_vehicle_tunes.py:2694-2739 -- matches
+   cl_recon.py's `dob_left = -dob_logged`.
+
+2. Reconstruction validation (validate.json) independently re-read: corr 0.9992-0.99995, median
+   residual 0.00015-0.0005 torque across all 5 routes/speed bands -- matches the finding's stated
+   range exactly.
+
+3. overshoot_summary.txt numbers reproduced EXACTLY (same n, same fractions/CIs to rounding) by a
+   fresh, independently-written script reading directly from dwellpost.json (see attrib_check.txt) --
+   data-integrity confirmed, not just re-printed.
+
+4. Term-share table (tables.txt) independently checked: dob IS the largest single |build| share in
+   T64<8 (38%), T64B<8 (55%), T64 8-15 (60%), T64B 8-15 (52%) -- matches the finding's magnitude
+   numbers exactly. EXCEPTION not mentioned in the finding: T5<8m/s (n=11) dob share is only 2% (P
+   31%, hold 27% dominate instead) -- consistent with that bin's low obs-fade median (0.08, i.e. most
+   of T5's <8m/s dwells sit well under 6 m/s where the observer has not faded in). Not a refutation
+   (T5<8 wasn't cited in the magnitude list) but worth flagging as a boundary the finding didn't state.
+
+5. NEW independent check -- confound direction: T4 (no observer, low overshoot) runs Ki 0.6/schedule-
+   to-2.5 (HIGHER than T64's flat 0.3) and Kv 0.0006 (LOWER than T64's 0.001). Higher Ki should if
+   anything increase overshoot via integral wind-up, and lower Kv should reduce rate damping -- both
+   point the WRONG way to explain T4's much lower overshoot via those alternate levers. This weakens
+   the two most obvious non-observer confounds (Ki, Kv) as competing explanations, which supports
+   (does not prove) the observer attribution.
+
+6. NEW independent check -- jump sizes are NOT smaller on T4 (jump p50: T64 0.73, T64B 1.00, T5 1.21,
+   T4 0.89; T4 is mid-pack, not the smallest). So the overshoot gap is not simply explained by T4
+   having smaller stick-slip jumps to begin with.
+
+7. NEW independent check -- event-level Spearman correlations (6-15 m/s, observer-on routes pooled,
+   n=149), computed fresh from dwellpost.json:
+   - dob's dwell-build vs overshoot: rho +0.15 (p=0.067, marginal, not significant at 0.05)
+   - dob's post-release (0-0.3s) rise vs overshoot: rho -0.23 (p=0.005) -- OPPOSITE sign to what a
+     naive "the observer keeps pushing and causes the overshoot" story predicts.
+   - jump size alone vs overshoot: rho +0.21 (p=0.011)
+   - dob's post-release rise vs overshoot AFTER regressing out jump size from both (partial): rho -0.13
+     (p=0.103, not significant).
+   Interpretation: within the observer-on group, the observer's post-release rise does NOT track
+   overshoot severity event-by-event once jump size is controlled for. This does not contradict the
+   GROUP-LEVEL association (observer-on vs T4, which is large and robust, n=149 vs n=66, non-
+   overlapping CIs) but it does mean the specific mechanistic narrative in the finding's stream summary
+   ("it keeps rising in the jump direction... driving the overshoot") is not supported at the
+   individual-event level by a direct dose-response test. The finding itself already marks
+   observer-CAUSES-overshoot as BELIEF, not EVIDENCE, so this is a caveat on an already-hedged claim,
+   not a refutation of an EVIDENCE claim.
+
+VERDICT: The core "reach" claim (C1) -- the observer is fully faded in by 6 m/s (not merely "barely
+reaching" that regime), is a substantial (30-60%) share of the release-torque build in the torque-mode
+routes that carry it, and its absence in T4 coincides with a large, robustly-CI'd drop in post-release
+overshoot -- holds up under independent re-derivation from the underlying JSON and cross-check against
+the fork's own source constants. It is consistent with the prior route-70 finding (plant = spring +
+Coulomb friction produces the dwell-jump itself; C1 does not contradict this -- it is about what shapes
+the torque AT and AFTER release, not what causes the stick-slip mechanically) and with route-75/T4
+having zero observer contribution by construction. The weaker point is the implied event-level causal
+mechanism, which my own dose-response check does not support -- recommend the "corrected" framing below.

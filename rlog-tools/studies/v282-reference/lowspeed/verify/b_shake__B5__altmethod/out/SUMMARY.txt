@@ -1,0 +1,45 @@
+B5 ALTMETHOD verification summary (b_eq x1e-4 output per deg/s; >0 damps, <0 feeds; @30ms primary)
+
+Original (b02/b07, energy-weighted mean over ALL time in each v-bin, sliding 500-sample blocks):
+  <8 m/s:  rl_fb +8.05 [+7.86,+8.17]   hyst -0.39 [-0.58,-0.13]   p_meas +0.30 [+0.05,+0.46]
+  8-15:    rl_fb +7.83 [+7.71,+7.93]   hyst -0.08 [-0.18,-0.00]   p_meas +0.58 [+0.50,+0.66]
+
+Alt method A -- EVENT/episode-conditioned (only sustained env>=4 deg/s, >=1.5s shake episodes; bug found
+and fixed in this script: filtering the whole-route array before slicing to usable runs poisons the
+ENTIRE sosfiltfilt output with NaN wherever the unusable stretches carry NaN -- b02 avoids this by
+filtering per-run, after slicing; this script now does the same):
+  rev64  <8: n=21 eps, 53.7s   hyst -0.47[-0.64,-0.08]  rl_fb +8.11[+7.81,+8.25]  p_meas +0.36[-0.02,+0.54]
+  rev64 8-15: n=17 eps, 35.6s  hyst -0.05[-0.23,+0.04]  rl_fb +7.79[+7.59,+8.04]  p_meas +0.59[+0.47,+0.74]
+  all    <8: n=34 eps, 90.0s   hyst -0.46[-0.65,-0.13]  rl_fb +6.49[+5.03,+7.66]  p_meas +0.43[+0.23,+0.53]
+  all   8-15: n=31 eps, 72.0s  hyst -0.00[-0.11,+0.07]  rl_fb +6.15[+5.13,+7.11]  p_meas +0.57[+0.48,+0.68]
+
+Alt method B -- TAIL (top-quartile instantaneous 1.8-3.5 Hz envelope, i.e. the biggest-amplitude quarter
+of samples in each run x v-bin) vs REST (bottom 75%):
+  rev64  <8 tail: hyst -0.38[-0.57,-0.09] rl_fb +8.04[+7.75,+8.21]   rest: hyst -0.39[-0.63,+0.02] rl_fb +8.14[+8.01,+8.25]
+  rev64 8-15 tail: hyst -0.05[-0.13,+0.01] rl_fb +7.77[+7.65,+7.88]  rest: hyst -0.20[-0.33,+0.08] rl_fb +8.17[+7.67,+8.42]
+  all    <8 tail: hyst -0.37[-0.58,-0.11] rl_fb +6.54[+5.42,+7.60]   rest: hyst -0.45[-0.64,-0.09] rl_fb +6.67[+5.53,+7.61]
+  all   8-15 tail: hyst -0.02[-0.08,+0.03] rl_fb +6.24[+5.35,+7.03]  rest: hyst -0.17[-0.28,-0.00] rl_fb +6.86[+5.70,+7.77]
+
+Reading: rl_fb (rate-loop measured-rate part) is the dominant damper under EVERY conditioning tried here
+-- whole-bin mean, episode-only, top-quartile-amplitude tail, and bottom-75% rest -- magnitude 6-8x1e-4
+in all of them (T4/T5's lower rate-loop gain config pulls the "all torque" group down to ~6.2-6.9, still
+5-10x hyst). It never flips sign and never drops toward hyst's magnitude in the actual shake episodes or
+in the highest-amplitude quarter of samples, which is the specific place a hidden nonlinear/amplitude-
+gated feeding effect masked by the original block mean would have had to show up.
+
+hyst (friction hysteresis) stays small and, critically, STABLE in magnitude whether conditioned on the
+actual sustained shake episodes, the top-amplitude quarter, or the quieter remainder: ~-0.4 to -0.5e-4
+below 8 m/s in every slice, ~0 to -0.2e-4 above 8 m/s (mostly CI-straddles-zero, i.e. LESS significant
+under event-conditioning than the original whole-bin estimate). A term whose "feeding" only appeared
+because block-averaging smeared an amplitude-dependent nonlinear effect would be expected to grow in the
+episode/tail slices relative to the rest slice; it does not -- episode and tail track rest to within
+overlapping CIs at every route group x speed bin tested (8 of 8 comparisons).
+
+Positive control (ctrl = -1e-3*rate) reads +8.85 to +9.12e-4 @30ms in every slice here, matching b02's
++8.9 to +9.0 in the corresponding bins -- confirms sign/scale of this independently-built estimator.
+dob_log (observer) also tracks b07's reported magnitudes and sign in every slice, a second cross-check.
+
+VERDICT: the alt-method lens (event-conditioned instead of spectral-block-mean; tail-amplitude instead
+of whole-bin average) does not surface a hidden feeder in either rl_fb or hyst. If anything it makes
+hyst's already-small 8-15 m/s effect (-0.08, CI just touching zero) LOSE significance entirely under
+event-conditioning (CI now clearly straddles zero, both route groups). B5's null survives this lens.

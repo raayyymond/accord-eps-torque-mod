@@ -1,0 +1,53 @@
+=== 1. Below-2.5-m/s regime (reach_us.json bin 0 = 0.3-2.5 m/s; NOT covered by the finding's own
+     reach.json, whose hands-off mask starts at v>=2.5) ===
+
+total dwell (stick-slip) episodes with v<2.5 m/s, pooled across all 5 torque routes: n=11
+  T64   v=0.35 jump= 14.35deg ang= 34.48 b_z=-0.01213 b_out=-0.01340 z_share=+0.906 zsat_dwell=0.00 dwell_s=0.15
+  T64   v=1.50 jump=  3.10deg ang=  3.96 b_z=-0.00000 b_out=+0.01389 z_share=-0.000 zsat_dwell=1.00 dwell_s=0.12
+  T64   v=1.26 jump=  0.75deg ang=  1.42 b_z=+0.00041 b_out=+0.02466 z_share=+0.016 zsat_dwell=0.71 dwell_s=0.52
+  T64   v=1.22 jump=  2.45deg ang=  0.23 b_z=-0.00000 b_out=+0.01650 z_share=-0.000 zsat_dwell=1.00 dwell_s=0.15
+  T64B  v=1.82 jump=  0.50deg ang=  1.56 b_z=+0.01108 b_out=+0.03196 z_share=+0.347 zsat_dwell=0.00 dwell_s=1.07
+  T64B  v=1.53 jump=  2.19deg ang=  3.47 b_z=+0.00121 b_out=+0.02174 z_share=+0.056 zsat_dwell=0.90 dwell_s=0.20
+  T64B  v=2.43 jump=  0.29deg ang=  0.92 b_z=-0.00052 b_out=-0.00393 z_share=+0.132 zsat_dwell=0.00 dwell_s=0.14
+  T64B  v=2.41 jump=  0.49deg ang=  0.63 b_z=+0.00149 b_out=+0.00295 z_share=+0.507 zsat_dwell=0.41 dwell_s=0.17
+  T64B  v=2.44 jump=  0.29deg ang=  0.24 b_z=-0.00000 b_out=+0.00507 z_share=-0.000 zsat_dwell=1.00 dwell_s=0.12
+  T64B  v=2.36 jump=  5.89deg ang=  0.06 b_z=+0.00100 b_out=+0.02659 z_share=+0.038 zsat_dwell=0.08 dwell_s=0.52
+  T4    v=2.29 jump=  1.74deg ang=  0.53 b_z=-0.00000 b_out=+0.00247 z_share=-0.000 zsat_dwell=1.00 dwell_s=0.14
+
+  of these, jump>=3deg: n=3
+    T64 v=0.35 jump=14.35 z_share=+0.906  <-- DOMINANT
+    T64 v=1.50 jump=3.10 z_share=-0.000  <-- 
+    T64B v=2.36 jump=5.89 z_share=+0.038  <-- 
+
+=== 2. Per-event z share inside the finding's own '18 large snaps (jump>=7deg)' set,
+     re-cut event-by-event instead of the median rollup in tables.txt ===
+
+n jump>=7deg: 18 (matches the finding's '18 of them')
+  T64   v= 5.29 jump= 10.76 ang=  -51.1 dist_pressed_s=  4.28 z_share=-0.000
+  T64   v= 5.69 jump= 19.69 ang= -151.6 dist_pressed_s=  1.28 z_share=-0.000
+  T64   v= 0.35 jump= 14.35 ang=  -34.5 dist_pressed_s=  1.18 z_share=+0.906  <-- z is 20-90% of the release build
+  T64   v=11.25 jump=  7.51 ang=  -11.2 dist_pressed_s=  1.05 z_share=-0.000
+  T64   v= 6.57 jump= 18.80 ang= -148.4 dist_pressed_s=  1.26 z_share=+0.004
+  T64B  v= 8.80 jump=  7.46 ang=  -11.0 dist_pressed_s= 11.18 z_share=-0.000
+  T64B  v= 8.77 jump= 10.80 ang=  -20.2 dist_pressed_s= 12.32 z_share=-0.000
+  T64B  v= 5.33 jump=  8.90 ang=  111.9 dist_pressed_s=  2.88 z_share=+0.369  <-- z is 20-90% of the release build
+  T64B  v= 9.66 jump= 13.58 ang=  -39.4 dist_pressed_s=  2.30 z_share=-0.000
+  T64B  v= 9.60 jump= 10.94 ang=  -54.6 dist_pressed_s=  3.22 z_share=-0.000
+  T64B  v= 9.33 jump=  7.00 ang=  -67.2 dist_pressed_s=  1.82 z_share=+0.283  <-- z is 20-90% of the release build
+  T64B  v=11.60 jump= 12.41 ang=  -20.9 dist_pressed_s=  1.03 z_share=-0.000
+  T64B  v= 3.57 jump= 12.37 ang= -111.7 dist_pressed_s=  1.31 z_share=-0.000
+  T5    v= 7.09 jump= 16.59 ang=  -76.0 dist_pressed_s=  4.52 z_share=-0.000
+  T4    v=10.81 jump= 14.84 ang=  -25.0 dist_pressed_s= 26.22 z_share=-0.000
+  T4    v= 5.54 jump= 11.66 ang=  143.2 dist_pressed_s=  2.20 z_share=+0.377  <-- z is 20-90% of the release build
+  T4    v= 9.35 jump= 11.16 ang=  -25.5 dist_pressed_s=  0.98 z_share=-0.000
+  T4    v= 5.38 jump= 10.00 ang=    9.8 dist_pressed_s= 68.22 z_share=+0.206  <-- z is 20-90% of the release build
+
+  median z_share = 0.0000  (matches the finding's 'build over large jumps median 0.000')
+  BUT 5/18 = 28% of these events have |z_share| >= 0.15, up to 0.91
+  all of these pass the finding's own hands-off gate (dist_pressed_s far exceeds 1 s in every case).
+
+=== 3. Sanity check: AccordTorqueKi and AccordFFRateGain in the same jump>=7deg set (control) ===
+
+  I share over all jump>=3deg (n=38): median -0.0014, p90(|share|) 0.287, max(|share|) 0.459
+  -> no comparable tail: Ki's claim of 'negligible' survives this same event-level re-cut.
+  move-term clamp duty at v<2.5 m/s (bin 0), all 5 routes: [0.0, 0.0, 0.0, 0.0, 0.0] -> still 0.0 everywhere; AccordFFRateGain claim survives at low speed too.

@@ -1,0 +1,15 @@
+0000006c--68c6e94b17 v0-8        89s  sr_bp   8.88 deg/s  sa_bp  0.516 deg  u_bp  0.0147  p95|rate|  91.6  <=1LSB 0.54  nlvl 348  |H|4Hz 456  1/|H| 0.00219  coh4 0.87  R2_fb 0.667  R2_fb+u 1.000
+0000006c--68c6e94b17 v8-15      171s  sr_bp   3.18 deg/s  sa_bp  0.190 deg  u_bp  0.0036  p95|rate|  11.0  <=1LSB 0.58  nlvl 151  |H|4Hz 708  1/|H| 0.00141  coh4 0.88  R2_fb 0.857  R2_fb+u 1.000
+0000006c--68c6e94b17 v15-99     295s  sr_bp   1.44 deg/s  sa_bp  0.089 deg  u_bp  0.0014  p95|rate|   5.5  <=1LSB 0.66  nlvl  67  |H|4Hz 925  1/|H| 0.00108  coh4 0.72  R2_fb 0.612  R2_fb+u 1.000
+0000006d--05e83bb04f v0-8       103s  sr_bp   6.93 deg/s  sa_bp  0.438 deg  u_bp  0.0164  p95|rate|  81.5  <=1LSB 0.52  nlvl 277  |H|4Hz 444  1/|H| 0.00225  coh4 0.55  R2_fb 0.391  R2_fb+u 1.000
+0000006d--05e83bb04f v8-15      195s  sr_bp   3.46 deg/s  sa_bp  0.213 deg  u_bp  0.0040  p95|rate|  13.5  <=1LSB 0.57  nlvl 114  |H|4Hz 719  1/|H| 0.00139  coh4 0.83  R2_fb 0.864  R2_fb+u 1.000
+0000006d--05e83bb04f v15-99     295s  sr_bp   1.97 deg/s  sa_bp  0.118 deg  u_bp  0.0020  p95|rate|   6.6  <=1LSB 0.66  nlvl  95  |H|4Hz 1046  1/|H| 0.00096  coh4 0.9  R2_fb 0.739  R2_fb+u 1.000
+0000006e--6ca3e014fd v0-8       164s  sr_bp   9.91 deg/s  sa_bp  0.621 deg  u_bp  0.0165  p95|rate|  92.7  <=1LSB 0.52  nlvl 369  |H|4Hz 633  1/|H| 0.00158  coh4 0.85  R2_fb 0.764  R2_fb+u 1.000
+0000006e--6ca3e014fd v8-15      296s  sr_bp   5.96 deg/s  sa_bp  0.365 deg  u_bp  0.0070  p95|rate|  30.9  <=1LSB 0.52  nlvl 199  |H|4Hz 778  1/|H| 0.00129  coh4 0.93  R2_fb 0.935  R2_fb+u 1.000
+0000006e--6ca3e014fd v15-99     253s  sr_bp   3.62 deg/s  sa_bp  0.244 deg  u_bp  0.0032  p95|rate|  11.6  <=1LSB 0.61  nlvl 127  |H|4Hz 1129  1/|H| 0.00089  coh4 0.95  R2_fb 0.877  R2_fb+u 1.000
+00000076--d0b7ea7e4d v0-8        79s  sr_bp   8.92 deg/s  sa_bp  0.526 deg  u_bp  0.0125  p95|rate|  75.2  <=1LSB 0.50  nlvl 275  |H|4Hz 866  1/|H| 0.00115  coh4 0.94  R2_fb 0.842  R2_fb+u 1.000
+00000076--d0b7ea7e4d v8-15       85s  sr_bp   4.92 deg/s  sa_bp  0.315 deg  u_bp  0.0051  p95|rate|  28.9  <=1LSB 0.42  nlvl 150  |H|4Hz 992  1/|H| 0.00101  coh4 0.99  R2_fb 0.978  R2_fb+u 1.000
+00000076--d0b7ea7e4d v15-99     297s  sr_bp   1.82 deg/s  sa_bp  0.113 deg  u_bp  0.0015  p95|rate|   7.7  <=1LSB 0.60  nlvl  76  |H|4Hz 1162  1/|H| 0.00086  coh4 0.96  R2_fb 0.874  R2_fb+u 1.000
+00000075--6c8687d5bd v0-8       208s  sr_bp   7.93 deg/s  sa_bp  0.491 deg  u_bp  0.0090  p95|rate|  79.0  <=1LSB 0.54  nlvl 351  |H|4Hz 755  1/|H| 0.00132  coh4 0.47  R2_fb 0.725  R2_fb+u 1.000
+00000075--6c8687d5bd v8-15      335s  sr_bp   4.43 deg/s  sa_bp  0.280 deg  u_bp  0.0036  p95|rate|  26.4  <=1LSB 0.62  nlvl 210  |H|4Hz 1281  1/|H| 0.00078  coh4 0.87  R2_fb 0.951  R2_fb+u 1.000
+00000075--6c8687d5bd v15-99     216s  sr_bp   3.23 deg/s  sa_bp  0.217 deg  u_bp  0.0021  p95|rate|  10.1  <=1LSB 0.64  nlvl 127  |H|4Hz 1519  1/|H| 0.00066  coh4 0.91  R2_fb 0.963  R2_fb+u 1.000

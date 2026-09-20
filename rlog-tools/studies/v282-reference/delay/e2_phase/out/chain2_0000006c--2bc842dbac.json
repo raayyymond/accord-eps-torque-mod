@@ -1,0 +1,57 @@
+{
+ "4": {
+  "candidates": {
+   "carControl_k0": {
+    "scale": -3373.7867059479304,
+    "rms": 370.763493991667,
+    "frac_within_1lsb": 0.0003094059405940594,
+    "accept": false
+   },
+   "carControl_k1": {
+    "scale": -3428.0556075770987,
+    "rms": 348.58469609428414,
+    "frac_within_1lsb": 0.012689569792633859,
+    "accept": false
+   },
+   "carControl_k2": {
+    "scale": -3471.129152468894,
+    "rms": 328.7477850067653,
+    "frac_within_1lsb": 0.017027863777089782,
+    "accept": false
+   },
+   "carControl_k3": {
+    "scale": -3511.2411893390486,
+    "rms": 309.7247526339627,
+    "frac_within_1lsb": 0.01610405698358625,
+    "accept": false
+   },
+   "carOutput_k0": {
+    "scale": -4088.598080289638,
+    "rms": 43.874316283384395,
+    "frac_within_1lsb": 0.07425742574257425,
+    "accept": false
+   },
+   "carOutput_k1": {
+    "scale": -4075.4016617104116,
+    "rms": 78.33217978803286,
+    "frac_within_1lsb": 0.03806870937790158,
+    "accept": false
+   },
+   "carOutput_k2": {
+    "scale": -4055.633179135877,
+    "rms": 111.19580027630454,
+    "frac_within_1lsb": 0.029411764705882353,
+    "accept": false
+   },
+   "carOutput_k3": {
+    "scale": -4029.9205964796665,
+    "rms": 142.86126453757132,
+    "frac_within_1lsb": 0.021678538247135337,
+    "accept": false
+   }
+  },
+  "accepted": [],
+  "D_ctl_ms": null,
+  "verdict": "NOT ESTABLISHED - no stream/offset matches the sent 0xE4 within 1 LSB on 90 % of frames"
+ }
+}

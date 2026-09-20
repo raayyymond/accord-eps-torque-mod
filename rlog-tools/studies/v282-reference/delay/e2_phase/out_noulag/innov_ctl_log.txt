@@ -1,0 +1,32 @@
+closed_F0_Ka.01_d.01 D30 v0-8 n4 | direct 57.9 J1.0e-06 nb11 | iv 69.1 J1.0e-06 nb11
+closed_F0_Ka.01_d.01 D30 v8-15 n15 | direct 53.8 J1.0e-06 nb8 | iv 63.4 J1.0e-06 nb7
+closed_F0_Ka.01_d.01 D30 v15-99 n27 | direct 1.0 J2.5e-05 nb6 | iv 59.7 J1.0e-06 nb16
+closed_F0_Ka.01_d.01 D30 v8-99 n42 | direct -- | iv 65.6 J1.0e-06 nb12
+closed_F0_Ka.01_d.01 D60 v0-8 n4 | direct 80.2 J1.0e-06 nb11 | iv 84.9 J1.0e-06 nb12
+closed_F0_Ka.01_d.01 D60 v8-15 n15 | direct 82.8 J1.0e-06 nb8 | iv 80.6 J1.0e-06 nb11
+closed_F0_Ka.01_d.01 D60 v15-99 n27 | direct 55.4 J1.0e-06 nb7 | iv 71.8 J1.0e-06 nb13
+closed_F0_Ka.01_d.01 D60 v8-99 n42 | direct 86.2 J1.0e-06 nb6 | iv 77.4 J1.0e-06 nb12
+closed_F.02_Ka.01_d.01 D30 v0-8 n4 | direct 58.6 J1.0e-06 nb11 | iv 68.9 J1.0e-06 nb11
+closed_F.02_Ka.01_d.01 D30 v8-15 n15 | direct 56.1 J1.0e-06 nb5 | iv 62.3 J1.0e-06 nb8
+closed_F.02_Ka.01_d.01 D30 v15-99 n27 | direct -- | iv 65.4 J1.0e-06 nb12
+closed_F.02_Ka.01_d.01 D30 v8-99 n42 | direct -- | iv 64.0 J1.0e-06 nb9
+closed_F.02_Ka.01_d.01 D60 v0-8 n4 | direct 80.1 J1.0e-06 nb10 | iv 86.8 J1.0e-06 nb11
+closed_F.02_Ka.01_d.01 D60 v8-15 n15 | direct 80.8 J1.0e-06 nb5 | iv 79.8 J1.0e-06 nb11
+closed_F.02_Ka.01_d.01 D60 v15-99 n27 | direct -- | iv 72.9 J1.0e-06 nb12
+closed_F.02_Ka.01_d.01 D60 v8-99 n42 | direct 80.9 J1.0e-06 nb5 | iv 76.1 J1.0e-06 nb12
+closed_F.02_Kr.002_Ka.02_d.005 D30 v0-8 n4 | direct 47.0 J3.9e-05 nb14 | iv 60.5 J1.0e-06 nb13
+closed_F.02_Kr.002_Ka.02_d.005 D30 v8-15 n15 | direct 37.6 J8.6e-05 nb9 | iv 62.3 J1.0e-06 nb9
+closed_F.02_Kr.002_Ka.02_d.005 D30 v15-99 n27 | direct -- | iv 62.3 J1.0e-06 nb16
+closed_F.02_Kr.002_Ka.02_d.005 D30 v8-99 n42 | direct 58.5 J1.0e-06 nb4 | iv 60.8 J1.0e-06 nb11
+closed_F.02_Kr.002_Ka.02_d.005 D60 v0-8 n4 | direct 78.3 J1.0e-06 nb12 | iv 81.9 J1.0e-06 nb12
+closed_F.02_Kr.002_Ka.02_d.005 D60 v8-15 n15 | direct 47.2 J1.4e-04 nb9 | iv 84.7 J1.0e-06 nb9
+closed_F.02_Kr.002_Ka.02_d.005 D60 v15-99 n27 | direct -- | iv 83.2 J1.0e-06 nb12
+closed_F.02_Kr.002_Ka.02_d.005 D60 v8-99 n42 | direct 80.6 J1.0e-06 nb6 | iv 84.1 J1.0e-06 nb11
+open_F.02 D30 v0-8 n4 | direct 30.3 J6.9e-05 nb17 | iv 35.6 J5.2e-05 nb16
+open_F.02 D30 v8-15 n15 | direct 30.2 J8.2e-05 nb16 | iv 37.5 J5.8e-05 nb8
+open_F.02 D30 v15-99 n27 | direct -- | iv --
+open_F.02 D30 v8-99 n42 | direct 30.5 J8.2e-05 nb15 | iv --
+open_F.02 D60 v0-8 n4 | direct 60.4 J6.7e-05 nb17 | iv 64.8 J5.3e-05 nb17
+open_F.02 D60 v8-15 n15 | direct 59.2 J8.4e-05 nb16 | iv 65.2 J5.5e-05 nb13
+open_F.02 D60 v15-99 n27 | direct -- | iv 45.1 J7.9e-05 nb5
+open_F.02 D60 v8-99 n42 | direct 59.6 J8.3e-05 nb14 | iv 65.2 J4.9e-05 nb11

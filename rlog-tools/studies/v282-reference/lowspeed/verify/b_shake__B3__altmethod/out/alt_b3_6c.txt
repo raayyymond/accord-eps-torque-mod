@@ -1,0 +1,8 @@
+route 0000006c--68c6e94b17 <8 m/s, n_runs_used 13, total secs 84
+ALT pp-amplitude (max-min in 0.3s window): p50=3.07 p90=40.41 deg/s
+ALT episodes (pp>=8 deg/s sustained >=1.5s): n=4 total_s=9.1 per_100s=10.81
+  episode durations: p50=2.06s max=3.41s
+ALT peak-decay (local-extrema based, all peaks height>=3): n=141 median ratio(+0.8s)=0.619
+ALT peak-decay (peaks height>=6, matches b04 gate): n=102 median ratio(+0.8s)=0.646
+ALT zero-crossing period (raw, ungated): n=409 p10=0.300s p50=0.380s p90=0.504s CV=0.273
+  (a locked relay/limit cycle would show CV << this and a tight p10-p90 band)

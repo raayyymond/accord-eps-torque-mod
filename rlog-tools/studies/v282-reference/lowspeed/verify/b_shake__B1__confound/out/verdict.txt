@@ -1,0 +1,38 @@
+B1 adversarial confound check — REFUTED (specific magnitude), qualitative direction unresolved.
+
+Method: recomputed bs.est() (same estimator as b07_rank.py) from out/b02_rows.json directly,
+dropping the T64B route (0000006e--6ca3e014fd, 4x the demand of 6c/6d, hold-level off) that the
+finding's own text already flags as an outlier in the 6-8 m/s "exception" discussion, but which
+the reported headline numbers (13% observer share; 3-8 m/s pooled b_eq; 6-8>3-6 energy ranking)
+never re-derive without.
+
+Result, 3-8 m/s bin:
+  pooled  rev64 (T64+T64B, 3 routes, 228 s): dob_log -1.12e-4, ffwd -7.36e-4, hyst -0.42e-4
+          -> observer share of (dob+ffwd+hyst) = 12.6%   [matches the finding's ~13%]
+  T64-only (6c+6d, 2 routes, 113 s):         dob_log -1.16e-4, ffwd -3.69e-4, hyst -0.13e-4
+          -> observer share = 23.2%  (point estimate nearly DOUBLES)
+  Block bootstrap (2000, by route+block): ffwd CI [-6.30,-0.73]e-4 (T64-only, n=2 routes) vs
+  [-9.79,-2.86]e-4 (pooled) -- wide but the point estimate shift is large and the observer's own
+  b_eq barely moves (-1.12 -> -1.16), so the % shift is driven almost entirely by ffwd shrinking
+  when the 4x-demand route leaves the pool.
+
+Energy-share ranking also flips: pooled rev64 says 6-8 m/s carries more of the <8 m/s shake energy
+than 3-6 m/s (51.3% vs 40.8%). Drop T64B: 3-6 m/s becomes dominant (52.7% vs 28.3%). T64B alone
+carries most of ITS OWN energy in the 6-8 bin (66.7%), which is what drives the pooled ranking.
+
+Separately (not part of the requested confound, but found while checking T4/T5 group composition):
+route 75 (T4, labelled "rev 4" in v282cmp.py / cl_recon.py) has the logged observer signal
+IDENTICALLY ZERO for all 86,494 samples (std 0.0) -- it already flew with the observer off. It is
+NOT a valid stand-in for "ARM-D" (rev 6.4 + observer off) though: cl_recon.py's own config table
+shows T4 also differs from the flown rev-6.4 config in Ki (0.6 scheduled to 2.5 by 18 m/s vs rev
+6.4's flat 0.3), Kp (0.85, unspecified for 6.4), Kv (0.0006) and rate_rc (0.03 vs the 0.01 s
+mentioned for rev 6.4/rev5). So it cannot be used to directly confirm or refute B1 either; flagging
+it because a reader could otherwise mistake T4 for a real ARM-D data point.
+
+Verdict: the finding's specific magnitude ("~13%", the 6-8-carries-more-energy framing) is a
+pooling artifact of the 4x-demand T64B route and does not survive dropping it -- the number moves
+to ~23% with wide, small-n uncertainty. The finding's own text already shows awareness that T64B
+dominates the 6-8 m/s exception case, but does not propagate that into the headline 3-8 m/s number.
+The qualitative direction (observer is A feeder, not obviously THE dominant one, below 8 m/s) is
+not disproven, but is now underdetermined -- 23% vs 13% is well within "meaningfully undersized
+lever" territory rather than "clearly minor."

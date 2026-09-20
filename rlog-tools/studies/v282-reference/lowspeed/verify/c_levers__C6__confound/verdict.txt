@@ -1,0 +1,54 @@
+ADVERSARIAL CONFOUND VERIFICATION -- finding C6 (c_levers instrument facts + lever-reach table)
+Script: verify_c6.py (same directory). Raw numbers: out/verify_c6_results.json.
+
+SCOPE NOTE: C6 makes no V282 comparison (CFG in cl_recon.py holds only the 5 torque-mode routes).
+The generic confound-lens line "V282 is mostly one 62-segment route -- leave it out and re-test" does
+not apply to this finding's content; it is a template note from the harness, not a defect in C6.
+
+CONFIRMED, independently reproduced from existing c_levers outputs:
+  1. Rebuild validation (corr 0.9992-0.99995, p50 |residual| 0.00015-0.0005, p95 below 8 m/s
+     0.0017-0.007) -- exact match to out/validate.json across all 5 routes and both speed cuts.
+  2. Stick-slip p90 mask-sensitivity: on the loose 'us' mask (V.usable, includes creep, no
+     steeringPressed guard) T64 below 8 m/s gives n=26, p90=12.56 deg. With the ±0.5 s
+     steeringPressed-dilation guard (fill_lowspeedlarg HO mask) T64 gives n=17, p90=4.59 deg;
+     T64B gives p90=2.92 deg. All three numbers reproduce the claim (12.6/26, 4.6/17, ~3.0) almost
+     exactly. The recommended metric fix (count jumps >=7 deg per 100 deg of turn travel, not a p90)
+     is a reasonable response to a real small-n-tail problem.
+  3. Big-jump census TOTAL and ANGLE RANGE: 18 jumps >=7 deg, hands-off (>=1.0 s from steeringPressed
+     for 17/18; the 18th sits at 0.98 s, immaterial), spanning |angle| 9.8-151.6 deg -- both reproduce
+     the claim's "18 jumps... 10-152 deg" essentially exactly.
+
+FOUND WRONG (concrete, reproducible):
+  4. Per-route breakdown of the 18 big jumps. Claim: T64=7, T64B=6, T5=1, T4=4. Reproducible from
+     cl_bigjumps.py's own output (bigjumps.json): T64=5, T64B=8, T5=1, T4=4. Total is unchanged (18),
+     but the claimed split UNDERSTATES T64B's share (44% reproducible vs 33% claimed). Since T64B is
+     exactly the route flagged as carrying ~4x the demand of 6c/6d, this is the direction the CONFOUND
+     lens asks about, and the corrected number makes the confound concern slightly WORSE, not better:
+     T64B (highest demand, no hold-level) contributes the largest single share of the large-snap
+     census, so a naive per-route table can look like "T64 snaps more" when in the reproducible data
+     it does not.
+  5. AccordFrictionHyst "z saturated 98-100% of turn and transient frames": true only for the
+     TRANSIENT subset (|rate_des|>=40, 96.9-100% saturated, matches). Restricted to ordinary TURN
+     frames (|angle_des|>=15, not fast-rate) the reproducible saturation is 61-85%, not 98-100% --
+     cl_reach.py never actually computes a turn-only zsat (its FR['zsat'] is over ALL hands-off frames
+     in the speed bin, not the turn subset), so this number in the finding was not checked against its
+     own instrument before being written down. This partially, not fully, weakens the "no dynamic
+     reach" support for AccordFrictionHyst's LOW-reach verdict: 15-39% of ordinary turning time the
+     term is unpinned. It does not reverse the verdict (z_build in large jumps ~0 is untouched by this
+     check, and the term is still saturated the plurality/majority of the time).
+
+CONFOUND question on the "Main result" (observer + rate-loop gain are the two high-reach levers):
+  The pooled 6-15 m/s overshoot-after-dwell-release statistic (observer-on group T64+T64B+T5, n=149,
+  0.61) is close to the T64-ONLY subgroup already reported in the finding's own out/overshoot_summary.txt
+  (n=58, 0.57) -- so the headline number is NOT an artifact of T64B's higher demand pulling the pooled
+  figure up; T64-alone shows nearly the same effect size against T4 (0.18, no observer). At 6-8 m/s the
+  T64-only n drops to 6, too small to rule out T64B/T5 dominating that narrower band's 0.77. The finding
+  already discloses, in its own caveats, that T64 vs T4 differs in Kp/Ki/Kv/rate_rc/schedule as well as
+  the observer, so "observer -> overshoot" is correctly labeled association/mechanism, not proven
+  causation. That caveat is appropriate and is not undermined by anything found here.
+
+NET: the finding's central instrument facts and its stick-slip-metric recommendation SURVIVE
+independent reproduction almost exactly. Two supporting numbers inside the lever-reach table do not
+reproduce as written (item 4, item 5) and should be corrected; neither reverses the finding's
+qualitative conclusions, and item 4's correction if anything sharpens (does not refute) the CONFOUND
+concern the lens asked about.

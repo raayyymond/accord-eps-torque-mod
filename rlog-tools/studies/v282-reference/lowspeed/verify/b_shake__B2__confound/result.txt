@@ -1,0 +1,16 @@
+=== window-time weight of the dominant V282 route ===
+00000064--ce6b0b0ebb n_windows<8: 53
+00000065--b9f78988bd n_windows<8: 57
+0000006c--2bc842dbac n_windows<8: 322
+
+=== V282 <8 m/s: full group vs excluding the dominant route ===
+<3    full: rate 3.92 [3.358987188020788, 4.467782526328464] H 0.27  |  excl-dominant: rate 5.99 [4.785935661128614, 7.063565419794436] H 0.36
+3-6   full: rate 1.77 [1.4776059743333299, 2.0763749579318738] H 0.19  |  excl-dominant: rate 1.85 [1.534008668800401, 2.1712822552531152] H 0.28
+6-8   full: rate 1.52 [1.1251457118020123, 1.9288687924349397] H 0.36  |  excl-dominant: rate 2.01 [1.1185235628756764, 2.8212950457730357] H 0.45
+<8    full: rate 2.61 [2.310404854933751, 2.9443947774803365] H 0.25  |  excl-dominant: rate 3.40 [2.736416537479369, 3.9887801770912366] H 0.33
+
+=== rev64 (torque) <8 m/s: full group (incl 4x-demand T64B) vs T64 only (excl T64B) ===
+rev64 full: rate 9.74 [7.679610673385392, 11.717388957121152]  |  T64-only (excl T64B): rate 8.64 [6.592411017195849, 10.510417364073712]
+
+=== independent T4 route (different day/road, matched low demand), <8 m/s ===
+T4 <8: rate 10.71 [7.65902225781895, 13.517161057893704]

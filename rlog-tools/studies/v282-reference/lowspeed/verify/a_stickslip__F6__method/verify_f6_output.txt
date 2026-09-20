@@ -1,0 +1,41 @@
+=== 1. composition shares at 2-8 m/s (all dwells) ===
+  P        change=+0.006031  share=16.81%
+  hold_ff  change=+0.009993  share=27.86%
+  move     change=+0.004692  share=13.08%
+  z        change=+0.009177  share=25.58%
+  rl       change=+0.002384  share= 6.65%
+  dob      change=+0.003593  share=10.02%
+  sum=0.035871   n=145  dwell_s(median)=0.48
+  F6 claims: hold_ff~28%, z~26%, P 17%, move 14%, observer 9%, rl 7%
+  -> hold_ff, z, P, rl reproduce to within ~0.2 pt of "about" language.
+  -> move recomputes 13.08% (claim says 14%, ~1 pt low).
+  -> dob (observer) recomputes 10.02% (claim says 9%, ~1 pt high). Both within "about" tolerance.
+
+=== 2. shortfall at dwell start (Coulomb friction half-width F), 2-8 m/s ===
+  F = 0.0309  CI [0.026951731460058238, 0.03651533083897297]  n=145
+  F6 claims "about 0.033" -> point estimate 0.0309, well within the 95% CI [0.027, 0.037]. Confirmed (order + CI).
+
+=== 3. z lever reach: max contribution vs degrees of travel needed ===
+  hyst_run: z += d_ang_deg * fric/band, clipped to +/-fric.  fric=0.015, band(<=8 m/s)=3.0 -> rate=0.005/deg
+  degrees to move z by one fric-width (0 -> +fric, e.g. -0.015 -> 0.000): 3.00 deg
+  degrees to move z across its FULL range (-fric -> +fric = 0.030): 6.00 deg
+  F6 claims: "z can contribute at most 0.030 [=2*fric] and needs 3 deg ... to do so."
+  3 deg buys exactly ONE fric-width (0.015), not the full 0.030 (peak-to-peak) it is paired with.
+  The full 0.030 swing needs 6 deg of monotonic desired-angle travel, not 3. FACTOR-OF-2 ERROR.
+
+=== 3b. cross-check against the ACTUAL median dwell (2-8 m/s, torque routes) ===
+  median desired-angle travel during the dwell: 2.39 deg (CI [2.1197776794433594, 2.652818312868476])
+  median z change over that dwell (a_stickslip accumulation table): 0.0092
+  predicted from rate*travel: 0.0120  (roughly consistent, both well under 0.015, let alone 0.030)
+  Real dwells (median ~2.4 deg of one-directional demand travel) do not even reach the 3 deg needed for one
+  fric-width of z, let alone the 6 deg needed for the claimed 0.030 max. The "0.030 at 3 deg" pairing does
+  not hold in theory OR in the observed data.
+
+=== 4. hold-map static-friction offset ===
+  latcontrol_vehicle_tunes.py:273 defines HONDA_ACCORD_HOLD_STATIC_FRICTION = 0.020 but grep shows it is
+  referenced ONLY in a docstring (get_honda_accord_hold_torque, line 2622: "the static friction is NOT
+  included") and never applied in get_honda_accord_hold_torque's return value. F6's claim CONFIRMED.
+
+=== 5. observer fade schedule ===
+  HONDA_ACCORD_DOB_FADE_V_BP = [3.0, 6.0] (latcontrol_vehicle_tunes.py:410), fade = interp(v,[3,6],[0,1]).
+  F6 claims "faded out below 3-6 m/s" -> EXACT MATCH to the fork constant.

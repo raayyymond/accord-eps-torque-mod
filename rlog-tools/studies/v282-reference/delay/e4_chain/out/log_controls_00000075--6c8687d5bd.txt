@@ -1,0 +1,11 @@
+true fc=5.05 dd=4 level (inf, 34, 0.926945666022523) diff (5, 4, 0.7672665898077581)
+true fc=inf dd=30 level (inf, 30, 0.9270394823280631) diff (inf, 30, 0.7787778163657895)
+true fc=inf dd=60 level (inf, 60, 0.9268971230533093) diff (inf, 60, 0.7837218675134188)
+true fc=3.0 dd=20 level (inf, 67, 0.9261698771488927) diff (3, 20, 0.7449906481695838)
+real {'lag_ms': 20, 'lag_refined_ms': np.float64(20.4), 'corr': -0.6791604292359469, 'runs': 7}
+8e-05 0.003 30 {'lag_ms': 130, 'lag_refined_ms': np.float64(133.5), 'corr': -0.7055032351204648, 'runs': 7}
+8e-05 0.003 60 {'lag_ms': 160, 'lag_refined_ms': np.float64(164.9), 'corr': -0.6934086872447229, 'runs': 7}
+8e-05 0.0006 30 {'lag_ms': 170, 'lag_refined_ms': np.float64(166.8), 'corr': -0.6437122191138648, 'runs': 7}
+8e-05 0.0006 60 {'lag_ms': 200, 'lag_refined_ms': np.float64(197.8), 'corr': -0.6383316513910813, 'runs': 7}
+0.001 0.003 30 {'lag_ms': 10, 'lag_refined_ms': np.float64(10.9), 'corr': 0.6335546393029554, 'runs': 7}
+0.001 0.003 60 {'lag_ms': 40, 'lag_refined_ms': np.float64(41.0), 'corr': 0.6223888455411977, 'runs': 7}

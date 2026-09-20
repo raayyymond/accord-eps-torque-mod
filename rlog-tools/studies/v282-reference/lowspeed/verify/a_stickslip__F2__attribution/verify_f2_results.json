@@ -1,0 +1,333 @@
+{
+ "identity_check": {
+  "route": "0000006c--68c6e94b17",
+  "LAF": 14.0,
+  "resid_rms_on_HO_2to15": 3.2811733133535e-09,
+  "resid_rms_on_act_ANY_SPEED": 0.005072545076024533,
+  "lstsq_coef_on_HO": 0.0714285713752201,
+  "lstsq_intercept_on_HO": 4.4541127753269196e-12,
+  "one_over_LAF": 0.07142857142857142,
+  "note": "F2's method line claims 'residual rms 0.0008 on 6c'. On the pipeline's own HO&2-15m/s mask the true residual is ~1e-9 (machine precision) and the lstsq coef is exact -1/LAF to 7 places. F2's 0.0008 was likely computed on a looser mask (e.g. all-active, all-speed) where the PID clip/override/i-unwind branches (steeringPressed, saturation) break the linear identity -- confirmed separately: resid rms on the bare 'active' mask (no speed/press gate) is ~0.005, 6x the claimed 0.0008. This does not weaken F2 -- within the mask F2 actually uses (HO, 2-15 m/s), the identity is essentially exact, stronger than F2 states."
+ },
+ "rerun_dwmin20_matches_checked_in_json": {
+  "2-8": {
+   "n": 145,
+   "terms": {
+    "cmd": [
+     0.03550205592714362,
+     [
+      0.03242859684908508,
+      0.04146649931227296
+     ]
+    ],
+    "P": [
+     0.006031363650781087,
+     [
+      0.005314152841677249,
+      0.006741375677435834
+     ]
+    ],
+    "I": [
+     -0.0003875294262860703,
+     [
+      -0.0007838209199093322,
+      0.0002886685739307628
+     ]
+    ],
+    "hold_ff": [
+     0.009992866200728118,
+     [
+      0.00857483578824535,
+      0.011369791501230552
+     ]
+    ],
+    "move": [
+     0.004691514620101551,
+     [
+      0.003471826396508047,
+      0.005214582659055415
+     ]
+    ],
+    "z": [
+     0.00917732767647349,
+     [
+      0.00802884492930947,
+      0.009789210316724594
+     ]
+    ],
+    "rl": [
+     0.0023841711467208243,
+     [
+      0.0014572984114631343,
+      0.0030067371253653394
+     ]
+    ],
+    "dob": [
+     0.0035934171071481803,
+     [
+      0.0010564139943984132,
+      0.008639515176481736
+     ]
+    ]
+   }
+  },
+  "8-15": {
+   "n": 366,
+   "terms": {
+    "cmd": [
+     0.03751446546038757,
+     [
+      0.03382903487122243,
+      0.04174686722693217
+     ]
+    ],
+    "P": [
+     0.007151312658775889,
+     [
+      0.006547942197328897,
+      0.00746808215103556
+     ]
+    ],
+    "I": [
+     0.0008497465176313328,
+     [
+      0.000726522351732511,
+      0.0009094331507320873
+     ]
+    ],
+    "hold_ff": [
+     0.012468848999699736,
+     [
+      0.011766145498387592,
+      0.013579718657745295
+     ]
+    ],
+    "move": [
+     0.004290376500951727,
+     [
+      0.0037627210127059367,
+      0.004864047030835266
+     ]
+    ],
+    "z": [
+     0.008416505866075766,
+     [
+      0.007304281474813347,
+      0.009640292740891652
+     ]
+    ],
+    "rl": [
+     0.0007440168575696161,
+     [
+      0.00043563395587280115,
+      0.001059223355129244
+     ]
+    ],
+    "dob": [
+     0.0037809815244269534,
+     [
+      0.000979971004472152,
+      0.006318980659717315
+     ]
+    ]
+   }
+  }
+ },
+ "rerun_byte_identical_to_checked_in": {
+  "2-8": true,
+  "8-15": true
+ },
+ "f2_stated_numbers_vs_reruns": {
+  "below_8ms": {
+   "cmd": {
+    "f2": 0.034,
+    "dwmin20": 0.03550205592714362,
+    "dwmin12": 0.03327240091703159
+   },
+   "hold_ff": {
+    "f2": 0.0096,
+    "dwmin20": 0.009992866200728118,
+    "dwmin12": 0.009109458710916306
+   },
+   "z": {
+    "f2": 0.0087,
+    "dwmin20": 0.00917732767647349,
+    "dwmin12": 0.008277011800972652
+   },
+   "P": {
+    "f2": 0.0057,
+    "dwmin20": 0.006031363650781087,
+    "dwmin12": 0.005819631254017886
+   },
+   "move": {
+    "f2": 0.0046,
+    "dwmin20": 0.004691514620101551,
+    "dwmin12": 0.004455962063197129
+   },
+   "dob": {
+    "f2": 0.0032,
+    "dwmin20": 0.0035934171071481803,
+    "dwmin12": 0.003503792633353598
+   },
+   "rl": {
+    "f2": 0.0023,
+    "dwmin20": 0.0023841711467208243,
+    "dwmin12": 0.0021874441716096945
+   },
+   "I": {
+    "f2": -0.0003,
+    "dwmin20": -0.0003875294262860703,
+    "dwmin12": -0.00010798386861390628
+   }
+  },
+  "ms8_15": {
+   "hold_ff": {
+    "f2": 0.011,
+    "dwmin20": 0.012468848999699736,
+    "dwmin12": 0.011918311367328495
+   },
+   "z": {
+    "f2": 0.0076,
+    "dwmin20": 0.008416505866075766,
+    "dwmin12": 0.00788461549344172
+   },
+   "P": {
+    "f2": 0.0067,
+    "dwmin20": 0.007151312658775889,
+    "dwmin12": 0.006866817586903584
+   },
+   "move": {
+    "f2": 0.0042,
+    "dwmin20": 0.004290376500951727,
+    "dwmin12": 0.004362155912950098
+   },
+   "dob": {
+    "f2": 0.0029,
+    "dwmin20": 0.0037809815244269534,
+    "dwmin12": 0.0035012485361982917
+   },
+   "I": {
+    "f2": 0.0005,
+    "dwmin20": 0.0008497465176313328,
+    "dwmin12": 0.0007937965547171189
+   }
+  },
+  "note": "F2's raw mean-change numbers are systematically ~2-12% below the DWMIN=20 (primary, checked-in) json and track the DWMIN=12 sensitivity run noticeably more closely for the <8 m/s band (cmd 0.0333 @dw12 vs claimed 0.034, vs 0.0355 @dw20). Likely a reporting/rounding mismatch (quoting the sensitivity run's numbers, or an intermediate draft) rather than a methodological error -- both runs agree on direction and the fractional split (see below)."
+ },
+ "magnitude_fraction_recheck": {
+  "dwmin20_below8": {
+   "total": 0.03550205592714362,
+   "FF_frac": 0.6721218778504412,
+   "P_frac": 0.169887728844732,
+   "I_frac": -0.010915689702065365
+  },
+  "dwmin12_below8": {
+   "total": 0.03327240091703159,
+   "FF_frac": 0.656472991821438,
+   "P_frac": 0.17490866584980688,
+   "I_frac": -0.0032454486492626724
+  },
+  "dwmin20_8to15": {
+   "total": 0.03751446546038757,
+   "FF_frac": 0.6710939648949787,
+   "P_frac": 0.19062813693366182,
+   "I_frac": 0.022651169547613592
+  },
+  "dwmin12_8to15": {
+   "total": 0.03612217852271495,
+   "FF_frac": 0.6689818765644056,
+   "P_frac": 0.19009976329598938,
+   "I_frac": 0.021975323393575236
+  },
+  "f2_claimed": "FF 68%, P 17%, I 0% (below 8 m/s)"
+ },
+ "largest_last100_recheck": {
+  "dwmin20_below8": {
+   "P": 0.05517241379310345,
+   "I": 0.020689655172413793,
+   "hold_ff": 0.2689655172413793,
+   "move": 0.027586206896551724,
+   "z": 0.3448275862068966,
+   "rl": 0.020689655172413793,
+   "dob": 0.2620689655172414
+  },
+  "dwmin12_below8": {
+   "P": 0.08064516129032258,
+   "I": 0.016129032258064516,
+   "hold_ff": 0.25806451612903225,
+   "move": 0.026881720430107527,
+   "z": 0.34946236559139787,
+   "rl": 0.016129032258064516,
+   "dob": 0.25268817204301075
+  },
+  "dwmin20_8to15": {
+   "P": 0.02185792349726776,
+   "I": 0.03278688524590164,
+   "hold_ff": 0.5218579234972678,
+   "move": 0.01912568306010929,
+   "z": 0.00819672131147541,
+   "rl": 0.01366120218579235,
+   "dob": 0.3825136612021858
+  },
+  "dwmin12_8to15": {
+   "P": 0.023255813953488372,
+   "I": 0.03488372093023256,
+   "hold_ff": 0.5302325581395348,
+   "move": 0.030232558139534883,
+   "z": 0.011627906976744186,
+   "rl": 0.011627906976744186,
+   "dob": 0.3581395348837209
+  },
+  "f2_claimed_below8": "z 34%, hold FF 27%, observer 26%, P 6%, I 2%",
+  "f2_claimed_8to15": "hold FF 52%, observer 38%, P 2%"
+ },
+ "sign_alignment_check": {
+  "with_demand_frac_2to15": 0.9608610567514677,
+  "n_2to15": 511,
+  "with_demand_frac_below8": 0.9241379310344827,
+  "n_below8": 145,
+  "with_demand_frac_8to15": 0.9754098360655737,
+  "n_8to15": 366,
+  "note": "F2 sign-aligns every term by sjump (the eventual jump direction). hold_ff/z/move are actually driven by the DEMAND direction (sdem). They agree in 92-98% of episodes, so this does not materially affect the attribution."
+ },
+ "z_reconstruction_quality_caveat": {
+  "per_route": {
+   "0000006c--68c6e94b17": {
+    "z_rms": 0.011173739401585385,
+    "zres_rms": 0.013796935904685139,
+    "err_rms": 0.009770975800553023,
+    "err_p95": 0.014696759180313672,
+    "corr": 0.8184129271133527
+   },
+   "0000006d--05e83bb04f": {
+    "z_rms": 0.011031123737798002,
+    "zres_rms": 0.013056694367795135,
+    "err_rms": 0.008840812093395987,
+    "err_p95": 0.013588020644183059,
+    "corr": 0.8268450784375464
+   },
+   "0000006e--6ca3e014fd": {
+    "z_rms": 0.011495907811410203,
+    "zres_rms": 0.012142946654938435,
+    "err_rms": 0.008298385658147505,
+    "err_p95": 0.012700848159519999,
+    "corr": 0.7905528378849089
+   },
+   "00000075--6c8687d5bd": {
+    "z_rms": 0.011833354399129943,
+    "zres_rms": 0.012820197973506288,
+    "err_rms": 0.00803090594252043,
+    "err_p95": 0.01144542457780037,
+    "corr": 0.8232061329980237
+   },
+   "00000076--d0b7ea7e4d": {
+    "z_rms": 0.012476884103671758,
+    "zres_rms": 0.013002385408366677,
+    "err_rms": 0.008443426045613088,
+    "err_p95": 0.01634697347535268,
+    "corr": 0.8165062549592425
+   }
+  },
+  "note": "corr(z, z_resid) ~0.79-0.83 and err_rms (~0.008-0.010) is comparable in magnitude to z's own rms (~0.011-0.013) across the torque routes. The AGGREGATE F-vs-P-vs-I split (F2's headline 68/17/0) only needs F_t = -f/LAF, which is measured exactly (see identity_check) and does NOT depend on this reconstruction. But the FINE split of F into hold/z/move/rl/dob individually (the 'largest_last100' percentages, e.g. 'z in 34% of episodes') carries real reconstruction uncertainty this fit quality implies, which F2 does not flag."
+ }
+}

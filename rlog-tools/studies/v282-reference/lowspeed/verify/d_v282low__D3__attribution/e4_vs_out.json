@@ -1,0 +1,123 @@
+[
+ {
+  "route": "00000064--ce6b0b0ebb",
+  "group": "V282",
+  "sec": 47.0,
+  "n": 8515,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.1738,
+  "hf_lf_e4": 0.1116,
+  "ratio_e4_over_out": 0.642,
+  "corr_out_e4": -0.9686
+ },
+ {
+  "route": "00000065--b9f78988bd",
+  "group": "V282",
+  "sec": 61.6,
+  "n": 9063,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.2684,
+  "hf_lf_e4": 0.1004,
+  "ratio_e4_over_out": 0.374,
+  "corr_out_e4": -0.9117
+ },
+ {
+  "route": "0000006c--2bc842dbac",
+  "group": "V282",
+  "sec": 299.2,
+  "n": 36254,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.1805,
+  "hf_lf_e4": 0.0862,
+  "ratio_e4_over_out": 0.478,
+  "corr_out_e4": -0.9488
+ },
+ {
+  "route": "00000039--f56039af87",
+  "group": "V282old",
+  "sec": 181.0,
+  "n": 21784,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.0962,
+  "hf_lf_e4": 0.0701,
+  "ratio_e4_over_out": 0.729,
+  "corr_out_e4": -0.9665
+ },
+ {
+  "route": "0000003a--283a39a1d6",
+  "group": "V282old",
+  "sec": 27.9,
+  "n": 5648,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.0358,
+  "hf_lf_e4": 0.0341,
+  "ratio_e4_over_out": 0.953,
+  "corr_out_e4": -0.9995
+ },
+ {
+  "route": "0000003c--927965c2b4",
+  "group": "V282old",
+  "sec": 58.6,
+  "n": 8707,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.1067,
+  "hf_lf_e4": 0.0727,
+  "ratio_e4_over_out": 0.681,
+  "corr_out_e4": -0.9927
+ },
+ {
+  "route": "0000006c--68c6e94b17",
+  "group": "T64",
+  "sec": 63.4,
+  "n": 7217,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.0839,
+  "hf_lf_e4": 0.083,
+  "ratio_e4_over_out": 0.989,
+  "corr_out_e4": -0.9999
+ },
+ {
+  "route": "0000006d--05e83bb04f",
+  "group": "T64",
+  "sec": 69.4,
+  "n": 8108,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.1884,
+  "hf_lf_e4": 0.1332,
+  "ratio_e4_over_out": 0.707,
+  "corr_out_e4": -0.9711
+ },
+ {
+  "route": "0000006e--6ca3e014fd",
+  "group": "T64B",
+  "sec": 126.0,
+  "n": 14976,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.1626,
+  "hf_lf_e4": 0.1433,
+  "ratio_e4_over_out": 0.881,
+  "corr_out_e4": -0.9904
+ },
+ {
+  "route": "00000076--d0b7ea7e4d",
+  "group": "T5",
+  "sec": 55.1,
+  "n": 7304,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.0778,
+  "hf_lf_e4": 0.0775,
+  "ratio_e4_over_out": 0.996,
+  "corr_out_e4": -0.9999
+ },
+ {
+  "route": "00000075--6c8687d5bd",
+  "group": "T4",
+  "sec": 171.1,
+  "n": 19107,
+  "e4_nan_frac": 0.0,
+  "hf_lf_out": 0.0645,
+  "hf_lf_e4": 0.0639,
+  "ratio_e4_over_out": 0.991,
+  "corr_out_e4": -0.9999
+ }
+]

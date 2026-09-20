@@ -1,0 +1,22 @@
+===== speed bin <3 =====
+  T64    absang: n=  34 mean=  13.7 p50=  2.5 p90=  47.8
+  T64B   absang: n=  15 mean=   1.2 p50=  0.9 p90=   2.3
+  V282   absang: n= 139 mean=   7.9 p50=  5.7 p90=  14.4
+  0-5deg    T64 n=  20 model=  6.73 setpt=  2.96  |  T64B n=  15 model=  6.95 setpt=  2.77  |  V282 n=  65 model=  5.87 setpt=  5.11
+  5-10deg   T64 n=   4 model=  5.09 setpt=  2.27  |  T64B n=   0 model=  0.00 setpt=  0.00  |  V282 n=  40 model=  6.98 setpt=  6.16
+  10-20deg  T64 n=   3 model=262.55 setpt= 21.65  |  T64B n=   0 model=  0.00 setpt=  0.00  |  V282 n=  28 model=  8.50 setpt=  6.32
+  20+deg    T64 n=   7 model= 23.96 setpt= 16.51  |  T64B n=   0 model=  0.00 setpt=  0.00  |  V282 n=   6 model= 15.18 setpt= 10.39
+
+===== speed bin 6-8 =====
+  T64    absang: n=  37 mean=  26.1 p50=  6.6 p90=  84.8
+  T64B   absang: n=  55 mean=  15.9 p50=  3.6 p90=  62.6
+  V282   absang: n= 127 mean=   9.4 p50=  2.0 p90=  31.7
+  0-5deg    T64 n=  16 model=  3.28 setpt=  1.60  |  T64B n=  34 model=  3.66 setpt=  1.76  |  V282 n=  91 model=  2.79 setpt=  2.24
+  5-10deg   T64 n=   7 model=  2.76 setpt=  1.25  |  T64B n=  10 model=  3.09 setpt=  1.73  |  V282 n=  13 model=  3.28 setpt=  3.13
+  10-20deg  T64 n=   4 model=  3.45 setpt=  1.82  |  T64B n=   2 model=  4.23 setpt=  2.66  |  V282 n=   6 model=  3.50 setpt=  3.74
+  20+deg    T64 n=  10 model=  8.37 setpt=  6.04  |  T64B n=   9 model= 31.45 setpt= 12.26  |  V282 n=  17 model=  6.30 setpt=  5.97
+
+===== window-count SHARE by demand bin, speed 3-6 (mix-shift check) =====
+  T64    n=  57  share 0-5: 64.9%  5-10:  7.0%  10-20:  5.3%  20+: 22.8%
+  T64B   n=  42  share 0-5: 50.0%  5-10: 14.3%  10-20:  4.8%  20+: 31.0%
+  V282   n= 166  share 0-5: 71.1%  5-10: 15.1%  10-20:  6.6%  20+:  7.2%

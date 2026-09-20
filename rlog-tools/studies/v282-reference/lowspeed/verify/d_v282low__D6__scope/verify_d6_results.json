@@ -1,0 +1,96 @@
+{
+  "events_lt8_v282": {
+    "n": 9,
+    "n_build": 2,
+    "claim_n": 9,
+    "claim_n_build": 2,
+    "matches": true
+  },
+  "blocks_gt45deg_lt8ms": {
+    "n_total_blocks": 13,
+    "claim_n_total": 5,
+    "n_rate_35_80": 5,
+    "claim_n_35_80": 5,
+    "n_rate_15_35": 3,
+    "claim_none_15_35": false,
+    "all_rates": [
+      16.0,
+      22.6,
+      34.4,
+      46.6,
+      49.8,
+      56.8,
+      67.9,
+      72.0,
+      88.5,
+      93.9,
+      95.0,
+      127.8,
+      135.0
+    ],
+    "VERDICT": "CONTRADICTED: the 35-80 deg/s count (5) is exact, but the \"none 15-35\" clause is FALSE -- 3 blocks ([np.float64(16.0), np.float64(22.6), np.float64(34.4)] deg/s) fall in [15,35] at |des|>45 deg, v<8 m/s. Per-route breakdown shows these come from 2 distinct maneuvers (route 6c blocks idx 107 and the 537-539 ramp), not one outlier block."
+  },
+  "rate_cap_check": {
+    "per_route_max_srdeg_s": {
+      "00000064--ce6b0b0ebb": 133.24,
+      "00000065--b9f78988bd": 139.98,
+      "0000006c--2bc842dbac": 151.09,
+      "00000039--f56039af87": 151.01,
+      "0000003a--283a39a1d6": 127.8,
+      "0000003c--927965c2b4": 121.52
+    },
+    "claim": "~151 deg/s ceiling, same on both V282 groups",
+    "note": "route 6c (V282) = 151.09, route 39 (V282old) = 151.01 -- near-exact agreement across DIFFERENT fork versions on the same EPS; strong support."
+  },
+  "pressed_exclusion": {
+    "00000064--ce6b0b0ebb": {
+      "frames_denom": 2511,
+      "frac_pressed": 0.239
+    },
+    "00000065--b9f78988bd": {
+      "frames_denom": 3979,
+      "frac_pressed": 0.466
+    },
+    "0000006c--2bc842dbac": {
+      "frames_denom": 7376,
+      "frac_pressed": 0.257
+    }
+  },
+  "t50_lag_check": {
+    "t50_lag_cl_p25_50_75": {
+      "V282": [
+        0.1701793239122165,
+        0.3129303325743419,
+        0.697091051768006
+      ],
+      "T64": [
+        -0.06177011795909271,
+        0.2602246693009209,
+        0.27312444421262483
+      ],
+      "T64B": [
+        0.13903871175844884,
+        0.1890757102496673,
+        0.4033610141179643
+      ],
+      "T5": [
+        0.09021464958020893,
+        0.1592223086415612,
+        0.8668476231538274
+      ],
+      "T4": [
+        0.04461556505369657,
+        0.15631177229676033,
+        0.3850464208431637
+      ]
+    },
+    "v282_iqr_width": 0.527,
+    "median_diffs_from_v282": {
+      "T64": 0.053,
+      "T64B": 0.124,
+      "T5": 0.154,
+      "T4": 0.157
+    },
+    "iqr_wider_than_every_diff": true
+  }
+}

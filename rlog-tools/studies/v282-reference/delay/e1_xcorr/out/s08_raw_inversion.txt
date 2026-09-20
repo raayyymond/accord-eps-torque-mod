@@ -1,0 +1,21 @@
+raw sinc peak (ms) of u_e4 vs acc_r on the synthetic plant, all speeds pooled
+  J8e-5_b0.0006_F0.02    D0: -46.0 D15: -27.5 D30: -23.0 D45:  -4.5 D60:  14.0 D75:  31.5 D90:  38.5 D120:  72.5
+  J3e-4_b0.0006_F0.02    D0: -21.5 D15:  -4.0 D30:  13.5 D45:  29.5 D60:  40.5 D75:  56.5 D90:  72.0 D120: 103.5
+  J1e-3_b0.0006_F0.02    D0:  -5.0 D15:  13.0 D30:  28.5 D45:  37.5 D60:  55.0 D75:  71.5 D90:  85.0 D120: 115.0
+
+recovery (map plant -> truth plant): recovered D for true 30 / 60
+  map J8e-5_b0.0006_F0.02    truth J8e-5_b0.0006_F0.02     30->  20.9  60->  60.4  FAIL  monotone True
+  map J8e-5_b0.0006_F0.02    truth J3e-4_b0.0006_F0.02     30->  60.0  60->  91.8  FAIL  monotone True
+  map J8e-5_b0.0006_F0.02    truth J1e-3_b0.0006_F0.02     30->  72.5  60-> 104.6  FAIL  monotone True
+  map J3e-4_b0.0006_F0.02    truth J8e-5_b0.0006_F0.02     30->   nan  60->  31.1  FAIL  monotone True
+  map J3e-4_b0.0006_F0.02    truth J3e-4_b0.0006_F0.02     30->  30.7  60->  57.2  PASS  monotone True
+  map J3e-4_b0.0006_F0.02    truth J1e-3_b0.0006_F0.02     30->  44.1  60->  73.3  FAIL  monotone True
+  map J1e-3_b0.0006_F0.02    truth J8e-5_b0.0006_F0.02     30->   nan  60->  16.2  FAIL  monotone True
+  map J1e-3_b0.0006_F0.02    truth J3e-4_b0.0006_F0.02     30->  15.6  60->  47.6  FAIL  monotone True
+  map J1e-3_b0.0006_F0.02    truth J1e-3_b0.0006_F0.02     30->  34.0  60->  60.4  PASS  monotone True
+
+real torque-route raw peak inverted through each plant's map
+  bin <8    raw  16.0 [8.0,34.0] ->  J8e-5:  62.1 [55.4,80.4]  J3e-4:  32.9 [25.7,50.0]  J1e-3:  18.7 [10.8,40.7]
+  bin 8-15  raw  32.0 [18.0,34.5] ->  J8e-5:  76.1 [63.8,81.4]  J3e-4:  47.8 [34.7,50.6]  J1e-3:  38.3 [21.1,41.3]
+  bin >=15  raw  26.5 [22.5,28.5] ->  J8e-5:  70.8 [67.5,72.5]  J3e-4:  42.3 [38.7,44.1]  J1e-3:  31.5 [26.6,34.0]
+  bin all   raw  20.0 [17.5,33.0] ->  J8e-5:  65.4 [63.3,78.2]  J3e-4:  36.5 [34.3,48.9]  J1e-3:  23.6 [20.5,39.5]

@@ -1,0 +1,37 @@
+ALTMETHOD verification of B3 ("shake is excited, lightly damped ringing; not a limit cycle; not the
+stick-slip relay cycle").
+
+1) ARITHMETIC CHECK on the finding's own cited numbers (out/recheck_45.txt): the claim states energy
+   inside dwell-then-jump windows is LESS than its time share on "4 of 5 torque routes (6c 0.17 vs 0.31,
+   6d 0.21 vs 0.19, 6e 0.03 vs 0.26, T4 0.14 vs 0.26; T5 0.32 vs 0.25)". Recomputing energy<time directly
+   from b06_stickslip_link.json's own numbers for the <8 m/s bin gives 3 of 5, not 4 of 5: 6c, 6e, T4 have
+   energy_share < time_share; 6d (0.2092 > 0.1918) and T5 (0.3237 > 0.2452) both have energy_share ABOVE
+   time_share. The finding's own quoted 6d numbers (0.21 vs 0.19) already show this -- the "4 of 5" tally
+   is an internal arithmetic error, not a data problem. CONFIRMED WRONG.
+
+2) INDEPENDENT METHOD (event/peak-based instead of spectral/Hilbert-envelope), route 0000006c--68c6e94b17
+   (T64), <8 m/s only, 67-84s of usable data depending on windowing (out/alt_b3_6c.txt):
+   - ALT amplitude = sliding 0.3s max-min (peak-to-peak) instead of Hilbert magnitude of the analytic
+     signal. Episodes with pp>=8 deg/s (~ Hilbert env>=4 deg/s for a sinusoid) sustained >=1.5s: 4 episodes,
+     9.1s total, 10.8 s/100s, max duration 3.41s. The ORIGINAL Hilbert pipeline on the SAME route (b04_rows
+     EP array) gives 17.4 s/100s, 5 episodes, max 3.35s -- same order of magnitude, same qualitative
+     picture (sustained episodes lasting a few seconds, not the whole run).
+   - ALT decay: local-extrema (raw band-passed peaks, not envelope) amplitude 0.8s after a peak >=6 deg/s:
+     median ratio 0.65 (n=102). The original Hilbert-envelope decay for the same route/bin: median 0.45
+     (n=17, DEC array). Both show clear decay (ratio well below 1) -- i.e. NOT sustained -- but the
+     magnitude is method-sensitive: the peak-picking estimate decays less than the smoothed-envelope
+     estimate. This softens (does not reverse) the specific "falls to 0.48 of peak" number.
+   - ALT relay-cycle test: raw (envelope-ungated) zero-crossing period of the band-passed rate: median
+     0.38s, p10-p90 0.30-0.50s, CV 0.27 (n=409 half-cycles). This is close to the shake's own natural
+     period (consistent, expected for any lightly damped resonance, driven or ringing) and does NOT by
+     itself distinguish ringing from a relay -- a linear lightly-damped mode also rings near one frequency.
+     This sub-test was not a strong differentiator either way; it neither confirms nor refutes the
+     relay-vs-ringing distinction on its own.
+
+VERDICT: the core qualitative claim (episodes exist, last order-of-seconds, decay measurably within 0.8s,
+i.e. behave like excited ringing rather than a sustained limit cycle) is REPRODUCED by an independent,
+non-Hilbert, non-spectral method on the one route checked. But one of the finding's specific supporting
+numbers -- "less than time share on 4 of 5 routes" -- is an arithmetic error against its own cited data;
+the correct count is 3 of 5 (6d joins T5 as an energy>time exception). The decay-magnitude claim (0.48 at
++0.8s) is somewhat method-sensitive: an event-based estimate on the same route/bin gives ~0.65, still
+decay but softer than claimed.

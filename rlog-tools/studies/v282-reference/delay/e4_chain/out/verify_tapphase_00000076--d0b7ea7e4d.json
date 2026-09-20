@@ -1,0 +1,113 @@
+{
+ "route": "00000076--d0b7ea7e4d",
+ "n_runs": 20,
+ "real": {
+  "dd_ms": 30.51,
+  "fc_hz": 2275.0,
+  "r2_phase": 0.7593,
+  "pure_delay_only_ms": 30.58,
+  "r2_phase_pure": 0.7593,
+  "coh_mean": 0.401,
+  "gain": 0.4231,
+  "pole_phase_delay_ms": {
+   "1.0": 0.07,
+   "2.0": 0.07,
+   "2.5": 0.07,
+   "3.5": 0.07
+  },
+  "sec": 369.0,
+  "n_runs_used": 18
+ },
+ "control": {
+  "fc=5.0 dd=4.0": {
+   "dd_ms": -2.11,
+   "fc_hz": 3.87,
+   "r2_phase": 0.6741,
+   "pure_delay_only_ms": 26.55,
+   "r2_phase_pure": 0.4298,
+   "coh_mean": 0.428,
+   "gain": 0.4078,
+   "pole_phase_delay_ms": {
+    "1.0": 40.24,
+    "2.0": 37.95,
+    "2.5": 36.51,
+    "3.5": 33.43
+   },
+   "true_fc": 5.0,
+   "true_dd_ms": 4.0,
+   "dd_err_ms": -6.11
+  },
+  "fc=inf dd=30.0": {
+   "dd_ms": 26.18,
+   "fc_hz": 42.962,
+   "r2_phase": 0.9951,
+   "pure_delay_only_ms": 29.82,
+   "r2_phase_pure": 0.9951,
+   "coh_mean": 0.623,
+   "gain": 0.534,
+   "pole_phase_delay_ms": {
+    "1.0": 3.7,
+    "2.0": 3.7,
+    "2.5": 3.7,
+    "3.5": 3.7
+   },
+   "true_fc": "inf",
+   "true_dd_ms": 30.0,
+   "dd_err_ms": -3.82
+  },
+  "fc=inf dd=60.0": {
+   "dd_ms": 59.43,
+   "fc_hz": 1452.112,
+   "r2_phase": 0.9989,
+   "pure_delay_only_ms": 59.54,
+   "r2_phase_pure": 0.9989,
+   "coh_mean": 0.614,
+   "gain": 0.5292,
+   "pole_phase_delay_ms": {
+    "1.0": 0.11,
+    "2.0": 0.11,
+    "2.5": 0.11,
+    "3.5": 0.11
+   },
+   "true_fc": "inf",
+   "true_dd_ms": 60.0,
+   "dd_err_ms": -0.57
+  },
+  "fc=3.0 dd=20.0": {
+   "dd_ms": 12.93,
+   "fc_hz": 2.414,
+   "r2_phase": 0.8747,
+   "pure_delay_only_ms": 51.59,
+   "r2_phase_pure": 0.6576,
+   "coh_mean": 0.362,
+   "gain": 0.362,
+   "pole_phase_delay_ms": {
+    "1.0": 62.52,
+    "2.0": 55.07,
+    "2.5": 51.12,
+    "3.5": 43.98
+   },
+   "true_fc": 3.0,
+   "true_dd_ms": 20.0,
+   "dd_err_ms": -7.07
+  },
+  "fc=5.0 dd=30.0": {
+   "dd_ms": 28.69,
+   "fc_hz": 4.796,
+   "r2_phase": 0.9957,
+   "pure_delay_only_ms": 53.69,
+   "r2_phase_pure": 0.9737,
+   "coh_mean": 0.425,
+   "gain": 0.4114,
+   "pole_phase_delay_ms": {
+    "1.0": 32.71,
+    "2.0": 31.44,
+    "2.5": 30.59,
+    "3.5": 28.67
+   },
+   "true_fc": 5.0,
+   "true_dd_ms": 30.0,
+   "dd_err_ms": -1.31
+  }
+ }
+}

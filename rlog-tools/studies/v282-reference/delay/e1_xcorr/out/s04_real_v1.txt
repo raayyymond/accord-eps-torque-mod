@@ -1,0 +1,280 @@
+
+== TORQUE V293  u_e4|acc_r  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc   16.0 par   16.1 route-CI [  8.0, 34.0] corr +0.656 n28 routes5
+      0000006c--68c6e94b17   sinc   17.0 par   20.3 [  nan,  nan] corr +0.629 n2
+      0000006d--05e83bb04f   sinc   10.5 par   13.9 [  8.0, 21.5] corr +0.374 n5
+      0000006e--6ca3e014fd   sinc   21.5 par   21.4 [ 17.0, 39.5] corr +0.646 n7
+      00000076--d0b7ea7e4d   sinc   39.0 par   41.4 [ 36.3, 40.0] corr +0.907 n3
+      00000075--6c8687d5bd   sinc    5.0 par    5.1 [-15.5, 35.5] corr +0.661 n11
+  bin 8-15  POOLED sinc   32.0 par   27.1 route-CI [ 18.0, 34.5] corr +0.750 n76 routes5
+      0000006c--68c6e94b17   sinc   32.0 par   31.5 [ 27.5, 35.0] corr +0.722 n12
+      0000006d--05e83bb04f   sinc   35.0 par   34.7 [ 32.0, 36.0] corr +0.746 n12
+      0000006e--6ca3e014fd   sinc   17.5 par   23.0 [ 15.0, 39.0] corr +0.776 n21
+      00000076--d0b7ea7e4d   sinc   37.0 par   37.0 [ 31.0, 41.0] corr +0.810 n6
+      00000075--6c8687d5bd   sinc   34.0 par   32.4 [ 29.0, 35.0] corr +0.757 n25
+  bin >=15  POOLED sinc   26.5 par   26.1 route-CI [ 22.5, 28.5] corr +0.634 n105 routes5
+      0000006c--68c6e94b17   sinc   16.0 par   16.5 [ 13.5, 18.5] corr +0.308 n23
+      0000006d--05e83bb04f   sinc   26.5 par   26.5 [ 22.0, 28.5] corr +0.605 n24
+      0000006e--6ca3e014fd   sinc   28.0 par   27.6 [ 25.0, 31.0] corr +0.707 n20
+      00000076--d0b7ea7e4d   sinc   23.0 par   22.2 [ 20.5, 26.5] corr +0.612 n20
+      00000075--6c8687d5bd   sinc   30.0 par   27.2 [ 20.5, 32.0] corr +0.749 n18
+  bin all   POOLED sinc   20.0 par   23.5 route-CI [ 17.5, 33.0] corr +0.692 n209 routes5
+      0000006c--68c6e94b17   sinc   29.5 par   28.2 [ 19.5, 33.5] corr +0.627 n37
+      0000006d--05e83bb04f   sinc   31.5 par   30.7 [ 25.5, 34.0] corr +0.634 n41
+      0000006e--6ca3e014fd   sinc   18.0 par   23.1 [ 15.0, 36.5] corr +0.740 n48
+      00000076--d0b7ea7e4d   sinc   36.0 par   36.2 [ 27.5, 38.0] corr +0.808 n29
+      00000075--6c8687d5bd   sinc   16.0 par   16.3 [  1.0, 34.5] corr +0.646 n54
+
+== V282 control  u_e4|acc_r  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc  -50.0 par  -67.9 route-CI [-50.0,-50.0] corr +0.483 n32 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -69.4 [-50.0,-50.0] corr +0.453 n28
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -65.6 [-50.0,-50.0] corr +0.546 n4
+  bin 8-15  POOLED sinc  -50.0 par  -56.9 route-CI [-50.0,-50.0] corr +0.434 n34 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -57.1 [-50.0,-50.0] corr +0.431 n31
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -55.1 [-50.0,-49.0] corr +0.478 n3
+  bin >=15  POOLED sinc  -50.0 par  -62.0 route-CI [-50.0,-50.0] corr +0.371 n187 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -62.0 [-50.0,-50.0] corr +0.376 n162
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -61.6 [-50.0,-50.0] corr +0.347 n25
+  bin all   POOLED sinc  -50.0 par  -63.8 route-CI [-50.0,-50.0] corr +0.443 n253 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -63.6 [-50.0,-50.0] corr +0.424 n221
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -64.2 [-50.0,-50.0] corr +0.511 n32
+
+== TORQUE V293  u_e4|acc_a  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc   13.5 par   13.1 route-CI [  1.5, 32.5] corr +0.642 n28 routes5
+      0000006c--68c6e94b17   sinc   17.0 par   19.5 [  nan,  nan] corr +0.628 n2
+      0000006d--05e83bb04f   sinc    7.5 par    9.5 [  6.0, 13.6] corr +0.369 n5
+      0000006e--6ca3e014fd   sinc   20.5 par   20.5 [ 15.0, 38.0] corr +0.637 n7
+      00000076--d0b7ea7e4d   sinc   36.5 par   37.9 [ 26.0, 37.0] corr +0.889 n3
+      00000075--6c8687d5bd   sinc    0.0 par   -0.0 [-17.0, 34.0] corr +0.649 n11
+  bin 8-15  POOLED sinc   18.0 par   23.5 route-CI [ 16.5, 33.0] corr +0.735 n76 routes5
+      0000006c--68c6e94b17   sinc   30.0 par   29.6 [ 25.0, 33.5] corr +0.708 n12
+      0000006d--05e83bb04f   sinc   33.0 par   31.5 [ 29.0, 34.0] corr +0.728 n12
+      0000006e--6ca3e014fd   sinc   16.0 par   18.8 [ 13.5, 37.0] corr +0.767 n21
+      00000076--d0b7ea7e4d   sinc   34.0 par   34.2 [ 27.5, 37.5] corr +0.804 n6
+      00000075--6c8687d5bd   sinc   33.0 par   29.5 [ 23.5, 34.0] corr +0.743 n25
+  bin >=15  POOLED sinc   22.0 par   22.5 route-CI [ 18.5, 23.5] corr +0.630 n105 routes5
+      0000006c--68c6e94b17   sinc   12.5 par   11.4 [  9.5, 14.5] corr +0.287 n23
+      0000006d--05e83bb04f   sinc   22.0 par   22.3 [ 17.5, 24.5] corr +0.593 n24
+      0000006e--6ca3e014fd   sinc   24.0 par   24.3 [ 21.5, 27.0] corr +0.704 n20
+      00000076--d0b7ea7e4d   sinc   20.5 par   18.7 [ 12.5, 24.0] corr +0.605 n20
+      00000075--6c8687d5bd   sinc   21.0 par   23.9 [ 18.0, 30.0] corr +0.746 n18
+  bin all   POOLED sinc   17.5 par   20.2 route-CI [ 15.5, 30.0] corr +0.675 n209 routes5
+      0000006c--68c6e94b17   sinc   27.5 par   26.2 [ 18.5, 32.0] corr +0.613 n37
+      0000006d--05e83bb04f   sinc   27.5 par   26.9 [ 22.5, 31.5] corr +0.610 n41
+      0000006e--6ca3e014fd   sinc   16.5 par   19.7 [ 14.0, 34.5] corr +0.728 n48
+      00000076--d0b7ea7e4d   sinc   33.0 par   32.6 [ 24.0, 35.5] corr +0.783 n29
+      00000075--6c8687d5bd   sinc   13.5 par   12.8 [ -8.0, 33.0] corr +0.625 n54
+
+== V282 control  u_e4|acc_a  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc  -50.0 par  -71.1 route-CI [-50.0,-50.0] corr +0.447 n32 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -72.2 [-50.0,-50.0] corr +0.411 n28
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -69.3 [-50.0,-50.0] corr +0.523 n4
+  bin 8-15  POOLED sinc  -50.0 par  -59.7 route-CI [-50.0,-50.0] corr +0.394 n34 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -60.1 [-50.0,-50.0] corr +0.390 n31
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -55.4 [-50.0,-46.5] corr +0.443 n3
+  bin >=15  POOLED sinc  -49.0 par  -49.2 route-CI [-50.0,-49.0] corr +0.279 n187 routes2
+      0000006c--2bc842dbac   sinc  -49.0 par  -49.1 [-50.0,-47.0] corr +0.279 n162
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -49.7 [-50.0,-45.5] corr +0.282 n25
+  bin all   POOLED sinc  -50.0 par  -62.8 route-CI [-50.0,-50.0] corr +0.377 n253 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -61.9 [-50.0,-50.0] corr +0.353 n221
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -65.4 [-50.0,-50.0] corr +0.463 n32
+
+== TORQUE V293  u_cs|acc_r  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc   22.5 par   23.0 route-CI [ 14.0, 38.0] corr +0.658 n28 routes5
+      0000006c--68c6e94b17   sinc   18.5 par   24.8 [  nan,  nan] corr +0.667 n2
+      0000006d--05e83bb04f   sinc   22.5 par   20.3 [ 19.0, 26.0] corr +0.377 n5
+      0000006e--6ca3e014fd   sinc   29.0 par   28.9 [ 24.5, 52.0] corr +0.658 n7
+      00000076--d0b7ea7e4d   sinc   50.0 par   47.5 [ 31.5, 50.5] corr +0.906 n3
+      00000075--6c8687d5bd   sinc   11.5 par   11.7 [-13.0, 38.5] corr +0.656 n11
+  bin 8-15  POOLED sinc   34.5 par   33.2 route-CI [ 33.5, 38.5] corr +0.754 n76 routes5
+      0000006c--68c6e94b17   sinc   37.0 par   37.2 [ 34.0, 39.5] corr +0.723 n12
+      0000006d--05e83bb04f   sinc   37.0 par   38.3 [ 35.5, 38.5] corr +0.752 n12
+      0000006e--6ca3e014fd   sinc   33.5 par   29.6 [ 16.0, 48.5] corr +0.782 n21
+      00000076--d0b7ea7e4d   sinc   44.0 par   43.7 [ 40.0, 47.0] corr +0.808 n6
+      00000075--6c8687d5bd   sinc   36.5 par   38.1 [ 33.5, 37.0] corr +0.759 n25
+  bin >=15  POOLED sinc   33.0 par   32.8 route-CI [ 28.0, 34.5] corr +0.635 n105 routes5
+      0000006c--68c6e94b17   sinc   21.5 par   22.4 [ 18.0, 26.5] corr +0.307 n23
+      0000006d--05e83bb04f   sinc   33.0 par   33.3 [ 28.0, 35.5] corr +0.604 n24
+      0000006e--6ca3e014fd   sinc   35.0 par   34.9 [ 32.0, 36.5] corr +0.707 n20
+      00000076--d0b7ea7e4d   sinc   27.0 par   28.1 [ 24.5, 31.0] corr +0.612 n20
+      00000075--6c8687d5bd   sinc   34.0 par   33.5 [ 29.5, 35.0] corr +0.750 n18
+  bin all   POOLED sinc   32.5 par   29.9 route-CI [ 26.0, 37.5] corr +0.696 n209 routes5
+      0000006c--68c6e94b17   sinc   34.0 par   33.6 [ 31.0, 37.0] corr +0.640 n37
+      0000006d--05e83bb04f   sinc   35.5 par   35.5 [ 30.5, 36.5] corr +0.634 n41
+      0000006e--6ca3e014fd   sinc   33.0 par   30.0 [ 17.0, 42.5] corr +0.746 n48
+      00000076--d0b7ea7e4d   sinc   42.0 par   42.5 [ 35.0, 47.5] corr +0.808 n29
+      00000075--6c8687d5bd   sinc   21.0 par   22.8 [  5.5, 36.5] corr +0.643 n54
+
+== V282 control  u_cs|acc_r  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc  -50.0 par  -55.9 route-CI [-50.0,-50.0] corr +0.520 n32 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -60.8 [-50.0,-50.0] corr +0.480 n28
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -48.9 [-50.0,-43.5] corr +0.596 n4
+  bin 8-15  POOLED sinc  -48.0 par  -47.1 route-CI [-48.5,-47.0] corr +0.443 n34 routes2
+      0000006c--2bc842dbac   sinc  -48.5 par  -47.1 [-50.0,-42.5] corr +0.442 n31
+      00000064--ce6b0b0ebb   sinc  -47.0 par  -47.8 [-50.0,-43.0] corr +0.464 n3
+  bin >=15  POOLED sinc  -50.0 par  -56.1 route-CI [-50.0,-50.0] corr +0.380 n187 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -56.1 [-50.0,-50.0] corr +0.384 n162
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -56.1 [-50.0,-50.0] corr +0.356 n25
+  bin all   POOLED sinc  -50.0 par  -53.7 route-CI [-50.0,-50.0] corr +0.468 n253 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -55.2 [-50.0,-50.0] corr +0.442 n221
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -49.5 [-50.0,-47.0] corr +0.552 n32
+
+== TORQUE V293  u_cs|acc_a  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc   19.5 par   19.8 route-CI [  7.5, 36.5] corr +0.643 n28 routes5
+      0000006c--68c6e94b17   sinc   18.0 par   23.9 [  nan,  nan] corr +0.665 n2
+      0000006d--05e83bb04f   sinc   19.5 par   16.0 [  9.0, 23.5] corr +0.370 n5
+      0000006e--6ca3e014fd   sinc   28.0 par   27.9 [ 23.5, 51.5] corr +0.647 n7
+      00000076--d0b7ea7e4d   sinc   42.0 par   43.9 [ 28.0, 43.0] corr +0.887 n3
+      00000075--6c8687d5bd   sinc    6.5 par    6.7 [-15.0, 36.5] corr +0.642 n11
+  bin 8-15  POOLED sinc   33.0 par   29.6 route-CI [ 32.0, 36.5] corr +0.740 n76 routes5
+      0000006c--68c6e94b17   sinc   35.5 par   35.4 [ 29.0, 39.0] corr +0.706 n12
+      0000006d--05e83bb04f   sinc   35.0 par   35.0 [ 31.0, 36.5] corr +0.728 n12
+      0000006e--6ca3e014fd   sinc   32.0 par   25.3 [ 15.0, 44.0] corr +0.769 n21
+      00000076--d0b7ea7e4d   sinc   41.5 par   41.0 [ 36.0, 44.0] corr +0.806 n6
+      00000075--6c8687d5bd   sinc   35.0 par   35.3 [ 32.0, 36.0] corr +0.742 n25
+  bin >=15  POOLED sinc   29.5 par   29.3 route-CI [ 25.0, 31.5] corr +0.630 n105 routes5
+      0000006c--68c6e94b17   sinc   16.5 par   17.2 [ 14.5, 19.5] corr +0.286 n23
+      0000006d--05e83bb04f   sinc   29.0 par   29.2 [ 25.0, 32.5] corr +0.592 n24
+      0000006e--6ca3e014fd   sinc   31.5 par   31.6 [ 29.0, 33.5] corr +0.708 n20
+      00000076--d0b7ea7e4d   sinc   24.5 par   24.6 [ 22.0, 28.0] corr +0.602 n20
+      00000075--6c8687d5bd   sinc   32.0 par   30.3 [ 23.5, 34.0] corr +0.748 n18
+  bin all   POOLED sinc   30.0 par   26.6 route-CI [ 20.0, 34.5] corr +0.676 n209 routes5
+      0000006c--68c6e94b17   sinc   33.0 par   31.6 [ 28.0, 35.5] corr +0.626 n37
+      0000006d--05e83bb04f   sinc   32.5 par   31.7 [ 27.0, 34.5] corr +0.615 n41
+      0000006e--6ca3e014fd   sinc   31.5 par   26.5 [ 16.0, 39.0] corr +0.732 n48
+      00000076--d0b7ea7e4d   sinc   38.5 par   38.9 [ 29.5, 41.0] corr +0.782 n29
+      00000075--6c8687d5bd   sinc   18.0 par   19.3 [  4.0, 35.5] corr +0.622 n54
+
+== V282 control  u_cs|acc_a  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc  -50.0 par  -58.8 route-CI [-50.0,-50.0] corr +0.491 n32 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -63.4 [-50.0,-50.0] corr +0.440 n28
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -52.2 [-50.0,-46.5] corr +0.588 n4
+  bin 8-15  POOLED sinc  -50.0 par  -50.0 route-CI [-50.0,-47.0] corr +0.408 n34 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -50.2 [-50.0,-47.0] corr +0.407 n31
+      00000064--ce6b0b0ebb   sinc  -47.0 par  -47.7 [-50.0,-40.0] corr +0.433 n3
+  bin >=15  POOLED sinc  -42.5 par  -42.9 route-CI [-43.5,-42.0] corr +0.278 n187 routes2
+      0000006c--2bc842dbac   sinc  -42.0 par  -42.7 [-44.5,-40.0] corr +0.277 n162
+      00000064--ce6b0b0ebb   sinc  -43.5 par  -43.9 [-48.5,-39.0] corr +0.282 n25
+  bin all   POOLED sinc  -50.0 par  -52.9 route-CI [-50.0,-50.0] corr +0.399 n253 routes2
+      0000006c--2bc842dbac   sinc  -50.0 par  -53.7 [-50.0,-50.0] corr +0.368 n221
+      00000064--ce6b0b0ebb   sinc  -50.0 par  -50.8 [-50.0,-44.0] corr +0.510 n32
+
+== TORQUE V293  u_e4|ang  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc  255.0 par  256.8 route-CI [184.5,398.5] corr +0.594 n28 routes5
+      0000006c--68c6e94b17   sinc  200.0 par  202.4 [  nan,  nan] corr +0.381 n2
+      0000006d--05e83bb04f   sinc  255.0 par  250.7 [145.0,274.5] corr +0.483 n5
+      0000006e--6ca3e014fd   sinc  180.5 par  177.4 [-50.0,245.5] corr +0.378 n7
+      00000076--d0b7ea7e4d   sinc  396.5 par  400.0 [188.5,396.5] corr +0.409 n3
+      00000075--6c8687d5bd   sinc  256.0 par  262.9 [244.5,285.0] corr +0.794 n11
+  bin 8-15  POOLED sinc  225.5 par  228.6 route-CI [224.5,265.5] corr +0.411 n76 routes5
+      0000006c--68c6e94b17   sinc  206.0 par  208.9 [-50.0,226.5] corr +0.259 n12
+      0000006d--05e83bb04f   sinc  248.0 par  248.3 [205.5,276.5] corr +0.314 n12
+      0000006e--6ca3e014fd   sinc  224.5 par  222.1 [206.0,293.0] corr +0.524 n21
+      00000076--d0b7ea7e4d   sinc  325.0 par  324.7 [274.3,355.2] corr +0.388 n6
+      00000075--6c8687d5bd   sinc  265.0 par  266.1 [245.5,305.5] corr +0.217 n25
+  bin >=15  POOLED sinc  249.0 par  246.5 route-CI [229.0,256.5] corr +0.426 n105 routes5
+      0000006c--68c6e94b17   sinc  215.5 par  215.7 [192.0,253.5] corr +0.338 n23
+      0000006d--05e83bb04f   sinc  226.5 par  228.5 [207.0,235.0] corr +0.358 n24
+      0000006e--6ca3e014fd   sinc  240.5 par  236.9 [225.0,281.0] corr +0.407 n20
+      00000076--d0b7ea7e4d   sinc  254.0 par  245.6 [234.5,275.0] corr +0.553 n20
+      00000075--6c8687d5bd   sinc  260.5 par  262.8 [256.0,282.0] corr +0.555 n18
+  bin all   POOLED sinc  241.0 par  240.7 route-CI [223.5,275.5] corr +0.491 n209 routes5
+      0000006c--68c6e94b17   sinc  205.5 par  206.4 [197.0,223.5] corr +0.292 n37
+      0000006d--05e83bb04f   sinc  252.0 par  245.2 [211.4,274.5] corr +0.356 n41
+      0000006e--6ca3e014fd   sinc  223.5 par  216.8 [204.0,264.0] corr +0.476 n48
+      00000076--d0b7ea7e4d   sinc  395.5 par  375.8 [254.5,396.5] corr +0.354 n29
+      00000075--6c8687d5bd   sinc  256.0 par  263.3 [255.0,284.0] corr +0.678 n54
+
+== V282 control  u_e4|ang  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc  155.0 par  159.1 route-CI [154.5,155.5] corr +0.756 n32 routes2
+      0000006c--2bc842dbac   sinc  155.5 par  164.3 [135.0,195.0] corr +0.761 n28
+      00000064--ce6b0b0ebb   sinc  154.5 par  148.9 [113.5,155.0] corr +0.746 n4
+  bin 8-15  POOLED sinc  235.0 par  233.4 route-CI [115.5,235.0] corr +0.624 n34 routes2
+      0000006c--2bc842dbac   sinc  235.0 par  238.0 [134.5,275.0] corr +0.635 n31
+      00000064--ce6b0b0ebb   sinc  115.5 par  116.4 [ 97.5,134.0] corr +0.650 n3
+  bin >=15  POOLED sinc  154.0 par  147.7 route-CI [154.0,155.0] corr +0.716 n187 routes2
+      0000006c--2bc842dbac   sinc  154.0 par  146.7 [136.0,154.5] corr +0.718 n162
+      00000064--ce6b0b0ebb   sinc  155.0 par  154.4 [136.0,155.5] corr +0.710 n25
+  bin all   POOLED sinc  155.0 par  157.9 route-CI [154.5,155.5] corr +0.714 n253 routes2
+      0000006c--2bc842dbac   sinc  155.5 par  162.0 [135.5,175.0] corr +0.710 n221
+      00000064--ce6b0b0ebb   sinc  154.5 par  147.5 [134.5,155.0] corr +0.732 n32
+
+== TORQUE V293  u_e4|rate  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc  111.0 par  113.3 route-CI [ 97.0,138.5] corr +0.755 n28 routes5
+      0000006c--68c6e94b17   sinc   97.5 par  103.0 [  nan,  nan] corr +0.604 n2
+      0000006d--05e83bb04f   sinc   99.5 par   95.1 [ 77.5,104.0] corr +0.523 n5
+      0000006e--6ca3e014fd   sinc   96.0 par   95.4 [ 87.0,144.5] corr +0.614 n7
+      00000076--d0b7ea7e4d   sinc  156.5 par  161.3 [104.5,157.0] corr +0.685 n3
+      00000075--6c8687d5bd   sinc  110.0 par  114.6 [103.5,144.5] corr +0.855 n11
+  bin 8-15  POOLED sinc  122.0 par  118.9 route-CI [119.0,127.5] corr +0.693 n76 routes5
+      0000006c--68c6e94b17   sinc  107.0 par  110.7 [103.5,124.0] corr +0.584 n12
+      0000006d--05e83bb04f   sinc  125.0 par  125.3 [105.5,130.0] corr +0.672 n12
+      0000006e--6ca3e014fd   sinc  119.0 par  115.9 [106.0,141.5] corr +0.758 n21
+      00000076--d0b7ea7e4d   sinc  125.5 par  127.8 [108.5,162.0] corr +0.585 n6
+      00000075--6c8687d5bd   sinc  128.5 par  134.2 [124.0,144.0] corr +0.586 n25
+  bin >=15  POOLED sinc  108.5 par  114.2 route-CI [104.5,124.0] corr +0.583 n105 routes5
+      0000006c--68c6e94b17   sinc   88.0 par   94.5 [ 85.5,104.5] corr +0.328 n23
+      0000006d--05e83bb04f   sinc  106.0 par  108.4 [102.0,107.5] corr +0.521 n24
+      0000006e--6ca3e014fd   sinc  108.0 par  113.3 [106.5,122.5] corr +0.618 n20
+      00000076--d0b7ea7e4d   sinc  104.5 par  104.5 [102.5,107.0] corr +0.689 n20
+      00000075--6c8687d5bd   sinc  125.5 par  127.5 [123.5,126.5] corr +0.715 n18
+  bin all   POOLED sinc  120.0 par  116.5 route-CI [109.0,126.5] corr +0.706 n209 routes5
+      0000006c--68c6e94b17   sinc  107.0 par  108.1 [100.0,122.0] corr +0.539 n37
+      0000006d--05e83bb04f   sinc  121.5 par  118.4 [105.0,125.0] corr +0.594 n41
+      0000006e--6ca3e014fd   sinc  108.5 par  111.9 [103.0,127.0] corr +0.716 n48
+      00000076--d0b7ea7e4d   sinc  141.5 par  142.9 [108.0,155.5] corr +0.632 n29
+      00000075--6c8687d5bd   sinc  123.0 par  120.1 [106.0,142.5] corr +0.778 n54
+
+== V282 control  u_e4|rate  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc    5.0 par    5.9 route-CI [  5.0,  6.0] corr +0.938 n32 routes2
+      0000006c--2bc842dbac   sinc    5.0 par    4.6 [  4.5,  5.5] corr +0.929 n28
+      00000064--ce6b0b0ebb   sinc    6.0 par    8.1 [  4.0,  6.5] corr +0.961 n4
+  bin 8-15  POOLED sinc    6.0 par    9.4 route-CI [  6.0,  6.5] corr +0.804 n34 routes2
+      0000006c--2bc842dbac   sinc    6.0 par    9.5 [  5.5,  7.0] corr +0.801 n31
+      00000064--ce6b0b0ebb   sinc    6.5 par    7.7 [  5.0,  8.0] corr +0.839 n3
+  bin >=15  POOLED sinc    5.5 par    6.6 route-CI [  5.5,  5.5] corr +0.818 n187 routes2
+      0000006c--2bc842dbac   sinc    5.5 par    6.5 [  5.0,  6.0] corr +0.818 n162
+      00000064--ce6b0b0ebb   sinc    5.5 par    6.8 [  4.5,  6.5] corr +0.821 n25
+  bin all   POOLED sinc    5.5 par    6.9 route-CI [  5.5,  6.0] corr +0.880 n253 routes2
+      0000006c--2bc842dbac   sinc    5.5 par    6.5 [  5.0,  5.5] corr +0.866 n221
+      00000064--ce6b0b0ebb   sinc    6.0 par    7.9 [  5.0,  6.5] corr +0.931 n32
+
+== TORQUE V293  u_cs|ang  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc  256.0 par  263.6 route-CI [192.0,400.0] corr +0.595 n28 routes5
+      0000006c--68c6e94b17   sinc  208.5 par  208.6 [  nan,  nan] corr +0.374 n2
+      0000006d--05e83bb04f   sinc  255.0 par  260.3 [148.5,275.0] corr +0.476 n5
+      0000006e--6ca3e014fd   sinc  185.5 par  186.0 [-50.0,246.5] corr +0.382 n7
+      00000076--d0b7ea7e4d   sinc  396.5 par  400.0 [201.0,396.5] corr +0.391 n3
+      00000075--6c8687d5bd   sinc  274.5 par  269.9 [246.0,287.5] corr +0.792 n11
+  bin 8-15  POOLED sinc  226.5 par  234.5 route-CI [225.5,266.0] corr +0.407 n76 routes5
+      0000006c--68c6e94b17   sinc  207.5 par  213.6 [-50.0,240.0] corr +0.268 n12
+      0000006d--05e83bb04f   sinc  250.5 par  251.0 [206.0,276.5] corr +0.322 n12
+      0000006e--6ca3e014fd   sinc  225.5 par  228.5 [224.0,312.5] corr +0.517 n21
+      00000076--d0b7ea7e4d   sinc  326.0 par  330.3 [284.5,366.0] corr +0.387 n6
+      00000075--6c8687d5bd   sinc  266.0 par  271.7 [246.0,324.5] corr +0.217 n25
+  bin >=15  POOLED sinc  254.0 par  252.6 route-CI [236.0,261.2] corr +0.425 n105 routes5
+      0000006c--68c6e94b17   sinc  218.5 par  222.4 [195.5,255.5] corr +0.340 n23
+      0000006d--05e83bb04f   sinc  237.5 par  237.5 [214.5,253.0] corr +0.358 n24
+      0000006e--6ca3e014fd   sinc  243.5 par  243.2 [229.5,280.5] corr +0.404 n20
+      00000076--d0b7ea7e4d   sinc  254.5 par  250.6 [235.0,275.5] corr +0.553 n20
+      00000075--6c8687d5bd   sinc  272.0 par  268.6 [258.0,285.5] corr +0.551 n18
+  bin all   POOLED sinc  247.0 par  247.1 route-CI [224.5,314.5] corr +0.489 n209 routes5
+      0000006c--68c6e94b17   sinc  208.0 par  212.1 [201.5,225.0] corr +0.296 n37
+      0000006d--05e83bb04f   sinc  253.5 par  249.8 [218.0,275.0] corr +0.360 n41
+      0000006e--6ca3e014fd   sinc  224.5 par  223.3 [206.0,266.5] corr +0.472 n48
+      00000076--d0b7ea7e4d   sinc  395.5 par  380.4 [256.0,396.5] corr +0.347 n29
+      00000075--6c8687d5bd   sinc  274.5 par  270.0 [255.5,285.5] corr +0.677 n54
+
+== V282 control  u_cs|ang  (lag ms: parabolic / sinc [95% CI], corr, blocks)
+  bin <8    POOLED sinc  155.5 par  164.4 route-CI [155.5,175.0] corr +0.750 n32 routes2
+      0000006c--2bc842dbac   sinc  175.0 par  168.6 [153.6,195.0] corr +0.757 n28
+      00000064--ce6b0b0ebb   sinc  155.5 par  158.3 [115.0,155.5] corr +0.738 n4
+  bin 8-15  POOLED sinc  235.0 par  239.4 route-CI [117.0,255.0] corr +0.541 n34 routes2
+      0000006c--2bc842dbac   sinc  255.0 par  246.6 [135.0,295.0] corr +0.546 n31
+      00000064--ce6b0b0ebb   sinc  117.0 par  122.8 [112.0,134.5] corr +0.660 n3
+  bin >=15  POOLED sinc  155.0 par  153.6 route-CI [154.5,155.5] corr +0.716 n187 routes2
+      0000006c--2bc842dbac   sinc  154.5 par  152.6 [154.0,155.0] corr +0.718 n162
+      00000064--ce6b0b0ebb   sinc  155.5 par  161.2 [154.5,174.5] corr +0.710 n25
+  bin all   POOLED sinc  155.5 par  162.9 route-CI [155.0,174.5] corr +0.697 n253 routes2
+      0000006c--2bc842dbac   sinc  174.5 par  165.5 [154.5,175.0] corr +0.688 n221
+      00000064--ce6b0b0ebb   sinc  155.0 par  156.6 [135.5,155.5] corr +0.727 n32

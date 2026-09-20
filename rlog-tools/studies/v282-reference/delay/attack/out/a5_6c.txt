@@ -1,0 +1,19 @@
+=== OPEN LOOP (mandated: 30 and 60 ms within 5 ms) ===
+  0000006c synth D=0 fb0 dist0 J8e-05 b0.0006          onset     nan ms  R2 0.9996  sum(b) +0.040  a1 +1.182
+  0000006c synth D=15 fb0 dist0 J8e-05 b0.0006         onset     nan ms  R2 0.9996  sum(b) +0.027  a1 +1.171
+  0000006c synth D=30 fb0 dist0 J8e-05 b0.0006         onset     nan ms  R2 0.9996  sum(b) +0.019  a1 +1.170
+  0000006c synth D=60 fb0 dist0 J8e-05 b0.0006         onset     nan ms  R2 0.9996  sum(b) -0.027  a1 +1.187
+  0000006c synth D=90 fb0 dist0 J8e-05 b0.0006         onset     nan ms  R2 0.9997  sum(b) -0.091  a1 +1.208
+=== disputed J / b / F / k ===
+  0000006c synth D=30 fb0 dist0 J0.001 b0.003          onset     nan ms  R2 0.9993  sum(b) -0.132  a1 +0.912
+  0000006c synth D=60 fb0 dist0 J0.001 b0.003          onset     nan ms  R2 0.9993  sum(b) -0.120  a1 +0.921
+  0000006c synth D=30 fb0 dist0 J0.0003 b0.0006        onset     nan ms  R2 0.9997  sum(b) -0.035  a1 +0.833
+  0000006c synth D=30 fb0 dist0 J8e-05 b0.0006         onset     nan ms  R2 0.9997  sum(b) -0.033  a1 +0.835
+  0000006c synth D=30 fb0 dist0 J8e-05 b0.0006         onset     nan ms  R2 0.9993  sum(b) +0.036  a1 +1.303
+=== CLOSED LOOP + unmeasured road torque (the real situation) ===
+  0000006c synth D=30 fb0.0006 dist0 J8e-05 b0.0006    onset     nan ms  R2 0.9994  sum(b) +0.076  a1 +1.179
+  0000006c synth D=60 fb0.0006 dist0 J8e-05 b0.0006    onset     nan ms  R2 0.9994  sum(b) +0.037  a1 +1.191
+  0000006c synth D=30 fb0.0006 dist0.015 J8e-05 b0.0006 onset     nan ms  R2 0.9974  sum(b) +0.034  a1 +1.637
+  0000006c synth D=60 fb0.0006 dist0.015 J8e-05 b0.0006 onset   54.78 ms  R2 0.9974  sum(b) -0.009  a1 +1.626
+=== REAL ===
+  0000006c REAL                                        onset     nan ms  R2 0.9934  sum(b) +0.563  a1 +1.360

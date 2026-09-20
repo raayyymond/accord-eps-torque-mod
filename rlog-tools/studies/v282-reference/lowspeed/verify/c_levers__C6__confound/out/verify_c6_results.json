@@ -1,0 +1,124 @@
+{
+ "validate": {
+  "corr_min": 0.9989793439950042,
+  "corr_max": 0.999951924121136,
+  "p50_min": 0.00015079863505108176,
+  "p50_max": 0.000499700568290995,
+  "p95_lt8_min": 0.003363035274364237,
+  "p95_lt8_max": 0.007057562625849797,
+  "claim_corr_range": [
+   0.9992,
+   0.99995
+  ],
+  "claim_p50_range": [
+   0.00015,
+   0.0005
+  ],
+  "claim_p95_lt8_range": [
+   0.0017,
+   0.007
+  ],
+  "verdict": "CONFIRMED (exact reproduction from validate.json)"
+ },
+ "stickslip_p90": {
+  "us_mask": {
+   "n": 26,
+   "p90": 12.556952882126588,
+   "p50": 1.8181138785060362,
+   "claim": "n~26, p90 12.6"
+  },
+  "ho_mask": {
+   "n": 17,
+   "p90": 4.589472032340051,
+   "p50": 1.5256704033912563,
+   "claim": "n=17, p90 4.6"
+  },
+  "ho_mask_T64B": {
+   "n": 25,
+   "p90": 2.923638823910167,
+   "claim": "p90 3.0"
+  },
+  "verdict": "CONFIRMED (n and p90 reproduce to within rounding on both masks)"
+ },
+ "bigjumps": {
+  "n_total": 18,
+  "claim_total": 18,
+  "breakdown": {
+   "T64": 5,
+   "T64B": 8,
+   "T5": 1,
+   "T4": 4
+  },
+  "claim_breakdown": {
+   "T64": 7,
+   "T64B": 6,
+   "T5": 1,
+   "T4": 4
+  },
+  "ang_range": [
+   9.777799958581374,
+   151.64354187250137
+  ],
+  "claim_ang_range": [
+   10,
+   152
+  ],
+  "n_dist_pressed_ge1s": 17,
+  "n_total_for_guard": 18,
+  "verdict": "TOTAL and ANGLE RANGE confirmed; PER-ROUTE BREAKDOWN in the claim is WRONG -- reproducible split is T64=5/T64B=8, not T64=7/T64B=6 (total still 18). This UNDERSTATES how much of the 7deg+ census T64B (the ~4x-demand route) actually carries: 8/18=44% reproducible vs 6/18=33% claimed. Guard: 17/18 rows are >=1.0s from steeringPressed, one T4 row sits at 0.98s (borderline, immaterial)."
+ },
+ "z_saturation": {
+  "rows": [
+   {
+    "rk": "0000006c--68c6e94b17",
+    "g": "T64",
+    "turn_n": 2361,
+    "turn_zsat": 0.8470986869970352,
+    "trans_n": 917,
+    "trans_zsat": 0.9989094874591058
+   },
+   {
+    "rk": "0000006d--05e83bb04f",
+    "g": "T64",
+    "turn_n": 2868,
+    "turn_zsat": 0.7974198047419805,
+    "trans_n": 961,
+    "trans_zsat": 0.9895941727367326
+   },
+   {
+    "rk": "0000006e--6ca3e014fd",
+    "g": "T64B",
+    "turn_n": 6883,
+    "turn_zsat": 0.7222141508063344,
+    "trans_n": 2341,
+    "trans_zsat": 0.9884664673216574
+   },
+   {
+    "rk": "00000076--d0b7ea7e4d",
+    "g": "T5",
+    "turn_n": 2950,
+    "turn_zsat": 0.8301694915254237,
+    "trans_n": 975,
+    "trans_zsat": 1.0
+   },
+   {
+    "rk": "00000075--6c8687d5bd",
+    "g": "T4",
+    "turn_n": 6814,
+    "turn_zsat": 0.7458174346932785,
+    "trans_n": 2369,
+    "trans_zsat": 0.9957788096243141
+   }
+  ],
+  "turn_zsat_range": [
+   0.7222141508063344,
+   0.8470986869970352
+  ],
+  "trans_zsat_range": [
+   0.9884664673216574,
+   1.0
+  ],
+  "claim": "z is saturated 98-100% of turn and transient frames",
+  "verdict": "REFUTED AS WRITTEN for the TURN subset: turn-frame z-saturation is 61-85% (not 98-100%); only the TRANSIENT (|rate_des|>=40) subset reaches 96.9-100%, matching the claim. During 15-39% of ordinary (non-transient) turning the hysteresis term z is NOT pinned and so retains some dynamic range -- a partial, not complete, weakening of the \"no dynamic reach\" support for AccordFrictionHyst's LOW-reach verdict (the verdict direction is not reversed, since z is still mostly saturated and z_build in large jumps was separately reported as ~0, which this check does not contradict)."
+ }
+}

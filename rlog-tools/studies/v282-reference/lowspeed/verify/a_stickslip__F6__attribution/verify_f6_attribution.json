@@ -1,0 +1,89 @@
+{
+ "accumulation_2_8": {
+  "n": 145,
+  "cmd_change": 0.03550205592714362,
+  "fracs": {
+   "P": {
+    "change": 0.006031363650781087,
+    "pct_of_cmd": 17.0
+   },
+   "I": {
+    "change": -0.0003875294262860703,
+    "pct_of_cmd": -1.1
+   },
+   "hold_ff": {
+    "change": 0.009992866200728118,
+    "pct_of_cmd": 28.1
+   },
+   "move": {
+    "change": 0.004691514620101551,
+    "pct_of_cmd": 13.2
+   },
+   "z": {
+    "change": 0.00917732767647349,
+    "pct_of_cmd": 25.9
+   },
+   "rl": {
+    "change": 0.0023841711467208243,
+    "pct_of_cmd": 6.7
+   },
+   "dob": {
+    "change": 0.0035934171071481803,
+    "pct_of_cmd": 10.1
+   }
+  }
+ },
+ "accumulation_8_15": {
+  "n": 366,
+  "cmd_change": 0.03751446546038757,
+  "fracs": {
+   "P": {
+    "change": 0.007151312658775889,
+    "pct_of_cmd": 19.1
+   },
+   "I": {
+    "change": 0.0008497465176313328,
+    "pct_of_cmd": 2.3
+   },
+   "hold_ff": {
+    "change": 0.012468848999699736,
+    "pct_of_cmd": 33.2
+   },
+   "move": {
+    "change": 0.004290376500951727,
+    "pct_of_cmd": 11.4
+   },
+   "z": {
+    "change": 0.008416505866075766,
+    "pct_of_cmd": 22.4
+   },
+   "rl": {
+    "change": 0.0007440168575696161,
+    "pct_of_cmd": 2.0
+   },
+   "dob": {
+    "change": 0.0037809815244269534,
+    "pct_of_cmd": 10.1
+   }
+  }
+ },
+ "breakaway_F_2_8": {
+  "F": 0.03094571338534995,
+  "n": 145
+ },
+ "breakaway_F_8_15": {
+  "F": 0.01819451712816539,
+  "n": 366
+ },
+ "z_reach_check": {
+  "fric": 0.015,
+  "band_lowspeed_deg": 3.0,
+  "z_after_3deg_from_center": 0.015,
+  "z_after_6deg_from_center": 0.015,
+  "z_after_3deg_from_neg_extreme": 7.635663206318616e-16,
+  "z_after_6deg_from_neg_extreme": 0.015,
+  "note": "max single-sided magnitude is fric=0.015, not 0.030; 0.030 is the PEAK-TO-PEAK SWING (-fric to +fric), which needs 2*band=6 deg of travel, not 3 deg. 3 deg of travel from center reaches only +fric=0.015 (half of 0.030). F6 conflates the 0.030 swing ceiling with the 3 deg dose that actually only buys 0.015 of it."
+ },
+ "observed_dwell_demand_travel_2_8_median_deg": 2.3913698196411133,
+ "hold_map_source_check": "see hold_torque() in sslib.py: k(v)*sat*tanh(angle/sat), pure odd function of angle, no additive constant -> CONFIRMED no +/-0.02 offset exists in the flown map."
+}

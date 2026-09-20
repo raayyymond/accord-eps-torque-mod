@@ -1,0 +1,73 @@
+{
+ "5": {
+  "candidates": {
+   "carControl_k0": {
+    "scale": -4088.7436531489234,
+    "rms": 0.3941599503917717,
+    "frac_within_1lsb": 1.0,
+    "accept": true
+   },
+   "carControl_k1": {
+    "scale": -4088.3453299658463,
+    "rms": 4.427422147608619,
+    "frac_within_1lsb": 0.3199647421771706,
+    "accept": false
+   },
+   "carControl_k2": {
+    "scale": -4087.381311206725,
+    "rms": 7.7720120682703975,
+    "frac_within_1lsb": 0.18646682830063918,
+    "accept": false
+   },
+   "carControl_k3": {
+    "scale": -4085.9612943156676,
+    "rms": 10.86750503858274,
+    "frac_within_1lsb": 0.12985008818342153,
+    "accept": false
+   },
+   "carOutput_k0": {
+    "scale": -4088.356526054909,
+    "rms": 4.42721843591523,
+    "frac_within_1lsb": 0.31967393699052654,
+    "accept": false
+   },
+   "carOutput_k1": {
+    "scale": -4087.396955302814,
+    "rms": 7.77135535771512,
+    "frac_within_1lsb": 0.1866460996033495,
+    "accept": false
+   },
+   "carOutput_k2": {
+    "scale": -4085.9866117455517,
+    "rms": 10.86670167570027,
+    "frac_within_1lsb": 0.12960105796782015,
+    "accept": false
+   },
+   "carOutput_k3": {
+    "scale": -4084.1977977877787,
+    "rms": 13.747464368009728,
+    "frac_within_1lsb": 0.10670194003527336,
+    "accept": false
+   }
+  },
+  "accepted": [
+   "carControl_k0"
+  ],
+  "picked": "carControl_k0",
+  "carState_offset_corr": {
+   "0": -0.9802187629036402,
+   "1": -0.34267898393738633,
+   "2": -0.39026197315297784
+  },
+  "carState_best_offset": 0,
+  "D_ctl_ms": [
+   9.918651850028937,
+   10.507631000024276,
+   10.891173499970819,
+   11.398597000038535,
+   12.415500549988678
+  ],
+  "D_ctl_mean_ms": 11.013061999330207,
+  "verdict": "established"
+ }
+}

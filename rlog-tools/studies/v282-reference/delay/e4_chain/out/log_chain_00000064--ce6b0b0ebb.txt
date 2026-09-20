@@ -1,0 +1,213 @@
+{
+ "route": "00000064--ce6b0b0ebb",
+ "carState_carries_0x14A_batch_lag": {
+  "0": 1.0,
+  "1": 0.2809295179565969,
+  "2": 0.20710309080437703
+ },
+ "carState_minus_its_can_batch_ms": [
+  2.33,
+  2.45,
+  2.54,
+  2.63,
+  2.82
+ ],
+ "controlsState_consumes_carState_lag": {
+  "0": {
+   "n": 16448,
+   "sign_agree": -0.8340223735408561,
+   "corr": -0.404288200489981
+  },
+  "1": {
+   "n": 16048,
+   "sign_agree": -0.3606679960119641,
+   "corr": -0.3835894484289572
+  },
+  "2": {
+   "n": 16078,
+   "sign_agree": -0.34593854957084214,
+   "corr": -0.342281497174094
+  }
+ },
+ "controlsState_minus_carState_ms": [
+  3.38,
+  3.71,
+  4.27,
+  4.77,
+  5.56
+ ],
+ "carControl_torque_eq_nearest_controlsState_output": 1.0,
+ "carControl_minus_controlsState_ms": [
+  0.17,
+  0.19,
+  0.23
+ ],
+ "carOutput_torque_eq_Lth_recent_carControl": {
+  "0": 0.0004,
+  "1": 0.9305,
+  "2": 0.0004,
+  "3": 0.0008
+ },
+ "sendcan_eq_Lth_next_carOutput_can": {
+  "0": 0.9998720573183214,
+  "1": 0.04432300043866062,
+  "2": 0.027452843983038457
+ },
+ "n_sendcan": 90206,
+ "n_engaged_handsoff_identity": 52595,
+ "identity_rate_engaged": 0.9345365449651459,
+ "echo_found_rate_engaged": 1.0,
+ "D_ctl_carState_to_sendcan_ms_pct": [
+  9.95,
+  10.54,
+  10.92,
+  11.42,
+  12.4
+ ],
+ "D_ctl_mean": 11.039561545831816,
+ "batch14_to_sendcan_ms_pct": [
+  12.61,
+  13.09,
+  13.48,
+  13.99,
+  15.16
+ ],
+ "batch14_to_sendcan_mean": 13.77527766169817,
+ "sendcan_to_echo_batch_ms_pct": [
+  5.43,
+  6.07,
+  6.4,
+  7.04,
+  16.39
+ ],
+ "sendcan_to_echo_mean": 7.292463866241742,
+ "echo_batch_offset_hist": {
+  "0": 48293,
+  "1": 4302
+ },
+ "carState_loops_stale_hist": {
+  "0": 1,
+  "1": 52593,
+  "2": 1
+ },
+ "by_speed": {
+  "<8": {
+   "n": 9868,
+   "D_ctl_mean": 10.991321307661622,
+   "batch14_to_send_mean": 13.748179183928167,
+   "send_to_echo_mean": 7.356898451053556
+  },
+  "8-15": {
+   "n": 10099,
+   "D_ctl_mean": 10.999852824735392,
+   "batch14_to_send_mean": 13.707659799782112,
+   "send_to_echo_mean": 7.355231048420724
+  },
+  ">=15": {
+   "n": 32628,
+   "D_ctl_mean": 11.06644192601498,
+   "batch14_to_send_mean": 13.804402357239566,
+   "send_to_echo_mean": 7.2535486322173295
+  }
+ },
+ "n_steps_gt60": 1797,
+ "n_sign_flips": 1250,
+ "traced_examples_steps_and_flips": [
+  {
+   "sendcan_t": 88.2517,
+   "cmd": -53,
+   "prev_cmd": 19,
+   "carOutput_t": 88.2612,
+   "co_can": -53,
+   "carControl_t": 88.2456,
+   "cc_tq": 0.012975911609828472,
+   "controlsState_t": 88.2454,
+   "ct_out": 0.012975911609828472,
+   "carState_t": 88.241,
+   "cs_ang": 1.2000000476837158,
+   "batch14_t": 88.2386,
+   "ang14": 1.2000000000000002,
+   "echo_t": 88.2588
+  },
+  {
+   "sendcan_t": 88.2625,
+   "cmd": -116,
+   "prev_cmd": -53,
+   "carOutput_t": 88.2712,
+   "co_can": -116,
+   "carControl_t": 88.2552,
+   "cc_tq": 0.02841717004776001,
+   "controlsState_t": 88.255,
+   "ct_out": 0.02841717004776001,
+   "carState_t": 88.2508,
+   "cs_ang": 1.2999999523162842,
+   "batch14_t": 88.2483,
+   "ang14": 1.3,
+   "echo_t": 88.2687
+  },
+  {
+   "sendcan_t": 88.5938,
+   "cmd": -921,
+   "prev_cmd": -1004,
+   "carOutput_t": 88.6033,
+   "co_can": -921,
+   "carControl_t": 88.5878,
+   "cc_tq": 0.22501513361930847,
+   "controlsState_t": 88.5876,
+   "ct_out": 0.22501513361930847,
+   "carState_t": 88.5834,
+   "cs_ang": 2.0999999046325684,
+   "batch14_t": 88.5808,
+   "ang14": 2.1,
+   "echo_t": 88.601
+  },
+  {
+   "sendcan_t": 88.2517,
+   "cmd": -53,
+   "prev_cmd": 19,
+   "carOutput_t": 88.2612,
+   "co_can": -53,
+   "carControl_t": 88.2456,
+   "cc_tq": 0.012975911609828472,
+   "controlsState_t": 88.2454,
+   "ct_out": 0.012975911609828472,
+   "carState_t": 88.241,
+   "cs_ang": 1.2000000476837158,
+   "batch14_t": 88.2386,
+   "ang14": 1.2000000000000002,
+   "echo_t": 88.2588
+  },
+  {
+   "sendcan_t": 89.0668,
+   "cmd": 42,
+   "prev_cmd": -41,
+   "carOutput_t": 89.0752,
+   "co_can": 42,
+   "carControl_t": 89.0591,
+   "cc_tq": -0.01037401519715786,
+   "controlsState_t": 89.059,
+   "ct_out": -0.01037401519715786,
+   "carState_t": 89.0549,
+   "cs_ang": 4.0,
+   "batch14_t": 89.0525,
+   "ang14": 4.0,
+   "echo_t": 89.0729
+  },
+  {
+   "sendcan_t": 89.1068,
+   "cmd": -7,
+   "prev_cmd": 8,
+   "carOutput_t": 89.1151,
+   "co_can": -7,
+   "carControl_t": 89.1,
+   "cc_tq": 0.0017290497198700905,
+   "controlsState_t": 89.0998,
+   "ct_out": 0.0017290497198700905,
+   "carState_t": 89.0958,
+   "cs_ang": 3.9000000953674316,
+   "batch14_t": 89.0931,
+   "ang14": 3.9000000000000004,
+   "echo_t": 89.1128
+  }
+ ]
+}

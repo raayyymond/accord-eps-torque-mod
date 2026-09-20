@@ -1,0 +1,18 @@
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\delay\e2_phase\common.py:134: RuntimeWarning: invalid value encountered in sqrt
+  corr = cov / np.sqrt(np.outer(np.diag(cov), np.diag(cov)))
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\delay\e2_phase\common.py:134: RuntimeWarning: divide by zero encountered in divide
+  corr = cov / np.sqrt(np.outer(np.diag(cov), np.diag(cov)))
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\delay\e2_phase\common.py:134: RuntimeWarning: invalid value encountered in divide
+  corr = cov / np.sqrt(np.outer(np.diag(cov), np.diag(cov)))
+
+== admissible_v0-8: routes 2 chunks 12
+   D 35.5 ms  sdD 6.2  J 6.88e-05  b 6.9e-04  k 1.0e-05 corrDJ -0.37  bins 11  f 2.0-5.9
+   group delay raw +37.6 ms  plant-removed +16.8 ms
+   J-profile (J, D ms, cost): [('2e-05', 69.4, 518.8), ('4e-05', 57.0, 462.1), ('8e-05', 29.4, 401.4), ('1e-04', 28.4, 1588.8), ('3e-04', 31.7, 4807.5)]
+   route-cluster bootstrap n=300  median 32.4  CI95 [15.8, 43.3] ms
+
+== admissible_plus_75_v0-8: routes 3 chunks 25
+   D 38.1 ms  sdD 5.8  J 7.03e-05  b 7.8e-04  k 1.0e-05 corrDJ -0.43  bins 12  f 1.6-5.9
+   group delay raw +42.5 ms  plant-removed +17.9 ms
+   J-profile (J, D ms, cost): [('2e-05', 71.4, 817.3), ('4e-05', 58.6, 710.0), ('8e-05', 33.4, 564.6), ('1e-04', 29.2, 2145.6), ('3e-04', 31.1, 6725.1)]
+   route-cluster bootstrap n=300  median 36.8  CI95 [16.9, 65.3] ms

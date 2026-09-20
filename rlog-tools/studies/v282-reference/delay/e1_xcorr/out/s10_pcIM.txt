@@ -1,0 +1,5 @@
+merged 96 plants
+  bin <8    own-best plant J8e-05 b0.008 F0 ks0.7 rho_rate 0.833 :  rate D 93.9 (rho 0.833)  acc_r D 89.9 (rho 0.870)  ang D 103.2 (rho 0.785)   top5 rate D: 94,88,94,91,89
+  bin 8-15  own-best plant J8e-05 b0.008 F0 ks0.7 rho_rate 0.751 :  rate D 95.9 (rho 0.751)  acc_r D 88.4 (rho 0.836)  ang D 109.4 (rho 0.557)   top5 rate D: 96,88,96,89,91
+  bin >=15  own-best plant J0.0006 b0.0015 F0 ks0.7 rho_rate 0.506 :  rate D 64.0 (rho 0.506)  acc_r D 48.3 (rho 0.690)  ang D 99.3 (rho 0.383)   top5 rate D: 64,70,76,83,84
+  bin all   own-best plant J8e-05 b0.008 F0 ks0.7 rho_rate 0.699 :  rate D 98.9 (rho 0.699)  acc_r D 89.7 (rho 0.792)  ang D 114.2 (rho 0.544)   top5 rate D: 99,91,100,79,91

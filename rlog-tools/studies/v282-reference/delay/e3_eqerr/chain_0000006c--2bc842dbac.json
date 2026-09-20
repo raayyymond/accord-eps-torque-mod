@@ -1,0 +1,87 @@
+{
+ "route": "0000006c--2bc842dbac",
+ "segs": [
+  "75604b0a432fdc89_0000006c--2bc842dbac--30--rlog.zst",
+  "75604b0a432fdc89_0000006c--2bc842dbac--31--rlog.zst",
+  "75604b0a432fdc89_0000006c--2bc842dbac--32--rlog.zst"
+ ],
+ "n": {
+  "cs": 17916,
+  "cc": 17916,
+  "sc": 17916,
+  "cb": 18000,
+  "ec": 17916
+ },
+ "angle_match_b01": 1.0,
+ "angle_match_b56": 1.0,
+ "cs_uses_latest_14A_when_moving": 1.0,
+ "cs_uses_prev_14A_when_moving": 0.0,
+ "can_batch_to_carState_ms": [
+  2.404253747954499,
+  2.612208503705915,
+  2.8977039983146824
+ ],
+ "carState_to_carControl_ms": [
+  4.851844001677819,
+  5.143390502780676,
+  6.233717753275414
+ ],
+ "sendcan_value_match": {
+  "cc_latest_before_send": {
+   "scale": -4086.1705553374813,
+   "rms_resid_counts": 0.6819941442964477,
+   "rms_e4": 164.18847694793703,
+   "frac_within_2": 0.9998883430102724
+  },
+  "cc_one_earlier": {
+   "scale": -4064.9100323611324,
+   "rms_resid_counts": 16.90855932335876,
+   "rms_e4": 164.18847694793703,
+   "frac_within_2": 0.22945511389012951
+  },
+  "cc_next_after_send": {
+   "scale": -4064.6767888931654,
+   "rms_resid_counts": 16.910284897828056,
+   "rms_e4": 164.18847694793703,
+   "frac_within_2": 0.21856855739169273
+  }
+ },
+ "carControl_to_sendcan_ms": [
+  4.524850752204657,
+  5.761493001045892,
+  7.297367047794979
+ ],
+ "D_ctl_log_ms_carState_used_to_sendcan": [
+  10.193655747934827,
+  10.657415752575616,
+  11.013865499990061,
+  11.51779300198541,
+  12.45385095207894
+ ],
+ "D_ctl_log_ms_mean": 11.15022632336071,
+ "latest_carState_to_sendcan_ms": [
+  0.8361965545191197,
+  1.0831299987330567,
+  1.6586204012128292
+ ],
+ "frac_cycles_command_from_previous_carState": 0.9996650290308173,
+ "frac_cycles_command_from_same_carState": 0.00016748548459133542,
+ "frac_cycles_command_2plus_back": 0.00016748548459133542,
+ "can_batch_of_sample_to_sendcan_ms": [
+  12.900166200779495,
+  13.649578002514318,
+  15.225057652423859
+ ],
+ "sendcan_to_echo_batch_ms": [
+  5.320731802203227,
+  6.238676000066334,
+  16.20317495144263
+ ],
+ "echo_value_match_frac": 0.923806865754954,
+ "rate_field_match": [
+  0.999944183969636,
+  0.33260772493860236
+ ],
+ "rate_nonint_frac": 0.0,
+ "angle_step_min_nonzero": 0.09999942779541016
+}

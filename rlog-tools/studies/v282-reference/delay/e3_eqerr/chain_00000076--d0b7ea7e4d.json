@@ -1,0 +1,87 @@
+{
+ "route": "00000076--d0b7ea7e4d",
+ "segs": [
+  "75604b0a432fdc89_00000076--d0b7ea7e4d--8--rlog.zst",
+  "75604b0a432fdc89_00000076--d0b7ea7e4d--9--rlog.zst",
+  "75604b0a432fdc89_00000076--d0b7ea7e4d--10--rlog.zst"
+ ],
+ "n": {
+  "cs": 17912,
+  "cc": 17916,
+  "sc": 17912,
+  "cb": 18001,
+  "ec": 17912
+ },
+ "angle_match_b01": 0.9999441715051363,
+ "angle_match_b56": 0.9999441715051363,
+ "cs_uses_latest_14A_when_moving": 0.9996233521657251,
+ "cs_uses_prev_14A_when_moving": 0.0003766478342749529,
+ "can_batch_to_carState_ms": [
+  2.3859765999930005,
+  2.590069999996558,
+  2.863072799993916
+ ],
+ "carState_to_carControl_ms": [
+  3.9620584000090275,
+  5.327621999981602,
+  6.525355100052366
+ ],
+ "sendcan_value_match": {
+  "cc_latest_before_send": {
+   "scale": -4087.5151482921033,
+   "rms_resid_counts": 0.4123895087426659,
+   "rms_e4": 195.22049728956094,
+   "frac_within_2": 1.0
+  },
+  "cc_one_earlier": {
+   "scale": -4085.41690010925,
+   "rms_resid_counts": 4.008099121276128,
+   "rms_e4": 195.22049728956094,
+   "frac_within_2": 0.4650826446280992
+  },
+  "cc_next_after_send": {
+   "scale": -4087.98806513133,
+   "rms_resid_counts": 4.557918110156706,
+   "rms_e4": 195.22049728956094,
+   "frac_within_2": 0.46646005509641875
+  }
+ },
+ "carControl_to_sendcan_ms": [
+  4.024038599959567,
+  5.468597000003683,
+  7.092918650079126
+ ],
+ "D_ctl_log_ms_carState_used_to_sendcan": [
+  10.016014399997175,
+  10.566876000041248,
+  10.959318499999426,
+  11.46651300001622,
+  12.431379050022429
+ ],
+ "D_ctl_log_ms_mean": 11.077753045660415,
+ "latest_carState_to_sendcan_ms": [
+  0.7387629999584533,
+  0.9964275000129419,
+  1.4339556500544859
+ ],
+ "frac_cycles_command_from_previous_carState": 0.9997245179063361,
+ "frac_cycles_command_from_same_carState": 0.00020661157024793388,
+ "frac_cycles_command_2plus_back": 6.887052341597796e-05,
+ "can_batch_of_sample_to_sendcan_ms": [
+  12.70731334999482,
+  13.57934899999691,
+  15.175204300066977
+ ],
+ "sendcan_to_echo_batch_ms": [
+  5.436820099930628,
+  6.342869000036444,
+  16.421179599956297
+ ],
+ "echo_value_match_frac": 0.9423817765618894,
+ "rate_field_match": [
+  0.9998883430102724,
+  0.33497096918267083
+ ],
+ "rate_nonint_frac": 0.0,
+ "angle_step_min_nonzero": 0.09999942779541016
+}

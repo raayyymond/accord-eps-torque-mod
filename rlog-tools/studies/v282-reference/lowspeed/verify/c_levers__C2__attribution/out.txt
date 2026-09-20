@@ -1,0 +1,55 @@
+=== 1. Primary 1.8-3.5 Hz band: is rate_t the only positive (damping) term? ===
+T64   2.5-5  (60s)  rate_t b30=+6.27  other-term b30s: P=-0.86 I=-0.06 hold=-0.67 move=-1.32 z=-0.42 dob=-0.52
+T64   5-8    (28s)  rate_t b30=+5.27  other-term b30s: P=-1.42 I=-0.07 hold=-1.07 move=-1.92 z=-0.31 dob=-0.38
+T64   8-15   (409s)  rate_t b30=+7.50  other-term b30s: P=+0.13 I=-0.05 hold=-0.15 move=-0.35 z=-0.14 dob=-1.58   <-- POSITIVE non-rate_t term(s): ['P']
+T64B  5-8    (60s)  rate_t b30=+6.43  other-term b30s: P=-0.71 I=-0.08 hold=-0.25 move=-1.39 z=-0.13 dob=-0.91
+T64B  8-15   (367s)  rate_t b30=+6.23  other-term b30s: P=-0.36 I=-0.06 hold=-0.75 move=-1.59 z=-0.35 dob=-1.36
+T5    2.5-5  (7s)  rate_t b30=+4.59  other-term b30s: P=-2.13 I=-0.06 hold=-0.60 move=-2.51 z=-0.23 dob=-0.06
+T5    5-8    (44s)  rate_t b30=+7.89  other-term b30s: P=+0.29 I=-0.05 hold=-0.07 move=-0.06 z=-0.04 dob=-1.60   <-- POSITIVE non-rate_t term(s): ['P']
+T5    8-15   (92s)  rate_t b30=+7.95  other-term b30s: P=+0.58 I=-0.05 hold=-0.04 move=+0.11 z=-0.02 dob=-1.84   <-- POSITIVE non-rate_t term(s): ['P', 'move']
+T4    2.5-5  (28s)  rate_t b30=+2.47  other-term b30s: P=-0.67 I=-0.15 hold=-0.34 move=-1.32 z=-1.16 dob=-0.00
+T4    5-8    (11s)  rate_t b30=+3.56  other-term b30s: P=+0.26 I=-0.12 hold=+0.07 move=+0.14 z=+0.13 dob=-0.00   <-- POSITIVE non-rate_t term(s): ['P', 'hold', 'move', 'z']
+T4    8-15   (474s)  rate_t b30=+3.01  other-term b30s: P=+0.10 I=-0.15 hold=-0.18 move=-0.58 z=-0.22 dob=-0.00   <-- POSITIVE non-rate_t term(s): ['P']
+
+=== 2. "Command without the rate loop" arithmetic: out_b30 - rate_t_b30 vs sum(other 6 terms) ===
+T64 2.5-5: out-rate_t = -4.41   sum(P,I,hold,move,z,dob) = -3.85   diff = -0.56  (residual from saturation/reconstruction gap, not from linearity failure)
+T64 5-8: out-rate_t = -5.73   sum(P,I,hold,move,z,dob) = -5.18   diff = -0.55  (residual from saturation/reconstruction gap, not from linearity failure)
+T64 8-15: out-rate_t = -2.61   sum(P,I,hold,move,z,dob) = -2.14   diff = -0.47  (residual from saturation/reconstruction gap, not from linearity failure)
+
+=== 3. 3.5-6 Hz pumping band: per-route rate_t b30/b60 range (claim: T64/T64B/T5 +4.7..+6.9 @30ms, -2.1..-4.2 @60ms) ===
+  T64   6c bin0 (9s)  b30=+5.36  b60=-2.82
+  T64   6c bin1 (22s)  b30=+4.69  b60=-2.50
+  T64   6c bin2 (202s)  b30=+4.71  b60=-2.83
+  T64   6d bin0 (51s)  b30=+6.32  b60=-1.69
+  T64   6d bin1 (5s)  b30=+4.63  b60=-3.81
+  T64   6d bin2 (207s)  b30=+4.63  b60=-2.73
+  T64B  6e bin0 (5s)  b30=+5.02  b60=-4.24
+  T64B  6e bin1 (60s)  b30=+4.71  b60=-3.59
+  T64B  6e bin2 (367s)  b30=+4.86  b60=-2.56
+  T5    76 bin0 (7s)  b30=+6.93  b60=-1.48
+  T5    76 bin1 (44s)  b30=+4.96  b60=-2.16
+  T5    76 bin2 (92s)  b30=+4.40  b60=-2.60
+  ACTUAL range b30: [4.40, 6.93]   claim: [4.7, 6.9]
+  ACTUAL range b60: [-4.24, -1.48]   claim: [-2.1, -4.2]  (all-negative confirmed: True)
+
+=== 4. T4 rate_t primary-band b30 range (claim: +2.5 to +3.6) ===
+  T4 2.5-5: rate_t b30 = +2.47
+  T4 5-8: rate_t b30 = +3.56
+  T4 8-15: rate_t b30 = +3.01
+  ACTUAL range: [2.47, 3.56]  claim: [2.5, 3.6]
+
+=== 5. Overshoot claim: observer-on 61% vs T4(no observer) 18% at 6-15 m/s, >1deg overshoot ===
+  6-15 m/s observer on (T64,T64B,T5)    n=149 overshoot>1deg 0.61 [0.53,0.68]  overshoot p50 1.55 [1.06,1.78] deg  err@release p50 +0.84 [+0.60,+0.96]  dob rise over the jump p50 +0.0075 [+0.0067,+0.0086]
+  6-15 m/s T64 only                     n= 58 overshoot>1deg 0.57 [0.45,0.69]  overshoot p50 1.34 [0.88,1.58] deg  err@release p50 +0.57 [+0.29,+0.84]  dob rise over the jump p50 +0.0064 [+0.0054,+0.0075]
+  6-15 m/s T4 no observer               n= 66 overshoot>1deg 0.18 [0.09,0.29]  overshoot p50 0.00 [0.00,0.07] deg  err@release p50 +1.63 [+1.42,+1.89]  dob rise over the jump p50 +0.0000 [+0.0000,+0.0000]
+
+=== 6. Dwell-build share of |out|: observer 38-60% on T64/T64B (claim) ===
+  (see tables.txt DWELL section: T64<8=+0.38 T64 8-15=+0.60 T64B<8=+0.55 T64B 8-15=+0.52 -> range 38-60% CONFIRMED)
+
+=== 7. Rate-loop taper 12 m/s and 0.46-0.6 floor at 20-26 m/s: cross-checked against fork source ===
+  latcontrol_vehicle_tunes.py:293  HONDA_ACCORD_RATE_LOOP_TAPER_V = 12.0  (confirms untapered <12 m/s)
+  factor at 20 m/s = min(1,12/20) = 0.600   factor at 26 m/s = min(1,12/26) = 0.462  (claim: 0.46-0.6) -> MATCH
+
+=== 8. Validation residuals (claim: corr 0.9992-0.99995, median resid 0.0002-0.0005) ===
+  corr range [0.99924, 0.99995]  claim [0.9992, 0.99995]
+  median-abs-resid range [0.00015, 0.00042]  claim [0.0002, 0.0005]

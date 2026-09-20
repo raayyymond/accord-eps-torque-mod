@@ -1,0 +1,18 @@
+=== OPEN LOOP controls (mandated: recover 30 and 60 ms within 5 ms) ===
+  0000006c synth D=0 fb0 dist0 J8e-05            onset D     nan ms  J_fit       nan  R2 0.321  |h(tau<0)|share 0.148
+  0000006c synth D=30 fb0 dist0 J8e-05           onset D   41.64 ms  J_fit  3.44e-04  R2 0.247  |h(tau<0)|share 0.173
+  0000006c synth D=60 fb0 dist0 J8e-05           onset D     nan ms  J_fit       nan  R2 0.188  |h(tau<0)|share 0.184
+=== sensitivity to the disputed J and b ===
+  0000006c synth D=30 fb0 dist0 J0.001           onset D     nan ms  J_fit       nan  R2 0.104  |h(tau<0)|share 0.256
+  0000006c synth D=60 fb0 dist0 J0.001           onset D     nan ms  J_fit       nan  R2 0.100  |h(tau<0)|share 0.270
+  0000006c synth D=30 fb0 dist0 J0.0003          onset D     nan ms  J_fit       nan  R2 0.028  |h(tau<0)|share 0.192
+  0000006c synth D=30 fb0 dist0 J8e-05           onset D   34.98 ms  J_fit  3.29e-04  R2 0.254  |h(tau<0)|share 0.173
+  0000006c synth D=30 fb0 dist0 J8e-05           onset D    4.66 ms  J_fit  4.31e-04  R2 0.527  |h(tau<0)|share 0.105
+=== CLOSED LOOP, then closed loop + unmeasured road torque (the real situation) ===
+  0000006c synth D=30 fb0.0006 dist0 J8e-05      onset D   21.38 ms  J_fit  2.52e-04  R2 0.458  |h(tau<0)|share 0.129
+  0000006c synth D=60 fb0.0006 dist0 J8e-05      onset D     nan ms  J_fit       nan  R2 0.369  |h(tau<0)|share 0.140
+  0000006c synth D=30 fb0.0006 dist0.015 J8e-05  onset D    9.68 ms  J_fit  3.50e-04  R2 0.424  |h(tau<0)|share 0.153
+  0000006c synth D=60 fb0.0006 dist0.015 J8e-05  onset D     nan ms  J_fit       nan  R2 0.339  |h(tau<0)|share 0.162
+  0000006c synth D=30 fb0.003 dist0.015 J8e-05   onset D   18.90 ms  J_fit  1.70e-04  R2 0.525  |h(tau<0)|share 0.093
+=== REAL ===
+  0000006c REAL                                  onset D     nan ms  J_fit       nan  R2 0.082  |h(tau<0)|share 0.297

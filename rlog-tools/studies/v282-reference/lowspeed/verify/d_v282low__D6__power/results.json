@@ -1,0 +1,62 @@
+{
+  "1_event_count": {
+    "n": 9,
+    "n_build": 2
+  },
+  "2_blocks_ge45deg_by_rate_bin": {
+    "0-5": 0,
+    "5-15": 0,
+    "15-35": 3,
+    "35-80": 5,
+    "80-400": 5
+  },
+  "2_verdict": "WRONG as literally stated: 15-35 deg/s x >=45 deg has n=3 blocks, not zero. d_matched.py drops it only because its own n>=5 reporting threshold is not met. \"none\" conflates \"below the reporting threshold\" with \"no data exists\".",
+  "3_t50_lag_power": {
+    "T4": {
+      "n": 9,
+      "mwu_p": 0.1333202155896274,
+      "mean_diff_s": 0.4141732778569047,
+      "cohens_d_observed": 0.8114550549708581,
+      "min_detectable_d_80pow": 1.3333333333333333,
+      "min_detectable_diff_s": 0.6805442072973122
+    },
+    "T5": {
+      "n": 3,
+      "mwu_p": 0.6,
+      "mean_diff_s": 0.03611779792190972,
+      "cohens_d_observed": 0.04938166774671236,
+      "min_detectable_d_80pow": 1.8856180831641267,
+      "min_detectable_diff_s": 1.3791428275557749
+    },
+    "T64": {
+      "n": 3,
+      "mwu_p": 0.3727272727272727,
+      "mean_diff_s": 0.5669238824620324,
+      "cohens_d_observed": 0.8790553763128847,
+      "min_detectable_d_80pow": 1.8856180831641267,
+      "min_detectable_diff_s": 1.2160802986404002
+    },
+    "T64B": {
+      "n": 7,
+      "mwu_p": 0.35104895104895106,
+      "mean_diff_s": 0.38353424376964884,
+      "cohens_d_observed": 0.7097060173826636,
+      "min_detectable_d_80pow": 1.4253932901995967,
+      "min_detectable_diff_s": 0.7703008347698254
+    }
+  },
+  "3_verdict": "CONFIRMS and STRENGTHENS the null: min detectable effect at these n is d~1.3-1.5 (alpha .05, 80% power, rule-of-thumb), while the observed effect vs T64B is only d~0.71 (~0.38s mean diff). A true difference of that size would routinely fail to reach significance at n=9 vs n=7 -- the \"cannot be compared\" call is well-founded, if anything understated as a caution.",
+  "4_rate_ceiling_check": {
+    "V282": {
+      "max_event_peak_rate_meas_lt15": 108.2460682993878,
+      "max_raw_abs_sr_lt15": 159.79364013671875,
+      "max_raw_abs_sr_lt8": 159.79364013671875
+    },
+    "V282old": {
+      "max_event_peak_rate_meas_lt15": 151.00740207995233,
+      "max_raw_abs_sr_lt15": 154.0,
+      "max_raw_abs_sr_lt8": 154.0
+    }
+  },
+  "4_verdict": "WRONG as stated. The two V282 groups do NOT share a ~151 deg/s max: V282old reaches 151.0 (event-detected peak) / 154.0 (raw, <15 m/s); V282 only reaches 108.2 (event) and its own RAW max is 159.8 deg/s -- HIGHER than 151, not capped at it. 151 is the V282old event-detected max alone, not a value both groups hit. The \"same-ceiling\" premise behind the firmware-rate-cap BELIEF is not reproducible from this data; the controller-saturation flag (cs_sat) is also 0 in every cell, which does not support a servo ceiling being hit either."
+}

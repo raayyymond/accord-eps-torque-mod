@@ -1,0 +1,94 @@
+====================================================================================================
+CHECK 1: un-pool T64 (6c,6d) from T64B (6e) -- b08 pooled all three as 'rev64'
+====================================================================================================
+<3    T64(6c,6d) n=  34 model_rate= 78.93 absang= 13.7  |  T64B(6e) n=  15 model_rate=  6.95 absang=  1.2  |  V282 n= 139 model_rate=  7.39 absang=  7.9  |  ratio(pooled rev64/V282)= 8.91  ratio(T64-only/V282)=10.68
+3-6   T64(6c,6d) n=  57 model_rate= 18.15 absang= 18.3  |  T64B(6e) n=  42 model_rate= 34.02 absang= 40.3  |  V282 n= 166 model_rate=  5.60 absang=  9.0  |  ratio(pooled rev64/V282)= 4.66  ratio(T64-only/V282)= 3.24
+6-8   T64(6c,6d) n=  37 model_rate=  5.13 absang= 26.1  |  T64B(6e) n=  55 model_rate= 13.13 absang= 15.9  |  V282 n= 127 model_rate=  3.55 absang=  9.4  |  ratio(pooled rev64/V282)= 3.01  ratio(T64-only/V282)= 1.45
+8-15  T64(6c,6d) n= 247 model_rate=  1.88 absang=  3.0  |  T64B(6e) n= 217 model_rate=  2.60 absang=  8.0  |  V282 n= 534 model_rate=  1.75 absang=  4.7  |  ratio(pooled rev64/V282)= 1.28  ratio(T64-only/V282)= 1.07
+<8    T64(6c,6d) n= 128 model_rate= 42.53 absang= 19.3  |  T64B(6e) n= 112 model_rate= 22.92 absang= 23.1  |  V282 n= 432 model_rate=  5.77 absang=  8.8  |  ratio(pooled rev64/V282)= 6.03  ratio(T64-only/V282)= 7.37
+
+====================================================================================================
+CHECK 2: drop the 62-segment V282 route 0000006c--2bc842dbac
+====================================================================================================
+<3    V282-full n= 139 model_rate=  7.39  |  V282-no62(64,65) n=  27 model_rate=  9.29  |  V282-only62 n= 112 model_rate=  6.85  |  ratio(rev64-pooled / V282-no62)= 7.09  ratio(T64-only / V282-no62)= 8.49
+3-6   V282-full n= 166 model_rate=  5.60  |  V282-no62(64,65) n=  48 model_rate=  5.69  |  V282-only62 n= 118 model_rate=  5.56  |  ratio(rev64-pooled / V282-no62)= 4.59  ratio(T64-only / V282-no62)= 3.19
+6-8   V282-full n= 127 model_rate=  3.55  |  V282-no62(64,65) n=  35 model_rate=  4.23  |  V282-only62 n=  92 model_rate=  3.25  |  ratio(rev64-pooled / V282-no62)= 2.52  ratio(T64-only / V282-no62)= 1.21
+8-15  V282-full n= 534 model_rate=  1.75  |  V282-no62(64,65) n= 193 model_rate=  1.80  |  V282-only62 n= 341 model_rate=  1.73  |  ratio(rev64-pooled / V282-no62)= 1.25  ratio(T64-only / V282-no62)= 1.05
+<8    V282-full n= 432 model_rate=  5.77  |  V282-no62(64,65) n= 110 model_rate=  6.40  |  V282-only62 n= 322 model_rate=  5.54  |  ratio(rev64-pooled / V282-no62)= 5.43  ratio(T64-only / V282-no62)= 6.64
+
+====================================================================================================
+CHECK 3: demand-matched (bin by mean |steering angle| in-window, absang) at fixed speed bin 3-6 m/s
+====================================================================================================
+T64(6c,6d)     absang in [3,6) m/s: n=57 mean=18.3 p10=0.5 p50=2.1 p90=55.3
+T64B(6e)       absang in [3,6) m/s: n=42 mean=40.3 p10=1.0 p50=5.2 p90=155.7
+V282(64,65)    absang in [3,6) m/s: n=48 mean=5.3 p10=0.9 p50=3.2 p90=12.9
+V282-full      absang in [3,6) m/s: n=166 mean=9.0 p10=0.6 p50=2.3 p90=12.4
+
+0-5deg    T64 n=  37 model_rate=  4.43  |  T64B n=  21 model_rate=  8.59  |  V282full n= 118 model_rate=  4.13  |  V282no62 n=  31 model_rate=  4.15
+5-10deg   T64 n=   4 model_rate=  4.06  |  T64B n=   6 model_rate=  3.35  |  V282full n=  25 model_rate=  3.76  |  V282no62 n=   9 model_rate=  4.70
+10-20deg  T64 n=   3 model_rate=  6.00  |  T64B n=   2 model_rate=  5.35  |  V282full n=  11 model_rate=  8.65  |  V282no62 n=   7 model_rate= 10.44
+20-40deg  T64 n=   5 model_rate= 43.94  |  T64B n=   3 model_rate= 95.23  |  V282full n=   6 model_rate=  5.75  |  V282no62 n=   1 model_rate=  7.39
+
+====================================================================================================
+CHECK 4: per-route, all bins (does EVERY torque route exceed EVERY V282 route, or is it pooling-driven?)
+====================================================================================================
+--- speed bin <3 ---
+  T64      0000006c--68c6e94b17     n=  15 model_rate=118.24 absang= 10.8
+  T64      0000006d--05e83bb04f     n=  19 model_rate= 10.57 absang= 16.0
+  T64B     0000006e--6ca3e014fd     n=  15 model_rate=  6.95 absang=  1.2
+  T5       00000076--d0b7ea7e4d     n=  10 model_rate=  6.90 absang=  3.8
+  T4       00000075--6c8687d5bd     n=  15 model_rate=  9.31 absang=  2.7
+  V282     00000064--ce6b0b0ebb     n=  15 model_rate=  6.00 absang= 12.0
+  V282     00000065--b9f78988bd     n=  12 model_rate= 12.22 absang= 18.5
+  V282     0000006c--2bc842dbac     n= 112 model_rate=  6.85 absang=  6.2
+  V282old  00000039--f56039af87     n=  38 model_rate=  8.30 absang= 25.2
+  V282old  0000003a--283a39a1d6     n=  10 model_rate=  5.86 absang= 42.7
+  V282old  0000003c--927965c2b4     n=  20 model_rate=  9.42 absang=  6.3
+--- speed bin 3-6 ---
+  T64      0000006c--68c6e94b17     n=  24 model_rate= 18.46 absang= 28.3
+  T64      0000006d--05e83bb04f     n=  33 model_rate= 17.92 absang= 11.0
+  T64B     0000006e--6ca3e014fd     n=  42 model_rate= 34.02 absang= 40.3
+  T5       00000076--d0b7ea7e4d     n=  17 model_rate=  4.06 absang=  4.1
+  T4       00000075--6c8687d5bd     n=  68 model_rate= 30.10 absang= 35.1
+  V282     00000064--ce6b0b0ebb     n=  27 model_rate=  4.06 absang=  4.4
+  V282     00000065--b9f78988bd     n=  21 model_rate=  7.26 absang=  6.5
+  V282     0000006c--2bc842dbac     n= 118 model_rate=  5.56 absang= 10.5
+  V282old  00000039--f56039af87     n=  50 model_rate=  6.82 absang= 27.3
+  V282old  0000003a--283a39a1d6     n=  17 model_rate=  4.99 absang= 20.9
+  V282old  0000003c--927965c2b4     n=  20 model_rate=  6.16 absang= 23.2
+--- speed bin 6-8 ---
+  T64      0000006c--68c6e94b17     n=  20 model_rate=  4.66 absang= 22.0
+  T64      0000006d--05e83bb04f     n=  17 model_rate=  5.63 absang= 30.9
+  T64B     0000006e--6ca3e014fd     n=  55 model_rate= 13.13 absang= 15.9
+  T5       00000076--d0b7ea7e4d     n=  21 model_rate=  5.84 absang= 34.3
+  T4       00000075--6c8687d5bd     n=  63 model_rate= 13.89 absang= 12.9
+  V282     00000064--ce6b0b0ebb     n=  11 model_rate=  3.07 absang= 13.4
+  V282     00000065--b9f78988bd     n=  24 model_rate=  4.67 absang= 10.8
+  V282     0000006c--2bc842dbac     n=  92 model_rate=  3.25 absang=  8.6
+  V282old  00000039--f56039af87     n=  78 model_rate=  3.38 absang=  9.9
+  V282old  0000003a--283a39a1d6     n=   9 model_rate=  4.49 absang= 27.0
+  V282old  0000003c--927965c2b4     n=  14 model_rate=  5.46 absang= 21.4
+--- speed bin 8-15 ---
+  T64      0000006c--68c6e94b17     n= 119 model_rate=  1.87 absang=  2.9
+  T64      0000006d--05e83bb04f     n= 128 model_rate=  1.89 absang=  3.0
+  T64B     0000006e--6ca3e014fd     n= 217 model_rate=  2.60 absang=  8.0
+  T5       00000076--d0b7ea7e4d     n=  53 model_rate=  2.36 absang=  6.9
+  T4       00000075--6c8687d5bd     n= 249 model_rate=  2.73 absang=  6.1
+  V282     00000064--ce6b0b0ebb     n=  57 model_rate=  1.97 absang=  4.6
+  V282     00000065--b9f78988bd     n= 136 model_rate=  1.72 absang=  2.1
+  V282     0000006c--2bc842dbac     n= 341 model_rate=  1.73 absang=  5.8
+  V282old  00000039--f56039af87     n= 217 model_rate=  1.57 absang=  4.6
+  V282old  0000003a--283a39a1d6     n=  64 model_rate=  1.74 absang=  7.2
+  V282old  0000003c--927965c2b4     n=  57 model_rate=  1.71 absang=  7.0
+--- speed bin <8 ---
+  T64      0000006c--68c6e94b17     n=  59 model_rate= 60.83 absang= 21.7
+  T64      0000006d--05e83bb04f     n=  69 model_rate= 13.86 absang= 17.3
+  T64B     0000006e--6ca3e014fd     n= 112 model_rate= 22.92 absang= 23.1
+  T5       00000076--d0b7ea7e4d     n=  48 model_rate=  5.54 absang= 17.2
+  T4       00000075--6c8687d5bd     n= 146 model_rate= 22.67 absang= 22.2
+  V282     00000064--ce6b0b0ebb     n=  53 model_rate=  4.53 absang=  8.4
+  V282     00000065--b9f78988bd     n=  57 model_rate=  7.75 absang= 10.8
+  V282     0000006c--2bc842dbac     n= 322 model_rate=  5.54 absang=  8.4
+  V282old  00000039--f56039af87     n= 166 model_rate=  5.93 absang= 18.6
+  V282old  0000003a--283a39a1d6     n=  36 model_rate=  5.13 absang= 28.5
+  V282old  0000003c--927965c2b4     n=  54 model_rate=  7.39 absang= 16.5

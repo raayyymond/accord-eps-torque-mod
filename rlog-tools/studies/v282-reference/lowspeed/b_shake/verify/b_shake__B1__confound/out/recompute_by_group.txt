@@ -1,0 +1,27 @@
+=== ALL rev64 (T64+T64B) ===
+rev64 <3: secs=62 share_of_lt8=0.0785080257400611 dob_log@30=-0.00 ffwd@30=-13.38 hyst@30=-0.10 ctrl@30=+8.98 per-route-dob={'0000006c': -0.01, '0000006d': 0.01, '0000006e': -0.2}
+rev64 3-6: secs=119 share_of_lt8=0.4084066045278447 dob_log@30=-0.88 ffwd@30=-6.59 hyst@30=-0.42 ctrl@30=+8.93 per-route-dob={'0000006c': -1.06, '0000006d': -0.61, '0000006e': -0.87}
+rev64 6-8: secs=109 share_of_lt8=0.5130853697320942 dob_log@30=-1.32 ffwd@30=-7.97 hyst@30=-0.41 ctrl@30=+9.00 per-route-dob={'0000006c': -1.64, '0000006d': -1.7, '0000006e': -1.22}
+rev64 3-8: secs=228 share_of_lt8=0.9214919742599389 dob_log@30=-1.12 ffwd@30=-7.36 hyst@30=-0.42 ctrl@30=+8.97 per-route-dob={'0000006c': -1.23, '0000006d': -1.06, '0000006e': -1.1}
+
+=== T64 ONLY (6c+6d, drop 4x-demand T64B/6e) ===
+T64only <3: secs=42 share_of_lt8=0.190771838909662 dob_log@30=+0.00 ffwd@30=-13.46 hyst@30=-0.11 ctrl@30=+8.99 per-route-dob={'0000006c': -0.01, '0000006d': 0.01}
+T64only 3-6: secs=69 share_of_lt8=0.5266937889788748 dob_log@30=-0.89 ffwd@30=-4.91 hyst@30=-0.17 ctrl@30=+8.89 per-route-dob={'0000006c': -1.06, '0000006d': -0.61}
+T64only 6-8: secs=43 share_of_lt8=0.28253437211146315 dob_log@30=-1.67 ffwd@30=-1.42 hyst@30=-0.07 ctrl@30=+8.92 per-route-dob={'0000006c': -1.64, '0000006d': -1.7}
+T64only 3-8: secs=113 share_of_lt8=0.8092281610903379 dob_log@30=-1.16 ffwd@30=-3.69 hyst@30=-0.13 ctrl@30=+8.90 per-route-dob={'0000006c': -1.23, '0000006d': -1.06}
+
+=== T64B ONLY (6e) ===
+T64Bonly 3-6: secs=50 share_of_lt8=0.3296499494435792 dob_log@30=-0.87 ffwd@30=-8.37 hyst@30=-0.69 ctrl@30=+8.98 per-route-dob={'0000006e': -0.87}
+T64Bonly 6-8: secs=66 share_of_lt8=0.6665882659520846 dob_log@30=-1.22 ffwd@30=-9.82 hyst@30=-0.51 ctrl@30=+9.03 per-route-dob={'0000006e': -1.22}
+
+=== T4 (route 75) ONLY ===
+T4 <3: secs=22 share_of_lt8=0.0037385574277051603 dob_log@30=-0.00 ffwd@30=-2.33 hyst@30=-0.09 ctrl@30=+8.83 per-route-dob={'00000075': -0.0}
+T4 3-6: secs=80 share_of_lt8=0.5413446283101182 dob_log@30=-0.00 ffwd@30=-3.23 hyst@30=-0.25 ctrl@30=+9.17 per-route-dob={'00000075': -0.0}
+T4 6-8: secs=82 share_of_lt8=0.4549168142621766 dob_log@30=-0.00 ffwd@30=-3.57 hyst@30=-0.68 ctrl@30=+8.95 per-route-dob={'00000075': -0.0}
+T4 3-8: secs=162 share_of_lt8=0.9962614425722948 dob_log@30=-0.00 ffwd@30=-3.39 hyst@30=-0.45 ctrl@30=+9.07 per-route-dob={'00000075': -0.0}
+
+=== T5 (route 76) ONLY ===
+T5 <3: secs=13 share_of_lt8=0.01506036423897976 dob_log@30=+0.09 ffwd@30=-3.49 hyst@30=-0.45 ctrl@30=+8.86 per-route-dob={'00000076': 0.09}
+T5 3-6: secs=21 share_of_lt8=0.06419253947617816 dob_log@30=-0.97 ffwd@30=-1.79 hyst@30=-0.68 ctrl@30=+9.02 per-route-dob={'00000076': -0.97}
+T5 6-8: secs=24 share_of_lt8=0.920747096284842 dob_log@30=-1.70 ffwd@30=-0.42 hyst@30=-0.05 ctrl@30=+8.95 per-route-dob={'00000076': -1.7}
+T5 3-8: secs=44 share_of_lt8=0.9849396357610202 dob_log@30=-1.65 ffwd@30=-0.51 hyst@30=-0.09 ctrl@30=+8.95 per-route-dob={'00000076': -1.65}

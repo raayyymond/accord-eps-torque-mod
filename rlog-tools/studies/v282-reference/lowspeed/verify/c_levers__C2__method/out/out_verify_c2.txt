@@ -1,0 +1,27 @@
+[const] HONDA_ACCORD_RATE_LOOP_TAPER_V = 12.0  (claim: untapered below 12 m/s)
+[const] HONDA_ACCORD_DOB_FADE_V_BP = [3.0, 6.0]  (claim: fade 3 -> 6 m/s, full at 6)
+
+=== re-derivation: per-run OLS b_eq, 1.8-3.5 Hz, route T64 (0000006c--68c6e94b17) ===
+  2.5-5.0 m/s  n_runs=  5 sec=    20  P       b30 (run-OLS, weighted mean) -0.82  [95% CI -1.26,-0.35] x1e-4
+  2.5-5.0 m/s  n_runs=  5 sec=    20  rate_t  b30 (run-OLS, weighted mean) +6.51  [95% CI +5.33,+7.46] x1e-4
+  2.5-5.0 m/s  n_runs=  5 sec=    20  out     b30 (run-OLS, weighted mean) +2.84  [95% CI -0.12,+5.39] x1e-4
+    -> command WITHOUT rate loop (out - rate_t), weighted mean: -3.67 x1e-4
+  5.0-8.0 m/s  n_runs=  6 sec=    77  P       b30 (run-OLS, weighted mean) -0.75  [95% CI -1.30,-0.28] x1e-4
+  5.0-8.0 m/s  n_runs=  6 sec=    77  rate_t  b30 (run-OLS, weighted mean) +5.94  [95% CI +5.41,+6.76] x1e-4
+  5.0-8.0 m/s  n_runs=  6 sec=    77  out     b30 (run-OLS, weighted mean) +0.65  [95% CI +0.09,+2.98] x1e-4
+    -> command WITHOUT rate loop (out - rate_t), weighted mean: -5.29 x1e-4
+  8.0-15.0 m/s  n_runs= 31 sec=   400  P       b30 (run-OLS, weighted mean) +0.27  [95% CI +0.09,+0.45] x1e-4
+  8.0-15.0 m/s  n_runs= 31 sec=   400  rate_t  b30 (run-OLS, weighted mean) +7.32  [95% CI +7.03,+7.58] x1e-4
+  8.0-15.0 m/s  n_runs= 31 sec=   400  out     b30 (run-OLS, weighted mean) +4.47  [95% CI +3.56,+5.29] x1e-4
+    -> command WITHOUT rate loop (out - rate_t), weighted mean: -2.85 x1e-4
+
+=== overshoot fraction, independent event detector: dwell smoothing window 6 (not 10), pre/post travel 0.4 deg (not 0.5) ===
+  T64 (observer on)            n=  55  overshoot>1deg frac 0.36  median 0.74 deg
+  T64 (observer on) rd         n=  49  overshoot>1deg frac 0.39  median 0.74 deg
+  T4 (observer off, dob=0.0)   n= 133  overshoot>1deg frac 0.22  median 0.00 deg
+
+  pooled T64 observer-on: n=104  T4 observer-off: n=133
+
+=== 3.5-6 Hz 'pumping band' b_eq for rate_t, independent per-run OLS, tau 3/6, T64 pooled (2.5-15 m/s combined) ===
+  rate_t b30ms (weighted mean over 42 runs): +4.38 x1e-4
+  rate_t b60ms (weighted mean over 42 runs): -2.95 x1e-4

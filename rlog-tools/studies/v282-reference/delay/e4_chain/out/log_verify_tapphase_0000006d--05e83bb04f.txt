@@ -1,0 +1,6 @@
+REAL {"dd_ms": 30.48, "fc_hz": 1932.938, "r2_phase": 0.8117, "pure_delay_only_ms": 30.56, "r2_phase_pure": 0.8117, "coh_mean": 0.37, "gain": 0.4318, "pole_phase_delay_ms": {"1.0": 0.08, "2.0": 0.08, "2.5": 0.08, "3.5": 0.08}, "sec": 514.4, "n_runs_used": 15}
+CTRL fc=5.0 dd=4.0 {"dd_ms": 3.56, "fc_hz": 5.049, "dd_err_ms": -0.44, "r2_phase": 0.9906, "pure_delay_only_ms": 27.99, "coh_mean": 0.407}
+CTRL fc=inf dd=30.0 {"dd_ms": 25.45, "fc_hz": 34.357, "dd_err_ms": -4.55, "r2_phase": 0.998, "pure_delay_only_ms": 29.97, "coh_mean": 0.584}
+CTRL fc=inf dd=60.0 {"dd_ms": 53.09, "fc_hz": 22.181, "dd_err_ms": -6.91, "r2_phase": 0.9994, "pure_delay_only_ms": 59.86, "coh_mean": 0.591}
+CTRL fc=3.0 dd=20.0 {"dd_ms": 26.64, "fc_hz": 3.875, "dd_err_ms": 6.64, "r2_phase": 0.965, "pure_delay_only_ms": 57.45, "coh_mean": 0.33}
+CTRL fc=5.0 dd=30.0 {"dd_ms": 30.99, "fc_hz": 5.398, "dd_err_ms": 0.99, "r2_phase": 0.9977, "pure_delay_only_ms": 54.27, "coh_mean": 0.403}

@@ -1,0 +1,35 @@
+=== reproduce overshoot_summary.txt from dwellpost.json directly ===
+2.5-6.0 observer on          n= 27 over>1deg 0.33 [0.15,0.52]  over p50 0.22  err0 p50 +1.90  dob_rise p50 +0.0038
+2.5-6.0 T64 only             n= 12 over>1deg 0.50 [0.25,0.75]  over p50 0.50  err0 p50 +2.13  dob_rise p50 +0.0057
+2.5-6.0 T4 no observer       n= 21 over>1deg 0.29 [0.10,0.48]  over p50 0.00  err0 p50 +2.59  dob_rise p50 +0.0000
+6.0-8.0 observer on          n= 26 over>1deg 0.77 [0.62,0.92]  over p50 2.34  err0 p50 +1.24  dob_rise p50 +0.0093
+6.0-8.0 T64 only             n=  6 over>1deg 0.67 [0.33,1.00]  over p50 2.14  err0 p50 +0.98  dob_rise p50 +0.0093
+6.0-8.0 T4 no observer       n= 18 over>1deg 0.11 [0.00,0.28]  over p50 0.00  err0 p50 +2.61  dob_rise p50 +0.0000
+6.0-15.0 observer on          n=149 over>1deg 0.61 [0.54,0.69]  over p50 1.55  err0 p50 +0.84  dob_rise p50 +0.0075
+6.0-15.0 T64 only             n= 58 over>1deg 0.57 [0.43,0.69]  over p50 1.34  err0 p50 +0.57  dob_rise p50 +0.0064
+6.0-15.0 T4 no observer       n= 66 over>1deg 0.18 [0.09,0.27]  over p50 0.00  err0 p50 +1.63  dob_rise p50 +0.0000
+8.0-15.0 observer on          n=123 over>1deg 0.58 [0.49,0.66]  over p50 1.31  err0 p50 +0.81  dob_rise p50 +0.0074
+8.0-15.0 T64 only             n= 52 over>1deg 0.56 [0.42,0.69]  over p50 1.23  err0 p50 +0.52  dob_rise p50 +0.0063
+8.0-15.0 T4 no observer       n= 48 over>1deg 0.21 [0.10,0.33]  over p50 0.00  err0 p50 +1.48  dob_rise p50 +0.0000
+
+=== ATTRIBUTION CHECK: does overshoot correlate BETTER with some other term's build than with dob? ===
+(Spearman corr of dwell build b_X against overshoot magnitude, observer-on routes, 6-15 m/s)
+n=149
+  P       corr(build,over) +0.01 (p=0.931)   corr(post-jump change,over) -0.34 (p=0.000)
+  I       corr(build,over) -0.29 (p=0.000)   corr(post-jump change,over) -0.39 (p=0.000)
+  hold    corr(build,over) -0.00 (p=1.000)   corr(post-jump change,over) -0.10 (p=0.238)
+  move    corr(build,over) -0.16 (p=0.046)   corr(post-jump change,over) -0.08 (p=0.361)
+  z       corr(build,over) -0.39 (p=0.000)   corr(post-jump change,over) -0.45 (p=0.000)
+  rate_t  corr(build,over) -0.11 (p=0.178)   corr(post-jump change,over) -0.30 (p=0.000)
+  dob     corr(build,over) +0.15 (p=0.067)   corr(post-jump change,over) -0.23 (p=0.005)
+
+=== simpler explanation check: does jump size ALONE predict overshoot as well as dob does? ===
+  jump size vs overshoot: corr +0.21 (p=0.011)
+  dob post-jump rise vs overshoot: corr -0.23 (p=0.005)
+  dob rise vs overshoot AFTER removing jump-size trend from both (partial corr): -0.13 (p=0.103)
+
+=== T4 vs T64/T64B/T5: are jump sizes themselves comparable (confound check)? ===
+  T64    n= 58 jump p50 0.73 p90 2.50  dwell_s p50 0.19  ang p50 1.7
+  T64B   n= 79 jump p50 1.00 p90 3.76  dwell_s p50 0.22  ang p50 2.0
+  T5     n= 12 jump p50 1.21 p90 2.65  dwell_s p50 0.23  ang p50 2.2
+  T4     n= 66 jump p50 0.89 p90 1.82  dwell_s p50 0.21  ang p50 1.8

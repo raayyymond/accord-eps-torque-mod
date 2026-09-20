@@ -1,0 +1,15 @@
+{
+ "finding_id": "F4",
+ "lens": "POWER",
+ "verdict": "not refuted, well-powered",
+ "independent_recompute_matches_pipeline": true,
+ "key_checks": {
+  "leave_one_route_out_2_8": "p50 in [0.084,0.114], p90 in [0.634,0.776], all <1 across all 5 route drops",
+  "leave_one_route_out_8_15": "p50 in [0.207,0.244] <<1, p90 in [1.212,1.423] straddles 1 in all drops (matches paper's own caveat)",
+  "route_cluster_bootstrap_direct": "P(bootstrap p90 ratio >= 1) = 0.14% for 2-8 m/s bin (n=145,5 routes); 97% for 8-15 m/s bin (n=366,5 routes) -- confirms paper is right to claim the <8m/s null strongly and hedge the 8-15 one",
+  "frac_reaching_2Fk_by_route": "reaching episodes spread 1/2/2/4/0 across the 5 routes (not concentrated in one route); bootstrap CI on the 6% figure = [3.8%,8.6%], far from 50%",
+  "F_sensitivity_2_8": "p90 ratio stays <1 for F down to ~0.015 (plausible identified F range 0.018-0.033 per project priors); only F<~0.013 would flip median-consistency",
+  "correlation_robustness": "corr(slip,|aa|) pooled 0.788 vs within-route-demeaned 0.788 (not an ecological/between-route artifact); boot CI [0.62,0.86]. corr(slip,1/k) boot CI [-0.33,-0.08], excludes zero, wrong sign for the 2F/k prediction",
+  "caveat_thin_subgroup": "the cited 'aa>=5, <8 m/s, 300ms jump p90=7.3deg' rests on n=28 episodes, with only 1 and 3 episodes from two of the five routes -- this specific descriptive number is fragile even though the main null is not"
+ }
+}
