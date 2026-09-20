@@ -61,7 +61,12 @@ def route(rk):
     rate_meas = fo_filter(sr, 0.03 if meta['group'] == 'T4' else RATE_LOOP_RC)   # rev 5 changed 0.03 -> 0.01
     rl = rlg0 * np.minimum(1.0, RATE_LOOP_TAPER_V / np.maximum(v, 0.1)) * (rate_des - rate_meas)
     z_resid = F_t - hold_ff - move_ff - rl - dob_left     # what the log says z must be
-    hold_at_aa = hold_torque(aa, v, False)                 # spring torque at the ACTUAL angle (level 1 below 12.5)
+    # Spring torque at the ACTUAL angle.  Must honour THIS route's flown AccordHoldLevel (x1.15 below 12.5 m/s),
+    # exactly as hold_ff above does -- it was hard-coded False until 2026-09-19, so the stored channel was the
+    # UNLEVELLED map on every route including the level-ON ones.  That silently broke any comparison across the
+    # AccordHoldLevel natural experiment (r6c/r6d ON vs r6e OFF), which is the contrast that identifies whether the
+    # low-speed outward deficit is a hold-map stiffness error at all.  Re-run extraction after changing this.
+    hold_at_aa = hold_torque(aa, v, level)
     val = {}
     if torque:
         mm = HO & (v >= 2) & (v < 15)

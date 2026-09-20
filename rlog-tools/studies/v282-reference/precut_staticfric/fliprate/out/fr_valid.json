@@ -1,0 +1,280 @@
+{
+ "00000075--6c8687d5bd": {
+  "route": "00000075--6c8687d5bd",
+  "group": "T4",
+  "sec": 535.5,
+  "gaps_over_1p5dt": 66,
+  "dt_p99": 0.0134,
+  "corr_angdes_aa": 0.9936,
+  "bands": {
+   "dc": {
+    "H": 0.976,
+    "coh": 0.988,
+    "H_nomove": 1.032,
+    "coh_nomove": 0.951,
+    "rms_Flog": 0.067647,
+    "rms_Fhat": 0.06838,
+    "rms_move": 0.020431
+   },
+   "lo": {
+    "H": 0.983,
+    "coh": 0.973,
+    "H_nomove": 1.241,
+    "coh_nomove": 0.884,
+    "rms_Flog": 0.009877,
+    "rms_Fhat": 0.00987,
+    "rms_move": 0.005718
+   },
+   "shake": {
+    "H": 1.091,
+    "coh": 0.979,
+    "H_nomove": 1.283,
+    "coh_nomove": 0.945,
+    "rms_Flog": 0.00394,
+    "rms_Fhat": 0.003569,
+    "rms_move": 0.001095
+   },
+   "hi": {
+    "H": 0.992,
+    "coh": 0.975,
+    "H_nomove": 1.246,
+    "coh_nomove": 0.931,
+    "rms_Flog": 0.001397,
+    "rms_Fhat": 0.001414,
+    "rms_move": 0.000532
+   },
+   "vhi": {
+    "H": 0.944,
+    "coh": 0.942,
+    "H_nomove": 1.444,
+    "coh_nomove": 0.845,
+    "rms_Flog": 0.000436,
+    "rms_Fhat": 0.000443,
+    "rms_move": 0.000209
+   }
+  },
+  "ang_offset": {
+   "best_c_deg": 0.5,
+   "best_rms": 0.007596,
+   "rms_at_0": 0.008324,
+   "scan": {
+    "-2.0": 0.016988,
+    "-1.75": 0.015687,
+    "-1.5": 0.014418,
+    "-1.25": 0.01319,
+    "-1.0": 0.012017,
+    "-0.75": 0.010915,
+    "-0.5": 0.009909,
+    "-0.25": 0.009032,
+    "0.0": 0.008324,
+    "0.25": 0.007831,
+    "0.5": 0.007596,
+    "0.75": 0.007642,
+    "1.0": 0.007963,
+    "1.25": 0.00853,
+    "1.5": 0.009296,
+    "1.75": 0.010216,
+    "2.0": 0.011253
+   },
+   "aa_minus_angdes_mean": 0.654,
+   "aa_minus_angdes_p50": 0.476,
+   "roll_leg_p50_deg": 0.583,
+   "roll_leg_p5_p95": [
+    0.11,
+    1.074
+   ]
+  },
+  "sens": {
+   "sec_under12": 481.0,
+   "flips_base": 105.61,
+   "flips_rollcomp": 104.57,
+   "flips_gapzero": 105.61,
+   "z_rms_base": 0.00871,
+   "z_rms_rollcomp": 0.00872,
+   "z_rms_gapzero": 0.00871
+  },
+  "ang_off_sweep": {
+   "-2.0": {
+    "flips": 104.8,
+    "z_rms": 0.00874,
+    "z_mean_signed_left": -0.0011,
+    "z_shake": 0.001092
+   },
+   "-1.0": {
+    "flips": 108.9,
+    "z_rms": 0.00871,
+    "z_mean_signed_left": -0.00043,
+    "z_shake": 0.001066
+   },
+   "-0.5": {
+    "flips": 105.2,
+    "z_rms": 0.00871,
+    "z_mean_signed_left": -9e-05,
+    "z_shake": 0.001056
+   },
+   "0.0": {
+    "flips": 105.6,
+    "z_rms": 0.00871,
+    "z_mean_signed_left": 0.00027,
+    "z_shake": 0.001062
+   },
+   "0.5": {
+    "flips": 107.7,
+    "z_rms": 0.00872,
+    "z_mean_signed_left": 0.00062,
+    "z_shake": 0.001073
+   },
+   "1.0": {
+    "flips": 106.9,
+    "z_rms": 0.00873,
+    "z_mean_signed_left": 0.00096,
+    "z_shake": 0.001085
+   },
+   "2.0": {
+    "flips": 104.8,
+    "z_rms": 0.00877,
+    "z_mean_signed_left": 0.00163,
+    "z_shake": 0.00109
+   }
+  }
+ },
+ "00000076--d0b7ea7e4d": {
+  "route": "00000076--d0b7ea7e4d",
+  "group": "T5",
+  "sec": 155.5,
+  "gaps_over_1p5dt": 97,
+  "dt_p99": 0.0134,
+  "corr_angdes_aa": 0.9916,
+  "bands": {
+   "dc": {
+    "H": 1.004,
+    "coh": 0.997,
+    "H_nomove": 0.979,
+    "coh_nomove": 0.961,
+    "rms_Flog": 0.071469,
+    "rms_Fhat": 0.072367,
+    "rms_move": 0.021839
+   },
+   "lo": {
+    "H": 1.034,
+    "coh": 0.989,
+    "H_nomove": 1.041,
+    "coh_nomove": 0.923,
+    "rms_Flog": 0.009364,
+    "rms_Fhat": 0.008628,
+    "rms_move": 0.00314
+   },
+   "shake": {
+    "H": 1.089,
+    "coh": 0.987,
+    "H_nomove": 1.103,
+    "coh_nomove": 0.981,
+    "rms_Flog": 0.005499,
+    "rms_Fhat": 0.005065,
+    "rms_move": 0.000548
+   },
+   "hi": {
+    "H": 1.035,
+    "coh": 0.995,
+    "H_nomove": 1.072,
+    "coh_nomove": 0.984,
+    "rms_Flog": 0.002657,
+    "rms_Fhat": 0.002595,
+    "rms_move": 0.000405
+   },
+   "vhi": {
+    "H": 1.057,
+    "coh": 0.986,
+    "H_nomove": 1.156,
+    "coh_nomove": 0.962,
+    "rms_Flog": 0.00097,
+    "rms_Fhat": 0.000908,
+    "rms_move": 0.000206
+   }
+  },
+  "ang_offset": {
+   "best_c_deg": 0.75,
+   "best_rms": 0.00822,
+   "rms_at_0": 0.008792,
+   "scan": {
+    "-2.0": 0.015578,
+    "-1.75": 0.014525,
+    "-1.5": 0.013506,
+    "-1.25": 0.01253,
+    "-1.0": 0.011607,
+    "-0.75": 0.010753,
+    "-0.5": 0.009984,
+    "-0.25": 0.009322,
+    "0.0": 0.008792,
+    "0.25": 0.008419,
+    "0.5": 0.008224,
+    "0.75": 0.00822,
+    "1.0": 0.008409,
+    "1.25": 0.008776,
+    "1.5": 0.009302,
+    "1.75": 0.00996,
+    "2.0": 0.010728
+   },
+   "aa_minus_angdes_mean": 0.169,
+   "aa_minus_angdes_p50": 0.024,
+   "roll_leg_p50_deg": 0.723,
+   "roll_leg_p5_p95": [
+    0.098,
+    1.05
+   ]
+  },
+  "sens": {
+   "sec_under12": 125.8,
+   "flips_base": 108.12,
+   "flips_rollcomp": 113.68,
+   "flips_gapzero": 108.12,
+   "z_rms_base": 0.01156,
+   "z_rms_rollcomp": 0.01159,
+   "z_rms_gapzero": 0.01156
+  },
+  "ang_off_sweep": {
+   "-2.0": {
+    "flips": 108.9,
+    "z_rms": 0.0115,
+    "z_mean_signed_left": -0.00183,
+    "z_shake": 0.001091
+   },
+   "-1.0": {
+    "flips": 112.9,
+    "z_rms": 0.01155,
+    "z_mean_signed_left": -0.00119,
+    "z_shake": 0.001108
+   },
+   "-0.5": {
+    "flips": 109.7,
+    "z_rms": 0.01157,
+    "z_mean_signed_left": -0.00088,
+    "z_shake": 0.00112
+   },
+   "0.0": {
+    "flips": 108.1,
+    "z_rms": 0.01156,
+    "z_mean_signed_left": -0.00058,
+    "z_shake": 0.001134
+   },
+   "0.5": {
+    "flips": 110.5,
+    "z_rms": 0.01155,
+    "z_mean_signed_left": -0.00029,
+    "z_shake": 0.001132
+   },
+   "1.0": {
+    "flips": 108.1,
+    "z_rms": 0.01153,
+    "z_mean_signed_left": -1e-05,
+    "z_shake": 0.001132
+   },
+   "2.0": {
+    "flips": 106.5,
+    "z_rms": 0.01152,
+    "z_mean_signed_left": 0.00049,
+    "z_shake": 0.001154
+   }
+  }
+ }
+}

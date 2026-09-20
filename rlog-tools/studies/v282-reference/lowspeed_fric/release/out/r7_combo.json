@@ -1,0 +1,64 @@
+{
+ "2-8": {
+  "ARM-D only": {
+   "dcmd_after": 0.00666,
+   "share_of_gap": 0.337,
+   "change_in_breakaway_push_at_bk": -0.01018
+  },
+  "ARM-D + ffrg 2.0": {
+   "dcmd_after": 0.00139,
+   "share_of_gap": 0.526,
+   "change_in_breakaway_push_at_bk": 0.00753
+  },
+  "ARM-D + ffrg 2.0 + spring 0.65": {
+   "dcmd_after": -0.00072,
+   "share_of_gap": 0.602,
+   "change_in_breakaway_push_at_bk": 0.00495
+  },
+  "ffrg 2.0 + spring 0.65 (obs kept)": {
+   "dcmd_after": 0.00868,
+   "share_of_gap": 0.265,
+   "change_in_breakaway_push_at_bk": 0.01513
+  },
+  "_ctx": {
+   "dcmd_T64": 0.01605,
+   "dcmd_V282": -0.0118,
+   "gap": 0.02785,
+   "hold_level_at_bk": 0.00738,
+   "move_level_at_bk": 0.0059,
+   "dob_dwell_rise": 0.01018,
+   "measured_shortfall_at_dwell": 0.033
+  }
+ },
+ "8-15": {
+  "ARM-D only": {
+   "dcmd_after": 0.01048,
+   "share_of_gap": 0.375,
+   "change_in_breakaway_push_at_bk": -0.00618
+  },
+  "ARM-D + ffrg 2.0": {
+   "dcmd_after": 0.00795,
+   "share_of_gap": 0.48,
+   "change_in_breakaway_push_at_bk": 0.00783
+  },
+  "ARM-D + ffrg 2.0 + spring 0.65": {
+   "dcmd_after": 0.00538,
+   "share_of_gap": 0.588,
+   "change_in_breakaway_push_at_bk": 0.00601
+  },
+  "ffrg 2.0 + spring 0.65 (obs kept)": {
+   "dcmd_after": 0.01435,
+   "share_of_gap": 0.213,
+   "change_in_breakaway_push_at_bk": 0.0122
+  },
+  "_ctx": {
+   "dcmd_T64": 0.01945,
+   "dcmd_V282": -0.00449,
+   "gap": 0.02394,
+   "hold_level_at_bk": 0.0052,
+   "move_level_at_bk": 0.00467,
+   "dob_dwell_rise": 0.00618,
+   "measured_shortfall_at_dwell": 0.026
+  }
+ }
+}

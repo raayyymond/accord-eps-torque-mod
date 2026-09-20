@@ -1,0 +1,138 @@
+{
+ "control_torque_move_only|2-8": {
+  "gh": 0.009,
+  "gr": 0.000947,
+  "gh_ci": [
+   0.003,
+   0.018
+  ],
+  "gr_ci": [
+   0.000942,
+   0.000969
+  ],
+  "r2": 0.997,
+  "n": 145,
+  "truth_gr": 0.000991,
+  "truth_gh": 0.0,
+  "verdict_note": "dependent = the move channel alone"
+ },
+ "control_torque_holdmove|2-8": {
+  "gh": 1.03,
+  "gr": 0.000951,
+  "gh_ci": [
+   1.009,
+   1.104
+  ],
+  "gr_ci": [
+   0.000944,
+   0.00099
+  ],
+  "r2": 0.997,
+  "n": 145,
+  "truth_gr": 0.000991,
+  "truth_gh": 1.0,
+  "verdict_note": "dependent = hold+move (the plant FF)"
+ },
+ "torque_F|2-8": {
+  "gh": 1.18,
+  "gr": 0.001968,
+  "gh_ci": [
+   0.82,
+   1.715
+  ],
+  "gr_ci": [
+   0.001138,
+   0.002209
+  ],
+  "r2": 0.734,
+  "n": 145,
+  "truth_gr": 0.000991,
+  "truth_gh": 1.0,
+  "verdict_note": "dependent = the whole F (adds z, rl, dob -- unmodelled)"
+ },
+ "V282_F|2-8": {
+  "gh": 0.723,
+  "gr": 0.004057,
+  "gh_ci": [
+   0.388,
+   0.996
+  ],
+  "gr_ci": [
+   0.002294,
+   0.004324
+  ],
+  "r2": 0.897,
+  "n": 146,
+  "truth_gr": null,
+  "truth_gh": null,
+  "verdict_note": "the claim: gr much larger than the torque routes"
+ },
+ "control_torque_move_only|8-15": {
+  "gh": 0.015,
+  "gr": 0.001311,
+  "gh_ci": [
+   0.006,
+   0.029
+  ],
+  "gr_ci": [
+   0.001281,
+   0.001346
+  ],
+  "r2": 0.985,
+  "n": 366,
+  "truth_gr": 0.001494,
+  "truth_gh": 0.0,
+  "verdict_note": "dependent = the move channel alone"
+ },
+ "control_torque_holdmove|8-15": {
+  "gh": 1.054,
+  "gr": 0.001266,
+  "gh_ci": [
+   1.009,
+   1.197
+  ],
+  "gr_ci": [
+   0.001098,
+   0.001335
+  ],
+  "r2": 0.99,
+  "n": 366,
+  "truth_gr": 0.001494,
+  "truth_gh": 1.0,
+  "verdict_note": "dependent = hold+move (the plant FF)"
+ },
+ "torque_F|8-15": {
+  "gh": 1.609,
+  "gr": -0.000472,
+  "gh_ci": [
+   1.555,
+   1.736
+  ],
+  "gr_ci": [
+   -0.000687,
+   0.001004
+  ],
+  "r2": 0.535,
+  "n": 366,
+  "truth_gr": 0.001494,
+  "truth_gh": 1.0,
+  "verdict_note": "dependent = the whole F (adds z, rl, dob -- unmodelled)"
+ },
+ "V282_F|8-15": {
+  "gh": 0.608,
+  "gr": 0.005097,
+  "gh_ci": [
+   0.564,
+   0.67
+  ],
+  "gr_ci": [
+   0.004789,
+   0.005276
+  ],
+  "r2": 0.989,
+  "n": 163,
+  "truth_gr": null,
+  "truth_gh": null,
+  "verdict_note": "the claim: gr much larger than the torque routes"
+ }
+}

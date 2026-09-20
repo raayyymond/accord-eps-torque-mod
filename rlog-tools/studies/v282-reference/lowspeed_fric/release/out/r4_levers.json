@@ -1,0 +1,252 @@
+{
+ "a_hysteresis_at_release": {
+  "2-8": {
+   "n": 145,
+   "z_level_at_bk": 0.0085,
+   "frac_clipped_at_bk": 0.29,
+   "+300ms": {
+    "dz_mean": 0.00211,
+    "dz_p50": 0.00088,
+    "frac_dz_negative": 0.234,
+    "dz_if_driven_by_measured_angle": 0.00476,
+    "frac_dzmeas_negative": 0.124,
+    "demand_reverses": 0.221
+   },
+   "+500ms": {
+    "dz_mean": 0.00121,
+    "dz_p50": 0.0,
+    "frac_dz_negative": 0.366,
+    "dz_if_driven_by_measured_angle": 0.00645,
+    "frac_dzmeas_negative": 0.145,
+    "demand_reverses": 0.317
+   }
+  },
+  "8-15": {
+   "n": 366,
+   "z_level_at_bk": 0.00507,
+   "frac_clipped_at_bk": 0.227,
+   "+300ms": {
+    "dz_mean": 0.00383,
+    "dz_p50": 0.00352,
+    "frac_dz_negative": 0.112,
+    "dz_if_driven_by_measured_angle": 0.00553,
+    "frac_dzmeas_negative": 0.079,
+    "demand_reverses": 0.09
+   },
+   "+500ms": {
+    "dz_mean": 0.00492,
+    "dz_p50": 0.00522,
+    "frac_dz_negative": 0.134,
+    "dz_if_driven_by_measured_angle": 0.00842,
+    "frac_dzmeas_negative": 0.098,
+    "demand_reverses": 0.098
+   }
+  }
+ },
+ "b_rate_loop_at_release": {
+  "2-8": {
+   "n": 145,
+   "gain_flown": 0.00085,
+   "rl_level_at_bk": 0.00196,
+   "taper": 1.0,
+   "drl_+300ms": -0.00207,
+   "dcmd_+300ms": 0.01003,
+   "drl_+500ms": -0.00231,
+   "dcmd_+500ms": 0.01216,
+   "frac_peak_rate_after_65ms": 0.717,
+   "frac_peak_rate_after_110ms": 0.634,
+   "pk_rate_time_p50": 0.25,
+   "drl_+300ms_shift0": -0.00207,
+   "drl_+300ms_shift6": -0.00352,
+   "drl_+300ms_shift8": -0.00358
+  },
+  "8-15": {
+   "n": 366,
+   "gain_flown": 0.00087,
+   "rl_level_at_bk": 0.00028,
+   "taper": 0.98,
+   "drl_+300ms": -0.00093,
+   "dcmd_+300ms": 0.01791,
+   "drl_+500ms": -0.00053,
+   "dcmd_+500ms": 0.02603,
+   "frac_peak_rate_after_65ms": 0.803,
+   "frac_peak_rate_after_110ms": 0.716,
+   "pk_rate_time_p50": 0.27,
+   "drl_+300ms_shift0": -0.00093,
+   "drl_+300ms_shift6": -0.00286,
+   "drl_+300ms_shift8": -0.00294
+  }
+ },
+ "c_reach": {
+  "2-8": {
+   "AccordDobHz 0.6->0 (ARM-D)": {
+    "delta_cmd_300ms": -0.00939,
+    "basis": "T64 only (the flown rev); T4/T5-style revs differ",
+    "n": 34,
+    "share_of_target": 0.432
+   },
+   "AccordFFRateGain 0.5->1.0": {
+    "delta_cmd_300ms": -0.00214,
+    "also_adds_at_breakaway": 0.00567,
+    "n": 145,
+    "share_of_target": 0.098
+   },
+   "AccordFFRateGain 0.5->2.0": {
+    "delta_cmd_300ms": -0.00642,
+    "also_adds_at_breakaway": 0.017,
+    "n": 145,
+    "share_of_target": 0.295
+   },
+   "AccordFFRateGain 0.5->4.0": {
+    "delta_cmd_300ms": -0.01498,
+    "also_adds_at_breakaway": 0.03966,
+    "n": 145,
+    "share_of_target": 0.688
+   },
+   "AccordRateLoopGain 0.001->0.0015": {
+    "delta_cmd_300ms": -0.00104,
+    "note": "REPORT: gain margin permits ~x1.5 from 0.0006; the flown 0.001 is already above that",
+    "share_of_target": 0.048
+   },
+   "AccordRateLoopGain 0.001->0.002": {
+    "delta_cmd_300ms": -0.00207,
+    "note": "REPORT: gain margin permits ~x1.5 from 0.0006; the flown 0.001 is already above that",
+    "share_of_target": 0.095
+   },
+   "AccordFrictionHyst 0.015->0.01": {
+    "delta_cmd_300ms": -0.0007,
+    "also_removes_at_breakaway": -0.00283,
+    "share_of_target": 0.032
+   },
+   "AccordFrictionHyst 0.015->0.0": {
+    "delta_cmd_300ms": -0.00211,
+    "also_removes_at_breakaway": -0.0085,
+    "share_of_target": 0.097
+   },
+   "AccordHoldLevel 1->0": {
+    "delta_cmd_300ms": -0.00079,
+    "note": "already flown as T64B: worse in band and shakier",
+    "share_of_target": 0.036
+   },
+   "P scale x0.5 (SteerKP or 1/SteerLatAccel)": {
+    "delta_cmd_300ms": -0.00094,
+    "share_of_target": 0.043
+   },
+   "P scale x1.5 (SteerKP or 1/SteerLatAccel)": {
+    "delta_cmd_300ms": 0.00094,
+    "share_of_target": -0.043
+   },
+   "_target_matched_excess_rise_300ms": 0.02176
+  },
+  "8-15": {
+   "AccordDobHz 0.6->0 (ARM-D)": {
+    "delta_cmd_300ms": -0.00896,
+    "basis": "T64 only (the flown rev); T4/T5-style revs differ",
+    "n": 115,
+    "share_of_target": 0.366
+   },
+   "AccordFFRateGain 0.5->1.0": {
+    "delta_cmd_300ms": 0.00017,
+    "also_adds_at_breakaway": 0.00569,
+    "n": 366,
+    "share_of_target": -0.007
+   },
+   "AccordFFRateGain 0.5->2.0": {
+    "delta_cmd_300ms": 0.0005,
+    "also_adds_at_breakaway": 0.01707,
+    "n": 366,
+    "share_of_target": -0.02
+   },
+   "AccordFFRateGain 0.5->4.0": {
+    "delta_cmd_300ms": 0.00117,
+    "also_adds_at_breakaway": 0.03983,
+    "n": 366,
+    "share_of_target": -0.048
+   },
+   "AccordRateLoopGain 0.001->0.0015": {
+    "delta_cmd_300ms": -0.00046,
+    "note": "REPORT: gain margin permits ~x1.5 from 0.0006; the flown 0.001 is already above that",
+    "share_of_target": 0.019
+   },
+   "AccordRateLoopGain 0.001->0.002": {
+    "delta_cmd_300ms": -0.00093,
+    "note": "REPORT: gain margin permits ~x1.5 from 0.0006; the flown 0.001 is already above that",
+    "share_of_target": 0.038
+   },
+   "AccordFrictionHyst 0.015->0.01": {
+    "delta_cmd_300ms": -0.00128,
+    "also_removes_at_breakaway": -0.00169,
+    "share_of_target": 0.052
+   },
+   "AccordFrictionHyst 0.015->0.0": {
+    "delta_cmd_300ms": -0.00383,
+    "also_removes_at_breakaway": -0.00507,
+    "share_of_target": 0.157
+   },
+   "AccordHoldLevel 1->0": {
+    "delta_cmd_300ms": -0.00096,
+    "note": "already flown as T64B: worse in band and shakier",
+    "share_of_target": 0.039
+   },
+   "P scale x0.5 (SteerKP or 1/SteerLatAccel)": {
+    "delta_cmd_300ms": -9e-05,
+    "share_of_target": 0.004
+   },
+   "P scale x1.5 (SteerKP or 1/SteerLatAccel)": {
+    "delta_cmd_300ms": 9e-05,
+    "share_of_target": -0.004
+   },
+   "_target_matched_excess_rise_300ms": 0.02445
+  }
+ },
+ "d_shake_band_content": {
+  "TORQUE|2-8": {
+   "n": 145,
+   "cmd": 0.003735,
+   "move": 0.00075,
+   "hold_ff": 0.000399,
+   "z": 0.000437,
+   "rl": 0.002674,
+   "dob": 0.000366,
+   "P": 0.000872,
+   "F": 0.003016,
+   "move_over_cmd": 0.201
+  },
+  "V282|2-8": {
+   "n": 146,
+   "cmd": 0.004579,
+   "move": 0.0,
+   "hold_ff": 0.0,
+   "z": 0.0,
+   "rl": 0.0,
+   "dob": 0.0,
+   "P": 0.000899,
+   "F": 0.003754,
+   "move_over_cmd": 0.0
+  },
+  "TORQUE|8-15": {
+   "n": 366,
+   "cmd": 0.003142,
+   "move": 0.000472,
+   "hold_ff": 0.000294,
+   "z": 0.000265,
+   "rl": 0.002366,
+   "dob": 0.000463,
+   "P": 0.000782,
+   "F": 0.002465,
+   "move_over_cmd": 0.15
+  },
+  "V282|8-15": {
+   "n": 163,
+   "cmd": 0.003017,
+   "move": 0.0,
+   "hold_ff": 0.0,
+   "z": 0.0,
+   "rl": 0.0,
+   "dob": 0.0,
+   "P": 0.000718,
+   "F": 0.002356,
+   "move_over_cmd": 0.0
+  }
+ }
+}

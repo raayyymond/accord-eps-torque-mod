@@ -1,0 +1,191 @@
+{
+ "time_fraction": {
+  "2-8|return": {
+   "n": 93,
+   "frames": 10052,
+   "time_frac_outward_ge25": 0.09878631118185435,
+   "time_frac_inward_ge25": 0.15489454834858735,
+   "time_frac_near_zero": 0.7463191404695583,
+   "time_frac_outward_ge50": 0.06774771189812973,
+   "time_frac_inward_ge50": 0.12833267011539992,
+   "mean_abs_z_out": 0.0038430366139927527,
+   "frac_episodes_any_inward_ge25": 0.46236559139784944,
+   "frac_episodes_inward_ge25_over_10pct_of_time": 0.3870967741935484,
+   "frac_episodes_untouched": 0.24731182795698925
+  },
+  "2-8|depart": {
+   "n": 52,
+   "frames": 4772,
+   "time_frac_outward_ge25": 0.579002514668902,
+   "time_frac_inward_ge25": 0.008801341156747695,
+   "time_frac_near_zero": 0.41219614417435035,
+   "time_frac_outward_ge50": 0.5220033528918693,
+   "time_frac_inward_ge50": 0.005658005029337804,
+   "mean_abs_z_out": 0.010041487956370812,
+   "frac_episodes_any_inward_ge25": 0.07692307692307693,
+   "frac_episodes_inward_ge25_over_10pct_of_time": 0.038461538461538464,
+   "frac_episodes_untouched": 0.07692307692307693
+  },
+  "8-12|return": {
+   "n": 205,
+   "frames": 23012,
+   "time_frac_outward_ge25": 0.02081522683817139,
+   "time_frac_inward_ge25": 0.12098035807404832,
+   "time_frac_near_zero": 0.8582044150877803,
+   "time_frac_outward_ge50": 0.008213106205458022,
+   "time_frac_inward_ge50": 0.06609594993916218,
+   "mean_abs_z_out": 0.0018319549975346812,
+   "frac_episodes_any_inward_ge25": 0.33170731707317075,
+   "frac_episodes_inward_ge25_over_10pct_of_time": 0.2780487804878049,
+   "frac_episodes_untouched": 0.5707317073170731
+  },
+  "8-12|depart": {
+   "n": 79,
+   "frames": 7676,
+   "time_frac_outward_ge25": 0.3888744137571652,
+   "time_frac_inward_ge25": 0.007295466388744137,
+   "time_frac_near_zero": 0.6038301198540906,
+   "time_frac_outward_ge50": 0.22055758207399687,
+   "time_frac_inward_ge50": 0.002996352266805628,
+   "mean_abs_z_out": 0.005188269070853981,
+   "frac_episodes_any_inward_ge25": 0.0379746835443038,
+   "frac_episodes_inward_ge25_over_10pct_of_time": 0.0379746835443038,
+   "frac_episodes_untouched": 0.3037974683544304
+  },
+  "2-12|return": {
+   "n": 298,
+   "frames": 33064,
+   "time_frac_outward_ge25": 0.04451971933220421,
+   "time_frac_inward_ge25": 0.13129082990563756,
+   "time_frac_near_zero": 0.8241894507621582,
+   "time_frac_outward_ge50": 0.02631260585531091,
+   "time_frac_inward_ge50": 0.08501693684974594,
+   "mean_abs_z_out": 0.0024433568971426096,
+   "frac_episodes_any_inward_ge25": 0.3724832214765101,
+   "frac_episodes_inward_ge25_over_10pct_of_time": 0.31208053691275167,
+   "frac_episodes_untouched": 0.4697986577181208
+  },
+  "2-12|depart": {
+   "n": 131,
+   "frames": 12448,
+   "time_frac_outward_ge25": 0.46176092544987146,
+   "time_frac_inward_ge25": 0.007872750642673522,
+   "time_frac_near_zero": 0.530366323907455,
+   "time_frac_outward_ge50": 0.3361182519280206,
+   "time_frac_inward_ge50": 0.004016709511568123,
+   "mean_abs_z_out": 0.007048773611477883,
+   "frac_episodes_any_inward_ge25": 0.05343511450381679,
+   "frac_episodes_inward_ge25_over_10pct_of_time": 0.03816793893129771,
+   "frac_episodes_untouched": 0.21374045801526717
+  }
+ },
+ "one_drive_threshold": {
+  "2-8": {
+   "return_dwell_p50|n=11": {
+    "base": 0.52,
+    "sd_within": 0.13225030964046927,
+    "sd_between": 0.11414902540100814,
+    "sd_total": 0.1747001556954086,
+    "detect_thr_95": 0.3424123051630008,
+    "mde_80pct": 0.48916043594714403
+   },
+   "return_dwell_p50|n=20": {
+    "base": 0.52,
+    "sd_within": 0.09280555341007347,
+    "sd_between": 0.11414902540100814,
+    "sd_total": 0.14711516150196757,
+    "detect_thr_95": 0.28834571654385643,
+    "mde_80pct": 0.41192245220550916
+   },
+   "return_dwell_p50|n=29": {
+    "base": 0.52,
+    "sd_within": 0.07843790501887464,
+    "sd_between": 0.11414902540100814,
+    "sd_total": 0.1385009203714907,
+    "detect_thr_95": 0.27146180392812175,
+    "mde_80pct": 0.38780257704017396
+   },
+   "return_os30_p90|n=11": {
+    "base": 1.6515008926391601,
+    "sd_within": 2.0316666197730533,
+    "sd_between": 0.7309259516257915,
+    "sd_total": 2.15914844340544,
+    "detect_thr_95": 4.231930949074663,
+    "mde_80pct": 6.045615641535232
+   },
+   "return_os30_p90|n=20": {
+    "base": 1.6515008926391601,
+    "sd_within": 1.566250866264229,
+    "sd_between": 0.7309259516257915,
+    "sd_total": 1.728408089206226,
+    "detect_thr_95": 3.387679854844203,
+    "mde_80pct": 4.8395426497774325
+   },
+   "return_os30_p90|n=29": {
+    "base": 1.6515008926391601,
+    "sd_within": 1.2893663202269714,
+    "sd_between": 0.7309259516257915,
+    "sd_total": 1.4821330083685844,
+    "detect_thr_95": 2.9049806964024256,
+    "mde_80pct": 4.149972423432036
+   }
+  },
+  "2-12": {
+   "return_dwell_p50|n=11": {
+    "base": 0.495,
+    "sd_within": 0.12721847288719512,
+    "sd_between": 0.04207136793592528,
+    "sd_total": 0.1339945515450162,
+    "detect_thr_95": 0.2626293210282317,
+    "mde_80pct": 0.3751847443260453
+   },
+   "return_dwell_p50|n=20": {
+    "base": 0.495,
+    "sd_within": 0.09168709832052435,
+    "sd_between": 0.04207136793592528,
+    "sd_total": 0.10087875890611216,
+    "detect_thr_95": 0.19772236745597982,
+    "mde_80pct": 0.28246052493711404
+   },
+   "return_dwell_p50|n=29": {
+    "base": 0.495,
+    "sd_within": 0.07822917418553005,
+    "sd_between": 0.04207136793592528,
+    "sd_total": 0.08882456694940878,
+    "detect_thr_95": 0.1740961512208412,
+    "mde_80pct": 0.24870878745834457
+   },
+   "return_os30_p90|n=11": {
+    "base": 0.5025793552398683,
+    "sd_within": 1.2494515340262433,
+    "sd_between": 0.8750725425398314,
+    "sd_total": 1.5254117773859155,
+    "detect_thr_95": 2.989807083676394,
+    "mde_80pct": 4.271152976680563
+   },
+   "return_os30_p90|n=20": {
+    "base": 0.5025793552398683,
+    "sd_within": 0.8687759376475144,
+    "sd_between": 0.8750725425398314,
+    "sd_total": 1.233095123882356,
+    "detect_thr_95": 2.4168664428094178,
+    "mde_80pct": 3.4526663468705965
+   },
+   "return_os30_p90|n=29": {
+    "base": 0.5025793552398683,
+    "sd_within": 0.7357220377115622,
+    "sd_between": 0.8750725425398314,
+    "sd_total": 1.1432580073988454,
+    "detect_thr_95": 2.240785694501737,
+    "mde_80pct": 3.201122420716767
+   }
+  }
+ },
+ "effect_scale": {
+  "build_rate_torque_per_s": 0.06520833333333334,
+  "z_hold_p50_2_8": 0.0194,
+  "hw_2_8": 0.0333,
+  "seconds_of_dwell_removed": 0.29750798722044725,
+  "note": "the dwell shortening a full-dose one-sided term would produce on the side it acts on; a wrong-sign or symmetric implementation would produce a shift of this order on RETURNS"
+ }
+}

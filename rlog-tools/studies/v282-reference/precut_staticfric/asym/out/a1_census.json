@@ -1,0 +1,198 @@
+{
+ "torque 2-8": {
+  "n": 145,
+  "n_away": 52,
+  "n_toward": 93,
+  "routes": {
+   "0000006c--68c6e94b17": 17,
+   "0000006d--05e83bb04f": 17,
+   "0000006e--6ca3e014fd": 45,
+   "00000075--6c8687d5bd": 53,
+   "00000076--d0b7ea7e4d": 13
+  },
+  "routes_away": {
+   "0000006c--68c6e94b17": 6,
+   "0000006d--05e83bb04f": 8,
+   "0000006e--6ca3e014fd": 16,
+   "00000075--6c8687d5bd": 16,
+   "00000076--d0b7ea7e4d": 6
+  },
+  "absaa_away": [
+   0.13,
+   1.42,
+   7.32
+  ],
+  "absaa_toward": [
+   0.39,
+   2.35,
+   8.63
+  ],
+  "v_away": [
+   3.79,
+   5.98,
+   7.36
+  ],
+  "v_toward": [
+   3.33,
+   6.15,
+   7.76
+  ],
+  "n_absaa_lt_0p3": 13,
+  "n_absaa_lt_1": 44,
+  "kind": {
+   "cont": 54,
+   "rest": 36,
+   "rev": 55
+  },
+  "kind_away": {
+   "cont": 29,
+   "rest": 15,
+   "rev": 8
+  },
+  "dwell_s": [
+   0.25,
+   0.48,
+   1.156
+  ],
+  "n_wd0_clipped": 8,
+  "n_wd0_eq0": 0,
+  "wd0": [
+   -8,
+   87,
+   118
+  ],
+  "corr_toward_absaa": 0.147,
+  "corr_toward_v": 0.01,
+  "corr_toward_dwell": 0.081
+ },
+ "torque 8-15": {
+  "n": 366,
+  "n_away": 107,
+  "n_toward": 259,
+  "routes": {
+   "0000006c--68c6e94b17": 59,
+   "0000006d--05e83bb04f": 56,
+   "0000006e--6ca3e014fd": 107,
+   "00000075--6c8687d5bd": 122,
+   "00000076--d0b7ea7e4d": 22
+  },
+  "routes_away": {
+   "0000006c--68c6e94b17": 20,
+   "0000006d--05e83bb04f": 17,
+   "0000006e--6ca3e014fd": 23,
+   "00000075--6c8687d5bd": 40,
+   "00000076--d0b7ea7e4d": 7
+  },
+  "absaa_away": [
+   0.27,
+   1.87,
+   9.18
+  ],
+  "absaa_toward": [
+   0.57,
+   2.45,
+   7.88
+  ],
+  "v_away": [
+   8.78,
+   10.65,
+   13.74
+  ],
+  "v_toward": [
+   8.56,
+   10.44,
+   13.12
+  ],
+  "n_absaa_lt_0p3": 23,
+  "n_absaa_lt_1": 98,
+  "kind": {
+   "cont": 92,
+   "rest": 99,
+   "rev": 175
+  },
+  "kind_away": {
+   "cont": 49,
+   "rest": 30,
+   "rev": 28
+  },
+  "dwell_s": [
+   0.25,
+   0.475,
+   1.115
+  ],
+  "n_wd0_clipped": 22,
+  "n_wd0_eq0": 1,
+  "wd0": [
+   -8,
+   83,
+   118
+  ],
+  "corr_toward_absaa": -0.071,
+  "corr_toward_v": -0.076,
+  "corr_toward_dwell": 0.077
+ },
+ "V282 2-8": {
+  "n": 146,
+  "n_away": 56,
+  "n_toward": 90,
+  "routes": {
+   "00000064--ce6b0b0ebb": 12,
+   "00000065--b9f78988bd": 18,
+   "0000006c--2bc842dbac": 116
+  },
+  "routes_away": {
+   "00000064--ce6b0b0ebb": 7,
+   "00000065--b9f78988bd": 6,
+   "0000006c--2bc842dbac": 43
+  },
+  "absaa_away": [
+   0.3,
+   1.3,
+   4.03
+  ],
+  "absaa_toward": [
+   0.48,
+   1.75,
+   7.98
+  ],
+  "v_away": [
+   3.66,
+   5.64,
+   7.75
+  ],
+  "v_toward": [
+   2.91,
+   5.72,
+   7.42
+  ],
+  "n_absaa_lt_0p3": 13,
+  "n_absaa_lt_1": 47,
+  "kind": {
+   "cont": 51,
+   "rest": 65,
+   "rev": 30
+  },
+  "kind_away": {
+   "cont": 23,
+   "rest": 27,
+   "rev": 6
+  },
+  "dwell_s": [
+   0.23,
+   0.365,
+   0.685
+  ],
+  "n_wd0_clipped": 1,
+  "n_wd0_eq0": 0,
+  "wd0": [
+   43,
+   97,
+   116
+  ],
+  "corr_toward_absaa": 0.164,
+  "corr_toward_v": -0.095,
+  "corr_toward_dwell": -0.096
+ },
+ "holdlevel_on_2_8": 34,
+ "holdlevel_off_2_8": 111
+}

@@ -1,0 +1,110 @@
+{
+ "demand_arc": {
+  "V282|2-8": {
+   "n": 146,
+   "rate_des_at_bk": 4.799,
+   "rate_des_peak_in_window": 8.504,
+   "release_at_frac_of_peak_rate": 0.584,
+   "d_rate_des_300ms": -3.449,
+   "d_rate_des_300ms_over_rate_at_bk": -0.739
+  },
+  "TORQUE|2-8": {
+   "n": 143,
+   "rate_des_at_bk": 5.284,
+   "rate_des_peak_in_window": 7.624,
+   "release_at_frac_of_peak_rate": 0.688,
+   "d_rate_des_300ms": -1.598,
+   "d_rate_des_300ms_over_rate_at_bk": -0.277
+  },
+  "V282|8-15": {
+   "n": 163,
+   "rate_des_at_bk": 3.514,
+   "rate_des_peak_in_window": 5.786,
+   "release_at_frac_of_peak_rate": 0.555,
+   "d_rate_des_300ms": -1.729,
+   "d_rate_des_300ms_over_rate_at_bk": -0.529
+  },
+  "TORQUE|8-15": {
+   "n": 365,
+   "rate_des_at_bk": 3.365,
+   "rate_des_peak_in_window": 4.677,
+   "release_at_frac_of_peak_rate": 0.689,
+   "d_rate_des_300ms": -0.163,
+   "d_rate_des_300ms_over_rate_at_bk": -0.042
+  }
+ },
+ "stack_T64": {
+  "2-8": {
+   "ARM-D  AccordDobHz 0": {
+    "dcmd_300ms_after": 0.00666,
+    "reach": 0.00939,
+    "share_of_gap_to_V282": 0.337
+   },
+   "+ AccordFFRateGain 0.5->1.0": {
+    "dcmd_300ms_after": 0.0049,
+    "reach": 0.01115,
+    "share_of_gap_to_V282": 0.4,
+    "adds_at_breakaway": 0.0059
+   },
+   "+ AccordFFRateGain 0.5->2.0": {
+    "dcmd_300ms_after": 0.00139,
+    "reach": 0.01466,
+    "share_of_gap_to_V282": 0.526,
+    "adds_at_breakaway": 0.01771
+   },
+   "+ AccordFFRateGain 0.5->2.0 + RateLoopGain 0.0015": {
+    "dcmd_300ms_after": 0.00013,
+    "reach": 0.01592,
+    "share_of_gap_to_V282": 0.572,
+    "adds_at_breakaway": 0.01771
+   },
+   "_measured": {
+    "dcmd_300ms_T64": 0.01605,
+    "dcmd_300ms_V282": -0.0118,
+    "gap": 0.02785,
+    "n_T64": 34,
+    "n_V282": 146,
+    "move_level_at_bk": 0.0059,
+    "d_move_300ms": -0.00176,
+    "d_dob_300ms": 0.00939,
+    "d_rl_300ms": -0.00253
+   }
+  },
+  "8-15": {
+   "ARM-D  AccordDobHz 0": {
+    "dcmd_300ms_after": 0.01048,
+    "reach": 0.00896,
+    "share_of_gap_to_V282": 0.375
+   },
+   "+ AccordFFRateGain 0.5->1.0": {
+    "dcmd_300ms_after": 0.00964,
+    "reach": 0.00981,
+    "share_of_gap_to_V282": 0.41,
+    "adds_at_breakaway": 0.00467
+   },
+   "+ AccordFFRateGain 0.5->2.0": {
+    "dcmd_300ms_after": 0.00795,
+    "reach": 0.0115,
+    "share_of_gap_to_V282": 0.48,
+    "adds_at_breakaway": 0.01402
+   },
+   "+ AccordFFRateGain 0.5->2.0 + RateLoopGain 0.0015": {
+    "dcmd_300ms_after": 0.00748,
+    "reach": 0.01197,
+    "share_of_gap_to_V282": 0.5,
+    "adds_at_breakaway": 0.01402
+   },
+   "_measured": {
+    "dcmd_300ms_T64": 0.01945,
+    "dcmd_300ms_V282": -0.00449,
+    "gap": 0.02394,
+    "n_T64": 115,
+    "n_V282": 163,
+    "move_level_at_bk": 0.00467,
+    "d_move_300ms": -0.00085,
+    "d_dob_300ms": 0.00896,
+    "d_rl_300ms": -0.00094
+   }
+  }
+ }
+}

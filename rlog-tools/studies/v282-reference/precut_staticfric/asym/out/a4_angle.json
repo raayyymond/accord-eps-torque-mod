@@ -1,0 +1,451 @@
+{
+ "frame": {
+  "corr_cmd_aa": 0.651,
+  "corr_holdff_angdes": 0.983
+ },
+ "centre_by_absaa_2_8": {
+  "0-1": {
+   "n": 42,
+   "n_away": 23,
+   "n_toward": 19,
+   "centre": [
+    0.00597,
+    [
+     -0.00086,
+     0.0137
+    ]
+   ],
+   "halfwidth": [
+    0.03895,
+    [
+     0.02857,
+     0.0479
+    ]
+   ],
+   "med_absaa": 0.45,
+   "med_holdmap": 0.0019
+  },
+  "1-2": {
+   "n": 31,
+   "n_away": 11,
+   "n_toward": 20,
+   "centre": [
+    0.01644,
+    [
+     NaN,
+     NaN
+    ]
+   ],
+   "halfwidth": [
+    0.03154,
+    [
+     NaN,
+     NaN
+    ]
+   ],
+   "med_absaa": 1.49,
+   "med_holdmap": 0.0056
+  },
+  "2-4": {
+   "n": 35,
+   "n_away": 9,
+   "n_toward": 26,
+   "centre": [
+    0.03276,
+    [
+     0.01735,
+     0.03851
+    ]
+   ],
+   "halfwidth": [
+    0.03506,
+    [
+     0.02697,
+     0.04039
+    ]
+   ],
+   "med_absaa": 2.85,
+   "med_holdmap": 0.011
+  },
+  "4-8": {
+   "n": 20,
+   "n_away": 4,
+   "n_toward": 16,
+   "centre": [
+    0.04266,
+    [
+     NaN,
+     NaN
+    ]
+   ],
+   "halfwidth": [
+    0.03072,
+    [
+     NaN,
+     NaN
+    ]
+   ],
+   "med_absaa": 5.56,
+   "med_holdmap": 0.0244
+  },
+  "8-1000000000.0": {
+   "n": 17,
+   "n_away": 5,
+   "n_toward": 12,
+   "centre": [
+    0.04763,
+    [
+     NaN,
+     NaN
+    ]
+   ],
+   "halfwidth": [
+    0.04393,
+    [
+     NaN,
+     NaN
+    ]
+   ],
+   "med_absaa": 11.2,
+   "med_holdmap": 0.0489
+  }
+ },
+ "centre_by_absaa_8_15": {
+  "0-1": {
+   "n": 90,
+   "centre": [
+    0.00652,
+    [
+     -0.00194,
+     0.00945
+    ]
+   ],
+   "halfwidth": [
+    0.02578,
+    [
+     0.0234,
+     0.03094
+    ]
+   ]
+  },
+  "1-2": {
+   "n": 65,
+   "centre": [
+    0.00958,
+    [
+     -0.00509,
+     0.02648
+    ]
+   ],
+   "halfwidth": [
+    0.02834,
+    [
+     0.01925,
+     0.04273
+    ]
+   ]
+  },
+  "2-4": {
+   "n": 115,
+   "centre": [
+    0.02093,
+    [
+     0.01246,
+     0.02525
+    ]
+   ],
+   "halfwidth": [
+    0.02691,
+    [
+     0.01751,
+     0.0303
+    ]
+   ]
+  },
+  "4-8": {
+   "n": 57,
+   "centre": [
+    0.02215,
+    [
+     0.01138,
+     0.02399
+    ]
+   ],
+   "halfwidth": [
+    0.02937,
+    [
+     0.01804,
+     0.03098
+    ]
+   ]
+  },
+  "8-1000000000.0": {
+   "n": 39,
+   "centre": [
+    0.03989,
+    [
+     NaN,
+     NaN
+    ]
+   ],
+   "halfwidth": [
+    0.05048,
+    [
+     NaN,
+     NaN
+    ]
+   ]
+  }
+ },
+ "intercept_slope_2-8": {
+  "intercept": [
+   0.01829,
+   [
+    0.01226,
+    0.02152
+   ]
+  ],
+  "slope_per_deg": [
+   0.00128,
+   [
+    0.00023,
+    0.00334
+   ]
+  ],
+  "halfwidth": [
+   0.03388,
+   [
+    0.03055,
+    0.03748
+   ]
+  ],
+  "map_slope_k_median": 0.00449,
+  "slope_as_frac_of_map": 0.286
+ },
+ "intercept_slope_2-5": {
+  "intercept": [
+   0.01714,
+   [
+    -0.00551,
+    0.02079
+   ]
+  ],
+  "slope_per_deg": [
+   0.00083,
+   [
+    0.00048,
+    0.01977
+   ]
+  ],
+  "halfwidth": [
+   0.03305,
+   [
+    0.02605,
+    0.04332
+   ]
+  ],
+  "map_slope_k_median": 0.00272,
+  "slope_as_frac_of_map": 0.306
+ },
+ "intercept_slope_5-8": {
+  "intercept": [
+   0.01819,
+   [
+    0.00948,
+    0.02238
+   ]
+  ],
+  "slope_per_deg": [
+   0.0015,
+   [
+    -0.00029,
+    0.00321
+   ]
+  ],
+  "halfwidth": [
+   0.0341,
+   [
+    0.02916,
+    0.04075
+   ]
+  ],
+  "map_slope_k_median": 0.00464,
+  "slope_as_frac_of_map": 0.323
+ },
+ "intercept_slope_8-15": {
+  "intercept": [
+   0.01233,
+   [
+    0.00716,
+    0.01927
+   ]
+  ],
+  "slope_per_deg": [
+   0.00098,
+   [
+    0.0006,
+    0.00126
+   ]
+  ],
+  "halfwidth": [
+   0.02813,
+   [
+    0.02386,
+    0.03188
+   ]
+  ],
+  "map_slope_k_median": 0.008,
+  "slope_as_frac_of_map": 0.123
+ },
+ "loo_2_8": {
+  "0000006c--68c6e94b17": {
+   "centre": 0.0243,
+   "halfwidth": 0.03201,
+   "n_dropped": 17
+  },
+  "0000006d--05e83bb04f": {
+   "centre": 0.02204,
+   "halfwidth": 0.03198,
+   "n_dropped": 17
+  },
+  "0000006e--6ca3e014fd": {
+   "centre": 0.02244,
+   "halfwidth": 0.0321,
+   "n_dropped": 45
+  },
+  "00000075--6c8687d5bd": {
+   "centre": 0.02191,
+   "halfwidth": 0.03516,
+   "n_dropped": 53
+  },
+  "00000076--d0b7ea7e4d": {
+   "centre": 0.02231,
+   "halfwidth": 0.03261,
+   "n_dropped": 13
+  }
+ },
+ "all_2_8": {
+  "centre": 0.02268,
+  "halfwidth": 0.03266
+ },
+ "per_route_2_8": {
+  "0000006c--68c6e94b17": {
+   "n": 17,
+   "n_away": 6,
+   "n_toward": 11,
+   "centre": 0.01049,
+   "halfwidth": 0.03741,
+   "holdlevel": true
+  },
+  "0000006d--05e83bb04f": {
+   "n": 17,
+   "n_away": 8,
+   "n_toward": 9,
+   "centre": 0.02615,
+   "halfwidth": 0.03647,
+   "holdlevel": true
+  },
+  "0000006e--6ca3e014fd": {
+   "n": 45,
+   "n_away": 16,
+   "n_toward": 29,
+   "centre": 0.02324,
+   "halfwidth": 0.03393,
+   "holdlevel": false
+  },
+  "00000075--6c8687d5bd": {
+   "n": 53,
+   "n_away": 16,
+   "n_toward": 37,
+   "centre": 0.0232,
+   "halfwidth": 0.02824,
+   "holdlevel": false
+  },
+  "00000076--d0b7ea7e4d": {
+   "n": 13,
+   "n_away": 6,
+   "n_toward": 7,
+   "centre": 0.02624,
+   "halfwidth": 0.03237,
+   "holdlevel": false
+  }
+ },
+ "dfbeta_max": 0.00088,
+ "dfbeta_top": [
+  {
+   "route": "00000075--6c8687d5bd",
+   "absaa": 0.17,
+   "v": 6.04,
+   "toward": false,
+   "y_out": -0.0346,
+   "dfbeta": 0.00088
+  },
+  {
+   "route": "0000006d--05e83bb04f",
+   "absaa": 20.03,
+   "v": 7.28,
+   "toward": false,
+   "y_out": 0.1217,
+   "dfbeta": -0.00065
+  },
+  {
+   "route": "00000075--6c8687d5bd",
+   "absaa": 9.94,
+   "v": 5.48,
+   "toward": false,
+   "y_out": 0.1141,
+   "dfbeta": -0.00058
+  },
+  {
+   "route": "0000006d--05e83bb04f",
+   "absaa": 0.81,
+   "v": 3.86,
+   "toward": false,
+   "y_out": 0.0155,
+   "dfbeta": 0.00039
+  },
+  {
+   "route": "0000006e--6ca3e014fd",
+   "absaa": 1.22,
+   "v": 6.49,
+   "toward": true,
+   "y_out": 0.0617,
+   "dfbeta": -0.00039
+  },
+  {
+   "route": "0000006c--68c6e94b17",
+   "absaa": 0.01,
+   "v": 7.37,
+   "toward": false,
+   "y_out": 0.0157,
+   "dfbeta": 0.00039
+  }
+ ],
+ "heterosced_2_8": {
+  "0-1": {
+   "n": 42,
+   "iqr": 0.085,
+   "sd": 0.0449
+  },
+  "1-2": {
+   "n": 31,
+   "iqr": 0.055,
+   "sd": 0.038
+  },
+  "2-4": {
+   "n": 35,
+   "iqr": 0.0479,
+   "sd": 0.04
+  },
+  "4-8": {
+   "n": 20,
+   "iqr": 0.0343,
+   "sd": 0.0313
+  },
+  "8-1000000000.0": {
+   "n": 17,
+   "iqr": 0.0522,
+   "sd": 0.0501
+  }
+ }
+}

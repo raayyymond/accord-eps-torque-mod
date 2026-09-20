@@ -1,0 +1,186 @@
+self-test OK: slip factor scales as 1/stiffness, rack map monotone, deg/curv in range, move clip exact
+
+torque-mode routes with the rate-plant feedforward LIVE (AccordRatePlantFF=1 in initData):
+   r71    00000071--f2c9d073a3     rev 2                  commit 66cf4454a  gain 0.5  LAF 14.0
+   r72    00000072--8001fc3048     rev 3                  commit e8e62f0e1  gain 0.5  LAF 14.0
+   r73    00000073--79fd149dd8     rev 3 (+0.212 relay)   commit e8e62f0e1  gain 0.5  LAF 14.0
+   r74    00000074--2bf17ca67d     rev 4                  commit 08a5a7064  gain 0.5  LAF 14.0
+   r75    00000075--6c8687d5bd     rev 4                  commit 08a5a7064  gain 0.5  LAF 14.0
+   r76    00000076--d0b7ea7e4d     rev 5                  commit e44b6cd31  gain 0.5  LAF 14.0
+   r6c    0000006c--68c6e94b17     rev 6.4                commit 84766cdc5  gain 0.5  LAF 14.0
+   r6d    0000006d--05e83bb04f     rev 6.4                commit 84766cdc5  gain 0.5  LAF 14.0
+   r6e    0000006e--6ca3e014fd     rev 6.4 HoldLevel OFF  commit 84766cdc5  gain 0.5  LAF 14.0
+
+======================================================================================================================
+SECTION 1  REPRODUCTION OF THE FORK'S OWN NUMBER (positive control)
+======================================================================================================================
+latcontrol_vehicle_tunes.py:179-183, written at commit 8c4051ce6:
+   "at 1.0 the feedforward alone exceeded full scale for 0.34 s below 8 m/s on route 70's
+    own demand (max 1.13); at 0.5 the max is 0.81."
+Route 70 flew AccordRatePlantFF=0 (initData) -- the feedforward did NOT run on that drive, so
+this is necessarily an offline recomputation on route 70's logged demand, which is what we redo.
+The hold term is the LINEAR k(v)*angle/G(v) of that commit (the saturating hold map did not
+exist yet).  Two candidate K tables are tried: 8c4051ce6's (the bounded low-speed knots, which
+that commit introduced) and 4247cb09e's (the pre-bound knots route 70 itself shipped).
+
+K table      offset  mask              gain  max|FF|  sec>1.0  p99|FF|   frames  max|move| max|hold|
+8c4051ce6    OFF     engaged,!pressed  0.50    0.398    0.000    0.249    13135      0.381     0.254
+8c4051ce6    OFF     engaged,!pressed  1.00    0.694    0.000    0.383    13135      0.762     0.254
+8c4051ce6    OFF     engaged           0.50    0.570    0.000    0.293    15300      0.417     0.254
+8c4051ce6    OFF     engaged           1.00    0.899    0.000    0.495    15300      0.834     0.254
+8c4051ce6    ON      engaged,!pressed  0.50    0.417    0.000    0.253    13135      0.375     0.248
+8c4051ce6    ON      engaged,!pressed  1.00    0.688    0.000    0.396    13135      0.750     0.248
+8c4051ce6    ON      engaged           0.50    0.578    0.000    0.298    15300      0.411     0.260
+8c4051ce6    ON      engaged           1.00    0.908    0.000    0.498    15300      0.823     0.260
+4247cb09e    OFF     engaged,!pressed  0.50    0.717    0.000    0.477    13135      0.381     0.494
+4247cb09e    OFF     engaged,!pressed  1.00    0.963    0.000    0.581    13135      0.762     0.494
+4247cb09e    OFF     engaged           0.50    0.807    0.000    0.541    15300      0.417     0.509
+4247cb09e    OFF     engaged           1.00    1.134    0.340    0.676    15300      0.834     0.509
+4247cb09e    ON      engaged,!pressed  0.50    0.766    0.000    0.499    13135      0.375     0.527
+4247cb09e    ON      engaged,!pressed  1.00    1.017    0.010    0.604    13135      0.750     0.527
+4247cb09e    ON      engaged           0.50    0.822    0.000    0.559    15300      0.411     0.527
+4247cb09e    ON      engaged           1.00    1.150    0.350    0.694    15300      0.823     0.527
+
+CLOSEST VARIANT: K 4247cb09e, latAccelOffset OFF, mask engaged
+   gain 1.0 -> max 1.134 (claim 1.13, +0.4 %), 0.340 s above full scale (claim 0.34 s, +0.0 %)
+   gain 0.5 -> max 0.807 (claim 0.81, -0.3 %)
+
+======================================================================================================================
+SECTION 2  GAIN SWEEP -- all torque-mode routes pooled, engaged and hands-off
+======================================================================================================================
+|FF| = |hold + move| (the fork's own 'feedforward alone').  |TOTAL| = |p+i+f|/LAF, the command
+BEFORE the +/-1.0 clip, with P, I and the observer held at their logged values (open loop).
+Full scale = 1.0 torque (steer_max, latcontrol.py:17).
+
+--- speed 2-8 m/s   (1027 s engaged hands-off, move-term limit 1.00) ---
+ gain  max|FF|  p99|FF|  s |FF|>1 |  max|TOT|  p99|TOT|   p99.9   %>=1.0   s >1.0  longest s |  % move clipped
+ 0.50    0.932    0.465      0.00 |     1.321     0.510   0.935    0.063     0.65       0.10 |           0.000
+ 0.75    1.089    0.500      0.08 |     1.463     0.550   1.025    0.114     1.17       0.13 |           0.000
+ 1.00    1.247    0.545      0.44 |     1.690     0.585   1.110    0.163     1.67       0.21 |           0.000
+ 1.25    1.405    0.595      0.95 |     1.808     0.630   1.210    0.207     2.13       0.21 |           0.015
+ 1.50    1.563    0.645      1.59 |     1.888     0.680   1.295    0.283     2.91       0.21 |           0.044
+ 2.00    1.620    0.750      3.32 |     2.039     0.780   1.430    0.419     4.30       0.23 |           0.130
+
+--- speed 8-15 m/s   (1692 s engaged hands-off, move-term limit 1.40) ---
+ gain  max|FF|  p99|FF|  s |FF|>1 |  max|TOT|  p99|TOT|   p99.9   %>=1.0   s >1.0  longest s |  % move clipped
+ 0.50    0.377    0.295      0.00 |     0.667     0.365   0.515    0.000     0.00       0.00 |           0.000
+ 0.75    0.401    0.305      0.00 |     0.686     0.370   0.520    0.000     0.00       0.00 |           0.000
+ 1.00    0.427    0.315      0.00 |     0.705     0.375   0.520    0.000     0.00       0.00 |           0.000
+ 1.25    0.455    0.330      0.00 |     0.724     0.385   0.530    0.000     0.00       0.00 |           0.000
+ 1.50    0.499    0.340      0.00 |     0.749     0.395   0.535    0.000     0.00       0.00 |           0.000
+ 2.00    0.624    0.370      0.00 |     0.824     0.415   0.560    0.000     0.00       0.00 |           0.000
+
+--- speed >15 m/s   (2315 s engaged hands-off, move-term limit 1.40) ---
+ gain  max|FF|  p99|FF|  s |FF|>1 |  max|TOT|  p99|TOT|   p99.9   %>=1.0   s >1.0  longest s |  % move clipped
+ 0.50    0.348    0.195      0.00 |     0.459     0.200   0.275    0.000     0.00       0.00 |           0.000
+ 0.75    0.364    0.200      0.00 |     0.485     0.200   0.275    0.000     0.00       0.00 |           0.000
+ 1.00    0.381    0.205      0.00 |     0.510     0.205   0.280    0.000     0.00       0.00 |           0.000
+ 1.25    0.398    0.205      0.00 |     0.535     0.205   0.285    0.000     0.00       0.00 |           0.000
+ 1.50    0.415    0.210      0.00 |     0.561     0.210   0.290    0.000     0.00       0.00 |           0.000
+ 2.00    0.448    0.220      0.00 |     0.615     0.215   0.315    0.000     0.00       0.00 |           0.000
+
+======================================================================================================================
+SECTION 3  THE TWO REGIMES -- a gain can be safe at a dwell and ruinous on a transient
+======================================================================================================================
+dwell = |angle_des_rate| < 15 deg/s   mid = 15-75   transient = >= 75 deg/s   (of the DESIRED wheel angle, the move term's input)
+
+--- speed 2-8 m/s ---
+regime      share%      sec |                     g=0.50                     g=1.00                     g=2.00
+                            |   max|FF|  max|TOT|  s>1.0   max|FF|  max|TOT|  s>1.0   max|FF|  max|TOT|  s>1.0
+dwell        70.17    720.9 |    0.642     1.127    0.03    0.653     1.132    0.03    0.676     1.140    0.03
+mid          22.67    232.9 |    0.693     0.844    0.00    0.759     0.907    0.00    0.892     1.043    0.04
+trans         7.17     73.6 |    0.932     1.321    0.62    1.247     1.690    1.64    1.620     2.039    4.23
+
+--- speed 8-15 m/s ---
+regime      share%      sec |                     g=0.50                     g=1.00                     g=2.00
+                            |   max|FF|  max|TOT|  s>1.0   max|FF|  max|TOT|  s>1.0   max|FF|  max|TOT|  s>1.0
+dwell        93.10   1575.6 |    0.350     0.651    0.00    0.368     0.668    0.00    0.404     0.702    0.00
+mid           6.79    114.9 |    0.377     0.667    0.00    0.427     0.705    0.00    0.624     0.824    0.00
+trans         0.12      2.0 |    0.157     0.183    0.00    0.120     0.109    0.00    0.308     0.306    0.00
+
+--- speed >15 m/s ---
+regime      share%      sec |                     g=0.50                     g=1.00                     g=2.00
+                            |   max|FF|  max|TOT|  s>1.0   max|FF|  max|TOT|  s>1.0   max|FF|  max|TOT|  s>1.0
+dwell        99.85   2311.4 |    0.348     0.425    0.00    0.381     0.434    0.00    0.448     0.464    0.00
+mid           0.15      3.5 |    0.259     0.459    0.00    0.295     0.510    0.00    0.386     0.615    0.00
+
+======================================================================================================================
+SECTION 4  WHAT SATURATION DOES -- clip episodes, and what they coincide with
+======================================================================================================================
+While |TOTAL| >= 1.0 the delivered command is stuck at the rail: for that whole stretch the
+output stops being a function of the demand or the error, i.e. the lateral loop is OPEN.
+
+ gain   band  episodes  total s  longest s  median s   p90 s |  median |angle| in episode  % with |angle|>30 deg
+ 0.50    2-8        16     0.65       0.10     0.035   0.080 |                      300.6                  100.0
+ 0.50   8-15         0     0.00
+ 0.50    >15         0     0.00
+
+ 1.00    2-8        22     1.67       0.21     0.070   0.129 |                      189.3                  100.0
+ 1.00   8-15         0     0.00
+ 1.00    >15         0     0.00
+
+ 1.50    2-8        36     2.91       0.21     0.055   0.155 |                      166.3                  100.0
+ 1.50   8-15         0     0.00
+ 1.50    >15         0     0.00
+
+ 2.00    2-8        53     4.30       0.23     0.060   0.188 |                      166.4                   98.1
+ 2.00   8-15         0     0.00
+ 2.00    >15         0     0.00
+
+======================================================================================================================
+SECTION 5  THE CEILING, and the below-8-m/s-only gating that was actually proposed
+======================================================================================================================
+Three criteria, all on the pooled torque-mode routes:
+  A  the fork's own:  max |hold+move| <= 1.00 below 8 m/s  (feedforward alone never full scale)
+  B  with margin:     max |hold+move| <= 0.85 below 8 m/s  (15 % of the actuator kept in hand)
+  C  no new railing:  seconds of |TOTAL| >= 1.0 below 8 m/s no worse than the flown 0.5
+
+--- 2-8 m/s   (flown 0.5 baseline: 0.65 s at the rail, max |FF| 0.932, max |TOT| 1.321)
+    ceiling A (|FF| <= 1.00): 0.6      ceiling B (|FF| <= 0.85): None      ceiling C (no new railing): 0.5
+     gain  max|FF|  max|TOT|  s at rail  x baseline
+     0.50    0.932     1.321       0.65        1.00
+     0.60    0.995     1.378       0.88        1.35
+     0.70    1.058     1.434       1.05        1.62
+     0.75    1.089     1.463       1.17        1.80
+     0.80    1.121     1.509       1.24        1.91
+     0.90    1.184     1.599       1.42        2.18
+     1.00    1.247     1.690       1.67        2.57
+     1.25    1.405     1.808       2.13        3.28
+     1.50    1.563     1.888       2.91        4.48
+     2.00    1.620     2.039       4.30        6.62
+
+--- 8-15 m/s   (flown 0.5 baseline: 0.00 s at the rail, max |FF| 0.377, max |TOT| 0.667)
+    ceiling A (|FF| <= 1.00): 3.5      ceiling B (|FF| <= 0.85): 2.9      ceiling C (no new railing): 3.15
+     gain  max|FF|  max|TOT|  s at rail  x baseline
+     0.50    0.377     0.667       0.00         inf
+     0.60    0.387     0.675       0.00         inf
+     0.70    0.396     0.682       0.00         inf
+     0.75    0.401     0.686       0.00         inf
+     0.80    0.406     0.690       0.00         inf
+     0.90    0.416     0.697       0.00         inf
+     1.00    0.427     0.705       0.00         inf
+     1.25    0.455     0.724       0.00         inf
+     1.50    0.499     0.749       0.00         inf
+     2.00    0.624     0.824       0.00         inf
+
+--- >15 m/s   (flown 0.5 baseline: 0.00 s at the rail, max |FF| 0.348, max |TOT| 0.459)
+    ceiling A (|FF| <= 1.00): 4.0      ceiling B (|FF| <= 0.85): 4.0      ceiling C (no new railing): 4.0
+     gain  max|FF|  max|TOT|  s at rail  x baseline
+     0.50    0.348     0.459       0.00         inf
+     0.60    0.354     0.470       0.00         inf
+     0.70    0.361     0.480       0.00         inf
+     0.75    0.364     0.485       0.00         inf
+     0.80    0.368     0.490       0.00         inf
+     0.90    0.374     0.500       0.00         inf
+     1.00    0.381     0.510       0.00         inf
+     1.25    0.398     0.535       0.00         inf
+     1.50    0.415     0.561       0.00         inf
+     2.00    0.448     0.615       0.00         inf
+
+GATED PROPOSAL (raise below 8 m/s only, keep 0.5 at and above 8):
+  the >=8 m/s rows above at gain 0.5 are then unchanged; only the 2-8 m/s rows move.
+  NOTE the discontinuity this creates: the gain steps at 8 m/s, so the move term jumps by
+  (g-0.5)*angle_des_rate/G(8) = (g-0.5)*angle_des_rate/438 torque when the speed crosses 8 m/s.
+  At 100 deg/s of desired-angle rate and g=2.0 that is a 0.34 torque step. A speed-interpolated
+  schedule, not a step, is the only form of this lever that does not add its own transient.
+

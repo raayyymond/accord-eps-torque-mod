@@ -1,0 +1,87 @@
+======================================================================================================================
+0  THE TERM ITSELF, on logged demand (flown gain 0.5, engaged hands-off)
+======================================================================================================================
+z_out is ONE-SIDED: zero while the desired angle unwinds, saturating at LEVEL*g(v) while it grows.
+s_r = tanh(rate/2.0) reaches 0.995 at only 6 deg/s of desired-angle rate (the 2-8 m/s
+MEDIAN rate is 6.5 deg/s), and s_a = tanh(angle/1.0) is 1.000 beyond ~4 deg.  So the term is
+effectively FULL-ON, not tapered, over almost the whole outward-moving population.
+
+              band     sec  % active  mean |z|  p99 |z|  max |z|  % at >=0.95 of full |  % co-signed with cmd
+               2-8    1027     50.53   0.00790  0.02001  0.02000                27.48 |                  91.8
+       8-12 (ramp)    1132     52.12   0.00342  0.01838  0.02000                15.48 |                  90.4
+ 12-15 (gated off)     560      0.00   0.00000  0.00001  0.00000                 0.00 |                   nan
+               >15    2315      0.00   0.00000  0.00001  0.00000                 0.00 |                   nan
+
+======================================================================================================================
+1  THE RAILING EPISODES BELOW 8 m/s -- is the term ON them, and co-signed?
+======================================================================================================================
+Frames with |(p+i+f)/LAF| >= 1.0 at the flown gain 0.5, 2-8 m/s (the 16 episodes / 0.65 s).
+
+route   rail fr  z_out mean      min      max  % at full  % co-signed  |angle_des| med   rate med
+r71           6     0.02000  0.02000  0.02000      100.0        100.0            210.3      490.6
+r72           0   -- no railing frames below 8 m/s --
+r73          39     0.02000  0.02000  0.02000      100.0        100.0            366.7      162.4
+r74           0   -- no railing frames below 8 m/s --
+r75           3     0.00555  0.00000  0.01666        0.0          0.0             27.2        2.4
+r76           0   -- no railing frames below 8 m/s --
+r6c           0   -- no railing frames below 8 m/s --
+r6d          17     0.02000  0.02000  0.02000      100.0        100.0            381.8      343.4
+r6e           0   -- no railing frames below 8 m/s --
+
+POOLED: 65 railing frames below 8 m/s, mean |z_out| 0.01933 of a 0.020 level (96.7 % of full value), co-signed with the command on 95.4 % of them.
+
+======================================================================================================================
+2  ADDED RAILING, by level -- seconds, episodes, and the LONGEST episode
+======================================================================================================================
+--- 2-8 m/s   (1027 s engaged hands-off, gate g(v) = 1.00 mid-band)
+  level  s at rail  x base  episodes  longest s   p90 s  max|TOT|  max|FF|  fr in [0.98,1)
+  0.000      0.650    1.00        16      0.100   0.080     1.321    0.932              16
+  0.005      0.700    1.08        16      0.100   0.085     1.326    0.937              16
+  0.010      0.730    1.12        16      0.100   0.085     1.331    0.942              15
+  0.015      0.740    1.14        16      0.100   0.085     1.336    0.947              15
+  0.020      0.810    1.25        16      0.110   0.095     1.341    0.952               9
+  0.030      0.870    1.34        15      0.111   0.102     1.351    0.962               8
+
+--- 8-12 (ramp) m/s   (1132 s engaged hands-off, gate g(v) = 0.50 mid-band)
+  level  s at rail  x base  episodes  longest s   p90 s  max|TOT|  max|FF|  fr in [0.98,1)
+  0.000      0.000     nan         0      0.000   0.000     0.667    0.377               0
+  0.005      0.000     nan         0      0.000   0.000     0.670    0.381               0
+  0.010      0.000     nan         0      0.000   0.000     0.672    0.385               0
+  0.015      0.000     nan         0      0.000   0.000     0.675    0.389               0
+  0.020      0.000     nan         0      0.000   0.000     0.678    0.393               0
+  0.030      0.000     nan         0      0.000   0.000     0.683    0.400               0
+
+--- 12-15 (gated off) m/s   (560 s engaged hands-off, gate g(v) = 0.00 mid-band)
+  level  s at rail  x base  episodes  longest s   p90 s  max|TOT|  max|FF|  fr in [0.98,1)
+  0.000      0.000     nan         0      0.000   0.000     0.599    0.326               0
+  0.005      0.000     nan         0      0.000   0.000     0.599    0.326               0
+  0.010      0.000     nan         0      0.000   0.000     0.599    0.326               0
+  0.015      0.000     nan         0      0.000   0.000     0.599    0.326               0
+  0.020      0.000     nan         0      0.000   0.000     0.599    0.326               0
+  0.030      0.000     nan         0      0.000   0.000     0.599    0.326               0
+
+--- >15 m/s   (2315 s engaged hands-off, gate g(v) = 0.00 mid-band)
+  level  s at rail  x base  episodes  longest s   p90 s  max|TOT|  max|FF|  fr in [0.98,1)
+  0.000      0.000     nan         0      0.000   0.000     0.459    0.348               0
+  0.005      0.000     nan         0      0.000   0.000     0.459    0.348               0
+  0.010      0.000     nan         0      0.000   0.000     0.459    0.348               0
+  0.015      0.000     nan         0      0.000   0.000     0.459    0.348               0
+  0.020      0.000     nan         0      0.000   0.000     0.459    0.348               0
+  0.030      0.000     nan         0      0.000   0.000     0.459    0.348               0
+
+======================================================================================================================
+3  WHERE THE TERM IS LARGEST vs WHERE THE RAIL IS -- the s_a shape question
+======================================================================================================================
+s_a = tanh(angle_des/1.0) makes z_out MAXIMAL at large angle.  Below is |TOT| headroom (1.0 -
+|TOT|) against |angle_des|, at the flown gain 0.5 and 2-8 m/s, so the two shapes can be compared.
+
+ |angle_des| deg      sec  mean|z_out|  max|TOT|  min headroom  rail frames  fr >=0.95
+             0-5    426.1      0.00635     0.767         0.233            0          0
+            5-15    266.9      0.00928     0.766         0.234            0          0
+           15-30     84.8      0.00979     1.127        -0.127            3          3
+           30-60     59.0      0.00864     0.814         0.186            0          0
+          60-120     75.7      0.00847     0.829         0.171            0          0
+         120-200     92.4      0.00798     1.212        -0.212           11         15
+         200-300     19.1      0.00888     1.237        -0.237           14         25
+         300-400      3.0      0.01509     1.321        -0.321           31         41
+

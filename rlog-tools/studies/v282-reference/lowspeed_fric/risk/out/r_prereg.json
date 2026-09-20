@@ -1,0 +1,63 @@
+{
+ "_what": "Pre-registered one-drive readout for a RAISED low-speed friction-hysteresis term (AccordFrictionHyst / HONDA_ACCORD_FRICTION_HYST_BAND_*). Written BEFORE the drive. Baseline = ARM-D (rev 6.4 with AccordDobHz 0), not T64.",
+ "_written": "2026-09-19",
+ "_stream": "lowspeed_fric/risk",
+
+ "attribution_gate_run_first": {
+  "why": "z is NOT logged anywhere (latcontrol_torque.py:841-851 logs accordObserverTorque/Frozen and no friction state). The kit's reconstruction has err_p95 0.0127-0.0163 against a term whose own ceiling is 0.015, so the log cannot confirm the dose. Only the params can.",
+  "checks": [
+   "initData params: AccordFrictionHyst, AccordFrictionHystBand, AccordDobHz, AccordRateLoopGain, AccordFFRateGain, AccordTorqueKi, AccordHoldLevel, SteerFriction (the r73 precedent: the fork back-filled an explicit 0.0 with stock 0.212)",
+   "fork commit hash in initData (a code-level band/level schedule cannot be read from params at all)",
+   "accordObserverTorque identically 0 over the whole route (ARM-D baseline)",
+   "ABORT THE READOUT if any of these is not as intended -- a null from the wrong config is not a null"
+  ],
+  "recommended_instrument_add_before_the_drive": "log the live friction level and band (2 floats) into starpilotLateralState; without them a code-schedule candidate flies unverifiable"
+ },
+
+ "drive_content_required": {
+  "low_speed": ">=200 s of MOVING hands-off engaged time at 2-8 m/s (measured episode yield ~40 per 100 s of moving time at 5-8, ~18 at 2-5; one T64 route produced only ~17 low-speed episodes, which is not enough)",
+  "both_halves": "must contain both DEPARTURES (turning away from centre) and RETURNS (unwinding toward centre) -- the risk is concentrated on returns, which are 60% of low-speed episodes",
+  "highway": ">=300 s straight motorway in runs >=51 s, plus bends at 15-22 and >22 m/s, to re-read the construction check",
+  "hands_off": "the dwell/breakaway extractor requires hands-off (active & ~pressed dilated 0.5 s)"
+ },
+
+ "primary_readout": {
+  "_note": "Do NOT score this on the 1.8-3.5 Hz steering-rate RMS below 8 m/s: T64's own ratio there is x1.8 [1.0, 3.3] on two routes, a CI that already spans 1.0, so one drive cannot resolve it. The episode metrics DID separate at low speed and are the primary.",
+  "metrics": [
+   {"id": "gap_bk_depart_2_8", "what": "median angle behind the demand at breakaway, DEPART episodes 2-8 m/s, deg", "V282": 1.16, "T64_flown": 3.65, "direction": "down", "works_if": "falls below ~2.5"},
+   {"id": "dwell_p50_depart_2_8", "what": "median dwell length, DEPART, s", "V282": 0.37, "T64_flown": 0.41, "direction": "down"},
+   {"id": "dwell_p50_return_2_8", "what": "median dwell length, RETURN, s", "V282": 0.36, "T64_flown": 0.51, "direction": "down"},
+   {"id": "slip_ge3_per100s_5_8", "what": "slip >= 3 deg events per 100 s of moving time, 5-8 m/s", "V282": 6.69, "T64_flown": 20.93, "direction": "down"},
+   {"id": "pk_rate_2_8", "what": "median peak steering rate in the 0.4 s after breakaway, deg/s", "V282_depart": 3.20, "V282_return": 3.48, "T64_depart": 6.76, "T64_return": 8.43, "direction": "down"},
+   {"id": "jump_p90_below_8", "what": "p90 jump after a dwell, deg", "V282": 1.5, "T64_flown": 12.6, "direction": "down"}
+  ]
+ },
+
+ "fail_signature": [
+  {"id": "F1_return_overdelivery", "what": "os30_p90 on RETURN episodes at 2-8 m/s (angle past the demand 0.30 s after breakaway, deg)", "V282": 1.06, "T64_flown": 3.20, "FAIL_if": "rises above 3.20 (already the worst half under the flown config)", "also": "%past_30 on returns rises above 31%, or median slip on returns rises", "operator_words": "snaps past / darty / nervous near centre at walking pace / over-turns on small inputs"},
+  {"id": "F2_2_5_dominance", "what": "|z| / hold torque at the actual angle, 2-5 m/s", "flown": 1.49, "C4_candidate": 3.41, "FAIL_if": "the operator reports the car self-steering or pulling at 2-5 m/s -- this is where the friction term already outweighs the spring it sits on"},
+  {"id": "F3_chatter", "what": "1.8-3.5 Hz steering-rate RMS at 2-8 m/s, 10 s blocks matched on speed x |angle|", "note": "underpowered (see primary_readout); accept only a large move", "arithmetic_cost": "the term's own 1.8-3.5 Hz content goes 0.00105 -> 0.00254 torque rms (x2.4), i.e. 8% -> 19% of the whole command's content in that band"},
+  {"id": "F4_highway_leak", "what": "|H| model->livePose yaw*v at >=15 m/s, 0.08-0.25 / 0.15-0.30 / 0.30-0.60 Hz", "V282": [0.89, 0.90, 1.12], "T64_flown": [1.09, 1.17, 1.31], "FAIL_if": "any band moves for a candidate whose schedule is identical above its knot -- that falsifies the construction and means the wrong config flew"},
+  {"id": "F5_engage_pull", "what": "torque ramp rate on re-engage (z resets to 0 on hands-on / inactive)", "flown": "0.054 torque/s at the median 5.4 deg/s demand rate", "C4_candidate": "0.15 torque/s", "FAIL_if": "the operator reports a pull or a tug at the moment of engagement at low speed"}
+ ],
+
+ "not_a_risk_measured": [
+  {"id": "N1_relay_chatter", "claim": "z chattering on demand reversals", "verdict": "NOT LIVE", "evidence": "z zero-crossings 0.6-1.0 per 100 s hands-off at 2-8 m/s, unchanged by every candidate (0.8 -> 0.8). z sits saturated near one rail; it almost never crosses."},
+  {"id": "N2_rate_limiter", "claim": "the raise trips the Honda slew cap / steer_limited_by_safety", "verdict": "NOT LIVE", "evidence": "p99 |d(dz)/dt| = 0.25 torque/s = 0.0025 per frame at 2-8 m/s, vs the 0.03/frame the fork's own dither comment cites; |cmd| p99 0.4275 -> 0.4352 against a rail of 1.0"},
+  {"id": "N3_antiwindup", "claim": "the raise steals integrator authority through the anti-windup clamp", "verdict": "NOT LIVE", "evidence": "common/pid.py clamps i only when p+i+d+f is already at the limit; |cmd| p99 is 0.43 of the rail at low speed"},
+  {"id": "N4_schedule_slew", "claim": "a speed-scheduled ceiling drags z while accelerating through the knots", "verdict": "NOT LIVE", "evidence": "d(ceiling)/dv x logged dv/dt p95 = 0.009 torque/s (knots 8-12, 2.09 m/s^2) or 0.019 (knots 6-8); the demand itself already slews z at 0.25 torque/s p99"},
+  {"id": "N5_instability", "claim": "the raise can destabilise a loop", "verdict": "CANNOT, as a linear loop gain", "evidence": "honda_accord_friction_hysteresis takes only d_angle_des (latcontrol_torque.py:639-662); no measurement enters it. BUT the disturbance observer reads output_torque (line 689), so with AccordDobHz > 0 a raised z raises the observer residual while the wheel is stuck -- a unity-gain path through two 0.6 Hz poles and a 60 ms delay. ARM-D (DobHz 0) removes it: update() returns 0 and resets."}
+ ],
+
+ "interactions": {
+  "ARM_D": "the observer is faded 0 -> 1 over 3 -> 6 m/s (HONDA_ACCORD_DOB_FADE_V_BP), so ARM-D changes nothing below 3 m/s and part of 3-6. Measured: the observer supplied 0.0036 of the 0.0355 command change through a low-speed dwell (10%), and it is the only term that takes back over-delivery once the wheel moves further than its model. Consequence: a dose sized on an ARM-D baseline will be effectively AMPLIFIED if AccordDobHz is later turned back on. Score the candidate against ARM-D, and re-read it if the observer returns.",
+  "dither": "off today. get_honda_accord_dither_gate = clip(1 - |output_torque|/0.15, 0, 1) and |output_torque| = |cs_out|, so raising z closes the gate slightly: mean gate 0.551 -> 0.518 and fully-closed frames 17.7% -> 18.7% at 2-8 m/s. Second order; the two levers are near-independent, and both aim at the same break-out, so a raised friction term reduces whatever reach the dither would have had."
+ },
+
+ "candidate_construction_verdicts": {
+  "C1_toggle_030": "the ONLY zero-code option (AccordFrictionHyst 0.015 -> 0.030). It cannot be kept off the highway: dz != 0 on 100% of frames at every speed, |dz| up to 0.0150, and the small-signal slope goes 0.0126 -> 0.0251 torque/deg at 15-22 m/s and 0.0241 -> 0.0481 at 22+, i.e. x2 the levelled hold stiffness the schedule was deliberately matched to. The highway 0.30-0.60 Hz band is already over-delivering (1.31 vs V282 1.12). DISQUALIFIED on construction.",
+  "C2_lvl033_k12 / C4_reach_k12 / C5_half_k12": "knots at 8 -> 12 m/s. Parameters identical above 12, but z is a CARRIED STATE, so they still differ above the knot: dz != 0 on 26% of 12-15 m/s frames (max 0.0068) and 2.4% of 15-22 (max 0.0052 = 0.8 deg of settled angle at the measured k'). Residual, transient, but not zero.",
+  "C6_reach_k68": "knots at 6 -> 8 m/s. EXACTLY zero dz at >=15 m/s, 0.8% at 12-15 (max 0.0010), 4.5% at 8-12 (max 0.0068, state carry only). The only highway-clean construction -- but it reaches full dose only below 6 m/s, and 108 of the 145 low-speed episodes sit at 5-8 m/s, so it under-doses exactly where the data is.",
+  "C3_band110": "slope-only (band 3.0 -> 1.1 at ceiling 0.015). Costs almost nothing on sliding frames (over_tow unchanged at 0.0010) but measured Delta z THROUGH the dwell FALLS on departures, 0.0051 -> 0.0021, because the steeper slope saturates z before the dwell begins and a constant cannot close a gap that opens during it."
+ }
+}
