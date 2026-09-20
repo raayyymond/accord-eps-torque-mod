@@ -170,3 +170,132 @@ a highway/mid-speed lever and why no low-speed arm can share its drive.
 and both columns are in the +left frame (cs_out = -output_torque = +left, confirmed by corr(e4, acceleration) < 0 with
 e4 = -4089*cs_out), so the columns agree — but at the measured 55-75 ms, not the 30 ms I first used, that column reads the
 whole command as FEEDING the band at >=15 m/s (-0.5 to -2.9e-4), which strengthens ARM-D rather than weakening it.
+
+---
+
+# The low-speed outward deficit, resolved (2026-09-19) — and a retraction of my own, one commit old
+
+Four candidate low-speed levers died today; the underlying defect they were aiming at turned out to be real,
+additive, and **not reachable by any existing toggle**. Every number below is EVIDENCE, hand-checked by the
+orchestrator in `lowspeed/a_stickslip/orch_crux_check.py` and `orch_crux_check2.py`, each gated on reproducing
+`ss_centring_fit`'s five coefficients to <5e-7 before anything else was trusted.
+
+## 🛑 RETRACTED, same day: "the 0.020 intercept does not exist as a constant"
+
+Commit `05fe5ac` claimed the intercept was a parameterisation artefact because the band centre "spans 454x with
+angle". **That reading was wrong, and it was wrong in a specific, instructive way.** The 454x was driven entirely
+by the first quintile straddling zero, and the quantity I binned had a *linear* `k*|angle|` already subtracted —
+0.056 torque at 10 deg, steeper than the fork's own map. Against the map itself the picture is different:
+
+| \|angle\| (deg) | n_aw/n_tw | S (no fit) | levelled MAP | SHORTFALL | required MULT | F |
+|---|---|---|---|---|---|---|
+| 0.0 – 0.6 | 16/10 | +0.0037 | −0.0005 | +0.0043 | — (map ~0) | +0.0368 |
+| 0.6 – 2.5 | 22/38 | +0.0259 | +0.0028 | **+0.0231** | **9.2x** | +0.0353 |
+| 2.5 – 10  | 11/37 | +0.0555 | +0.0113 | **+0.0442** | **4.9x** | +0.0273 |
+| >10       | 3/8   | +0.1051 | +0.0716 | +0.0335 | **1.5x** | +0.0329 |
+
+`S = (median u_away + median u_toward)/2` with `u = cmd*sign(angle)` needs **no fit, no k, no c, no episode
+selection** — outward breakaways sit on the band's upper edge `S+F`, inward on the lower `S-F`, so the average is
+the centre by construction. The map is recomputed per route honouring its own flown `AccordHoldLevel`
+(6c/6d ON, 6e/75/76 off — read from each route's params, not from labels).
+
+**So the additive deficit is real and well determined where the data is thickest: +0.0231 at 0.6–2.5 deg.**
+What does *not* exist is angle-*proportionality* — and that is the finding that matters, because it kills a
+different set of levers than I thought.
+
+## The required multiplier spans 9.2x → 1.5x — so every multiplicative lever is DOMINATED
+
+Not merely imprecise: **dominated**. Sized for 1 deg it over-holds several-fold at 8; sized for 8 deg it delivers
+a fraction of what 1 deg needs. That disqualifies `AccordHoldLevel`, the `HONDA_ACCORD_HOLD_K_V` schedule and
+`AccordEpsSpringScale` on shape alone, at any dose. The additive shortfall is the stabler parameterisation, and
+it is the one the remedy must use.
+
+## Nothing winds during the stick — the integrators only CARRY the deficit
+
+Median change from dwell start to breakaway, outward frame:
+
+| \|angle\| (deg) | n | d_dob | d_I | d_cmd | cmd @ dwell start |
+|---|---|---|---|---|---|
+| 0.0 – 0.6 | 26 | **+0.0000** | +0.0005 | +0.0119 | +0.0182 |
+| 0.6 – 2.5 | 60 | **+0.0000** | +0.0012 | −0.0144 | +0.0249 |
+| 2.5 – 10  | 48 | **+0.0000** | +0.0007 | −0.0341 | +0.0793 |
+
+The command is **already at full level when the dwell starts** and then *decays*. The observer contributes
+exactly zero change and the integrator ~0.001, against a centre of 0.02–0.09. ⇒ The deficit is a **STANDING
+condition the stick does not create**; "an integrator winding on the deficit during the stick" is dead as a
+*cause*. Which integrator carries it is set only by which one is running: route 75 flew the observer OFF
+(no `AccordDobHz` key ⇒ `update` returns 0) and its PID's I carries the same amount alone.
+
+## 🛑 The 0.033 "Coulomb half-width" is NOT a Coulomb magnitude
+
+Same instants, matched angle 0.6–2.5 deg:
+
+| instant | S | F |
+|---|---|---|
+| dwell start | +0.0234 | **+0.0030** |
+| start + 25% | +0.0246 | +0.0048 |
+| start + 50% | +0.0233 | +0.0073 |
+| breakaway−3 | +0.0259 | **+0.0353** |
+| breakaway | +0.0270 | +0.0376 |
+
+**S holds while F grows twelve-fold.** So F at detection is an upper bound containing the command's overshoot
+past the true edge plus the 0.3 deg detector lag — it is not the friction. This retracts the other half of
+`05fe5ac`: "the friction-shaped quantity is the flat 0.033 half-width" is not supported, and **`AccordFrictionHyst`
+must not be re-sized against 0.033** (the "0.015 = 45% of measured" framing is void). True Coulomb is somewhere
+between the fork's separately identified 0.010–0.012 and 0.030; unresolved.
+
+## ⭐ Why the intercept is missing: the fork's own supplier does not point the right way
+
+`latcontrol_vehicle_tunes.py:227` states the map "was fitted with a static-friction intercept of 0.020 torque,
+which is NOT in the table: the hysteresis feedforward (AccordFrictionHyst) supplies it in the direction of the
+last desired motion." `HONDA_ACCORD_HOLD_STATIC_FRICTION = 0.020` at `:273` is defined and **read by no code**.
+
+Measured, z at breakaway projected into the outward frame — the frame the deficit lives in:
+
+| route | n | median z_outward | median \|z\| |
+|---|---|---|---|
+| 6c | 17 | −0.0066 | 0.0106 |
+| 6d | 17 | +0.0012 | 0.0088 |
+| 6e | 45 | −0.0030 | 0.0101 |
+| 75 | 53 | −0.0038 | 0.0073 |
+| 76 | 13 | −0.0032 | 0.0140 |
+| **pooled** | 145 | **−0.0038** CI [−0.0060, −0.0030] | 0.0095 |
+
+**The term is running — |z| median 0.0095 — and its outward-frame contribution is ~0 or the wrong sign, on 5/5
+routes.** It is keyed on *desired-angle motion*, and a dwell is *defined* by the demand moving, so it points
+wherever the demand points, not outward. The hold feedforward supplies only 20–35% of the command that actually
+holds the wheel at 2–8 m/s; the rest is carried by whichever integrator is enabled.
+
+## What this licenses, and what it does not
+
+- The remedy's shape is settled: **additive, odd in desired angle, saturating, knee below ~1 deg**, ~+0.021 at
+  0.6–2.5 deg, near zero below 0.4 deg (measured requirement there +0.0006). The residue above 2.5 deg
+  (0.031–0.048) is **not separable from a slope excess** and should be left to the integrator until measured
+  densely at 3–15 deg, where n thins to 6 away-episodes.
+- **No existing toggle has this parity** ⇒ a small fork code change, not a toggle config. `AccordFrictionHyst`
+  is the wrong frame; `AccordDobHz` / `AccordTorqueKi` change who pays and how fast, not whether.
+- 🛑 **An unsettled DESIGN question comes before any drive:** `get_honda_accord_hold_torque` is *also* the
+  observer's internal model and the observer is called with the **measured** angle. Put the term inside that
+  function and it becomes a near-relay inside a loop whose DC gain is ~1 above 6 m/s — the class that already
+  produced route 71's 2.34 Hz limit cycle. Leave it out and the observer reads the raise as a disturbance and
+  cancels it inside its 0.6 Hz corner. The design must state which, and show the relay margin at zero angle.
+- 🛑 **The `AccordHoldLevel` contrast is struck from the plan — it is an IDENTITY, not an experiment.** S is a
+  property of the car, so turning the level off moves `S − map` by exactly +0.15*map with no information about
+  cause. Measured move +0.0004 against a within-arm route scatter of 0.021 (19x). No number of repeats fixes it.
+
+## Four levers closed today, for the record
+
+| lever | why it died |
+|---|---|
+| `AccordFFRateGain` 0.5 → 2.0 | ceiling 0.60 below 8 m/s; toggle clamped at 1.5; sized on dwells where 4x the gain moves the peak 5%, while the whole effect lands on the 7% of frames that are transients |
+| hysteresis (ceiling, band) | slope-bound; full coverage needs 5.7x hold stiffness; best permitted reaches 46% |
+| symmetric `0.020*sign(angle)` intercept | on the intercept model it moves error between halves; and inward travel already exceeds outward (0.0374 vs 0.0262, 5/5 routes) |
+| one-sided outward term | null control void (28% of returns take ≥25% dose *inward* via the sign re-arm); adds x1.16 to the command's 1.8–3.5 Hz RMS; `s_a` is flat 1.000 from 4 to 400 deg so it has no large-angle taper at all; delivers exactly 0.000 on the 62 frames where it is at full value, because they are already railed |
+
+## Carried forward: the actuator is already saturating
+
+On the flown config, below 8 m/s, the total command rails **16 times / 0.65 s**, longest episode 0.21 s, 98–100%
+of episodes at |wheel angle| > 30 deg (median 166–300). At those frames the feedforward carries 1.00–1.05 of the
+command against P's 0.11–0.13. For each episode's duration the output is not a function of demand or error.
+This is measured on routes already driven, in the regime the operator describes as jerky and not gradual, and
+**no lever discussed today addresses it** — most would deepen it.

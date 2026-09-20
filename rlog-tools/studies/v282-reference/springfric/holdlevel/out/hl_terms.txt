@@ -1,0 +1,97 @@
+======================================================================================================================
+G.  PER-TERM OUTWARD-FRAME CONTRIBUTION vs |angle|, at breakaway (bk-3).  OBSERVER ROUTES ONLY (6c,6d,6e,76)
+    every term x sign(angle at dwell start); medians; n = 92 episodes, 4 route clusters
+    a term that CAUSES an angle-proportional centre must itself grow with |angle|
+
+  term               0.00-0.63    0.63-1.42    1.42-2.67    2.67-4.56   4.56-39.57  slope/deg                    CI
+  cmd                  -0.0086      +0.0180      +0.0248      +0.0324      +0.0645   +0.00614 [+0.00124,+0.01044]
+  hold_ff              +0.0009      +0.0075      +0.0071      +0.0089      +0.0359   +0.00462 [+0.00301,+0.00688]
+  move                 -0.0008      -0.0020      -0.0028      -0.0059      -0.0072   -0.00047 [-0.00113,+0.00035]
+  z_hyst               +0.0003      +0.0031      -0.0060      -0.0050      -0.0030   -0.00018 [-0.00128,+0.00070]
+  rate_lp              -0.0014      -0.0016      -0.0003      -0.0037      -0.0060   -0.00037 [-0.00103,+0.00028]
+  dob                  +0.0000      +0.0054      +0.0173      +0.0418      +0.0402   +0.00305 [+0.00037,+0.00459]
+  P                    -0.0018      +0.0030      -0.0004      -0.0023      -0.0047   +0.00043 [-0.00061,+0.00339]
+  I                    -0.0014      +0.0026      +0.0045      +0.0032      -0.0018   -0.00105 [-0.00622,+0.00039]
+  dob+I                -0.0052      +0.0108      +0.0227      +0.0320      +0.0372   +0.00200 [-0.00585,+0.00463]
+  hold@aa_flown        +0.0012      +0.0035      +0.0078      +0.0167      +0.0409   +0.00464 [+0.00420,+0.00544]
+  hold@aa_unlev        +0.0012      +0.0034      +0.0070      +0.0167      +0.0388   +0.00431 [+0.00404,+0.00473]
+
+  slope/deg is the per-episode OLS slope of (term x sign) against |angle| over 0.01-20 deg, with a
+  4-route-cluster bootstrap CI.  The map's OWN slope is the hold@aa rows -- the benchmark.
+
+======================================================================================================================
+H.  THE PLANT-SPRING / MAP RATIO at breakaway, per route (no interaction term -> no collinearity)
+    cmd[bk-3] = a * hold_unlev(aa,v) + Fa*sj + d*sj*toward + c    (hold_unlev is odd in the angle)
+    a = how many times the UNLEVELLED map the plant actually demands.  The flown level supplies 1.15 of it
+    on 6c/6d and 1.00 on 6e/76/75, so 'a - level' is the shortfall the rest of the loop must carry.
+
+  route                  lvl   obs     n        a      +-  a - level       Fa        d        c   resid
+  0000006c--68c6e94b17   True  yes    17   +1.024   0.300     -0.126  +0.0486  -0.0277  -0.0145  0.0194
+  0000006d--05e83bb04f   True  yes    17   +1.960   0.194     +0.810  +0.0428  -0.0238  +0.0140  0.0199
+  0000006e--6ca3e014fd   False yes    45   +1.673   0.231     +0.673  +0.0462  -0.0260  -0.0071  0.0262
+  00000075--6c8687d5bd   False no     53   +1.158   0.141     +0.158  +0.0541  -0.0480  -0.0084  0.0261
+  00000076--d0b7ea7e4d   False yes    13   +1.635   0.922     +0.635  +0.0575  -0.0430  +0.0094  0.0221
+  ALL FIVE pooled        -     -     145   +1.406   0.103   route-cluster 95% CI [+1.166,+1.833]
+  (the fork's own comment at latcontrol_vehicle_tunes.py:244/268 cites a MEASURED x1.4-1.65 shortfall
+   at speed, from a different method; this is the low-speed stick-slip band's own reading of it.)
+
+======================================================================================================================
+I.  PR-5 -- DOES THE OBSERVER WIND THROUGH THE DWELL?  observer routes, fade >= 0.9 only (full authority)
+    structural prediction (flown code, wheel stuck): w2(t)/(C-H) = t/(2 tau) - (1-exp(-2t/tau))/4,
+    tau = 0.2653 s, so growth per second -> 1/(2 tau) = 1.885 x the standing mismatch
+    n = 50, routes [np.str_('0000006c--68c6e94b17'), np.str_('0000006d--05e83bb04f'), np.str_('0000006e--6ca3e014fd'), np.str_('00000076--d0b7ea7e4d')]
+
+      dwell (s)    n    dob@d0    dob@bk    growth             growth CI   mis@d0   g/mis    PR-5
+   0.20- 0.32   17   +0.0261   +0.0292   +0.0042 [-0.0122,+0.0079]  +0.0215   +0.20    0.29
+   0.32- 0.55   16   +0.0137   +0.0151   +0.0107 [+0.0058,+0.0144]  +0.0228   +0.47    0.54
+   0.55- 1.58   17   +0.0340   +0.0328   -0.0029 [-0.0150,+0.0044]  +0.0503   -0.06    1.20
+  POOLED growth +0.0058 [-0.0101,+0.0093]   median mis@d0 +0.0412
+  OLS growth vs dwell  slope +0.0037/s  intercept +0.0041  corr +0.063
+  OLS dob@bk vs dwell  slope +0.0033/s  corr +0.027
+  OLS dob@bk vs |angle| slope +0.00488/deg  corr +0.569
+  OLS dob@bk vs mis@d0 slope +0.829  corr +0.945
+  NOTE: the observer is NOT reset at a dwell -- it has usually already settled onto the standing
+  mismatch before the dwell begins, so a small GROWTH with a large LEVEL is the expected signature of
+  an already-wound integrator, not of one that is not winding.  dob@d0 is the level it arrived with.
+
+======================================================================================================================
+J.  THE FREE OBSERVER-OFF CONTRAST: route 75 ran NO observer (AccordDobHz absent -> dob_hz 0 -> returns 0)
+    CONFOUNDS, from initData: 75 is a DIFFERENT fork commit (08a5a7064 vs 84766cdc), AccordTorqueKi 0.6 not
+    0.3 (x2 at v<8, since the KiHigh schedule starts at 8 m/s), SteerKP 0.85 not 1.0, AccordRateLoopGain
+    0.0006 not 0.001, rate-loop RC 0.03 not 0.01, AccordRefFilter 0.12 not 0.06, and AccordHoldLevel absent.
+    SteerFriction 0.212 on 75 and 6d is INERT: latcontrol_torque.py:675 zeroes the relay whenever
+    AccordFrictionHyst > 0, and it was 0.015 on all five routes.
+
+  route                  obs     Ki    n   cmd.sgn   hold_ff       dob         I     dob+I         P  centre(y_fit)
+  0000006c--68c6e94b17   yes    0.3   17   +0.0156   +0.0009   +0.0145   +0.0015   +0.0183   -0.0027        +0.0122
+  0000006d--05e83bb04f   yes    0.3   17   +0.0266   +0.0085   +0.0154   +0.0020   +0.0213   -0.0003        +0.0324
+  0000006e--6ca3e014fd   yes    0.3   45   +0.0316   +0.0119   +0.0104   +0.0015   +0.0094   -0.0016        +0.0154
+  00000075--6c8687d5bd   no     0.6   53   +0.0308   +0.0121   +0.0000   +0.0167   +0.0167   +0.0049        +0.0190
+  00000076--d0b7ea7e4d   yes    0.3   13   +0.0267   +0.0068   +0.0213   +0.0119   +0.0258   +0.0002        +0.0219
+
+  observer ON  (6c,6d,6e,76)   dob    n  92  +0.0139 [+0.0118,+0.0159]
+  observer ON  (6c,6d,6e,76)   I      n  92  +0.0023 [+0.0015,+0.0097]
+  observer ON  (6c,6d,6e,76)   dob+I  n  92  +0.0172 [+0.0100,+0.0255]
+  observer ON  (6c,6d,6e,76)   cmd    n  92  +0.0272 [+0.0164,+0.0316]
+  observer OFF (75)            dob    n  53  +0.0000 [+0.0000,+0.0000]
+  observer OFF (75)            I      n  53  +0.0167 [+0.0167,+0.0167]
+  observer OFF (75)            dob+I  n  53  +0.0167 [+0.0167,+0.0167]
+  observer OFF (75)            cmd    n  53  +0.0308 [+0.0308,+0.0308]
+
+======================================================================================================================
+K.  WHERE THE OBSERVER HAS NO AUTHORITY.  fade(v) = interp(v,[3,6],[0,1]) is EXACTLY 0 below 3 m/s.
+    If the observer manufactured the angle-proportional centre, the centre must collapse at v < 3 m/s.
+
+       v band  fade    n  n_aw/n_tw  med|ang|   centre       hw   dob.sgn    I.sgn  hold_ff
+   2.0- 3.0 obs  0.00    5    1/4      (too few)
+   2.0- 3.0 all  0.00    9    2/7          1.07  +0.0131  +0.0318   +0.0000  +0.0055  +0.0048
+   3.0- 4.5 obs  0.25   14    5/9          1.06  +0.0181  +0.0342   +0.0050  +0.0057  +0.0082
+   3.0- 4.5 all  0.25   20    9/11         1.28  +0.0201  +0.0286   +0.0019  +0.0076  +0.0088
+   4.5- 6.0 obs  0.75   27   10/17         2.31  +0.0217  +0.0439   +0.0173  +0.0025  +0.0119
+   4.5- 6.0 all  0.75   44   16/28         2.30  +0.0202  +0.0357   +0.0017  +0.0031  +0.0123
+   6.0- 8.0 obs  1.00   46   20/26         2.34  +0.0158  +0.0305   +0.0245  +0.0010  +0.0105
+   6.0- 8.0 all  1.00   72   25/47         2.65  +0.0180  +0.0313   +0.0000  +0.0015  +0.0105
+
+  and the same split by |angle| inside the fade = 0 band, if n allows:
+  v < 3 m/s: n 9, routes [np.str_('0000006e--6ca3e014fd'), np.str_('00000075--6c8687d5bd'), np.str_('00000076--d0b7ea7e4d')], |angle| [0.1  0.16 0.25 0.39 1.07 1.37 1.4  1.94 2.66]
+    dob.sgn all exactly zero? True   max|dob| 0.00e+00

@@ -1,0 +1,120 @@
+================================================================================================================
+A.  PR-1 -- does the STORED hold_ff channel carry each route's FLOWN level?  (it is hold(angdes,v,level))
+    rms|stored hold_ff - hold(angdes, v, L)| for L = flown and L = False, whole window
+    0000006c--68c6e94b17  flown True   vs flown 2.368e-09   vs False 6.064e-03
+    0000006d--05e83bb04f  flown True   vs flown 1.832e-09   vs False 4.525e-03
+    0000006e--6ca3e014fd  flown False  vs flown 3.380e-09   vs False 3.380e-09
+    00000075--6c8687d5bd  flown False  vs flown 3.755e-09   vs False 3.755e-09
+    00000076--d0b7ea7e4d  flown False  vs flown 2.878e-09   vs False 2.878e-09
+    => the feedforward channel IS levelled per route (hold_aa was not); the level really ran.
+
+================================================================================================================
+B.  THE OBSERVER'S RECURSION, reproduced from the logged cmd / aa / sr / v with each route's flown level
+    residual = cmd(t-60ms) - [hold_flown(aa,v) + rate/G(v) + J*acc];  w1,w2 two 0.6 Hz lags;
+    out = clip(w2 * fade(v), +-0.3), fade = interp(v,[3,6],[0,1]).  Warm-started from the logged dob.
+    Compared over the 2.3 s window of every 2-8 m/s episode.
+    route                  lvl     n  rms(dob)  rms(sim-dob)   ratio   corr
+    0000006c--68c6e94b17   True   17    0.0314        0.0015    0.05  0.999
+    0000006d--05e83bb04f   True   17    0.0258        0.0014    0.05  0.998
+    0000006e--6ca3e014fd   False  45    0.0406        0.0019    0.05  0.999
+    00000075--6c8687d5bd   False  53    0.0000        0.0255 25525949.30    nan
+    00000076--d0b7ea7e4d   False  13    0.0307        0.0011    0.04  0.999
+    (a small ratio + high corr = the observer's own arithmetic, driven by logged signals, IS the logged
+     channel; this is structural arithmetic on logged data, not a closed-loop prediction.)
+
+================================================================================================================
+C.  PR-2/PR-3 -- CENTRE and HALF-WIDTH per route, same |angle| quintiles as the orchestrator's
+    CENTRE = (med_away + med_toward)/2, HALF-WIDTH = (med_away - med_toward)/2
+
+  -- y_fit  (orchestrator's single k=0.00556, c=-0.00562) --
+          |angle| bin         006c ON         006d ON         006e OFF        0076 OFF
+                           ctr / hw  n     ctr / hw  n     ctr / hw  n     ctr / hw  n
+      0.00-    0.63 +0.0008/+0.0355 2+3-0.0120/+0.0341 1+2+0.0006/+0.0343 6+5-0.0048/+0.0227 1+1
+      0.63-    1.42               --+0.0027/+0.0365 2+2+0.0165/+0.0352 3+7+0.0130/+0.0350 2+3
+      1.42-    2.67 +0.0128/+0.0349 1+3+0.0359/+0.0249 2+2+0.0216/+0.0503 2+2              --
+      2.67-    4.56 +0.0180/+0.0313 1+3+0.0380/+0.0340 1+2+0.0332/+0.0468 3+6+0.0435/+0.0234 2+2
+      4.56-   39.57               --+0.0546/+0.0464 2+1+0.0098/+0.0253 2+9              --
+  PRED |delta| (PR-2) 0.0000  0.0004  -0.0011  -0.0017  0.0027
+
+  -- y_map  (each route's OWN FLOWN hold map, no constant) --
+          |angle| bin         006c ON         006d ON         006e OFF        0076 OFF
+                           ctr / hw  n     ctr / hw  n     ctr / hw  n     ctr / hw  n
+      0.00-    0.63 -0.0016/+0.0380 2+3-0.0062/+0.0335 1+2+0.0007/+0.0398 6+5+0.0014/+0.0223 1+1
+      0.63-    1.42               --+0.0041/+0.0362 2+2+0.0196/+0.0381 3+7+0.0188/+0.0307 2+3
+      1.42-    2.67 +0.0156/+0.0392 1+3+0.0337/+0.0231 2+2+0.0248/+0.0550 2+2              --
+      2.67-    4.56 +0.0185/+0.0258 1+3+0.0372/+0.0290 1+2+0.0429/+0.0468 3+6+0.0456/+0.0263 2+2
+      4.56-   39.57               --+0.0599/+0.0468 2+1+0.0241/+0.0236 2+9              --
+  PRED |delta| (PR-2) 0.0000  0.0004  -0.0011  -0.0017  0.0027
+
+  POOLED over bins, ON group (6c[,6d]) vs OFF group (6e[,76]), route-cluster bootstrap on the CENTRE proxy
+  (centre proxy per episode: y with the toward episodes sign-flipped about the pooled half-width is not
+   defined per-episode, so the pooled comparison below is on the DIRECTIONAL medians separately.)
+  -- y_fit --
+    ON  6c+6d    n  14/ 20  away +0.0517 [+0.0502,+0.0711]   toward -0.0178 [-0.0257,-0.0063]   centre +0.0170  hw +0.0347
+    OFF 6e       n  16/ 29  away +0.0471 [+0.0471,+0.0471]   toward -0.0162 [-0.0162,-0.0162]   centre +0.0154  hw +0.0316
+    OFF 6e+76    n  22/ 36  away +0.0513 [+0.0471,+0.0659]   toward -0.0164 [-0.0220,-0.0162]   centre +0.0175  hw +0.0338
+    ON  6c only  n   6/ 11  away +0.0502 [+0.0502,+0.0502]   toward -0.0257 [-0.0257,-0.0257]   centre +0.0122  hw +0.0380
+  -- y_map --
+    ON  6c+6d    n  14/ 20  away +0.0566 [+0.0555,+0.0656]   toward -0.0170 [-0.0251,+0.0042]   centre +0.0198  hw +0.0368
+    OFF 6e       n  16/ 29  away +0.0532 [+0.0532,+0.0532]   toward -0.0107 [-0.0107,-0.0107]   centre +0.0212  hw +0.0320
+    OFF 6e+76    n  22/ 36  away +0.0574 [+0.0532,+0.0683]   toward -0.0110 [-0.0119,-0.0107]   centre +0.0232  hw +0.0342
+    ON  6c only  n   6/ 11  away +0.0555 [+0.0555,+0.0555]   toward -0.0251 [-0.0251,-0.0251]   centre +0.0152  hw +0.0403
+
+================================================================================================================
+D.  THE POOLED LEVEL-INTERACTION REGRESSION -- the best-powered form of the contrast
+    cmd[bk-3] = a*hold_unlev(aa,v) + b*hold_unlev(aa,v)*OFF + Fa*sj + d*sj*toward + c
+    hold_unlev is already ODD in the angle, so a is the plant-spring / map ratio and
+    PR-2 (level passes straight through, nothing absorbs) => b = -0.15
+    PR-3 (an in-loop integrator absorbs it)               => b = 0
+    6c ON  vs 6e OFF             n  62  a +0.943+-0.309   b +0.713+-0.326  (95% CI +0.074..+1.353)   Fa +0.0462  d -0.0264  c -0.0092
+      resid rms 0.0243;  PR-2 wants b = -0.150, PR-3 wants b = 0.  DISCRIMINATES
+    6c+6d ON vs 6e OFF           n  79  a +1.644+-0.192   b +0.106+-0.249  (95% CI -0.382..+0.594)   Fa +0.0486  d -0.0245  c -0.0040
+      resid rms 0.0262;  PR-2 wants b = -0.150, PR-3 wants b = 0.  BOTH inside CI -> UNDERPOWERED
+    6c+6d ON vs 6e+76 OFF        n  92  a +1.617+-0.187   b +0.172+-0.240  (95% CI -0.298..+0.642)   Fa +0.0497  d -0.0262  c -0.0022
+      resid rms 0.0257;  PR-2 wants b = -0.150, PR-3 wants b = 0.  BOTH inside CI -> UNDERPOWERED
+
+================================================================================================================
+E.  PR-4 / PR-5 -- THE OBSERVER AT BREAKAWAY.  dob . sign(angle) at bk-3, all 5 routes, n=145
+
+  PR-5  dob . sign at breakaway, and its GROWTH through the dwell, by dwell duration quartile
+       dwell (s)    n    dob@d0    dob@bk    growth            growth CI    per s  PR-5 shape
+    0.20-  0.30   31   +0.0000   +0.0000   +0.0000 [-0.0089,+0.0040]  +0.0000       0.259
+    0.30-  0.48   40   +0.0000   +0.0078   +0.0004 [+0.0000,+0.0107]  +0.0010       0.445
+    0.48-  0.76   37   +0.0000   +0.0000   +0.0000 [-0.0004,+0.0029]  +0.0000       0.828
+    0.76-  2.70   37   +0.0000   +0.0000   +0.0000 [-0.0118,+0.0018]  +0.0000       1.654
+  POOLED growth +0.0000 [-0.0002,+0.0042]   (route-cluster, 5 clusters)
+  OLS growth vs dwell: slope -0.0015 /s  intercept +0.0031   corr -0.056
+  standing mismatch at dwell start (cmd - hold_flown).sign: median +0.0292  -> PR-5 predicts growth/s = +0.0550
+
+  PR-4  the observer's authority schedule fade(v) = interp(v,[3,6],[0,1]) -- is the absorber the observer?
+        v band  fade    n  dob@bk . sgn                   CI  I@bk . sgn    growth
+    2.0-  3.0  0.00    9       +0.0000 [+0.0000,+0.0000]     +0.0055   +0.0000
+    3.0-  4.5  0.25   20       +0.0019 [+0.0000,+0.0079]     +0.0076   +0.0000
+    4.5-  6.0  0.75   44       +0.0017 [+0.0000,+0.0213]     +0.0031   +0.0000
+    6.0-  8.0  1.00   72       +0.0000 [+0.0000,+0.0365]     +0.0015   +0.0000
+
+================================================================================================================
+F.  THE SUBSTITUTION ACCOUNTING -- who supplies cmd at breakaway, and does it change with the level?
+    all in the OUTWARD frame (x sign(angle at dwell start)), medians with route-cluster CIs where >1 route
+  6c ON  n  17  cmd +0.0156  hold_ff(flown) +0.0081  move -0.0034  z (hyst) -0.0066  rate loop -0.0021  dob +0.0145  P -0.0027  I +0.0015
+  6d ON  n  17  cmd +0.0266  hold_ff(flown) +0.0061  move -0.0027  z (hyst) +0.0012  rate loop -0.0002  dob +0.0154  P -0.0003  I +0.0020
+  6e OFF n  45  cmd +0.0316  hold_ff(flown) +0.0078  move -0.0043  z (hyst) -0.0030  rate loop -0.0027  dob +0.0104  P -0.0016  I +0.0015
+  76 OFF n  13  cmd +0.0267  hold_ff(flown) +0.0060  move -0.0045  z (hyst) -0.0032  rate loop -0.0029  dob +0.0213  P +0.0002  I +0.0119
+  75 OFF n  53  cmd +0.0308  hold_ff(flown) +0.0093  move -0.0040  z (hyst) -0.0038  rate loop -0.0018  dob +0.0000  P +0.0049  I +0.0167
+
+  the same, split by direction (outward-breaking vs inward-breaking episodes):
+  6c ON  out n   6  cmd +0.0606  hold_ff(flown) +0.0028  move +0.0045  z (hyst) +0.0109  rate loop +0.0025  dob +0.0107  P +0.0090  I +0.0017
+  6c ON  in  n  11  cmd -0.0145  hold_ff(flown) +0.0091  move -0.0079  z (hyst) -0.0106  rate loop -0.0049  dob +0.0195  P -0.0064  I +0.0015
+  6e OFF out n  16  cmd +0.0647  hold_ff(flown) +0.0045  move +0.0033  z (hyst) +0.0125  rate loop -0.0000  dob +0.0145  P +0.0072  I +0.0006
+  6e OFF in  n  29  cmd -0.0022  hold_ff(flown) +0.0101  move -0.0060  z (hyst) -0.0073  rate loop -0.0042  dob +0.0096  P -0.0024  I +0.0024
+
+  ON-group minus OFF-group, matched by |angle| quintile then averaged (reduces the angle-mix confound):
+    cmd             mean over 5 matched bins  +0.0168   per-bin ['+0.0565', '-0.0662', '+0.0379', '+0.0126', '+0.0431']
+    hold_ff(flown)  mean over 5 matched bins  -0.0060   per-bin ['-0.0004', '+0.0012', '-0.0005', '-0.0041', '-0.0263']
+    move            mean over 5 matched bins  +0.0012   per-bin ['+0.0029', '-0.0099', '+0.0064', '+0.0005', '+0.0063']
+    z (hyst)        mean over 5 matched bins  +0.0040   per-bin ['+0.0144', '-0.0148', '+0.0053', '+0.0032', '+0.0120']
+    rate loop       mean over 5 matched bins  +0.0004   per-bin ['-0.0022', '-0.0055', '+0.0043', '+0.0002', '+0.0051']
+    dob             mean over 5 matched bins  +0.0038   per-bin ['+0.0050', '-0.0056', '-0.0089', '-0.0272', '+0.0556']
+    P               mean over 5 matched bins  -0.0040   per-bin ['+0.0099', '-0.0060', '+0.0080', '+0.0140', '-0.0460']
+    I               mean over 5 matched bins  +0.0134   per-bin ['-0.0008', '-0.0060', '-0.0040', '+0.0020', '+0.0759']
+    PR-2 predicted  mean over 5 matched bins  -0.0001   per-bin ['-0.0000', '-0.0004', '+0.0011', '+0.0017', '-0.0027']

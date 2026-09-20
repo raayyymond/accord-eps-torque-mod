@@ -1,0 +1,570 @@
+########## adv_gate
+================================================================================
+GATE  (my loader, no ss_load / sslib import)
+  away             +0.0525637  want +0.052564  d -3.10e-07  OK
+  toward           +0.0140065  want +0.014006  d +4.61e-07  OK
+  halfwidth        +0.0332851  want +0.033285  d +7.53e-08  OK
+  centring_offset  +0.0192786  want +0.019279  d -3.86e-07  OK
+  k                +0.0055600  want +0.005560  d +6.41e-09  OK
+  n 145 (145)   n_toward 93 (93)   -> GATE PASS
+
+  reproduced profile (quintiles of |aa[PRE]|):
+               bin  n_aw  n_tw  med|aa|   med_away    med_tow    CENTRE        HW
+     0.00-    0.63    14    15     0.31    +0.0337    -0.0336   +0.0001   +0.0336
+     0.63-    1.42    12    17     0.98    +0.0551    -0.0160   +0.0196   +0.0355
+     1.42-    2.67    11    18     1.94    +0.0520    -0.0150   +0.0185   +0.0335
+     2.67-    4.56     9    20     3.34    +0.0704    -0.0023   +0.0341   +0.0363
+     4.56-   39.57     6    23     8.28    +0.0597    +0.0003   +0.0300   +0.0297
+
+================================================================================
+WHAT THE DECOMPOSITION IS, ALGEBRAICALLY  (this is the whole attack surface)
+  away episodes have sign(aa)=+sj, toward episodes sign(aa)=-sj.  Write
+    R = cmd[bk] - K*aa[bk] - c      u = R*sign(aa)  (= y)
+  Plant = spring S(theta) + Coulomb F.  Wheel stuck at theta requires the command,
+  measured OUTWARD-positive, to satisfy   S(|th|) - F  <  u  <  S(|th|) + F.
+  Breaking OUTWARD means u hit the UPPER edge: u = S(|th|)+F.
+  Breaking INWARD  means u hit the LOWER edge: u = S(|th|)-F.
+  So med_away = S - K|th| + F ,  med_toward = S - K|th| - F , hence
+     CENTRE = S(|th|) - K*|th|        HALF-WIDTH = F
+  => HALF-WIDTH flat is the Coulomb force.  CENTRE IS THE SPRING MISFIT, S(th)-K*th,
+     WHICH IS ZERO AT th=0 BY CONSTRUCTION FOR ANY S AND ANY K.  The "454x span" is
+     the span of a function that must vanish at the origin, divided by its own
+     smallest bin.  It carries no information about whether S-K*th is a DEFICIT.
+########## adv_a_shape
+====================================================================================
+A1  IS IT PROPORTIONAL?  implied slope = CENTRE / med|aa| per bin
+    a truly angle-PROPORTIONAL centre has a CONSTANT slope here.
+                bin  med|aa|    CENTRE  slope/deg        HW
+      0.00-   0.63     0.31   +0.0001   +0.00024   +0.0336
+      0.63-   1.42     0.98   +0.0196   +0.01990   +0.0355
+      1.42-   2.67     1.94   +0.0185   +0.00951   +0.0335
+      2.67-   4.56     3.34   +0.0341   +0.01021   +0.0363
+      4.56-  39.57     8.28   +0.0300   +0.00362   +0.0297
+    slope spans +0.00024 -> +0.01990   ratio 83x
+    slope over the FOUR bins above 0.63 deg: +0.00362 -> +0.01990  ratio 5.5x
+    VERDICT A1: if the slope is not constant, "angle-proportional" is the WRONG
+    functional form and every remedy sized from a proportional k is mis-sized.
+
+====================================================================================
+A2  ROUTE-CLUSTER BOOTSTRAP CI on each bin (2000 draws, indices concatenated)
+                bin    CENTRE                 95% CI          HW                 95% CI
+      0.00-   0.63   +0.0001 [ -0.0063, +0.0025]     +0.0336 [ +0.0250, +0.0345]
+      0.63-   1.42   +0.0196 [ +0.0155, +0.0337]     +0.0355 [ +0.0323, +0.0405]
+      1.42-   2.67   +0.0185 [ +0.0142, +0.0399]     +0.0335 [ +0.0269, +0.0477]
+      2.67-   4.56   +0.0341 [ +0.0188, +0.0408]     +0.0363 [ +0.0264, +0.0439]
+      4.56-  39.57   +0.0300 [ +0.0098, +0.0507]     +0.0297 [ +0.0196, +0.0575]
+
+    CENTRE(bin3) - CENTRE(bin1): point +0.0184  CI [+0.0135,+0.0450]   P(<=0)=0.000
+    the "454x" ratio, bootstrapped: median 297x   CI [14x, 50664157001x]   frac>1000x 0.32   frac NEGATIVE min 0.32
+    VERDICT A2: a ratio whose denominator bootstraps through zero is not a statistic.
+
+====================================================================================
+A3  RE-BINNING -- does the profile survive different boundaries?
+    fixed 0/.5/1/2/4/40      n=145  CENTRE: -0.0000@0.30(n13/13) +0.0137@0.77(n8/10) +0.0161@1.45(n11/20) +0.0300@2.79(n11/23) +0.0393@7.64(n9/27)
+                                span -0.0000..+0.0393   HW: +0.0336 +0.0383 +0.0323 +0.0404 +0.0368
+    log  .1/.4/1/2.5/6/40    n=145  CENTRE: -0.0002@0.26(n12/10) +0.0110@0.73(n9/13) +0.0171@1.60(n14/25) +0.0369@3.32(n11/25) +0.0286@8.86(n6/20)
+                                span -0.0002..+0.0369   HW: +0.0339 +0.0408 +0.0331 +0.0351 +0.0310
+    3 bins 0/1/3/40          n=145  CENTRE: +0.0019@0.40(n21/23) +0.0235@1.86(n19/32) +0.0340@6.30(n12/38)
+                                span +0.0019..+0.0340   HW: +0.0342 +0.0343 +0.0330
+    terciles                 n=145  CENTRE: +0.0032@0.45(n23/25) +0.0203@1.94(n18/30) +0.0373@6.30(n11/38)
+                                span +0.0032..+0.0373   HW: +0.0351 +0.0311 +0.0362
+    DROP |aa|<0.5 : 4 bins   n=119  CENTRE: +0.0193@0.91(n12/18) +0.0179@1.88(n11/18) +0.0320@3.29(n9/21) +0.0382@8.27(n7/23)
+                                span +0.0179..+0.0382   HW: +0.0327 +0.0341 +0.0384 +0.0379
+    DROP |aa|<1.0 : 3 bins   n=101  CENTRE: +0.0180@1.58(n13/21) +0.0299@2.93(n9/24) +0.0393@7.72(n9/25)
+                                span +0.0180..+0.0393   HW: +0.0340 +0.0405 +0.0368
+
+====================================================================================
+A4  ESTIMATORS (quintile bins, all 5)
+    median      CENTRE +0.0001 +0.0196 +0.0185 +0.0341 +0.0300    HW +0.0336 +0.0355 +0.0335 +0.0363 +0.0297
+    trim20      CENTRE +0.0002 +0.0215 +0.0218 +0.0300 +0.0313    HW +0.0329 +0.0340 +0.0361 +0.0352 +0.0346
+    mean        CENTRE -0.0005 +0.0202 +0.0229 +0.0280 +0.0305    HW +0.0336 +0.0325 +0.0363 +0.0354 +0.0388
+    HodgesLehm  CENTRE +0.0005 +0.0208 +0.0229 +0.0297 +0.0334    HW +0.0334 +0.0341 +0.0364 +0.0358 +0.0386
+
+====================================================================================
+A5  MODEL COMPARISON on the signed edge level, both directions jointly:
+    u_signed = y ;  model  u = f(|th|) + F*sigma ,  sigma=+1 away / -1 toward
+    prop      b*|th|         rms 0.02732  R2 0.5772  coef [1.000e-05 3.329e-02 1.924e-02]
+    const     a*1[th>0]      rms 0.02732  R2 0.5772  coef [0.01928 0.03329 0.     ]
+    step      a*1[th>.6]     rms 0.02543  R2 0.6337  coef [ 0.02517  0.03464 -0.00047]
+    tanh      a*tanh(th/1)   rms 0.02502  R2 0.6456  coef [ 0.03874  0.03573 -0.01078]
+    tanh      a*tanh(th/3)   rms 0.02546  R2 0.6330  coef [0.03101 0.03547 0.00263]
+    log       a*log1p(th)    rms 0.02644  R2 0.6040  coef [0.00908 0.03473 0.00898]
+    prop+const               rms 0.02732  R2 0.5772  coef [1.000e-05 1.924e-02 3.329e-02 0.000e+00]
+    (F = the sigma coefficient; the first coefficient is the angle term)
+########## adv_b_confounds
+============================================================================================
+B1  SIGN DEGENERACY  --  the same sign(aa[PRE]) defines BOTH the y sign and toward/away.
+    algebra: mislabel fraction p  =>  CENTRE_obs = CENTRE_true*(1-2p),  HW unchanged.
+    bin1 shows CENTRE ~0 with HW FULLY PRESERVED (+0.0336) -- the contamination signature.
+
+    (a) how noisy is the sign?  |aa[PRE]| in LSB (0.1 deg) for the 2-8 torque set:
+        |aa| <= 0.05 deg (0.5 LSB):   5 of 145  ( 3.4%)
+        |aa| <= 0.10 deg (1.0 LSB):   6 of 145  ( 4.1%)
+        |aa| <= 0.20 deg (2.0 LSB):   9 of 145  ( 6.2%)
+        |aa| <= 0.30 deg (3.0 LSB):  13 of 145  ( 9.0%)
+        |aa| <= 0.50 deg (5.0 LSB):  26 of 145  (17.9%)
+        |aa| <= 0.63 deg (6.3 LSB):  29 of 145  (20.0%)
+        disagreement sign(aa[PRE]) vs sign(dwell-mean aa): 11 of 145
+        disagreement sign(aa[PRE]) vs sign(angdes[PRE]):   36 of 145
+
+    (b) the profile under different outward-sign definitions, SAME quintile edges:
+    sign(aa[PRE])  [the original]      CENTRE +0.0001 +0.0196 +0.0185 +0.0341 +0.0300  | HW +0.0336 +0.0355 +0.0335 +0.0363 +0.0297
+                                       med|x|    0.31    0.98    1.94    3.34    8.28  | n 14/15 12/17 11/18 9/20 6/23
+    sign(dwell-mean aa)                CENTRE +0.0024 +0.0196 +0.0185 +0.0341 +0.0300  | HW +0.0360 +0.0355 +0.0335 +0.0363 +0.0297
+                                       med|x|    0.31    0.98    1.94    3.34    8.28  | n 3/26 12/17 11/18 9/20 6/23
+    sign(angdes[PRE])                  CENTRE +0.0079 +0.0192 +0.0106 +0.0235 +0.0210  | HW +0.0258 +0.0325 +0.0245 +0.0258 +0.0208
+                                       med|x|    0.31    0.98    1.94    3.34    8.28  | n 24/5 17/12 18/11 15/14 8/21
+    sign(dwell-mean angdes)            CENTRE +0.0038 +0.0171 +0.0185 +0.0336 +0.0300  | HW +0.0309 +0.0347 +0.0335 +0.0318 +0.0297
+                                       med|x|    0.31    0.98    1.94    3.34    8.28  | n 17/12 13/16 11/18 10/19 6/23
+
+    (c) restrict to episodes where the sign is UNAMBIGUOUS, then re-bin inside them:
+        |aa|>= 0.3  n=132  CENTRE +0.0146 +0.0265 +0.0393  at |aa| 0.77 2.22 6.86   slope/deg +0.0190 +0.0119 +0.0057
+        |aa|>= 0.5  n=119  CENTRE +0.0179 +0.0260 +0.0393  at |aa| 1.08 2.59 7.06   slope/deg +0.0165 +0.0101 +0.0056
+        |aa|>= 1.0  n=101  CENTRE +0.0180 +0.0299 +0.0393  at |aa| 1.58 2.93 7.72   slope/deg +0.0114 +0.0102 +0.0051
+        |aa|>= 2.0  n= 70  CENTRE +0.0275 +0.0393 +0.0305  at |aa| 2.66 4.15 9.57   slope/deg +0.0103 +0.0095 +0.0032
+    if the slope/deg still falls by >2x across the retained range, the centre is NOT
+    proportional to angle even with the sign degeneracy removed.
+
+============================================================================================
+B2  SPEED CONFOUND
+    corr(|aa[PRE]|, v) over the 2-8 torque set: +0.125   corr(log|aa|, v) +0.147
+    median v per ANGLE quintile: 6.04 5.90 5.68 6.53 6.48
+    median |aa| per SPEED tercile, and the profile binned BY SPEED:
+        speed bins [np.float64(2.41), np.float64(5.46), np.float64(6.69), np.float64(7.96)]
+    BINNED BY SPEED (not angle)        CENTRE +0.0162 +0.0229 +0.0185  | HW +0.0339 +0.0280 +0.0332
+                                       med|x|    3.99    5.99    7.34  | n 14/34 23/25 15/34
+    fork k(v)*level vs the single fitted K=0.00556:
+        v= 2  k_fork=0.00210  k*1.15=0.00241   K-k*1.15 = +0.00315   x 2.30
+        v= 3  k_fork=0.00245  k*1.15=0.00282   K-k*1.15 = +0.00274   x 1.97
+        v= 4  k_fork=0.00280  k*1.15=0.00322   K-k*1.15 = +0.00234   x 1.73
+        v= 5  k_fork=0.00360  k*1.15=0.00414   K-k*1.15 = +0.00142   x 1.34
+        v= 6  k_fork=0.00440  k*1.15=0.00506   K-k*1.15 = +0.00050   x 1.10
+        v= 7  k_fork=0.00480  k*1.15=0.00552   K-k*1.15 = +0.00004   x 1.01
+        v= 8  k_fork=0.00520  k*1.15=0.00598   K-k*1.15 = -0.00042   x 0.93
+    => a single K mis-specifies the angle slope by -0.0032 at 2 m/s and +0.0004 at 8 m/s;
+       any |aa|-v correlation turns that into a spurious angle profile.
+
+    angle profile WITHIN each speed tercile (3 angle bins each):
+        v 2.41-5.46  n= 49  CENTRE +0.0082@0.43(n7/9) +0.0191@1.42(n4/12) +0.0251@2.93(n4/13)
+        v 5.46-6.69  n= 49  CENTRE +0.0136@0.65(n8/8) +0.0223@2.30(n10/6) +0.0365@6.79(n6/11)
+        v 6.69-7.96  n= 49  CENTRE -0.0057@0.37(n8/8) +0.0233@2.46(n4/12) +0.0273@7.65(n3/14)
+
+============================================================================================
+B3  DETECTION ASYMMETRY per angle bin  (frames from dwell end i1 to breakaway bk)
+    pooled: away 12.0  toward 13.0 frames
+                bin  lag_away   lag_tow    diff  pkrate_aw  pkrate_tw
+      0.00-   0.63      10.5      15.0    -4.5       6.03       4.46
+      0.63-   1.42      12.0      11.0    +1.0       8.26       4.80
+      1.42-   2.67      14.0      12.0    +2.0       5.79       4.45
+      2.67-   4.56      17.0      13.5    +3.5       7.15       9.43
+      4.56-  39.57      12.0      11.0    +1.0      24.47      19.13
+    and the command growth rate over the 30 ms before bk, to price the lag:
+    median |dcmd| per 10 frames, sign-aligned: away +0.0067  toward +0.0080
+
+============================================================================================
+B4  the offset floor:  aa = sa - aoff (learned).  A 0.1-0.3 deg offset error flips the
+    sign of any episode inside it, and bin 1 is |aa| <= 0.63 deg = 6 LSB.
+    bin-1 episodes with |aa| <= 0.3 deg: 13 of 29 in bin 1
+    implied CENTRE_true from bin1 if p is the mislabel fraction:  CENTRE_true = 0.0001/(1-2p)
+        p=0.10 -> CENTRE_true = +0.0001   (needs p ~ 0.5 to reach 0.03)
+        p=0.20 -> CENTRE_true = +0.0002   (needs p ~ 0.5 to reach 0.03)
+        p=0.30 -> CENTRE_true = +0.0003   (needs p ~ 0.5 to reach 0.03)
+        p=0.40 -> CENTRE_true = +0.0005   (needs p ~ 0.5 to reach 0.03)
+        p=0.45 -> CENTRE_true = +0.0010   (needs p ~ 0.5 to reach 0.03)
+########## adv_c_regressorfree
+================================================================================================
+C1  RAW BAND EDGES, NO SPRING REGRESSOR.   u = cmd*sign(theta), outward-positive.
+    S = (u_away + u_toward)/2   F = (u_away - u_toward)/2
+         |theta| bin  n_aw/tw  med|th|    u_away  u_toward    S_meas    F_meas    S/|th|
+       0.00-    0.61  14/15       0.31   +0.0351   -0.0316   +0.0018   +0.0333  +0.00567
+       0.63-    1.42  12/17       0.98   +0.0613   -0.0083   +0.0265   +0.0348  +0.02693
+       1.42-    2.66  11/18       1.94   +0.0647   -0.0066   +0.0291   +0.0357  +0.01495
+       2.68-    4.55   9/20       3.34   +0.0804   +0.0152   +0.0478   +0.0326  +0.01433
+       4.59-   39.57   6/23       8.28   +0.1176   +0.0550   +0.0863   +0.0313  +0.01042
+    => S RISES with |theta| with NO regressor in sight, and F is flat.  The "single linear
+       k*aa regressor manufactured it" objection FAILS: the band centre rises in RAW units.
+       BUT S/|theta| is NOT constant either -- S is a SATURATING function of angle.
+
+================================================================================================
+C2  S_measured vs THE FORK'S OWN DELIVERED HOLD MAP (my recompute, per-route level)
+     med|th|    S_meas  hold(th) hold*1.15    S-hold  S/hold fitted K*|th|   S-K|th|
+        0.31   +0.0018   +0.0010   +0.0012   +0.0006    1.52       +0.0017   +0.0000
+        0.98   +0.0265   +0.0036   +0.0037   +0.0228    7.15       +0.0055   +0.0210
+        1.94   +0.0291   +0.0074   +0.0078   +0.0212    3.71       +0.0108   +0.0183
+        3.34   +0.0478   +0.0151   +0.0151   +0.0327    3.17       +0.0185   +0.0292
+        8.28   +0.0863   +0.0403   +0.0409   +0.0454    2.11       +0.0460   +0.0403
+    (hold(th) = unlevelled map = what the stored channel holds; hold*1.15 = per-route level)
+    the fitted K=0.00556 is the TOTAL command slope, not the fork hold slope; at the median
+    speed the fork hold slope is ~0.005 and the deficit S-hold is what feedback must supply.
+
+================================================================================================
+C3  TERM DECOMPOSITION of the band centre.  For each channel X, centre_X = (X_aw+X_tw)/2
+    with X measured outward-positive.  These SUM to the cmd centre (cmd = P+I+F_t,
+    F_t = hold_ff + move + z + rl + dob).  A hold-stiffness deficit (A) shows up as a
+    hold_ff row that is too small; an integrator/observer wind-up (B) shows up in I or dob.
+     med|th|       cmd         P         I         F   hold_ff      move         z        rl       dob
+        0.31   +0.0018   +0.0004   -0.0009   -0.0002   +0.0013   -0.0000   +0.0028   -0.0009   +0.0000
+        0.98   +0.0265   +0.0043   +0.0031   +0.0104   +0.0090   -0.0003   +0.0010   -0.0005   +0.0028
+        1.94   +0.0291   +0.0043   +0.0038   +0.0216   +0.0108   -0.0003   -0.0007   -0.0002   +0.0038
+        3.34   +0.0478   +0.0024   +0.0037   +0.0433   +0.0148   -0.0014   +0.0019   -0.0008   +0.0171
+        8.28   +0.0863   +0.0012   +0.0047   +0.0712   +0.0464   -0.0003   +0.0030   -0.0001   +0.0234
+                   cmd         P         I         F   hold_ff      move         z        rl       dob
+    HALF-WIDTH of each term (what is odd in the direction of MOTION = friction-shaped):
+        0.31   +0.0333   +0.0063   -0.0001   +0.0294   +0.0082   +0.0039   +0.0110   +0.0017   +0.0000
+        0.98   +0.0348   +0.0027   +0.0005   +0.0306   +0.0042   +0.0057   +0.0120   +0.0028   +0.0028
+        1.94   +0.0357   +0.0074   -0.0012   +0.0318   +0.0079   +0.0045   +0.0102   +0.0022   +0.0038
+        3.34   +0.0326   +0.0049   +0.0019   +0.0271   +0.0064   +0.0050   +0.0069   +0.0031   +0.0065
+        8.28   +0.0313   +0.0057   +0.0023   +0.0304   +0.0097   +0.0059   +0.0075   +0.0029   +0.0164
+
+================================================================================================
+C4  SAMPLE-INSTANT ROBUSTNESS -- centre computed at frames INSIDE the dwell, which
+    removes the 0.3-deg breakaway detector from the estimate.
+                    sample      0.31      0.98      1.94      3.34      8.28   <- med|theta|
+    bk-3   (the original)    +0.0018   +0.0265   +0.0291   +0.0478   +0.0863   S
+                             +0.0333   +0.0348   +0.0357   +0.0326   +0.0313   F
+    bk-13  (-100 ms)         +0.0052   +0.0238   +0.0305   +0.0538   +0.0794   S
+                             +0.0272   +0.0267   +0.0278   +0.0208   +0.0173   F
+    bk-23  (-200 ms)         +0.0052   +0.0230   +0.0312   +0.0570   +0.0851   S
+                             +0.0199   +0.0140   +0.0164   +0.0077   +0.0140   F
+    dwell END  (i1)          +0.0085   +0.0264   +0.0269   +0.0519   +0.0842   S
+                             +0.0255   +0.0270   +0.0242   +0.0204   +0.0208   F
+    dwell MID                +0.0112   +0.0193   +0.0308   +0.0548   +0.0888   S
+                             +0.0105   +0.0092   +0.0097   -0.0050   +0.0028   F
+    dwell START (i0)         +0.0155   +0.0205   +0.0296   +0.0570   +0.0894   S
+                             +0.0027   +0.0058   -0.0025   -0.0155   -0.0065   F
+    if S keeps its angle profile at instants well inside the dwell (where the detector
+    cannot act) the detection-artefact objection is dead; if F collapses there, good --
+    F is the edge-only quantity and should shrink away from the edge.
+########## adv_d_composition
+==================================================================================================
+D1  HISTORY-CLASS COMPOSITION
+    (a) kind mix, AWAY vs TOWARD, per angle bin  (fractions cont/rest/rev)
+     bin med|th|  AWAY n        cont/rest/rev    TOW n        cont/rest/rev
+            0.31      14   0.50/ 0.36/ 0.14          15   0.33/ 0.33/ 0.33
+            0.98      12   0.58/ 0.42/ 0.00          17   0.41/ 0.24/ 0.35
+            1.94      11   0.45/ 0.27/ 0.27          18   0.33/ 0.33/ 0.33
+            3.34       9   0.67/ 0.22/ 0.11          20   0.20/ 0.00/ 0.80
+            8.28       6   0.67/ 0.00/ 0.33          23   0.13/ 0.26/ 0.61
+    (b) the raw outward command U at the edge, by kind (pooled 2-8):
+        cont  n  54 (aw 29/tw 25)  U_away +0.0673  U_toward -0.0139   S +0.0267  F +0.0406   med|th| aw  1.63 tw  1.59
+        rest  n  36 (aw 15/tw 21)  U_away +0.0578  U_toward +0.0057   S +0.0317  F +0.0260   med|th| aw  0.91 tw  1.65
+        rev   n  55 (aw  8/tw 47)  U_away +0.0660  U_toward +0.0248   S +0.0454  F +0.0206   med|th| aw  2.19 tw  3.34
+    (c) the profile WITHIN each kind (3 angle terciles inside the kind):
+        cont  S: +0.0093@0.37(n11/7)  +0.0251@1.61(n8/10)  +0.0428@4.20(n10/8)
+        rest  S: +0.0053@0.34(n6/6)  +0.0173@1.41(n6/6)  +0.0559@4.80(n3/9)
+        rev   S: +0.0116@0.92(n3/15)  +0.0501@3.21(n2/16)  +0.0770@7.80(n3/16)
+    (d) MIX-REWEIGHTED profile: within each angle bin, compute S separately for each kind
+        present on BOTH sides and average with the POOLED kind weights (removes the mix drift)
+        pooled kind weights {'cont': np.float64(0.372), 'rest': np.float64(0.248), 'rev': np.float64(0.379)}
+        med|th|   0.31  S_raw +0.0018   S_reweighted -0.0033   [co+0.003 re-0.004 re-0.009]  (weight covered 1.00)
+        med|th|   0.98  S_raw +0.0265   S_reweighted +0.0275   [co+0.024 re+0.033]  (weight covered 0.62)
+        med|th|   1.94  S_raw +0.0291   S_reweighted +0.0337   [co+0.040 re+0.026 re+0.033]  (weight covered 1.00)
+        med|th|   3.34  S_raw +0.0478   S_reweighted +0.0366   [co+0.027 re+0.046]  (weight covered 0.75)
+        med|th|   8.28  S_raw +0.0863   S_reweighted +0.0776   [co+0.065 re+0.090]  (weight covered 0.75)
+
+==================================================================================================
+D2  INTERCEPT vs SLOPE of the raw band centre S(theta), clustered CI.
+    model  U = (a + b*|th|)  + F*sigma   fitted on the raw edges, sigma = +1 away / -1 toward
+    intercept a      +0.01902  CI [+0.01104, +0.02274]
+    slope b /deg     +0.00546  CI [+0.00420, +0.00840]
+    F                +0.03316  CI [+0.02876, +0.03707]
+    sat: a           +0.01848  CI [+0.01085, +0.02212]
+    sat: k           +0.00566  CI [+0.00438, +0.00849]
+    sat: F           +0.03323  CI [+0.02884, +0.03710]
+    no-intercept b   +0.00703  CI [+0.00562, +0.00981]
+    no-intercept F   +0.03056  CI [+0.02454, +0.03576]
+    rms with a       +0.02780  CI [+0.02410, +0.02842]
+    rms without a    +0.03181  CI [+0.02599, +0.03311]
+    P(intercept <= 0) = 0.000      fork HONDA_ACCORD_HOLD_STATIC_FRICTION = 0.020
+    => if the intercept is a real, nonzero, ANGLE-INDEPENDENT term, the remedy is NOT a k
+       schedule / HOLD_LEVEL / EpsSpringScale -- all three are MULTIPLICATIVE in angle and
+       cannot produce an intercept.
+
+==================================================================================================
+D3  CONFIG.  per-route flown params and per-route raw band centre
+                     route   grp  lvl  SteerFric  FricHyst   n aw/tw     S_lo     S_hi        F  th_lo  th_hi
+      0000006c--68c6e94b17   T64    1     0.0000     0.015    6/11    +0.0128  +0.0391  +0.0375   0.35   3.53
+      0000006d--05e83bb04f   T64    1     0.2120     0.015    8/9     -0.0017  +0.0686  +0.0314   0.77   2.79
+      0000006e--6ca3e014fd  T64B    0     0.0000     0.015   16/29    +0.0054  +0.0585  +0.0334   0.52   4.55
+      00000075--6c8687d5bd    T4    0     0.2120     0.015   16/37    +0.0219  +0.0661  +0.0237   1.25   3.63
+      00000076--d0b7ea7e4d    T5    0     0.0000     0.015    6/7     +0.0074  +0.0487  +0.0393   0.77   3.30
+    (S_lo / S_hi = raw band centre below / above that route's own median |angle|)
+
+    AccordHoldLevel NATURAL EXPERIMENT, restricted to the SAME fork rev (T64/T64B only):
+      LEVEL ON  (6c,6d)  n= 34  S +0.0096 hold +0.0023 S-hold +0.0073 @0.68 (n8/9)   |   S +0.0499 hold +0.0192 S-hold +0.0306 @3.53 (n6/11)
+      LEVEL OFF (6e)     n= 45  S +0.0054 hold +0.0020 S-hold +0.0033 @0.52 (n9/13)   |   S +0.0585 hold +0.0204 S-hold +0.0381 @4.55 (n7/16)
+      the 1.15x level removes ~13% of the hold map below 12.5 m/s.  Predicted move in
+      S-hold if cause (A): the DEFICIT should GROW by 0.15*hold when the level is off
+      (i.e. ~0.0006 at 1 deg, ~0.006 at 8 deg) -- a change far below the route scatter below.
+
+    SteerFriction split (0.212 stock vs 0.0 declared):
+      SteerFriction 0.212  n= 70  S +0.0144 F +0.0251 @1.12 (n15/20)   |   S +0.0650 F +0.0321 @3.63 (n9/26)
+      SteerFriction 0.0    n= 75  S +0.0124 F +0.0316 @0.63 (n16/21)   |   S +0.0563 F +0.0300 @4.20 (n12/26)
+
+==================================================================================================
+D4  WINDING THROUGH THE DWELL, per term.  change = (X[bk-3] - X[dwell start]) * sign(theta),
+    averaged over away and toward the same way the centre is (so it is the centre's growth).
+     med|th|  dwell_s      cmd        P        I  hold_ff     move        z       rl      dob
+        0.31     0.48  -0.0066  -0.0014  +0.0002  -0.0028  -0.0003  -0.0032  -0.0005  +0.0004
+        0.98     0.50  -0.0006  -0.0020  +0.0014  -0.0019  +0.0002  -0.0042  +0.0005  +0.0018
+        1.94     0.50  -0.0034  -0.0016  +0.0013  -0.0029  +0.0003  -0.0017  +0.0002  +0.0000
+        3.34     0.51  -0.0162  -0.0058  +0.0008  -0.0061  -0.0000  -0.0062  +0.0014  +0.0029
+        8.28     0.39  +0.0027  -0.0031  +0.0005  -0.0006  -0.0026  -0.0015  -0.0009  +0.0031
+    and the LEVEL each term already had at dwell start (centre-aligned):
+        0.31           +0.0155  +0.0026  -0.0006  +0.0047  +0.0010  +0.0076  +0.0002  +0.0000
+        0.98           +0.0205  +0.0071  +0.0030  +0.0100  -0.0006  +0.0059  -0.0009  +0.0000
+        1.94           +0.0296  +0.0065  +0.0020  +0.0141  -0.0009  +0.0016  -0.0006  +0.0000
+        3.34           +0.0570  +0.0048  +0.0047  +0.0201  -0.0017  +0.0097  -0.0020  +0.0168
+        8.28           +0.0894  +0.0024  +0.0046  +0.0476  -0.0000  +0.0066  +0.0006  +0.0178
+########## adv_e_intercept
+==================================================================================================
+E1  POSITION-ALIGNED vs ARRIVAL-DIRECTION-ALIGNED intercept
+    (a) how strongly does arrival direction agree with sign(angle), per angle bin?
+     med|th|    n  frac arrived OUTWARD  |arr travel| med  frac(desired) OUT
+        0.31   29                  0.55              0.70               0.66
+        0.98   29                  0.62              0.68               0.59
+        1.94   29                  0.52              0.64               0.52
+        3.34   29                  0.76              1.49               0.48
+        8.28   29                  0.62              3.08               0.59
+    => if this fraction climbs from ~0.5 near centre to ~1.0 away from it, then an
+       arrival-direction friction term MASQUERADES as a position term that "turns on"
+       over exactly that scale, and the intercept is NOT identified as a spring.
+
+    (b) joint fit  U = a1 + a2*arr_out + b*|th| + F*sigma   (a1 position, a2 arrival)
+    --- arrival from MEASURED angle ---
+      a1 position         +0.01753  CI [+0.01025, +0.02162]
+      a2 arrival          +0.00679  CI [+0.00320, +0.00901]
+      b slope/deg         +0.00537  CI [+0.00417, +0.00836]
+      F                   +0.03226  CI [+0.02793, +0.03659]
+      rms both            +0.02702  CI [+0.02350, +0.02777]
+      arrival-only a2     +0.00943  CI [+0.00501, +0.01168]
+      arrival-only b      +0.00674  CI [+0.00552, +0.00942]
+      arrival-only F      +0.02959  CI [+0.02322, +0.03534]
+      rms arrival-only    +0.03044  CI [+0.02523, +0.03213]
+      position-only a1    +0.01902  CI [+0.01087, +0.02274]
+      position-only b     +0.00546  CI [+0.00420, +0.00845]
+      position-only F     +0.03316  CI [+0.02907, +0.03707]
+      rms position-only   +0.02780  CI [+0.02390, +0.02842]
+      P(a1 <= 0) = 0.000   P(a2 <= 0) = 0.002
+    --- arrival from DESIRED angle ---
+      a1 position         +0.01865  CI [+0.01095, +0.02221]
+      a2 arrival          +0.00268  CI [-0.00088, +0.00502]
+      b slope/deg         +0.00544  CI [+0.00421, +0.00844]
+      F                   +0.03286  CI [+0.02858, +0.03657]
+      rms both            +0.02767  CI [+0.02388, +0.02815]
+      arrival-only a2     +0.00439  CI [-0.00092, +0.00658]
+      arrival-only b      +0.00695  CI [+0.00559, +0.00985]
+      arrival-only F      +0.03015  CI [+0.02390, +0.03531]
+      rms arrival-only    +0.03151  CI [+0.02562, +0.03253]
+      position-only a1    +0.01902  CI [+0.01087, +0.02274]
+      position-only b     +0.00546  CI [+0.00420, +0.00845]
+      position-only F     +0.03316  CI [+0.02907, +0.03707]
+      rms position-only   +0.02780  CI [+0.02390, +0.02842]
+      P(a1 <= 0) = 0.000   P(a2 <= 0) = 0.083
+    (c) the intercept measured ONLY on episodes that arrived INWARD (arr_out < 0), where
+        a position term and an arrival term have OPPOSITE sign -- the discriminating subset:
+      arrived OUTWARD  n= 89 (aw 36/tw 53)  intercept +0.02318  slope +0.00565  F +0.03182   med|th| 2.13
+      arrived INWARD   n= 56 (aw 16/tw 40)  intercept +0.01346  slope +0.00472  F +0.03358   med|th| 1.83
+        a POSITION term keeps the SAME sign in both rows.  An ARRIVAL term FLIPS.
+
+==================================================================================================
+E2  does the a + b|th| model even fit?  per-bin residual
+    a=+0.01902 b=+0.00546 F=+0.03316
+     med|th|     S_obs    S_pred     resid
+        0.31   +0.0018   +0.0207   -0.0190
+        0.98   +0.0265   +0.0244   +0.0021
+        1.94   +0.0291   +0.0296   -0.0006
+        3.34   +0.0478   +0.0372   +0.0106
+        8.28   +0.0863   +0.0642   +0.0221
+    a straight line + intercept misses the two end bins by +/-0.02 = the size of the
+    effect itself.  NEITHER a pure spring NOR a spring+constant is the right form.
+
+==================================================================================================
+E3  F IS AN EDGE-TIMING STATISTIC.  bracket it.
+    dwell start (inside band)      F = -0.0084
+    dwell mid                      F = +0.0023
+    dwell END = last stuck frame   F = +0.0197
+    bk-23 (-200ms)                 F = +0.0133
+    bk-13 (-100ms)                 F = +0.0207
+    bk-3 (the reported one)        F = +0.0270
+    bk+0                           F = +0.0298
+    bk+10                          F = +0.0327
+    LOWER bound = the last frame the wheel is verifiably stuck (command still INSIDE the
+    band).  UPPER bound = 30 ms before a breakaway that is itself detected 0.3 deg AFTER
+    true slip onset (command has passed the edge).  So plant Coulomb in [~0.023, ~0.033].
+    The fork's own V293 plant identification puts Coulomb at 0.010-0.012 (SteerFriction's
+    unit).  These disagree by 2-3x; at most one of them is right.
+
+==================================================================================================
+E4  THE OBSERVER'S SHARE, PER ROUTE (a pooled median hides routes with no observer)
+                     route   DobHz    n         S   hold_ff       dob        P        I        z
+      0000006c--68c6e94b17     0.6   17   +0.0231   +0.0036   +0.0151  +0.0013  +0.0016  +0.0001
+      0000006d--05e83bb04f     0.6   17   +0.0422   +0.0048   +0.0136  -0.0007  +0.0038  +0.0043
+      0000006e--6ca3e014fd     0.6   45   +0.0312   +0.0114   +0.0121  +0.0024  +0.0015  +0.0026
+      00000075--6c8687d5bd      --   53   +0.0330   +0.0136   +0.0000  +0.0031  +0.0178  +0.0029
+      00000076--d0b7ea7e4d     0.6   13   +0.0369   +0.0091   +0.0178  +0.0022  +0.0127  -0.0032
+    frac of episodes with dob EXACTLY 0 at bk-3: 0.40
+
+==================================================================================================
+E5  MATCHED-ANGLE AccordHoldLevel contrast (T64/T64B only, one angle band at a time)
+    |th|  0.3- 1.5:  ON n=11 S +0.0152 hold +0.0029 S-hold +0.0123 @0.73   |   OFF n=16 S +0.0141 hold +0.0024 S-hold +0.0117 @0.84
+    |th|  1.5- 4.0:  ON n=12 S +0.0460 hold +0.0092 S-hold +0.0368 @2.33   |   OFF n= 9 S +0.0375 hold +0.0091 S-hold +0.0284 @2.68
+    |th|  4.0-40.0:  ON n= 7 S +0.0857 hold +0.0465 S-hold +0.0391 @10.21   |   OFF n=15 S +0.0682 hold +0.0302 S-hold +0.0379 @6.79
+    cause (A) predicts S-hold GROWS by 0.13*hold when the level is switched off
+    (0.0003 / 0.0013 / 0.0055 in these three bands) -- compare against the spread.
+
+    WITHIN-ROUTE intercept (a + b|th| + F*sigma fitted inside each route):
+    0000006c--68c6e94b17 n= 17  a +0.01523  b +0.00307  F +0.03478
+    0000006d--05e83bb04f n= 17  a +0.00798  b +0.00959  F +0.03225
+    0000006e--6ca3e014fd n= 45  a +0.01407  b +0.00713  F +0.03651
+    00000075--6c8687d5bd n= 53  a +0.02315  b +0.00421  F +0.02713
+    00000076--d0b7ea7e4d n= 13  a +0.01279  b +0.01042  F +0.03345
+########## adv_f_final
+==================================================================================================
+F1  DC-BIAS TEST.  split by the SIDE of centre.
+            side   n aw/tw  med|th|  intercept a    slope b         F
+      LEFT  th>0   25/58       2.13     +0.01714   +0.00493  +0.03438
+      RIGHT th<0   27/35       1.51     +0.01588   +0.00865  +0.03182
+    a VEHICLE-FRAME DC bias gives intercepts of OPPOSITE sign on the two sides.
+    a POSITION-ODD term gives the SAME sign.
+
+    joint fit with a free vehicle-frame constant:  U = a + d*sign(theta) + b|th| + F*sigma
+    (d is the vehicle-frame DC bias expressed in the outward-positive frame)
+      a  position-odd      +0.01921  CI [+0.01120, +0.02408]
+      d  vehicle-frame DC  -0.00556  CI [-0.01051, +0.00454]
+      b  slope/deg         +0.00557  CI [+0.00444, +0.00833]
+      F                    +0.03246  CI [+0.02904, +0.03650]
+      rms                  +0.02727  CI [+0.02355, +0.02808]
+      P(a <= 0) = 0.000   P(|d| >= |a|) = 0.002
+    left/right balance of the set: th>0 83 / th<0 62
+
+==================================================================================================
+F2  LEAVE-ONE-ROUTE-OUT
+                     dropped    n         a         b         F
+                none (all 5)  145  +0.01902  +0.00546  +0.03316
+        0000006c--68c6e94b17  128  +0.01984  +0.00560  +0.03267
+        0000006d--05e83bb04f  128  +0.02014  +0.00487  +0.03195
+        0000006e--6ca3e014fd  100  +0.02020  +0.00507  +0.03205
+        00000075--6c8687d5bd   92  +0.01355  +0.00716  +0.03644
+        00000076--d0b7ea7e4d  132  +0.01865  +0.00544  +0.03317
+
+==================================================================================================
+F3  ANGLE-CONTROLLED F at each sample instant (regression F, not the pooled median)
+                            sample         a         b         F
+         dwell start (inside band)  +0.02368  +0.00568  -0.00062
+                         dwell mid  +0.02220  +0.00560  +0.00637
+      dwell END = last stuck frame  +0.02051  +0.00538  +0.02403
+                    bk-23 (-200ms)  +0.01971  +0.00579  +0.01696
+                    bk-13 (-100ms)  +0.01935  +0.00560  +0.02540
+           bk-3 (the reported one)  +0.01902  +0.00546  +0.03316
+            bk+0 (detection frame)  +0.01881  +0.00536  +0.03385
+    NOTE the intercept a and slope b are STABLE from dwell start to breakaway while F
+    grows from ~0 to 0.033 -- exactly the band model: the command starts near the CENTRE
+    and travels to an EDGE.  The centre is NOT something the loop has to build during
+    the stick; it is already there when the stick begins.
+
+==================================================================================================
+F4  what the intercept is worth, and what a MULTIPLICATIVE lever would have to do
+    at the median speed 5.99 m/s the fork hold map is k*sat*tanh(th/sat), sat=94 deg
+    (tanh nonlinearity over 0-40 deg at this speed: 5.6% -- the map is LINEAR here, so a linear regressor
+     is NOT mis-specified against it; possibility (3) as framed is quantitatively dead)
+     |th| deg  S = a+b|th|  intercept share  fork hold*1.15  mult needed
+          0.5      +0.0217              87%         +0.0025        8.61x
+          1.0      +0.0245              78%         +0.0051        4.84x
+          2.0      +0.0299              64%         +0.0101        2.96x
+          4.0      +0.0408              47%         +0.0202        2.02x
+          8.0      +0.0627              30%         +0.0403        1.55x
+         16.0      +0.1063              18%         +0.0801        1.33x
+         32.0      +0.1937              10%         +0.1557        1.24x
+    a k-schedule / HOLD_LEVEL / AccordEpsSpringScale is MULTIPLICATIVE in angle: one number
+    cannot serve a requirement whose multiplier runs 7x at 1 deg to 1.6x at 32 deg.
+    the hysteresis feedforward is in the MOTION frame and contributes ~0 to the centre
+    (measured z centre 0.000-0.004, z half-width 0.007-0.012 against a flown 0.015).
+====================================================================================================
+G1  THE INTERCEPT/SLOPE SPLIT IS NOT IDENTIFIED -- it is entirely a function of the
+    angle window the line is fitted over.
+      window (deg)    n                intercept a  P(a<=0)             slope b /deg         F
+      0.0-  40.0   145  +0.01902 [+0.01087,+0.02263]    0.000  +0.00546 [+0.00420,+0.00845]  +0.03316
+      0.3-  40.0   132  +0.02295 [+0.01313,+0.02737]    0.000  +0.00517 [+0.00378,+0.00828]  +0.03450
+      0.3-   6.0   106  +0.00960 [+0.00145,+0.01849]    0.007  +0.01092 [+0.00673,+0.01470]  +0.03500
+      0.3-   4.0    96  +0.00961 [-0.00142,+0.01987]    0.045  +0.01077 [+0.00564,+0.01777]  +0.03488
+      0.3-   3.0    82  +0.00570 [-0.00588,+0.01482]    0.134  +0.01426 [+0.00966,+0.02173]  +0.03408
+      0.0-   3.0    95  +0.00086 [-0.00865,+0.00511]    0.409  +0.01684 [+0.01401,+0.02364]  +0.03388
+      0.0-   2.0    75  +0.00007 [-0.01056,+0.00592]    0.507  +0.01781 [+0.01237,+0.02644]  +0.03409
+    => the +0.019 intercept and the +0.0055/deg slope are ONE parameterisation of the same
+       curve; over |aa|<3 deg (95 of 145 episodes) the intercept is 0.000 and the slope is
+       0.0168/deg.  Neither number is a property of the car on its own.
+
+====================================================================================================
+G2  NON-PARAMETRIC requirement S(theta) vs the fork's delivered hold map (no functional form)
+          window   n aw/tw  med|th|                         S (CI)  fork hold   S-hold  S/hold
+     0.0-  0.6   14/14       0.31   +0.0004 [ -0.0057, +0.0045]    +0.0015  -0.0011   0.29x
+     0.6-  1.5   13/19       1.02   +0.0261 [ +0.0152, +0.0303]    +0.0043  +0.0218   6.05x
+     1.5-  3.0   13/22       2.13   +0.0415 [ +0.0267, +0.0510]    +0.0099  +0.0316   4.20x
+     3.0-  6.0    6/18       3.74   +0.0518 [ +0.0397, +0.0700]    +0.0198  +0.0319   2.61x
+     6.0- 40.0    6/20       8.86   +0.0881 [ +0.0622, +0.1097]    +0.0464  +0.0417   1.90x
+    the SHORTFALL RATIO falls 6.0x -> 1.9x as angle grows, and the ABSOLUTE shortfall runs
+    -0.001 / +0.022 / +0.032 / +0.032 / +0.042.  A lever that is multiplicative in angle,
+    sized on the 9-deg shortfall, delivers 0.005 at 1 deg where 0.022 is needed (4.6x short);
+    sized on the 1-deg shortfall it delivers 0.19 at 9 deg where 0.042 is needed (4.6x over).
+
+====================================================================================================
+G3  WHO CARRIES THE STANDING DEFICIT, per route (centre-aligned level at bk-3)
+                     route  DobHz    Ki    n        S  hold_ff      dob        I        P  ff share  slow-int share
+      0000006c--68c6e94b17    0.6   0.3   17  +0.0231  +0.0036  +0.0151  +0.0016  +0.0013       16%             72%
+      0000006d--05e83bb04f    0.6   0.3   17  +0.0422  +0.0048  +0.0136  +0.0038  -0.0007       11%             41%
+      0000006e--6ca3e014fd    0.6   0.3   45  +0.0312  +0.0114  +0.0121  +0.0015  +0.0024       37%             43%
+      00000075--6c8687d5bd     --   0.6   53  +0.0330  +0.0136  +0.0000  +0.0178  +0.0031       41%             54%
+      00000076--d0b7ea7e4d    0.6   0.3   13  +0.0369  +0.0091  +0.0178  +0.0127  +0.0022       25%             83%
+    route 75 is the ONE route with no AccordDobHz: its I is 0.0178, 5-10x the I on every
+    observer route (0.0015-0.0038), and its dob is exactly 0.  The deficit is carried by
+    whichever slow integrating element is enabled -- that is a measured substitution.
+
+    and NOTHING winds during the stick: through a 0.4-0.5 s dwell the centre-aligned change
+    is I +0.0002..+0.0014 and dob +0.0000..+0.0031, against a centre of 0.018-0.089.
+    The intercept and slope of the band centre are STABLE from dwell start to breakaway
+    (a 0.0237 -> 0.0190, b 0.00568 -> 0.00546) while F grows -0.0006 -> +0.0332.
+====================================================================================================
+G1  THE INTERCEPT/SLOPE SPLIT IS NOT IDENTIFIED -- it is entirely a function of the
+    angle window the line is fitted over.
+      window (deg)    n                intercept a  P(a<=0)             slope b /deg         F
+      0.0-  40.0   145  +0.01902 [+0.01087,+0.02263]    0.000  +0.00546 [+0.00420,+0.00845]  +0.03316
+      0.3-  40.0   132  +0.02295 [+0.01313,+0.02737]    0.000  +0.00517 [+0.00378,+0.00828]  +0.03450
+      0.3-   6.0   106  +0.00960 [+0.00145,+0.01849]    0.007  +0.01092 [+0.00673,+0.01470]  +0.03500
+      0.3-   4.0    96  +0.00961 [-0.00142,+0.01987]    0.045  +0.01077 [+0.00564,+0.01777]  +0.03488
+      0.3-   3.0    82  +0.00570 [-0.00588,+0.01482]    0.134  +0.01426 [+0.00966,+0.02173]  +0.03408
+      0.0-   3.0    95  +0.00086 [-0.00865,+0.00511]    0.409  +0.01684 [+0.01401,+0.02364]  +0.03388
+      0.0-   2.0    75  +0.00007 [-0.01056,+0.00592]    0.507  +0.01781 [+0.01237,+0.02644]  +0.03409
+    => the +0.019 intercept and the +0.0055/deg slope are ONE parameterisation of the same
+       curve; over |aa|<3 deg (95 of 145 episodes) the intercept is 0.000 and the slope is
+       0.0168/deg.  Neither number is a property of the car on its own.
+
+====================================================================================================
+G2  NON-PARAMETRIC requirement S(theta) vs the fork's delivered hold map (no functional form)
+          window   n aw/tw  med|th|                         S (CI)  fork hold   S-hold  S/hold
+     0.0-  0.6   14/14       0.31   +0.0004 [ -0.0057, +0.0045]    +0.0015  -0.0011   0.29x
+     0.6-  1.5   13/19       1.02   +0.0261 [ +0.0152, +0.0303]    +0.0043  +0.0218   6.05x
+     1.5-  3.0   13/22       2.13   +0.0415 [ +0.0267, +0.0510]    +0.0099  +0.0316   4.20x
+     3.0-  6.0    6/18       3.74   +0.0518 [ +0.0397, +0.0700]    +0.0198  +0.0319   2.61x
+     6.0- 40.0    6/20       8.86   +0.0881 [ +0.0622, +0.1097]    +0.0464  +0.0417   1.90x
+    the SHORTFALL RATIO falls 6.0x -> 1.9x as angle grows, and the ABSOLUTE shortfall runs
+    -0.001 / +0.022 / +0.032 / +0.032 / +0.042.  A lever that is multiplicative in angle,
+    sized on the 9-deg shortfall, delivers 0.005 at 1 deg where 0.022 is needed (4.6x short);
+    sized on the 1-deg shortfall it delivers 0.19 at 9 deg where 0.042 is needed (4.6x over).
+
+====================================================================================================
+G3  WHO CARRIES THE STANDING DEFICIT, per route (centre-aligned level at bk-3)
+                     route  DobHz    Ki    n        S  hold_ff      dob        I        P  ff share  slow-int share
+      0000006c--68c6e94b17    0.6   0.3   17  +0.0231  +0.0036  +0.0151  +0.0016  +0.0013       16%             72%
+      0000006d--05e83bb04f    0.6   0.3   17  +0.0422  +0.0048  +0.0136  +0.0038  -0.0007       11%             41%
+      0000006e--6ca3e014fd    0.6   0.3   45  +0.0312  +0.0114  +0.0121  +0.0015  +0.0024       37%             43%
+      00000075--6c8687d5bd     --   0.6   53  +0.0330  +0.0136  +0.0000  +0.0178  +0.0031       41%             54%
+      00000076--d0b7ea7e4d    0.6   0.3   13  +0.0369  +0.0091  +0.0178  +0.0127  +0.0022       25%             83%
+    route 75 is the ONE route with no AccordDobHz: its I is 0.0178, 5-10x the I on every
+    observer route (0.0015-0.0038), and its dob is exactly 0.  The deficit is carried by
+    whichever slow integrating element is enabled -- that is a measured substitution.
+
+    and NOTHING winds during the stick: through a 0.4-0.5 s dwell the centre-aligned change
+    is I +0.0002..+0.0014 and dob +0.0000..+0.0031, against a centre of 0.018-0.089.
+    The intercept and slope of the band centre are STABLE from dwell start to breakaway
+    (a 0.0237 -> 0.0190, b 0.00568 -> 0.00546) while F grows -0.0006 -> +0.0332.

@@ -1,0 +1,67 @@
+====================================================================================================================
+L.  DE-TAUTOLOGISED: the observer vs the mismatch it does NOT itself contain
+    mis_all = (cmd          - hold_flown - b*rate) . sgn   <- contains dob (step 5 used this: corr 0.945)
+    mis_ex  = (cmd - dob    - hold_flown - b*rate) . sgn   <- exogenous, the observer's actual input driver
+    dob@bk vs mis_all (tautological)   n  50  slope +0.829  intercept -0.0004  corr +0.945   median +0.0412
+    dob@bk vs mis_ex  (exogenous)      n  50  slope +0.205  intercept +0.0275  corr +0.152   median +0.0119
+    -> the exogenous figure is the honest one; the 0.945 in step 5 is retracted as partly an identity.
+
+    and the observer against |angle| alone (the quantity the centre is proportional to):
+    d(dob@bk)/d|angle| = +0.00488 per deg, 4-route-cluster 95% CI [+0.00216,+0.00751]   corr +0.569
+
+====================================================================================================================
+M.  THE SPRING EXCESS, with route-cluster CIs.  cmd[bk-3] = a*HOLD + Fa*sj + d*sj*toward + c
+    HOLD = hold(aa, v, .) is the fork's own saturating, speed-scheduled map -- so a mis-specified
+    single linear k CANNOT be what produces a != 1 here (that is the third hypothesis, tested).
+    a is dimensionless: the multiple of that map the breakaway command actually sits at.
+    UNLEVELLED map (rev 3-5)   all five routes       n 145 clusters 5  a +1.406  95% CI [+1.165,+1.858]
+    UNLEVELLED map (rev 3-5)   observer routes only  n  92 clusters 4  a +1.698  95% CI [+1.077,+1.890]
+    UNLEVELLED map (rev 3-5)   level ON  (6c+6d)     n  34 clusters 2  a +1.659  95% CI [+1.024,+1.960]
+    UNLEVELLED map (rev 3-5)   level OFF (6e+76+75)  n 111 clusters 3  a +1.313  95% CI [+1.157,+1.753]
+    each route's FLOWN map     all five routes       n 145 clusters 5  a +1.357  95% CI [+1.132,+1.714]
+    each route's FLOWN map     observer routes only  n  92 clusters 4  a +1.555  95% CI [+0.892,+1.729]   <- CI includes 1.0
+    each route's FLOWN map     level ON  (6c+6d)     n  34 clusters 2  a +1.443  95% CI [+0.890,+1.704]   <- CI includes 1.0
+    each route's FLOWN map     level OFF (6e+76+75)  n 111 clusters 3  a +1.313  95% CI [+1.157,+1.753]
+    a > 1 against the FLOWN map = the flown feedforward under-holds at breakaway, in proportion to
+    the map's own shape.  That is hypothesis (A).  a = 1 would mean the map is right and the centre
+    is something else.
+
+====================================================================================================================
+N.  IS THE EXCESS ANGLE-PROPORTIONAL, OR A CONSTANT?  add a sign(angle) intercept to the same fit:
+    cmd = a*HOLD + e*sign(angle) + Fa*sj + d*sj*toward + c
+    e loads a Coulomb / static-friction intercept (flat in angle); a loads a stiffness deficit.
+    UNLEVELLED all five  n 145  a +1.406 [+1.166,+1.858]   e +0.0205 [+0.0164,+0.0235]
+    UNLEVELLED observer  n  92  a +1.698 [+1.077,+1.890]   e +0.0172 [+0.0158,+0.0208]
+    FLOWN      all five  n 145  a +1.357 [+1.135,+1.713]   e +0.0204 [+0.0166,+0.0234]
+    FLOWN      observer  n  92  a +1.555 [+0.892,+1.729]   e +0.0177 [+0.0158,+0.0219]
+    (HONDA_ACCORD_HOLD_STATIC_FRICTION = 0.020 is the intercept the map was fitted WITHOUT, and the
+     fork's comment at :227 says AccordFrictionHyst supplies it -- it flew at 0.015.  e is the
+     measurement of what is still missing after that.)
+
+====================================================================================================================
+O.  POWER, RESTATED AS A NUISANCE-TO-SIGNAL RATIO -- why one route per arm cannot settle this
+    the toggle moves the feedforward's supplied fraction of the map by exactly 0.15 (x1.15 -> x1.00,
+    flat for all v <= 12.5).  The route-to-route scatter of a, measured, is:
+      0000006c--68c6e94b17  lvl True   n  17  a +1.024
+      0000006d--05e83bb04f  lvl True   n  17  a +1.960
+      0000006e--6ca3e014fd  lvl False  n  45  a +1.673
+      00000075--6c8687d5bd  lvl False  n  53  a +1.158
+      00000076--d0b7ea7e4d  lvl False  n  13  a +1.635
+    spread 1.024 .. 1.960, sd 0.388, range/0.15 = 6.2x
+    With ONE route in each arm the toggle is perfectly collinear with every route-level nuisance
+    (road crown, tyre/temperature, the learned LiveParametersV2 and LiveDelay, which do differ between
+    6c and 6e).  A 6x nuisance-to-signal ratio at 1 cluster per arm is not a resolvable experiment.
+
+====================================================================================================================
+P.  HALF-WIDTH per route (Fa + d/2 from the same fit) -- Coulomb friction must be route-flat
+    0000006c--68c6e94b17  lvl True  obs yes n  17  half-width +0.0348   centring offset +0.0139
+    0000006d--05e83bb04f  lvl True  obs yes n  17  half-width +0.0309   centring offset +0.0119
+    0000006e--6ca3e014fd  lvl False obs yes n  45  half-width +0.0333   centring offset +0.0130
+    00000075--6c8687d5bd  lvl False obs no  n  53  half-width +0.0301   centring offset +0.0240
+    00000076--d0b7ea7e4d  lvl False obs yes n  13  half-width +0.0360   centring offset +0.0215
+    AccordFrictionHyst flew 0.015 on all five; the fork's own static-friction constant is 0.020.
+
+  AccordFrictionHystBand is INERT in this whole band: HONDA_ACCORD_FRICTION_HYST_BAND_BP starts at
+  8.0 m/s with value 3.0, and the flat fallback HONDA_ACCORD_FRICTION_HYST_BAND_DEG is also 3.0, so
+  np.interp clamps to 3.0 for every v <= 8.  6c/6d/6e had the toggle on and 75/76 did not; below
+  8 m/s that difference cannot act.  (EVIDENCE: source read, latcontrol_vehicle_tunes.py:319-321.)

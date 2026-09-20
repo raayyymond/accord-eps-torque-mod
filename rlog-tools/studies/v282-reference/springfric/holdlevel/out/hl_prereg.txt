@@ -1,0 +1,106 @@
+STREAM holdlevel, step 3: PRE-REGISTRATION.  Run and frozen BEFORE any per-route band centre is looked at.
+
+Writes out/hl_prereg.txt.
+
+WHAT THE TOGGLE DOES, read from the flown source (fork HEAD == the flown commit 84766cdc523f, file clean):
+  latcontrol_torque.py:651-655, 689-692
+    hold_level = toggles.accord_hold_level
+    hold_fn    = get_honda_accord_hold_torque            if hold_level
+                 lambda a,v: get_honda_accord_hold_torque(a, v, level=False)   otherwise
+    plant_ff_torque = -get_honda_accord_rate_plant_ff(..., hold_level=hold_level)
+    accord_dob.update(..., hold_fn, ...)
+  => ONE toggle gates BOTH the feedforward's hold term AND the observer's internal spring model,
+     by the SAME factor.  latcontrol_vehicle_tunes.py:263 says so in words ("THE LEVEL AND THE
+     OBSERVER'S INTERNAL MODEL MOVE TOGETHER, which is what makes it safe").
+  get_honda_accord_hold_level(v, True) = interp(v, [12.5, 17.5], [1.15, 1.45]) -> FLAT 1.15 for all v <= 12.5,
+  so across the whole 2-8 m/s band the toggle is exactly x1.15 on the hold map, nothing else.
+
+THE OBSERVER IS AN INTEGRATOR WHEN THE WHEEL IS STUCK -- structural, from the flown code:
+  residual = u_left_delayed - (spring_model + b*rate + J*acc);  w1,w2 two first-order lags at f_hz = 0.6 Hz;
+  output = clip(w2 * fade, +-0.3), fade = interp(v, [3.0, 6.0], [0, 1]);
+  and u_left = -output_torque ALREADY CONTAINS the observer's own previous output.
+  So the observer sees itself with loop gain fade*Q(s), Q = 1/(1+tau s)^2, tau = 1/(2 pi 0.6) = 0.2653 s, Q(0) = 1.
+  With the wheel STUCK the angle cannot move, so nothing else closes the loop and
+      w2 / (C - H) = Q / (1 - fade Q)
+  For fade = 1 that is 1 / (tau s (2 + tau s)) -- A PURE INTEGRATOR of gain 1/(2 tau) = 1.885 per second.
+  For fade < 1 it settles at (C - H) * fade / (1 - fade).
+  C - H = the standing command-minus-model mismatch; H uses the LEVELLED map when the toggle is on.
+
+HYPOTHESES AND THEIR PRE-REGISTERED PREDICTIONS (delta = 6e OFF minus 6c ON, at matched |angle| and v):
+  PR-1  ARITHMETIC IDENTITY, must hold or my hold-term reconstruction is wrong:
+        delta(hold_ff . sign) = -0.15 * hold_unlevelled(angle_des, v)
+  PR-2  (A) HOLD-MAP LEVEL DEFICIT, nothing in the loop absorbs it:
+        the lost feedforward passes straight to the command ->
+        delta(cmd . sign at breakaway) = -0.15 * hold_unlevelled   (6e's command sits LESS outward)
+        equivalently: CENTRE in the orchestrator's k_fit frame DROPS by that amount on 6e,
+        and CENTRE measured against each route's OWN FLOWN MAP is UNCHANGED.
+  PR-3  (B) AN IN-LOOP INTEGRATOR ABSORBS IT:
+        delta(cmd . sign) ~ 0, materially smaller than PR-2's number, and the missing 0.15*hold
+        reappears in dob . sign and/or I . sign.  CENTRE against each route's own flown map RISES
+        by +0.15 * hold_unlevelled (the deficit the rest of the loop must carry is bigger).
+  PR-4  WHICH integrator, decided inside the band and immune to route confounds:
+        the observer's authority is fade(v) = interp(v, [3, 6], [0, 1]).  If the observer is the absorber,
+        the absorption must be ABSENT below 3 m/s and FULL above 6 m/s.  If absorption is present at
+        v < 3 m/s it is the PID's I, not the observer.
+  PR-5  the observer's stuck-wheel integrator gain is 1/(2 tau) = 1.885/s, so
+        dob . sign at breakaway must RISE with dwell duration, slope ~ 1.885 * (deficit) per second,
+        and its step shape is (C-H)*[t/(2 tau) - (1 - exp(-2 t / tau))/4].  Tabulated below.
+
+DECISION RULE, fixed now:
+  - PR-1 fails            -> my reconstruction is wrong; report that and nothing else.
+  - |delta cmd| CI covers PR-2's predicted value and excludes 0     -> (A), the level passes through.
+  - |delta cmd| CI covers 0 and excludes PR-2's value               -> (B), something absorbs it; PR-4 names it.
+  - both inside the CI (i.e. the CI spans 0 and the prediction)     -> UNDERPOWERED, no verdict from the contrast.
+  Power is computed BELOW, before any measurement, so that the third outcome cannot be spun as a null.
+
+============================================================================================================
+PRE-REGISTERED PREDICTED DELTA, from the fork's map arithmetic alone
+  d = 0.15 * hold_unlevelled(|angle|, v) = 0.15 * k(v) * sat(v) * tanh(|angle| / sat(v))
+  evaluated at each bin's MEDIAN |angle| and the bin's median v across the two contrast routes
+
+     |angle| bin (deg)  med|ang|  med v  hold_unlev  PREDICTED d  as frac of
+                                                          (PR-2)   hw 0.0333
+      0.00 -     0.63      0.30   7.09      0.0014       0.0002        0.01
+      0.63 -     1.42      1.06   5.10      0.0039       0.0006        0.02
+      1.42 -     2.67      1.91   5.57      0.0078       0.0012        0.03
+      2.67 -     4.56      3.53   6.55      0.0163       0.0024        0.07
+      4.56 -    39.57      7.63   6.17      0.0340       0.0051        0.15
+
+  NOTE the shape: the prediction is essentially LINEAR in |angle| (tanh is linear until
+  |angle| ~ sat/3, and sat(v) is 94-300 deg over 2-8 m/s), so PR-2 predicts an angle-PROPORTIONAL
+  delta with slope 0.15*k(v) ~ 0.00054-0.00078 torque/deg.  At the MEDIAN episode angle that is
+  about a thousandth of a torque unit.  Which is the whole problem -- see POWER.
+
+============================================================================================================
+POWER I ACTUALLY HAVE -- computed before any contrast is measured
+  per-episode scatter of the band variable y = (cmd - k_fit*aa - c)*sign(aa) at breakaway,
+  pooled over the two contrast routes, by direction; MDE = 2.8 * sqrt(s_a^2/n_a + s_b^2/n_b)
+  for the difference of two medians (1.253 * sd/sqrt(n) per median, 95 % two-sided).
+
+  sd(y) over the contrast set, all directions   0.0424   (n 62)
+  sd(y) OUTWARD  0.0200  n 22
+  sd(y) INWARD   0.0293  n 40
+
+           |angle| bin  n 6c  n 6e      sd  MDE(centre)  PREDICTED d  MDE/pred
+      0.00 -     0.63     5    11  0.0457       0.0502       0.0002     234.3x
+      0.63 -     1.42     2    10  0.0430       0.0746       0.0006     126.9x
+      1.42 -     2.67     4     4  0.0464       0.0570       0.0012      49.0x
+      2.67 -     4.56     4     9  0.0441       0.0541       0.0024      22.1x
+      4.56 -    39.57     2    11  0.0378       0.0657       0.0051      12.9x
+
+  MDE/pred is the factor by which the smallest detectable centre difference exceeds the
+  pre-registered prediction.  Any value >> 1 means a null in that bin is UNINFORMATIVE by
+  construction, decided before the data were looked at.
+
+============================================================================================================
+PR-5 REFERENCE SHAPE: the observer's stuck-wheel step response, w2(t)/(C-H)
+  w2(t)/(C-H) = t/(2 tau) - (1 - exp(-2 t / tau))/4,  tau = 0.2653 s (0.6 Hz), fade = 1
+  (fade < 1: it settles instead, at fade/(1-fade) * (C-H) with the same corner)
+
+   t (s)          0.10    0.20    0.30    0.50    0.75    1.00    1.50    2.00
+   w2/(C-H)      0.056   0.182   0.342   0.698   1.165   1.635   2.577   3.520
+
+  observed dwell durations on the contrast routes (s): median 0.40, quartiles 0.27 / 0.68, max 1.84
+  so the observer's own structure says it contributes 0.1-1.6 x the standing mismatch across the
+  observed dwell range -- the SAME ORDER as the half-width.  That makes PR-5 a high-powered test
+  even where the level contrast (above) is not.

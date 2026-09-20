@@ -1,0 +1,79 @@
+====================================================================================================================
+Q.  RETRACTION CHECK on my own step-6 section N
+    design [hold, sgn, sj, sj*toward, 1]  shape (145, 5)  matrix_rank 4   -> RANK DEFICIENT
+    max|sgn - (sj + 2*sj*toward)| over the set = 4.00e+00   (an exact identity, so sgn adds no information)
+    design without sgn                     shape (145, 4)  matrix_rank 4
+    a with sgn in the design +1.3572   a without it +1.3572   difference +4.44e-16
+    => a IS identified (hold lies outside the deficient span).  e IS NOT.  ** e = +0.0204 RETRACTED. **
+
+====================================================================================================================
+R.  THE IDENTIFIED REPARAMETERISATION   cmd[bk-3] = a*hold + A*(sgn*away) + B*(sgn*toward) + c
+    A = outward-frame breakaway level breaking AWAY from centre; B = same breaking TOWARD centre
+    half-width = (A-B)/2   (Coulomb, must be flat in angle)
+    flat outward offset = (A+B)/2   (the part of the CENTRE that is NOT angle-proportional)
+
+  set                           n  cl       a           a 95% CI  half-width                 CI  flat offset                 CI
+  all five routes             145   5  +1.357 [+1.115,+1.714]     +0.0333 [+0.0309,+0.0374]      +0.0179 [+0.0126,+0.0222]
+  observer routes (6c,6d,6e,76)   92   4  +1.555 [+0.892,+1.729]     +0.0358 [+0.0327,+0.0381]      +0.0140 [+0.0114,+0.0193]
+  observer OFF (75 alone)      53   1  +1.158 [+1.158,+1.158]     +0.0301 [+0.0301,+0.0301]      +0.0240 [+0.0240,+0.0240]
+  level ON (6c+6d)             34   2  +1.443 [+0.890,+1.704]     +0.0381 [+0.0309,+0.0381]      +0.0113 [+0.0113,+0.0139]
+  level OFF (6e+76+75)        111   3  +1.313 [+1.157,+1.753]     +0.0315 [+0.0301,+0.0360]      +0.0199 [+0.0130,+0.0240]
+  (a 1-cluster row's CI is degenerate by construction -- it is printed to show the absence of resolution)
+
+====================================================================================================================
+S.  THE UNSIGNED CONSTANT c -- a left/right asymmetry the outward frame cannot carry
+  route                     n        c  n(aa>0)  n(aa<0)  sign balance
+  0000006c--68c6e94b17     17  -0.0145       10        7          0.59
+  0000006d--05e83bb04f     17  +0.0140        9        8          0.53
+  0000006e--6ca3e014fd     45  -0.0071       22       23          0.49
+  00000075--6c8687d5bd     53  -0.0084       36       17          0.68
+  00000076--d0b7ea7e4d     13  +0.0094        6        7          0.46
+  c is 0.004-0.015, the same size as the flat offset itself.  In the outward frame it contributes
+  +c*sign(angle), whose per-bin median flips with that bin's left/right balance -- so a binned CENTRE
+  carries a +-c wobble that has nothing to do with angle.  This is a property of the FIT, not the car.
+
+====================================================================================================================
+T.  THE SIGN FRAME IS DEGENERATE IN THE BOTTOM BIN (steering-angle LSB = 0.1 deg)
+    bottom quintile |angle| < 0.63 deg: n = 29
+      |angle| < 0.05 deg (0 LSB):   5 episodes  (3% of the 2-8 m/s set)
+      |angle| < 0.10 deg (1 LSB):   6 episodes  (4% of the 2-8 m/s set)
+      |angle| < 0.15 deg (1 LSB):   8 episodes  (6% of the 2-8 m/s set)
+      |angle| < 0.20 deg (2 LSB):   9 episodes  (6% of the 2-8 m/s set)
+      |angle| < 0.30 deg (3 LSB):  13 episodes  (9% of the 2-8 m/s set)
+
+    the orchestrator's bottom-bin CENTRE, with a sign guard applied:
+    guard                   n_aw  n_tw  centre y_fit  centre y_map   hw y_fit
+    none (as measured)        14    15       +0.0001       -0.0001    +0.0336
+    |angle| >= 0.15 deg        8    13       +0.0024       +0.0042    +0.0347
+    |angle| >= 0.30 deg        5    11       +0.0042       +0.0071    +0.0341
+    |angle| >= 0.30, all bins    43    89       +0.0190       +0.0249    +0.0329
+
+    and the orchestrator's full five-bin CENTRE table with the >= 0.30 deg sign guard:
+             |angle| bin  n_aw  n_tw    centre  half-width
+        0.31-    0.90    11    16   +0.0100     +0.0411
+        0.90-    1.66     9    17   +0.0153     +0.0260
+        1.66-    2.79     9    17   +0.0299     +0.0407
+        2.79-    5.50     8    18   +0.0338     +0.0316
+        5.50-   39.57     6    21   +0.0273     +0.0324
+    CENTRE spans +0.0100 -> +0.0338   ratio 3.4x   (was 454x without the guard)
+
+====================================================================================================================
+U.  THE FINAL DECOMPOSITION of the breakaway band, all five routes, 5 route clusters
+    cmd[bk-3] = a * hold_flown(aa, v)   +   offset * sign(angle)   +/-   half-width
+      a            +1.357  95% CI [+1.100,+1.714]   (1.0 = the flown map is exactly right)
+      offset       +0.0179 95% CI [+0.0126,+0.0225]  torque, FLAT in angle
+      half-width   +0.0333 95% CI [+0.0309,+0.0374]  torque, FLAT in angle (Coulomb)
+
+    the two flat terms against the fork's own constants:
+      HONDA_ACCORD_HOLD_STATIC_FRICTION = 0.020  (the intercept the map was fitted WITHOUT, :273)
+      AccordFrictionHyst flew 0.015 on all five routes = 0.75 of it, and it is keyed to the direction
+      of the last DESIRED motion (z follows d angle_des), not to the direction of the held angle.
+
+    how much of the CENTRE each part explains, at the bin median angles:
+      |angle|  hold_flown  (a-1)*hold  flat offset       sum  measured ctr
+         0.31      0.0012      0.0004       0.0179    0.0183       -0.0001
+         0.98      0.0037      0.0013       0.0179    0.0192       +0.0237
+         1.94      0.0078      0.0028       0.0179    0.0207       +0.0211
+         3.34      0.0151      0.0054       0.0179    0.0232       +0.0364
+         8.28      0.0409      0.0146       0.0179    0.0325       +0.0419
+    (measured ctr is in the y_map frame = cmd - hold_flown, so it should equal (a-1)*hold + offset)
