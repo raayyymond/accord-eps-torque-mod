@@ -1,0 +1,114 @@
+From: accord-eps-torque-mod analysis, 2026-09-20
+Subject: [PATCH] Accord: allow margin-safe loop gain -- raise the SteerKP ceiling and
+ schedule the error-notch Q by speed
+
+Apply on StarPilot branch `Dom`, which was clean at 84766cdc5 when this was written:
+
+    cd C:/Users/dudei/Desktop/Projects/openpilots/raayyymond-StarPilot/StarPilot
+    git checkout Dom && git status --porcelain     # expect empty
+    git apply --check analysis-2020accord/reference/starpilot_Dom_margin-safe-gain.patch
+    git apply           <same path>
+
+WHY, IN ONE PARAGRAPH.  On the operator's own goal metric -- how closely achieved lateral acceleration tracks
+the model's desired lateral acceleration, with V282 as the reference -- the torque-mode build sits at J 1.3512
+against V282's 0.442, and 98% of that gap is in 0.15-0.60 Hz.  It is a LOOP GAIN deficit: the fork's lateral
+loop never crosses unity (|L| < 1 at every frequency 0.08-2.5 Hz) where V282's crossed at 0.26-0.37 Hz on its
+proportional term alone.  Raising SteerKP closes it, but the gain also lands at 3.4-4.9 Hz, where the V293 plant
+is 5-13x more compliant than V282's rate-servo EPS was, and that is where the stability margin binds.  The fix
+is not more gain and not less -- it is gain PAIRED WITH a wider error notch, which holds 3.4-4.9 Hz down while
+0.15-0.60 Hz goes up.  Today the toggle ceilings forbid that pairing: SteerKP stops at 3.00, and a Q wide enough
+to protect at speed is unsafe below 15 m/s because the notch centre falls to 0.82-1.28 Hz there.  This patch
+removes exactly those two obstacles and nothing else.
+
+MEASURED, at matched vector margin (VM = min|1+L| over 2-6 Hz; anchors below):
+    toggles only     SteerKP 3.0 / Q 0.30  ->  15.9% of the gap, command shake x0.964, VM 0.479/0.377
+    with this patch  SteerKP 5.0 / Q 0.20  ->  23.1% of the gap, command shake x0.973, VM 0.396/0.388
+    with this patch  SteerKP 6.0 / Q 0.20  ->  32.9% of the gap, command shake x1.004, VM 0.281/0.290
+VM anchors, each computed from that route's own identified plant and its own flown controller:
+    V282 0.842/0.882 | r73 0.913/0.828 | r72 (flew clean) -/0.527 | rev 6.4 as flown 0.686/0.505
+    r71 (LIMIT-CYCLED at 2.34 Hz) 0.322/0.079
+
+DEFAULTS ARE BIT-IDENTICAL TO TODAY.  Hunk 1 changes only a clamp ceiling, so every existing value is unaffected.
+Hunk 2's schedule interpolates [8, 15] m/s from max(q, 1.0) to q, so at the shipped default q = 1.0 it returns
+1.0 at every speed -- exactly today's behaviour -- and at any q < 1.0 it leaves everything below 8 m/s at the
+1.0 that has already driven.  q <= 0 (notch bypassed) passes straight through, preserving that escape.
+
+NOT IN THIS PATCH, DELIBERATELY:
+ - a k_d / derivative term.  Measured VM 0.048 at KP 4.0 / Q 0.30 / k_d 0.40 -- identical to the withdrawn
+   ARM-KP2, i.e. the worst on the ladder.  k_d is measurement-rate feedback through a 2 Hz low-pass, so it adds
+   gain exactly where the margin binds.
+ - decoupling the integrator from kp in error_with_lsf (torque.py:342).  The defect is real -- kp sits in the
+   integrator's denominator, so SteerKP 1->3 cuts low-speed integral authority to x0.35 at 2 m/s -- but the
+   existing AccordTorqueKi toggle reaches x3.33 and covers SteerKP 3-4 with room.  Ship the toggle, measure,
+   and only write code if SteerKP > 4 is ever wanted.
+ - any firmware change.  Nothing here touches the EPS.
+
+---
+ selfdrive/controls/lib/latcontrol_torque.py        |  6 +++--
+ selfdrive/controls/lib/latcontrol_vehicle_tunes.py | 18 ++++++++++++++
+ starpilot/common/starpilot_variables.py            | 10 +++++++-
+ 3 files changed, 31 insertions(+), 3 deletions(-)
+
+diff --git a/starpilot/common/starpilot_variables.py b/starpilot/common/starpilot_variables.py
+--- a/starpilot/common/starpilot_variables.py
++++ b/starpilot/common/starpilot_variables.py
+@@ -456,7 +456,15 @@ LAT_ACCEL_FACTOR_MAX_MULT = 10.0
+ # SteerKP toggle ceiling as a multiple of the platform Kp. The old 1.5x clamp (0.9 on the Accord) sat
+ # below what the identified rate-servo plant tolerates; the floor stays low but non-zero.
+ STEER_KP_MIN = 0.05
+-STEER_KP_MAX_MULT = 5.0
++# 2026-09-20: 5.0 -> 10.0 (Accord ceiling 3.00 -> 6.00 at the platform Kp of 0.6).  NOT so SteerKP alone can go
++# higher -- measured on the identified loop, every setting above 2.0 at the stock notch Q sits at or below the
++# 2-6 Hz vector margin of route 71, the only route that has ever limit-cycled.  It is so the gain can be raised
++# TOGETHER WITH a wide error notch (Q 0.20-0.30), which is the pairing that holds the 3.4-4.9 Hz mode down while
++# the 0.15-0.60 Hz gain -- where 98% of the tracking gap to the V282 reference lives -- goes up.  At matched
++# vector margin that pairing measures 23% (KP 5.0 / Q 0.20) and 33% (KP 6.0 / Q 0.20) of the gap, at command
++# shake at or below as-flown.  Raising KP alone is what this ceiling used to prevent, and still should;
++# get_honda_accord_error_notch_q is the other half of the change.  STEER_KP_MIN untouched.
++STEER_KP_MAX_MULT = 10.0
+
+ class StarPilotVariables:
+   def __init__(self):
+diff --git a/selfdrive/controls/lib/latcontrol_vehicle_tunes.py b/selfdrive/controls/lib/latcontrol_vehicle_tunes.py
+--- a/selfdrive/controls/lib/latcontrol_vehicle_tunes.py
++++ b/selfdrive/controls/lib/latcontrol_vehicle_tunes.py
+@@ -393,6 +393,24 @@ HONDA_ACCORD_KI_SCHEDULE_V_BP = [8.0, 18.0]        # m/s
++# AccordErrorNotchQ, speed-scheduled (2026-09-20).  The notch CENTRE is already a function of speed
++# (get_honda_accord_mode_hz: 0.82 Hz at 2 m/s, 1.28 at 8, 2.05 at 23), so one scalar Q is a different filter at
++# every speed.  A Q wide enough to protect the 3.4-4.9 Hz mode at motorway speed sits on top of the demand at
++# low speed: measured |N| and phase at 0.3 Hz are 0.920 @ -23 deg (Q 1.0) but 0.576 @ -55 deg (Q 0.30) and
++# 0.426 @ -65 deg (Q 0.20) at 2 m/s.  That is the regime the operator reports as ratchety, and it is OUTSIDE
++# the goal metric (every scored window is >= 15.75 m/s), so a scalar Q buys margin at speed by silently
++# spending feel at low speed.  Scheduling it costs nothing measurable on the metric BY CONSTRUCTION and makes
++# the wide Q survivable.  Below 8 m/s the delivered Q is pinned to the 1.0 that has already driven.
++HONDA_ACCORD_NOTCH_Q_V_BP = [8.0, 15.0]   # m/s.  8.0 is already a fork breakpoint (KI_SCHEDULE_V_BP[0]);
++                                          # 15.0 is the goal metric's own floor, so above it the toggle value
++                                          # is delivered exactly as it was scored.
++HONDA_ACCORD_NOTCH_Q_LOW = 1.0            # the Q flown on rev 6.4: nothing below 8 m/s changes.
++
++
++def get_honda_accord_error_notch_q(v_ego: float, q: float) -> float:
++  """AccordErrorNotchQ narrowed at low speed.  q <= 0 (notch bypassed) passes straight through, and q >= 1.0
++  is speed-flat, so the shipped default of 1.0 reproduces the previous behaviour at every speed exactly."""
++  if q <= 0.0:
++    return q
++  return float(np.interp(v_ego, HONDA_ACCORD_NOTCH_Q_V_BP, [max(q, HONDA_ACCORD_NOTCH_Q_LOW), q]))
++
+ # Disturbance observer (AccordDobHz, rev 5, 2026-09-15).  A P loop through the ~60 ms round trip has a static stiffness of
+diff --git a/selfdrive/controls/lib/latcontrol_torque.py b/selfdrive/controls/lib/latcontrol_torque.py
+--- a/selfdrive/controls/lib/latcontrol_torque.py
++++ b/selfdrive/controls/lib/latcontrol_torque.py
+@@ -344,8 +344,10 @@
+         # AccordErrorNotchQ: notch the P/I error at the steering system's own mode (get_honda_accord_mode_hz), so the
+         # ~60 ms-delayed feedback cannot pump the resonance (route 71: a 2.34 Hz limit cycle on hard curves at speed).
+         # The logged error is the notched one, so torqueState.p / error still reads SteerKP exactly.
+-        error_with_lsf = self.accord_error_notch.update(error_with_lsf, get_honda_accord_mode_hz(CS.vEgo),
+-                                                        float(getattr(starpilot_toggles, "accord_error_notch_q", 1.0)))
++        # The Q is speed-scheduled (get_honda_accord_error_notch_q): a Q wide enough to hold 3.4-4.9 Hz down at
++        # motorway speed would sit on top of the demand below 8 m/s, where the notch centre falls to 0.82-1.28 Hz.
++        error_with_lsf = self.accord_error_notch.update(
++          error_with_lsf, get_honda_accord_mode_hz(CS.vEgo),
++          get_honda_accord_error_notch_q(CS.vEgo,
++                                         float(getattr(starpilot_toggles, "accord_error_notch_q", 1.0))))
+       if self.is_ioniq_6_2025:
+         error_with_lsf *= get_ioniq_6_2025_low_speed_center_error_scale(
