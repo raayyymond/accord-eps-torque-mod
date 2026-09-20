@@ -1,0 +1,109 @@
+============================================================================================================================
+A. DOSE OF THE `SteerDelay` TOGGLE.  D = SteerDelay + 0.1.  Exact discrete algebra of the stage.
+   Rows are the flown configurations; columns sweep D.  |H| / lag_ms of the CANCELLER ALONE
+   (the ref filter is a separate, already-named lever and multiplies on top unchanged).
+============================================================================================================================
+
+   jerk cutoff 1.2 Hz
+      band Hz         D=0.20         D=0.25         D=0.30         D=0.35         D=0.40         D=0.50    
+                   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms 
+      0.15-0.30   1.050   11.7   1.062   15.9   1.073   20.5   1.084   25.5   1.094   30.8   1.112   42.6  
+      0.30-0.60   1.161   36.2   1.191   47.5   1.216   59.5   1.237   72.0   1.252   84.8   1.267  111.2  
+      0.60-1.20   1.339   79.4   1.359  100.4   1.351  121.6   1.316  142.7   1.255  163.7   1.061  204.5  
+
+   jerk cutoff 4.0 Hz
+      band Hz         D=0.20         D=0.25         D=0.30         D=0.35         D=0.40         D=0.50    
+                   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms 
+      0.15-0.30   1.016    2.3   1.020    3.4   1.023    4.6   1.027    6.0   1.030    7.5   1.036   11.0  
+      0.30-0.60   1.059    8.4   1.070   12.0   1.080   15.9   1.088   20.2   1.094   24.8   1.099   34.4  
+      0.60-1.20   1.170   25.6   1.179   34.5   1.173   43.4   1.153   51.9   1.119   59.7   1.022   70.6  
+
+   jerk cutoff 8.0 Hz
+      band Hz         D=0.20         D=0.25         D=0.30         D=0.35         D=0.40         D=0.50    
+                   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms 
+      0.15-0.30   1.008    1.0   1.010    1.5   1.012    2.1   1.014    2.8   1.015    3.5   1.018    5.3  
+      0.30-0.60   1.030    3.8   1.036    5.6   1.041    7.6   1.045    9.8   1.049   12.2   1.051   17.2  
+      0.60-1.20   1.092   12.6   1.098   17.4   1.094   22.3   1.083   26.9   1.064   30.9   1.012   35.9  
+
+   F_j == 1 (ideal)
+      band Hz         D=0.20         D=0.25         D=0.30         D=0.35         D=0.40         D=0.50    
+                   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms   |H|   lag_ms 
+      0.15-0.30   1.000    0.0   1.000    0.0   1.000    0.0   1.000    0.0   1.000    0.0   1.000    0.0  
+      0.30-0.60   1.000    0.0   1.000    0.0   1.000    0.0   1.000    0.0   1.000    0.0   1.000    0.0  
+      0.60-1.20   1.000    0.0   1.000    0.0   1.000    0.0   1.000    0.0   1.000    0.0   1.000    0.0  
+
+============================================================================================================================
+B. DOSE OF `HONDA_ACCORD_JERK_LP_HZ` (code constant -- NO toggle exists; AccordJerkLpHz is ABSENT
+   from all 15 routes' initData).  At each build's own flown D.  fc -> inf is the ideal canceller.
+============================================================================================================================
+
+   V282 flown D=0.300
+      band Hz       fc=1.2       fc=2.0       fc=4.0       fc=8.0       fc=16.0      fc=inf    
+      0.15-0.30   1.073  20.5   1.046  10.6   1.023   4.6   1.012   2.1   1.006   1.0   1.000   0.0  
+      0.30-0.60   1.216  59.5   1.148  34.2   1.080  15.9   1.041   7.6   1.021   3.7   1.000   0.0  
+      0.60-1.20   1.351 121.6   1.284  81.1   1.173  43.4   1.094  22.3   1.049  11.3   1.000   0.0  
+
+   rev 6.4 flown D=0.399
+      band Hz       fc=1.2       fc=2.0       fc=4.0       fc=8.0       fc=16.0      fc=inf    
+      0.15-0.30   1.092  29.7   1.058  16.0   1.030   7.2   1.015   3.4   1.008   1.6   1.000   0.0  
+      0.30-0.60   1.250  82.2   1.171  49.0   1.093  23.9   1.048  11.7   1.024   5.8   1.000   0.0  
+      0.60-1.20   1.269 159.5   1.213 107.6   1.127  58.2   1.068  30.1   1.035  15.3   1.000   0.0  
+
+   rev 5 flown D=0.386
+      band Hz       fc=1.2       fc=2.0       fc=4.0       fc=8.0       fc=16.0      fc=inf    
+      0.15-0.30   1.090  28.6   1.056  15.3   1.029   6.9   1.015   3.2   1.007   1.5   1.000   0.0  
+      0.30-0.60   1.247  79.6   1.169  47.3   1.092  23.0   1.047  11.2   1.024   5.5   1.000   0.0  
+      0.60-1.20   1.282 155.3   1.224 104.8   1.134  56.7   1.072  29.3   1.037  14.9   1.000   0.0  
+
+============================================================================================================================
+C. THE WHOLE STAGE as flown, and the two counterfactuals that need no code change:
+   (i) AccordRefFilter -> 0.0 ;  (ii) SteerDelay pinned to 0.2 (D = 0.300, what V282 flew).
+============================================================================================================================
+      case                        0.15-0.30 Hz      0.30-0.60 Hz      0.60-1.20 Hz   
+                                  |H|   lag_ms     |H|   lag_ms     |H|   lag_ms  
+      V282 as flown              1.073   20.5     1.216   59.5     1.351  121.6   
+      rev 6.4 as flown           1.021  126.8     1.056  142.4     0.992  172.7   
+      rev 6.4, RefFilter 0       1.030    7.2     1.093   23.9     1.127   58.2   
+      rev 6.4, RF0 + D=0.30      1.023    4.6     1.080   15.9     1.173   43.4   
+      rev 5 as flown             1.055  266.0     1.104  309.7     0.865  362.8   
+      rev 5, RefFilter 0         1.090   28.6     1.247   79.6     1.282  155.3   
+
+============================================================================================================================
+D. SECOND ESTIMATE of the true model->achieved group delay, from the BAND PHASE at >=15 m/s
+   (runs >=60 s, coherence printed).  This is the quantity the learner is trying to estimate.
+   err = D_flown - this.  NEGATIVE = the canceller's D UNDER-states the real lag.
+============================================================================================================================
+      route                  group   D_flown    0.15-0.30 Hz           0.30-0.60 Hz           0.60-1.20 Hz        
+                                               lag_ms  coh  err_ms   lag_ms  coh  err_ms   lag_ms  coh  err_ms 
+      00000039--f56039af87   V282old    0.300     --    --     --       --    --     --       --    --     --  
+      0000003a--283a39a1d6   V282old    0.300   329.0  0.98    -29    344.1  0.93    -44    282.1  0.87    +18 
+      0000003c--927965c2b4   V282old    0.300   348.8  0.95    -49    321.4  0.91    -21    299.0  0.88     +1 
+      00000064--ce6b0b0ebb   V282       0.300   257.1  0.93    +43    291.2  0.90     +9    272.2  0.82    +28 
+      00000065--b9f78988bd   V282       0.300   239.3  0.95    +61    275.7  0.89    +24    321.4  0.69    -21 
+      0000006c--2bc842dbac   V282       0.300   255.5  0.94    +45    334.1  0.81    -34    292.6  0.84     +7 
+      0000006c--68c6e94b17   T64        0.399   477.5  0.92    -78    523.4  0.90   -124    318.6  0.80    +80 
+      0000006d--05e83bb04f   T64        0.399   468.8  0.93    -70    555.4  0.91   -156    346.3  0.71    +53 
+      0000006e--6ca3e014fd   T64B       0.402   500.5  0.91    -98    479.8  0.88    -78    288.9  0.70   +113 
+      00000075--6c8687d5bd   T4         0.380   651.3  0.95   -272    473.3  0.91    -94    339.5  0.56    +40 
+      00000076--d0b7ea7e4d   T5         0.386   650.0  0.99   -264    667.6  0.80   -282    331.8  0.60    +54 
+      00000072--8001fc3048   T6?        0.374   760.4  0.96   -387    560.3  0.81   -186    306.5  0.55    +67 
+      00000073--79fd149dd8   T6?        0.374   375.3  0.97     -1    444.3  0.87    -70    368.2  0.57     +6 
+      00000070--717f5a7866   V293a      0.300   526.1  0.94   -226    435.9  0.82   -136    289.4  0.70    +11 
+      00000071--f2c9d073a3   V293a      0.300   235.7  0.97    +64    230.6  0.75    +69    270.6  0.59    +29 
+
+   group V282     band 0.15-0.30   mean X->Y lag  250.6 ms over 3 routes   mean D_flown 0.300
+   group V282     band 0.30-0.60   mean X->Y lag  300.3 ms over 3 routes   mean D_flown 0.300
+   group V282old  band 0.15-0.30   mean X->Y lag  338.9 ms over 2 routes   mean D_flown 0.300
+   group V282old  band 0.30-0.60   mean X->Y lag  332.7 ms over 2 routes   mean D_flown 0.300
+   group T64      band 0.15-0.30   mean X->Y lag  473.1 ms over 2 routes   mean D_flown 0.399
+   group T64      band 0.30-0.60   mean X->Y lag  539.4 ms over 2 routes   mean D_flown 0.399
+   group T64B     band 0.15-0.30   mean X->Y lag  500.5 ms over 1 routes   mean D_flown 0.402
+   group T64B     band 0.30-0.60   mean X->Y lag  479.8 ms over 1 routes   mean D_flown 0.402
+   group T5       band 0.15-0.30   mean X->Y lag  650.0 ms over 1 routes   mean D_flown 0.386
+   group T5       band 0.30-0.60   mean X->Y lag  667.6 ms over 1 routes   mean D_flown 0.386
+   group T4       band 0.15-0.30   mean X->Y lag  651.3 ms over 1 routes   mean D_flown 0.380
+   group T4       band 0.30-0.60   mean X->Y lag  473.3 ms over 1 routes   mean D_flown 0.380
+   group T6?      band 0.15-0.30   mean X->Y lag  567.9 ms over 2 routes   mean D_flown 0.374
+   group T6?      band 0.30-0.60   mean X->Y lag  502.3 ms over 2 routes   mean D_flown 0.374
+   group V293a    band 0.15-0.30   mean X->Y lag  380.9 ms over 2 routes   mean D_flown 0.300
+   group V293a    band 0.30-0.60   mean X->Y lag  333.3 ms over 2 routes   mean D_flown 0.300

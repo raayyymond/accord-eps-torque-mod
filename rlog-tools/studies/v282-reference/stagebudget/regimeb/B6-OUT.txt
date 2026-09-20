@@ -1,0 +1,50 @@
+==================================================================================================================================
+V1. REPRODUCTION of the surface stream's Regime B cell from this stream's own window store.
+    Cell = laterally engaged hands-off, speed bin, p95|model lateral accel| >= 1.0 (the A3 stratum).
+    Published (SURFACE-OUT.txt, 0.60-1.20 Hz): 8-15 V282 1.097 / TORQ 2.503 ; 15-22 1.226 / 1.979.
+==================================================================================================================================
+   speed   group       n  |H| here  published    sa95  demand RMS   Mcoh   Minc
+   8-15    V282       12     1.097      1.097    23.2      0.0112  1.573  0.561
+   8-15    TORQ       18     2.503      2.503    78.2      0.0189  2.421  1.781
+   15-22   V282       13     1.226      1.226    14.6      0.0130  1.681  0.768
+   15-22   TORQ       22     1.979      1.979    13.4      0.0223  2.109  1.325
+
+==================================================================================================================================
+V2. NRMSE BUDGET at 0.60-1.20 Hz on MATCHED in-band demand RMS (the b2 matching).
+    M_coh is the goal's own metric (RMS of achieved-minus-desired that the demand explains, in
+    units of the demand's own in-band RMS); M_inc is the part the demand does not explain.
+==================================================================================================================================
+   speed   group       n    |H|  Mgain  Mphase   Mcoh   Minc  M total  inc share of M^2
+   8-15    V282       52  1.030  0.055   1.532  1.533  0.645    1.663               15%
+   8-15    TORQ      124  1.086  0.107   1.665  1.668  1.442    2.206               43%
+   15-22   V282       87  1.510  0.514   1.803  1.875  1.001    2.126               22%
+   15-22   TORQ      166  1.479  0.485   1.797  1.862  1.463    2.368               38%
+   22+     V282      333  1.782  0.795   1.839  2.003  0.829    2.168               15%
+   22+     TORQ      170  1.686  0.707   1.831  1.963  1.208    2.305               27%
+
+==================================================================================================================================
+V3/V4/V5. STICK-SLIP SIGNATURE, 8-22 m/s, laterally engaged hands-off, matched demand.
+   A dwell = |steering rate| < 1.0 deg/s for >= 0.25 s.  For each dwell that ends in a jump
+   (peak |rate| >= 6 deg/s within 0.6 s) I record: the travel of the COMMAND during the dwell,
+   the travel of the SETPOINT, the jump's peak rate and its angle excursion, and the window's
+   in-band demand RMS.  If the command keeps moving while the wheel does not, and the jump
+   tracks how far it moved, the object is a Coulomb breakaway, not a mode.
+==================================================================================================================================
+
+ V3: speed   group      nep  dwell s  |dU| during dwell  |dZ| m/s2  jump deg/s  jump deg  corr(jump,|dU|)
+     8-15    V282         3  (too few episodes to characterise)
+     8-15    TORQ        18     0.29             0.0150     0.0229        10.7      1.17            -0.05
+     15-22   V282         0  (too few episodes to characterise)
+     15-22   TORQ        16     0.32             0.0198     0.0596        11.0      2.31            -0.08
+
+ V4: jump size vs the window's in-band demand RMS (torque mode, pooled 8-22 m/s)
+     demand 0.004-0.008: n   12  p50 jump    9.1 deg/s  p90   16.2  p50 angle excursion  1.03 deg  p50 |dU| 0.0138
+     demand 0.008-0.012: n   12  p50 jump   11.8 deg/s  p90   13.0  p50 angle excursion  1.65 deg  p50 |dU| 0.0216
+     demand 0.018-0.026: n    6  p50 jump   18.8 deg/s  p90   28.7  p50 angle excursion  2.43 deg  p50 |dU| 0.0216
+
+ V5: correlation of the 0.3-4 Hz residual ENVELOPE with the demand's LEVEL vs its RATE
+     speed   group     nblk  corr with |demand|  corr with |d demand/dt|
+     8-15    V282        26                0.25                     0.45
+     8-15    TORQ        54                0.41                     0.49
+     15-22   V282        42                0.37                     0.56
+     15-22   TORQ        83                0.41                     0.47

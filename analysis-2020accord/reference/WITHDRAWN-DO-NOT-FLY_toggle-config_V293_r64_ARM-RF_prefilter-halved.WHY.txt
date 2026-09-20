@@ -1,0 +1,34 @@
+ARM-RF IS WITHDRAWN. Do not fly it as specified. Withdrawn 2026-09-20, the day after it was built.
+
+WHY. The config halved AccordRefFilter (0.06 -> 0.03) on the strength of that stage owning ~47-49% of
+the 0.15-0.60 Hz tracking-error gap. The stage measurement stands -- its lag is 2*RC, measured
+0 / 119 / 238 ms at flown 0.00 / 0.06 / 0.12 on 15/15 routes at unity magnitude. What was WRONG was
+treating that share as a share of the OPERATOR'S GAP.
+
+1. RF = 0 HAS ALREADY FLOWN ON THE TORQUE EPS. Routes 70 and 71 carry no reference filter in their
+   source at all (`git show 4247cb09:latcontrol_torque.py | grep -c accord_ref_filter` -> 0; same at
+   66cf4454), confirmed independently from each route's own initData: AccordRefFilter is ABSENT on
+   r70/r71 exactly as it is on all six V282 reference routes. So this is not an untested lever.
+
+2. ON THE OPERATOR'S OWN METRIC IT IS APPROXIMATELY NULL. Exposure-weighted d(NRMSE^2) over
+   0.15-1.20 Hz, by flown value:
+        RF 0.00 (r70/71)      0.15-0.30 -0.010 | 0.30-0.60 +0.409 | 0.60-1.20 +2.517 | TOTAL +2.916
+        RF 0.06 (rev 6.4)               +0.436 |           +1.123 |           +1.429 |       +2.988
+        RF 0.12 (rev 4/5)               +0.342 |           +0.810 |           +1.983 |       +3.135
+   A 7% spread across the whole range of the toggle. RF = 0 matches V282 in Regime A (-0.010, no gap
+   left) and is the WORST of the three in Regime B. The filter TRANSFERS error between bands roughly
+   one-for-one; it does not remove it.
+
+3. THE RANKING THAT MOTIVATED IT WAS INVERTED. Regime A is ~86% of exposure TIME but only 8.7% of the
+   exposure-weighted error gap. Regime B (0.60-1.20 Hz) is 63.9% of it, and 76% of that is INCOHERENT
+   -- motion the demand does not explain. Buying Regime-A timing by spending Regime-B smoothness is
+   the wrong direction on this car, whose flown wheel shake already runs 2.6-6.5x V282's.
+
+CONFOUND, stated: r70/r71 also differ in fork code (no error notch, no friction hysteresis, no
+rate-measurement filter, no observer, no hold map) and in SteerKP (0.30 and 0.85). They are the only
+flown evidence of RF = 0 on the torque EPS and they are not a clean dose. The conclusion "approximately
+null" rests on three flown values spanning the toggle's whole range agreeing to 7%, not on r70/71 alone.
+
+WHAT WOULD REVIVE IT: a decision by the operator that Regime-A timing is worth more than Regime-B
+smoothness. That is his call, not a measurement -- but it should be made knowing the trade is roughly
+one-for-one, and that RF = 0 has already been driven.

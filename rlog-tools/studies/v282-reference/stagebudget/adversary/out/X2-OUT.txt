@@ -1,0 +1,144 @@
+======================================================================================================================================================
+1. THE REGIME-B CELL, every estimator x taper x detrend x window length.  X = curv*v^2 -> Y = wz*v
+   H1 = Sxy/Sxx (what the surface stream uses, per bin).  Hcoh = |H1|*gamma.  Htot = sqrt(Syy/Sxx).
+======================================================================================================================================================
+
+  speed 8-15  amp A3 (p95|model| >= 1.0 m/s2)   band 0.60-1.20 Hz
+    n  512 F_lin_hann   V282   16 H1  1.307 Hcoh  1.222 Htot  1.399 H2   1.498 g2  0.87/0.18 bias 1.002 lag     327 prat  1.40
+                       TORQ   31 H1  2.241 Hcoh  1.737 Htot  2.921 H2   3.852 g2  0.61/0.10 bias 1.006 lag      32 prat  2.97
+                       ratio H1  1.71  Hcoh  1.42  Htot  2.09
+    n  512 F_lin_bh     V282   16 H1  1.429 Hcoh  1.299 Htot  1.572 H2   1.730 g2  0.83/0.18 bias 1.003 lag     386 prat  1.58
+                       TORQ   31 H1  2.058 Hcoh  1.567 Htot  2.720 H2   3.619 g2  0.59/0.10 bias 1.006 lag     153 prat  2.77
+                       ratio H1  1.44  Hcoh  1.21  Htot  1.73
+    n  512 F_lin_mt3    V282   16 H1  1.019 Hcoh  0.820 Htot  1.286 H2   1.649 g2  0.63/0.06 bias 1.004 lag      34 prat  1.29
+                       TORQ   31 H1  1.281 Hcoh  0.835 Htot  1.997 H2   3.178 g2  0.43/0.03 bias 1.004 lag      62 prat  2.01
+                       ratio H1  1.26  Hcoh  1.02  Htot  1.55
+    n  512 F_mean_hann  V282   16 H1  1.209 Hcoh  1.046 Htot  1.399 H2   1.620 g2  0.75/0.18 bias 1.005 lag     375 prat  1.41
+                       TORQ   31 H1  2.124 Hcoh  1.614 Htot  2.820 H2   3.791 g2  0.59/0.10 bias 1.006 lag     157 prat  2.87
+                       ratio H1  1.76  Hcoh  1.54  Htot  2.02
+    n 1024 F_lin_hann   V282    9 H1  1.084 Hcoh  0.978 Htot  1.202 H2   1.336 g2  0.82/0.31 bias 1.006 lag     515 prat  1.20
+                       TORQ   31 H1  1.988 Hcoh  1.548 Htot  2.586 H2   3.420 g2  0.61/0.10 bias 1.006 lag     249 prat  2.61
+                       ratio H1  1.83  Hcoh  1.58  Htot  2.15
+    n 1024 F_lin_bh     V282    9 H1  1.025 Hcoh  0.939 Htot  1.122 H2   1.231 g2  0.84/0.31 bias 1.006 lag     493 prat  1.12
+                       TORQ   31 H1  1.995 Hcoh  1.582 Htot  2.556 H2   3.344 g2  0.63/0.10 bias 1.006 lag     219 prat  2.57
+                       ratio H1  1.95  Hcoh  1.69  Htot  2.28
+    n 1024 F_lin_mt3    V282    9 H1  0.701 Hcoh  0.489 Htot  1.048 H2   1.641 g2  0.47/0.11 bias 1.015 lag       3 prat  1.05
+                       TORQ   31 H1  1.194 Hcoh  0.710 Htot  2.068 H2   3.700 g2  0.35/0.03 bias 1.006 lag     -33 prat  2.08
+                       ratio H1  1.70  Hcoh  1.45  Htot  1.97
+    n 1024 F_mean_hann  V282    9 H1  1.069 Hcoh  0.955 Htot  1.199 H2   1.347 g2  0.80/0.31 bias 1.007 lag     512 prat  1.20
+                       TORQ   31 H1  1.992 Hcoh  1.549 Htot  2.594 H2   3.436 g2  0.61/0.10 bias 1.006 lag     243 prat  2.62
+                       ratio H1  1.86  Hcoh  1.62  Htot  2.16
+    n 2048 F_lin_hann   V282    6 H1  1.104 Hcoh  1.022 Htot  1.203 H2   1.331 g2  0.85/0.45 bias 1.012 lag     381 prat  1.22
+                       TORQ   21 H1  1.458 Hcoh  1.070 Htot  2.466 H2   7.648 g2  0.43/0.14 bias 1.181 lag     730 prat  2.48
+                       ratio H1  1.32  Hcoh  1.05  Htot  2.05
+    n 2048 F_lin_bh     V282    6 H1  1.124 Hcoh  1.033 Htot  1.230 H2   1.359 g2  0.84/0.45 bias 1.010 lag     367 prat  1.25
+                       TORQ   21 H1  1.569 Hcoh  1.152 Htot  2.615 H2   7.775 g2  0.46/0.14 bias 1.145 lag     428 prat  2.63
+                       ratio H1  1.40  Hcoh  1.12  Htot  2.13
+    n 2048 F_lin_mt3    V282    6 H1  0.732 Hcoh  0.490 Htot  1.151 H2   1.926 g2  0.43/0.16 bias 1.027 lag      37 prat  1.16
+                       TORQ   21 H1  0.993 Hcoh  0.581 Htot  1.999 H2   6.524 g2  0.28/0.05 bias 1.074 lag     685 prat  2.02
+                       ratio H1  1.36  Hcoh  1.19  Htot  1.74
+    n 2048 F_mean_hann  V282    6 H1  1.104 Hcoh  1.022 Htot  1.203 H2   1.332 g2  0.85/0.45 bias 1.012 lag     379 prat  1.22
+                       TORQ   21 H1  1.457 Hcoh  1.070 Htot  2.466 H2   7.664 g2  0.43/0.14 bias 1.182 lag     731 prat  2.48
+                       ratio H1  1.32  Hcoh  1.05  Htot  2.05
+
+  speed 15-22  amp A3 (p95|model| >= 1.0 m/s2)   band 0.60-1.20 Hz
+    n  512 F_lin_hann   V282   16 H1  1.166 Hcoh  1.015 Htot  1.346 H2   1.561 g2  0.75/0.18 bias 1.006 lag     225 prat  1.35
+                       TORQ   27 H1  1.774 Hcoh  1.417 Htot  2.225 H2   2.794 g2  0.64/0.11 bias 1.005 lag      52 prat  2.24
+                       ratio H1  1.52  Hcoh  1.40  Htot  1.65
+    n  512 F_lin_bh     V282   16 H1  1.103 Hcoh  0.948 Htot  1.287 H2   1.506 g2  0.74/0.18 bias 1.006 lag     180 prat  1.29
+                       TORQ   27 H1  1.739 Hcoh  1.401 Htot  2.163 H2   2.700 g2  0.65/0.11 bias 1.005 lag      38 prat  2.17
+                       ratio H1  1.58  Hcoh  1.48  Htot  1.68
+    n  512 F_lin_mt3    V282   16 H1  0.864 Hcoh  0.614 Htot  1.223 H2   1.745 g2  0.50/0.06 bias 1.005 lag     224 prat  1.23
+                       TORQ   27 H1  1.561 Hcoh  1.134 Htot  2.163 H2   3.021 g2  0.53/0.04 bias 1.003 lag      29 prat  2.20
+                       ratio H1  1.81  Hcoh  1.85  Htot  1.77
+    n  512 F_mean_hann  V282   16 H1  1.076 Hcoh  0.917 Htot  1.270 H2   1.509 g2  0.73/0.18 bias 1.006 lag     209 prat  1.27
+                       TORQ   27 H1  1.741 Hcoh  1.393 Htot  2.182 H2   2.744 g2  0.65/0.11 bias 1.005 lag      21 prat  2.20
+                       ratio H1  1.62  Hcoh  1.52  Htot  1.72
+    n 1024 F_lin_hann   V282   11 H1  1.104 Hcoh  0.927 Htot  1.328 H2   1.618 g2  0.70/0.26 bias 1.011 lag     144 prat  1.33
+                       TORQ   14 H1  2.054 Hcoh  1.752 Htot  2.430 H2   2.902 g2  0.73/0.21 bias 1.007 lag    -114 prat  2.46
+                       ratio H1  1.86  Hcoh  1.89  Htot  1.83
+    n 1024 F_lin_bh     V282   11 H1  1.047 Hcoh  0.853 Htot  1.302 H2   1.640 g2  0.66/0.26 bias 1.013 lag     155 prat  1.30
+                       TORQ   14 H1  2.077 Hcoh  1.765 Htot  2.460 H2   2.933 g2  0.73/0.21 bias 1.007 lag    -160 prat  2.50
+                       ratio H1  1.98  Hcoh  2.07  Htot  1.89
+    n 1024 F_lin_mt3    V282   11 H1  0.933 Hcoh  0.699 Htot  1.273 H2   1.788 g2  0.55/0.09 bias 1.008 lag      81 prat  1.28
+                       TORQ   14 H1  1.617 Hcoh  1.241 Htot  2.135 H2   2.869 g2  0.58/0.07 bias 1.005 lag     -78 prat  2.14
+                       ratio H1  1.73  Hcoh  1.78  Htot  1.68
+    n 1024 F_mean_hann  V282   11 H1  1.096 Hcoh  0.919 Htot  1.321 H2   1.611 g2  0.70/0.26 bias 1.011 lag     145 prat  1.32
+                       TORQ   14 H1  2.044 Hcoh  1.739 Htot  2.423 H2   2.902 g2  0.73/0.21 bias 1.007 lag    -110 prat  2.45
+                       ratio H1  1.87  Hcoh  1.89  Htot  1.84
+    n 2048 F_lin_hann   V282    4 H1  1.388 Hcoh  1.216 Htot  1.627 H2   1.982 g2  0.73/0.63 bias 1.035 lag     150 prat  1.65
+                       TORQ   16 H1  1.697 Hcoh  1.373 Htot  2.115 H2   2.662 g2  0.66/0.18 bias 1.009 lag      60 prat  2.13
+                       ratio H1  1.22  Hcoh  1.13  Htot  1.30
+    n 2048 F_lin_bh     V282    4 H1  1.407 Hcoh  1.237 Htot  1.630 H2   1.937 g2  0.76/0.63 bias 1.027 lag     181 prat  1.65
+                       TORQ   16 H1  1.660 Hcoh  1.321 Htot  2.095 H2   2.658 g2  0.63/0.18 bias 1.009 lag      64 prat  2.11
+                       ratio H1  1.18  Hcoh  1.07  Htot  1.29
+    n 2048 F_lin_mt3    V282    4 H1  0.750 Hcoh  0.475 Htot  1.243 H2   2.385 g2  0.39/0.24 bias 1.064 lag    -108 prat  1.26
+                       TORQ   16 H1  0.999 Hcoh  0.613 Htot  1.659 H2   2.803 g2  0.37/0.06 bias 1.010 lag     -69 prat  1.67
+                       ratio H1  1.33  Hcoh  1.29  Htot  1.33
+    n 2048 F_mean_hann  V282    4 H1  1.389 Hcoh  1.216 Htot  1.629 H2   1.986 g2  0.73/0.63 bias 1.035 lag     152 prat  1.65
+                       TORQ   16 H1  1.697 Hcoh  1.372 Htot  2.114 H2   2.661 g2  0.66/0.18 bias 1.009 lag      61 prat  2.13
+                       ratio H1  1.22  Hcoh  1.13  Htot  1.30
+
+======================================================================================================================================================
+2. SUB-BAND SPLIT.  Leakage from the 1.2-2.4 Hz band (where the two builds are the SAME) would
+   pile the excess at the TOP edge.  A real in-band object would not.
+======================================================================================================================================================
+
+  speed 8-15 A3
+    B_lo   (0.6, 0.8)  V282 H1  1.101 g2 0.82 | TORQ H1  1.944 g2 0.66 | ratio  1.77
+    B_mid  (0.8, 1.0)  V282 H1  1.093 g2 0.80 | TORQ H1  2.199 g2 0.54 | ratio  2.01
+    B_hi   (1.0, 1.2)  V282 H1  1.016 g2 0.85 | TORQ H1  1.794 g2 0.26 | ratio  1.76
+    HI     (1.2, 2.4)  V282 H1  0.768 g2 0.34 | TORQ H1  2.090 g2 0.29 | ratio  2.72
+
+  speed 15-22 A3
+    B_lo   (0.6, 0.8)  V282 H1  1.168 g2 0.78 | TORQ H1  2.140 g2 0.79 | ratio  1.83
+    B_mid  (0.8, 1.0)  V282 H1  1.057 g2 0.64 | TORQ H1  1.901 g2 0.77 | ratio  1.80
+    B_hi   (1.0, 1.2)  V282 H1  0.953 g2 0.49 | TORQ H1  2.225 g2 0.48 | ratio  2.33
+    HI     (1.2, 2.4)  V282 H1  1.419 g2 0.38 | TORQ H1  5.628 g2 0.82 | ratio  3.96
+
+======================================================================================================================================================
+3. CHANNEL SWAP: curvature -> curvature (C -> K) instead of curv*v^2 -> wz*v.
+   X = curv*v^2 and Y = wz*v scale with DIFFERENT powers of v, so any window in which the speed
+   changes puts a spurious gain into |H|.  8-15 m/s corner entries are where speed changes most.
+======================================================================================================================================================
+  8-15   A3  accel-frame  V282  1.084 TORQ  1.988 ratio  1.83   |  curvature-frame V282  0.678 TORQ  1.799 ratio  2.65   |  v-sd in window V282 1.07 TORQ 2.32 m/s
+  8-15   A2  accel-frame  V282  1.087 TORQ  1.291 ratio  1.19   |  curvature-frame V282  1.083 TORQ  1.263 ratio  1.17   |  v-sd in window V282 1.82 TORQ 1.67 m/s
+  15-22  A3  accel-frame  V282  1.104 TORQ  2.054 ratio  1.86   |  curvature-frame V282  1.064 TORQ  2.074 ratio  1.95   |  v-sd in window V282 0.79 TORQ 0.79 m/s
+  15-22  A2  accel-frame  V282  1.362 TORQ  1.475 ratio  1.08   |  curvature-frame V282  1.297 TORQ  1.466 ratio  1.13   |  v-sd in window V282 0.46 TORQ 0.68 m/s
+  22+    A3  accel-frame  V282  1.772 TORQ  1.723 ratio  0.97   |  curvature-frame V282  1.750 TORQ  1.651 ratio  0.94   |  v-sd in window V282 0.16 TORQ 0.36 m/s
+  22+    A2  accel-frame  V282  1.738 TORQ  1.667 ratio  0.96   |  curvature-frame V282  1.645 TORQ  1.663 ratio  1.01   |  v-sd in window V282 0.65 TORQ 0.59 m/s
+
+======================================================================================================================================================
+4. THE STRATUM IS NOT MATCHED.  Per-window census of the A3 cell at 8-15 and 15-22 m/s.
+======================================================================================================================================================
+
+  speed 8-15 A3, n=1024 windows
+    route                    grp      n    v50  |sa|50  |sa|95   ap95   ax50   vsd     H1    g2
+    00000065--b9f78988bd     V282     1   13.1     2.4    70.5   1.85   0.16  2.04  1.056  1.00
+    0000006c--2bc842dbac     V282     8   12.0    10.3    35.7   1.27   0.45  0.86  1.103  0.84
+    0000006c--68c6e94b17     T64      2   10.3     2.3   152.9   2.37   0.09  2.84  1.986  0.82
+    0000006d--05e83bb04f     T64      3   11.8     3.6   126.4   2.14   0.11  2.95  1.813  0.58
+    0000006e--6ca3e014fd     T64B     6    9.3     3.0   112.3   2.14   0.12  1.54  1.723  0.74
+    00000076--d0b7ea7e4d     T5       1   11.4     3.2   119.8   2.31   0.17  2.85  3.503  1.00
+    00000075--6c8687d5bd     T4       5    9.0    25.7    89.9   1.93   0.61  2.11  2.442  0.74
+    00000072--8001fc3048     T3       2   10.9     5.0   119.7   2.54   0.30  2.38  2.386  0.54
+    00000070--717f5a7866     T2       3   12.0     6.2   124.8   1.60   0.31  3.12  1.193  0.83
+    00000071--f2c9d073a3     T2       9   10.0    11.6    78.0   2.22   0.67  1.05  2.419  0.78
+
+  speed 15-22 A3, n=1024 windows
+    route                    grp      n    v50  |sa|50  |sa|95   ap95   ax50   vsd     H1    g2
+    0000006c--2bc842dbac     V282    11   17.3     7.8    16.1   1.35   0.90  0.79  1.104  0.70
+    0000006d--05e83bb04f     T64      1   18.9     1.2    12.2   1.21   0.10  0.92  2.172  1.00
+    0000006e--6ca3e014fd     T64B     4   19.5     9.2    16.7   1.69   0.97  0.58  1.896  0.79
+    00000075--6c8687d5bd     T4       5   20.0     8.7    12.5   1.55   0.73  1.04  2.677  0.86
+    00000070--717f5a7866     T2       1   22.0     6.4     8.6   1.01   0.67  0.11  0.970  1.00
+    00000071--f2c9d073a3     T2       3   18.3     7.6    13.1   1.13   0.79  0.60  2.567  0.83
+
+======================================================================================================================================================
+5. TIME-DOMAIN CHECK, no cross-spectrum at all: band-passed regression on every run >= 60 s
+   whose median speed is in the bin, weighted by run length.  Reported with its own R^2.
+======================================================================================================================================================
+  8-15   V282  nruns   2 sec     154  g(weighted)  1.111  g median  1.119  range 1.08..1.16  R2 median 0.81
+  8-15   TORQ  nruns   3 sec     381  g(weighted)  2.216  g median  2.362  range 1.09..2.62  R2 median 0.65
+  15-22  V282  nruns   3 sec     300  g(weighted)  1.577  g median  1.541  range 1.22..1.83  R2 median 0.73
+  15-22  TORQ  no run >=60 s with median speed in bin and p95|model| >= 1

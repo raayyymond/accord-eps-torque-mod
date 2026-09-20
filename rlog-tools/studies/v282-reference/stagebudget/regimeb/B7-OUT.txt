@@ -1,0 +1,53 @@
+======================================================================================================================================================
+L1. PER FORK REV: demand-normalised incoherent WHEEL-ANGLE residual (deg of residual per m/s^2 of
+    in-band demand), 0.60-1.20 Hz and 1.80-3.50 Hz, matched speed, hands-off engaged.
+    Params are each route's OWN flown initData.  V282 is the reference row.
+======================================================================================================================================================
+   rev     RefFilt  DobHz    Ki    Fric    KP |                   8-15                  15-22                    22+
+                                              |     n  .6-1.2  1.8-3.5     n  .6-1.2  1.8-3.5     n  .6-1.2  1.8-3.5
+   V282     ABSENT ABSENT   0.3    0.01   0.9 |   52      7.8      2.8   87      3.8      2.2  333      1.8      1.1
+   T2       ABSENT ABSENT  0.15     0.0   0.3 |   34     43.5     30.7   50     11.5     14.5   40      4.9      4.2
+   T3         0.12 ABSENT   0.6     0.0  0.85 |    6     49.9     25.1   36     15.1     14.8   41      6.4      3.7
+   T4         0.12 ABSENT   0.6     0.0  0.85 |   27     49.1     26.7   15     18.7     16.9   14      8.8      5.5
+   T5         0.12    0.6   0.3     0.0   1.0 |    4       --       --   13     17.5     12.5   19      6.6      4.3
+   T64        0.06    0.6   0.3     0.0   1.0 |   24     41.6     19.8   34     13.5     12.4   42      5.3      3.3
+   T64B       0.06    0.6   0.3     0.0   1.0 |   29     38.1     28.7   18     13.2     11.1   14      6.0      4.1
+
+   (units: deg of demand-unexplained wheel angle per m/s^2 of in-band demand RMS; the ratio is
+    taken per window then median-ed, so it is not driven by one loud window.)
+
+======================================================================================================================================================
+L2. THE STRUCTURAL HOLE.  |H| X->Y at 0.60-1.20 Hz inside torque mode across the WHOLE demand
+    range, with the V282 window count alongside.  The published A3 number (2.503 at 8-15) is
+    measured where V282 has n<6, so it is not a measured contrast there.
+======================================================================================================================================================
+
+   speed 8-15 m/s
+        demand RMS  TORQ n  TORQ |H|  TORQ Minc  V282 n  V282 |H|  V282 Minc  TORQ exposure
+    0.004-0.008        70     0.965      1.471      24     0.928      0.761          49.0%
+    0.008-0.012        34     0.950      1.251      21     0.969      0.610          23.8%
+    0.012-0.018        20     1.332      1.450       7     1.206      0.506          14.0%
+    0.018-0.026         6     1.811      1.832       3     1.000      0.274           4.2%
+    0.026-0.040         1     3.745      0.000       1     1.141      0.000           0.7%
+    0.040-0.070         5     2.416      1.700       0       nan        nan           3.5%
+    0.070-0.150         0       nan        nan       0       nan        nan           0.0%
+
+   speed 15-22 m/s
+        demand RMS  TORQ n  TORQ |H|  TORQ Minc  V282 n  V282 |H|  V282 Minc  TORQ exposure
+    0.004-0.008        51     1.264      1.544      26     1.422      1.354          28.0%
+    0.008-0.012        62     1.221      1.444      33     1.414      1.134          34.1%
+    0.012-0.018        36     1.544      1.477      21     1.547      0.875          19.8%
+    0.018-0.026        17     1.707      1.338       7     1.618      0.753           9.3%
+    0.026-0.040         8     2.265      1.172       2     1.111      0.217           4.4%
+    0.040-0.070         3     1.929      0.857       0       nan        nan           1.6%
+    0.070-0.150         0       nan        nan       0       nan        nan           0.0%
+
+======================================================================================================================================================
+L3. EXPOSURE-WEIGHTED RESTATEMENT at 0.60-1.20 Hz, matched demand.  dM^2 split into the coherent
+    and incoherent legs; exposure = each speed bin's share of the torque car's engaged windows
+    in the matched demand range.
+======================================================================================================================================================
+   speed    exposure   M V282   M TORQ      dM  d(Mcoh^2)  d(Minc^2)   incoherent share of dM^2
+   8-15        27.0%    1.663    2.206   0.543      0.435      1.664                        79%
+   15-22       36.1%    2.126    2.368   0.242     -0.051      1.138                       105%
+   22+         37.0%    2.168    2.305   0.137     -0.160      0.771                       126%

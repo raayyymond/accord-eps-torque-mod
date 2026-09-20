@@ -1,0 +1,26 @@
+Flown lateralDelay (liveDelay), engaged frames only, and the flown toggles:
+  00000064--ce6b0b0ebb V282  D=0.200s  AccordRefFilter=ABSENT AccordJerkLpHz=ABSENT
+  00000065--b9f78988bd V282  D=0.200s  AccordRefFilter=ABSENT AccordJerkLpHz=ABSENT
+  0000006c--2bc842dbac V282  D=0.200s  AccordRefFilter=ABSENT AccordJerkLpHz=ABSENT
+  0000006c--68c6e94b17 T64   D=0.299s  AccordRefFilter=0.06   AccordJerkLpHz=ABSENT
+  0000006d--05e83bb04f T64   D=0.299s  AccordRefFilter=0.06   AccordJerkLpHz=ABSENT
+  0000006e--6ca3e014fd T64B  D=0.302s  AccordRefFilter=0.06   AccordJerkLpHz=ABSENT
+  00000076--d0b7ea7e4d T5    D=0.286s  AccordRefFilter=0.12   AccordJerkLpHz=ABSENT
+  00000075--6c8687d5bd T4    D=0.280s  AccordRefFilter=0.12   AccordJerkLpHz=ABSENT
+  00000072--8001fc3048 T3    D=0.274s  AccordRefFilter=0.12   AccordJerkLpHz=ABSENT
+  00000073--79fd149dd8 T3    D=0.274s  AccordRefFilter=0.12   AccordJerkLpHz=ABSENT
+  00000070--717f5a7866 T2    D=0.200s  AccordRefFilter=ABSENT AccordJerkLpHz=ABSENT
+  00000071--f2c9d073a3 T2    D=0.200s  AccordRefFilter=ABSENT AccordJerkLpHz=ABSENT
+
+Predicted |H_XZ| of the DOCUMENTED stage at each rev's flown D / F_j / RC, vs the MEASURED |H_XZ|
+(measured = b4 T8, 15-22 m/s band averages).
+      band Hz   V282 pred/meas     T2 pred/meas     T3 pred/meas     T4 pred/meas     T5 pred/meas    T64 pred/meas
+  0.10-0.20      1.023/  1.030   1.023/  1.038   1.018/  1.035   1.019/  1.046   1.019/  1.044   1.007/  1.000
+  0.30-0.45      1.122/  1.145   1.122/  1.144   1.073/  1.054   1.075/  1.073   1.078/  1.054   1.038/  1.038
+  0.45-0.60      1.204/  1.227   1.204/  1.230   1.086/  1.070   1.089/  1.089   1.092/  1.066   1.061/  1.065
+  0.60-0.80      1.293/  1.332   1.293/  1.337   1.053/  1.040   1.055/  1.030   1.057/  0.970   1.078/  1.063
+  0.80-1.00      1.367/  1.373   1.367/  1.385   0.959/  0.873   0.959/  0.844   0.958/  0.864   1.071/  1.010
+  1.00-1.20      1.407/  1.335   1.407/  1.333   0.826/  0.651   0.823/  0.660   0.820/  0.671   1.027/  0.882
+  1.20-1.50      1.409/  1.197   1.409/  1.220   0.645/  0.449   0.639/  0.430   0.631/  0.418   0.921/  0.696
+
+  D used (median of each rev's flown liveDelay): V282=0.200s  T2=0.200s  T3=0.274s  T4=0.280s  T5=0.286s  T64=0.299s

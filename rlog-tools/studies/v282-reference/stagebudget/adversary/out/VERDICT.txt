@@ -1,0 +1,100 @@
+ADVERSARY STREAM -- VERDICT.  All numbers re-derived from the route caches by adv_lib.py, which shares
+no code with the surface/amplitude/attribution streams.  Positive controls in `python adv_lib.py`.
+
+WHAT A FAIL WOULD HAVE LOOKED LIKE (written before the runs):
+  - regime B dies if |H| collapses toward 1 under a different estimator, taper, detrend or window
+    length, or if the excess piles at the top band edge (leakage from 1.2-2.4 Hz).
+  - the budget dies if (X->Z) + (Z->Y) does not sum to (X->Y).
+  - the whole comparison dies if wheel -> yaw differs between builds at matched speed.
+
+=========================================================================================== 1. REGIME B
+NOT an estimator artefact.  |H| ratio TORQ/V282 at 0.60-1.20 Hz, A3, 8-15 m/s:
+  H1 1.71/1.83/1.32, Hcoh 1.42/1.58/1.05, Htot 2.09/2.15/2.05 at 512/1024/2048 samples; hann 1.83,
+  blackman-harris 1.95, 3-taper DPSS 1.70; linear detrend 1.83, mean-only 1.86; sub-bands 1.77/2.01/1.76
+  (no top-edge pile-up => no leakage); curvature-frame (C->K, no v^2 asymmetry) 2.65; independent
+  time-domain band-passed regression 1.11 -> 2.22 (R^2 0.81/0.65).  My control recovers a KNOWN gain
+  1.10 out of a cell with coherence 0.20 and an output/input power ratio 2.5, and a KNOWN |H|=4.0 in
+  the adjacent band leaks +1 to +3%.  Incoherence and leakage are both excluded as owners.
+
+IT IS A ONE-ROUTE COMPARISON.  In EVERY A3 cell of the whole surface, exactly ONE V282 route
+contributes >= 3 windows (route 6c--2bc842dbac).  At 0.60-1.20 / 8-22 / A3 the per-route |H| is
+  V282: 6c 1.085 (195 s; r64 n=0, r65 n=1)
+  TORQ: r70 1.072, r6d 1.734, r6e 1.780, r71 2.427, r75 2.461 (410 s)
+The within-build route spread (1.07-2.46) exceeds the between-build difference.  Exact permutation
+over the route labels: p = 0.50.
+
+THE STRATUM IS NOT ANGLE-MATCHED, AND THE MISMATCH IS TWO-SIDED.  At 8-15 m/s / A3:
+  V282  |sa|95 p10/50/90 = 17/45/161 deg,  median |model| 0.27/0.45/0.66, in-band RMS 0.22/0.28/0.51
+  TORQ  |sa|95 p10/50/90 = 52/92/181 deg,  median |model| 0.09/0.29/0.89, in-band RMS 0.21/0.52/0.96
+V282's A3 windows hold a moderate steady angle; the T64-family windows are near-straight with a large
+excursion (median |model| 0.09-0.12 against p95 2.1-2.4).  These are different KINDS of window.
+Overlap box on (|sa|95, median |model|, v): V282 n=1, TORQ n=3.  1:1 nearest-neighbour matching inside
+a 0.75 sd caliper yields 3 pairs and a ratio of 1.02.  There is not enough common support to measure it.
+
+MAGNITUDE AND EXPOSURE BELONG TO DIFFERENT STRATA.  0.60-1.20 Hz |H| ratio by stratum:
+  A3 (>=1 m/s2):  1.83 at 8-15, 1.86 at 15-22   -- 9.7% of torque engaged window time at 8-22 m/s
+  A2 (.3-1):      1.19 at 8-15, 1.08 at 15-22   -- 22.4%
+  22+ A3/A2:      0.97 / 0.96                   -- no difference at all above 22 m/s
+The "17.5% of exposure" is A2+A3; the "|H| 2.15" is A3 alone.  Multiplying one by the other inflates
+the score by roughly 4x.
+
+=========================================================================================== 2. RANKING
+Rebuilt from scratch on NRMSE (RMS of achieved-minus-desired over in-band demand RMS), never on |H|.
+  full-surface rank 1 = 1.20-2.40 Hz / 8-15 / A3  (M 1.700 -> 3.758)  -- a band the brief says not to
+  rank.  Its M_coh is 1.144 -> 1.084, i.e. the coherent miss is slightly BETTER on torque and 100% of
+  the NRMSE excess is incoherent motion.  Rank 1 is therefore a choice of metric, not a measurement.
+  Regime B's own cell (0.60-1.20 / 8-15 / A3) ranks 6th on my rebuild, behind two regime-A cells.
+LEAVE-ONE-ROUTE-OUT (12 drops): rank 1 changes twice.  Dropping 6c--2bc842dbac (73% of V282's engaged
+seconds) makes the rank-1 cell UNREADABLE -- it has no V282 side left at all.  Dropping r71 moves
+rank 1 to a regime-A cell (0.15-0.30 / 8-15 / A1).
+
+WHAT SURVIVES route-level clustering (exact permutation, both builds >= 3 routes with >= 3 windows):
+  0.30-0.60  8-15  A1  dM +0.430 p 0.0121   (891 s torque)
+  0.30-0.60  15-22 A1  dM +0.438 p 0.0121   (584 s)
+  0.30-0.60  22+   A2  dM +0.419 p 0.0061   (512 s)
+  0.15-0.30  22+   A2  dM +0.346 p 0.0357   (471 s)
+  0.30-0.60  22+   A1  dM +0.317 p 0.0167   (420 s)
+  0.30-0.60  8-15  A2  dM +0.650 p 0.0333   (399 s)
+  0.60-1.20  8-15  A2  dM +0.805 p 0.0083   (399 s)
+Six of the seven are REGIME A.  All twelve A3 cells are NOT TESTABLE (rV = 1).  |H| itself separates
+at the route level in 1 of 24 testable cells.
+
+============================================================================================ 3. BUDGET
+ARITHMETIC: ADMISSIBLE.  closure = (X->Z) + (Z->Y) - (X->Y), phase-slope lags, 8-22 m/s:
+  0.15-0.30 Hz: -3 / -12 / +1 / -4 / -2 ms across the five families   (<= 1.4% of the legs)
+  0.30-0.60 Hz: -3 / +5 / +3 / -5 / +17 ms
+  0.60-1.20 Hz: +3 / +4 / +9 / +9 / +124 ms  (only the RF12 row fails)
+ATTRIBUTION: NOT ADMISSIBLE.  The downstream leg Z->Y at 0.15-0.30 Hz, per route:
+  V282  r64 -38, r65 +207, r6c +160                              (mean 110 ms)
+  TORQ  r76 -32, r71 +116, r73 +117, r72 +247, r70 +328, r75 +335, r6c68 +495, r6e +706, r6d +850
+The pooled residual is +241 ms (median +168).  Exact permutation over route labels: p = 0.196 (mean),
+p = 0.364 (median).  Three of nine torque routes sit at or below the V282 maximum.  Dropping the single
+worst torque route takes the residual to +179 ms.  A residual with 880 ms of route spread, a third of
+its members showing none of it, and p ~ 0.2 is not a stage.  By family it is +593 ms (RF06), +114 ms
+(RF00T) and +82 ms (RF12) -- it tracks the fork parameter set, not the EPS build.
+CONFIRMED INDEPENDENTLY: the 2*RC identification of AccordRefFilter.  X->Z minus 2*AccordRefFilter at
+0.15-0.30 Hz = 57 / 56 / 65 / 10 / 57 ms for V282 / V282old / RF00T / RF06 / RF12 -- a common ~57 ms
+baseline once the filter is removed, on families that never shared a fork commit.
+For scale: the TOTAL gap (X->Y, 0.15-0.30 Hz) is +356 ms at the route level, p = 0.064 (mean) /
+0.18 (median).  It is the best-supported claim in the picture and even it is not at p < 0.05.
+
+=========================================================================================== 4. CONTROL
+Wheel -> yaw, the pure-vehicle control, PASSES where it matters.  Speed-matched 2 m/s bins, H1 ratio
+TORQ/V282 at 0.15-0.30 Hz: 1.29 / 0.98 / 0.87 / 1.08 / 0.93 / 1.37 / 1.04 / 0.99 / 1.03 (v 6-30).
+At 0.30-0.60: 1.14 / 1.06 / 0.92 / 1.00 / 0.95 / 1.10 / 0.94 / 1.04 / 0.98.  Route level, 16-22 m/s,
+0.15-0.60 Hz: +5.9%, exact permutation p = 0.42.  No comparison error upstream.
+IT DOES NOT PASS at 0.60-1.20 and 1.20-2.40 Hz (ratio 0.55 at 20-22 m/s, 0.70 at 28-30, brackets
+[H1,H2] disjoint).  H1 is biased DOWN by input noise and torque mode puts x3-5 more 1.8-3.5 Hz motion
+on the wheel, so part of this is estimator; part is real (wheel motion that does not reach the road).
+Either way the vehicle is NOT a common reference above ~0.6 Hz, which is exactly regime B's band.
+A stream that reports wheel->yaw differing between builds is therefore not automatically wrong -- but
+it must show the [H1, H2] bracket and match speed within 2 m/s before calling it a plant difference.
+
+======================================================================================= 5. MY OWN LIMITS
+- I use NON-overlapping windows, so my window counts are ~40% of the surface stream's.  Overlapping
+  windows add resolution, not independence, and cannot repair a one-route reference -- but my absolute
+  |H| values will differ slightly from theirs for this reason.
+- My route-level tests have 3 V282 routes, so the minimum attainable two-sided p is 2/220 = 0.009.
+  "p = 0.196" means the data cannot resolve it, not that the effect is zero.
+- I did not re-derive the AccordRefFilter identification from the fork source; I confirmed its 2*RC
+  signature from the logged X->Z lag only.

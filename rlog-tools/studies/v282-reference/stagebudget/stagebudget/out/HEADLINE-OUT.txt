@@ -1,0 +1,46 @@
+A. the ONE cell whose lag closure is not exact (unwrap branch), named:
+   max |closure| 83.6 ms at band 0.60-1.20  T3  v 22+  a5 .100-.200  n50  cohY 0.59
+
+B. HEADLINE: exposure-weighted leg gaps, amplitude-matched, TORQ vs V282, with route-cluster CI on
+   the two decision-bearing legs (L2 ref filter, L34 loop).  R = residual after the ref filter.
+  0.06-0.15 Hz  cells-weighted n=100  L1 -0  L2 +108[+42,+225]  L34 -75[-311,+176]  L5 -10  |  TOT +23  R -85   (L34 share of R: 89%)
+  0.15-0.30 Hz  cells-weighted n=518  L1 +0  L2 +133[+57,+204]  L34 +159[+37,+257]  L5 -17  |  TOT +276  R +143   (L34 share of R: 112%)
+  0.30-0.60 Hz  cells-weighted n=1487  L1 -4  L2 +119[+54,+178]  L34 +59[-12,+129]  L5 -35  |  TOT +138  R +19   (L34 share of R: 302%)
+  0.60-1.20 Hz  cells-weighted n=1352  L1 -10  L2 +87[+33,+162]  L34 -32[-106,+23]  L5 -28  |  TOT +18  R -69   (L34 share of R: 46%)
+
+C. T2 (V293 EPS, V282's setpoint software exactly: no ref filter, jerk 1.2 Hz, D 0.200,
+   and git-identical in-loop structure -- no notch / hysteresis / rate-meas filter / observer /
+   hold map on EITHER side) vs V282, AMPLITUDE-MATCHED.  The whole gap here IS the residual.
+  ### 0.15-0.30 Hz
+   8-15   a4 .050-.100   n  14/19  medA 0.0655/0.0690 | L1   -8  L2   -5  L34  +197  L5  -22 | TOT  +162
+   8-15   a5 .100-.200   n   9/8   medA 0.1822/0.1443 | L1   -3  L2   -2  L34  -132  L5  -21 | TOT  -158  WEAK
+   8-15   a6 >=.200      n  12/9   medA 0.5511/0.5954 | L1   -0  L2   -0  L34  -160  L5  -22 | TOT  -182  WEAK
+   15-22  a4 .050-.100   n  28/11  medA 0.0704/0.0591 | L1   +1  L2   +1  L34   +84  L5  -24 | TOT   +62
+   15-22  a6 >=.200      n  14/38  medA 0.5442/0.4199 | L1   +0  L2   +0  L34  +164  L5   -7 | TOT  +157
+   22+    a4 .050-.100   n 119/21  medA 0.0676/0.0791 | L1   -0  L2   -0  L34  +345  L5  -22 | TOT  +323
+   22+    a5 .100-.200   n  55/9   medA 0.1381/0.1460 | L1   +3  L2   +2  L34   +28  L5   +8 | TOT   +40  WEAK
+   22+    a6 >=.200      n 111/14  medA 0.4785/0.4469 | L1   +0  L2   +1  L34  +161  L5  -27 | TOT  +135
+  ### 0.30-0.60 Hz
+   0-8    a3 .025-.050   n  21/17  medA 0.0388/0.0356 | L1  -10  L2   -6  L34   -68  L5  -15 | TOT   -99  WEAK
+   0-8    a4 .050-.100   n   8/14  medA 0.0601/0.0720 | L1   +2  L2   +0  L34   -85  L5  -24 | TOT  -107  WEAK
+   8-15   a3 .025-.050   n  57/22  medA 0.0363/0.0416 | L1   -1  L2   +0  L34   +67  L5  +16 | TOT   +83
+   8-15   a4 .050-.100   n  39/43  medA 0.0640/0.0703 | L1   -7  L2   -4  L34   -59  L5  -42 | TOT  -112
+   8-15   a5 .100-.200   n  23/26  medA 0.1453/0.1322 | L1   -4  L2   -2  L34    -4  L5  -43 | TOT   -53
+   8-15   a6 >=.200      n  50/38  medA 0.4432/0.3725 | L1   -5  L2   -2  L34  -100  L5   +4 | TOT  -102
+   15-22  a3 .025-.050   n  67/19  medA 0.0368/0.0362 | L1   -8  L2   -3  L34   +95  L5  -17 | TOT   +67  WEAK
+   15-22  a4 .050-.100   n  63/25  medA 0.0683/0.0767 | L1   -3  L2   -2  L34   +73  L5  -40 | TOT   +27
+   15-22  a5 .100-.200   n  34/13  medA 0.1237/0.1398 | L1   -6  L2   -3  L34  +101  L5   -5 | TOT   +87  WEAK
+   15-22  a6 >=.200      n  47/92  medA 0.6476/0.4686 | L1   -1  L2   -1  L34   +87  L5   +6 | TOT   +92
+   22+    a3 .025-.050   n 169/14  medA 0.0392/0.0432 | L1   -2  L2   -0  L34  +245  L5 -156 | TOT   +87
+   22+    a4 .050-.100   n 211/32  medA 0.0652/0.0774 | L1   -1  L2   -1  L34  +142  L5  -93 | TOT   +47
+   22+    a5 .100-.200   n  88/27  medA 0.1336/0.1226 | L1   +2  L2   +1  L34  +134  L5  -29 | TOT  +108
+   22+    a6 >=.200      n 253/29  medA 0.4599/0.4787 | L1   -3  L2   -1  L34   +68  L5  -64 | TOT    +0
+
+D. THE REF-FILTER DOSE, MEASURED (leg L2 lag by flown AccordRefFilter, 0.15-0.30 Hz, pooled speeds)
+   AccordRefFilter 0.00   n  861  measured L2 lag     +8 ms   analytic 2*RC stage     +0 ms   measured L2 gain 1.019
+   AccordRefFilter 0.06   n  213  measured L2 lag   +119 ms   analytic 2*RC stage   +119 ms   measured L2 gain 0.998
+   AccordRefFilter 0.12   n  220  measured L2 lag   +239 ms   analytic 2*RC stage   +232 ms   measured L2 gain 0.989
+   same, 0.60-1.20 Hz (where the ref filter costs GAIN):
+   AccordRefFilter 0.00   n 2173  measured L2 gain 1.022  lag    +40 ms  | that cell's L34 gain 0.986
+   AccordRefFilter 0.06   n  551  measured L2 gain 0.880  lag   +129 ms  | that cell's L34 gain 1.434
+   AccordRefFilter 0.12   n  619  measured L2 gain 0.659  lag   +247 ms  | that cell's L34 gain 1.057

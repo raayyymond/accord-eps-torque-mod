@@ -1,0 +1,36 @@
+================================================================================================================================
+POSITIVE CONTROL: inject a known EXTRA lag into the achieved signal of one route and check the
+estimator's recovered lag rises by that amount.  Nothing below is reported until this passes.
+================================================================================================================================
+   00000064--ce6b0b0ebb  injected +0.00 s -> median recovered 0.2151 s  (rise +0.0000, expected +0.00)  n=6
+   00000064--ce6b0b0ebb  injected +0.10 s -> median recovered 0.3153 s  (rise +0.1002, expected +0.10)  n=7
+   00000064--ce6b0b0ebb  injected +0.20 s -> median recovered 0.4192 s  (rise +0.2041, expected +0.20)  n=16
+
+================================================================================================================================
+THE D QUESTION.  D_flown is what the canceller actually used.  D_learner is the SAME estimator the
+fork ships, re-run here on every route so both builds are read by one instrument.
+  err = D_flown - D_learner.  NEGATIVE = the canceller under-states the true model->achieved lag.
+================================================================================================================================
+route                  group    D_flown   learner_med p25       p75       err_ms   n_win
+00000039--f56039af87   V282old     0.3000       nan       nan       nan     +nan      0
+0000003a--283a39a1d6   V282old     0.3000       nan       nan       nan     +nan      0
+0000003c--927965c2b4   V282old     0.3000       nan       nan       nan     +nan      0
+00000064--ce6b0b0ebb   V282        0.3000    0.2151    0.2097    0.2163      +85      6
+00000065--b9f78988bd   V282        0.3000    0.5210    0.4408    0.5282     -221      6
+0000006c--2bc842dbac   V282        0.3000    0.3280    0.3076    0.3458      -28     14
+0000006c--68c6e94b17   T64         0.3990       nan       nan       nan     +nan      0
+0000006d--05e83bb04f   T64         0.3990    0.4957    0.4482    0.4957      -97     12
+0000006e--6ca3e014fd   T64B        0.4022    0.4142    0.3966    0.4721      -12     23
+00000075--6c8687d5bd   T4          0.3796    0.5467    0.5373    0.5640     -167      8
+00000076--d0b7ea7e4d   T5          0.3858       nan       nan       nan     +nan      0
+00000072--8001fc3048   T6?         0.3739       nan       nan       nan     +nan      0
+00000073--79fd149dd8   T6?         0.3739    0.4122    0.3825    0.4418      -38     10
+00000070--717f5a7866   V293a       0.3000    0.4415    0.4133    0.4729     -142     31
+00000071--f2c9d073a3   V293a       0.3000    0.4775    0.4474    0.4831     -177      9
+
+   group V282      learner 0.3547 s (n_routes 3)   D_flown 0.3000   err -55 ms
+   group T64       learner 0.4957 s (n_routes 1)   D_flown 0.3990   err -97 ms
+   group T64B      learner 0.4142 s (n_routes 1)   D_flown 0.4022   err -12 ms
+   group T4        learner 0.5467 s (n_routes 1)   D_flown 0.3796   err -167 ms
+   group T6?       learner 0.4122 s (n_routes 1)   D_flown 0.3739   err -38 ms
+   group V293a     learner 0.4595 s (n_routes 2)   D_flown 0.3000   err -160 ms

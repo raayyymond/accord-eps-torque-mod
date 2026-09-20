@@ -1,0 +1,64 @@
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_function_base_impl.py:1317: RuntimeWarning: divide by zero encountered in divide
+  a = -(dx2) / (dx1 * (dx1 + dx2))
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_function_base_impl.py:1318: RuntimeWarning: divide by zero encountered in divide
+  b = (dx2 - dx1) / (dx1 * dx2)
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_function_base_impl.py:1319: RuntimeWarning: divide by zero encountered in divide
+  c = dx1 / (dx2 * (dx1 + dx2))
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_function_base_impl.py:1328: RuntimeWarning: invalid value encountered in add
+  out[tuple(slice1)] = a * f[tuple(slice2)] + b * f[tuple(slice3)] \
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_function_base_impl.py:1328: RuntimeWarning: invalid value encountered in multiply
+  out[tuple(slice1)] = a * f[tuple(slice2)] + b * f[tuple(slice3)] \
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\lib\_function_base_impl.py:1329: RuntimeWarning: invalid value encountered in multiply
+  + c * f[tuple(slice4)]
+sb_lib self-test OK: 2*RC lag recovered (240 ms at 0.12), canceller exact at F_j=1, replay reproduces a step and tracks a ramp lag-free
+self-test OK: lag 0.25 s and gain 0.8 recovered; band |H| 0.8 recovered
+
+==================================================================================================================================
+SOFTWARE REPLAY VALIDATION -- logged desiredLateralAccel vs the replay of latcontrol_torque's
+setpoint chain from the SAME route's logged desiredCurvature, vEgo and liveDelay.lateralDelay.
+  corr / rms(Zhat-Z) as a fraction of rms(Z) / p99 |Zhat-Z|, over LATERALLY ENGAGED frames only.
+  RF = flown AccordRefFilter (None = the code has no ref-filter stage at that commit).
+  Jhz = the flown jerk-filter cutoff (git-checked per commit).
+==================================================================================================================================
+route                    grp      commit        RF  Jhz  D_med engaged s     corr  rmsE/rmsZ   p99|E|    rmsZ clipRAW% clipFLT%  verdict
+00000070--717f5a7866     T2       4247cb09e   None  1.2  0.200       805  0.99952     0.0310   0.0516  0.5065    0.098    0.000  PASS
+00000071--f2c9d073a3     T2       66cf4454a   None  1.2  0.200       830  0.99964     0.0268   0.0618  0.6417    0.075    0.000  PASS
+00000072--8001fc3048     T3       e8e62f0e1   0.12  1.2  0.274       595  0.99982     0.0192   0.0250  0.4323    0.131    0.000  PASS
+00000073--79fd149dd8     T3       e8e62f0e1   0.12  1.2  0.274       529  0.99995     0.0105   0.0248  0.5994    0.017    0.000  PASS
+00000074--2bf17ca67d     T4       08a5a7064   0.12  1.2  0.280        28  0.99954     0.0276   0.0368  0.3446    0.493    0.000  PASS
+00000075--6c8687d5bd     T4       08a5a7064   0.12  1.2  0.280       777  0.99991     0.0136   0.0299  0.6207    0.153    0.000  PASS
+00000076--d0b7ea7e4d     T5       e44b6cd31   0.12  1.2  0.286       490  0.99984     0.0187   0.0292  0.4477    0.069    0.000  PASS
+0000006c--68c6e94b17     T64      84766cdc5   0.06  4.0  0.299       577  0.99995     0.0100   0.0119  0.3554    0.062    0.000  PASS
+0000006d--05e83bb04f     T64      84766cdc5   0.06  4.0  0.299       617  0.99996     0.0088   0.0139  0.4836    0.075    0.000  PASS
+0000006e--6ca3e014fd     T64B     84766cdc5   0.06  4.0  0.302       740  0.99995     0.0102   0.0221  0.7246    0.105    0.000  PASS
+00000064--ce6b0b0ebb     V282     0f98d8c75   None  1.2  0.200       558  0.99915     0.0411   0.0476  0.3446    0.000    0.000  PASS
+00000065--b9f78988bd     V282     0f98d8c75   None  1.2  0.200       595  0.99935     0.0362   0.0495  0.4334    0.071    0.000  PASS
+0000006c--2bc842dbac     V282     57410c3b4   None  1.2  0.200      3047  0.99968     0.0253   0.0435  0.5457    0.048    0.000  PASS
+00000039--f56039af87     V282old  8a28dcef8   None  1.2  0.200       807  0.99952     0.0311   0.0560  0.4849    0.077    0.000  PASS
+0000003a--283a39a1d6     V282old  ffe28378f   None  1.2  0.200       463  0.99953     0.0309   0.0484  0.4529    0.022    0.000  PASS
+0000003c--927965c2b4     V282old  ffe28378f   None  1.2  0.200       552  0.99944     0.0332   0.0543  0.4905    0.044    0.000  PASS
+
+16 routes replayed, 16 PASS, 0 FAIL
+
+==================================================================================================================================
+CONTROL: the analytic response of each software stage, as a check on the measured legs.
+  canceller = e^{-sD} + F_j(s)(1-e^{-sD}) with the flown D and the flown jerk cutoff,
+  ref filter = two cascaded FirstOrderFilters at the flown rc.  |H| and group lag (ms).
+==================================================================================================================================
+case                                       0.10 Hz           0.22 Hz           0.45 Hz           0.85 Hz
+                                      |H|   lag ms      |H|   lag ms      |H|   lag ms      |H|   lag ms
+V282   D 0.200 Jhz 1.2 RF none    canceller+jerk   1.010      +7     1.047     +31     1.161     +89     1.339    +146  
+                                  ref filter      1.000      -0     1.000      -0     1.000      -0     1.000      -0  
+                                  = whole X->Z    1.010      +7     1.047     +31     1.161     +89     1.339    +146  
+T3/T4  D 0.276 Jhz 1.2 RF 0.12    canceller+jerk   1.015      +6     1.066     +43     1.212    +123     1.391    +193  
+                                  ref filter      0.994    +238     0.971    +233     0.889    +212     0.692    +163  
+                                  = whole X->Z    1.008    +244     1.035    +276     1.078    +335     0.963    +356  
+T5     D 0.286 Jhz 1.2 RF 0.12    canceller+jerk   1.015      +7     1.068     +45     1.217    +128     1.393    +200  
+                                  ref filter      0.994    +238     0.971    +233     0.889    +212     0.692    +163  
+                                  = whole X->Z    1.009    +245     1.037    +278     1.082    +341     0.964    +363  
+T64    D 0.299 Jhz 4.0 RF 0.06    canceller+jerk   1.005      -6     1.024      +4     1.089     +36     1.209     +89  
+                                  ref filter      0.998    +120     0.992    +119     0.968    +116     0.893    +106  
+                                  = whole X->Z    1.004    +114     1.016    +123     1.054    +152     1.080    +195  
+T2     D 0.200 Jhz 1.2 RF none    canceller+jerk   1.010      +7     1.047     +31     1.161     +89     1.339    +146  
+                                  ref filter      1.000      -0     1.000      -0     1.000      -0     1.000      -0  
+                                  = whole X->Z    1.010      +7     1.047     +31     1.161     +89     1.339    +146  
