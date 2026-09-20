@@ -1,0 +1,87 @@
+{
+ "verdict": "GATE SHOULD BE SCORED FAIL (clause a); clause b is vacuous; clause c passes trivially",
+ "guard_epoch_matrix": {
+  "friction_hyst>0 guard introduced at": "08a5a7064984 (rev 4, 2026-09-14)",
+  "error notch introduced at": "e8e62f0e194b (rev 3, 2026-09-13)",
+  "rate loop introduced at": "e8e62f0e194b",
+  "relay LIVE on": {
+   "r39/3a/3c": 0.03,
+   "r64/65/6c-2bc (V282)": 0.01,
+   "r71": 0.011,
+   "r73": 0.21205
+  },
+  "relay dead on": [
+   "r70",
+   "r72",
+   "r74",
+   "r75",
+   "r76",
+   "r6c-68c",
+   "r6d",
+   "r6e"
+  ]
+ },
+ "measured_2p0_2p8Hz_rate_rms_degps": {
+  "V282": 0.1995,
+  "r70": 1.7287,
+  "r71": 8.1336,
+  "r72": 0.4386,
+  "r73": 0.367,
+  "rev6.4": 1.6209,
+  "rev5": 1.1241
+ },
+ "measured_3p5_4p5Hz_rate_rms_degps": {
+  "V282": 0.1661,
+  "r70": 0.8355,
+  "r71": 1.3561,
+  "r72": 0.347,
+  "r73": 0.6808,
+  "rev6.4": 1.0154,
+  "rev5": 0.8634
+ },
+ "clause_a_controller_set_sensitivity": {
+  "all 5 anchors": "FAIL 0/4",
+  "drop r73 only": "FAIL 0/4",
+  "drop V282 only": "FAIL 0/4",
+  "r71+r72+rev6.4 only": "PASS 4/4"
+ },
+ "clause_b_ratio_r71_over_r72_on_r72_plant": {
+  "point": 4.9964,
+  "block_boot_95CI": [
+   4.8215,
+   5.2037
+  ],
+  "route_cluster_n_per_arm": 1
+ },
+ "null_pass_rate_clause_a": {
+  "3 independent plants, K=4": 0.1565,
+  "plants perfectly correlated, K=4": 0.25,
+  "K=5": 0.2
+ },
+ "amplitude": {
+  "A_flip_to_stable_m_s2": 2.593,
+  "A_flip_deg": 11.36,
+  "observed_LC_amplitude_deg": 6.0,
+  "L_at_observed_amplitude": 1.063,
+  "L_quoted_smallsignal": 1.43
+ },
+ "plant_extrapolation_ratio_2p34_over_0p20": {
+  "model b=7e-5": 4.613,
+  "model b=6e-4": 1.536,
+  "model b=4.9e-3": 0.215,
+  "measured r71": 1.568,
+  "measured r72": 2.395,
+  "measured r73": 0.457,
+  "measured T64": 1.568,
+  "measured V282": 0.218,
+  "r72_vs_r73_same_commit_same_anchor_ratio_gap": 5.2
+ },
+ "armkp3_step_over_b_range": {
+  "b=7e-5": 0.99,
+  "b=3e-4": 1.11,
+  "b=6e-4": 1.22,
+  "b=1.2e-3": 1.4,
+  "b=1.8e-3": 1.54,
+  "b=4.9e-3": 1.76
+ }
+}

@@ -103,3 +103,64 @@ mechanism is modelled.** That null costs zero drives.
 **Incidental but worth knowing:** route 6d — one of the two routes that define the J = 1.3512 baseline — carried a
 back-filled `SteerFriction` 0.2120 in its `initData`. It was inert (the `:675` guard, `AccordFrictionHyst` 0.015),
 but it is a reminder to read the params rather than the labels.
+
+---
+
+# 🛑 CORRECTION 2026-09-20 — the loop-margin sentence is STRUCK, and the crossing is settled
+
+The pre-registered retrodiction gate (`rlog-tools/studies/v282-reference/PREREG_retrodiction_gate.md`, committed
+74a7e9d **before** the statistic existed) **FAILED**. All three streams and the adjudicator scored clause (a) FAIL
+independently. The class-closing null it licensed is now the result:
+
+> *No statistic available to this kit orders the flown anchors by controller. The Tier B class is therefore
+> CLOSED at any dose until the instability mechanism itself is modelled — not until a better estimator is found.*
+
+## What this changes about ARM-KP3 — three things, none of them the config file
+
+**1. STRIKE the "bounded ×1.46 step" sentence.** That was a *severity* claim quoted from the retrodicting model.
+The gate showed that model mis-ranks its own clean anchors by up to an order of magnitude: it reads r73's
+controller riskiest of everything, and r73 flew without r71's object. **The model is good at WHERE and is not
+calibrated for HOW MUCH.** It retrodicts r71's 2.34 Hz to within ~5–15 % across the delay bracket, and that is all
+it is licensed to say. Do not quote a margin from it. ARM-KP3's case is its *mechanism* — the notch algebra,
+hand-verified — not a margin.
+
+**2. The crossing is settled, and the earlier disagreement was an artefact of counting.** Three re-derivations put
+it at 1.5–1.8 Hz, 3.72–4.05 Hz and 1.62–2.10 Hz. **All three were right about a different crossing: there are
+THREE.** Hand-derived (`orch_armkp3_crossing.py`; α omitted because a positive scalar cannot move a phase
+crossing, so the disputed plant-gain anchor does not enter):
+
+| v = 23 m/s, D = 65 ms, b = 0.0006 | −180° crossings |
+|---|---|
+| as flown (kp 1.0, ki 0.30, Q 1.00) | **1.77 / 2.05 / 3.27 Hz** |
+| ARM-KP3 (kp 3.0, ki 0.60, Q 0.30) | **1.69 / 2.05 / 3.87 Hz** |
+
+ARM-KP3 moves the first crossing slightly **down** and the third **up**; the middle one sits exactly on the plant
+mode in *both* configs — it is the notch's own zero, not something ARM-KP3 introduces. `b` is the one genuinely
+open constant (the study leaves it uncertain over ~70×); the full sweep over b and speed is in the script.
+⇒ **The R1 revert band of 1.5–6.0 Hz already covers all three. Keep it. Listen across the whole band, not at a
+single frequency.**
+
+**3. `SteerKP` 3.0 is the ceiling, not a midpoint** (`max = steerKp × STEER_KP_MAX_MULT`, `KP = 0.6`,
+`MAX_MULT = 5.0` ⇒ 3.00). Tier B's 8 / 12 / 16 rungs were **never reachable from a toggle config at all** — they
+always needed fork code. True independently of the gate.
+
+## Two record errors, corrected as facts
+
+- 🛑 **The `friction_hyst > 0` guard is a PER-COMMIT fact, not a per-route one.** `friction_torque = 0.0 if
+  friction_hyst > 0.0` first appears at **08a5a7064** (rev 4). Routes 72 and 73 flew **e8e62f0e1**, which applies
+  friction *unconditionally* — so r73's back-filled `SteerFriction` 0.2120 was **LIVE**, at 19.3× r71's 0.011.
+  Confirmed on the wire: the coefficient of `clip(arg/0.30)` in `pid_log.f` is **2.530** on r73 against **0.311**
+  on r72 (same commit, same kp/LAF/ki/notch/rate-loop, `SteerFriction` 0.0). The same correction makes all three
+  V282 reference routes relay-live at 0.010–0.030. **Anything reading `AccordFrictionHyst` as gating the relay
+  must first check the flown commit.** This does *not* change ARM-KP3, which flies rev 6.4's commit where the
+  guard exists and `AccordFrictionHyst` stays 0.015 — G0b still holds.
+- `loopshape/loopshape/lp_lib.py` recorded `notch=False` for routes 72 and 73; **both flew it at Q = 1.0.** Fixed.
+
+## One thing deliberately NOT done
+r73's "flew clean" label is contradicted by its own wire (×3.7–5.9 more 4.0–6.5 Hz wheel-rate power than its
+matched control r72 — the "4 Hz chatter" the fork's own next commit records, and which this kit's memory recorded
+on 2026-09-14). **The gate was not re-run with r73 relabelled.** Re-labelling an anchor after seeing the result is
+exactly what the prereg's anti-fudge clause forbids. It would not have rescued the model anyway: r73's object is
+at 4.0–6.5 Hz and the repair places it at 1.7–1.9 Hz, so the model is wrong about the frequency of the very
+effect it adds. If r73's label is to be corrected, it must be established from the wire in its own write-up,
+*before* any future pre-registration is written.

@@ -1,0 +1,98 @@
+================================================================================================================================
+REPAIRED STATISTIC   R = |L| at the first -180 deg crossing (1-8 Hz).   R >= 1 => limit cycle predicted there.
+speed bin 15-22    delay point 65 ms (measured bracket 55-75 ms)
+================================================================================================================================ 
+
+TABLE 1 -- THE RELAY GUARD, from each route's OWN initData and OWN flown commit
+route                  label                      commit     SteerFriction  FricHyst  guard?  RELAY  rateloop  notchQ    kp   LAF    ki
+00000039--f56039af87   V282old                    8a28dcef8         0.0300        --      no   LIVE    0.0000      --  0.80   2.1  0.30
+0000003a--283a39a1d6   V282old                    ffe28378f         0.0300        --      no   LIVE    0.0000      --  0.80   4.0  0.30
+0000003c--927965c2b4   V282old                    ffe28378f         0.0300        --      no   LIVE    0.0000      --  0.80   3.6  0.30
+00000064--ce6b0b0ebb   V282                       0f98d8c75         0.0100        --      no   LIVE    0.0000      --  0.90   6.0  0.30
+00000065--b9f78988bd   V282                       0f98d8c75         0.0100        --      no   LIVE    0.0000      --  0.90   6.0  0.30
+0000006c--2bc842dbac   V282                       57410c3b4         0.0100        --      no   LIVE    0.0000      --  0.90   6.0  0.30
+0000006c--68c6e94b17   T64 rev6.4                 84766cdc5         0.0000     0.015     yes   dead    0.0010    1.00  1.00  14.0  0.30
+0000006d--05e83bb04f   T64 rev6.4                 84766cdc5         0.2120     0.015     yes   dead    0.0010    1.00  1.00  14.0  0.30
+0000006e--6ca3e014fd   T64B rev6.4                84766cdc5         0.0000     0.015     yes   dead    0.0010    1.00  1.00  14.0  0.30
+00000070--717f5a7866   V293 r1                    4247cb09e         0.0000        --      no   dead    0.0000      --  0.30   6.0  0.15
+00000071--f2c9d073a3   r71 *LIMIT CYCLE 2.34 Hz*  66cf4454a         0.0110        --      no   LIVE    0.0000      --  0.85  14.0  0.30
+00000072--8001fc3048   r72 clean                  e8e62f0e1         0.0000     0.015      no   dead    0.0006    1.00  0.85  14.0  0.60
+00000073--79fd149dd8   r73 clean                  e8e62f0e1         0.2120     0.015      no   LIVE    0.0006    1.00  0.85  14.0  0.60
+00000074--2bf17ca67d                              08a5a7064         0.0000     0.015     yes   dead    0.0006    1.00  0.85  14.0  0.60
+00000075--6c8687d5bd   T4 rev4                    08a5a7064         0.2120     0.015     yes   dead    0.0006    1.00  0.85  14.0  0.60
+00000076--d0b7ea7e4d   T5 rev5                    e44b6cd31         0.0000     0.015     yes   dead    0.0010    1.00  1.00  14.0  0.30
+
+  guard = that commit carries `friction_torque = 0.0 if friction_hyst > 0.0` (added at 08a5a7064).
+  r72/r73 flew e8e62f0e1: hysteresis term present, GUARD NOT PRESENT -- so r73's back-filled
+  stock 0.2120 RAN as an error relay, while 6d's and 75's identical 0.2120 did not.
+
+TABLE 2 -- THE IDENTIFIED PLANTS (this speed bin).  alpha = |H_iv|(0.15-0.30 Hz) * k(v)
+plant                  label                      nrun   secs     v  |H|0.2  phase   coh    k(v)  alpha       c      A  modeHz  use?
+00000039--f56039af87   V282old                       3    124  16.1   64.20  -70.6 0.893  0.0098  0.632  0.0839  0.253    1.77 -V282
+0000006c--2bc842dbac   V282                          5    438  18.1   57.10  -63.0 0.954  0.0106  0.607  0.0909  0.079    1.83 -V282
+0000006d--05e83bb04f   T64 rev6.4                    5    221  17.3   49.33  -12.2 0.670  0.0102  0.505  0.0821  0.123    1.80  thin
+0000006e--6ca3e014fd   T64B rev6.4                   2    159  17.6   44.04  -35.2 0.883  0.0103  0.456  0.1061  0.165    1.81   YES
+00000070--717f5a7866   V293 r1                       5    308  18.9   58.32  -32.1 0.936  0.0110  0.642  0.0913  0.303    1.87   YES
+00000071--f2c9d073a3   r71 *LIMIT CYCLE 2.34 Hz*     4    180  17.4   53.74  -41.7 0.932  0.0103  0.551  0.1052  0.287    1.80   YES
+00000073--79fd149dd8   r73 clean                     6    240  18.1   30.58  -29.6 0.922  0.0106  0.324  0.0830  0.070    1.83   YES
+00000075--6c8687d5bd   T4 rev4                       2    135  18.1   54.41  -37.0 0.965  0.0106  0.578  0.1060  0.185    1.83   YES
+00000076--d0b7ea7e4d   T5 rev5                       2    146  17.6   40.62  -37.8 0.939  0.0103  0.420  0.0911  0.181    1.81   YES
+
+  V282-era routes are EXCLUDED as plants and as controllers: the fork's J/b/k(v) model is
+  explicitly the V293 torque-mode plant.  Their measured 0.2 Hz phase (-50 to -63 deg) differs
+  from the V293 routes' (-25 to -41 deg), which is what a rate-servo EPS should look like.
+  They are reported in TABLE 4b, not used for the gate.
+
+TABLE 3 -- RETRODICTION OF r71 ON ITS OWN PLANT (the one labelled test)
+   r71 as flown, relay ON     0.60 @ 2.41 Hz    0.69 @ 2.28 Hz    0.77 @ 2.18 Hz
+   r71 with the relay OFF     0.38 @ 2.40 Hz    0.43 @ 2.27 Hz    0.48 @ 2.18 Hz
+   r72's controller           0.21 @ 3.91 Hz    0.25 @ 3.54 Hz    0.29 @ 3.26 Hz
+   rev 6.4's controller       0.28 @ 4.08 Hz    0.34 @ 3.66 Hz    0.39 @ 3.35 Hz
+   OBSERVED on r71: a limit cycle at 2.34 Hz.
+   DF limit-cycle amplitude (R(A)=1 at 65 ms): error amplitude A* = nan m/s^2  => wheel amplitude nan deg  (reported: +/-6 deg)
+
+TABLE 4 -- PLANT x CONTROLLER CROSS-TABLE of R  (row = whose plant, col = whose controller)
+plant \ controller                  71      72      73      6c      6d      6e      76      75      70
+6e T64B rev6.4                    0.57    0.20    1.49    0.28    0.28    0.28    0.28    0.20    0.42
+70 V293 r1                        0.66    0.25    1.61    0.35    0.35    0.35    0.35    0.25    0.46
+71 r71 *LIMIT CYCLE 2.34 Hz*      0.69    0.25    1.80    0.34    0.34    0.34    0.34    0.25    0.51
+73 r73 clean                      0.31    0.12    0.73    0.18    0.18    0.18    0.18    0.12    0.22
+75 T4 rev4                        0.71    0.25    1.84    0.34    0.34    0.34    0.34    0.25    0.51
+76 T5 rev5                        0.45    0.17    1.12    0.24    0.24    0.24    0.24    0.17    0.33
+   -- crossing frequency, Hz --
+6e T64B rev6.4                    2.29    3.54    1.60    3.66    3.66    3.66    3.66    3.52    2.27
+70 V293 r1                        2.33    3.60    1.65    3.72    3.72    3.72    3.72    3.58    2.31
+71 r71 *LIMIT CYCLE 2.34 Hz*      2.28    3.54    1.60    3.66    3.66    3.66    3.66    3.52    2.27
+73 r73 clean                      2.30    3.62    1.63    3.73    3.73    3.73    3.73    3.60    2.29
+75 T4 rev4                        2.30    3.55    1.62    3.67    3.67    3.67    3.67    3.53    2.29
+76 T5 rev5                        2.29    3.58    1.61    3.70    3.70    3.70    3.70    3.57    2.27
+
+TABLE 4b -- the V282-era plants, OUT OF MODEL DOMAIN, reported not used
+plant \ controller                  71      72      73      6c      6d      6e      76      75      70
+39 V282old                        0.67    0.27    1.60    0.38    0.38    0.38    0.38    0.27    0.52
+6c V282                           0.64    0.24    1.56    0.34    0.34    0.34    0.34    0.24    0.46
+   -- crossing frequency, Hz --
+39 V282old                        2.26    3.59    1.57    3.71    3.71    3.71    3.71    3.58    2.24
+6c V282                           2.30    3.59    1.63    3.71    3.71    3.71    3.71    3.57    2.29
+
+TABLE 5 -- ROUTE-CLUSTER BOOTSTRAP of the plant anchor (2000 draws, resampling contiguous runs)
+   alpha is a pure scalar on L, so R scales exactly with it and the crossing frequency is fixed.
+   plant 6e T64B rev6.4          alpha x[0.844,1.157] :  71: 0.57[0.48,0.66]  72: 0.20[0.17,0.24]  73: 1.49[1.26,1.72]  6c: 0.28[0.23,0.32]
+   plant 70 V293 r1              alpha x[0.922,1.249] :  71: 0.66[0.61,0.82]  72: 0.25[0.23,0.31]  73: 1.61[1.48,2.01]  6c: 0.35[0.32,0.44]
+   plant 71 r71 *LIMIT CYCLE 2   alpha x[0.694,1.126] :  71: 0.69[0.48,0.78]  72: 0.25[0.17,0.28]  73: 1.80[1.25,2.03]  6c: 0.34[0.24,0.38]
+   plant 73 r73 clean            alpha x[0.894,1.060] :  71: 0.31[0.28,0.33]  72: 0.12[0.11,0.13]  73: 0.73[0.66,0.78]  6c: 0.18[0.16,0.19]
+   plant 75 T4 rev4              alpha x[0.878,1.048] :  71: 0.71[0.62,0.74]  72: 0.25[0.22,0.26]  73: 1.84[1.61,1.92]  6c: 0.34[0.30,0.36]
+   plant 76 T5 rev5              alpha x[0.882,1.213] :  71: 0.45[0.40,0.55]  72: 0.17[0.15,0.21]  73: 1.12[0.98,1.35]  6c: 0.24[0.21,0.29]
+
+================================================================================================================================
+THE PRE-REGISTERED GATE  (PREREG_retrodiction_gate.md, committed 74a7e9d before any of this ran)
+================================================================================================================================
+
+(a) RANK -- r71's controller must be the RISKIEST on >= 2 of the 3 non-r71 plants with enough data
+Traceback (most recent call last):
+  File "C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\retrodict\repair\r3_gate.py", line 198, in <module>
+    main()
+  File "C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\retrodict\repair\r3_gate.py", line 155, in main
+    vals = {c: G[(prt, c)][0] for c in ctrls if np.isfinite(G[(prt, c)][0])}
+                                                            ~^^^^^^^^^^
+KeyError: ('00000072--8001fc3048', '00000071--f2c9d073a3')

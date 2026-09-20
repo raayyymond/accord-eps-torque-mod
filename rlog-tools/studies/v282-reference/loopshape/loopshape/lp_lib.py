@@ -71,8 +71,17 @@ FLOWN = {
     "00000075--6c8687d5bd": dict(kp=0.85, laf=14.0, ki=0.6, ki_hi=2.5, notch=True, eps="V293"),
     "00000070--717f5a7866": dict(kp=0.3, laf=6.0, ki=0.15, ki_hi=0.0, notch=False, eps="V293"),
     "00000071--f2c9d073a3": dict(kp=0.85, laf=14.0, ki=0.3, ki_hi=0.0, notch=False, eps="V293"),
-    "00000072--8001fc3048": dict(kp=0.85, laf=14.0, ki=0.6, ki_hi=0.0, notch=False, eps="V293"),
-    "00000073--79fd149dd8": dict(kp=0.85, laf=14.0, ki=0.6, ki_hi=0.0, notch=False, eps="V293"),
+    # 2026-09-20 CORRECTION: r72 and r73 both FLEW the error notch at Q = 1.0 -- `notch=False` here was wrong,
+    # so every conclusion this engine drew about these two routes used the wrong controller.  They also flew
+    # AccordRateLoopGain 0.0006.  And r73 flew a LIVE SteerFriction relay at the back-filled stock 0.2120:
+    # 🛑 THE `friction_hyst > 0` GUARD IS A PER-COMMIT FACT, NOT A PER-ROUTE ONE.  It first appears at
+    # 08a5a7064 (rev 4).  r72/r73 flew e8e62f0e1, which applies friction UNCONDITIONALLY, so reading
+    # AccordFrictionHyst 0.015 as "relay dead" is only valid at rev 4 and later.  Confirmed on the wire: the
+    # coefficient of clip(arg/0.30) in pid_log.f is 2.530 on r73 against 0.311 on r72 (same commit, same
+    # kp/laf/ki/notch/rate-loop, SteerFriction 0.0).  The same correction makes all three V282 routes
+    # relay-live at 0.010-0.030.  Anything gating the relay on AccordFrictionHyst must check the flown commit.
+    "00000072--8001fc3048": dict(kp=0.85, laf=14.0, ki=0.6, ki_hi=0.0, notch=True, eps="V293"),
+    "00000073--79fd149dd8": dict(kp=0.85, laf=14.0, ki=0.6, ki_hi=0.0, notch=True, eps="V293"),
 }
 LOW_SPEED_X, LOW_SPEED_Y, MIN_SPEED = [0, 10, 20, 30], [12, 10.5, 8, 5], 1.0
 HOLD_V_BP = [2.0, 4.0, 6.0, 8.0, 10.0, 12.5, 15.0, 17.5, 20.0, 23.0, 28.0]
