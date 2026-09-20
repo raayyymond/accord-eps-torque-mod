@@ -1,0 +1,77 @@
+CENSUS -- engaged time by speed, and the two candidate loop-open controls.  EVIDENCE (logged flags).
+'on' = laterally engaged AND steeringPressed.  'lon' = controlsState active but latActive FALSE.
+
+route                 fam         LAF   kp  kp/LAF   act s    ident  >=15 runs>=41s
+64/ce6b               V282       6.00 0.90  0.1500     580  6.2e-08        239 s/2  
+65/b9f7               V282       6.00 0.90  0.1500     658  8.9e-08        153 s/1  
+6c/2bc8               V282       6.00 0.90  0.1500    3124  6.7e-08       1837 s/8  
+39/f560               V282old    2.11 0.80  0.3791     876  1.4e-07         45 s/1  
+3a/283a               V282old    4.00 0.80  0.2000     481  7.5e-08        200 s/1  
+3c/9279               V282old    3.60 0.80  0.2222     593  1.0e-07        187 s/2  
+6c/68c6               TORQ      14.00 1.00  0.0714     608  5.4e-08        239 s/2  
+6d/05e8               TORQ      14.00 1.00  0.0714     658  6.0e-08        105 s/1  
+6e/6ca3               TORQ      14.00 1.00  0.0714     766  6.0e-08        185 s/2  
+70/717f               TORQ       6.00 0.30  0.0500     856  6.0e-08        346 s/4  
+71/f2c9               TORQ      14.00 0.85  0.0607     879  6.2e-08         88 s/1  
+72/8001               TORQ      14.00 0.85  0.0607     624  8.9e-08        173 s/1  
+73/79fd               TORQ      14.00 0.85  0.0607     596  6.4e-08        116 s/2  
+75/6c86               TORQ      14.00 0.85  0.0607     801  9.4e-08        143 s/2  
+76/d0b7               TORQ      14.00 1.00  0.0714     528  4.6e-08        133 s/2  
+
+HANDS-OFF usable seconds by speed bin:
+route                       0-8     8-15    15-22      >22
+64/ce6b                     128      103       99      228
+65/b9f7                     112      204      173      105
+6c/2bc8                     495      518      437     1598
+39/f560                     276      310      124       97
+3a/283a                      79      109       84      191
+3c/9279                     123      121      172      135
+6c/68c6                      98      179      108      193
+6d/05e8                     115      203      220       78
+6e/6ca3                     182      304      158       97
+70/717f                     131      170      307      197
+71/f2c9                     212      341      179       98
+72/8001                     158      119      112      207
+73/79fd                      78      115      239       98
+75/6c86                     218      339      134       85
+76/d0b7                      88       93      146      164
+
+HANDS-ON (steeringPressed, laterally engaged) seconds by speed bin:
+route                       0-8     8-15    15-22      >22  8-22 tot  longest  n>=10s   t>=10s
+64/ce6b                      10        8        5        0        13      2.9       0        0
+65/b9f7                      38       22        3        0        25      5.4       0        0
+6c/2bc8                      40       22        6        7        28      3.8       0        0
+39/f560                      33       20       13        4        33     11.4       1       11
+3a/283a                       6        7        5        0        12      2.8       0        0
+3c/9279                      14       25        0        2        25      6.5       0        0
+6c/68c6                      14        8        9        0        17      2.3       0        0
+6d/05e8                      23       14        3        1        17      1.8       0        0
+6e/6ca3                      18        7        0        0         7      1.7       0        0
+70/717f                      22       17       12        1        28      2.9       0        0
+71/f2c9                      37        6        4        2        10      1.9       0        0
+72/8001                      21        3        3        1         7      2.1       0        0
+73/79fd                      35       25        4        3        29      2.5       0        0
+75/6c86                      20        2        0        2         2      0.9       0        0
+76/d0b7                      13       10       14        2        24      2.3       0        0
+
+LONGITUDINAL-ONLY engaged (lateral loop OPEN) seconds by speed bin:
+route                       0-8     8-15    15-22      >22  8-22 tot  longest  n>=10s   t>=10s
+64/ce6b                       2        0        0        0         0      0.0       0        0
+65/b9f7                      19        0        0        0         0      0.0       0        0
+6c/2bc8                       4        0        0        0         0      0.0       0        0
+39/f560                       2        0        0        0         0      0.0       0        0
+3a/283a                      17        0        0        0         0      0.0       0        0
+3c/9279                       0        0        0        0         0      0.0       0        0
+6c/68c6                       0        0        0        0         0      0.0       0        0
+6d/05e8                       0        0        0        0         0      0.0       0        0
+6e/6ca3                       0        0        0        0         0      0.0       0        0
+70/717f                       9        0        0        0         0      0.0       0        0
+71/f2c9                       9        0        0        0         0      0.0       0        0
+72/8001                       1        0        0        0         0      0.0       0        0
+73/79fd                       0        0        0        0         0      0.0       0        0
+75/6c86                       7        0        0        0         0      0.0       0        0
+76/d0b7                       0        0        0       20         0      0.0       0        0
+
+V282     hands-on 8-22 m/s total      66 s (in runs >=10 s:      0 s,   0 runs) | lon-only 8-22       0 s (>=10 s:      0 s,   0 runs)
+V282old  hands-on 8-22 m/s total      70 s (in runs >=10 s:     11 s,   1 runs) | lon-only 8-22       0 s (>=10 s:      0 s,   0 runs)
+TORQ     hands-on 8-22 m/s total     140 s (in runs >=10 s:      0 s,   0 runs) | lon-only 8-22       0 s (>=10 s:      0 s,   0 runs)

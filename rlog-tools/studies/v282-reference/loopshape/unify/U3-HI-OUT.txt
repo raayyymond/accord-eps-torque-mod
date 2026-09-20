@@ -1,0 +1,46 @@
+TEST 1 -- IS THE EXTRA LAG THE LOOP SHAPE?   tag hi   all windows
+
+(a) IDENTITY CHECK.  T built from the three measured transfers vs T measured directly.
+    This is algebraically exact when P is the IV estimate, so it only catches coding
+    errors -- it is NOT evidence for the structure.  Printed so nobody reads it as such.
+    V282: max |T_built - T_meas| over 0.08-1.2 Hz = 4.90e-02
+    TORQ: max |T_built - T_meas| over 0.08-1.2 Hz = 9.89e-02
+
+(b) THE LEG, RE-MEASURED (cross-spectral phase of the shaped setpoint -> wheel angle),
+    beside the study's five-leg budget number for L34.
+    band           V282 ms   TORQ ms    gap ms   (budget L34 at 0.15-0.30: 107.7 / 305.0 / +197.2)
+    0.08-0.15          169       204        35
+    0.15-0.30          109       271       162
+    0.30-0.60           92       166        74
+    0.60-1.20           72         9       -63
+
+    Same, on the loop's own output Y (the angle through the kinematic model):
+    0.08-0.15           92       137        45
+    0.15-0.30           87       250       163
+    0.30-0.60           97       181        84
+    0.60-1.20           84        21       -62
+
+(c) ATTRIBUTION of the measured lag gap (Shapley over the 6 orderings of the three
+    measured transfers).  'C' = the fork's feedback gain (kp/LAF and ki), 'P' = the
+    PLANT (the EPS change), 'F' = the feedforward path (plant FF, ref filter, the
+    torque builds' inner rate loop and observer).
+    band           gap ms     C ms     P ms     F ms     |L| V282 -> TORQ
+    0.08-0.15          59       40       55      -36        2.721 -> 0.801
+    0.15-0.30         167       46      -64      185        1.506 -> 0.479
+    0.30-0.60          88       38      -84      134        0.864 -> 0.387
+    0.60-1.20         -58       15     -127       53        0.547 -> 0.455
+
+(d) ONE FACTOR AT A TIME, from the V282 baseline (lag of T, ms).  Algebra on measured
+    transfers -- read as attribution of a measured difference, not as a dose.
+    band             V282  +C only  +P only  +F only  all three
+    0.08-0.15          42       90       76       36        101
+    0.15-0.30          63       91       18      212        230
+    0.30-0.60          91      115       19      199        179
+    0.60-1.20          83      104      -29      127         25
+
+(e) ROUTE-CLUSTER BOOTSTRAP (300 draws, routes resampled within family), 5-95%:
+    band                      gap ms                C ms                P ms                F ms
+    0.08-0.15     [   -59,   144]     [    22,    68]     [   -92,   120]     [  -120,    40]
+    0.15-0.30     [   112,   206]     [    34,    60]     [   -99,   -40]     [   120,   223]
+    0.30-0.60     [    46,   120]     [    33,    41]     [  -107,   -65]     [    95,   158]
+    0.60-1.20     [   -97,   -34]     [    11,    18]     [  -174,   -98]     [    37,    70]

@@ -1,0 +1,41 @@
+PLANT torque -> wheel angle (deg per torque), BOTH estimators, per route:
+route    fam     est       0.08     0.15      0.3      0.6   slope  ph .15-.3
+39/f560  V282old IV        84.4     86.0     40.8     22.3   -0.70        -36
+39/f560  V282old dir       61.2     64.8     37.4     21.5   -0.54        -40
+3a/283a  V282old IV        47.7     53.4     35.2     19.8   -0.45        -39
+3a/283a  V282old dir       41.6     47.5     33.2     19.0   -0.40        -41
+3c/9279  V282old IV        57.0     61.0     37.0     20.4   -0.53        -38
+3c/9279  V282old dir       49.5     54.0     34.6     19.6   -0.47        -40
+64/ce6b  V282    IV        50.5     54.5     34.1     18.4   -0.51        -38
+64/ce6b  V282    dir       43.3     47.8     31.9     17.7   -0.45        -39
+65/b9f7  V282    IV        48.8     52.8     33.0     16.9   -0.54        -38
+65/b9f7  V282    dir       38.6     43.9     31.1     16.3   -0.43        -41
+6c/2bc8  V282    IV        59.1     62.8     34.9     18.5   -0.60        -35
+6c/2bc8  V282    dir       46.4     51.1     32.6     18.1   -0.48        -38
+6c/68c6  TORQ    IV        33.7     36.7     28.7     26.2   -0.15        -24
+6c/68c6  TORQ    dir       26.3     30.9     27.3     25.2   -0.04        -28
+6d/05e8  TORQ    IV        36.1     38.8     30.7     32.3   -0.08        -25
+6d/05e8  TORQ    dir       30.6     34.9     29.7     29.3   -0.04        -28
+6e/6ca3  TORQ    IV        43.4     49.8     47.5     83.6    0.28        -23
+6e/6ca3  TORQ    dir       37.9     43.6     44.0     65.6    0.24        -29
+70/717f  TORQ    IV        42.0     50.7     49.9     53.6    0.10        -25
+70/717f  TORQ    dir       39.5     46.2     39.4     35.0   -0.08        -26
+71/f2c9  TORQ    IV        44.6     52.8     44.2     44.5   -0.03        -25
+71/f2c9  TORQ    dir       40.2     44.2     34.3     34.9   -0.10        -29
+72/8001  TORQ    IV        27.2     33.7     35.1     26.0   -0.02        -27
+72/8001  TORQ    dir       25.8     31.9     31.4     22.1   -0.07        -29
+73/79fd  TORQ    IV        30.0     34.0     25.4     19.6   -0.23        -27
+73/79fd  TORQ    dir       23.7     27.5     20.8     12.6   -0.32        -29
+75/6c86  TORQ    IV        44.7     53.9     56.6     47.6    0.03        -24
+75/6c86  TORQ    dir       38.4     48.0     53.4     44.4    0.08        -29
+76/d0b7  TORQ    IV        33.4     41.1     41.5     41.2    0.09        -22
+76/d0b7  TORQ    dir       28.5     36.0     36.2     39.3    0.14        -27
+
+  slope TORQ      IV   n=9  min -0.23  max +0.28  median -0.02
+  slope TORQ      dir  n=9  min -0.32  max +0.24  median -0.04
+  slope V282      IV   n=3  min -0.60  max -0.51  median -0.54
+  slope V282      dir  n=3  min -0.48  max -0.43  median -0.45
+  slope V282old   IV   n=3  min -0.70  max -0.45  median -0.53
+  slope V282old   dir  n=3  min -0.54  max -0.40  median -0.47
+  IV: V282-EPS routes -0.70..-0.45   TORQUE routes -0.23..+0.28   SEPARATED
+  dir: V282-EPS routes -0.54..-0.40   TORQUE routes -0.32..+0.24   SEPARATED

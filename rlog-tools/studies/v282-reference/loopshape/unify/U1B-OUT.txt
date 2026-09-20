@@ -1,0 +1,22 @@
+IS THE LOOP'S MEASUREMENT THE STEERING ANGLE?  (EVIDENCE: frame-by-frame reconstruction)
+
+route     fam             n  corr(y, angle model)    slope  resid/rms  corr(y, yawpose)  |yaw|/|y|
+64/ce6b   V282        42975               0.99988   1.0028     0.0158            0.9635      1.029
+65/b9f7   V282        48292               0.99998   1.0029     0.0065            0.9917      1.012
+6c/2bc8   V282       255280               0.99996   1.0016     0.0093            0.9917      1.011
+39/f560   V282old     53068               0.99958   0.8009     0.0289            0.9897      1.013
+3a/283a   V282old     38444               0.99738   0.8413     0.0724            0.9761      0.994
+3c/9279   V282old     42841               0.99890   0.8190     0.0469            0.9860      0.995
+6c/68c6   TORQ        47925               0.99920   1.0302     0.0399            0.9727      1.004
+6d/05e8   TORQ        50138               0.99965   1.0318     0.0263            0.9924      0.993
+6e/6ca3   TORQ        55834               0.99971   1.0137     0.0242            0.9932      1.003
+70/717f   TORQ        67360               0.99956   1.0119     0.0297            0.9908      1.007
+71/f2c9   TORQ        61841               0.99979   1.0094     0.0207            0.9872      1.000
+72/8001   TORQ        43689               0.99930   1.0273     0.0373            0.9778      1.028
+73/79fd   TORQ        45156               0.99972   1.0365     0.0238            0.9838      1.013
+75/6c86   TORQ        55893               0.99966   1.0154     0.0261            0.9924      1.000
+76/d0b7   TORQ        40256               0.99954   1.0112     0.0303            0.9753      1.001
+
+READ: corr ~1.000 and residual ~0 => `actualLateralAccel` IS the steering angle through the
+kinematic model.  The fork's lateral loop is therefore an ANGLE loop; the vehicle (angle -> yaw)
+sits OUTSIDE it, and wheel motion that does not become yaw is invisible to the feedback.

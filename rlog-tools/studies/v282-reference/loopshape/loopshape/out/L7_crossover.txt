@@ -1,0 +1,15 @@
+CROSSOVER: measured where |L| crosses 1 inside the identified band; EXTRAPOLATED below it by
+holding |P| at its lowest measured value and letting the KNOWN integrator lift |C|.
+family   bin     kp/LAF  ki/LAF  |P| at 0.15-0.2  measured wc  extrapolated wc
+V282     15-22   0.1500  0.0500             6.84     0.287 Hz n/a (|L|<1 always)
+V282     22+     0.1500  0.0500            11.62     0.368 Hz n/a (|L|<1 always)
+V282     8-15    0.1500  0.0500             4.27     0.257 Hz n/a (|L|<1 always)
+T64      15-22   0.0714  0.0214             4.17 none in 0.1-4        0.0193 Hz
+T64      22+     0.0714  0.0214             6.12 none in 0.1-4        0.0253 Hz
+T64      8-15    0.0714  0.0214             4.02 none in 0.1-4        0.0245 Hz
+T5       15-22   0.0714  0.0214             4.46 none in 0.1-4        0.0207 Hz
+T64B     15-22   0.0714  0.0214             7.30     1.374 Hz        0.0405 Hz
+T4       15-22   0.0607  0.1786             6.51     0.256 Hz        0.2681 Hz
+T3       15-22   0.0607  0.0429             3.45 none in 0.1-4        0.0328 Hz
+T2       15-22   0.0607  0.0214             6.37     2.800 Hz        0.0323 Hz
+RF00T    15-22   0.0500  0.0250             5.50     2.509 Hz        0.0398 Hz

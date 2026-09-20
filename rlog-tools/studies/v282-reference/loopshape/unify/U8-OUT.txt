@@ -1,0 +1,63 @@
+POSITIVE CONTROL ON |C|: the measured feedback gain against the one computed from each route's
+OWN flown SteerKP / SteerLatAccel / AccordTorqueKi(High) at the band centre 0.212 Hz.
+
+route    fam       kp/LAF  ki_eff  |C| pred  |C| meas   ratio
+39/f560  V282old   0.3791            0.3791    0.4572    1.21
+3a/283a  V282old   0.2000            0.2000    0.2136    1.07
+3c/9279  V282old   0.2222            0.2222    0.2418    1.09
+64/ce6b  V282      0.1500            0.1546    0.1630    1.05
+65/b9f7  V282      0.1500            0.1546    0.1753    1.13
+6c/2bc8  V282      0.1500            0.1546    0.1671    1.08
+6c/68c6  TORQ      0.0714            0.0732    0.0801    1.09
+6d/05e8  TORQ      0.0714            0.0732    0.0851    1.16
+6e/6ca3  TORQ      0.0714            0.0732    0.0856    1.17
+70/717f  TORQ      0.0500            0.0534    0.0809    1.51
+71/f2c9  TORQ      0.0607            0.0628    0.0748    1.19
+72/8001  TORQ      0.0607            0.0687    0.0770    1.12
+73/79fd  TORQ      0.0607            0.0687    0.0855    1.24
+75/6c86  TORQ      0.0607            0.1471    0.1690    1.15
+76/d0b7  TORQ      0.0714            0.0732    0.0807    1.10
+   ratio across all 15 routes: median 1.13, range 1.05-1.51
+
+THE TRADE CURVE (each point is one flown route; nothing is simulated):
+route    fam         s    v  LAG ms  SHAKE 1.2-4  inc .6-1.2    |L|    |F|  F lead ms  config
+73/79fd  TORQ      207 20.1      17       0.0870      0.0638  0.340  0.202        394  pFF 1 rf 0.12 hyst 0.015 rl 0.0006 dob   0 SteerFric0.2120497077703476
+6c/2bc8  V282     1867 26.5     101       0.0301      0.0420  1.643  0.069        535  pFF 1 rf    0 hyst     0 rl      0 dob   0 SteerFric   0.01
+64/ce6b  V282      239 28.5     105       0.0305      0.0322  1.477  0.071        546  pFF 1 rf    0 hyst     0 rl      0 dob   0 SteerFric   0.01
+71/f2c9  TORQ      175 17.9     119       0.3500      0.1873  0.536  0.121        158  pFF 1 rf    0 hyst     0 rl      0 dob   0 SteerFric  0.011
+65/b9f7  V282      181 20.5     128       0.0300      0.0338  1.148  0.085        539  pFF 1 rf    0 hyst     0 rl      0 dob   0 SteerFric   0.01
+39/f560  V282old   141 21.8     166       0.0462      0.0970  4.183  0.277         -5  pFF ? rf    0 hyst     0 rl      0 dob   0 SteerFric   0.03
+3c/9279  V282old   187 24.5     195       0.0381      0.0632  2.052  0.211         45  pFF ? rf    0 hyst     0 rl      0 dob   0 SteerFric   0.03
+6c/68c6  TORQ      239 25.1     197       0.1163      0.1065  0.420  0.229         89  pFF 1 rf 0.06 hyst 0.015 rl  0.001 dob 0.6 SteerFric    0.0
+75/6c86  TORQ      143 21.9     198       0.1449      0.1641  0.994  0.122        146  pFF 1 rf 0.12 hyst 0.015 rl 0.0006 dob   0 SteerFric0.2120497077703476
+3a/283a  V282old   200 28.5     218       0.0349      0.0413  1.815  0.182         55  pFF ? rf    0 hyst     0 rl      0 dob   0 SteerFric   0.03
+6e/6ca3  TORQ      185 22.7     229       0.2805      0.2647  0.530  0.168         11  pFF 1 rf 0.06 hyst 0.015 rl  0.001 dob 0.6 SteerFric    0.0
+72/8001  TORQ      235 23.4     242       0.0762      0.0759  0.371  0.114        146  pFF 1 rf 0.12 hyst 0.015 rl 0.0006 dob   0 SteerFric    0.0
+70/717f  TORQ      386 22.1     266       0.2082      0.1496  0.455  0.158        -38  pFF 0 rf    0 hyst     0 rl      0 dob   0 SteerFric    0.0
+6d/05e8  TORQ      174 19.0     271       0.0912      0.1138  0.340  0.290         15  pFF 1 rf 0.06 hyst 0.015 rl  0.001 dob 0.6 SteerFric0.2120497077703476
+76/d0b7  TORQ      188 25.0     288       0.1627      0.1491  0.420  0.171        -93  pFF 1 rf 0.12 hyst 0.015 rl  0.001 dob 0.6 SteerFric    0.0
+
+V282 TARGET BOX: lag 101-128 ms, shake 0.0300-0.0305 deg
+torque routes inside the box: 0 of 9
+torque routes inside on LAG only  : ['71/f2c9', '73/79fd']
+torque routes inside on SHAKE only: []
+best torque shake 0.0762 deg = 2.50x the WORST V282 route
+best torque lag   17 ms  vs V282 101-128 ms
+corr(lag, shake) across the 9 torque routes = -0.054  (n=9; a strong negative value would mean the two trade one-for-one)
+PARETO FRONT (no flown torque route beats these on both axes): 73/79fd(17 ms, 0.0870), 72/8001(242 ms, 0.0762)
+
+WHAT A GAIN RAISE WOULD HAVE TO DO, and where the logs stop supporting the question:
+   band          |L| V282  |L| TORQ  x needed   |L|x3.3  coh ru V  coh ru T
+   0.08-0.15        2.468     0.712      3.47     2.349     0.858     0.818
+   0.15-0.30        1.605     0.486      3.30     1.603     0.906     0.849
+   0.30-0.60        0.860     0.388      2.22     1.281     0.922     0.764
+   0.60-1.20        0.544     0.455      1.20     1.500     0.945     0.513
+   1.20-2.40        0.331     0.165      2.01     0.544     0.907     0.299
+   2.40-4.00        0.157     0.290      0.54     0.956     0.834     0.141
+   Matching V282's |L| at 0.15-0.30 Hz needs x3.30 on the feedback gain.  At that gain the
+   torque loop's |L| first reaches 1 somewhere between 0.6 and 1.8 Hz -- INSIDE the band
+   where the uncommanded wheel motion lives, and where the reference has so little power
+   that the measured phase of L is not trustworthy (coherence r-u falls to 0.51 / 0.30).
+   => the PHASE MARGIN at the new crossover is NOT measurable from these logs.  That is a
+   missing instrument, not a small number: it is the one quantity that decides whether a
+   gain raise buys tracking or buys shake.

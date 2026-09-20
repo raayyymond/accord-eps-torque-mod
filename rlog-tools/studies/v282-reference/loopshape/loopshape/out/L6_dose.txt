@@ -1,0 +1,22 @@
+DOSE ALGEBRA on the MEASURED T64 loop (15-22 m/s, 2 routes / 12 runs / 54 windows, v=17.2).
+LAF divides only p and i -- the Accord plant FF is already in torque units -- so SteerLatAccel
+and SteerKP scale the FEEDBACK ONLY.  AccordTorqueKiHigh raises the integral gain above 18 m/s.
+u_shake = the resulting 1.8-3.5 Hz command RMS relative to as-flown, from the MEASURED
+  decomposition u = u_fb + u_ff and their measured covariance (|L| is 0.09-0.12 there, so the
+  closed-loop correction to this open-loop scaling is < 12%).
+
+configuration                         |L|.20  |L|.29  |L|.39  |L|.59  |L|.98  |L|2.6  |S|.20  |S|.29  |S|.98  Ms<2Hz  u_shake
+T64 AS FLOWN (kp 1.0, ki 0.3, LAF 14)   0.384   0.287   0.283   0.323   0.310   0.077    0.77    0.84    0.98    1.07    1.02x
+  AccordTorqueKiHigh 0.6  (ki -> 0.6)   0.415   0.299   0.290   0.327   0.311   0.077    0.78    0.85    0.99    1.07    1.02x
+  AccordTorqueKiHigh 1.0  (ki -> 1.0)   0.482   0.323   0.305   0.335   0.315   0.077    0.79    0.87    1.01    1.07    1.02x
+  AccordTorqueKiHigh 1.5  (ki -> 1.5)   0.590   0.367   0.331   0.350   0.320   0.078    0.80    0.90    1.04    1.07    1.02x
+  AccordTorqueKiHigh 2.5  (ki -> 2.5)   0.847   0.479   0.403   0.392   0.337   0.079    0.78    0.94    1.09    1.12    1.02x
+  AccordTorqueKiHigh 4.0  (ki -> 4.0)   1.271   0.679   0.540   0.479   0.374   0.081    0.69    0.98    1.19    1.28    1.03x
+  AccordTorqueKiHigh 6.0  (ki -> 6.0)   1.860   0.968   0.745   0.620   0.439   0.084    0.55    0.95    1.33    1.55    1.04x
+  kp/LAF x1.5 (SteerLatAccel 9.3)      0.536   0.401   0.396   0.452   0.433   0.108    0.70    0.78    0.95    1.10    1.11x
+  kp/LAF x2.0 (SteerLatAccel 7.0)      0.689   0.516   0.509   0.580   0.556   0.138    0.64    0.73    0.91    1.13    1.20x
+  kp/LAF x3.0 (SteerLatAccel 4.7)      0.994   0.744   0.734   0.837   0.802   0.199    0.54    0.64    0.82    1.20    1.40x
+  KiHigh 2.5 AND kp/LAF x2.0           1.520   0.861   0.724   0.704   0.605   0.141    0.56    0.80    1.07    1.13    1.21x
+
+V282 AS FLOWN (the reference)          1.395   0.978   0.721   0.502   0.335   0.118    0.51    0.64    0.96    1.10       --
+T4/r75 AS FLOWN (KiHigh 2.5, kp .85)   1.188   0.902   0.934   1.070   0.982   0.490    0.72    0.88    0.51

@@ -1,0 +1,77 @@
+================================================================================================================================
+1. THE NINE TORQUE ROUTES THE DOSE-RESPONSE WOULD BE READ FROM  (kp/LAF in 0.0607-0.0714)
+================================================================================================================================
+       short           kp          laf          kpl       commit  AccordDobHz AccordTorque AccordTorque AccordRateLo AccordRefFil AccordFricti SteerFrictio AccordHoldLe
+        r6c'          1.0         14.0 0.0714285714     84766cdc          0.6          0.3          0.0        0.001         0.06        0.015          0.0            1
+         r6d          1.0         14.0 0.0714285714     84766cdc          0.6          0.3          0.0        0.001         0.06        0.015 0.2120497077            1
+         r6e          1.0         14.0 0.0714285714     84766cdc          0.6          0.3          0.0        0.001         0.06        0.015          0.0            0
+         r76          1.0         14.0 0.0714285714     e44b6cd3          0.6          0.3          0.0        0.001         0.12        0.015          0.0       ABSENT
+         r71         0.85         14.0 0.0607142857     66cf4454       ABSENT          0.3       ABSENT       ABSENT       ABSENT       ABSENT        0.011       ABSENT
+         r72         0.85         14.0 0.0607142857     e8e62f0e       ABSENT          0.6       ABSENT       0.0006         0.12        0.015          0.0       ABSENT
+         r73         0.85         14.0 0.0607142857     e8e62f0e       ABSENT          0.6       ABSENT       0.0006         0.12        0.015 0.2120497077       ABSENT
+         r74         0.85         14.0 0.0607142857     08a5a706       ABSENT          0.6          2.5       0.0006         0.12        0.015          0.0       ABSENT
+         r75         0.85         14.0 0.0607142857     08a5a706       ABSENT          0.6          2.5       0.0006         0.12        0.015 0.2120497077       ABSENT
+
+-- ALIASING WITH SteerKP over those nine routes (Cramer's V / exact alias) --
+  AccordDobHz              levels= 2 ['0.6', 'ABSENT']                                        -> PERFECT ALIAS (both ways)
+  AccordTorqueKi           levels= 2 ['0.3', '0.6']                                           -> crossed
+  AccordTorqueKiHigh       levels= 3 ['0.0', '2.5', 'ABSENT']                                 -> determines SteerKP
+  AccordRateLoopGain       levels= 3 ['0.0006', '0.001', 'ABSENT']                            -> determines SteerKP
+  AccordRefFilter          levels= 3 ['0.06', '0.12', 'ABSENT']                               -> crossed
+  AccordFrictionHystBand   levels= 2 ['1', 'ABSENT']                                          -> crossed
+  AccordHoldLevel          levels= 3 ['0', '1', 'ABSENT']                                     -> crossed
+  SteerFriction            levels= 3 ['0.0', '0.011', '0.2120497077703476']                   -> crossed
+  commit                   levels= 5 ['08a5a706', '66cf4454', '84766cdc', 'e44b6cd3', 'e8e62f -> determines SteerKP
+  AccordFrictionHyst       levels= 2 ['0.015', 'ABSENT']                                      -> crossed
+
+================================================================================================================================
+2. THE +0.808 WITHIN-V282 CORRELATION -- what it is actually a contrast between
+================================================================================================================================
+  band 0.15-0.30 speed 15-22 n=6  corr(kp/LAF, L34lag)=-0.188 | corr(CLUSTER dummy, lag)=+0.430 | within-old-cluster corr=-0.824 | new 168 ms vs old 215 ms
+  band 0.15-0.30 speed 22+   n=6  corr(kp/LAF, L34lag)=+0.745 | corr(CLUSTER dummy, lag)=+0.963 | within-old-cluster corr=+0.730 | new 87 ms vs old 143 ms
+  band 0.30-0.60 speed 8-15  n=6  corr(kp/LAF, L34lag)=+0.347 | corr(CLUSTER dummy, lag)=+0.880 | within-old-cluster corr=-0.921 | new 135 ms vs old 207 ms
+  band 0.30-0.60 speed 15-22 n=6  corr(kp/LAF, L34lag)=-0.183 | corr(CLUSTER dummy, lag)=+0.494 | within-old-cluster corr=-0.899 | new 121 ms vs old 156 ms
+  band 0.30-0.60 speed 22+   n=6  corr(kp/LAF, L34lag)=-0.089 | corr(CLUSTER dummy, lag)=+0.612 | within-old-cluster corr=-0.994 | new 89 ms vs old 105 ms
+
+-- THE WHOLE FAMILY the '+0.808' is one draw from: every (band, speed, metric) cell with all 6 routes --
+    0.15-0.30 15-22 L34lag   corr = -0.188
+    0.15-0.30 15-22 TOTlag   corr = -0.082
+    0.15-0.30 15-22 L5lag    corr = -0.078
+    0.15-0.30 22+   L34lag   corr = +0.745
+    0.15-0.30 22+   TOTlag   corr = +0.655
+    0.15-0.30 22+   L5lag    corr = +0.011
+    0.30-0.60 8-15  L34lag   corr = +0.347
+    0.30-0.60 8-15  TOTlag   corr = +0.334
+    0.30-0.60 8-15  L5lag    corr = -0.160
+    0.30-0.60 15-22 L34lag   corr = -0.183
+    0.30-0.60 15-22 TOTlag   corr = -0.263
+    0.30-0.60 15-22 L5lag    corr = -0.322
+    0.30-0.60 22+   L34lag   corr = -0.089
+    0.30-0.60 22+   TOTlag   corr = -0.200
+    0.30-0.60 22+   L5lag    corr = -0.308
+    => 15 cells: median -0.089, range [-0.322, +0.745], 5/15 positive.  A single cell reaching +0.8 is unremarkable in this family.
+    ROUTE-MEAN L34 lag, band 0.15-0.30: corr = +0.148   lags=['138', '140', '188', '170', '225', '168']
+    ROUTE-MEAN L34 lag, band 0.30-0.60: corr = +0.257   lags=['108', '121', '134', '142', '189', '183']
+
+-- what separates the two V282 clusters (every field that differs) --
+  AccordEpsGainScale         new=['1.0']                                      old=['ABSENT']
+  AccordEpsSpringScale       new=['1.0']                                      old=['ABSENT']
+  AccordFFRateGain           new=['0.5']                                      old=['ABSENT']
+  AccordRatePlantFF          new=['1']                                        old=['ABSENT']
+  AccordTorqueKi             new=['0.3']                                      old=['ABSENT']
+  AccordTurnFFTaper          new=['0']                                        old=['ABSENT']
+  AccordVariableSteerRatio   new=['1']                                        old=['ABSENT']
+  GitCommit                  new=['0f98d8c7573e0aa2d2fe616979680ca6dc9a7759', old=['8a28dcef8199bc5d33246d1ce6d646e4bd407839',
+  SteerFriction              new=['0.01']                                     old=['0.03']
+  SteerKP                    new=['0.9']                                      old=['0.8']
+  SteerLatAccel              new=['6.0']                                      old=['2.11', '3.6', '4.0']
+  SteerRatio                 new=['16.33', '16.84']                           old=['12.5']
+  => 12 fields differ between the two clusters of 3. SteerKP is ONE of them, and it moves 0.8 -> 0.9 in the LOW-lag direction.
+
+================================================================================================================================
+3. WHAT THE 'DOSE' RANGE ACTUALLY IS
+================================================================================================================================
+  torque family kp/LAF levels: [0.0607, 0.0714]  (ratio max/min = 1.176)
+  SteerKP levels: [0.85, 1.0]   LAF levels: [14.0]
+  V282 reference kp/LAF: [0.15]
+  V282old kp/LAF:        [0.2, 0.2222, 0.3791]

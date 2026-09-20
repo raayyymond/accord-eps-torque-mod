@@ -1,0 +1,51 @@
+UNCOMMANDED WHEEL MOTION PER ROUTE -- tag hi1k, engaged hands-off, >=15 m/s.
+inc = RMS of the steering angle NOT explained by the shaped setpoint (deg).
+coh = RMS of the part that IS explained (how much steering the road asked for).
+
+route    fam         s    v  inc 0.35-0.6 inc 0.6-1.2 inc 1.2-2.4 inc 2.4-4.0 inc 4.0-8.0  config
+39/f560  V282old   141 21.8        0.2228      0.0970      0.0408      0.0216      0.0246  pFF ? rf    0 hyst     0 rl      0 dob   0 SteerFric   0.03
+3a/283a  V282old   200 28.5        0.0761      0.0413      0.0302      0.0176      0.0191  pFF ? rf    0 hyst     0 rl      0 dob   0 SteerFric   0.03
+3c/9279  V282old   187 24.5        0.1017      0.0632      0.0332      0.0187      0.0207  pFF ? rf    0 hyst     0 rl      0 dob   0 SteerFric   0.03
+64/ce6b  V282      239 28.5        0.0335      0.0322      0.0249      0.0176      0.0174  pFF 1 rf    0 hyst     0 rl      0 dob   0 SteerFric   0.01
+65/b9f7  V282      181 20.5        0.0530      0.0338      0.0255      0.0157      0.0176  pFF 1 rf    0 hyst     0 rl      0 dob   0 SteerFric   0.01
+6c/2bc8  V282     1867 26.5        0.0606      0.0420      0.0252      0.0164      0.0182  pFF 1 rf    0 hyst     0 rl      0 dob   0 SteerFric   0.01
+6c/68c6  TORQ      239 25.1        0.1494      0.1065      0.1025      0.0550      0.0254  pFF 1 rf 0.06 hyst 0.015 rl  0.001 dob 0.6 SteerFric    0.0
+6d/05e8  TORQ      174 19.0        0.1657      0.1138      0.0775      0.0482      0.0272  pFF 1 rf 0.06 hyst 0.015 rl  0.001 dob 0.6 SteerFric0.2120497077703476
+6e/6ca3  TORQ      185 22.7        0.3341      0.2647      0.2392      0.1465      0.0542  pFF 1 rf 0.06 hyst 0.015 rl  0.001 dob 0.6 SteerFric    0.0
+70/717f  TORQ      386 22.1        0.1670      0.1496      0.1697      0.1206      0.0350  pFF 0 rf    0 hyst     0 rl      0 dob   0 SteerFric    0.0
+71/f2c9  TORQ      175 17.9        0.2178      0.1873      0.2607      0.2335      0.0532  pFF 1 rf    0 hyst     0 rl      0 dob   0 SteerFric  0.011
+72/8001  TORQ      235 23.4        0.0962      0.0759      0.0693      0.0316      0.0221  pFF 1 rf 0.12 hyst 0.015 rl 0.0006 dob   0 SteerFric    0.0
+73/79fd  TORQ      207 20.1        0.0788      0.0638      0.0807      0.0325      0.0413  pFF 1 rf 0.12 hyst 0.015 rl 0.0006 dob   0 SteerFric0.2120497077703476
+75/6c86  TORQ      143 21.9        0.2801      0.1641      0.1267      0.0705      0.0300  pFF 1 rf 0.12 hyst 0.015 rl 0.0006 dob   0 SteerFric0.2120497077703476
+76/d0b7  TORQ      188 25.0        0.1580      0.1491      0.1419      0.0796      0.0373  pFF 1 rf 0.12 hyst 0.015 rl  0.001 dob 0.6 SteerFric    0.0
+
+the same, NORMALISED by the commanded motion in the same band (inc/coh) -- removes most of
+the 'this route was on a curvier road' confound:
+route    fam           0.35-0.6     0.6-1.2     1.2-2.4     2.4-4.0     4.0-8.0   coh 0.35-0.60
+39/f560  V282old           0.30        0.33        0.84        1.16        2.04       0.7523
+3a/283a  V282old           0.20        0.21        0.88        2.42        4.07       0.3720
+3c/9279  V282old           0.25        0.35        0.93        2.24        3.92       0.4007
+64/ce6b  V282              0.18        0.27        0.63        1.80        2.58       0.1869
+65/b9f7  V282              0.24        0.33        0.76        2.05        3.02       0.2214
+6c/2bc8  V282              0.32        0.31        0.68        1.91        2.95       0.1870
+6c/68c6  TORQ              0.38        0.78        2.39        3.01        6.49       0.3917
+6d/05e8  TORQ              0.39        0.82        2.16        2.78        3.69       0.4224
+6e/6ca3  TORQ              0.62        0.67        1.76        2.12        4.61       0.5424
+70/717f  TORQ              0.50        0.95        1.59        2.39        6.43       0.3351
+71/f2c9  TORQ              0.72        0.80        1.84        2.03        5.05       0.3010
+72/8001  TORQ              0.50        1.20        1.67        2.38        5.48       0.1911
+73/79fd  TORQ              0.40        0.92        1.71        3.18        4.80       0.1973
+75/6c86  TORQ              0.64        1.23        1.59        2.39        5.61       0.4368
+76/d0b7  TORQ              0.55        1.65        1.89        2.99        4.86       0.2857
+
+V282      median inc: 0.35-0.6: 0.0530  0.6-1.2: 0.0338  1.2-2.4: 0.0252  2.4-4.0: 0.0164  4.0-8.0: 0.0176
+V282old   median inc: 0.35-0.6: 0.1017  0.6-1.2: 0.0632  1.2-2.4: 0.0332  2.4-4.0: 0.0187  4.0-8.0: 0.0207
+TORQ      median inc: 0.35-0.6: 0.1657  0.6-1.2: 0.1491  1.2-2.4: 0.1267  2.4-4.0: 0.0705  4.0-8.0: 0.0350
+TORQ / V282 ratio of medians: 0.35-0.6: 3.12  0.6-1.2: 4.42  1.2-2.4: 5.02  2.4-4.0: 4.31  4.0-8.0: 1.99
+
+RANGE WITHIN THE TORQUE FAMILY (min..max across the 9 routes) vs the V282 range:
+   0.35-0.6 Hz   TORQ 0.0788..0.3341   V282 0.0335..0.0606   SEPARATED
+   0.6-1.2 Hz   TORQ 0.0638..0.2647   V282 0.0322..0.0420   SEPARATED
+   1.2-2.4 Hz   TORQ 0.0693..0.2607   V282 0.0249..0.0255   SEPARATED
+   2.4-4.0 Hz   TORQ 0.0316..0.2335   V282 0.0157..0.0176   SEPARATED
+   4.0-8.0 Hz   TORQ 0.0221..0.0542   V282 0.0174..0.0182   SEPARATED

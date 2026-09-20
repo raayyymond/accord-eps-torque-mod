@@ -1,0 +1,49 @@
+SIZING AccordFFRateGain ON LOGGED DEMAND (no drive; P, I and the observer frozen at their logged
+values, C and P held at each route's own measured transfers).
+
+FEEDFORWARD PHASE LEAD at 0.15-0.30 Hz (ms) as a function of the toggle:
+route     flown g    g=0.25     g=0.5    g=0.75     g=1.0    g=1.25     g=1.5     g=2.0
+71/f2c9      0.50       107       158       205       249       289       327       392
+72/8001      0.50        88       146       201       251       297       339       410
+73/79fd      0.50       367       394       420       443       464       484       520
+75/6c86      0.50        89       146       200       249       293       334       404
+76/d0b7      0.50      -139       -93       -47        -2        42        85       166
+6c/68c6      0.50        57        89       119       149       177       204       256
+6d/05e8      0.50       -14        15        43        70        97       123       173
+6e/6ca3      0.50       -30        11        50        88       124       159       223
+
+RESULTING setpoint->loop-output LAG at 0.15-0.30 Hz (ms), through that route's measured C and P:
+route       flown    g=0.25     g=0.5    g=0.75     g=1.0    g=1.25     g=1.5     g=2.0   V282 ref
+71/f2c9       119       121        86        53        20       -12       -43      -101    101-128
+72/8001       242       268       228       188       148       110        72         1    101-128
+73/79fd        17        -2       -29       -56       -81      -105      -128      -172    101-128
+75/6c86       198       157       126        93        59        24       -12       -86    101-128
+76/d0b7       288       297       266       234       203       172       141        81    101-128
+6c/68c6       197       161       136       112        88        65        42        -2    101-128
+6d/05e8       271       251       229       206       184       162       140        98    101-128
+6e/6ca3       229       191       163       135       108        81        54         3    101-128
+
+THE COST, on the same arithmetic: RMS of the TOTAL COMMAND in 1.2-4.0 Hz (torque units) --
+the band where the torque-mode wheel motion separates from V282's.  This is the command, not
+the wheel: it bounds what the lever ADDS to the excitation, it does not predict the response.
+route        g=0.25     g=0.5    g=0.75     g=1.0    g=1.25     g=1.5     g=2.0   x vs flown at g=1.5
+71/f2c9      0.0844    0.0910    0.0985    0.1065    0.1151    0.1241    0.1429          1.36x
+72/8001      0.0162    0.0188    0.0217    0.0249    0.0282    0.0316    0.0387          1.68x
+73/79fd      0.0876    0.0881    0.0888    0.0896    0.0905    0.0915    0.0940          1.04x
+75/6c86      0.0183    0.0203    0.0227    0.0252    0.0280    0.0309    0.0371          1.52x
+76/d0b7      0.0249    0.0265    0.0285    0.0306    0.0329    0.0354    0.0405          1.33x
+6c/68c6      0.0303    0.0333    0.0368    0.0405    0.0445    0.0487    0.0575          1.46x
+6d/05e8      0.0201    0.0226    0.0253    0.0282    0.0312    0.0343    0.0407          1.52x
+6e/6ca3      0.0453    0.0480    0.0514    0.0556    0.0602    0.0652    0.0762          1.36x
+
+gain       median FF lead ms   median lag ms   median cmd 1.2-4 Hz
+0.25                      72             176                0.0276
+0.50                     117             150                0.0299
+0.75                     159             124                0.0326
+1.00                     199              98                0.0356
+1.25                     233              73                0.0387
+1.50                     266              48                0.0420
+2.00                     324              -0                0.0491
+
+V282's own feedforward carried 535-546 ms of lead at this band with |F| 0.069-0.085 torque
+per m/s^2; the torque builds fly 0.114-0.290 with -93..+394 ms.  The toggle's ceiling is 1.5.

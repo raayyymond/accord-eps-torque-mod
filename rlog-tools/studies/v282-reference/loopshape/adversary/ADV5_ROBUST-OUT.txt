@@ -1,0 +1,39 @@
+================================================================================================================
+(a)  PER-ROUTE crossover / phase margin, >=15 m/s.  (nw = 20.5 s windows)
+================================================================================================================
+  route                    fam       nw  medV |   fc Hz  PM deg  max|L| | |L| .15-.30 |L| .30-.60
+  00000064--ce6b0b0ebb     V282      13  26.3 |   0.351   109.9    1.91 |       1.582       0.736
+  00000065--b9f78988bd     V282       8  23.0 |   0.270   110.4    1.51 |       1.225       0.716
+  0000006c--2bc842dbac     V282      89  29.4 |   0.336   109.5    2.36 |       1.572       0.761
+  00000039--f56039af87     V282old    6  21.5 |   1.066    87.6    7.01 |       3.197       1.967
+  0000003a--283a39a1d6     V282old   10  28.1 |   0.453   111.9    2.19 |       1.747       1.011
+  0000003c--927965c2b4     V282old    8  28.5 |   0.599   103.5    2.47 |       2.035       1.244
+  0000006c--68c6e94b17     TORQ      11  23.6 |     nan     nan    0.47 |       0.364       0.304
+  0000006d--05e83bb04f     TORQ       9  20.7 |     nan     nan    0.56 |       0.312       0.280
+  0000006e--6ca3e014fd     TORQ      10  20.9 |     nan     nan    0.77 |       0.455       0.409
+  00000075--6c8687d5bd     TORQ       7  21.2 |   0.191    80.2    1.71 |       0.907       0.808
+  00000076--d0b7ea7e4d     TORQ       9  23.6 |     nan     nan    0.86 |       0.426       0.434
+
+================================================================================================================
+(b)  AMPLITUDE STRATIFICATION.  Windows split at the family median demand RMS.  An LTI loop has
+     ONE L; a gap here means 'crossover' and 'phase margin' are not single-valued.
+================================================================================================================
+  fam      stratum     nw  ampRMS | |L| .15-.30      <L | |L| .30-.60      <L |   fc Hz
+  V282     low  dmd    55  0.0855 |       1.041   -67.2 |       0.648   -77.9 |   0.232
+  V282     high dmd    55  0.3658 |       1.649   -63.6 |       0.805   -75.8 |   0.356
+  V282old  low  dmd    12  0.1223 |       1.714   -51.5 |       1.337   -66.7 |   0.565
+  V282old  high dmd    12  0.2555 |       2.350   -52.8 |       1.471   -68.6 |   0.673
+  TORQ     low  dmd    23  0.1054 |       0.305   -67.9 |       0.287   -72.8 |     nan
+  TORQ     high dmd    23  0.3343 |       0.496   -65.6 |       0.436   -86.1 |     nan
+
+================================================================================================================
+(c)  CEILING ON ANY LINEAR REMEDY, from the study's own exposure-weighted d(NRMSE^2) and its
+     incoherent fractions.  A linear controller reshapes only the part of the error that is
+     LINEARLY RELATED to the demand; the incoherent part is not a transfer-function defect.
+================================================================================================================
+    0.15-0.30  d(NRMSE^2)  0.266  incoherent   12 %  -> reachable by LTI shaping  0.234
+    0.30-0.60  d(NRMSE^2)  0.822  incoherent   30 %  -> reachable by LTI shaping  0.575
+    0.60-1.20  d(NRMSE^2)  1.955  incoherent   76 %  -> reachable by LTI shaping  0.469
+    TOTAL 3.043;  reachable by a PERFECT linear compensator 1.279 = 42.0 %  of the measured gap.
+    (upper bound: assumes the compensator makes every coherent transfer exactly ideal and adds
+     no incoherent motion of its own -- raising loop gain does the opposite.)
