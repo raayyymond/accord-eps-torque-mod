@@ -1,0 +1,60 @@
+advlib self-test OK: band ratio, residual telescoping, tone bin, lsf table
+
+PER ROUTE: J over 0.15-2.4 Hz, >=15 m/s, engaged hands-off runs >=30 s, 20.48 s Hann windows, 50% overlap
+  00000064--ce6b0b0ebb   V282     nwin   21 v  27.1  corr(X,Y) +0.662  J  0.857
+  00000065--b9f78988bd   V282     nwin   13 v  24.1  corr(X,Y) +0.733  J  0.532
+  0000006c--2bc842dbac   V282     nwin  168 v  29.5  corr(X,Y) +0.676  J  0.815
+  00000039--f56039af87   V282old  nwin    7 v  24.4  corr(X,Y) +0.743  J  1.278
+  0000003a--283a39a1d6   V282old  nwin   18 v  28.7  corr(X,Y) +0.697  J  1.239
+  0000003c--927965c2b4   V282old  nwin   15 v  28.6  corr(X,Y) +0.706  J  1.274
+  0000006c--68c6e94b17   T64      nwin   20 v  26.6  corr(X,Y) +0.513  J  1.550
+  0000006d--05e83bb04f   T64      nwin   12 v  21.6  corr(X,Y) +0.452  J  1.592
+  0000006e--6ca3e014fd   T64B     nwin   15 v  18.9  corr(X,Y) +0.555  J  1.376
+  00000076--d0b7ea7e4d   T5       nwin   11 v  22.8  corr(X,Y) +0.412  J  1.372
+  00000075--6c8687d5bd   T4       nwin   11 v  23.9  corr(X,Y) +0.489  J  1.245
+  00000070--717f5a7866   RF00T    nwin   30 v  22.4  corr(X,Y) +0.658  J  0.959
+  00000071--f2c9d073a3   T2       nwin    9 v  28.5  corr(X,Y) +0.724  J  0.896
+  00000072--8001fc3048   T3       nwin   17 v  26.4  corr(X,Y) +0.479  J  0.963
+  00000073--79fd149dd8   T3R      nwin   10 v  24.6  corr(X,Y) +0.610  J  0.922
+
+POOLED BY FAMILY (one denominator across every window of the family):
+  V282     n_routes 3  J_pooled  0.803   per-route J ['0.857', '0.532', '0.815']   spread 1.61x
+  V282old  n_routes 3  J_pooled  1.258   per-route J ['1.278', '1.239', '1.274']   spread 1.03x
+  T64      n_routes 2  J_pooled  1.563   per-route J ['1.550', '1.592']   spread 1.03x
+  T64B     n_routes 1  J_pooled  1.376   per-route J ['1.376']
+  T5       n_routes 1  J_pooled  1.372   per-route J ['1.372']
+  T4       n_routes 1  J_pooled  1.245   per-route J ['1.245']
+  RF00T    n_routes 1  J_pooled  0.959   per-route J ['0.959']
+  T2       n_routes 1  J_pooled  0.896   per-route J ['0.896']
+  T3       n_routes 1  J_pooled  0.963   per-route J ['0.963']
+  T3R      n_routes 1  J_pooled  0.922   per-route J ['0.922']
+
+THE HEADLINE PAIR, as the brief states it (rev 6.4 = T64 = 6c/68c6 + 6d; V282 = 64 + 65 + 6c/2bc8):
+  rev 6.4 (T64)    J =  1.563   (per route ['1.550', '1.592'])
+  V282 reference   J =  0.803   (per route ['0.857', '0.532', '0.815'])
+
+WITHIN-FAMILY SCATTER of J, per 20.48 s window (the resolution any closure % is quoted against):
+  00000064 V282     J  0.857  window median  1.603  IQR [0.610, 2.271]  n 21
+  00000065 V282     J  0.532  window median  0.890  IQR [0.570, 1.150]  n 13
+  0000006c V282     J  0.815  window median  1.503  IQR [0.574, 2.392]  n 168
+  00000039 V282old  J  1.278  window median  1.321  IQR [1.065, 2.067]  n 7
+  0000003a V282old  J  1.239  window median  2.891  IQR [1.340, 3.527]  n 18
+  0000003c V282old  J  1.274  window median  1.829  IQR [1.036, 2.992]  n 15
+  0000006c T64      J  1.550  window median  2.226  IQR [1.614, 2.865]  n 20
+  0000006d T64      J  1.592  window median  1.931  IQR [1.731, 2.516]  n 12
+  0000006e T64B     J  1.376  window median  1.806  IQR [1.201, 2.325]  n 15
+  00000076 T5       J  1.372  window median  1.591  IQR [1.218, 1.743]  n 11
+  00000075 T4       J  1.245  window median  1.321  IQR [1.131, 1.399]  n 11
+  00000070 RF00T    J  0.959  window median  1.020  IQR [0.806, 1.602]  n 30
+  00000071 T2       J  0.896  window median  1.195  IQR [0.744, 1.505]  n 9
+  00000072 T3       J  0.963  window median  1.147  IQR [0.970, 1.343]  n 17
+  00000073 T3R      J  0.922  window median  1.037  IQR [0.786, 1.658]  n 10
+
+FLOWN kp/LAF ENVELOPE, split by EPS BUILD (the brief pools them as '0.050-0.379'):
+  EPS V282: 00000064=0.1500  00000065=0.1500  0000006c=0.1500  0000003a=0.2000  0000003c=0.2222  00000039=0.3791
+    -> envelope 0.1500 .. 0.3791  (span 2.53x)
+  EPS V293: 00000070=0.0500  00000075=0.0607  00000071=0.0607  00000072=0.0607  00000073=0.0607  0000006c=0.0714  0000006d=0.0714  0000006e=0.0714  00000076=0.0714
+    -> envelope 0.0500 .. 0.0714  (span 1.43x)
+    SteerKP 2.0 -> kp/LAF 0.1429 = 2.00x the TOP of the torque-EPS envelope
+    SteerKP 2.5 -> kp/LAF 0.1786 = 2.50x the TOP of the torque-EPS envelope
+    SteerKP 3.0 -> kp/LAF 0.2143 = 3.00x the TOP of the torque-EPS envelope

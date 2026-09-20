@@ -1,0 +1,39 @@
+PRICED AGAINST THE BINDING CONSTRAINT.  Anchors: r71 limit-cycled at shake-band |L| 0.46;
+Ms > 2 is the classical robustness boundary; today's build runs Ms 1.27 / 1.33 (pooled / high-|X|).
+
+   SteerKP  KiHigh      J  clos %  |L| .15-.6  |L| shake |L| shk hi|X|  % of r71     Ms  Ms hi|X|
+       1.0     0.0  1.316     0.0       0.367      0.097         0.178       39%   1.27      1.33
+       1.0     0.6  1.342    -3.0       0.388      0.097         0.178       39%   1.27      1.32
+       1.0     1.0  1.374    -6.7       0.434      0.097         0.178       39%   1.27      1.32
+       1.0     1.5  1.410   -10.8       0.511      0.097         0.179       39%   1.27      1.32
+       1.0     2.5  1.465   -17.1       0.700      0.098         0.181       39%   1.26      1.31
+       1.0     4.0  1.518   -23.2       1.021      0.100         0.186       40%   1.26      1.31
+       1.0     6.0  1.545   -26.3       1.473      0.105         0.195       42%   1.49      1.46
+       1.5     0.0  1.211    12.1       0.529      0.141         0.262       57%   1.41      1.54
+       1.5     2.5  1.310     0.6       0.787      0.142         0.264       57%   1.40      1.52
+       1.5     6.0  1.345    -3.4       1.488      0.147         0.273       59%   1.39      1.49
+       2.0     0.0  1.122    22.3       0.692      0.185         0.346       75%   1.59      1.84
+       2.0     1.5  1.165    17.3       0.773      0.185         0.346       75%   1.59      1.82
+       2.0     2.5  1.189    14.5       0.901      0.186         0.347       75%   1.58      1.80
+       2.0     6.0  1.199    13.4       1.540      0.190         0.354       77%   1.56      1.74
+       2.5     0.0  1.047    30.9       0.856      0.230         0.430       93%   1.82      2.27
+       2.5     2.5  1.092    25.6       1.031      0.230         0.431       94%   1.81      2.21
+       3.0     0.0  0.983    38.2       1.020      0.274         0.514      112%   2.13      2.94
+       3.0     2.5  1.014    34.6       1.169      0.274         0.515      112%   2.10      2.81
+       3.0     6.0  1.001    36.1       1.703      0.277         0.519      113%   2.06      2.59
+
+THE FRONTIER UNDER THE CONSTRAINT 'shake-band |L| on high-demand windows <= 0.46 (r71) and Ms_hi <= 2.0':
+    SteerKP 2.0 + KiHigh 0.0: closure  22.3 % (|L|shake hi|X| 0.346, Ms_hi 1.84)
+    SteerKP 2.0 + KiHigh 1.5: closure  17.3 % (|L|shake hi|X| 0.346, Ms_hi 1.82)
+    SteerKP 2.0 + KiHigh 2.5: closure  14.5 % (|L|shake hi|X| 0.347, Ms_hi 1.80)
+    SteerKP 2.0 + KiHigh 6.0: closure  13.4 % (|L|shake hi|X| 0.354, Ms_hi 1.74)
+    SteerKP 1.5 + KiHigh 0.0: closure  12.1 % (|L|shake hi|X| 0.262, Ms_hi 1.54)
+    SteerKP 1.5 + KiHigh 2.5: closure   0.6 % (|L|shake hi|X| 0.264, Ms_hi 1.52)
+
+WHY THE INTEGRAL PATH DOES NOT REACH THE SHAKE BAND (pure algebra, |1/(j2pi f)|):
+    0.20 Hz: integral weight 0.7958  (1.0x smaller than at 0.20 Hz)
+    0.40 Hz: integral weight 0.3979  (2.0x smaller than at 0.20 Hz)
+    0.60 Hz: integral weight 0.2653  (3.0x smaller than at 0.20 Hz)
+    2.00 Hz: integral weight 0.0796  (10.0x smaller than at 0.20 Hz)
+    2.60 Hz: integral weight 0.0612  (13.0x smaller than at 0.20 Hz)
+    3.50 Hz: integral weight 0.0455  (17.5x smaller than at 0.20 Hz)

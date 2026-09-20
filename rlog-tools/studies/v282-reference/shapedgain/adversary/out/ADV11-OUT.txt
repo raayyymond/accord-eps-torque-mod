@@ -1,0 +1,13 @@
+BASE: three V282 routes at kp/LAF 0.1500, pooled J = 0.444
+
+      route  kp/LAF  k vs base  J PREDICTED  J MEASURED    error
+   0000003a  0.2000       1.33        0.437       1.099    2.51x
+   0000003c  0.2222       1.48        0.435       1.012    2.33x
+   00000039  0.3791       2.53        0.426       1.007    2.37x
+
+  CONFOUNDS, stated: different roads, different fork commits (the V282old feedforward differs),
+  and n=3 routes a side.  What survives them is the SIGN: the recipe predicts the metric FALLS
+  monotonically with gain, and on the only flown gain ladder that exists it RISES.
+
+  Same test in the direction the programme is proposing (gain UP from the torque base) has
+  no flown ladder at all: the torque-EPS routes span kp/LAF 0.0500-0.0714 only (1.43x).

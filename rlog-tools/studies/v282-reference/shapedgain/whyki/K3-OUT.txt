@@ -1,0 +1,70 @@
+================================================================================================================================
+K3  WHY Ki IS WEAK, AND WHAT IT IS WORTH ON THE GOAL METRIC
+================================================================================================================================
+
+1  arg(L) and Re(L), MEASURED.  L = (C_P + C_I)*G with C_P = S_Ep/S_EE, C_I = S_Ei/S_EE,
+   G = S_fy/S_fu (feedforward instrument).  Power-weighted per bin, E as the weight.
+   route      grp                0.15-0.30              0.30-0.60              0.60-1.20              1.20-2.40
+                      |L|  argL  ReL   |S|   |L|  argL  ReL   |S|   |L|  argL  ReL   |S|   |L|  argL  ReL   |S|
+   0000006c   T64    0.33   -55  0.19  0.82  0.31   -72  0.09  0.89  0.30   -91 -0.01  0.96  0.15    41 -0.00  0.99 
+   0000006d   T64    0.30   -54  0.17  0.83  0.28   -71  0.09  0.89  0.29   -94 -0.02  0.98  0.10    52  0.02  0.98 
+   0000006e   T64B   0.36   -52  0.22  0.80  0.44   -86  0.02  0.90  0.57  -102 -0.12  0.96  0.29    62  0.02  0.96 
+   00000076   T5     0.39   -50  0.25  0.78  0.41   -74  0.11  0.85  0.43   -13 -0.09  1.02  0.32    98 -0.25  1.32 
+   00000071   T2     0.48   -37  0.38  0.71  0.47   -76  0.11  0.85  0.50   -66  0.20  0.79  0.36   -68 -0.31  1.51 
+   00000072   T3     0.36   -69  0.13  0.85  0.37   -85  0.03  0.91  0.26    25  0.12  0.90  0.19    88 -0.07  1.06 
+   00000073   T3R    0.28   -66  0.11  0.88  0.19   -90  0.00  0.98  0.08  -100 -0.05  1.06  0.07   123 -0.07  1.07 
+   00000075   T4     0.80  -104 -0.19  0.89  0.85  -111 -0.31  0.95  0.68    -2  0.25  0.72  0.30   116 -0.11  1.08 
+   00000064   V282   1.34   -67  0.54  0.51  0.74   -79  0.15  0.74  0.56   -86  0.04  0.85  0.31   -93 -0.01  0.96 
+   00000065   V282   1.16   -63  0.52  0.55  0.72   -75  0.19  0.73  0.38   -90  0.00  0.93  0.23   -90  0.01  0.97 
+   0000006c   V282   1.32   -66  0.55  0.52  0.75   -78  0.17  0.73  0.51   -87  0.02  0.87  0.28   -89  0.02  0.95 
+
+   READ: |S| improves only through Re(L).  The I term enters L at -90 deg relative to the P
+   term, so it adds  |dL| * sin(argL)  to Re(L): NEGATIVE wherever argL < 0.
+
+2  THE GOAL METRIC as defined: sum|X-Y|^2 over 0.15-2.4 Hz / sum|X|^2 over the same band,
+   >=15 m/s, laterally engaged, hands off, runs >= 30 s (20.48 s Hann windows, 50 % overlap).
+   route      grp    ki_eff  kp/LAF  win    sec  sgn   METRIC
+   0000006c   T64     0.300  0.0714   20    205    1    1.551
+   0000006d   T64     0.300  0.0714   12    123    1    1.597
+   0000006e   T64B    0.300  0.0714   15    154    1    1.374
+   00000076   T5      0.300  0.0714   11    113    1    1.374
+   00000071   T2      0.300  0.0607    9     92    1    0.895
+   00000072   T3      0.600  0.0607   17    174    1    0.966
+   00000073   T3R     0.600  0.0607   10    102    1    0.925
+   00000075   T4      2.500  0.0607   11    113    1    1.238
+   00000064   V282    0.300  0.1500   21    215    1    0.854
+   00000065   V282    0.300  0.1500   13    133    1    0.531
+   0000006c   V282    0.300  0.1500  168   1720    1    0.811
+   rev 6.4 (T64/T64B/T5)              route median 1.463   pooled mean 1.474
+   V282 reference                     route median 0.811   pooled mean 0.732
+
+3  DOSE ON THE METRIC via the exact identity  X - Y = A + V*D.
+   V = S_MY/S_MM measured per route (the wheel->yaw leg, OUTSIDE the loop).  A is then defined
+   EXACTLY as (X-Y) - V*D per window, so the identity holds bit for bit and A carries whatever
+   the V regression does not.  A dose multiplies D by the complex ratio S_new/S_old, per bin.
+   ASSUMPTION, stated: the exogenous drivers of D and the whole A leg are unchanged.
+
+   baseline (rev 6.4 median) 1.463   V282 reference 0.811   gap 0.651
+   lever                    0000006c   0000006d   0000006e   00000076    median  gap closed
+   as flown                    1.551      1.597      1.374      1.374     1.463        0.0 %
+   KiHigh 1.0                  1.631      1.695      1.471      1.484     1.558      -14.6 %
+   KiHigh 2.5                  1.792      1.893      1.667      1.631     1.730      -41.1 %
+   KiHigh 4.0                  1.919      2.048      1.816      1.586     1.867      -62.2 %
+   KiHigh 6.0                  2.004      2.141      1.869      1.370     1.936      -72.8 %
+   SteerKP 2.0                 1.350      1.391      1.159      1.207     1.279       28.2 %
+   SteerKP 3.0                 1.195      1.231      1.028      1.125     1.160       46.5 %
+   KiHigh 2.5 + KP 2.0         1.458      1.537      1.256      1.318     1.388       11.5 %
+   KiHigh 6.0 + KP 3.0         1.245      1.330      1.016      1.176     1.210       38.7 %
+
+4  IF THE PROBLEM IS PHASE, WHAT SHAPE WOULD WORK?  The same |dL| added to L at a chosen
+   phase, on the rev-6.4 routes, 0.15-0.30 Hz -- to show the integrator's -90 deg is the
+   WORST available direction, not merely a weak one.  (Diagnostic; no such toggle exists.)
+      added phase  |L| after  |S| after     errx
+               0d       0.63      0.686    0.838
+             -30d       0.61      0.744    0.909
+             -45d       0.58      0.786    0.961
+             -60d       0.55      0.837    1.023
+             -90d       0.45      0.958    1.170
+            -120d       0.32      1.063    1.298
+              45d       0.58      0.658    0.803
+              90d       0.45      0.695    0.848

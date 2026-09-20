@@ -1,0 +1,30 @@
+==========================================================================================================================
+K5  TURNING THE INTEGRATOR DOWN, AND THE NOTCH'S LOW-FREQUENCY PHASE COST
+==========================================================================================================================
+
+   baseline (rev 6.4 median) 1.463   V282 reference 0.811   gap 0.651
+
+   lever                     0000006c  0000006d  0000006e  00000076   median   closed   shake x
+   as flown (Ki 0.30)           1.551     1.597     1.374     1.374    1.463     0.0%     1.000
+   Ki 0.15                      1.534     1.577     1.353     1.349    1.444     2.9%     1.000
+   Ki 0.05 (floor)              1.523     1.563     1.340     1.332    1.431     4.8%     0.999
+   SteerKP 2.0                  1.350     1.391     1.159     1.207    1.279    28.2%     1.227
+   SteerKP 2.0 + Ki 0.05        1.336     1.372     1.144     1.188    1.262    30.8%     1.226
+   SteerKP 3.0                  1.195     1.231     1.028     1.125    1.160    46.5%     1.476
+   SteerKP 3.0 + Ki 0.05        1.188     1.220     1.021     1.114    1.151    47.9%     1.476
+
+2  AccordErrorNotchQ: the EXACT discrete notch (HondaAccordErrorNotch coefficients) at the
+   0.15-0.30 Hz band centre, for the mode frequency at the rev-6.4 routes' median speed.
+   median speed 22.2 m/s -> mode 2.02 Hz.  The notch sits on the SHARED error, so it
+   moves the P term, the I term and the friction term together.
+        Q          0.20 Hz          0.30 Hz          0.60 Hz          1.20 Hz          2.00 Hz          2.60 Hz
+             |N|   arg deg    |N|   arg deg    |N|   arg deg    |N|   arg deg    |N|   arg deg    |N|   arg deg
+     4.00    1.000    -1.4    0.999    -2.2    0.997    -4.7    0.975   -13.0    0.064   -86.4    0.900    25.8 
+     1.50    0.998    -3.8    0.995    -5.8    0.977   -12.3    0.852   -31.5    0.024   -88.6    0.612    52.3 
+     1.00    0.995    -5.7    0.989    -8.6    0.951   -18.1    0.736   -42.6    0.016   -89.1    0.459    62.7 
+     0.70    0.990    -8.1    0.977   -12.2    0.906   -25.0    0.605   -52.7    0.011   -89.4    0.340    70.1 
+     0.50    0.981   -11.3    0.957   -16.9    0.838   -33.1    0.477   -61.5    0.008   -89.5    0.250    75.5 
+     0.35    0.961   -16.0    0.917   -23.5    0.732   -43.0    0.355   -69.2    0.006   -89.7    0.178    79.8 
+
+   A LOWER Q is a WIDER notch: it costs magnitude AND phase LAG at 0.2-0.6 Hz, which is the
+   same Re(L) currency the integrator fails on.  Flagged for the notch stream -- not scored here.

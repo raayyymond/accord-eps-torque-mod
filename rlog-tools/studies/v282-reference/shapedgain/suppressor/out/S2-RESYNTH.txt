@@ -1,0 +1,352 @@
+suplib self-test OK: notch_run == notch_H to 0.02 over 0.05-20 Hz (Welch H1); notch: |H(0)| = 1, |H(f0)| < 2e-3; fof_run == fof_H to 0.02; H_xy recovers the known notch gain at 0.5/1/3 Hz to 0.03; mode_hz(8) = 1.283 Hz (the 1.28 Hz on the table)
+s2 self-test OK: kp recovered exactly, notch identifiable, integrator reproduced
+
+====================================================================================================================================
+0000006c--68c6e94b17  fam T64  eps V293  flown kp 1.0 LAF 14.0 ki 0.3 notch-in-code True  runs 2  239 s >= 15.0 m/s
+  MEASURED kp = median(p/err) = 1.0000   (flown SteerKP 1.0)    MEASURED LAF = median((p+i+f)/U) = 14.0000   (flown 14.0)
+  IS THE NOTCH LIVE?  RMS residual of the LOGGED pid error against each reconstruction, as a fraction of the logged error's own RMS:
+      raw (no notch)   residual  0.3487
+      notch Q=1.0      residual  0.0001
+      notch Q=0.5      residual  0.1846
+      notch Q=2.0      residual  0.1348
+      -> best: notch Q=1.0
+  Realised transfer  reconstructed-raw-error -> LOGGED error  (this IS the notch, measured):
+      f Hz      0.20   0.30   0.60   1.00   1.50   1.75   2.00   2.25   2.50   3.00   3.50
+      |H|      0.996  0.989  0.959  0.867  0.589  0.414  0.200  0.045  0.242  0.522  0.688
+      coh      1.000  1.000  1.000  0.998  0.989  0.980  0.909  0.218  0.892  0.984  0.996
+      analytic notch Q=1.0 at the run's median speed 25.8 m/s (f0 2.17 Hz):
+      |H|      0.996  0.990  0.958  0.863  0.602  0.396  0.158  0.076  0.278  0.554  0.708
+  COMMAND CONTENT   1.8-3.5 Hz rms:  U 0.00124   u_fb 0.00043 (0.35x U)   u_ff 0.00103 (0.83x U)
+                    0.15-0.60 Hz rms: U 0.02900   u_fb 0.00505 (0.17x U)   u_ff 0.02834 (0.98x U)
+  RE-SYNTHESIS POSITIVE CONTROL (flown settings, per run): corr(U_resynth, U_log) 1.0000-1.0000;  band-rms ratio shake 1.000, gap 1.000
+  variant                                       1.8-3.5 Hz cmd  0.15-0.60 Hz cmd
+  KP x2 (notch as flown)                                 1.230             1.023
+  KP x3 (notch as flown)                                 1.502             1.070
+  notch OFF (Q=0), kp as flown                           1.640             0.977
+  notch Q=0.7                                            0.941             1.008
+  notch Q=0.5                                            0.902             1.018
+  notch Q=0.3                                            0.868             1.034
+  KP x2 + notch Q=0.5                                    0.997             1.056
+  KP x3 + notch Q=0.5                                    1.116             1.113
+  KP x3 + notch Q=0.3                                    0.968             1.148
+  cmd LP 2.0 Hz (kp as flown)                            0.603             0.986
+  KP x3 + cmd LP 2.0 Hz                                  0.882             1.053
+  cmd LP 3.0 Hz (kp as flown)                            0.737             0.993
+  KP x3 + cmd LP 3.0 Hz                                  1.086             1.062
+  cmd notch 2.5 Hz Q=1 (kp as flown)                     0.317             0.991
+  KP x3 + cmd notch 2.5 Hz Q=1                           0.522             1.060
+
+====================================================================================================================================
+0000006d--05e83bb04f  fam T64  eps V293  flown kp 1.0 LAF 14.0 ki 0.3 notch-in-code True  runs 3  174 s >= 15.0 m/s
+  MEASURED kp = median(p/err) = 1.0000   (flown SteerKP 1.0)    MEASURED LAF = median((p+i+f)/U) = 14.0000   (flown 14.0)
+  IS THE NOTCH LIVE?  RMS residual of the LOGGED pid error against each reconstruction, as a fraction of the logged error's own RMS:
+      raw (no notch)   residual  0.2842
+      notch Q=1.0      residual  0.0001
+      notch Q=0.5      residual  0.1781
+      notch Q=2.0      residual  0.1184
+      -> best: notch Q=1.0
+  Realised transfer  reconstructed-raw-error -> LOGGED error  (this IS the notch, measured):
+      f Hz      0.20   0.30   0.60   1.00   1.50   1.75   2.00   2.25   2.50   3.00   3.50
+      |H|      0.993  0.988  0.951  0.825  0.503  0.291  0.021  0.205  0.381  0.607  0.797
+      coh      1.000  1.000  1.000  0.995  0.977  0.947  0.033  0.832  0.953  0.996  0.992
+      analytic notch Q=1.0 at the run's median speed 20.9 m/s (f0 1.96 Hz):
+      |H|      0.995  0.988  0.947  0.823  0.474  0.219  0.044  0.271  0.445  0.663  0.777
+  COMMAND CONTENT   1.8-3.5 Hz rms:  U 0.00160   u_fb 0.00033 (0.20x U)   u_ff 0.00145 (0.91x U)
+                    0.15-0.60 Hz rms: U 0.02897   u_fb 0.00482 (0.17x U)   u_ff 0.02792 (0.96x U)
+  RE-SYNTHESIS POSITIVE CONTROL (flown settings, per run): corr(U_resynth, U_log) 1.0000-1.0000;  band-rms ratio shake 0.998, gap 1.000
+  variant                                       1.8-3.5 Hz cmd  0.15-0.60 Hz cmd
+  KP x2 (notch as flown)                                 1.167             1.032
+  KP x3 (notch as flown)                                 1.349             1.085
+  notch OFF (Q=0), kp as flown                           1.222             0.977
+  notch Q=0.7                                            0.953             1.008
+  notch Q=0.5                                            0.917             1.018
+  notch Q=0.3                                            0.879             1.032
+  KP x2 + notch Q=0.5                                    1.001             1.063
+  KP x3 + notch Q=0.5                                    1.093             1.125
+  KP x3 + notch Q=0.3                                    0.975             1.155
+  cmd LP 2.0 Hz (kp as flown)                            0.599             0.987
+  KP x3 + cmd LP 2.0 Hz                                  0.794             1.069
+  cmd LP 3.0 Hz (kp as flown)                            0.734             0.994
+  KP x3 + cmd LP 3.0 Hz                                  0.979             1.077
+  cmd notch 2.5 Hz Q=1 (kp as flown)                     0.305             0.991
+  KP x3 + cmd notch 2.5 Hz Q=1                           0.408             1.075
+
+====================================================================================================================================
+0000006e--6ca3e014fd  fam T64B  eps V293  flown kp 1.0 LAF 14.0 ki 0.3 notch-in-code True  runs 2  185 s >= 15.0 m/s
+  MEASURED kp = median(p/err) = 1.0000   (flown SteerKP 1.0)    MEASURED LAF = median((p+i+f)/U) = 14.0000   (flown 14.0)
+  IS THE NOTCH LIVE?  RMS residual of the LOGGED pid error against each reconstruction, as a fraction of the logged error's own RMS:
+      raw (no notch)   residual  0.4120
+      notch Q=1.0      residual  0.0001
+      notch Q=0.5      residual  0.2032
+      notch Q=2.0      residual  0.1613
+      -> best: notch Q=1.0
+  Realised transfer  reconstructed-raw-error -> LOGGED error  (this IS the notch, measured):
+      f Hz      0.20   0.30   0.60   1.00   1.50   1.75   2.00   2.25   2.50   3.00   3.50
+      |H|      0.994  0.989  0.950  0.832  0.517  0.217  0.051  0.326  0.370  0.652  0.747
+      coh      1.000  0.999  0.998  0.993  0.919  0.667  0.060  0.822  0.855  0.973  0.985
+      analytic notch Q=1.0 at the run's median speed 19.3 m/s (f0 1.89 Hz):
+      |H|      0.994  0.987  0.943  0.805  0.420  0.149  0.116  0.335  0.497  0.695  0.798
+  COMMAND CONTENT   1.8-3.5 Hz rms:  U 0.00283   u_fb 0.00087 (0.31x U)   u_ff 0.00227 (0.80x U)
+                    0.15-0.60 Hz rms: U 0.02963   u_fb 0.00605 (0.20x U)   u_ff 0.02794 (0.94x U)
+  RE-SYNTHESIS POSITIVE CONTROL (flown settings, per run): corr(U_resynth, U_log) 1.0000-1.0000;  band-rms ratio shake 1.000, gap 1.000
+  variant                                       1.8-3.5 Hz cmd  0.15-0.60 Hz cmd
+  KP x2 (notch as flown)                                 1.216             1.054
+  KP x3 (notch as flown)                                 1.452             1.135
+  notch OFF (Q=0), kp as flown                           1.339             0.976
+  notch Q=0.7                                            0.942             1.009
+  notch Q=0.5                                            0.898             1.019
+  notch Q=0.3                                            0.850             1.034
+  KP x2 + notch Q=0.5                                    1.006             1.086
+  KP x3 + notch Q=0.5                                    1.126             1.175
+  KP x3 + notch Q=0.3                                    0.977             1.205
+  cmd LP 2.0 Hz (kp as flown)                            0.597             0.989
+  KP x3 + cmd LP 2.0 Hz                                  0.846             1.121
+  cmd LP 3.0 Hz (kp as flown)                            0.732             0.994
+  KP x3 + cmd LP 3.0 Hz                                  1.046             1.128
+  cmd notch 2.5 Hz Q=1 (kp as flown)                     0.296             0.993
+  KP x3 + cmd notch 2.5 Hz Q=1                           0.441             1.126
+
+====================================================================================================================================
+00000076--d0b7ea7e4d  fam T5  eps V293  flown kp 1.0 LAF 14.0 ki 0.3 notch-in-code True  runs 3  163 s >= 15.0 m/s
+  MEASURED kp = median(p/err) = 1.0000   (flown SteerKP 1.0)    MEASURED LAF = median((p+i+f)/U) = 14.0000   (flown 14.0)
+  IS THE NOTCH LIVE?  RMS residual of the LOGGED pid error against each reconstruction, as a fraction of the logged error's own RMS:
+      raw (no notch)   residual  0.2679
+      notch Q=1.0      residual  0.0001
+      notch Q=0.5      residual  0.1518
+      notch Q=2.0      residual  0.1071
+      -> best: notch Q=1.0
+  Realised transfer  reconstructed-raw-error -> LOGGED error  (this IS the notch, measured):
+      f Hz      0.20   0.30   0.60   1.00   1.50   1.75   2.00   2.25   2.50   3.00   3.50
+      |H|      0.995  0.990  0.956  0.843  0.505  0.203  0.030  0.188  0.417  0.647  0.778
+      coh      1.000  1.000  0.999  0.998  0.988  0.769  0.057  0.641  0.973  0.983  0.985
+      analytic notch Q=1.0 at the run's median speed 22.7 m/s (f0 2.04 Hz):
+      |H|      0.995  0.989  0.952  0.841  0.531  0.295  0.040  0.193  0.380  0.621  0.751
+  COMMAND CONTENT   1.8-3.5 Hz rms:  U 0.00174   u_fb 0.00052 (0.30x U)   u_ff 0.00139 (0.80x U)
+                    0.15-0.60 Hz rms: U 0.03782   u_fb 0.00798 (0.21x U)   u_ff 0.03453 (0.91x U)
+  RE-SYNTHESIS POSITIVE CONTROL (flown settings, per run): corr(U_resynth, U_log) 0.9999-1.0000;  band-rms ratio shake 0.999, gap 1.000
+  variant                                       1.8-3.5 Hz cmd  0.15-0.60 Hz cmd
+  KP x2 (notch as flown)                                 1.355             1.073
+  KP x3 (notch as flown)                                 1.724             1.172
+  notch OFF (Q=0), kp as flown                           1.593             0.979
+  notch Q=0.7                                            0.906             1.008
+  notch Q=0.5                                            0.833             1.017
+  notch Q=0.3                                            0.755             1.032
+  KP x2 + notch Q=0.5                                    1.021             1.102
+  KP x3 + notch Q=0.5                                    1.221             1.210
+  KP x3 + notch Q=0.3                                    0.978             1.241
+  cmd LP 2.0 Hz (kp as flown)                            0.602             0.991
+  KP x3 + cmd LP 2.0 Hz                                  1.013             1.161
+  cmd LP 3.0 Hz (kp as flown)                            0.736             0.996
+  KP x3 + cmd LP 3.0 Hz                                  1.248             1.167
+  cmd notch 2.5 Hz Q=1 (kp as flown)                     0.309             0.995
+  KP x3 + cmd notch 2.5 Hz Q=1                           0.542             1.166
+
+====================================================================================================================================
+00000075--6c8687d5bd  fam T4  eps V293  flown kp 0.85 LAF 14.0 ki 0.6 notch-in-code True  runs 2  143 s >= 15.0 m/s
+  MEASURED kp = median(p/err) = 0.8500   (flown SteerKP 0.85)    MEASURED LAF = median((p+i+f)/U) = 14.0000   (flown 14.0)
+  IS THE NOTCH LIVE?  RMS residual of the LOGGED pid error against each reconstruction, as a fraction of the logged error's own RMS:
+      raw (no notch)   residual  0.3067
+      notch Q=1.0      residual  0.0001
+      notch Q=0.5      residual  0.1664
+      notch Q=2.0      residual  0.1219
+      -> best: notch Q=1.0
+  Realised transfer  reconstructed-raw-error -> LOGGED error  (this IS the notch, measured):
+      f Hz      0.20   0.30   0.60   1.00   1.50   1.75   2.00   2.25   2.50   3.00   3.50
+      |H|      0.991  0.995  0.952  0.843  0.506  0.274  0.028  0.237  0.425  0.629  0.761
+      coh      1.000  1.000  0.999  0.995  0.937  0.731  0.034  0.712  0.880  0.971  0.989
+      analytic notch Q=1.0 at the run's median speed 23.7 m/s (f0 2.08 Hz):
+      |H|      0.995  0.989  0.954  0.849  0.556  0.330  0.080  0.155  0.347  0.601  0.738
+  COMMAND CONTENT   1.8-3.5 Hz rms:  U 0.00112   u_fb 0.00041 (0.36x U)   u_ff 0.00085 (0.76x U)
+                    0.15-0.60 Hz rms: U 0.02864   u_fb 0.01042 (0.36x U)   u_ff 0.01933 (0.67x U)
+  RE-SYNTHESIS POSITIVE CONTROL (flown settings, per run): corr(U_resynth, U_log) 0.9876-0.9998;  band-rms ratio shake 1.000, gap 1.007
+  variant                                       1.8-3.5 Hz cmd  0.15-0.60 Hz cmd
+  KP x2 (notch as flown)                                 1.295             1.054
+  KP x3 (notch as flown)                                 1.608             1.134
+  notch OFF (Q=0), kp as flown                           1.438             1.001
+  notch Q=0.7                                            0.920             0.997
+  notch Q=0.5                                            0.857             0.992
+  notch Q=0.3                                            0.789             0.971
+  KP x2 + notch Q=0.5                                    1.009             1.052
+  KP x3 + notch Q=0.5                                    1.174             1.137
+  KP x3 + notch Q=0.3                                    0.967             1.125
+  cmd LP 2.0 Hz (kp as flown)                            0.598             0.991
+  KP x3 + cmd LP 2.0 Hz                                  0.940             1.124
+  cmd LP 3.0 Hz (kp as flown)                            0.733             0.996
+  KP x3 + cmd LP 3.0 Hz                                  1.160             1.129
+  cmd notch 2.5 Hz Q=1 (kp as flown)                     0.302             0.995
+  KP x3 + cmd notch 2.5 Hz Q=1                           0.510             1.128
+
+====================================================================================================================================
+00000072--8001fc3048  fam T3  eps V293  flown kp 0.85 LAF 14.0 ki 0.6 notch-in-code True  runs 2  207 s >= 15.0 m/s
+  MEASURED kp = median(p/err) = 0.8500   (flown SteerKP 0.85)    MEASURED LAF = median((p+i+f)/U) = 14.0000   (flown 14.0)
+  IS THE NOTCH LIVE?  RMS residual of the LOGGED pid error against each reconstruction, as a fraction of the logged error's own RMS:
+      raw (no notch)   residual  0.1794
+      notch Q=1.0      residual  0.0140
+      notch Q=0.5      residual  0.0997
+      notch Q=2.0      residual  0.0812
+      -> best: notch Q=1.0
+  Realised transfer  reconstructed-raw-error -> LOGGED error  (this IS the notch, measured):
+      f Hz      0.20   0.30   0.60   1.00   1.50   1.75   2.00   2.25   2.50   3.00   3.50
+      |H|      1.000  0.992  0.959  0.852  0.542  0.305  0.054  0.183  0.359  0.613  0.755
+      coh      1.000  1.000  1.000  0.999  0.996  0.991  0.882  0.968  0.991  0.999  1.000
+      analytic notch Q=1.0 at the run's median speed 26.4 m/s (f0 2.19 Hz):
+      |H|      0.996  0.990  0.959  0.867  0.614  0.413  0.180  0.054  0.257  0.540  0.699
+  COMMAND CONTENT   1.8-3.5 Hz rms:  U 0.00048   u_fb 0.00020 (0.42x U)   u_ff 0.00034 (0.71x U)
+                    0.15-0.60 Hz rms: U 0.02090   u_fb 0.00486 (0.23x U)   u_ff 0.01640 (0.78x U)
+  RE-SYNTHESIS POSITIVE CONTROL (flown settings, per run): corr(U_resynth, U_log) 1.0000-1.0000;  band-rms ratio shake 0.964, gap 1.000
+  variant                                       1.8-3.5 Hz cmd  0.15-0.60 Hz cmd
+  KP x2 (notch as flown)                                 1.294             1.164
+  KP x3 (notch as flown)                                 1.619             1.336
+  notch OFF (Q=0), kp as flown                           1.646             1.001
+  notch Q=0.7                                            0.926             0.998
+  notch Q=0.5                                            0.873             0.995
+  notch Q=0.3                                            0.819             0.983
+  KP x2 + notch Q=0.5                                    1.012             1.160
+  KP x3 + notch Q=0.5                                    1.173             1.332
+  KP x3 + notch Q=0.3                                    0.978             1.314
+  cmd LP 2.0 Hz (kp as flown)                            0.600             0.992
+  KP x3 + cmd LP 2.0 Hz                                  0.939             1.326
+  cmd LP 3.0 Hz (kp as flown)                            0.734             0.996
+  KP x3 + cmd LP 3.0 Hz                                  1.159             1.331
+  cmd notch 2.5 Hz Q=1 (kp as flown)                     0.320             0.995
+  KP x3 + cmd notch 2.5 Hz Q=1                           0.557             1.330
+
+====================================================================================================================================
+00000071--f2c9d073a3  fam T2  eps V293  flown kp 0.85 LAF 14.0 ki 0.3 notch-in-code False  runs 2  124 s >= 15.0 m/s
+  MEASURED kp = median(p/err) = 0.8500   (flown SteerKP 0.85)    MEASURED LAF = median((p+i+f)/U) = 14.0000   (flown 14.0)
+  IS THE NOTCH LIVE?  RMS residual of the LOGGED pid error against each reconstruction, as a fraction of the logged error's own RMS:
+      raw (no notch)   residual  0.0001
+      notch Q=1.0      residual  0.3840
+      notch Q=0.5      residual  0.4342
+      notch Q=2.0      residual  0.3244
+      -> best: raw (no notch)
+  Realised transfer  reconstructed-raw-error -> LOGGED error  (this IS the notch, measured):
+      f Hz      0.20   0.30   0.60   1.00   1.50   1.75   2.00   2.25   2.50   3.00   3.50
+      |H|      1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+      coh      1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+      analytic notch Q=1.0 at the run's median speed 27.6 m/s (f0 2.24 Hz):
+      |H|      0.996  0.991  0.961  0.873  0.635  0.445  0.220  0.012  0.218  0.513  0.681
+  COMMAND CONTENT   1.8-3.5 Hz rms:  U 0.00579   u_fb 0.00366 (0.63x U)   u_ff 0.00273 (0.47x U)
+                    0.15-0.60 Hz rms: U 0.01779   u_fb 0.00333 (0.19x U)   u_ff 0.01620 (0.91x U)
+  RE-SYNTHESIS POSITIVE CONTROL (flown settings, per run): corr(U_resynth, U_log) 0.9998-1.0000;  band-rms ratio shake 1.001, gap 1.002
+  variant                                       1.8-3.5 Hz cmd  0.15-0.60 Hz cmd
+  KP x2 (notch as flown)                                 1.571             1.084
+  KP x3 (notch as flown)                                 2.158             1.183
+  notch OFF (Q=0), kp as flown                           1.000             1.000
+  notch Q=0.7                                            0.536             1.006
+  notch Q=0.5                                            0.508             1.006
+  notch Q=0.3                                            0.484             1.002
+  KP x2 + notch Q=0.5                                    0.572             1.094
+  KP x3 + notch Q=0.5                                    0.654             1.195
+  KP x3 + notch Q=0.3                                    0.550             1.183
+  cmd LP 2.0 Hz (kp as flown)                            0.620             0.992
+  KP x3 + cmd LP 2.0 Hz                                  1.309             1.172
+  cmd LP 3.0 Hz (kp as flown)                            0.752             0.996
+  KP x3 + cmd LP 3.0 Hz                                  1.599             1.177
+  cmd notch 2.5 Hz Q=1 (kp as flown)                     0.319             0.997
+  KP x3 + cmd notch 2.5 Hz Q=1                           0.630             1.178
+
+====================================================================================================================================
+00000064--ce6b0b0ebb  fam V282  eps V282  flown kp 0.9 LAF 6.0 ki 0.3 notch-in-code False  runs 2  239 s >= 15.0 m/s
+  MEASURED kp = median(p/err) = 0.9000   (flown SteerKP 0.9)    MEASURED LAF = median((p+i+f)/U) = 6.0000   (flown 6.0)
+  IS THE NOTCH LIVE?  RMS residual of the LOGGED pid error against each reconstruction, as a fraction of the logged error's own RMS:
+      raw (no notch)   residual  0.0001
+      notch Q=1.0      residual  0.2889
+      notch Q=0.5      residual  0.3988
+      notch Q=2.0      residual  0.1980
+      -> best: raw (no notch)
+  Realised transfer  reconstructed-raw-error -> LOGGED error  (this IS the notch, measured):
+      f Hz      0.20   0.30   0.60   1.00   1.50   1.75   2.00   2.25   2.50   3.00   3.50
+      |H|      1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+      coh      1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+      analytic notch Q=1.0 at the run's median speed 27.1 m/s (f0 2.22 Hz):
+      |H|      0.996  0.991  0.960  0.870  0.626  0.431  0.201  0.031  0.236  0.526  0.690
+  COMMAND CONTENT   1.8-3.5 Hz rms:  U 0.00210   u_fb 0.00082 (0.39x U)   u_ff 0.00142 (0.68x U)
+                    0.15-0.60 Hz rms: U 0.01127   u_fb 0.00329 (0.29x U)   u_ff 0.00837 (0.74x U)
+  RE-SYNTHESIS POSITIVE CONTROL (flown settings, per run): corr(U_resynth, U_log) 0.9918-0.9997;  band-rms ratio shake 1.001, gap 1.003
+  variant                                       1.8-3.5 Hz cmd  0.15-0.60 Hz cmd
+  KP x2 (notch as flown)                                 1.344             1.256
+  KP x3 (notch as flown)                                 1.700             1.517
+  notch OFF (Q=0), kp as flown                           1.000             1.000
+  notch Q=0.7                                            0.703             0.984
+  notch Q=0.5                                            0.690             0.973
+  notch Q=0.3                                            0.680             0.945
+  KP x2 + notch Q=0.5                                    0.713             1.216
+  KP x3 + notch Q=0.5                                    0.744             1.466
+  KP x3 + notch Q=0.3                                    0.701             1.401
+  cmd LP 2.0 Hz (kp as flown)                            0.630             0.988
+  KP x3 + cmd LP 2.0 Hz                                  1.056             1.499
+  cmd LP 3.0 Hz (kp as flown)                            0.759             0.995
+  KP x3 + cmd LP 3.0 Hz                                  1.278             1.509
+  cmd notch 2.5 Hz Q=1 (kp as flown)                     0.365             0.993
+  KP x3 + cmd notch 2.5 Hz Q=1                           0.601             1.506
+
+====================================================================================================================================
+00000065--b9f78988bd  fam V282  eps V282  flown kp 0.9 LAF 6.0 ki 0.3 notch-in-code False  runs 1  153 s >= 15.0 m/s
+  MEASURED kp = median(p/err) = 0.9000   (flown SteerKP 0.9)    MEASURED LAF = median((p+i+f)/U) = 6.0000   (flown 6.0)
+  IS THE NOTCH LIVE?  RMS residual of the LOGGED pid error against each reconstruction, as a fraction of the logged error's own RMS:
+      raw (no notch)   residual  0.0001
+      notch Q=1.0      residual  0.2216
+      notch Q=0.5      residual  0.3269
+      notch Q=2.0      residual  0.1452
+      -> best: raw (no notch)
+  Realised transfer  reconstructed-raw-error -> LOGGED error  (this IS the notch, measured):
+      f Hz      0.20   0.30   0.60   1.00   1.50   1.75   2.00   2.25   2.50   3.00   3.50
+      |H|      1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+      coh      1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+      analytic notch Q=1.0 at the run's median speed 23.8 m/s (f0 2.09 Hz):
+      |H|      0.995  0.989  0.954  0.849  0.558  0.334  0.084  0.150  0.343  0.598  0.736
+  COMMAND CONTENT   1.8-3.5 Hz rms:  U 0.00173   u_fb 0.00063 (0.36x U)   u_ff 0.00120 (0.69x U)
+                    0.15-0.60 Hz rms: U 0.01264   u_fb 0.00411 (0.32x U)   u_ff 0.00903 (0.71x U)
+  RE-SYNTHESIS POSITIVE CONTROL (flown settings, per run): corr(U_resynth, U_log) 0.9963-0.9963;  band-rms ratio shake 1.000, gap 1.001
+  variant                                       1.8-3.5 Hz cmd  0.15-0.60 Hz cmd
+  KP x2 (notch as flown)                                 1.306             1.271
+  KP x3 (notch as flown)                                 1.623             1.546
+  notch OFF (Q=0), kp as flown                           1.000             1.000
+  notch Q=0.7                                            0.727             0.976
+  notch Q=0.5                                            0.712             0.962
+  notch Q=0.3                                            0.699             0.927
+  KP x2 + notch Q=0.5                                    0.739             1.217
+  KP x3 + notch Q=0.5                                    0.774             1.477
+  KP x3 + notch Q=0.3                                    0.725             1.400
+  cmd LP 2.0 Hz (kp as flown)                            0.629             0.986
+  KP x3 + cmd LP 2.0 Hz                                  1.014             1.526
+  cmd LP 3.0 Hz (kp as flown)                            0.758             0.993
+  KP x3 + cmd LP 3.0 Hz                                  1.225             1.537
+  cmd notch 2.5 Hz Q=1 (kp as flown)                     0.373             0.992
+  KP x3 + cmd notch 2.5 Hz Q=1                           0.594             1.534
+
+====================================================================================================================================
+0000006c--2bc842dbac  fam V282  eps V282  flown kp 0.9 LAF 6.0 ki 0.3 notch-in-code False  runs 8  1837 s >= 15.0 m/s
+  MEASURED kp = median(p/err) = 0.9000   (flown SteerKP 0.9)    MEASURED LAF = median((p+i+f)/U) = 6.0000   (flown 6.0)
+  IS THE NOTCH LIVE?  RMS residual of the LOGGED pid error against each reconstruction, as a fraction of the logged error's own RMS:
+      raw (no notch)   residual  0.0000
+      notch Q=1.0      residual  0.2673
+      notch Q=0.5      residual  0.3812
+      notch Q=2.0      residual  0.1827
+      -> best: raw (no notch)
+  Realised transfer  reconstructed-raw-error -> LOGGED error  (this IS the notch, measured):
+      f Hz      0.20   0.30   0.60   1.00   1.50   1.75   2.00   2.25   2.50   3.00   3.50
+      |H|      1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+      coh      1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+      analytic notch Q=1.0 at the run's median speed 29.4 m/s (f0 2.25 Hz):
+      |H|      0.996  0.991  0.961  0.875  0.641  0.454  0.231  0.001  0.207  0.505  0.676
+  COMMAND CONTENT   1.8-3.5 Hz rms:  U 0.00233   u_fb 0.00087 (0.37x U)   u_ff 0.00160 (0.69x U)
+                    0.15-0.60 Hz rms: U 0.01175   u_fb 0.00345 (0.29x U)   u_ff 0.00885 (0.75x U)
+  RE-SYNTHESIS POSITIVE CONTROL (flown settings, per run): corr(U_resynth, U_log) 0.9786-0.9993;  band-rms ratio shake 1.000, gap 1.002
+  variant                                       1.8-3.5 Hz cmd  0.15-0.60 Hz cmd
+  KP x2 (notch as flown)                                 1.333             1.257
+  KP x3 (notch as flown)                                 1.677             1.523
+  notch OFF (Q=0), kp as flown                           1.000             1.000
+  notch Q=0.7                                            0.701             0.983
+  notch Q=0.5                                            0.690             0.972
+  notch Q=0.3                                            0.681             0.944
+  KP x2 + notch Q=0.5                                    0.710             1.214
+  KP x3 + notch Q=0.5                                    0.736             1.465
+  KP x3 + notch Q=0.3                                    0.699             1.399
+  cmd LP 2.0 Hz (kp as flown)                            0.642             0.986
+  KP x3 + cmd LP 2.0 Hz                                  1.066             1.500
+  cmd LP 3.0 Hz (kp as flown)                            0.770             0.993
+  KP x3 + cmd LP 3.0 Hz                                  1.283             1.511
+  cmd notch 2.5 Hz Q=1 (kp as flown)                     0.377             0.991
+  KP x3 + cmd notch 2.5 Hz Q=1                           0.614             1.508

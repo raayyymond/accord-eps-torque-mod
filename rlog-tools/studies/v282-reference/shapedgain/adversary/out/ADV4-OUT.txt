@@ -1,0 +1,45 @@
+T64: 72 windows, median v 23.1 m/s, J as flown 1.316
+
+PLANT U->M and the coherence that licenses it:
+          band   |P| IV  |P| dir   ph IV  coh(X,U)
+   0.15-0.30     4.83     4.25     -28     0.815
+   0.30-0.60     3.94     3.82     -49     0.907
+   0.60-1.20     4.55     4.14     -56     0.813
+   1.20-2.40     4.41     4.19      90     0.618
+   1.80-3.50     5.24     6.09     126     0.627
+
+LOOP, per band (power-weighted over windows):
+          band     |L|    ph L     |S|  frac |S|>1
+   0.15-0.30   0.384     -47   0.775       0.000
+   0.30-0.60   0.301     -68   0.872       0.000
+   0.60-1.20   0.318     -84   0.925       0.000
+   1.20-2.40   0.132      23   0.923       0.278
+   1.80-3.50   0.097     111   1.009       0.783
+
+(a)+(b) J(k) ALONG THE WHOLE SWEEP.  k = SteerKP multiplier (kp 1.0 -> k, LAF fixed 14).
+    positive control: J(1) must equal the flown J exactly.
+        k  SteerKP  J complex  clos %    J |.|  clos %  |L| 1.8-3.5  max|S| band
+     1.00     1.00      1.316     0.0    1.316     0.0        0.097         1.27
+     1.25     1.25      1.262     6.2    1.256     6.8        0.121         1.36
+     1.50     1.50      1.211    12.0    1.201    13.2        0.145         1.47
+     2.00     2.00      1.119    22.6    1.104    24.3        0.193         1.73
+     2.50     2.50      1.040    31.6    1.023    33.5        0.241         2.12
+     3.00     3.00      0.973    39.3    0.956    41.3        0.290         2.71
+     4.00     4.00      0.870    51.1    0.855    52.9        0.386         5.66
+     6.00     6.00      0.741    65.9    0.731    67.1        0.579        18.04
+    10.00    10.00      0.611    80.9    0.606    81.5        0.965        15.65
+    30.00    30.00      0.470    97.0    0.474    96.5        2.895         4.18
+   100.00   100.00      0.425   102.2    0.427   102.0        9.652         4.91
+  10000.00 10000.00      0.407   104.2    0.407   104.2      965.152         0.54
+  => J(k) minimum inside the sweep at k = 10000; monotone to infinity: True
+
+(d) STABILITY CEILING FROM FLOWN ANCHORS.  shake-band |L| as flown = 0.097.
+    reaching |L| = 0.46 (r71 LIMIT-CYCLED at 2.34 Hz) needs k = 4.77  -> SteerKP 4.77
+    reaching |L| = 0.19 (r72 flew with no shake complaint) needs k = 1.97  -> SteerKP 1.97
+    at that k the metric is 0.817 = 57.2 % closure -- the largest closure this class reaches before the one flown instability anchor.
+
+(e) NOTCH CEILING.  An error-path notch removes feedback; it cannot make |S| < 1, so the most
+    it can remove is the error power the loop is currently ADDING (|S|>1 bins).
+    notch spanning 1.20-2.40 Hz: bins with |S|>1 =  27.8 %, max |S| = 1.27, best-case power removed =  0.19 % of the error => J 1.316 -> 1.313, closure   0.3 %
+    notch spanning 0.60-2.40 Hz: bins with |S|>1 =  18.5 %, max |S| = 1.27, best-case power removed =  0.19 % of the error => J 1.316 -> 1.313, closure   0.3 %
+    notch spanning 0.15-2.40 Hz: bins with |S|>1 =  14.5 %, max |S| = 1.27, best-case power removed =  0.19 % of the error => J 1.316 -> 1.313, closure   0.3 %

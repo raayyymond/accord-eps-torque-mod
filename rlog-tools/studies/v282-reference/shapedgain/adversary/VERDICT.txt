@@ -1,0 +1,100 @@
+ADVERSARY STREAM -- VERDICT ON THE MAXIMUM DEFENSIBLE CLOSURE
+=============================================================
+2026-09-20.  Every number below is re-derived in this folder from the caches, sharing no code with the
+other streams (advlib.py + adv1..adv11).  Controller transfers are written out from the fork source at
+the flown commit (84766cdc); only the plant is estimated.  EVIDENCE unless marked BELIEF.
+
+WHAT SURVIVED THE ATTACK (say this first)
+-----------------------------------------
+* The closure ARITHMETIC reproduces independently.  My own identification gives, on the same identity
+  X-Y = A + V*D with D scaled by the complex sensitivity ratio (1+L)/(1+kL):
+      SteerKP 2.0 -> 22.3 %   2.5 -> 31.6 %   3.0 -> 39.3 %   k -> inf -> 104.2 %
+  against the programme's 23.4 / 32.4 / 39.9 / 109.  The disagreement is ~1 point.  The method is not
+  broken and the >100 % asymptote is not an arithmetic slip: it happens because V282's OWN residual
+  (0.347) sits below V282's measured J (0.444), so 'beating V282' does not require beating physics.
+* My |L| reproduces the loopshape stream's to 3 significant figures at 0.15-0.6 Hz (0.384 / 0.301 vs
+  their 0.384 / 0.287), by an independent route (analytic C from source x IV plant).  EVIDENCE.
+* The blind band is NOT where the asymptote comes from.  Crediting the inadmissible bins (coh(X,u) or
+  coh(M,Y) < 0.7, i.e. everything above 0.88 Hz) with NO improvement moves the asymptote 104.2 % ->
+  101.1 %.  That attack misses.
+
+WHAT DID NOT SURVIVE
+--------------------
+1. '109 %' IS QUOTED PAST ITS OWN RESOLUTION.  The asymptote moves 99.5 / 104.2 / 141.5 % as the
+   analysis window goes 512 / 1024 / 2048 samples -- a nuisance choice nobody wrote down.  The V282
+   denominator that defines 'the gap' moves 0.372 / 0.444 / 0.803 over the same sweep.  The handed-down
+   pair (1.350 / 0.442) is only reproduced at nperseg 1024 (I get 1.316 / 0.444).  ADV2, ADV7.
+2. THE ASYMPTOTE IS CONSTRUCTION-DEPENDENT.  With A defined residually (identity exact to 2e-17) and V
+   by least squares, J_inf = 0.407 (104 %).  With V by instrumental variables, J_inf = 1.265 (5.9 %).
+   With A built as (X-Z) + (1-V)Z -- which silently drops r = Y - V*M and leaves the identity 37-82 %
+   wrong -- J_inf = 0.238-0.366 (109-124 %).  The published 109 % is inside that range; so is 6 %.
+   The split only holds where coh(M,Y) does, i.e. below ~0.9 Hz.  ADV3.
+3. 'INTERPOLATION INSIDE THE FLOWN ENVELOPE 0.050-0.379' IS FALSE.  That envelope pools two EPS builds.
+   On the TORQUE EPS the flown kp/LAF envelope is 0.0500-0.0714 -- a span of 1.43x.  SteerKP 2.0 is
+   2.00x the top of it, 2.5 is 2.50x, 3.0 is 3.00x.  Every dose on the table is an extrapolation.
+   And the plants are not interchangeable: |P|(1.8-3.5 Hz)/|P|(0.15-0.30 Hz) is 0.17 on the V282 EPS
+   and 1.55 on V293 -- 9.1x apart in exactly the band the shake lives in.  ADV1, ADV5.
+4. THE PLANT IS AMPLITUDE-NONLINEAR, AND THE DOSE IS SIZED AT THE WRONG AMPLITUDE.  Re-identified
+   inside demand-amplitude terciles of the same routes, |P| rises 1.59x / 1.24x / 1.71x from the low to
+   the high tercile at 0.15-0.30 / 0.30-0.60 / 0.60-1.20 Hz -- the Coulomb-friction signature the fork
+   already models.  Consequence: the same SteerKP delivers 1.87x more shake-band loop gain on high-
+   demand windows than the pooled figure used to size it.  r71's limit cycle was on hard curves.  ADV7, ADV8.
+5. THE SAFETY ENVELOPE IS NOT MEASURING THE HAZARD.  Re-identified on each route's own high-demand
+   windows: r71 (LIMIT-CYCLED at 2.34 Hz) shake-band |L| 0.515, Ms 2.47; r72 (flew fine) |L| 2.027,
+   Ms 2.69.  The anchors INVERT.  Two routes flying the same kp/LAF (r71, r72) give plant estimates
+   4.09x apart in that band at coherence 0.42-0.57; two routes flying the IDENTICAL rev 6.4 config give
+   1.51x.  'The new dose lands between r71 and r72' is a statement inside a 4x scatter.  ADV6, ADV10.
+6. THE NOTCH HINT HAS THE WRONG SIGN.  Put the exact HondaAccordErrorNotch transfer into the loop and
+   sweep Q with everything else held: Q 1.0 -> 0.7 -> 0.5 -> 0.3 moves the metric -3.0 %, -6.9 %,
+   -14.9 % (WORSE), because widening the notch removes loop gain at 0.15-0.6 Hz (|L| 0.367 -> 0.339)
+   as well as at 2 Hz.  Turning the notch off entirely gives +2.4 % on the metric and 4.2x the shake-
+   band loop gain -- that is the real trade, and it runs the other way.  The notch centre is already
+   1.73-2.25 Hz at 15-29 m/s, i.e. already inside the shake band.  BELIEF on magnitude (the mechanism
+   depends on |S| at 2.05 Hz, measured at coherence 0.56); EVIDENCE on sign and on the low-frequency cost.
+   Separately: AccordErrorNotchQ IS live -- known() is default_values.__contains__ and the key is
+   declared in params_keys.h with default 1.0, so no fork change is needed to set it.  ADV6.
+   A notch on the ERROR cannot push |S| below 1, so the most any error-path notch can remove from the
+   metric is the error power the loop currently ADDS: measured 0.19 % of the error, 0.3 % of the gap.
+7. THE EXTRAPOLATION HAS NEVER BEEN VALIDATED AGAINST A FLOWN GAIN CHANGE.  Run the recipe forward from
+   the three V282 routes (kp/LAF 0.150) to the only flown gain ladder that exists (0.200, 0.222, 0.379
+   on the same EPS): predicted J 0.437 / 0.435 / 0.426, measured 1.099 / 1.012 / 1.007 -- 2.3-2.5x
+   worse, and RISING where the recipe says it falls.  Confounded by road and by the older fork's
+   feedforward, so inconclusive as a refutation -- but it is the only control available and it does not
+   support the recipe.  ADV11.
+8. Minor, but it is a sign error: the closed-loop correction applied to the command-side shake estimate
+   was downward (x1.16-1.38 -> x1.15-1.24).  |S| in 1.8-3.5 Hz is 1.009 today and RISES with dose
+   (1.019 at KP 2.0, 1.034 at KP 3.0), so the correction is upward, by ~1-3 %.  Small, but it means the
+   quoted +15-40 % is a floor, not a centre.  ADV7.
+
+THE VERDICT
+-----------
+The class is not structurally capped at 23 %, and the asymptote is not a fabrication -- but 109 % is a
+property of an algebraic limit, not a headroom.  Reaching it needs SteerKP > 12: four times the toggle
+ceiling (0.6 x STEER_KP_MAX_MULT 5.0 = 3.00) and 2.6x the loop gain of the one build that limit-cycled.
+
+Priced against the constraint, on the plant the car presents where the instability actually appeared
+(high-demand windows), with the anchor taken from r71's own high-demand windows (|L| 0.515, Ms 2.47):
+
+   SteerKP 2.0  -> 22.3 % closure   shake-band |L| 0.346 = 67 % of r71's   Ms 1.84  (today 1.30)
+   SteerKP 2.5  -> 30.9 %           0.430 = 83 %                            Ms 2.27
+   SteerKP 3.0  -> 38.2 %           0.514 = 100 % of r71's                  Ms 2.94  (above r71's 2.47)
+
+No shaped alternative beats that inside the constraint.  AccordTorqueKiHigh -- the one lever whose
+authority genuinely cannot reach the shake band (integral weight is 10-17x smaller at 2-3.5 Hz than at
+0.2 Hz) -- makes the metric WORSE at every dose 0.6 to 6.0 (-3 % to -26 %), because the 90 deg of lag it
+adds costs more at 0.3-1.2 Hz than the gain buys at 0.15-0.3 Hz.
+
+  MAXIMUM DEFENSIBLE CLOSURE: 22 % (SteerKP 2.0), at +15-40 % shake and Ms 1.84 on hard corners.
+  31 % (SteerKP 2.5) is available only by spending five sixths of the margin to the one flown limit
+  cycle, on a hazard statistic that does not order the two flown anchors correctly.
+  The toggle ceiling (38 %) is NOT defensible: it puts the high-demand shake-band loop gain exactly at
+  r71's limit-cycling value and Ms above it.
+
+WHAT WOULD CHANGE THIS VERDICT
+------------------------------
+* A drive at SteerKP 2.0 with the metric read back: it converts finding 7 from 'unvalidated' to a
+  measured point, and it is the only way to test the exogeneity assumption at all.
+* A shake-band hazard statistic that orders r71 and r72 correctly.  Band-averaged |L| does not.  Until
+  one exists, every 'lands between the anchors' argument is decoration.
+* Demand-amplitude-resolved reporting throughout.  Pooled loop metrics understate the hard-corner case
+  by 1.87x and that is where the one flown instability lived.

@@ -1,0 +1,55 @@
+  0000006c T64      done
+  0000006d T64      done
+  0000006e T64B     done
+  00000076 T5       done
+  00000075 T4       done
+  00000070 RF00T    done
+  00000071 T2       done
+  00000072 T3       done
+  00000073 T3R      done
+  00000064 V282     done
+  00000065 V282     done
+  0000006c V282     done
+  00000039 V282old  done
+  0000003a V282old  done
+  0000003c V282old  done
+
+PER ROUTE (>=15 m/s, engaged hands-off, runs >=30 s, 10.24 s windows)
+      route     fam  kp/LAF      J  Jinf_dir  Jinf_iv    Wpow   shake  u_shake  |L|shk
+   0000006c     T64  0.0714  1.255     0.422    1.435   0.659   1.228   0.0012   0.108
+   0000006d     T64  0.0714  1.457     0.364    0.690   0.739   0.981   0.0012   0.094
+   0000006e    T64B  0.0714  0.886     0.276    0.478   0.574   2.517   0.0025   0.177
+   00000076      T5  0.0714  1.155     0.382    0.485   0.556   1.557   0.0012   0.463
+   00000075      T4  0.0607  0.961     0.379    0.542   0.325   1.433   0.0010   0.287
+   00000070   RF00T  0.0500  0.618     0.147    0.265   0.815   2.361   0.0018   1.373
+   00000071      T2  0.0607  0.479     0.219    4.713   0.341   5.081   0.0057   0.450
+   00000072      T3  0.0607  0.767     0.339    1.263   0.374   0.668   0.0005   1.819
+   00000073     T3R  0.0607  0.747     0.709   13.094   0.069   0.508   0.0024   0.127
+   00000064    V282  0.1500  0.467     0.361    0.838   0.185   0.234   0.0021   0.171
+   00000065    V282  0.1500  0.428     0.280    0.427   0.281   0.193   0.0017   0.156
+   0000006c    V282  0.1500  0.442     0.350    0.718   0.198   0.243   0.0022   0.160
+   00000039 V282old  0.3791  1.007     0.567    2.197   6.151   0.350   0.0031   0.864
+   0000003a V282old  0.2000  1.099     0.644    2.022   1.912   0.229   0.0019   0.942
+   0000003c V282old  0.2222  1.012     0.487    3.881   2.720   0.269   0.0020   0.758
+
+ASSUMPTION 1 -- is the irreducible residual really independent of how rough the loop is?
+  (torque-EPS routes only, n=9; Pearson r, and what it means if it is not ~0)
+    Jinf_dir (the asymptote's own residual)     vs wheel shake r = -0.634   vs command shake r = -0.227   vs kp/LAF r = +0.245
+    Wpow (the loop error's exogenous drive)     vs wheel shake r = +0.065   vs command shake r = -0.262   vs kp/LAF r = +0.171
+    Dpow (the loop error itself)                vs wheel shake r = -0.055   vs command shake r = -0.302   vs kp/LAF r = +0.509
+
+  band-resolved: where the asymptote's residual sits, and where it moves with shake
+            band  median Ainf  share of Jinf  corr(Ainf, shake)
+     0.15-0.30       0.1450          39.8%             -0.696
+     0.30-0.60       0.0464          12.7%             -0.591
+     0.60-1.20       0.0417          11.4%             -0.320
+     1.20-2.40       0.0649          17.8%              0.219
+
+ASSUMPTION 2 -- the plant the extrapolation is being carried across
+     EPS   n   |P| 0.15    |P| 0.3    |P| 0.6    |P| 1.2  |P| shake
+    V282   6       9.43       5.25       3.50       1.97       1.58
+    V293   9       5.28       5.51       6.76      10.51       8.18
+    V282: |P|(shake)/|P|(0.15-0.30) = 0.17   kp/LAF flown 0.1500..0.3791
+    V293: |P|(shake)/|P|(0.15-0.30) = 1.55   kp/LAF flown 0.0500..0.0714
+  => a gain raise sized on the pooled envelope is being carried across a plant whose
+     high-frequency shape differs by the ratio printed above.

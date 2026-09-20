@@ -1,0 +1,60 @@
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\shapedgain\suppressor\s5_tradeoff.py:84: RuntimeWarning: invalid value encountered in divide
+  Un = (Fc[None, :] * (W + C1[None, :] * Z - C1[None, :] * dM + (g1e * Frc)[None, :] * dSR)) / den
+suplib self-test OK: notch_run == notch_H to 0.02 over 0.05-20 Hz (Welch H1); notch: |H(0)| = 1, |H(f0)| < 2e-3; fof_run == fof_H to 0.02; H_xy recovers the known notch gain at 0.5/1/3 Hz to 0.03; mode_hz(8) = 1.283 Hz (the 1.28 Hz on the table)
+
+======================================================================================================================================================
+0. IDENTITY CHECK: re-solving the system at the FLOWN settings must return the logged U, M and SR.
+======================================================================================================================================================
+  0000006c--68c6e94b17 T64    max rel err  U 8.02e-03  M 5.70e-03  SR 8.21e-02
+  0000006d--05e83bb04f T64    max rel err  U 8.18e-03  M 6.72e-03  SR 1.89e-01
+  0000006e--6ca3e014fd T64B   max rel err  U 1.85e-02  M 1.63e-02  SR 1.48e-01
+  00000076--d0b7ea7e4d T5     max rel err  U 8.40e-03  M 1.55e-02  SR 1.68e-01
+  00000075--6c8687d5bd T4     max rel err  U 2.11e-01  M 2.32e-01  SR 2.85e-01
+  00000064--ce6b0b0ebb V282   max rel err  U 1.62e-02  M 1.60e-02  SR 1.58e-02
+  00000065--b9f78988bd V282   max rel err  U 1.34e-02  M 9.97e-03  SR 1.10e-02
+  0000006c--2bc842dbac V282   max rel err  U 2.29e-02  M 2.19e-02  SR 1.81e-02
+
+  flown J (T64 pooled) 1.563   V282 0.803   gap 0.760
+
+======================================================================================================================================================
+1. THE TRADE.  closure% = (J_flown - J)/(J_flown - J_V282) in this re-derivation.
+   shake = 1.8-3.5 Hz WHEEL-RATE rms ratio to flown, from the same solve (1.00 = today).
+   Per-route shake in brackets so the spread is visible, never averaged away.
+   |S|1.2-2.4 is the sensitivity peak the metric's own top band sees (waterbed watch).
+======================================================================================================================================================
+  case                                   J  closure   shake                    per-route shake |S|1.2-2.4  max|L|
+  as flown                           1.561     0.4%    1.00  [0.99 1.00 1.03 1.12 0.88]      1.039    0.40
+  SteerKP x2                         1.370    25.5%    1.01  [0.98 1.04 1.01 0.97 0.95]      1.080    0.73
+  SteerKP x3 (toggle ceiling)        1.226    44.3%    1.03  [0.98 1.08 0.95 0.91 0.95]      1.123    1.07
+  SteerKP x5 (code)                  1.038    69.1%    1.07  [0.95 1.17 0.80 0.80 0.85]      1.176    1.75
+  SteerKP x8 (code)                  0.884    89.3%    1.06  [0.81 1.26 0.67 0.60 0.68]      1.229    2.78
+  notch Q 0.5 alone                  1.625    -8.1%    0.97  [0.97 0.96 0.94 1.01 0.79]      1.022    0.40
+  notch OFF alone                    1.548     2.0%    1.63  [1.80 1.45 2.89 3.00 1.88]      1.308    0.58
+  err LP 2 Hz alone                  1.632    -8.9%    1.07  [1.10 1.04 1.15 1.41 0.84]      1.018    0.40
+  rate 0.003 (toggle ceiling)        1.552     1.5%    0.83  [0.75 0.90 0.54 0.36 0.38]      1.044    0.39
+  rate 0.003 no taper (code)         1.540     3.0%    0.59  [0.47 0.69 0.35 0.18 0.18]      1.036    0.38
+  rate 0.002 no taper (code)         1.546     2.2%    0.75  [0.62 0.86 0.51 0.28 0.27]      1.042    0.39
+  rate 0.0 (damper off)              1.562     0.2%    1.09  [1.13 1.04 1.14 1.02 0.75]      1.031    0.40
+  KPx3 + rate .003NT                 1.238    42.9%    0.60  [0.48 0.69 0.32 0.18 0.18]      1.124    1.03
+  KPx3 + errLP2                      1.295    35.3%    1.25  [1.26 1.25 2.16 6.44 1.42]      1.046    1.07
+  KPx3 + errLP2 + rate .003NT        1.339    29.6%    0.66  [0.50 0.79 0.38 0.19 0.19]      1.089    1.03
+  KPx5 + errLP2                      1.057    66.6%    1.43  [1.27 1.58 4.05 1.36 14.02]      1.064    1.75
+  KPx5 + errLP2 + rate .003NT        1.125    57.7%    0.71  [0.51 0.87 0.39 0.20 0.20]      1.145    1.68
+  KPx8 + errLP2                      0.865    91.9%    1.88  [1.18 2.39 2.21 0.85 1.43]      1.085    2.77
+  KPx8 + errLP2 + rate .003NT        0.929    83.5%    0.81  [0.53 1.02 0.40 0.22 0.23]      1.214    2.66
+  KPx8 + errLP1.5 + rate .003NT      0.944    81.4%    0.79  [0.52 0.99 0.42 0.22 0.22]      1.194    2.66
+  KPx2 + rate .003NT                 1.374    25.0%    0.59  [0.47 0.69 0.33 0.18 0.18]      1.074    0.70
+  KPx5 + rate .003NT                 1.052    67.3%    0.62  [0.54 0.69 0.31 0.19 0.19]      1.286    1.68
+  KPx8 + rate .003NT                 1.218    45.5%    0.93  [1.12 0.68 0.31 0.22 0.25]      2.546    2.67
+  KPx3 + rate .003 (toggle only)     1.237    42.9%    0.87  [0.80 0.93 0.48 0.35 0.38]      1.164    1.05
+  cmd notch 2.5 Hz Q1 (wrong lever)   1.833   -35.4%    0.84  [0.87 0.80 0.68 0.58 0.53]      1.007    0.40
+  cmd LP 2 Hz (wrong lever)          1.893   -43.3%    1.26  [1.39 1.12 1.35 1.11 0.74]      1.016    0.40
+  KPx3 + cmd notch 2.5 Hz Q1         1.439    16.4%    0.79  [0.79 0.78 0.67 0.55 0.50]      1.019    1.07
+
+======================================================================================================================================================
+2. CROSS-CHECK of the shake column against the MODEL-FREE command re-synthesis (S2).
+   S2 re-synthesised the COMMAND at the same settings straight from the logged p/i/f with no
+   plant anywhere; if the two disagree in DIRECTION the shake column is not to be trusted.
+======================================================================================================================================================
+  0000006c--68c6e94b17: command 1.8-3.5 Hz ratio   KPx2 1.2304716794247712, KPx3 1.501902824421003, notch Q0.5 0.9024054572158207, notch OFF 1.6398881136790509
+  0000006d--05e83bb04f: command 1.8-3.5 Hz ratio   KPx2 1.1669496101912984, KPx3 1.3487219338285772, notch Q0.5 0.9170168981013527, notch OFF 1.2223126278036913

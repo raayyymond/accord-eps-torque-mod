@@ -1,0 +1,20 @@
+SHAKE-BAND AND LIMIT-CYCLE-BAND LOOP GAIN, POOLED vs HIGH-DEMAND, PER FLOWN ANCHOR
+                                 route    n  |L|shk pool  |L|shk hi  |L|@2.0-2.7 pool      hi  Ms pool   Ms hi
+          r71  LIMIT-CYCLED at 2.34 Hz   22        0.450      0.515             0.585   0.616     2.05    2.47
+         r72  flew, no shake complaint   37        1.819      2.027             2.270   1.927     2.92    2.69
+                 r6c  rev 6.4 as flown   43        0.108      0.232             0.068   0.122     1.25    1.30
+                 r6d  rev 6.4 as flown   29        0.094      0.133             0.086   0.107     1.25    1.30
+
+  APPLES TO APPLES, high-demand windows only:
+    r71 (limit-cycled): shake |L| 0.515, 2.0-2.7 Hz |L| 0.616, Ms 2.47
+    r72 (flew fine)   : shake |L| 2.027, 2.0-2.7 Hz |L| 1.927, Ms 2.69
+    rev 6.4 as flown  : shake |L| 0.182, 2.0-2.7 Hz |L| 0.115, Ms 1.30
+
+  *** THE ANCHORS INVERT.  On this stream's own identification the route that FLEW FINE (r72)
+     carries the HIGHER shake-band loop gain, and the route that LIMIT-CYCLED carries the lower.
+     Whatever separated r71 from r72 on the car, band-averaged |L| is not it -- so an envelope
+     argument of the form 'the new dose lands between r71 and r72' is not measuring the hazard.
+
+  scale of the dose multiplier needed to take rev 6.4 to each anchor (high-demand, shake band):
+    to r71: x2.83 on the P path  -> SteerKP 2.83
+    to r72: x11.13 on the P path  -> SteerKP 11.13

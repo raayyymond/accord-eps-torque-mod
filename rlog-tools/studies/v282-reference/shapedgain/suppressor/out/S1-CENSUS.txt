@@ -1,0 +1,102 @@
+suplib self-test OK: notch_run == notch_H to 0.02 over 0.05-20 Hz (Welch H1); notch: |H(0)| = 1, |H(f0)| < 2e-3; fof_run == fof_H to 0.02; H_xy recovers the known notch gain at 0.5/1/3 Hz to 0.03; mode_hz(8) = 1.283 Hz (the 1.28 Hz on the table)
+
+============================================================================================================================================
+1. WHAT IS ON THE PATH.  Every term, in execution order, from the fork source (HEAD = 84766cdc5,
+   the commit rev 6.4 flew).  |H| / phase(deg) at each frequency.  dt = 0.01 s, exact discrete form.
+============================================================================================================================================
+  term                                     0.20 Hz      0.30 Hz      0.60 Hz      1.20 Hz      1.80 Hz      2.50 Hz      3.50 Hz      5.00 Hz  
+
+  -- SETPOINT / REFERENCE PATH (acts on the demand; a filter here cannot touch road-driven shake) --
+  jerk LP 4.0 Hz (HONDA_ACCORD_JERK_LP_HZ) 0.998/  -2.9  0.996/  -4.3  0.986/  -8.5  0.948/ -16.5  0.893/ -23.6  0.820/ -30.7  0.715/ -38.4  0.583/ -45.8   latcontrol_torque.py:312, NOT toggle-reachable (const)
+  jerk LP 1.2 Hz (generic, every other rev) 0.985/  -9.5  0.968/ -14.0  0.888/ -26.3  0.694/ -43.9  0.541/ -54.1  0.420/ -60.7  0.314/ -65.5  0.226/ -68.1   :90 LP_FILTER_CUTOFF_HZ
+  ref filter x2, AccordRefFilter rc=0.06 0.993/  -8.6  0.985/ -12.9  0.944/ -25.4  0.807/ -47.9  0.651/ -66.2  0.492/ -82.3  0.331/ -97.7  0.196/-110.2   
+  ref filter x2, AccordRefFilter rc=0.12 0.976/ -17.1  0.947/ -25.4  0.819/ -48.3  0.530/ -82.3  0.334/-103.0  0.207/-117.1  0.117/-127.6  0.061/-133.7   toggle 0.0-0.5, :319-329
+  ref filter x2, AccordRefFilter rc=0.5  0.713/ -64.1  0.525/ -86.1  0.216/-122.4  0.065/-146.3  0.030/-153.7  0.016/-156.7  0.008/-157.2  0.004/-154.8   
+
+  -- ERROR / FEEDBACK PATH (inside the loop: attenuating here lowers |L|, not the FF command) --
+  error notch v=15 m/s f0=1.73 Hz Q=1.0  0.993/  -6.7  0.985/ -10.1  0.931/ -21.4  0.602/ -53.0  0.074/ +85.7  0.600/ +53.1  0.837/ +33.2  0.931/ +21.3   AccordErrorNotchQ 0-4; CENTRE NOT toggle-reachable
+  error notch v=15 m/s f0=1.73 Hz Q=0.7  0.986/  -9.5  0.969/ -14.3  0.872/ -29.3  0.467/ -62.2  0.052/ +87.0  0.465/ +62.3  0.731/ +43.0  0.873/ +29.2   
+  error notch v=15 m/s f0=1.73 Hz Q=0.5  0.974/ -13.1  0.942/ -19.6  0.787/ -38.1  0.353/ -69.3  0.037/ +87.9  0.351/ +69.4  0.608/ +52.6  0.788/ +38.0   
+  error notch v=15 m/s f0=1.73 Hz Q=2.0  0.998/  -3.3  0.996/  -5.1  0.981/ -11.1  0.834/ -33.5  0.147/ +81.5  0.832/ +33.7  0.951/ +18.1  0.981/ +11.1   
+  error notch v=15 m/s f0=1.73 Hz Q=4.0  1.000/  -1.7  0.999/  -2.5  0.995/  -5.6  0.949/ -18.3  0.286/ +73.4  0.949/ +18.4  0.987/  +9.3  0.995/  +5.6   
+
+  error notch v=20 m/s f0=1.92 Hz Q=1.0  0.994/  -6.0  0.987/  -9.1  0.945/ -19.1  0.697/ -45.8  0.125/ -82.8  0.475/ +61.6  0.789/ +37.9  0.914/ +24.0   AccordErrorNotchQ 0-4; CENTRE NOT toggle-reachable
+  error notch v=20 m/s f0=1.92 Hz Q=0.7  0.989/  -8.6  0.975/ -12.9  0.896/ -26.3  0.563/ -55.8  0.088/ -85.0  0.353/ +69.3  0.669/ +48.0  0.844/ +32.4   
+  error notch v=20 m/s f0=1.92 Hz Q=0.5  0.979/ -11.9  0.952/ -17.8  0.822/ -34.7  0.437/ -64.1  0.063/ -86.4  0.261/ +74.9  0.541/ +57.3  0.747/ +41.7   
+  error notch v=20 m/s f0=1.92 Hz Q=2.0  0.999/  -3.0  0.997/  -4.6  0.985/  -9.8  0.889/ -27.2  0.244/ -75.9  0.734/ +42.8  0.932/ +21.3  0.976/ +12.5   
+  error notch v=20 m/s f0=1.92 Hz Q=4.0  1.000/  -1.5  0.999/  -2.3  0.996/  -5.0  0.969/ -14.4  0.449/ -63.3  0.907/ +24.9  0.982/ +11.0  0.994/  +6.3   
+
+  error notch v=28 m/s f0=2.25 Hz Q=1.0  0.996/  -5.1  0.991/  -7.7  0.961/ -16.0  0.803/ -36.6  0.412/ -65.7  0.207/ +78.1  0.676/ +47.5  0.873/ +29.2   AccordErrorNotchQ 0-4; CENTRE NOT toggle-reachable
+  error notch v=28 m/s f0=2.25 Hz Q=0.7  0.992/  -7.3  0.982/ -11.0  0.926/ -22.3  0.686/ -46.7  0.302/ -72.4  0.146/ +81.6  0.540/ +57.3  0.781/ +38.6   
+  error notch v=28 m/s f0=2.25 Hz Q=0.5  0.984/ -10.1  0.965/ -15.2  0.868/ -29.8  0.558/ -56.1  0.220/ -77.3  0.105/ +84.0  0.417/ +65.4  0.667/ +48.2   
+  error notch v=28 m/s f0=2.25 Hz Q=2.0  0.999/  -2.6  0.998/  -3.9  0.990/  -8.2  0.937/ -20.4  0.671/ -47.9  0.389/ +67.1  0.878/ +28.6  0.963/ +15.6   
+  error notch v=28 m/s f0=2.25 Hz Q=4.0  1.000/  -1.3  0.999/  -1.9  0.997/  -4.1  0.983/ -10.5  0.875/ -28.9  0.645/ +49.8  0.965/ +15.2  0.990/  +8.0   
+
+  -- INNER RATE LOOP (feedback on the MEASURED wheel rate; the only term that reaches road-driven shake) --
+  rate-meas LP rc=0.01 s (RATE_LOOP_RC)  1.000/  -0.7  1.000/  -1.1  0.999/  -2.2  0.994/  -4.3  0.987/  -6.4  0.976/  -8.8  0.955/ -12.0  0.914/ -16.4   tunes :286, NOT toggle-reachable
+     gain g = AccordRateLoopGain * min(1, 12/v)  (tunes :2644).  toggle 0.0-0.003, default 0.0006,
+     rev 6.4 flew 0.001.  Effective g by speed:
+       v 8: 0.00100  v12: 0.00100  v15: 0.00080  v18: 0.00067  v22: 0.00055  v28: 0.00043
+
+  -- DISTURBANCE OBSERVER (feedback on measured angle/rate + past command; AccordDobHz 0-3, flown 0.6) --
+  DOB two-pole LP at 0.6 Hz              0.897/ -36.8  0.794/ -52.9  0.491/ -88.9  0.194/-123.4  0.097/-137.3  0.053/-144.5  0.028/-148.4  0.014/-148.7   tunes :2735-2737, 60 ms internal delay on u, then a 0.3 clip
+  DOB two-pole LP at 3.0 Hz              0.995/  -7.6  0.988/ -11.4  0.955/ -22.5  0.840/ -43.0  0.701/ -60.1  0.548/ -75.8  0.383/ -91.5  0.234/-104.9   tunes :2735-2737, 60 ms internal delay on u, then a 0.3 clip
+
+  -- OUTPUT PATH after the PID --
+     NO output low-pass, NO rate limit and NO notch exist between output_torque and the CAN frame:
+     latcontrol_torque.py:696-880 applies only per-car SCALES/CLIPS (none for Accord) and the
+     optional AccordDither (flown 0.0).  The only output-side dynamics are the Honda safety rate
+     limiter in the car interface and the firmware's own 5.05 Hz output-lag cell.
+
+============================================================================================================================================
+2. THE ERROR NOTCH'S CENTRE IS ALREADY IN THE SHAKE BAND AT METRIC SPEEDS.
+   centre = sqrt(k(v)/J)/2pi with k = HONDA_ACCORD_HOLD_K_V(v), J = 8e-5 (tunes :2630).
+============================================================================================================================================
+   v m/s       2      4      8     12     15     18     20     23     28
+   f0 Hz    0.82   0.94   1.28   1.67   1.73   1.83   1.92   2.05   2.25
+  The brief's '1.28 Hz' is the value at 8 m/s.  The goal metric is scored at >= 15 m/s, where the
+  centre is 1.73-2.25 Hz -- i.e. the notch ALREADY sits at the bottom edge of the 1.8-3.5 Hz shake band.
+
+============================================================================================================================================
+3. WHAT Q BUYS AND WHAT IT COSTS.  Power-mean |H| over each band (equal weight per bin, 0.01 Hz grid),
+   and the phase the notch adds at 0.30 Hz -- the frequency a raised-gain crossover would sit at.
+============================================================================================================================================
+     v    f0     Q  |H| 0.15-0.60  |H| 1.8-3.5  arg H @0.30  arg H @0.20  |H| @2.5
+    15  1.73  4.00          0.998        0.911         -2.5         -1.7     0.949
+    15  1.73  2.00          0.992        0.806         -5.1         -3.3     0.832
+    15  1.73  1.00          0.971        0.629        -10.1         -6.7     0.600
+    15  1.73  0.70          0.946        0.516        -14.3         -9.5     0.465
+    15  1.73  0.50          0.904        0.409        -19.6        -13.1     0.351
+    15  1.73  0.30          0.801        0.268        -30.7        -21.3     0.220
+
+    20  1.92  4.00          0.998        0.845         -2.3         -1.5     0.907
+    20  1.92  2.00          0.994        0.727         -4.6         -3.0     0.734
+    20  1.92  1.00          0.977        0.544         -9.1         -6.0     0.475
+    20  1.92  0.70          0.956        0.435        -12.9         -8.6     0.353
+    20  1.92  0.50          0.920        0.337        -17.8        -11.9     0.261
+    20  1.92  0.30          0.828        0.216        -28.1        -19.4     0.160
+
+    28  2.25  4.00          0.999        0.774         -1.9         -1.3     0.645
+    28  2.25  2.00          0.996        0.610         -3.9         -2.6     0.389
+    28  2.25  1.00          0.984        0.408         -7.7         -5.1     0.207
+    28  2.25  0.70          0.968        0.310        -11.0         -7.3     0.146
+    28  2.25  0.50          0.941        0.232        -15.2        -10.1     0.105
+    28  2.25  0.30          0.866        0.144        -24.3        -16.6     0.063
+
+============================================================================================================================================
+4. CANDIDATE ADDED TERMS (each IS a fork code change).  Same two bands, plus the phase at 0.30 Hz.
+============================================================================================================================================
+  candidate                           |H| gap  |H| shake  arg@0.20  arg@0.30  arg@1.0  |H|@1.0
+  1st-order LP fc=2.0 Hz                0.979      0.591      -5.7      -8.5    -26.2    0.883
+  1st-order LP fc=3.0 Hz                0.990      0.726      -3.8      -5.7    -18.2    0.940
+  1st-order LP fc=4.0 Hz                0.994      0.805      -2.9      -4.3    -13.9    0.963
+  1st-order LP fc=6.0 Hz                0.997      0.887      -1.9      -2.9     -9.4    0.981
+  notch f0=2.5 Q=1.0 (on the COMMAND)    0.987      0.350      -4.6      -6.9    -25.4    0.903
+  notch f0=2.5 Q=0.7 (on the COMMAND)    0.974      0.259      -6.5      -9.8    -34.2    0.827
+  notch f0=2.5 Q=1.5 (on the COMMAND)    0.994      0.471      -3.1      -4.6    -17.6    0.953
+  notch f0=2.2 Q=1.0 (on the COMMAND)    0.983      0.425      -5.2      -7.9    -29.8    0.868
+  notch f0=2.8 Q=1.0 (on the COMMAND)    0.990      0.353      -4.1      -6.2    -22.2    0.926
+
+  A 2nd-order lead-lag / phase-compensated roll-off is not tabled here: every one of the above is
+  minimum-phase, so its phase at 0.3 Hz is set by its magnitude slope below 2 Hz and cannot be
+  cheated by adding order -- only by moving the corner up or narrowing the notch (higher Q).

@@ -1,0 +1,51 @@
+(1) IS THE ASYMPTOTE ROBUST TO THE CHOICES THAT ARE NOT WRITTEN DOWN?
+   nperseg   J_T64  J_V282   V est   J_inf  closure %
+       512   1.219   0.372     dir   0.376       99.5
+       512   1.219   0.372  hybrid   0.386       98.4
+       512   1.219   0.372      iv   1.049       20.0
+      1024   1.316   0.444     dir   0.407      104.2
+      1024   1.316   0.444  hybrid   0.411      103.8
+      1024   1.316   0.444      iv   1.265        5.9
+      2048   1.563   0.803     dir   0.488      141.5
+      2048   1.563   0.803  hybrid   0.489      141.4
+      2048   1.563   0.803      iv   1.577       -1.7
+
+  PER-ROUTE asymptote (the number is quoted as one figure; here is its route scatter):
+    0000006c T64     J  1.255  J_inf  0.422  own-route closure vs V282 pooled  102.7 %
+    0000006d T64     J  1.457  J_inf  0.364  own-route closure vs V282 pooled  107.9 %
+    00000064 V282    J  0.467  J_inf  0.361  own-route closure vs V282 pooled  468.3 %
+    00000065 V282    J  0.428  J_inf  0.280  own-route closure vs V282 pooled -926.5 %
+    0000006c V282    J  0.442  J_inf  0.350  own-route closure vs V282 pooled -5140.4 %
+
+(2) NONLINEARITY: the plant re-identified inside amplitude terciles of the SAME routes
+    tercile    n  med |X|   |P| 0.15-0.3   |P| 0.3-0.6   |P| 0.6-1.2
+   low  |X|   24    21.79           3.31          3.47          3.35
+   mid  |X|   24    32.04           3.61          3.72          4.10
+   high |X|   24    51.36           5.31          4.30          5.74
+    0.15-0.30 Hz: high/low |P| = 1.59x   (=1.00 would mean the plant is amplitude-linear there)
+    0.30-0.60 Hz: high/low |P| = 1.24x   (=1.00 would mean the plant is amplitude-linear there)
+    0.60-1.20 Hz: high/low |P| = 1.71x   (=1.00 would mean the plant is amplitude-linear there)
+
+(3) THE CLOSED-LOOP CORRECTION TO THE SHAKE COST -- its SIGN
+   SteerKP  |S| 1.8-3.5  ratio to flown  |S| peak 2.05Hz
+       1.0        1.009           1.000            1.016
+       1.5        1.013           1.004            1.027
+       2.0        1.019           1.010            1.043
+       2.5        1.026           1.017            1.065
+       3.0        1.034           1.025            1.096
+  => the loop AMPLIFIES in this band and amplifies MORE with dose, so the closed-loop
+     correction to a command-side shake estimate is upward, not the quoted downward one.
+
+(4) CEILING ARITHMETIC
+   closure %  needs SteerKP  |L| shake   max|S|                            verdict
+        20.0           1.90      0.176     1.55                inside both anchors
+        25.0           2.20      0.203     1.67                inside both anchors
+        30.0           2.45      0.225     1.79                inside both anchors
+        39.3           3.10      0.283     2.20 ABOVE the toggle ceiling 3.0 + Ms>2
+        45.0           3.60      0.327     2.66 ABOVE the toggle ceiling 3.0 + Ms>2
+        50.0           4.05      0.367     3.26 ABOVE the toggle ceiling 3.0 + Ms>2
+        60.0           5.40      0.487     8.50 ABOVE the toggle ceiling 3.0 + ABOVE r71's limit-cycle |L| + Ms>2
+        75.0           8.80      0.788    44.28 ABOVE the toggle ceiling 3.0 + ABOVE r71's limit-cycle |L| + Ms>2
+       100.0            >12
+
+  flown shake-band |L| = 0.097; toggle ceiling SteerKP 3.0 (0.6*5.0); r71 limit-cycled at |L| 0.46.

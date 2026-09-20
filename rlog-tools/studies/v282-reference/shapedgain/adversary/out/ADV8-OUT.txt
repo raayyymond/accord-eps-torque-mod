@@ -1,0 +1,20 @@
+SHAKE-BAND LOOP GAIN AND Ms, PER DEMAND-AMPLITUDE TERCILE, PER DOSE
+  (plant re-identified inside each tercile; controller exact from source)
+    tercile  SteerKP  |L| 1.8-3.5  max|S| in band  f of Ms peak
+   low  |X|      1.0        0.061            1.17         2.05 Hz
+   low  |X|      2.0        0.115            1.33         2.05 Hz
+   low  |X|      2.5        0.142            1.43         2.05 Hz
+   low  |X|      3.0        0.169            1.54         2.05 Hz
+   pooled        1.0        0.097            1.27         2.05 Hz
+   pooled        2.0        0.185            1.59         2.05 Hz
+   pooled        2.5        0.230            1.82         2.05 Hz
+   pooled        3.0        0.274            2.13         2.05 Hz
+   high |X|      1.0        0.178            1.33         2.15 Hz
+   high |X|      2.0        0.346            1.84         2.15 Hz
+   high |X|      2.5        0.430            2.27         2.15 Hz
+   high |X|      3.0        0.514            2.94         2.15 Hz
+
+  r71 limit-cycled at a shake-band |L| of 0.46 (its own flown value, quoted by the programme).
+    SteerKP 2.0: pooled |L| 0.185 but 0.346 on high-demand windows (1.87x) -> 75 % of the flown limit-cycle anchor
+    SteerKP 2.5: pooled |L| 0.230 but 0.430 on high-demand windows (1.87x) -> 93 % of the flown limit-cycle anchor
+    SteerKP 3.0: pooled |L| 0.274 but 0.514 on high-demand windows (1.88x) -> 112 % of the flown limit-cycle anchor

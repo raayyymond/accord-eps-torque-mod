@@ -1,0 +1,98 @@
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\shapedgain\suppressor\s4_closure.py:132: RuntimeWarning: invalid value encountered in divide
+  Dn = (Z - p1[None, :] * W - dt_) / (1 + (p1 * C1))[None, :]
+suplib self-test OK: notch_run == notch_H to 0.02 over 0.05-20 Hz (Welch H1); notch: |H(0)| = 1, |H(f0)| < 2e-3; fof_run == fof_H to 0.02; H_xy recovers the known notch gain at 0.5/1/3 Hz to 0.03; mode_hz(8) = 1.283 Hz (the 1.28 Hz on the table)
+s4 self-test OK: dtilde identity exact, gain-doubling identity exact, J 0.548 -> 0.326
+
+====================================================================================================================================
+1. THE METRIC AS FLOWN, and the identity check (m=1, g1=g0 must return J exactly).
+====================================================================================================================================
+  0000006c--68c6e94b17 T64    nwin  20 v  26.6  J  1.550   identity re-derivation  1.550  (diff 0.00e+00)   coh(M,Y) 0.15-0.6 0.97
+  0000006d--05e83bb04f T64    nwin  12 v  21.6  J  1.592   identity re-derivation  1.592  (diff 0.00e+00)   coh(M,Y) 0.15-0.6 0.97
+  0000006e--6ca3e014fd T64B   nwin  15 v  18.9  J  1.376   identity re-derivation  1.376  (diff 0.00e+00)   coh(M,Y) 0.15-0.6 0.97
+  00000076--d0b7ea7e4d T5     nwin  11 v  22.8  J  1.372   identity re-derivation  1.372  (diff 0.00e+00)   coh(M,Y) 0.15-0.6 0.97
+  00000075--6c8687d5bd T4     nwin  11 v  23.9  J  1.245   identity re-derivation  1.245  (diff 0.00e+00)   coh(M,Y) 0.15-0.6 0.97
+  00000064--ce6b0b0ebb V282   nwin  21 v  27.1  J  0.857   identity re-derivation  0.857  (diff 0.00e+00)   coh(M,Y) 0.15-0.6 0.90
+  00000065--b9f78988bd V282   nwin  13 v  24.1  J  0.532   identity re-derivation  0.532  (diff 0.00e+00)   coh(M,Y) 0.15-0.6 0.92
+  0000006c--2bc842dbac V282   nwin 168 v  29.5  J  0.815   identity re-derivation  0.815  (diff 2.22e-16)   coh(M,Y) 0.15-0.6 0.86
+
+  POOLED  rev 6.4 (T64) J = 1.563   V282 reference J = 0.803   gap = 0.760   ratio 1.95x
+  (the brief's handed-down pair is 1.350 / 0.442; this stream re-derives the metric from the
+   same definition and lands where the adversary stream's independent re-derivation did.
+   CLOSURE % below is always (J_flown - J_new)/(J_flown - J_V282) in THIS re-derivation.)
+
+====================================================================================================================================
+2. THE LOOP AS FLOWN: |L| = |p*C| from the measured plant and the exact controller.
+====================================================================================================================================
+  route                  fam       0.15   0.20   0.30   0.40   0.60   0.90   1.20   1.80   2.40   max|L| 0.1-2.4
+  0000006c--68c6e94b17   T64      0.409  0.377  0.320  0.298  0.311  0.304  0.181  0.221  0.080   0.409
+  0000006d--05e83bb04f   T64      0.388  0.352  0.292  0.283  0.285  0.303  0.113  0.072  0.078   0.388
+  0000006e--6ca3e014fd   T64B     0.551  0.455  0.355  0.394  0.427  0.559  0.196  0.050  0.293   0.559
+  00000076--d0b7ea7e4d   T5       0.384  0.383  0.394  0.403  0.481  0.476  0.320  0.269  0.638   0.638
+  00000075--6c8687d5bd   T4       0.628  0.490  0.452  0.513  0.625  0.420  0.321  0.246  0.246   0.630
+  00000064--ce6b0b0ebb   V282     1.843  1.547  1.111  0.828  0.576  0.583  0.415  0.226  0.232   1.843
+  00000065--b9f78988bd   V282     1.429  1.241  0.975  0.808  0.523  0.392  0.289  0.160  0.207   1.429
+  0000006c--2bc842dbac   V282     2.063  1.580  1.079  0.823  0.611  0.508  0.401  0.185  0.200   2.063
+
+====================================================================================================================================
+3. CLOSURE.  Each row: the metric J, and the % of the (flown -> V282) gap it closes.
+   kp multiplier m is SteerKP x m (toggle ceiling m = 3.0 at SteerKP 1.0).
+   g1 = AccordRateLoopGain (toggle ceiling 0.003); 'NT' = the 12/v taper removed (code change).
+====================================================================================================================================
+  case                            T64 pooled J  closure   per route: 0000006c  0000006d  0000006e  00000076  00000075
+  as flown                               1.563     0.0%      1.550    1.592    1.376    1.372    1.245
+  SteerKP x2                             1.372    25.1%      1.365    1.387    1.158    1.224    1.101
+  SteerKP x3 (toggle ceiling)            1.229    44.0%      1.230    1.226    1.004    1.619    1.040
+  SteerKP x5 (code)                      1.040    68.8%      1.053    1.013    0.855    0.973    0.890
+  SteerKP x8 (code)                      0.885    89.2%      0.887    0.882    0.764    0.767    0.743
+  notch Q 0.5                            1.628    -8.4%      1.611    1.663    1.474    1.418    1.281
+  notch OFF                              1.551     1.6%      1.550    1.553    2.151    1.329    1.302
+  notch Q 2.0                            1.541     3.0%      1.531    1.560    1.340    1.370    1.267
+  rate loop 0.003                        1.556     0.9%      1.537    1.597    1.307    1.372    1.275
+  rate loop 0.003 NT                     1.553     1.3%      1.532    1.598    1.294    1.405    1.345
+  err LP 2 Hz alone                      1.634    -9.3%      1.619    1.666    1.492    1.431    1.276
+  err LP 3 Hz alone                      1.610    -6.1%      1.595    1.641    1.454    1.414    1.262
+  KPx3 + rate 0.003 NT                   1.256    40.5%      1.248    1.272    1.017    1.093    1.061
+  KPx5 + rate 0.003 NT                   1.086    62.8%      1.103    1.052    0.869    0.942    1.336
+  KPx3 + notch Q2                        1.286    36.5%      1.321    1.214    1.043    1.117    1.264
+  KPx3 + notch OFF                       1.310    33.4%      1.221    1.495    1.671    0.975    1.196
+  KPx3 + err LP 2 Hz                     1.298    35.0%      1.289    1.316    1.110    1.158    0.969
+  KPx5 + err LP 2 Hz                     1.059    66.3%      1.058    1.062    0.980    0.988    0.844
+  KPx8 + err LP 2 Hz                     0.866    91.7%      0.873    0.852    1.066    0.840    0.773
+  KPx5 + err LP 1.5 Hz                   1.086    62.8%      1.084    1.090    0.956    1.011    0.836
+  KPx8 + err LP 1.5 Hz                   0.875    90.6%      0.883    0.857    1.878    0.880    0.748
+  KPx8 + err LP 1 Hz                     0.908    86.2%      0.917    0.890    0.955    0.921    0.736
+  KPx12 + err LP 1 Hz                    0.759   105.7%      0.779    0.719    2.169    0.718    0.677
+  KPx5 + errLP2 + rate .003NT            1.137    56.1%      1.131    1.147    0.930    0.980    0.918
+  KPx8 + errLP2 + rate .003NT            0.937    82.4%      0.945    0.921    0.778    0.909    0.799
+  KPx8 + errLP1.5 + rate .003NT          0.953    80.3%      0.958    0.943    0.798    0.945    0.791
+
+====================================================================================================================================
+4. WHERE THE CLOSURE COMES FROM: |S| = |1/(1+L)| per band, as flown and at each dose.
+====================================================================================================================================
+  case                             |S| 0.15-0.3   |S| 0.3-0.6   |S| 0.6-1.2   |S| 1.2-2.4   (T64 pooled, power-weighted)
+  as flown                                0.812         0.884         0.976         1.049
+  SteerKP x2                              0.668         0.760         0.886         1.099
+  SteerKP x3 (toggle ceiling)             0.564         0.656         0.783         1.149
+  SteerKP x5 (code)                       0.428         0.505         0.603         1.193
+  SteerKP x8 (code)                       0.313         0.369         0.431         1.188
+  notch Q 0.5                             0.833         0.927         1.060         1.028
+  notch OFF                               0.795         0.847         0.871         1.347
+  notch Q 2.0                             0.803         0.865         0.921         1.106
+  rate loop 0.003                         0.820         0.895         0.991         1.054
+  rate loop 0.003 NT                      0.832         0.910         1.006         1.044
+  err LP 2 Hz alone                       0.832         0.928         1.085         1.023
+  err LP 3 Hz alone                       0.825         0.913         1.051         1.029
+  KPx3 + rate 0.003 NT                    0.590         0.703         0.881         1.156
+  KPx5 + rate 0.003 NT                    0.452         0.552         0.722         1.370
+  KPx3 + notch Q2                         0.556         0.632         0.695         1.461
+  KPx3 + notch OFF                        0.549         0.614         0.635         1.852
+  KPx3 + err LP 2 Hz                      0.583         0.713         1.006         1.055
+  KPx5 + err LP 2 Hz                      0.442         0.550         0.801         1.072
+  KPx8 + err LP 2 Hz                      0.322         0.398         0.559         1.079
+  KPx5 + err LP 1.5 Hz                    0.448         0.571         0.901         1.077
+  KPx8 + err LP 1.5 Hz                    0.326         0.412         0.629         1.093
+  KPx8 + err LP 1 Hz                      0.336         0.446         0.815         1.135
+  KPx12 + err LP 1 Hz                     0.244         0.317         0.541         1.155
+  KPx5 + errLP2 + rate .003NT             0.468         0.606         0.974         1.174
+  KPx8 + errLP2 + rate .003NT             0.342         0.444         0.726         1.248
+  KPx8 + errLP1.5 + rate .003NT           0.347         0.461         0.830         1.228
