@@ -1,0 +1,272 @@
+      V293 rwd on disk: UNCHANGED (ac4723865378ff37...)
+======================================================================================================================
+  V294 -- ACCELERATION TRIM on the V293 torque map.  subr True / shl2 True / fb clamp 1024 / pole a 1011 b 567 / Kp 960 all 28
+======================================================================================================================
+
+  [1] BASE = V293 (the image on the car)
+      [PASS] [S] V293 base sha256 matches
+      [PASS] [V] base CRC chain 50/50  [entailed]
+      [PASS] [V] base BOOTLOADER CRC replay 49/49  [entailed]
+      [PASS] [V] base 0xC61B2 == 3072  [entailed]
+      [PASS] [V] base 0xC61B4 == 3072  [entailed]
+      [PASS] [V] base 0xC61B8 == 102  [entailed]
+      [PASS] [V] base 0xC61BA == 10240  [entailed]
+      [PASS] [V] base 0xC61BC == 15360  [entailed]
+      [PASS] [V] base 0xC61BE == 15360  [entailed]
+      [PASS] [V] base 0xC61F6 == 3  [entailed]
+      [PASS] [V] base 0xC61F8 == 1024  [entailed]
+      [PASS] [V] base 0xC61FA == 5530  [entailed]
+      [PASS] [V] base 0xC62E4 == 4  [entailed]
+      [PASS] [V] base 0xC63E6 == 0  [entailed]
+      [PASS] [V] base 0xC63E8 == 923  [entailed]
+      [PASS] [V] base 0xC63EA == 1560  [entailed]
+      [PASS] [V] base 0xC63EC == 992  [entailed]
+      [PASS] [V] base 0xC63EE == 507  [entailed]
+      [PASS] [V] base 0xC6440 == 2048  [entailed]
+      [PASS] [V] base 0xC6442 == 1024  [entailed]
+      [PASS] [V] base 0xC6444 == 512  [entailed]
+      [PASS] [V] base 0xC6448 == 1024  [entailed]
+      [PASS] [V] base 0xC644A == 1024  [entailed]
+      [PASS] [V] base 0xC6500 == 771  [entailed]
+      [PASS] [V] base 0xC674E == 5120  [entailed]
+      [PASS] [V] base 0xC6750 == 5120  [entailed]
+      [PASS] [V] base 0xC675A == 60416  [entailed]
+      [PASS] [V] base 0xC675C == 60416  [entailed]
+      [PASS] [V] base 0xC6768 == 5120  [entailed]
+      [PASS] [V] base 0xC676A == 5120  [entailed]
+      [PASS] [V] base 0xC676C == 5120  [entailed]
+      [PASS] [V] base 0xC6AE6 == 2048  [entailed]
+      [PASS] [V] base 0xC6B12 == 98  [entailed]
+      [PASS] [V] base 0xC6B26 == 256  [entailed]
+      [PASS] [V] base 0xC6CD0 == 5346  [entailed]
+      [PASS] [V] base 0xC62E6 == 0  [entailed]
+      [PASS] [V] base 0xC61B6 == 0  [entailed]
+      [PASS] [V] base 0xC6446 == 2048  [entailed]
+      [PASS] [V] base carries `add r9,r26` (c9d1) at 0x28FA4 and `shl 0x5,r16` (c582) at 0x29D76  [entailed]
+      [PASS] [V] base Kp bank: all 28 records flat at 120 (V293)  [entailed]
+      [PASS] [S] the two opcode edits are BOTH on -- neither alone is a candidate
+      [PASS] [S] fb clamp 1024: the trim bound is > 0 and <= 4096 (<= 100 % of the rail)
+      [PASS] [S] pole a 1011 in [1000,1018] (1.0-4 Hz) and b 567 in [1,4000]
+      [PASS] [S] Kp 960 == 120 << (5-2) -- the FF product is preserved EXACTLY
+      [PASS] [S] (a, b) = (1011, 567) is a documented ladder rung [(1000, 1080), (1005, 831), (1011, 284), (1011, 567), (1011, 1134), (1015, 392)]; THE SHIPPED DESIGN POINT
+
+  [2] THE TWO INSTRUCTIONS, DECODED before and after (independent V850 decoder, lengths asserted)
+      [PASS] [S] 0x28FA4: `add r9,r26` (len 2) -> `subr r9,r26` (len 2); SAME LENGTH, nothing after it moves
+      [PASS] [S] 0x29D76: `shl 0x5,r16` (len 2) -> `shl 0x2,r16` (len 2); SAME LENGTH, nothing after it moves
+      [PASS] [S] the following instruction 0x28FA6 `cmp r13,r26` decodes IDENTICALLY after the edit
+      [PASS] [S] the following instruction 0x29D78 `sub r26,r16` decodes IDENTICALLY after the edit
+      [PASS] [V] 0x28F96: `ld.hu 0x72e6,tp,r13`, tp+0x72E6 == 0xC62E6 (= 0). No off-by-0x1000
+      [PASS] [V] 0x28F9C: `ld.hu 0x72e6,tp,r14`, tp+0x72E6 == 0xC62E6 (= 0). No off-by-0x1000
+      [PASS] [V] 0x28FB8: `ld.hu 0x72e6,tp,r26`, tp+0x72E6 == 0xC62E6 (= 0). No off-by-0x1000
+      [PASS] [V] 0x28F8A: `ld.h 0x73e8,tp,r9`, tp+0x73E8 == 0xC63E8 (= 923). No off-by-0x1000
+      [PASS] [V] 0x28F86: `ld.hu 0x73ea,tp,r16`, tp+0x73EA == 0xC63EA (= 1560). No off-by-0x1000
+      [PASS] [S] a is read `ld.h` (SIGNED): 1011 < 32768 so it reads as +1011, never negative
+
+  [3] GATE 1 -- image-wide census of every cell this build writes (raw LE byte scan, controls first)
+      [PASS] [S] CONTROL: the forward gain found at its ONE site
+      [PASS] [S] CONTROL: the sum clamp has 8 and the P clamp 7 accessors
+      [PASS] [S] 0xC62E6 fb clamp: EXACTLY 3 accessors ['0x28f96', '0x28f9c', '0x28fb8'], all ld.hu, zero writers
+      [PASS] [S] 0xC63E8 (a): 1 accessor ['0x28f8a'] ld.h; 0xC63EA (b): 1 accessor ['0x28f86'] ld.hu -- both PRIVATE to the fb lag, zero writers (V289 moved these same two cells)
+      [PASS] [S] no LE32 in the image equals any of the three cal addresses
+      [PASS] [S] linear decode of [0x28F86,0x28FC0) lands exactly on 0x28FC0 -- the edited halfwords sit on instruction boundaries
+      [PASS] [S] linear decode of [0x29D6C,0x29D84) lands exactly on 0x29D84 -- the edited halfwords sit on instruction boundaries
+
+  [3b] SIGN, two ways
+      [PASS] [S] V282 image: T(idx 10) = 213 at fb 0 and -165 at fb +2434 (10 deg/s in the + sense): a POSITIVE operand LOWERS the torque -- E = shl(sp) - r26 is negative feedback
+      [PASS] [S] integer mirror: a +800 rate step gives s_new - s_old = [442, 436, 430, 425, 419]... (>0 while the rate is RISING) and s + s_new > 0 -- SAME sign convention, so subr -> r26 > 0 for + acceleration -> P falls: NEGATIVE feedback
+
+  [3e] THE OPERAND AND THE FF IDENTITY, integer mirrors
+      [PASS] [S] constant x = 0: the clamped difference operand settles to EXACTLY 0 (orbit [0]) -- no DC bias at any steady wheel rate; the SUM operand at x = 80 sits at 2434
+      [PASS] [S] constant x = 80: the clamped difference operand settles to EXACTLY 0 (orbit [0]) -- no DC bias at any steady wheel rate; the SUM operand at x = 80 sits at 2434
+      [PASS] [S] constant x = 800: the clamped difference operand settles to EXACTLY 0 (orbit [0]) -- no DC bias at any steady wheel rate; the SUM operand at x = 80 sits at 2434
+      [PASS] [S] constant x = 12000: the clamped difference operand settles to EXACTLY 0 (orbit [0]) -- no DC bias at any steady wheel rate; the SUM operand at x = 80 sits at 2434
+      [PASS] [S] ((sp<<5)*120)>>8 == ((sp<<2)*960)>>8 for EVERY sp in [-2048, 2048] (0 mismatches): the FEEDFORWARD PRODUCT IS BIT-IDENTICAL
+      [PASS] [S] int32: |a*s| at the +-12000 rate guard = 529,141,224 = 0.246 of 2^31; |b*x| = 6,804,000. Both low-word multiplies stay inside int32
+      [PASS] [S] |C*Kp| = 983,040 -- E*Kp stays inside int32 at the clamp bound
+
+  [6] APPLY
+      [PASS] [T] [C] fb clamp 0xC62E6 0 -> 1024
+      [PASS] [T] [A] pole a 0xC63E8 923 -> 1011
+      [PASS] [T] [B] gain b 0xC63EA 1560 -> 567
+      [PASS] [T] [K] Kp -> 960 flat on all 28 DISTINCT records, 140 cells
+      290 payload bytes written
+
+  [6b] READ BACK FROM THE BUILT IMAGE, AFTER mutate() -- adversary B's defects 1 and 3 (2026-09-20)
+      [PASS] [S] 🛑 FULL Y-TUPLE CENSUS of all 28 Kp records on the BUILT image: every Y tuple is EXACTLY (960,)*5 (0 violate), every n and X axis untouched (0 violate), the pointer array unchanged
+      [PASS] [S] 0x28FA4 on the BUILT image: `subr r9,r26` -- reg1 = r9 (s_new), reg2 = r26 (s_old, the destination): r26 := r9 - r26
+      [PASS] [S] 0x29D76 on the BUILT image: `shl 0x2,r16` -- imm5 = 2, DESTINATION r16 (the setpoint register the 0x29D78 `sub r26,r16` consumes)
+
+  [7] EVERYTHING ELSE BYTE-IDENTICAL TO V293 (first assertion is FULL-COVERAGE; the rest are entailed)
+      [PASS] [S] NO byte outside the 290 attributed payload bytes differs from V293 (0 stray)
+      [PASS] [S] FOUR code bytes WRITTEN, ['0x28fa4', '0x28fa5', '0x29d76', '0x29d77'] (the two 16-bit instructions), of which exactly TWO differ in value from V293: ['0x28fa4', '0x29d76'] (c9->89, c5->c2; the high bytes d1 / 82 are unchanged)
+      [PASS] [V] 0xC61B2 == base == 3072   [entailed]
+      [PASS] [V] 0xC61B4 == base == 3072   [entailed]
+      [PASS] [V] 0xC61B8 == base == 102   [entailed]
+      [PASS] [V] 0xC61BA == base == 10240   [entailed]
+      [PASS] [V] 0xC61BC == base == 15360   [entailed]
+      [PASS] [V] 0xC61BE == base == 15360   [entailed]
+      [PASS] [V] 0xC61F6 == base == 3   [entailed]
+      [PASS] [V] 0xC61F8 == base == 1024   [entailed]
+      [PASS] [V] 0xC61FA == base == 5530   [entailed]
+      [PASS] [V] 0xC62E4 == base == 4   [entailed]
+      [PASS] [V] 0xC63E6 == base == 0   [entailed]
+      [PASS] [V] 0xC63EC == base == 992   [entailed]
+      [PASS] [V] 0xC63EE == base == 507   [entailed]
+      [PASS] [V] 0xC6440 == base == 2048   [entailed]
+      [PASS] [V] 0xC6442 == base == 1024   [entailed]
+      [PASS] [V] 0xC6444 == base == 512   [entailed]
+      [PASS] [V] 0xC6448 == base == 1024   [entailed]
+      [PASS] [V] 0xC644A == base == 1024   [entailed]
+      [PASS] [V] 0xC6500 == base == 771   [entailed]
+      [PASS] [V] 0xC674E == base == 5120   [entailed]
+      [PASS] [V] 0xC6750 == base == 5120   [entailed]
+      [PASS] [V] 0xC675A == base == 60416   [entailed]
+      [PASS] [V] 0xC675C == base == 60416   [entailed]
+      [PASS] [V] 0xC6768 == base == 5120   [entailed]
+      [PASS] [V] 0xC676A == base == 5120   [entailed]
+      [PASS] [V] 0xC676C == base == 5120   [entailed]
+      [PASS] [V] 0xC6AE6 == base == 2048   [entailed]
+      [PASS] [V] 0xC6B12 == base == 98   [entailed]
+      [PASS] [V] 0xC6B26 == base == 256   [entailed]
+      [PASS] [V] 0xC6CD0 == base == 5346   [entailed]
+      [PASS] [V] 0xC61B6 == base == 0   [entailed]
+      [PASS] [V] 0xC6446 == base == 2048   [entailed]
+      [PASS] [V] EME float mirror 0xC6598   [entailed]
+      [PASS] [V] EME float mirror 0xC659C   [entailed]
+      [PASS] [V] EME float mirror 0xC65AC   [entailed]
+      [PASS] [V] EME float mirror 0xC65B0   [entailed]
+      [PASS] [V] EME float mirror 0xC65C4   [entailed]
+      [PASS] [V] EME float mirror 0xC65C8   [entailed]
+      [PASS] [V] EME float mirror 0xC65CC   [entailed]
+      [PASS] [S] the CAN-427 delivered-torque tap is byte-identical AND equals the recorded window -- THE INSTRUMENT IS ON THE WIRE
+      [PASS] [V] the tap's source store 0x2A23C intact  [entailed]
+      [PASS] [S] the 0x14A cave and hook intact
+      [PASS] [V] 0x29D78 `sub r26,r16` and 0x28FA8 `st.w r9,-0x3d30,gp` untouched  [entailed]
+      [PASS] [V] Kd bank 0 on all 28 records AND the D clamp 0: NO jerk term (V293's two independent cells)  [entailed]
+      [PASS] [V] Ki 0: NO rate term through the integrator  [entailed]
+      [PASS] [V] r24 engaged arm 2048 unchanged  [entailed]
+
+  [8] CRC TRAILERS -- blocks located by walking the chain from the image
+      [PASS] [S] no edit lands on the trailer 0x0C4FFC
+      [PASS] [S] block [0x013000,0x0C4FFC) CRC moves IFF a byte changed value (2 of 4); 0x4EB06B44 -> 0x1349B154
+      page [0x013000,0x0C4FFC)  trailer 0x4EB06B44 -> 0x1349B154  (4 payload bytes)
+      [PASS] [S] no edit lands on the trailer 0x0C6FFC
+      [PASS] [S] block [0x0C6000,0x0C6FFC) CRC moves IFF a byte changed value (4 of 6); 0x4164DA01 -> 0xF3441165
+      page [0x0C6000,0x0C6FFC)  trailer 0x4164DA01 -> 0xF3441165  (6 payload bytes)
+      [PASS] [S] no edit lands on the trailer 0x0E4FFC
+      [PASS] [S] block [0x0E4000,0x0E4FFC) CRC moves IFF a byte changed value (60 of 60); 0xF35509DA -> 0x0509E2AB
+      page [0x0E4000,0x0E4FFC)  trailer 0xF35509DA -> 0x0509E2AB  (60 payload bytes)
+      [PASS] [S] no edit lands on the trailer 0x0E5FFC
+      [PASS] [S] block [0x0E5000,0x0E5FFC) CRC moves IFF a byte changed value (60 of 60); 0xA7420499 -> 0x511EEFE8
+      page [0x0E5000,0x0E5FFC)  trailer 0xA7420499 -> 0x511EEFE8  (60 payload bytes)
+      [PASS] [S] no edit lands on the trailer 0x0E6FFC
+      [PASS] [S] block [0x0E6000,0x0E6FFC) CRC moves IFF a byte changed value (60 of 60); 0xAB5914DF -> 0x5D05FFAE
+      page [0x0E6000,0x0E6FFC)  trailer 0xAB5914DF -> 0x5D05FFAE  (60 payload bytes)
+      [PASS] [S] no edit lands on the trailer 0x0E7FFC
+      [PASS] [S] block [0x0E7000,0x0E7FFC) CRC moves IFF a byte changed value (60 of 60); 0xD8B9A01F -> 0x2EE54B6E
+      page [0x0E7000,0x0E7FFC)  trailer 0xD8B9A01F -> 0x2EE54B6E  (60 payload bytes)
+      [PASS] [S] no edit lands on the trailer 0x0E8FFC
+      [PASS] [S] block [0x0E8000,0x0E8FFC) CRC moves IFF a byte changed value (40 of 40); 0x8125A8FE -> 0x60E2D8C6
+      page [0x0E8000,0x0E8FFC)  trailer 0x8125A8FE -> 0x60E2D8C6  (40 payload bytes)
+      [PASS] [S] built image CRC chain 50/50
+      [PASS] [S] built image BOOTLOADER CRC replay 49/49
+
+  [9] FULL BYTE DIFF vs V293, every run attributed
+      [PASS] [S] all 314 differing bytes are attributed payload or CRC
+      [PASS] [S] total diff = 2 code + 4 fb-stage cal + 280 Kp + 28 CRC (over 7 block(s)) = 314, got 314 -- every term COMPUTED from the base
+      [PASS] [S] every one of the 40 differing runs is a named edit or a CRC trailer ([])
+      offset                len  what                       base -> built
+      0x028FA4-0x028FA4 (  1 B)  subr        0x28FA4 [S]    c9 -> 89
+      0x029D76-0x029D76 (  1 B)  shl 0x2     0x29D76 [E]    c5 -> c2
+      0x0C4FFC-0x0C4FFF (  4 B)  CRC trailer 0x0C4FFC       446bb04e -> 54b14913
+      0x0C62E7-0x0C62E7 (  1 B)  fb clamp    0xC62E6 [C]    00 -> 04
+      0x0C63E8-0x0C63E8 (  1 B)  pole a      0xC63E8 [A]    9b -> f3
+      0x0C63EA-0x0C63EB (  2 B)  gain b      0xC63EA [B]    1806 -> 3702
+      0x0C6FFC-0x0C6FFF (  4 B)  CRC trailer 0x0C6FFC       01da6441 -> 651144f3
+      0x0E436C-0x0E4375 ( 10 B)  Kp Y  rec 0xE4360 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E4384-0x0E438D ( 10 B)  Kp Y  rec 0xE4378 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E439C-0x0E43A5 ( 10 B)  Kp Y  rec 0xE4390 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E43B4-0x0E43BD ( 10 B)  Kp Y  rec 0xE43A8 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E43CC-0x0E43D5 ( 10 B)  Kp Y  rec 0xE43C0 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E43E4-0x0E43ED ( 10 B)  Kp Y  rec 0xE43D8 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E4FFC-0x0E4FFF (  4 B)  CRC trailer 0x0E4FFC       da0955f3 -> abe20905
+      0x0E536C-0x0E5375 ( 10 B)  Kp Y  rec 0xE5360 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E5384-0x0E538D ( 10 B)  Kp Y  rec 0xE5378 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E539C-0x0E53A5 ( 10 B)  Kp Y  rec 0xE5390 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E53B4-0x0E53BD ( 10 B)  Kp Y  rec 0xE53A8 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E53CC-0x0E53D5 ( 10 B)  Kp Y  rec 0xE53C0 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E53E4-0x0E53ED ( 10 B)  Kp Y  rec 0xE53D8 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E5FFC-0x0E5FFF (  4 B)  CRC trailer 0x0E5FFC       990442a7 -> e8ef1e51
+      0x0E636C-0x0E6375 ( 10 B)  Kp Y  rec 0xE6360 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E6384-0x0E638D ( 10 B)  Kp Y  rec 0xE6378 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E639C-0x0E63A5 ( 10 B)  Kp Y  rec 0xE6390 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E63B4-0x0E63BD ( 10 B)  Kp Y  rec 0xE63A8 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E63CC-0x0E63D5 ( 10 B)  Kp Y  rec 0xE63C0 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E63E4-0x0E63ED ( 10 B)  Kp Y  rec 0xE63D8 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E6FFC-0x0E6FFF (  4 B)  CRC trailer 0x0E6FFC       df1459ab -> aeff055d
+      0x0E736C-0x0E7375 ( 10 B)  Kp Y  rec 0xE7360 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E7384-0x0E738D ( 10 B)  Kp Y  rec 0xE7378 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E739C-0x0E73A5 ( 10 B)  Kp Y  rec 0xE7390 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E73B4-0x0E73BD ( 10 B)  Kp Y  rec 0xE73A8 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E73CC-0x0E73D5 ( 10 B)  Kp Y  rec 0xE73C0 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E73E4-0x0E73ED ( 10 B)  Kp Y  rec 0xE73D8 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E7FFC-0x0E7FFF (  4 B)  CRC trailer 0x0E7FFC       1fa0b9d8 -> 6e4be52e
+      0x0E824C-0x0E8255 ( 10 B)  Kp Y  rec 0xE8240 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E8264-0x0E826D ( 10 B)  Kp Y  rec 0xE8258 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E827C-0x0E8285 ( 10 B)  Kp Y  rec 0xE8270 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E8294-0x0E829D ( 10 B)  Kp Y  rec 0xE8288 [K]      78007800780078007800 -> c003c003c003c003c003
+      0x0E8FFC-0x0E8FFF (  4 B)  CRC trailer 0x0E8FFC       fea82581 -> c6d8e260
+      (+ 28 Kp record runs of 10 B each)
+
+  [10] THE DELIVERED SURFACE -- READ FROM THE BUILT IMAGE, and the FF identity against V293
+      [PASS] [S] read back from the bytes: built shl imm 2, operand `diff`; base shl imm 5, operand `sum`
+      fb stage on the built image: a=1011 b=567 C=1024; pole 2.03 Hz
+      [PASS] [S] the built pole is 2.03 Hz -- inside the ladder's 1-4 Hz (the shipped design point is 2.0 Hz)
+      [PASS] [S] 🛑 THE FEEDFORWARD IS BYTE-EXACT: V294 at r26 = 0 delivers V293's P, S and T at EVERY demand index 0..240 (0 mismatches), and this module's surface() reproduces build_v293_tva.surface() on the base
+      idx |  map |  Kp |     P  rail |     T   | V293 T | T at r26=-C (accel AGAINST cmd) | at +C (WITH cmd)
+         0 |    0 | 960 |      0      |      0  |      0 |    615 ( +615)              |   -616 ( -616)
+        20 |   86 | 960 |   1290      |    206  |    206 |    821 ( +615)              |   -410 ( -616)
+        40 |  172 | 960 |   2580      |    413  |    413 |   1028 ( +615)              |   -203 ( -616)
+        60 |  257 | 960 |   3855      |    617  |    617 |   1232 ( +615)              |      1 ( -616)
+        80 |  344 | 960 |   5160      |    826  |    826 |   1441 ( +615)              |    211 ( -615)
+       100 |  430 | 960 |   6450      |   1033  |   1033 |   1648 ( +615)              |    417 ( -616)
+       120 |  515 | 960 |   7725      |   1237  |   1237 |   1853 ( +616)              |    622 ( -615)
+       140 |  601 | 960 |   9015      |   1444  |   1444 |   2059 ( +615)              |    828 ( -616)
+       160 |  688 | 960 |  10320      |   1653  |   1653 |   2269 ( +616)              |   1038 ( -615)
+       180 |  774 | 960 |  11610      |   1860  |   1860 |   2461 ( +601)              |   1244 ( -616)
+       200 |  860 | 960 |  12900      |   2067  |   2067 |   2461 ( +394)              |   1451 ( -616)
+       220 |  946 | 960 |  14190      |   2273  |   2273 |   2461 ( +188)              |   1658 ( -615)
+       240 | 1032 | 960 |  15360 RAIL |   2461  |   2461 |   2461 (   +0)              |   1865 ( -596)
+      [PASS] [S] the trim at the clamp bound is +616 / -615 counts at idx 120 = 25.0 % of the 2461 rail (P-domain cap 3840 = (Kp*C)>>8): THE FEEDFORWARD KEEPS >= 75 % BY CONSTRUCTION
+      [PASS] [S] the rail is 2461 at idx 240, P clamp binding, exactly V293's
+      [PASS] [S] monotone in demand index
+      the operand from the built cells, x -> r26 (unclamped), and the trim as P-counts per x-count:
+        f=  1.0 Hz  |r26/x|  0.246  phase   63.8 deg  trim   0.92 P/x   (V282 at 20 Hz: 44.9 P/x, P+D)
+        f=  2.0 Hz  |r26/x|  0.391  phase   45.5 deg  trim   1.47 P/x   (V282 at 20 Hz: 44.9 P/x, P+D)
+        f=  2.5 Hz  |r26/x|  0.432  phase   39.1 deg  trim   1.62 P/x   (V282 at 20 Hz: 44.9 P/x, P+D)
+        f=  7.0 Hz  |r26/x|  0.535  phase   16.2 deg  trim   2.01 P/x   (V282 at 20 Hz: 44.9 P/x, P+D)
+        f= 20.0 Hz  |r26/x|  0.554  phase    5.8 deg  trim   2.08 P/x   (V282 at 20 Hz: 44.9 P/x, P+D)
+      [PASS] [S] trim gain at 20 Hz = 2.08 P-counts per x-count = -26.7 dB below V282's P+D there (the loop that was marginal at 20 Hz); gate: < -12 dB
+
+  [11] THE OUTPUT NAME, RE-DERIVED FROM THE BUILT IMAGE'S OWN BYTES
+      [PASS] [S] the tag re-derived from the image's own halfwords and opcodes is CHARACTER-IDENTICAL
+      _v294_V294-V293BASE-ACCELTRIM.SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.567-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP_plain_image.bin
+      39990-TVA,A160-V294-V293BASE-ACCELTRIM.SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.567-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP-0x13000-0x100000.rwd
+
+  [12] .rwd ENCODE + READBACK
+      [PASS] [S] V38 source .rwd sha256 matches
+      [PASS] [S] the decoded .rwd is BYTE-IDENTICAL to the built image
+      [PASS] [V] readback CRC 50/50 + 49/49  [entailed]
+      [PASS] [S] cipher table validated NON-CIRCULARLY against the known V38 plain image
+
+  [13] INDEPENDENT REBUILD -- a second splice + a DIFFERENT CRC locator
+      [PASS] [S] independent rebuild == built image sha256 (shares the constants; cross-checks the CRC locator and splice only)
+      [PASS] [S] both output paths fit the 259-char limit (image 214, rwd 232)
+
+======================================================================================================================
+  image SHA256 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+  .rwd  SHA256 a2b418f061160f66ffaa8ac541a478d43771fcbd004a92dc3d7a071cfd9f706a
+  159/159 assertions -- census: 66 substantive, 89 vacuous, 4 tautological
+======================================================================================================================
+
+      NOT WRITTEN -- set ACCORD_V294_WRITE=rwd to emit the files.  --grid for the control, ladder and mutation test.

@@ -75,6 +75,7 @@ from eps_chain_control import (
     _self_check_v288,
     _self_check_v289,
     _self_check_v293,
+    _self_check_v294,
     a160_governor_rate_cap,
     computed_runtime_governor,
     engage_decider,
@@ -517,6 +518,9 @@ def _self_check():
     # build_v293_tva.py's own printed surface table to the COUNT at every demand index, by marching
     # this model's tick rather than solving a fixed point -- two independent implementations.
     _self_check_v293()
+    # V294 / the acceleration trim (fb_op "diff", e_shift 2). Asserts only, prints nothing; reproduces
+    # build_v294_tva.py's FF identity, operand orbit, clamp bound and 25 % trim cap by marching the tick.
+    _self_check_v294()
 
 
 def _demo():

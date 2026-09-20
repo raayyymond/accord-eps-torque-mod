@@ -1,0 +1,71 @@
+      V293 rwd on disk: UNCHANGED (ac4723865378ff37...)
+======================================================================================================================
+  [0] ZERO-EDIT CONTROL -- every edit disabled must reproduce the V293 base BIT FOR BIT
+      [PASS] zero-edit rebuild == V293 (0 differing bytes, 0 attributed)
+
+  [0b] THE POLE / GAIN LADDER -- dry run, NOTHING WRITTEN (K/J = 1.0 at each pole, and K/J 0.5 / 2.0 at 2 Hz)
+          a     b     C |  diff blk | image sha256[:16]   rwd sha256[:16]
+       1015   392  1024 |   314   7 | 44999e40a9304d1b   d301c25bac97d7c9  
+       1011   567  1024 |   314   7 | 3143616d5b79bdb7   a2b418f061160f66  <-- SHIPPED
+       1005   831  1024 |   314   7 | 5ecc980a767d043a   0cfca5903b5e39e2  
+       1000  1080  1024 |   314   7 | 0196f38a26ab4179   206b3a344e1075f6  
+       1011   284  1024 |   314   7 | 5bd21e6f633f8aca   824ad786a09f5580  
+       1011  1134  1024 |   314   7 | 3f5b24af5045ef34   3d85365c1c2747b7  
+
+  [0c] MUTATION TEST -- flip each edit and prove the script FAILS
+      [CAUGHT] m_sub_not_subr           1 assertion(s) fire
+                   - raised KeyError: 'sub'
+      [CAUGHT] m_add_left               5 assertion(s) fire
+                   - 0x28FA4 on the BUILT image: `add r9,r26` -- reg1 = r9 (s_new), reg2 = r26 (s_old, the destination): 
+                   - FOUR code bytes WRITTEN, ['0x28fa4', '0x28fa5', '0x29d76', '0x29d77'] (the two 16-bit instructions),
+      [CAUGHT] m_shl5_left              7 assertion(s) fire
+                   - 0x29D76 on the BUILT image: `shl 0x5,r16` -- imm5 = 5, DESTINATION r16 (the setpoint register the 0x
+                   - FOUR code bytes WRITTEN, ['0x28fa4', '0x28fa5', '0x29d76', '0x29d77'] (the two 16-bit instructions),
+      [CAUGHT] m_shl3                   5 assertion(s) fire
+                   - 0x29D76 on the BUILT image: `shl 0x3,r16` -- imm5 = 3, DESTINATION r16 (the setpoint register the 0x
+                   - read back from the bytes: built shl imm 3, operand `diff`; base shl imm 5, operand `sum`
+      [CAUGHT] m_kp_one_record          2 assertion(s) fire
+                   - 🛑 FULL Y-TUPLE CENSUS of all 28 Kp records on the BUILT image: every Y tuple is EXACTLY (960,)*5 (1 
+                   - total diff = 2 code + 4 fb-stage cal + 280 Kp + 28 CRC (over 7 block(s)) = 314, got 304 -- every ter
+      [CAUGHT] m_kp_interior_knot       2 assertion(s) fire
+                   - 🛑 FULL Y-TUPLE CENSUS of all 28 Kp records on the BUILT image: every Y tuple is EXACTLY (960,)*5 (1 
+                   - 🛑 THE FEEDFORWARD IS BYTE-EXACT: V294 at r26 = 0 delivers V293's P, S and T at EVERY demand index 0
+      [CAUGHT] m_kp_nonlive_knot        1 assertion(s) fire
+                   - 🛑 FULL Y-TUPLE CENSUS of all 28 Kp records on the BUILT image: every Y tuple is EXACTLY (960,)*5 (1 
+      [CAUGHT] m_kp_two_nonlive         1 assertion(s) fire
+                   - 🛑 FULL Y-TUPLE CENSUS of all 28 Kp records on the BUILT image: every Y tuple is EXACTLY (960,)*5 (2 
+      [CAUGHT] m_shl_wrong_reg          3 assertion(s) fire
+                   - 0x29D76 on the BUILT image: `shl 0x2,r17` -- imm5 = 2, DESTINATION r17 (the setpoint register the 0x
+                   - FOUR code bytes WRITTEN, ['0x28fa4', '0x28fa5', '0x29d76', '0x29d77'] (the two 16-bit instructions),
+      [CAUGHT] m_b_double               1 assertion(s) fire
+                   - the tag re-derived from the image's own halfwords and opcodes is CHARACTER-IDENTICAL
+      [CAUGHT] m_fb_zero                3 assertion(s) fire
+                   - total diff = 2 code + 4 fb-stage cal + 280 Kp + 28 CRC (over 7 block(s)) = 314, got 313 -- every ter
+                   - the trim at the clamp bound is +0 / +0 counts at idx 120 = 0
+      [CAUGHT] m_fb_huge                2 assertion(s) fire
+                   - the trim at the clamp bound is +1224 / -3700 counts at idx 120 = 49
+                   - the tag re-derived from the image's own halfwords and opcodes is CHARACTER-IDENTICAL
+      [CAUGHT] m_a_old                  3 assertion(s) fire
+                   - total diff = 2 code + 4 fb-stage cal + 280 Kp + 28 CRC (over 7 block(s)) = 314, got 313 -- every ter
+                   - the built pole is 16
+      [CAUGHT] m_b_x8                   2 assertion(s) fire
+                   - trim gain at 20 Hz = 16
+                   - the tag re-derived from the image's own halfwords and opcodes is CHARACTER-IDENTICAL
+      [CAUGHT] m_stray_byte             4 assertion(s) fire
+                   - NO byte outside the 290 attributed payload bytes differs from V293 (1 stray)
+                   - all 315 differing bytes are attributed payload or CRC
+      [CAUGHT] m_dclamp                 6 assertion(s) fire
+                   - NO byte outside the 290 attributed payload bytes differs from V293 (1 stray)
+                   - 0xC61B6 == base == 0   [entailed]
+      [CAUGHT] m_kd_live                5 assertion(s) fire
+                   - NO byte outside the 290 attributed payload bytes differs from V293 (1 stray)
+                   - Kd bank 0 on all 28 records AND the D clamp 0: NO jerk term (V293's two independent cells)  [entaile
+      [CAUGHT] m_crc_off                1 assertion(s) fire
+                   - NO byte outside the 290 attributed payload bytes differs from V293 (1 stray)
+      [CAUGHT] m_tap                    5 assertion(s) fire
+                   - NO byte outside the 290 attributed payload bytes differs from V293 (1 stray)
+                   - the CAN-427 delivered-torque tap is byte-identical AND equals the recorded window -- THE INSTRUMENT 
+      [CAUGHT] m_r24                    6 assertion(s) fire
+                   - NO byte outside the 290 attributed payload bytes differs from V293 (2 stray)
+                   - 0xC6446 == base == 2048   [entailed]
+      [PASS] 20/20 mutations caught

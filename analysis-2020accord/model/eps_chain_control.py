@@ -513,8 +513,13 @@ def lkas_fb_lag(x: int, st: EpsState, cal: Calibration, lane_live: bool = True) 
     r14 = cal.fb_clamp & 0xFFFF           # 0x28F9C  ld.hu 0x72e6[tp],r14     +L again
     r9 = r9 >> 10                         # 0x28FA0  sar   0xa,r9             (a*s) >> 10, floors
     r9 = _s32(r9 + r7)                    # 0x28FA2  add   r7,r9              s_new
-    r26 = _s32(r26 + r9)                  # 0x28FA4  add   r9,r26             s + s_new
-                                          # 0x28FA6  cmp   r13,r26            flags of (s + s_new) - L
+    if cal.fb_op == "sum":
+        r26 = _s32(r26 + r9)              # 0x28FA4  add   r9,r26             s + s_new   (stock .. V293)
+    elif cal.fb_op == "diff":
+        r26 = _s32(r9 - r26)              # 0x28FA4  subr  r9,r26             s_new - s   (V294: r26 := r9 - r26)
+    else:
+        raise ValueError(f"lkas_fb_lag: fb_op must be 'sum' or 'diff', got {cal.fb_op!r}")
+                                          # 0x28FA6  cmp   r13,r26            flags of r26 - L
     st.fb_lag_s = r9                      # 0x28FA8  st.w  r9,-0x3d30[gp]     s := s_new (BEFORE the clamp resolves)
     if r26 > r13:                         # 0x28FAC  ble   0x28FB2            not-taken arm: above +L
         r26 = r14                         # 0x28FAE  mov   r14,r26 ; 0x28FB0  br 0x28FBE
@@ -867,7 +872,7 @@ def lkas_rate_pid_tick(sp: int, fb: int, idx: int, st: EpsState, cal: Calibratio
     point, so the agreement is between two independent implementations, not a copy.
     """
     tap = cal.override_taper_factor if taper is None else taper
-    E = _s32(32 * sp - fb)                       # 0x29D76 shl 0x5,r16 ; 0x29D78 sub r26,r16
+    E = _s32((sp << cal.e_shift) - fb)           # 0x29D76 shl imm5,r16 (5 stock..V293, 2 on V294) ; 0x29D78 sub r26,r16
 
     # ---- I : a DEADBAND on E>>5, then Ki, into a 32-bit accumulator that holds 8*I -----------------
     e5 = E >> 5                                  # 0x29D6C sar 0x5 (feeds the deadband compare only)
@@ -954,6 +959,61 @@ def lkas_rate_pid_surface(idx: int, cal: Calibration, fb: int = 0, pol: int = 1,
 
     band = sorted(deliver(L) for L in fixed) if fixed else [last["T"], last["T"]]
     return dict(idx=idx, sp=sp, T_lo=band[0], T_hi=band[-1], **last)
+
+
+def _self_check_v294():
+    """V294 assertions (2026-09-20): the ACCELERATION TRIM on V293's torque map. Called from
+    _self_check(); prints NOTHING. V294 = V293 + `subr` at 0x28FA4 (fb_op "diff") + `shl 0x2` at
+    0x29D76 (e_shift 2) + fb clamp 0 -> 1024 + fb-lag pole 923 -> 1011 (2.0 Hz) + b 1560 -> 567 + Kp
+    120 -> 960. Every expected number is build_v294_tva.py's own printed output, reproduced here by
+    marching this model's tick -- two independent implementations."""
+    v293 = replace(Calibration(), fb_clamp=0, kd_y=(0, 0, 0, 0), pid_d_clamp=0, kp_y=(120,) * 5)
+    v294 = replace(v293, fb_clamp=1024, fb_lag_a=1011, fb_lag_b=567, kp_y=(960,) * 5, fb_op="diff", e_shift=2)
+    assert (v294.fb_op, v294.e_shift, v293.fb_op, v293.e_shift) == ("diff", 2, "sum", 5)
+
+    # 0. the FEEDFORWARD is BIT-IDENTICAL: at fb = 0, V294's P, S and T equal V293's at EVERY demand index
+    for idx in range(0, 241):
+        a, b = lkas_rate_pid_surface(idx, v294), lkas_rate_pid_surface(idx, v293)
+        assert (a["P"], a["S"], a["T"], a["T_lo"], a["T_hi"]) == (b["P"], b["S"], b["T"], b["T_lo"], b["T_hi"]), idx
+        assert a["kp"] == 960 and a["kd"] == 0 and a["D"] == 0 and a["I"] == 0
+    assert lkas_rate_pid_surface(240, v294)["T"] == 2461                       # the rail, V282's and V293's
+
+    # 1. the DIFFERENCE operand settles to EXACTLY 0 at any constant wheel rate (no DC bias, unlike the
+    #    sum, which floors to 2434 at x = 80 on V282); and the clamp bounds it at +-1024
+    def fb_settle(x, cal):
+        st, seen, last = EpsState(), set(), None
+        for _ in range(300000):
+            if st.fb_lag_s in seen:
+                break
+            seen.add(st.fb_lag_s)
+            last = lkas_fb_lag(x, st, cal)
+        return last
+    assert [fb_settle(x, v294) for x in (0, 80, 800, 12000)] == [0, 0, 0, 0]
+    assert fb_settle(80, Calibration()) == 2434                                  # the V282 sum, unchanged
+    #    a +800 step: the operand is POSITIVE while the rate rises (same sign convention as the sum), then decays
+    st = EpsState()
+    seq = [lkas_fb_lag(800 if k >= 5 else 0, st, v294) for k in range(40)]
+    assert seq[5] == 442 and seq[6] == 436 and all(v >= 0 for v in seq) and seq[-1] < seq[5]
+    #    the first tick of the step is (b*x)>>10 = 442: the mirror's arithmetic, not a fitted number
+    assert (567 * 800) >> 10 == 442
+    #    the clamp: an operand past +-1024 is bounded (mirrored branch for branch in lkas_fb_lag)
+    st = EpsState()
+    big = [lkas_fb_lag(12000 if k >= 5 else 0, st, v294) for k in range(8)]
+    assert big[5] == 1024 and (567 * 12000) >> 10 == 6644                       # 6644 clamped to 1024
+
+    # 2. the TRIM at the clamp bound, read through the whole chain at idx 120: +-615/616 counts = 25 % of 2461
+    t0 = lkas_rate_pid_surface(120, v294)["T"]
+    tm = lkas_rate_pid_surface(120, v294, fb=-1024)["T"]
+    tp = lkas_rate_pid_surface(120, v294, fb=+1024)["T"]
+    assert t0 == 1237 and (tm - t0, tp - t0) == (616, -615), (t0, tm, tp)
+    assert (960 * 1024) >> 8 == 3840                                            # the P-domain cap
+    #    and the sign: a POSITIVE operand (wheel accelerating in the +T sense) LOWERS the torque
+    assert tp < t0 < tm
+
+    # 3. int32 headroom at the +-12000 rate guard and the FF product identity
+    s_max = 567 * 12000 // (1024 - 1011)
+    assert 1011 * s_max < 2 ** 31 and 1011 * s_max == 529141224
+    assert all(((sp << 5) * 120) >> 8 == ((sp << 2) * 960) >> 8 for sp in range(-2048, 2049))
 
 
 def _self_check_v293():

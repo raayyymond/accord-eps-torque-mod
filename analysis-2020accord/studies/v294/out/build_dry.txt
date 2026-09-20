@@ -1,0 +1,51 @@
+  [10] THE DELIVERED SURFACE -- READ FROM THE BUILT IMAGE, and the FF identity against V293
+      [PASS] [S] read back from the bytes: built shl imm 2, operand `diff`; base shl imm 5, operand `sum`
+      fb stage on the built image: a=1011 b=567 C=1024; pole 2.03 Hz
+      [PASS] [S] the built pole is 2.03 Hz (the design's 2 Hz acceleration bandwidth)
+      [PASS] [S] 🛑 THE FEEDFORWARD IS BYTE-EXACT: V294 at r26 = 0 delivers V293's P, S and T at EVERY demand index 0..240 (0 mismatches), and this module's surface() reproduces build_v293_tva.surface() on the base
+      idx |  map |  Kp |     P  rail |     T   | V293 T | T at r26=-C (accel AGAINST cmd) | at +C (WITH cmd)
+         0 |    0 | 960 |      0      |      0  |      0 |    615 ( +615)              |   -616 ( -616)
+        20 |   86 | 960 |   1290      |    206  |    206 |    821 ( +615)              |   -410 ( -616)
+        40 |  172 | 960 |   2580      |    413  |    413 |   1028 ( +615)              |   -203 ( -616)
+        60 |  257 | 960 |   3855      |    617  |    617 |   1232 ( +615)              |      1 ( -616)
+        80 |  344 | 960 |   5160      |    826  |    826 |   1441 ( +615)              |    211 ( -615)
+       100 |  430 | 960 |   6450      |   1033  |   1033 |   1648 ( +615)              |    417 ( -616)
+       120 |  515 | 960 |   7725      |   1237  |   1237 |   1853 ( +616)              |    622 ( -615)
+       140 |  601 | 960 |   9015      |   1444  |   1444 |   2059 ( +615)              |    828 ( -616)
+       160 |  688 | 960 |  10320      |   1653  |   1653 |   2269 ( +616)              |   1038 ( -615)
+       180 |  774 | 960 |  11610      |   1860  |   1860 |   2461 ( +601)              |   1244 ( -616)
+       200 |  860 | 960 |  12900      |   2067  |   2067 |   2461 ( +394)              |   1451 ( -616)
+       220 |  946 | 960 |  14190      |   2273  |   2273 |   2461 ( +188)              |   1658 ( -615)
+       240 | 1032 | 960 |  15360 RAIL |   2461  |   2461 |   2461 (   +0)              |   1865 ( -596)
+      [PASS] [S] the trim at the clamp bound is +616 / -615 counts at idx 120 = 25.0 % of the 2461 rail (P-domain cap 3840 = (Kp*C)>>8): THE FEEDFORWARD KEEPS >= 75 % BY CONSTRUCTION
+      [PASS] [S] the rail is 2461 at idx 240, P clamp binding, exactly V293's
+      [PASS] [S] monotone in demand index
+      the operand from the built cells, x -> r26 (unclamped), and the trim as P-counts per x-count:
+        f=  1.0 Hz  |r26/x|  0.246  phase   63.8 deg  trim   0.92 P/x   (V282 at 20 Hz: 44.9 P/x, P+D)
+        f=  2.0 Hz  |r26/x|  0.391  phase   45.5 deg  trim   1.47 P/x   (V282 at 20 Hz: 44.9 P/x, P+D)
+        f=  2.5 Hz  |r26/x|  0.432  phase   39.1 deg  trim   1.62 P/x   (V282 at 20 Hz: 44.9 P/x, P+D)
+        f=  7.0 Hz  |r26/x|  0.535  phase   16.2 deg  trim   2.01 P/x   (V282 at 20 Hz: 44.9 P/x, P+D)
+        f= 20.0 Hz  |r26/x|  0.554  phase    5.8 deg  trim   2.08 P/x   (V282 at 20 Hz: 44.9 P/x, P+D)
+      [PASS] [S] trim gain at 20 Hz = 2.08 P-counts per x-count = -26.7 dB below V282's P+D there (the loop that was marginal at 20 Hz); gate: < -12 dB
+
+  [11] THE OUTPUT NAME, RE-DERIVED FROM THE BUILT IMAGE'S OWN BYTES
+      [PASS] [S] the tag re-derived from the image's own halfwords and opcodes is CHARACTER-IDENTICAL
+      _v294_V294-V293BASE-ACCELTRIM.SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.567-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP_plain_image.bin
+      39990-TVA,A160-V294-V293BASE-ACCELTRIM.SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.567-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP-0x13000-0x100000.rwd
+
+  [12] .rwd ENCODE + READBACK
+      [PASS] [S] V38 source .rwd sha256 matches
+      [PASS] [S] the decoded .rwd is BYTE-IDENTICAL to the built image
+      [PASS] [S] cipher table validated NON-CIRCULARLY against the known V38 plain image
+
+  [13] INDEPENDENT REBUILD -- a second splice + a DIFFERENT CRC locator
+      [PASS] [S] independent rebuild == built image sha256 (shares the constants; cross-checks the CRC locator and splice only)
+      [PASS] [S] both output paths fit the 259-char limit (image 214, rwd 232)
+
+======================================================================================================================
+  image SHA256 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+  .rwd  SHA256 a2b418f061160f66ffaa8ac541a478d43771fcbd004a92dc3d7a071cfd9f706a
+  155/155 assertions -- census: 62 substantive, 89 vacuous, 4 tautological
+======================================================================================================================
+
+      NOT WRITTEN -- set ACCORD_V294_WRITE=rwd to emit the files.  --grid for the control, ladder and mutation test.

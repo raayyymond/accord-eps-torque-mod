@@ -120,6 +120,11 @@ DC gain `= 2b / (1024 - a)`. At (923, 1560): `3120/101 = 30.8911` — **EVIDENCE
 
 ### 1.3 Where `x` is produced, and whether it is clamped
 
+> ⚠ **ERRATUM 2026-09-20 (V294 adversarial pass, verified by the orchestrator from the bytes):** the count is
+> **29, not 30** — the alleged `ld.bu` at `0x14B1E` (`84 ff aa 95`) is `jarl 0x5E0C8,lp` (`hw2` bit 0 = 0, even
+> target, reg2 = 31 = lp), the `ld.bu`/`jarl` opcode collision the `firmware-decompile` skill documents. The
+> 25 `ld.h` + 4 `st.h` stand. Nothing downstream of this count changes.
+
 **EVIDENCE.** `gp-0x6a56` has 30 accesses image-wide — **25 `ld.h`, 4 `st.h`, 1 `ld.bu`**. All four
 writers are in one block at `0x3F7A0–0x3F822`, and they **saturate**:
 

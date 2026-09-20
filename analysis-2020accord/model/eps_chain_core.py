@@ -137,6 +137,16 @@ class Calibration:
                                          # gain, Q10. DC gain of the lag = 2b/(1024-a): 30.891 (V282), 30.886 (V289).
     fb_clamp: int = 46080                # 0xC62E6 (tp+0x72e6), `ld.hu`. The +-clamp on the lag output r26
                                          # (the rate feedback fb the error former subtracts at 0x29D78).
+    # ---- V294 (2026-09-20): TWO IN-PLACE OPCODE EDITS, modelled as structural fields ---------------------
+    fb_op: str = "sum"                   # the instruction at 0x28FA4: "sum" = `add r9,r26` (stock..V293,
+                                         # r26 = s_old + s_new, the TWO-SAMPLE SUM of the lagged rate);
+                                         # "diff" = `subr r9,r26` (V294, r26 = s_new - s_old, the per-tick
+                                         # CHANGE of the lagged rate = the wheel ACCELERATION through the
+                                         # lag pole, scaled b/1024). Bytes c9d1 -> 89d1, same length.
+    e_shift: int = 5                     # the immediate of `shl imm5,r16` at 0x29D76: E = (sp << e_shift)
+                                         # - r26. 5 on stock..V293 (E = 32*sp - r26); 2 on V294 (E = 4*sp
+                                         # - r26, paired with Kp x8 so the FF product 3840*sp is bit-exact
+                                         # and the trim gain on r26 is x8). Bytes c582 -> c282.
     # ---- V289 SUM NOTCH (a CODE CAVE at 0xC4C00..0xC4C8B, hooked at 0x2A174; NOT a stock cal) --------
     # None  = stock / V282 / V288 and every build before V289: no cave, S passes 0x2A174 untouched, and
     #         `lkas_sum_notch` is an identity that touches no state.
