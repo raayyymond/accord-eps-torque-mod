@@ -1,0 +1,92 @@
+C1.  IS THE CLAUSE (b) FAILURE ROBUST?  both speed bins x all eligible plants x 3 delays
+     x jerk in-loop/exogenous x two readings of the V282 anchor trio.
+================================================================================================================
+  [V282 trio = the three 0.010 routes (64/65/6c) ] bin 22+    plants 6
+  [V282 trio = the three 0.010 routes (64/65/6c) ] bin 15-22  plants 5
+  [V282 trio spans 0.010-0.030 as the prereg's ta] bin 22+    plants 6
+  [V282 trio spans 0.010-0.030 as the prereg's ta] bin 15-22  plants 5
+
+  clause (b) evaluated in 132 (V282-reading x bin x delay x jerk-reading x plant) cells
+  FAILED in 132 of 132  (100.0 %)
+  the clean that beats a positive: {'V282 clean': 66, 'V282old cln': 66}
+  (a single cell PASSES only if BOTH positives beat EVERY clean in it.)
+
+================================================================================================================
+C2.  CLAUSE (d), FINAL.  Two nulls: (i) uniform random ranking, (ii) a STRUCTURED null --
+     a statistic that is an arbitrary monotone combination of the controller's own numbers
+     but knows nothing about the labels.
+================================================================================================================
+  distinct clean VALUES for a statistic built on (kp, LAF, ki, notch, SteerFriction, rateloop):C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\gate2\adversary\adv_final.py:88: RuntimeWarning: divide by zero encountered in log
+  X = np.log(np.array([feats[n] for n in names]))
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\gate2\adversary\adv_final.py:89: RuntimeWarning: invalid value encountered in subtract
+  X = (X - X.mean(0)) / (X.std(0) + 1e-12)
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\numpy\_core\_methods.py:188: RuntimeWarning: invalid value encountered in subtract
+  x = um.subtract(arr, arrmean, out=...)
+
+    r72  (0.85, 14, 0.60, Q1, 0.000, 6e-4)        -> 1
+    rev6.4 x2 routes (1.00, 14, 0.30, Q1, 0, 1e-3)-> 1  (both routes identical)
+    V282 x3 routes (0.90, 6.0, 0.30, --, 0.010, 0)-> 1  (SteerRatio differs, statistic ignores it)
+    => 3 distinct clean values, not 5.  Clause (b)'s 'ALL FIVE clean routes' is 3 draws.
+    P(both positives top-2 | random ranking, 3 clean values) = 1/C(5,2) = 0.1000
+    P(both positives top-2 | random ranking, 4 clean values) = 1/C(6,2) = 0.0667
+    P(both positives top-2 | random ranking, 5 clean values) = 1/C(7,2) = 0.0476
+
+  STRUCTURED null (random weights on log controller features, 200000 draws):
+    P(b and c) = 0.0000   [uniform-ranking value would be 0.1000]
+    -- a statistic with structure but no label knowledge is NOT more likely to pass; the
+       anchor set's own geometry (V282 high-gain-and-relay-live, clean) works against it.
+
+  P(a | r71) ~ 1.00   (window [1.755,2.925] brackets the plant mode 1.73-2.25 at 93.5% of speeds;
+                       gate #1 passed it on every plant with NO jerk term)
+  P(a | r73)  = 0.667 (empirical over gate #1's own crossings, WIDE reading [3.0,8.125])
+              = 0.000 (NARROW reading [4.0,6.5]: 0 of 42 crossings of this model family reach it)
+
+  SINGLE-SHOT  P(pass a+b+c | no content) = 1.00 x 0.667 x 0.1000 = 0.0667
+  bracket over the count of distinct clean values (3..5): 0.0318 .. 0.0667
+  and if P(a|r73) is also taken as ~1 (the window is wide and the analyst picks the crossing): 0.1000
+
+  MULTIPLICITY from the choices the PREREG LEAVES FREE (crossing index, b over 70x, D, speed bin,
+  plant subset).  These are not hypothetical: the ONLY way r73 clears clause (a) in this model
+  family is to switch from the FIRST crossing to the THIRD, which is exactly such a choice.
+    M_eff=1: P = 1-(1-0.0667)^1 = 0.0667   <= 0.10
+    M_eff=2: P = 1-(1-0.0667)^2 = 0.1290   EXCEEDS 0.10
+    M_eff=3: P = 1-(1-0.0667)^3 = 0.1871   EXCEEDS 0.10
+    M_eff=4: P = 1-(1-0.0667)^4 = 0.2413   EXCEEDS 0.10
+
+wrote C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\gate2\adversary\out\final.json
+C2.  CLAUSE (d), FINAL.  Two nulls: (i) uniform random ranking, (ii) a STRUCTURED null --
+     a statistic that is an arbitrary monotone combination of the controller's own numbers
+     but knows nothing about the labels.
+================================================================================================================
+  distinct clean VALUES for a statistic built on (kp, LAF, ki, notch, SteerFriction, rateloop):
+    r72  (0.85, 14, 0.60, Q1, 0.000, 6e-4)        -> 1
+    rev6.4 x2 routes (1.00, 14, 0.30, Q1, 0, 1e-3)-> 1  (both routes identical)
+    V282 x3 routes (0.90, 6.0, 0.30, --, 0.010, 0)-> 1  (SteerRatio differs, statistic ignores it)
+    => 3 distinct clean values, not 5.  Clause (b)'s 'ALL FIVE clean routes' is 3 draws.
+    P(both positives top-2 | random ranking, 3 clean values) = 1/C(5,2) = 0.1000
+    P(both positives top-2 | random ranking, 4 clean values) = 1/C(6,2) = 0.0667
+    P(both positives top-2 | random ranking, 5 clean values) = 1/C(7,2) = 0.0476
+
+  STRUCTURED null (random weights on log controller features, 200000 draws):
+    P(b and c) = 0.0862   [uniform-ranking value would be 0.1000]
+    -- a statistic with structure but no label knowledge is NOT more likely to pass; the
+       anchor set's own geometry (V282 high-gain-and-relay-live, clean) works against it.
+
+  P(a | r71) ~ 1.00   (window [1.755,2.925] brackets the plant mode 1.73-2.25 at 93.5% of speeds;
+                       gate #1 passed it on every plant with NO jerk term)
+  P(a | r73)  = 0.667 (empirical over gate #1's own crossings, WIDE reading [3.0,8.125])
+              = 0.000 (NARROW reading [4.0,6.5]: 0 of 42 crossings of this model family reach it)
+
+  SINGLE-SHOT  P(pass a+b+c | no content) = 1.00 x 0.667 x 0.1000 = 0.0667
+  bracket over the count of distinct clean values (3..5): 0.0318 .. 0.0667
+  and if P(a|r73) is also taken as ~1 (the window is wide and the analyst picks the crossing): 0.1000
+
+  MULTIPLICITY from the choices the PREREG LEAVES FREE (crossing index, b over 70x, D, speed bin,
+  plant subset).  These are not hypothetical: the ONLY way r73 clears clause (a) in this model
+  family is to switch from the FIRST crossing to the THIRD, which is exactly such a choice.
+    M_eff=1: P = 1-(1-0.0667)^1 = 0.0667   <= 0.10
+    M_eff=2: P = 1-(1-0.0667)^2 = 0.1290   EXCEEDS 0.10
+    M_eff=3: P = 1-(1-0.0667)^3 = 0.1871   EXCEEDS 0.10
+    M_eff=4: P = 1-(1-0.0667)^4 = 0.2413   EXCEEDS 0.10
+
+wrote C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\gate2\adversary\out\final.json

@@ -1,0 +1,105 @@
+================================================================================================================
+A1.  WHAT IS `friction_jerk`?  -- read from the fork source, all 8 flown commits
+================================================================================================================
+  latcontrol_torque.py (e8e62f0e1:583-586, identical shape at 66cf4454a:553 and all others):
+
+      expected_lateral_accel = self.curvature_request_buffer[-delay_frames] * CS.vEgo ** 2
+      raw_lateral_jerk       = (future_desired_lateral_accel - expected_lateral_accel) / max(lat_delay, dt)
+      desired_lateral_jerk   = clip(self.jerk_filter.update(raw_lateral_jerk), +/-2.5)
+      friction_jerk          = copysign(max(|desired_lateral_jerk| - deadzone, 0), desired_lateral_jerk)
+      ff += friction_scale * get_friction(error_with_lsf + JERK_GAIN * friction_jerk, ...)
+
+  `future_desired_lateral_accel` is the PLANNER's.  `expected_lateral_accel` is the controller's own
+  PAST COMMAND replayed out of curvature_request_buffer.  NEITHER contains `measurement`.
+  `measurement` enters the relay argument ONLY through error_with_lsf = (setpoint - measurement)*(1+lsf/kp).
+
+  =>  d(relay argument)/d(measurement)  =  d(error_with_lsf)/d(measurement)  -- the jerk term drops out.
+  =>  Kj * friction_jerk is EXOGENOUS to the loop.  It contributes EXACTLY ZERO to L(s), hence
+      exactly zero to any -180 deg crossing frequency.  The prereg's stated mechanism --
+      "a jerk term is phase LEAD, and lead moves a -180 crossing UP in frequency" -- is FALSE
+      of the term the prereg actually names.
+
+================================================================================================================
+A2.  EVEN IF IT WERE IN-LOOP: how much lead can the fork's own jerk path supply?
+================================================================================================================
+  the fork filters the jerk at LP_FILTER_CUTOFF_HZ = 1.2 Hz, so the best case is a LEAD-LAG
+  1 + Kj*s/(1+s/wc), Kj = 0.22 s (JERK_GAIN, source), wc = 2*pi*1.2.
+    f Hz  |1+Kj s/(1+s/wc)|  phase deg
+    1.50              2.168      21.91
+    2.00              2.337      18.25
+    2.34              2.409      16.23
+    3.00              2.496      13.25
+    4.00              2.563      10.26
+    5.00              2.596       8.34
+    6.50              2.621       6.49
+    8.00              2.634       5.30
+  max lead over 1.5-8 Hz is bounded and small; and it applies ONLY to the relay branch,
+  which is in PARALLEL with (kp + I)/LAF, so the loop sees even less.
+
+================================================================================================================
+A3.  RUN IT.  r73's crossing, on the three non-positive plants, four readings of the repair
+================================================================================================================
+  plant 00000072 v=26.5  baseline (gate #1, no jerk term)           -> 1.91Hz|L|=1.85  3.41Hz|L|=1.73
+  plant 00000072 v=26.5  jerk as EXOGENOUS  (what source says)      -> 1.91Hz|L|=1.85  3.41Hz|L|=1.73
+  plant 00000072 v=26.5  jerk as IN-LOOP LEAD (maximally generous)  -> 2.01Hz|L|=2.72  3.58Hz|L|=3.76
+  plant 00000072 v=26.5  in-loop lead, r72 for reference            -> 3.63Hz|L|=0.20
+
+  plant 0000006c v=26.9  baseline (gate #1, no jerk term)           -> 1.92Hz|L|=1.97  3.43Hz|L|=1.84
+  plant 0000006c v=26.9  jerk as EXOGENOUS  (what source says)      -> 1.92Hz|L|=1.97  3.43Hz|L|=1.84
+  plant 0000006c v=26.9  jerk as IN-LOOP LEAD (maximally generous)  -> 2.03Hz|L|=2.93  3.59Hz|L|=4.00
+  plant 0000006c v=26.9  in-loop lead, r72 for reference            -> 3.64Hz|L|=0.22
+
+  plant 0000006e v=27.9  baseline (gate #1, no jerk term)           -> 1.95Hz|L|=2.68  3.45Hz|L|=2.40
+  plant 0000006e v=27.9  jerk as EXOGENOUS  (what source says)      -> 1.95Hz|L|=2.68  3.45Hz|L|=2.40
+  plant 0000006e v=27.9  jerk as IN-LOOP LEAD (maximally generous)  -> 2.05Hz|L|=4.08  3.62Hz|L|=5.27
+  plant 0000006e v=27.9  in-loop lead, r72 for reference            -> 3.62Hz|L|=0.27
+
+  r73's TARGET WINDOW is [3.000, 8.125] Hz (widest reading of '+/-25% of the 4.0-6.5 band').
+  Gate #1 placed r73 at 1.80-1.95 Hz.  Read the FIRST crossing above: the jerk term, at its
+  most generous, does not carry r73 anywhere near 3.0 Hz.
+
+================================================================================================================
+A4.  THE (a)-vs-(b) CONFLICT.  r73 and r72 differ in EXACTLY ONE flown parameter.
+================================================================================================================
+  r73: {'kp': 0.85, 'laf': 14.0, 'ki': 0.6, 'fric': 0.2120497, 'rate': 0.0006, 'notch': 1.0}
+  r72: {'kp': 0.85, 'laf': 14.0, 'ki': 0.6, 'fric': 0.0, 'rate': 0.0006, 'notch': 1.0}
+  -> identical commit, kp, LAF, ki, rate loop, notch.  SteerFriction 0.21205 vs 0.0 is the ONLY
+     difference, so the relay gain is the ONLY knob any admissible repair has on this pair.
+
+  sweep the relay multiplier on r73, plant r72 (v=26.5), D=65 ms, b=0.0006:
+    relay x  f_cross Hz   |L| r73   |L| r72   ratio   (a) r73 in [3.0,8.125]?
+      1.000       1.908     1.845     0.204   9.052                        no
+      0.700       1.914     1.260     0.204   6.180                        no
+      0.500       1.921     0.865     0.204   4.245                        no
+      0.300       1.942     0.455     0.204   2.234                        no
+      0.200       3.480     0.510     0.204   2.501                       YES
+      0.150       3.498     0.433     0.204   2.126                       YES
+      0.100       3.523     0.357     0.204   1.751                       YES
+      0.070       3.544     0.311     0.204   1.526                       YES
+      0.050       3.562     0.280     0.204   1.376                       YES
+      0.030       3.585     0.250     0.204   1.225                       YES
+      0.020       3.599     0.234     0.204   1.150                       YES
+      0.010       3.615     0.219     0.204   1.075                       YES
+      0.000       3.634     0.204     0.204   1.000                       YES
+
+  the LARGEST r73/r72 separation compatible with clause (a) is 2.501x, at relay x0.200
+  (f_cross 3.48 Hz).  At relay x1.0 the separation is 9.05x but f_cross is
+  1.91 Hz -- outside the window.  CLAUSE (a) AND CLAUSE (b) PULL THE ONE KNOB
+  IN OPPOSITE DIRECTIONS, and the knob is the only difference between the two routes.
+
+wrote C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\gate2\adversary\out\jerk_mech.json
+plant r72 v=26.5 alpha=0.487
+ r71  POS     ['2.55 Hz |L|=0.70 (-1 pi)']
+ r73  POS     ['1.91 Hz |L|=1.85 (-1 pi)', '2.16 Hz |L|=0.05 (-1 pi)', '3.41 Hz |L|=1.73 (-1 pi)']
+ r72 clean    ['3.63 Hz |L|=0.20 (-1 pi)']
+ rev6.4 cln   ['3.72 Hz |L|=0.27 (-1 pi)']
+ V282 clean   ['2.55 Hz |L|=1.31 (-1 pi)']
+ V282old cln  ['2.55 Hz |L|=3.46 (-1 pi)']
+
+--- at v=23.0 (the briefs 3-crossing example), alpha/c borrowed from the r72 plant ---
+ r71  POS     ['2.45 Hz |L|=0.74 (-1 pi)']
+ r73  POS     ['1.79 Hz |L|=2.02 (-1 pi)', '2.02 Hz |L|=0.06 (-1 pi)', '3.31 Hz |L|=1.93 (-1 pi)']
+ r72 clean    ['3.56 Hz |L|=0.22 (-1 pi)']
+ rev6.4 cln   ['3.65 Hz |L|=0.30 (-1 pi)']
+ V282 clean   ['2.45 Hz |L|=1.40 (-1 pi)']
+ V282old cln  ['2.45 Hz |L|=3.70 (-1 pi)']

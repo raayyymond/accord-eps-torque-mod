@@ -1,0 +1,125 @@
+====================================================================================================================================
+TABLE 1 -- THE FLOWN CONTROLLERS, from each route's OWN initData and OWN commit (constants re-verified)
+route                  label                  commit        fric   hyst guard RELAY    rate rateRC notchQ notch f0@27    kp   LAF    ki
+00000039--f56039af87   V282old CLEAN          8a28dcef8   0.0300     --    no  LIVE  0.0000   0.03     --          --  0.80   2.1  0.30
+0000003a--283a39a1d6   V282old CLEAN          ffe28378f   0.0300     --    no  LIVE  0.0000   0.03     --          --  0.80   4.0  0.30
+0000003c--927965c2b4   V282old CLEAN          ffe28378f   0.0300     --    no  LIVE  0.0000   0.03     --          --  0.80   3.6  0.30
+00000064--ce6b0b0ebb   V282 CLEAN             0f98d8c75   0.0100     --    no  LIVE  0.0000   0.03     --          --  0.90   6.0  0.30
+00000065--b9f78988bd   V282 CLEAN             0f98d8c75   0.0100     --    no  LIVE  0.0000   0.03     --          --  0.90   6.0  0.30
+0000006c--2bc842dbac   V282 CLEAN             57410c3b4   0.0100     --    no  LIVE  0.0000   0.03     --          --  0.90   6.0  0.30
+0000006c--68c6e94b17   T64 rev6.4 CLEAN       84766cdc5   0.0000  0.015   yes  dead  0.0010   0.01   1.00    2.212 Hz  1.00  14.0  0.30
+0000006d--05e83bb04f   T64 rev6.4 CLEAN       84766cdc5   0.2120  0.015   yes  dead  0.0010   0.01   1.00    2.212 Hz  1.00  14.0  0.30
+0000006e--6ca3e014fd   T64B rev6.4 CLEAN      84766cdc5   0.0000  0.015   yes  dead  0.0010   0.01   1.00    2.212 Hz  1.00  14.0  0.30
+00000070--717f5a7866   V293 r1 (unlabelled)   4247cb09e   0.0000     --    no  dead  0.0000   0.03     --          --  0.30   6.0  0.15
+00000071--f2c9d073a3   r71 POSITIVE 2.34Hz    66cf4454a   0.0110     --    no  LIVE  0.0000   0.03     --          --  0.85  14.0  0.30
+00000072--8001fc3048   r72 CLEAN              e8e62f0e1   0.0000  0.015    no  dead  0.0006   0.03   1.00    2.058 Hz  0.85  14.0  0.60
+00000073--79fd149dd8   r73 POSITIVE 4-6.5Hz   e8e62f0e1   0.2120  0.015    no  LIVE  0.0006   0.03   1.00    2.058 Hz  0.85  14.0  0.60
+00000074--2bf17ca67d                          08a5a7064   0.0000  0.015   yes  dead  0.0006   0.03   1.00    2.212 Hz  0.85  14.0  0.60
+00000075--6c8687d5bd   T4 rev4 (unlabelled)   08a5a7064   0.2120  0.015   yes  dead  0.0006   0.03   1.00    2.212 Hz  0.85  14.0  0.60
+00000076--d0b7ea7e4d   T5 rev5 (unlabelled)   e44b6cd31   0.0000  0.015   yes  dead  0.0010   0.01   1.00    2.212 Hz  1.00  14.0  0.30
+
+  RE-VERIFIED CORRECTIONS to gate #1's constants (git show <commit>:selfdrive/controls/lib/...):
+    HONDA_ACCORD_RATE_LOOP_RC = 0.03 at e8e62f0e1/08a5a7064, 0.01 only from e44b6cd31 (r2_stat used 0.01 for all)
+    HONDA_ACCORD_HOLD_K_V[28 m/s] = 0.0134 at e8e62f0e1, 0.0160 from 08a5a7064 -> r72/r73 notched at
+    2.06 Hz, not 2.21 Hz (r2_stat used 0.0160 for all).  The PLANT k(v) uses one table for every route.
+    VERIFIED UNCHANGED: guard first at 08a5a7064; notch+rate loop first at e8e62f0e1; the bilinear
+    notch coefficients; JERK_GAIN = 0.22 and the jerk-in-relay line present at EVERY flown commit.
+
+====================================================================================================================================
+TABLE 2 -- PLANT x CONTROLLER, R = |L| at the first -180 crossing.   b = 0.0006, D = 65 ms
+  row = whose plant (identified from its own log), col = whose flown controller
+plant                                39     3a     3c     64     65     6c     6c     6d     6e     70     71     72     73     74     75     76
+39 V282old CLEAN                   6.18   4.24   4.48   2.30   2.30   2.30   0.41   0.41   0.41   0.61   1.41   0.34   9.81   0.33   0.33   0.41
+3a V282old CLEAN                   7.17   4.94   5.22   2.67   2.67   2.67   0.46   0.46   0.46   0.68   1.65   0.40  11.76   0.37   0.37   0.46
+3c V282old CLEAN                   8.03   5.54   5.85   2.99   2.99   2.99   0.49   0.49   0.49   0.76   1.85   0.43  13.22   0.40   0.40   0.49
+64 V282 CLEAN                      7.17   4.93   5.21   2.67   2.67   2.67   0.44   0.44   0.44   0.69   1.65   0.38  11.58   0.37   0.37   0.44
+65 V282 CLEAN                      6.21   4.25   4.49   2.31   2.31   2.31   0.41   0.41   0.41   0.63   1.41   0.34   9.61   0.34   0.34   0.41
+6c V282 CLEAN                      8.14   5.61   5.93   3.04   3.04   3.04   0.47   0.47   0.47   0.76   1.88   0.41  13.44   0.39   0.39   0.47
+6c T64 rev6.4 CLEAN                4.39   3.02   3.19   1.64   1.64   1.64   0.29   0.29   0.29   0.43   1.01   0.25   7.07   0.24   0.24   0.29
+6e T64B rev6.4 CLEAN               5.88   4.05   4.28   2.19   2.19   2.19   0.35   0.35   0.35   0.56   1.35   0.31   9.61   0.29   0.29   0.35
+70 V293 r1 (unlabelled)            5.79   3.95   4.18   2.15   2.15   2.15   0.41   0.41   0.41   0.61   1.31   0.33   8.65   0.34   0.34   0.41
+71 r71 POSITIVE 2.34Hz             6.70   4.61   4.87   2.49   2.49   2.49   0.39   0.39   0.39   0.63   1.54   0.34  10.98   0.32   0.32   0.39
+72 r72 CLEAN                       4.10   2.82   2.98   1.53   1.53   1.53   0.27   0.27   0.27   0.40   0.94   0.23   6.55   0.22   0.22   0.27
+73 r73 POSITIVE 4-6.5Hz            5.40   3.71   3.92   2.01   2.01   2.01   0.35   0.35   0.35   0.52   1.24   0.29   8.68   0.28   0.28   0.35
+76 T5 rev5 (unlabelled)            3.45   2.37   2.50   1.29   1.29   1.29   0.24   0.24   0.24   0.35   0.79   0.20   5.41   0.19   0.19   0.24
+   -- crossing frequency, Hz --
+39 V282old CLEAN                   2.61   2.64   2.64   2.61   2.61   2.61   3.71   3.71   3.71   2.54   2.65   3.40   3.03   3.38   3.38   3.71
+3a V282old CLEAN                   2.66   2.69   2.69   2.66   2.66   2.66   3.73   3.73   3.73   2.59   2.70   3.41   3.06   3.42   3.42   3.73
+3c V282old CLEAN                   2.66   2.69   2.69   2.66   2.66   2.66   3.71   3.71   3.71   2.59   2.70   3.40   3.06   3.41   3.41   3.71
+64 V282 CLEAN                      2.64   2.67   2.67   2.63   2.63   2.63   3.70   3.70   3.70   2.56   2.68   3.40   3.04   3.39   3.39   3.70
+65 V282 CLEAN                      2.58   2.61   2.60   2.57   2.57   2.57   3.68   3.68   3.68   2.50   2.62   3.38   3.01   3.34   3.34   3.68
+6c V282 CLEAN                      2.66   2.69   2.69   2.66   2.66   2.66   3.68   3.68   3.68   2.59   2.70   3.39   3.05   3.40   3.40   3.68
+6c T64 rev6.4 CLEAN                2.63   2.66   2.66   2.63   2.63   2.63   3.72   3.72   3.72   2.56   2.67   3.40   3.04   3.40   3.40   3.72
+6e T64B rev6.4 CLEAN               2.66   2.69   2.68   2.65   2.65   2.65   3.70   3.70   3.70   2.58   2.70   3.40   3.05   3.40   3.40   3.70
+70 V293 r1 (unlabelled)            2.53   2.56   2.56   2.52   2.52   2.52   3.67   3.67   3.67   2.45   2.57   3.37   2.98   3.32   3.32   3.67
+71 r71 POSITIVE 2.34Hz             2.66   2.69   2.69   2.66   2.66   2.66   3.69   3.69   3.69   2.59   2.70   3.39   3.06   3.40   3.40   3.69
+72 r72 CLEAN                       2.62   2.65   2.65   2.61   2.61   2.61   3.72   3.72   3.72   2.54   2.66   3.40   3.03   3.39   3.39   3.72
+73 r73 POSITIVE 4-6.5Hz            2.63   2.66   2.66   2.63   2.63   2.63   3.71   3.71   3.71   2.56   2.67   3.40   3.04   3.39   3.39   3.71
+76 T5 rev5 (unlabelled)            2.59   2.62   2.62   2.59   2.59   2.59   3.71   3.71   3.71   2.51   2.63   3.39   3.01   3.36   3.36   3.71
+
+====================================================================================================================================
+CLAUSE (b) ORDERING -- BOTH positives above ALL the clean routes, on >= 2 of 3 non-positive plants
+====================================================================================================================================
+
+  clean set = prereg table as written (r72 + T64 x2 + V282 x3 @0.010)
+    plant 72 r72 CLEAN               r71   0.94  r73   6.55  | worst clean = 64 V282 CLEAN           1.53   FAIL
+        cleans: 72:0.23  6c:0.27  6e:0.27  64:1.53  65:1.53  6c:1.53
+    plant 6c T64 rev6.4 CLEAN        r71   1.01  r73   7.07  | worst clean = 64 V282 CLEAN           1.64   FAIL
+        cleans: 72:0.25  6c:0.29  6e:0.29  64:1.64  65:1.64  6c:1.64
+    plant 6e T64B rev6.4 CLEAN       r71   1.35  r73   9.61  | worst clean = 64 V282 CLEAN           2.19   FAIL
+        cleans: 72:0.31  6c:0.35  6e:0.35  64:2.19  65:2.19  6c:2.19
+    => both positives above all cleans on 0 of 3 prereg plants   (FAIL)
+
+  clean set = same but V282 = the 0.030 triple (V282old)
+    plant 72 r72 CLEAN               r71   0.94  r73   6.55  | worst clean = 39 V282old CLEAN        4.10   FAIL
+        cleans: 72:0.23  6c:0.27  6e:0.27  39:4.10  3a:2.82  3c:2.98
+    plant 6c T64 rev6.4 CLEAN        r71   1.01  r73   7.07  | worst clean = 39 V282old CLEAN        4.39   FAIL
+        cleans: 72:0.25  6c:0.29  6e:0.29  39:4.39  3a:3.02  3c:3.19
+    plant 6e T64B rev6.4 CLEAN       r71   1.35  r73   9.61  | worst clean = 39 V282old CLEAN        5.88   FAIL
+        cleans: 72:0.31  6c:0.35  6e:0.35  39:5.88  3a:4.05  3c:4.28
+    => both positives above all cleans on 0 of 3 prereg plants   (FAIL)
+
+  clean set = every clean anchor in the table, both V282 triples (9)
+    plant 72 r72 CLEAN               r71   0.94  r73   6.55  | worst clean = 39 V282old CLEAN        4.10   FAIL
+        cleans: 72:0.23  6c:0.27  6e:0.27  6d:0.27  64:1.53  65:1.53  6c:1.53  39:4.10  3a:2.82  3c:2.98
+    plant 6c T64 rev6.4 CLEAN        r71   1.01  r73   7.07  | worst clean = 39 V282old CLEAN        4.39   FAIL
+        cleans: 72:0.25  6c:0.29  6e:0.29  6d:0.29  64:1.64  65:1.64  6c:1.64  39:4.39  3a:3.02  3c:3.19
+    plant 6e T64B rev6.4 CLEAN       r71   1.35  r73   9.61  | worst clean = 39 V282old CLEAN        5.88   FAIL
+        cleans: 72:0.31  6c:0.35  6e:0.35  6d:0.35  64:2.19  65:2.19  6c:2.19  39:5.88  3a:4.05  3c:4.28
+    => both positives above all cleans on 0 of 3 prereg plants   (FAIL)
+
+  >>> CLAUSE (b) FAIL <<<   (scored on the strictest reading of the clean set)
+
+====================================================================================================================================
+CLAUSE (c) NO FALSE ALARM -- rev 6.4's flown controller must not rank above EITHER positive on ANY plant
+====================================================================================================================================
+    plant 39 V282old CLEAN            r71   1.41 r73   9.81 | rev6.4: 6c   0.41  6d   0.41  6e   0.41  
+    plant 3a V282old CLEAN            r71   1.65 r73  11.76 | rev6.4: 6c   0.46  6d   0.46  6e   0.46  
+    plant 3c V282old CLEAN            r71   1.85 r73  13.22 | rev6.4: 6c   0.49  6d   0.49  6e   0.49  
+    plant 64 V282 CLEAN               r71   1.65 r73  11.58 | rev6.4: 6c   0.44  6d   0.44  6e   0.44  
+    plant 65 V282 CLEAN               r71   1.41 r73   9.61 | rev6.4: 6c   0.41  6d   0.41  6e   0.41  
+    plant 6c V282 CLEAN               r71   1.88 r73  13.44 | rev6.4: 6c   0.47  6d   0.47  6e   0.47  
+    plant 6c T64 rev6.4 CLEAN         r71   1.01 r73   7.07 | rev6.4: 6c   0.29  6d   0.29  6e   0.29  
+    plant 6e T64B rev6.4 CLEAN        r71   1.35 r73   9.61 | rev6.4: 6c   0.35  6d   0.35  6e   0.35  
+    plant 70 V293 r1 (unlabelled)     r71   1.31 r73   8.65 | rev6.4: 6c   0.41  6d   0.41  6e   0.41  
+    plant 71 r71 POSITIVE 2.34Hz      r71   1.54 r73  10.98 | rev6.4: 6c   0.39  6d   0.39  6e   0.39  
+    plant 72 r72 CLEAN                r71   0.94 r73   6.55 | rev6.4: 6c   0.27  6d   0.27  6e   0.27  
+    plant 73 r73 POSITIVE 4-6.5Hz     r71   1.24 r73   8.68 | rev6.4: 6c   0.35  6d   0.35  6e   0.35  
+    plant 76 T5 rev5 (unlabelled)     r71   0.79 r73   5.41 | rev6.4: 6c   0.24  6d   0.24  6e   0.24  
+    => 0 false alarms in 39 cells.   >>> CLAUSE (c) PASS <<<
+
+====================================================================================================================================
+SENSITIVITY of (b) and (c) over the b sweep and the delay bracket
+====================================================================================================================================
+    b=0.00040 D=55ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00040 D=65ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00040 D=75ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00060 D=55ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00060 D=65ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00060 D=75ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00100 D=55ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00100 D=65ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00100 D=75ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00200 D=55ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00200 D=65ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS
+    b=0.00200 D=75ms   (b): 0/3 plants FAIL    (c): 0 false alarms PASS

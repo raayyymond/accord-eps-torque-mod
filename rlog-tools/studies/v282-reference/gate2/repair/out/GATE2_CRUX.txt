@@ -1,0 +1,54 @@
+========================================================================================================================
+CRUX 1 -- WHY the V282 controllers outrank r71.  |C_e| decomposed at 2.6 Hz (r71's crossing).
+========================================================================================================================
+route                  label                    kp/LAF   fric*N relay share  |C_e| g#1  |C_e| g#2  ratio to r71
+00000071--f2c9d073a3   r71 POSITIVE 2.34Hz      0.0607   0.0367      37.7%     0.1035     0.1551         1.00x
+00000073--79fd149dd8   r73 POSITIVE 4-6.5Hz     0.0607   0.7068      92.1%     0.3490     1.3517         8.71x
+00000072--8001fc3048   r72 CLEAN                0.0607   0.0000       0.0%     0.0277     0.0277         0.18x
+0000006c--68c6e94b17   T64 rev6.4 CLEAN         0.0714   0.0000       0.0%     0.0244     0.0244         0.16x
+0000006e--6ca3e014fd   T64B rev6.4 CLEAN        0.0714   0.0000       0.0%     0.0244     0.0244         0.16x
+00000064--ce6b0b0ebb   V282 CLEAN               0.1500   0.0333      18.2%     0.1942     0.2405         1.55x
+00000065--b9f78988bd   V282 CLEAN               0.1500   0.0333      18.2%     0.1942     0.2405         1.55x
+0000006c--2bc842dbac   V282 CLEAN               0.1500   0.0333      18.2%     0.1942     0.2405         1.55x
+00000039--f56039af87   V282old CLEAN            0.3791   0.1000      20.9%     0.5112     0.6501         4.19x
+0000003a--283a39a1d6   V282old CLEAN            0.2000   0.1000      33.3%     0.3200     0.4604         2.97x
+0000003c--927965c2b4   V282old CLEAN            0.2222   0.1000      31.0%     0.3437     0.4839         3.12x
+
+  r71's SteerFriction is 0.011; the V282 routes' is 0.010-0.030.  Their LAF is 2.11-6.0 vs r71's 14.0.
+  If the relay were the whole story the V282 @0.010 routes would sit BELOW r71.  They do not.
+
+========================================================================================================================
+CRUX 2 -- does the ONE NEW TERM change clause (b)?   (b) scored with jerk OFF = gate #1's controller
+========================================================================================================================
+   jerk=OFF  plant 72: worst positive   0.70   worst clean   3.46  (39)   FAIL
+   jerk=OFF  plant 6c: worst positive   0.75   worst clean   3.70  (39)   FAIL
+   jerk=OFF  plant 6e: worst positive   1.00   worst clean   4.93  (39)   FAIL
+   jerk=OFF  => 0/3
+
+   jerk=ON   plant 72: worst positive   0.94   worst clean   4.10  (39)   FAIL
+   jerk=ON   plant 6c: worst positive   1.01   worst clean   4.39  (39)   FAIL
+   jerk=ON   plant 6e: worst positive   1.35   worst clean   5.88  (39)   FAIL
+   jerk=ON   => 0/3
+
+  The new term does not touch (b)'s failure: it raises BOTH positives and every relay-live clean,
+  and the V282 controllers are relay-live too.
+========================================================================================================================
+CRUX 3 -- how fragile is clause (a)'s r73 PASS?  It cleared the 3.000 Hz edge by 0.04 Hz at b=6e-4/65 ms.
+========================================================================================================================
+variant                                                f_cross     |L|   in [3.000,8.125]?
+as flown, notch f0 from ITS OWN commit (2.058 Hz)       3.039     8.68                 YES
+gate #1's constant: notch f0 = 2.212 Hz (K_LATE)        3.051     8.19                 YES
+rate-loop RC = 0.01 (gate #1's wrong constant)          3.045     8.64                 YES
+both of gate #1's constants                             3.057     8.14                 YES
+notch Q = 1.0 but centred on the PLANT mode 2.212       3.051     8.19                 YES
+no notch at all (NOT flown -- diagnostic only)          2.755    13.65                  no
+
+  r73 OBSERVED: 4.0-6.5 Hz.  The model's best placement is ~3.0-3.3 Hz -- at or below the
+  bottom edge of the +/-25% window, never inside the observed band itself.
+
+========================================================================================================================
+CRUX 4 -- clause (b) if the cross-firmware V282 anchors were dropped (NOT PERMITTED -- the anchor
+           set is fixed; reported so the operator can see exactly where the failure lives)
+========================================================================================================================
+   V293-era cleans only (r72 + T64 x3)        -> both positives above all cleans on 3/3 plants
+   prereg's fixed set (with V282)             -> both positives above all cleans on 0/3 plants

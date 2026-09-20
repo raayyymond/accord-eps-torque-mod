@@ -1,0 +1,106 @@
+==============================================================================================================
+CLAUSE (a) -- ARE THE FREQUENCY WINDOWS DISCRIMINATING?  (the trap the brief names)
+==============================================================================================================
+  r71 window (+/-25% of 2.34 Hz)          : [1.755, 2.925] Hz
+  r73 window, widest reading              : [3.000, 8.125] Hz
+  r73 window, band itself                 : [4.000, 6.500] Hz
+
+  The plant mode sqrt(k(v)/J)/2pi over the speeds the anchors actually flew:
+    v = 15..30 m/s  ->  mode = 1.734 .. 2.251 Hz
+    fraction of that speed range whose PLANT MODE falls inside r71's window : 93.5 %
+    at each anchor's own mean speed:
+      r71_lo   v= 17.4  mode=1.803 Hz   inside r71 window: True
+      r71_hi   v= 28.5  mode=2.251 Hz   inside r71 window: True
+      r72      v= 26.5  mode=2.193 Hz   inside r71 window: True
+      r73_lo   v= 18.1  mode=1.833 Hz   inside r71 window: True
+      r73_hi   v= 26.9  mode=2.209 Hz   inside r71 window: True
+      T64      v= 26.9  mode=2.209 Hz   inside r71 window: True
+      V282     v= 30.0  mode=2.251 Hz   inside r71 window: True
+      V293     v= 18.9  mode=1.869 Hz   inside r71 window: True
+
+  => VERDICT ON r71's FREQUENCY CLAUSE: any model whose -180 crossing sits at or near the plant
+     mode passes it automatically.  Gate #1 ALREADY passed it (2.26-2.60 Hz on every plant) with
+     NO jerk term.  It carries ~zero information.  P(a-r71 | no content) is taken as ~1.
+
+==============================================================================================================
+HOW MANY DISTINCT SCORES DOES THE RANKING ACTUALLY CONTAIN?  (this sets clause (b)'s power)
+==============================================================================================================
+  r71  POSITIVE    00000071--f2c9d073a3  commit=66cf4454a  kp=0.85 LAF=14.00 ki=0.30 rate=0.0000 SF=0.0110 hyst=-1.0
+  r73  POSITIVE    00000073--79fd149dd8  commit=e8e62f0e1  kp=0.85 LAF=14.00 ki=0.60 rate=0.0006 SF=0.2120 hyst=0.015
+  r72  clean       00000072--8001fc3048  commit=e8e62f0e1  kp=0.85 LAF=14.00 ki=0.60 rate=0.0006 SF=0.0000 hyst=0.015
+  rev6.4 clean #1  0000006c--68c6e94b17  commit=84766cdc5  kp=1.00 LAF=14.00 ki=0.30 rate=0.0010 SF=0.0000 hyst=0.015
+  rev6.4 clean #2  0000006e--6ca3e014fd  commit=84766cdc5  kp=1.00 LAF=14.00 ki=0.30 rate=0.0010 SF=0.0000 hyst=0.015
+  V282 clean #1    00000064--ce6b0b0ebb  commit=0f98d8c75  kp=0.90 LAF=6.00 ki=0.30 rate=0.0000 SF=0.0100 hyst=-1.0
+  V282 clean #2    00000065--b9f78988bd  commit=0f98d8c75  kp=0.90 LAF=6.00 ki=0.30 rate=0.0000 SF=0.0100 hyst=-1.0
+  V282 clean #3    0000006c--2bc842dbac  commit=57410c3b4  kp=0.90 LAF=6.00 ki=0.30 rate=0.0000 SF=0.0100 hyst=-1.0
+
+  distinct CONTROLLER CONFIGS among the 8 anchor routes: 6
+    ['r71  POSITIVE']
+    ['r73  POSITIVE']
+    ['r72  clean']
+    ['rev6.4 clean #1', 'rev6.4 clean #2']
+    ['V282 clean #1', 'V282 clean #2']
+    ['V282 clean #3']
+  distinct clean configs = 4; total distinct configs in the ranking = 6
+  (routes that share a commit AND every flown toggle get IDENTICAL scores from any controller-only
+   statistic, so they are ONE draw, not three.  Clause (b)'s '5 clean routes' is really
+   4 clean values.)
+
+==============================================================================================================
+CLAUSES (b)+(c) -- EXACT COMBINATORICS FOR A CONTENT-FREE STATISTIC
+==============================================================================================================
+  n distinct clean values = 3:  P(both positives top-2, one plant) = 1/C(5,2) = 0.1000
+  n distinct clean values = 4:  P(both positives top-2, one plant) = 1/C(6,2) = 0.0667
+  n distinct clean values = 5:  P(both positives top-2, one plant) = 1/C(7,2) = 0.0476
+
+  Clause (c) is ENTAILED by clause (b): rev6.4 is one of the cleans, so if both positives
+  outrank every clean, rev6.4 cannot outrank either positive.  (c) adds ZERO power.
+  [verify by exhaustion over all orderings, below]
+  exhaustive over 720 orderings:  P(b) = 0.0667   P(c) = 0.3333   P(b and c) = 0.0667
+  => P(b and c) == P(b) : True
+
+  '>= 2 of 3 plants' -- does it multiply the power down?  Only if the plants disagree.
+  In gate #1's own cross-table (GATE_22plus.txt TABLE 4) the CONTROLLER ORDERING IS IDENTICAL
+  on all 7 plants, because the plant enters the statistic ONLY as the scalar alpha (r2_stat.py:
+  L = C_e * c * P, alpha a pure multiplier; TABLE 5 says so in as many words).  A pure positive
+  scalar cannot reorder a ranking.  So the 3 plants are ONE test, not three.
+    perfectly correlated : P(b on >=2 of 3) = P(b on one) = 0.0667
+    independent          : P(b on >=2 of 3) = 0.0127
+
+==============================================================================================================
+CLAUSE (d) -- THE NUMBER
+==============================================================================================================
+  P(a | r71)  ~ 1.00       (window brackets the plant mode; gate #1 passed it with no jerk term)
+  P(a | r73)  = 0.714  (uniform on the model's own 1-8 Hz crossing search)
+              = 0.472  (log-uniform on 1-8 Hz)
+  Empirical prior from gate #1's OWN 63 (plant x controller) crossings, 22+ bin:
+    P(crossing in r73's window) = 0.667   P(crossing in r71's window) = 0.333
+  P(pass a+b+c) [uniform 1-8 Hz prior                 | plants correlated ] = 0.0476
+  P(pass a+b+c) [uniform 1-8 Hz prior                 | plants independent] = 0.0091
+  P(pass a+b+c) [log-uniform 1-8 Hz prior             | plants correlated ] = 0.0314
+  P(pass a+b+c) [log-uniform 1-8 Hz prior             | plants independent] = 0.0060
+  P(pass a+b+c) [empirical (gate #1's own crossings)  | plants correlated ] = 0.0444
+  P(pass a+b+c) [empirical (gate #1's own crossings)  | plants independent] = 0.0085
+  P(pass a+b+c) [empirical, r71 NOT free              | plants correlated ] = 0.0148
+  P(pass a+b+c) [empirical, r71 NOT free              | plants independent] = 0.0028
+
+  MULTIPLICITY -- the prereg leaves these free, and each is a re-roll of the same dice:
+    x3  which of the THREE -180 crossings to score (the brief says 'state it')
+    x2  which speed bin (15-22 / 22+)
+    x3  b, open over ~70x (gate #1 used one value; nothing fixes it)
+    x3  delay 55/65/75 ms
+    x3  which 3 of the 6-7 available plants
+    naive product M = 162 configurations.  Effective independent tries is far less than M
+    (the choices are correlated), so report a BRACKET rather than the product:
+    M_eff= 1 [correlated ]  P(pass) = 1-(1-0.0444)^1 = 0.0444
+    M_eff= 1 [independent]  P(pass) = 1-(1-0.0085)^1 = 0.0085
+    M_eff= 2 [correlated ]  P(pass) = 1-(1-0.0444)^2 = 0.0869
+    M_eff= 2 [independent]  P(pass) = 1-(1-0.0085)^2 = 0.0169
+    M_eff= 3 [correlated ]  P(pass) = 1-(1-0.0444)^3 = 0.1275   >0.10  GATE TOO WEAK
+    M_eff= 3 [independent]  P(pass) = 1-(1-0.0085)^3 = 0.0253
+    M_eff= 5 [correlated ]  P(pass) = 1-(1-0.0444)^5 = 0.2033   >0.10  GATE TOO WEAK
+    M_eff= 5 [independent]  P(pass) = 1-(1-0.0085)^5 = 0.0418
+    M_eff=10 [correlated ]  P(pass) = 1-(1-0.0444)^10 = 0.3653   >0.10  GATE TOO WEAK
+    M_eff=10 [independent]  P(pass) = 1-(1-0.0085)^10 = 0.0818
+
+wrote C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\gate2\adversary\out\d_power.json

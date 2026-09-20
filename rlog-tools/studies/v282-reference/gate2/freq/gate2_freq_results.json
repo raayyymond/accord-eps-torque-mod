@@ -1,0 +1,308 @@
+{
+ "_what": "gate2/freq -- independent wire measurement of the two claimed objects. All numbers from the cached rlogs; no model, no fork constant used to FIND a frequency. Scripts s1..s13 in this folder.",
+ "mask": "engaged = carControl.latActive AND 0xE4 STEER_REQUEST; hands-off = NOT carState.steeringPressed",
+ "r71_object": {
+  "f_Hz": 2.37,
+  "ci95": [
+   2.3,
+   2.41
+  ],
+  "method": "cycle-by-cycle zero crossings (2.357 [2.322,2.401], n=22 cycles) + amplitude-weighted spectral mean (2.300 [2.284,2.313]) over the two big hands-off episodes t=660.6-666.3 and 670.2-675.0 s",
+  "channels_agree_Hz": {
+   "rate": 2.393,
+   "la_act": 2.393,
+   "dtq": 2.406,
+   "livePose_yaw": 2.394
+  },
+  "amplitude": {
+   "rate_deg_s": 85.9,
+   "angle_deg_pk": 6.99,
+   "cmd_counts": 292,
+   "yaw_rad_s": 0.038,
+   "dtq_counts": 882
+  },
+  "conditions": {
+   "v_m_s": [
+    19.1,
+    21.9
+   ],
+   "abs_angle_deg": [
+    25.9,
+    32.1
+   ],
+   "abs_la_m_s2": [
+    2.78,
+    4.37
+   ],
+   "spress_frac": 0.0,
+   "saturated_frac": 0.0
+  },
+  "duration_s": [
+   4.8,
+   5.7
+  ],
+  "cycles": [
+   11,
+   25
+  ],
+  "dlnE_dt_per_s": [
+   -0.16,
+   -0.03
+  ],
+  "zeta_eq": [
+   0.002,
+   0.011
+  ],
+  "inband_frac_of_0p6_15Hz": [
+   0.93,
+   0.96
+  ],
+  "h2_over_h1": [
+   0.046,
+   0.079
+  ],
+  "h3_over_h1": [
+   0.023,
+   0.031
+  ],
+  "route_wide": {
+   "episodes": 31,
+   "seconds_of_object": 45.6,
+   "of_engaged_handsoff_s": 834,
+   "all_handsoff": true
+  },
+  "speed_dependence_Hz": {
+   "9.8": 2.0,
+   "19.0": 2.5,
+   "28.5": 3.0,
+   "ratio_to_fork_plant_mode": 1.33
+  }
+ },
+ "r73_object_handsoff": {
+  "f_Hz": 4.9,
+  "ci95": [
+   4.5,
+   5.6
+  ],
+  "method": "amplitude^2-weighted census of 4 s engaged-hands-off v>=15 windows, whitened peak, weighted bootstrap; amp-wt median 4.93, IQR [4.50,5.25]; weighted mean 5.22 [4.97,5.60]",
+  "census_share_pct": {
+   "<4.0Hz": 0.0,
+   "4.0-6.5Hz": 87.7
+  },
+  "band_ratio_vs_r72_4p0_6p5": {
+   "rate_v15": 4.71,
+   "ci95": [
+    1.77,
+    12.73
+   ],
+   "rate_v10": 6.11,
+   "angle_v15": 3.71,
+   "la_act_v15": 2.7,
+   "controller_output_v15": 222.6
+  },
+  "claim_x3p7_5p9": "CONFIRMED",
+  "amplitude": {
+   "env_p99_deg_s": 14.7,
+   "env_max_deg_s": 27.5,
+   "band_rms_deg_s": 1.09
+  },
+  "conditions": {
+   "v_m_s": [
+    12,
+    26
+   ],
+   "abs_angle_deg": [
+    7,
+    14
+   ],
+   "burst_s": [
+    0.6,
+    1.1
+   ],
+   "inband_frac": [
+    0.18,
+    0.24
+   ]
+  },
+  "speed_dependence_Hz": {
+   "11.9": 4.5,
+   "15.3": 4.5,
+   "19.6": 4.75,
+   "26.7": 5.25,
+   "ratio_to_fork_plant_mode": [
+    2.39,
+    2.7
+   ]
+  }
+ },
+ "r73_object_driver_contact": {
+  "f_Hz": 2.775,
+  "ci95": [
+   2.74,
+   2.88
+  ],
+  "n_cycles": 52,
+  "episodes_s": [
+   [
+    188.0,
+    195.0
+   ],
+   [
+    544.2,
+    552.0
+   ],
+   [
+    595.0,
+    597.5
+   ],
+   [
+    349.5,
+    351.5
+   ]
+  ],
+  "amplitude": {
+   "rate_deg_s": [
+    126,
+    156
+   ],
+   "angle_deg_pk": 9.2,
+   "dtq_counts": [
+    1700,
+    2400
+   ]
+  },
+  "v_m_s": [
+   11.5,
+   16.5
+  ],
+  "spress_frac_of_episode": [
+   0.19,
+   0.42
+  ],
+  "note": "excluded by the gate's own engaged-hands-off >=15 m/s convention; it is r73's LARGEST oscillation"
+ },
+ "r73_at_2p0_2p6Hz": {
+  "ratio_vs_r72": {
+   "rate_v15": 0.54,
+   "ci95": [
+    0.23,
+    1.69
+   ],
+   "rate_v10": 0.9,
+   "err_v15": 0.74,
+   "angle_v15": 0.57,
+   "la_act_v15": 0.36
+  },
+  "whitened_excess_2p0_3p2": [
+   0.97,
+   1.29
+  ],
+  "r71_same_metric_at_2p25_2p50": [
+   9.06,
+   9.31
+  ],
+  "r72_same_metric": [
+   2.07,
+   2.56
+  ],
+  "verdict": "r73 has NO 2.3 Hz object. Gate #1's report CONFIRMED. The 2.0-2.6 envelope excursions on r73 are filter skirt from the 2.775 Hz driver-contact object (same timestamps)."
+ },
+ "v282_clean": {
+  "engaged_handsoff_s_v10": {
+   "v282a": 407,
+   "v282b": 435,
+   "v282c": 2417
+  },
+  "band_2p0_6p5_env_deg_s": {
+   "v282a": {
+    "p50": 0.36,
+    "p99": 2.62,
+    "max": 18.53
+   },
+   "v282b": {
+    "p50": 0.33,
+    "p99": 2.1,
+    "max": 14.31
+   },
+   "v282c": {
+    "p50": 0.32,
+    "p99": 2.26,
+    "max": 23.05
+   }
+  },
+  "seconds_above_12_deg_s": 0.1,
+  "longest_burst_s": 0.0,
+  "energy_density_A2_per_window_v15": {
+   "r71": 57.3,
+   "r75": 5.15,
+   "r73": 0.93,
+   "v282c": 0.13,
+   "r72": 0.12,
+   "v282b": 0.064,
+   "v282a": 0.031
+  },
+  "verdict": "CLEAN is well supported -- no object anywhere in 2-6.5 Hz. The five clean routes are NOT homogeneous: V282 << r72 < r75."
+ },
+ "r75_warning": {
+  "f_Hz": [
+   3.0,
+   3.5
+  ],
+  "band_2p8_3p6_ratio_vs_r72": 16.8,
+  "ci95": [
+   2.56,
+   81.6
+  ],
+  "env_p99_deg_s": 29.5,
+  "handsoff_bursts_v12": 9,
+  "max_burst_deg_s": 56.7,
+  "conditions": "hard curves, 19-20 m/s, |la| 3.5-3.7",
+  "energy_vs_r73": 5.5,
+  "consequence": "any AMPLITUDE-scoring statistic ranks r75 (CLEAN, rev 6.4 as flown) above r73 (POSITIVE) and fails clause (b) and clause (c). Only FREQUENCY PLACEMENT separates them."
+ },
+ "r74_unscoreable": {
+  "span_s": 103,
+  "v_max_m_s": 7.3,
+  "engaged_handsoff_s": 29,
+  "windows_at_v15": 0,
+  "consequence": "the 'T64 / rev 6.4 (2 routes)' row is effectively ONE scoreable route (r75)"
+ },
+ "relay_signature_from_the_wire": {
+  "statistic": "median over engaged-hands-off v>=15 8s windows of band power of controlsState output in 3-9 Hz / 0.2-1.0 Hz",
+  "values": {
+   "r72": 0.0008,
+   "r75": 0.0012,
+   "r71": 0.0277,
+   "v282a": 0.0465,
+   "v282b": 0.0472,
+   "v282c": 0.0508,
+   "r73": 0.0599
+  },
+  "verdict": "matches the anchor set's relay column EXACTLY, 23-50x separation. r75's SteerFriction 0.2120 is confirmed GUARDED OFF; r73's 0.2120 is confirmed LIVE; the three V282 routes are confirmed relay-live.",
+  "warning": "the relay's OUTPUT-side signature is LARGER on the three CLEAN V282 routes (0.0465-0.0508) than on POSITIVE r71 (0.0277). Relay presence cannot carry the statistic."
+ },
+ "same_or_different": {
+  "verdict": "SAME FAMILY, NOT THE SAME OBJECT",
+  "for": [
+   "both frequencies scale with the fork's own sqrt(k(v)/J)/2pi law at a CONSTANT multiple over 10-28 m/s: r71 x1.33, r73 x2.39-2.70, r75 x1.6-2.0",
+   "both near-sinusoidal at the wheel (2f/f <= 0.08), both near-neutral in damping, both only while LKAS engaged and requesting",
+   "both positives are wire-confirmed relay-live; r72 and r75 are wire-confirmed relay-dead"
+  ],
+  "against": [
+   "r73 has a HOLE where r71's object is (0.54x its own matched control; whitened <= 1.29) -- it is not r71's object plus an extra one",
+   "regimes differ: r71 hard curve / hands-off / 4.8-5.7 s / 85-93 deg/s / in-band 0.93-0.96; r73 near-straight / 0.6-1.1 s / 27-48 deg/s / in-band 0.18-0.24",
+   "~60x apart in oscillatory energy"
+  ],
+  "consequence_for_clause_a": "WELL-POSED in principle -- one loop model CAN place both, because both are closed-loop crossings on a common speed-scheduled plant. But the model must move the crossing from 1.33x to 2.08x (4.93/2.37) the plant mode from the x19.3 relay change plus the AccordRateLoopGain 0.0006 and the Q=1.0 notch that r71 did not fly."
+ },
+ "fork_plant_mode_Hz": {
+  "10": 1.531,
+  "15": 1.734,
+  "16": 1.763,
+  "20": 1.916,
+  "22": 2.008,
+  "26": 2.173,
+  "28": 2.251,
+  "source": "HONDA_ACCORD_HOLD_K_V / HONDA_ACCORD_EPS_INERTIA=8e-5, latcontrol_vehicle_tunes.py:236,279,2630 (read-only)"
+ }
+}

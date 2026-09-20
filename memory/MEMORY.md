@@ -1,3 +1,4 @@
+- 🛑🛑⭐⭐⭐⭐⭐ [CLOSED 2026-09-20 after TWO pre-registered gates (74a7e9d→879448f, a8a3c56→fail): the SteerFriction relay is NOT the instability mechanism — r71 flew 0.011 and LIMIT-CYCLED while three V282 routes flew 0.010–0.030 equally live and CLEAN for months at 2.5–6.2× its linear gain, and the relay's output chatter is 1.7–1.8× LARGER on the clean routes; clause (b) was UNSATISFIABLE BY PROOF (V282old Pareto-dominates r71 on both permitted terms at once); amplitude cannot score the anchors either (clean r75 carries 5.5× positive r73's energy); `friction_jerk` is REFERENCE-side so it contributes NOTHING to L(s) — the gate-2 premise was false and I wrote it; the `friction_hyst` guard is a PER-COMMIT fact first appearing at 08a5a7064. **TIER B CLOSED PERMANENTLY, no third repair.** ARM-KP3's 15.9 % stands but has no ladder above it](accord/mechanism/accord-the-relay-is-not-the-instability-mechanism-tier-b-closed.md)
 🛑 **THIS INDEX IS PAGINATED IN EIGHT.** This page alone is not the whole memory —
 the continuation pages carry the rest, newest last:
 
@@ -318,5 +319,6 @@ candidate levers were killed by exactly those entries on 2026-08-12 alone.
 
 🛑 **PAGINATED IN FOUR** — `MEMORY-PART2.md`, `MEMORY-PART3.md` and
 `MEMORY-PART4.md` (split 2026-08-28 at the 256 KB cap) must all be read.
+
 
 

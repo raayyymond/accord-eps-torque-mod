@@ -1,0 +1,2192 @@
+{
+ "clause_b_cells": 132,
+ "clause_b_fails": 132,
+ "worst_clean_counts": {
+  "V282 clean": 66,
+  "V282old cln": 66
+ },
+ "p_single": 0.06670000000000001,
+ "p_b": 0.1,
+ "pa73": 0.667,
+ "structured_null_p": 0.086175,
+ "detail": [
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.660440683199087,
+    "r73  POS": 1.6502011040384599,
+    "r72 clean": 0.18492442685656751,
+    "rev6.4 cln": 0.24435373592568874,
+    "V282 clean": 1.2432128030118772
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.8821215325219264,
+    "r73  POS": 2.2739184302072943,
+    "r72 clean": 0.22947325648829184,
+    "rev6.4 cln": 0.29734981206188593,
+    "V282 clean": 1.6611445891963437
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.8803959605808145,
+    "r73  POS": 2.2274037250211363,
+    "r72 clean": 0.2590558177337019,
+    "rev6.4 cln": 0.3428475982485423,
+    "V282 clean": 1.6536825529267438
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.6175053939917013,
+    "r73  POS": 1.5456257352819671,
+    "r72 clean": 0.17384608444725502,
+    "rev6.4 cln": 0.2297385253180726,
+    "V282 clean": 1.1621655491480536
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7070154089918105,
+    "r73  POS": 1.8013565112535104,
+    "r72 clean": 0.1939669406035221,
+    "rev6.4 cln": 0.25411486009704853,
+    "V282 clean": 1.3305430551098971
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.5215254896804272,
+    "r73  POS": 1.3039642202781683,
+    "r72 clean": 0.14994327433426957,
+    "rev6.4 cln": 0.19868428696429816,
+    "V282 clean": 0.9810114549977059
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.891142381281718,
+    "r73  POS": 2.150583454856684,
+    "r72 clean": 0.18492442685656751,
+    "rev6.4 cln": 0.24435373592568874,
+    "V282 clean": 1.4444814306139295
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.19492402908584,
+    "r73  POS": 3.0865753752664062,
+    "r72 clean": 0.22947325648829184,
+    "rev6.4 cln": 0.29734981206188593,
+    "V282 clean": 1.9347624160357089
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.1689949774354012,
+    "r73  POS": 2.4226321467944483,
+    "r72 clean": 0.2590558177337019,
+    "rev6.4 cln": 0.3428475982485423,
+    "V282 clean": 1.902264572154043
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.8317112484698325,
+    "r73  POS": 1.9816536416468122,
+    "r72 clean": 0.17384608444725502,
+    "rev6.4 cln": 0.2297385253180726,
+    "V282 clean": 1.3488049408432854
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.9517395947486817,
+    "r73  POS": 2.311973372527903,
+    "r72 clean": 0.1939669406035221,
+    "rev6.4 cln": 0.25411486009704853,
+    "V282 clean": 1.543687426477891
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.6993339658462214,
+    "r73  POS": 1.596460190694903,
+    "r72 clean": 0.14994327433426957,
+    "rev6.4 cln": 0.19868428696429816,
+    "V282 clean": 1.1354277093483562
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7467037261092014,
+    "r73  POS": 1.968114473069375,
+    "r72 clean": 0.21665915277467498,
+    "rev6.4 cln": 0.2894748278530683,
+    "V282 clean": 1.4050349659164834
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.9961752014572428,
+    "r73  POS": 2.6837222742413678,
+    "r72 clean": 0.2664848491209092,
+    "rev6.4 cln": 0.3494910655090229,
+    "V282 clean": 1.875175557869254
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.9998103965107644,
+    "r73  POS": 2.6826628510400266,
+    "r72 clean": 0.3056998669669226,
+    "rev6.4 cln": 0.4084541561930913,
+    "V282 clean": 1.8772391823731691
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.6985269794940945,
+    "r73  POS": 1.8452756839588118,
+    "r72 clean": 0.20384688517199773,
+    "rev6.4 cln": 0.27234396245629905,
+    "V282 clean": 1.314127842435557
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7999104821411905,
+    "r73  POS": 2.1423844182041734,
+    "r72 clean": 0.22684190896525008,
+    "rev6.4 cln": 0.3005607725483302,
+    "V282 clean": 1.5047648177353141
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.5906972346128022,
+    "r73  POS": 1.5627260728131116,
+    "r72 clean": 0.17629942819553926,
+    "rev6.4 cln": 0.23605008835215574,
+    "V282 clean": 1.1106846439146631
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.0235287635676515,
+    "r73  POS": 2.928778791657192,
+    "r72 clean": 0.21665915277467498,
+    "rev6.4 cln": 0.2894748278530683,
+    "V282 clean": 1.6481833276184683
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.3710664606000307,
+    "r73  POS": 4.07920850859247,
+    "r72 clean": 0.2664848491209092,
+    "rev6.4 cln": 0.3494910655090229,
+    "V282 clean": 2.2052094811267846
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.347564145479409,
+    "r73  POS": 3.5741684802128684,
+    "r72 clean": 0.3056998669669226,
+    "rev6.4 cln": 0.4084541561930913,
+    "V282 clean": 2.179316501965532
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.9556937760672043,
+    "r73  POS": 2.7162671322496057,
+    "r72 clean": 0.20384688517199773,
+    "rev6.4 cln": 0.27234396245629905,
+    "V282 clean": 1.5397614977178875
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.0937635405702653,
+    "r73  POS": 3.1433324891933907,
+    "r72 clean": 0.22684190896525008,
+    "rev6.4 cln": 0.3005607725483302,
+    "V282 clean": 1.762496820082064
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.8044307407478507,
+    "r73  POS": 2.2358504224990488,
+    "r72 clean": 0.17629942819553926,
+    "rev6.4 cln": 0.23605008835215574,
+    "V282 clean": 1.2976770863546463
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.8209431765419184,
+    "r73  POS": 2.2594198730195814,
+    "r72 clean": 0.2450684946337222,
+    "rev6.4 cln": 0.33101968459791636,
+    "V282 clean": 1.5441797421588621
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.0937537157545942,
+    "r73  POS": 3.0588568300963184,
+    "r72 clean": 0.2989042435323223,
+    "rev6.4 cln": 0.39653067350646193,
+    "V282 clean": 2.0581252287978944
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.1048010176313057,
+    "r73  POS": 3.103466442352815,
+    "r72 clean": 0.3482803291107238,
+    "rev6.4 cln": 0.46992369749367924,
+    "V282 clean": 2.073633599680544
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7684381989342354,
+    "r73  POS": 2.1201443352474065,
+    "r72 clean": 0.23076543255008608,
+    "rev6.4 cln": 0.3116513134906615,
+    "V282 clean": 1.4451377809929469
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.8801310848473975,
+    "r73  POS": 2.4555845257620743,
+    "r72 clean": 0.2561620698249818,
+    "rev6.4 cln": 0.34316237732345917,
+    "V282 clean": 1.6550856918659527
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.6507537112159342,
+    "r73  POS": 1.8006257887261437,
+    "r72 clean": 0.20011891289607434,
+    "rev6.4 cln": 0.2707481422639291,
+    "V282 clean": 1.2231742005456105
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.1410612714874602,
+    "r73  POS": 3.6315447537354855,
+    "r72 clean": 0.2450684946337222,
+    "rev6.4 cln": 0.33101968459791636,
+    "V282 clean": 1.826583120998314
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.5266682171981008,
+    "r73  POS": 4.986015012074329,
+    "r72 clean": 0.2989042435323223,
+    "rev6.4 cln": 0.39653067350646193,
+    "V282 clean": 2.440802171466926
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.5089841019150738,
+    "r73  POS": 4.58539253252602,
+    "r72 clean": 0.3482803291107238,
+    "rev6.4 cln": 0.46992369749367924,
+    "V282 clean": 2.4266989115848125
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.0660087408717442,
+    "r73  POS": 3.3787240022683807,
+    "r72 clean": 0.23076543255008608,
+    "rev6.4 cln": 0.3116513134906615,
+    "V282 clean": 1.70739541982217
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.2202163772827102,
+    "r73  POS": 3.8971474210844677,
+    "r72 clean": 0.2561620698249818,
+    "rev6.4 cln": 0.34316237732345917,
+    "V282 clean": 1.954720693260084
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.8984312739535031,
+    "r73  POS": 2.8083708004542327,
+    "r72 clean": 0.20011891289607434,
+    "rev6.4 cln": 0.2707481422639291,
+    "V282 clean": 1.440909441203602
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.432184764101093,
+    "r73  POS": 0.8810319340267155,
+    "r72 clean": 0.16615882602993795,
+    "rev6.4 cln": 0.23375599768668984,
+    "V282 clean": 0.8063757338769654
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.4979814785377261,
+    "r73  POS": 1.1879716191814333,
+    "r72 clean": 0.1703100233665588,
+    "rev6.4 cln": 0.23168026646246587,
+    "V282 clean": 0.9295532165600369
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.5760529878798742,
+    "r73  POS": 1.2578980171478888,
+    "r72 clean": 0.20891424175771126,
+    "rev6.4 cln": 0.29042073025301507,
+    "V282 clean": 1.07723948172806
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.6181365108068495,
+    "r73  POS": 1.4672947924139124,
+    "r72 clean": 0.210950860301056,
+    "rev6.4 cln": 0.28730921230769557,
+    "V282 clean": 1.15474635968411
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.3943882787484187,
+    "r73  POS": 0.8669160651143467,
+    "r72 clean": 0.14408515874499142,
+    "rev6.4 cln": 0.2000027256486858,
+    "V282 clean": 0.7361513764169483
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.5571129452426391,
+    "r73  POS": 2.6295949851826403,
+    "r72 clean": 0.16615882602993795,
+    "rev6.4 cln": 0.23375599768668984,
+    "V282 clean": 0.9104453590116995
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.6426364639610391,
+    "r73  POS": 3.0042252250659702,
+    "r72 clean": 0.1703100233665588,
+    "rev6.4 cln": 0.23168026646246587,
+    "V282 clean": 1.0502542271607764
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7483835231954746,
+    "r73  POS": 3.4370188229316043,
+    "r72 clean": 0.20891424175771126,
+    "rev6.4 cln": 0.29042073025301507,
+    "V282 clean": 1.222293988290326
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7999268030181859,
+    "r73  POS": 3.7065983888223366,
+    "r72 clean": 0.210950860301056,
+    "rev6.4 cln": 0.28730921230769557,
+    "V282 clean": 1.3070027416623176
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.5088783930286778,
+    "r73  POS": 2.388240986029584,
+    "r72 clean": 0.14408515874499142,
+    "rev6.4 cln": 0.2000027256486858,
+    "V282 clean": 0.8316638914470339
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.4942116393863496,
+    "r73  POS": 1.1659029195224369,
+    "r72 clean": 0.19935557654114275,
+    "rev6.4 cln": 0.28065873170079636,
+    "V282 clean": 0.9217515655406369
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.5693186571778769,
+    "r73  POS": 1.4890136799890992,
+    "r72 clean": 0.203728926694013,
+    "rev6.4 cln": 0.2781190701926801,
+    "V282 clean": 1.062304782800342
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.6576166531217524,
+    "r73  POS": 1.611200648979952,
+    "r72 clean": 0.2502046049178176,
+    "rev6.4 cln": 0.3487784591826266,
+    "V282 clean": 1.229288146259521
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7062629587083692,
+    "r73  POS": 1.8372616299241635,
+    "r72 clean": 0.2522402763566027,
+    "rev6.4 cln": 0.34487001776076487,
+    "V282 clean": 1.318865723899706
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.4508991689315327,
+    "r73  POS": 1.1153529276076575,
+    "r72 clean": 0.1726979867423843,
+    "rev6.4 cln": 0.2401661332012384,
+    "V282 clean": 0.8413084180351382
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.6454510773405453,
+    "r73  POS": 2.9895925339392586,
+    "r72 clean": 0.19935557654114275,
+    "rev6.4 cln": 0.28065873170079636,
+    "V282 clean": 1.0492908474530922
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7444221727861646,
+    "r73  POS": 1.2449470454340654,
+    "r72 clean": 0.203728926694013,
+    "rev6.4 cln": 0.2781190701926801,
+    "V282 clean": 1.210188166139261
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.8660683638237179,
+    "r73  POS": 1.3794356704181072,
+    "r72 clean": 0.2502046049178176,
+    "rev6.4 cln": 0.3487784591826266,
+    "V282 clean": 1.4067146797908054
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.9262569421706882,
+    "r73  POS": 1.6549995437263483,
+    "r72 clean": 0.2522402763566027,
+    "rev6.4 cln": 0.34487001776076487,
+    "V282 clean": 1.5052855764837638
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.5894902175794211,
+    "r73  POS": 2.7131725198447945,
+    "r72 clean": 0.1726979867423843,
+    "rev6.4 cln": 0.2401661332012384,
+    "V282 clean": 0.9583347130305482
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.5504288327812877,
+    "r73  POS": 1.4224081094997403,
+    "r72 clean": 0.23138851882318423,
+    "rev6.4 cln": 0.32677484013102914,
+    "V282 clean": 1.0262455058761157
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.6339114401031429,
+    "r73  POS": 1.767989990216224,
+    "r72 clean": 0.23548070858278264,
+    "rev6.4 cln": 0.3232252206674046,
+    "V282 clean": 1.1824186385535345
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7310173414938551,
+    "r73  POS": 1.9339662188738687,
+    "r72 clean": 0.2896399872374592,
+    "rev6.4 cln": 0.405699117569258,
+    "V282 clean": 1.366018069082944
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7858577160021929,
+    "r73  POS": 2.1797418880634014,
+    "r72 clean": 0.29140942239053896,
+    "rev6.4 cln": 0.40070439184900203,
+    "V282 clean": 1.4669879569726485
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.502073834558794,
+    "r73  POS": 1.3426529195898644,
+    "r72 clean": 0.20013083630711898,
+    "rev6.4 cln": 0.279463255812178,
+    "V282 clean": 0.9364667992399031
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.7273551798768928,
+    "r73  POS": 1.519502026330975,
+    "r72 clean": 0.23138851882318423,
+    "rev6.4 cln": 0.32677484013102914,
+    "V282 clean": 1.1767193887137932
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.838719343572497,
+    "r73  POS": 2.050656977365462,
+    "r72 clean": 0.23548070858278264,
+    "rev6.4 cln": 0.3232252206674046,
+    "V282 clean": 1.3568431268640297
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.9745447166550331,
+    "r73  POS": 2.3620268184969038,
+    "r72 clean": 0.2896399872374592,
+    "rev6.4 cln": 0.405699117569258,
+    "V282 clean": 1.5748910919409334
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 1.0430515591033878,
+    "r73  POS": 2.60615528166562,
+    "r72 clean": 0.29140942239053896,
+    "rev6.4 cln": 0.40070439184900203,
+    "V282 clean": 1.6866952076293291
+   }
+  },
+  {
+   "vset": "V282 trio = the three 0.010 routes (64/65/6c)",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282 clean",
+   "sc": {
+    "r71  POS": 0.6641790804187911,
+    "r73  POS": 1.5080740077130426,
+    "r72 clean": 0.20013083630711898,
+    "rev6.4 cln": 0.279463255812178,
+    "V282 clean": 1.0745015112365193
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.660440683199087,
+    "r73  POS": 1.6502011040384599,
+    "r72 clean": 0.18492442685656751,
+    "rev6.4 cln": 0.24435373592568874,
+    "V282 clean": 1.2432128030118772,
+    "V282old cln": 3.2742355338356086
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.8821215325219264,
+    "r73  POS": 2.2739184302072943,
+    "r72 clean": 0.22947325648829184,
+    "rev6.4 cln": 0.29734981206188593,
+    "V282 clean": 1.6611445891963437,
+    "V282old cln": 4.370563445095437
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.8803959605808145,
+    "r73  POS": 2.2274037250211363,
+    "r72 clean": 0.2590558177337019,
+    "rev6.4 cln": 0.3428475982485423,
+    "V282 clean": 1.6536825529267438,
+    "V282old cln": 4.378603207545867
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.6175053939917013,
+    "r73  POS": 1.5456257352819671,
+    "r72 clean": 0.17384608444725502,
+    "rev6.4 cln": 0.2297385253180726,
+    "V282 clean": 1.1621655491480536,
+    "V282old cln": 3.062303316614623
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7070154089918105,
+    "r73  POS": 1.8013565112535104,
+    "r72 clean": 0.1939669406035221,
+    "rev6.4 cln": 0.25411486009704853,
+    "V282 clean": 1.3305430551098971,
+    "V282old cln": 3.5065351992437632
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.5215254896804272,
+    "r73  POS": 1.3039642202781683,
+    "r72 clean": 0.14994327433426957,
+    "rev6.4 cln": 0.19868428696429816,
+    "V282 clean": 0.9810114549977059,
+    "V282old cln": 2.5883920923684425
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.891142381281718,
+    "r73  POS": 2.150583454856684,
+    "r72 clean": 0.18492442685656751,
+    "rev6.4 cln": 0.24435373592568874,
+    "V282 clean": 1.4444814306139295,
+    "V282old cln": 3.8848915073717123
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.19492402908584,
+    "r73  POS": 3.0865753752664062,
+    "r72 clean": 0.22947325648829184,
+    "rev6.4 cln": 0.29734981206188593,
+    "V282 clean": 1.9347624160357089,
+    "V282old cln": 5.1996926407405635
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.1689949774354012,
+    "r73  POS": 2.4226321467944483,
+    "r72 clean": 0.2590558177337019,
+    "rev6.4 cln": 0.3428475982485423,
+    "V282 clean": 1.902264572154043,
+    "V282old cln": 5.1377563226755605
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.8317112484698325,
+    "r73  POS": 1.9816536416468122,
+    "r72 clean": 0.17384608444725502,
+    "rev6.4 cln": 0.2297385253180726,
+    "V282 clean": 1.3488049408432854,
+    "V282old cln": 3.6289229507171314
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.9517395947486817,
+    "r73  POS": 2.311973372527903,
+    "r72 clean": 0.1939669406035221,
+    "rev6.4 cln": 0.25411486009704853,
+    "V282 clean": 1.543687426477891,
+    "V282old cln": 4.153749004060938
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.6993339658462214,
+    "r73  POS": 1.596460190694903,
+    "r72 clean": 0.14994327433426957,
+    "rev6.4 cln": 0.19868428696429816,
+    "V282 clean": 1.1354277093483562,
+    "V282old cln": 3.0579528145078485
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7467037261092014,
+    "r73  POS": 1.968114473069375,
+    "r72 clean": 0.21665915277467498,
+    "rev6.4 cln": 0.2894748278530683,
+    "V282 clean": 1.4050349659164834,
+    "V282old cln": 3.6997539252362746
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.9961752014572428,
+    "r73  POS": 2.6837222742413678,
+    "r72 clean": 0.2664848491209092,
+    "rev6.4 cln": 0.3494910655090229,
+    "V282 clean": 1.875175557869254,
+    "V282old cln": 4.9327965689991595
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.9998103965107644,
+    "r73  POS": 2.6826628510400266,
+    "r72 clean": 0.3056998669669226,
+    "rev6.4 cln": 0.4084541561930913,
+    "V282 clean": 1.8772391823731691,
+    "V282old cln": 4.969636456929436
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.6985269794940945,
+    "r73  POS": 1.8452756839588118,
+    "r72 clean": 0.20384688517199773,
+    "rev6.4 cln": 0.27234396245629905,
+    "V282 clean": 1.314127842435557,
+    "V282old cln": 3.462095900883359
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7999104821411905,
+    "r73  POS": 2.1423844182041734,
+    "r72 clean": 0.22684190896525008,
+    "rev6.4 cln": 0.3005607725483302,
+    "V282 clean": 1.5047648177353141,
+    "V282old cln": 3.964963407024298
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.5906972346128022,
+    "r73  POS": 1.5627260728131116,
+    "r72 clean": 0.17629942819553926,
+    "rev6.4 cln": 0.23605008835215574,
+    "V282 clean": 1.1106846439146631,
+    "V282old cln": 2.9300031227544387
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.0235287635676515,
+    "r73  POS": 2.928778791657192,
+    "r72 clean": 0.21665915277467498,
+    "rev6.4 cln": 0.2894748278530683,
+    "V282 clean": 1.6481833276184683,
+    "V282old cln": 4.436820819567258
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.3710664606000307,
+    "r73  POS": 4.07920850859247,
+    "r72 clean": 0.2664848491209092,
+    "rev6.4 cln": 0.3494910655090229,
+    "V282 clean": 2.2052094811267846,
+    "V282old cln": 5.932045054405524
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.347564145479409,
+    "r73  POS": 3.5741684802128684,
+    "r72 clean": 0.3056998669669226,
+    "rev6.4 cln": 0.4084541561930913,
+    "V282 clean": 2.179316501965532,
+    "V282old cln": 5.891128001575049
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.9556937760672043,
+    "r73  POS": 2.7162671322496057,
+    "r72 clean": 0.20384688517199773,
+    "rev6.4 cln": 0.27234396245629905,
+    "V282 clean": 1.5397614977178875,
+    "V282old cln": 4.146475054325078
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.0937635405702653,
+    "r73  POS": 3.1433324891933907,
+    "r72 clean": 0.22684190896525008,
+    "rev6.4 cln": 0.3005607725483302,
+    "V282 clean": 1.762496820082064,
+    "V282old cln": 4.746849353762568
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.8044307407478507,
+    "r73  POS": 2.2358504224990488,
+    "r72 clean": 0.17629942819553926,
+    "rev6.4 cln": 0.23605008835215574,
+    "V282 clean": 1.2976770863546463,
+    "V282old cln": 3.498071263176468
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.8209431765419184,
+    "r73  POS": 2.2594198730195814,
+    "r72 clean": 0.2450684946337222,
+    "rev6.4 cln": 0.33101968459791636,
+    "V282 clean": 1.5441797421588621,
+    "V282old cln": 4.065494734737138
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.0937537157545942,
+    "r73  POS": 3.0588568300963184,
+    "r72 clean": 0.2989042435323223,
+    "rev6.4 cln": 0.39653067350646193,
+    "V282 clean": 2.0581252287978944,
+    "V282old cln": 5.4131860752684435
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.1048010176313057,
+    "r73  POS": 3.103466442352815,
+    "r72 clean": 0.3482803291107238,
+    "rev6.4 cln": 0.46992369749367924,
+    "V282 clean": 2.073633599680544,
+    "V282old cln": 5.488667447937411
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7684381989342354,
+    "r73  POS": 2.1201443352474065,
+    "r72 clean": 0.23076543255008608,
+    "rev6.4 cln": 0.3116513134906615,
+    "V282 clean": 1.4451377809929469,
+    "V282old cln": 3.806629075010314
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.8801310848473975,
+    "r73  POS": 2.4555845257620743,
+    "r72 clean": 0.2561620698249818,
+    "rev6.4 cln": 0.34316237732345917,
+    "V282 clean": 1.6550856918659527,
+    "V282old cln": 4.36034515752229
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.6507537112159342,
+    "r73  POS": 1.8006257887261437,
+    "r72 clean": 0.20011891289607434,
+    "rev6.4 cln": 0.2707481422639291,
+    "V282 clean": 1.2231742005456105,
+    "V282old cln": 3.226230893354995
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "0000006c--68c6e94b17",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.1410612714874602,
+    "r73  POS": 3.6315447537354855,
+    "r72 clean": 0.2450684946337222,
+    "rev6.4 cln": 0.33101968459791636,
+    "V282 clean": 1.826583120998314,
+    "V282old cln": 4.9210739276695294
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.5266682171981008,
+    "r73  POS": 4.986015012074329,
+    "r72 clean": 0.2989042435323223,
+    "rev6.4 cln": 0.39653067350646193,
+    "V282 clean": 2.440802171466926,
+    "V282old cln": 6.571210127970272
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.5089841019150738,
+    "r73  POS": 4.58539253252602,
+    "r72 clean": 0.3482803291107238,
+    "rev6.4 cln": 0.46992369749367924,
+    "V282 clean": 2.4266989115848125,
+    "V282old cln": 6.56491052486184
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000072--8001fc3048",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.0660087408717442,
+    "r73  POS": 3.3787240022683807,
+    "r72 clean": 0.23076543255008608,
+    "rev6.4 cln": 0.3116513134906615,
+    "V282 clean": 1.70739541982217,
+    "V282old cln": 4.6016312868982086
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.2202163772827102,
+    "r73  POS": 3.8971474210844677,
+    "r72 clean": 0.2561620698249818,
+    "rev6.4 cln": 0.34316237732345917,
+    "V282 clean": 1.954720693260084,
+    "V282old cln": 5.268819591275607
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "22+",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.8984312739535031,
+    "r73  POS": 2.8083708004542327,
+    "r72 clean": 0.20011891289607434,
+    "rev6.4 cln": 0.2707481422639291,
+    "V282 clean": 1.440909441203602,
+    "V282old cln": 3.8872794823663352
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.432184764101093,
+    "r73  POS": 0.8810319340267155,
+    "r72 clean": 0.16615882602993795,
+    "rev6.4 cln": 0.23375599768668984,
+    "V282 clean": 0.8063757338769654,
+    "V282old cln": 2.1686512888809415
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.4979814785377261,
+    "r73  POS": 1.1879716191814333,
+    "r72 clean": 0.1703100233665588,
+    "rev6.4 cln": 0.23168026646246587,
+    "V282 clean": 0.9295532165600369,
+    "V282old cln": 2.497448723940032
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.5760529878798742,
+    "r73  POS": 1.2578980171478888,
+    "r72 clean": 0.20891424175771126,
+    "rev6.4 cln": 0.29042073025301507,
+    "V282 clean": 1.07723948172806,
+    "V282old cln": 2.8822193346897635
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.6181365108068495,
+    "r73  POS": 1.4672947924139124,
+    "r72 clean": 0.210950860301056,
+    "rev6.4 cln": 0.28730921230769557,
+    "V282 clean": 1.15474635968411,
+    "V282old cln": 3.096917359242299
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.3943882787484187,
+    "r73  POS": 0.8669160651143467,
+    "r72 clean": 0.14408515874499142,
+    "rev6.4 cln": 0.2000027256486858,
+    "V282 clean": 0.7361513764169483,
+    "V282old cln": 1.97801851834862
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.5571129452426391,
+    "r73  POS": 2.6295949851826403,
+    "r72 clean": 0.16615882602993795,
+    "rev6.4 cln": 0.23375599768668984,
+    "V282 clean": 0.9104453590116995,
+    "V282old cln": 2.4924844462439952
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.6426364639610391,
+    "r73  POS": 3.0042252250659702,
+    "r72 clean": 0.1703100233665588,
+    "rev6.4 cln": 0.23168026646246587,
+    "V282 clean": 1.0502542271607764,
+    "V282old cln": 2.872607696641312
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7483835231954746,
+    "r73  POS": 3.4370188229316043,
+    "r72 clean": 0.20891424175771126,
+    "rev6.4 cln": 0.29042073025301507,
+    "V282 clean": 1.222293988290326,
+    "V282old cln": 3.3308280339783614
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7999268030181859,
+    "r73  POS": 3.7065983888223366,
+    "r72 clean": 0.210950860301056,
+    "rev6.4 cln": 0.28730921230769557,
+    "V282 clean": 1.3070027416623176,
+    "V282old cln": 3.569138789628976
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.055,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.5088783930286778,
+    "r73  POS": 2.388240986029584,
+    "r72 clean": 0.14408515874499142,
+    "rev6.4 cln": 0.2000027256486858,
+    "V282 clean": 0.8316638914470339,
+    "V282old cln": 2.274920914197389
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.4942116393863496,
+    "r73  POS": 1.1659029195224369,
+    "r72 clean": 0.19935557654114275,
+    "rev6.4 cln": 0.28065873170079636,
+    "V282 clean": 0.9217515655406369,
+    "V282old cln": 2.478506131939911
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.5693186571778769,
+    "r73  POS": 1.4890136799890992,
+    "r72 clean": 0.203728926694013,
+    "rev6.4 cln": 0.2781190701926801,
+    "V282 clean": 1.062304782800342,
+    "V282old cln": 2.853613543521192
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.6576166531217524,
+    "r73  POS": 1.611200648979952,
+    "r72 clean": 0.2502046049178176,
+    "rev6.4 cln": 0.3487784591826266,
+    "V282 clean": 1.229288146259521,
+    "V282old cln": 3.2884515054395744
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7062629587083692,
+    "r73  POS": 1.8372616299241635,
+    "r72 clean": 0.2522402763566027,
+    "rev6.4 cln": 0.34487001776076487,
+    "V282 clean": 1.318865723899706,
+    "V282old cln": 3.536445635237663
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.4508991689315327,
+    "r73  POS": 1.1153529276076575,
+    "r72 clean": 0.1726979867423843,
+    "rev6.4 cln": 0.2401661332012384,
+    "V282 clean": 0.8413084180351382,
+    "V282old cln": 2.2601756448719277
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.6454510773405453,
+    "r73  POS": 2.9895925339392586,
+    "r72 clean": 0.19935557654114275,
+    "rev6.4 cln": 0.28065873170079636,
+    "V282 clean": 1.0492908474530922,
+    "V282old cln": 2.874706808746857
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7444221727861646,
+    "r73  POS": 1.2449470454340654,
+    "r72 clean": 0.203728926694013,
+    "rev6.4 cln": 0.2781190701926801,
+    "V282 clean": 1.210188166139261,
+    "V282old cln": 3.31250296105769
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.8660683638237179,
+    "r73  POS": 1.3794356704181072,
+    "r72 clean": 0.2502046049178176,
+    "rev6.4 cln": 0.3487784591826266,
+    "V282 clean": 1.4067146797908054,
+    "V282old cln": 3.836349187040061
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.9262569421706882,
+    "r73  POS": 1.6549995437263483,
+    "r72 clean": 0.2522402763566027,
+    "rev6.4 cln": 0.34487001776076487,
+    "V282 clean": 1.5052855764837638,
+    "V282old cln": 4.113706636934864
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.065,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.5894902175794211,
+    "r73  POS": 2.7131725198447945,
+    "r72 clean": 0.1726979867423843,
+    "rev6.4 cln": 0.2401661332012384,
+    "V282 clean": 0.9583347130305482,
+    "V282old cln": 2.623353786950231
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.5504288327812877,
+    "r73  POS": 1.4224081094997403,
+    "r72 clean": 0.23138851882318423,
+    "rev6.4 cln": 0.32677484013102914,
+    "V282 clean": 1.0262455058761157,
+    "V282old cln": 2.759044149925215
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.6339114401031429,
+    "r73  POS": 1.767989990216224,
+    "r72 clean": 0.23548070858278264,
+    "rev6.4 cln": 0.3232252206674046,
+    "V282 clean": 1.1824186385535345,
+    "V282old cln": 3.1757658583046533
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7310173414938551,
+    "r73  POS": 1.9339662188738687,
+    "r72 clean": 0.2896399872374592,
+    "rev6.4 cln": 0.405699117569258,
+    "V282 clean": 1.366018069082944,
+    "V282old cln": 3.653632877823119
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7858577160021929,
+    "r73  POS": 2.1797418880634014,
+    "r72 clean": 0.29140942239053896,
+    "rev6.4 cln": 0.40070439184900203,
+    "V282 clean": 1.4669879569726485,
+    "V282old cln": 3.93299989627322
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": false,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.502073834558794,
+    "r73  POS": 1.3426529195898644,
+    "r72 clean": 0.20013083630711898,
+    "rev6.4 cln": 0.279463255812178,
+    "V282 clean": 0.9364667992399031,
+    "V282old cln": 2.5154202393948313
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "0000006d--05e83bb04f",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.7273551798768928,
+    "r73  POS": 1.519502026330975,
+    "r72 clean": 0.23138851882318423,
+    "rev6.4 cln": 0.32677484013102914,
+    "V282 clean": 1.1767193887137932,
+    "V282old cln": 3.2259583797122966
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "0000006e--6ca3e014fd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.838719343572497,
+    "r73  POS": 2.050656977365462,
+    "r72 clean": 0.23548070858278264,
+    "rev6.4 cln": 0.3232252206674046,
+    "V282 clean": 1.3568431268640297,
+    "V282old cln": 3.7164063376118923
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000070--717f5a7866",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.9745447166550331,
+    "r73  POS": 2.3620268184969038,
+    "r72 clean": 0.2896399872374592,
+    "rev6.4 cln": 0.405699117569258,
+    "V282 clean": 1.5748910919409334,
+    "V282old cln": 4.297981779290167
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000075--6c8687d5bd",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 1.0430515591033878,
+    "r73  POS": 2.60615528166562,
+    "r72 clean": 0.29140942239053896,
+    "rev6.4 cln": 0.40070439184900203,
+    "V282 clean": 1.6866952076293291,
+    "V282old cln": 4.612604331128569
+   }
+  },
+  {
+   "vset": "V282 trio spans 0.010-0.030 as the prereg's table says",
+   "bin": "15-22",
+   "D": 0.075,
+   "jerk": true,
+   "plant": "00000076--d0b7ea7e4d",
+   "passed": false,
+   "worst_clean": "V282old cln",
+   "sc": {
+    "r71  POS": 0.6641790804187911,
+    "r73  POS": 1.5080740077130426,
+    "r72 clean": 0.20013083630711898,
+    "rev6.4 cln": 0.279463255812178,
+    "V282 clean": 1.0745015112365193,
+    "V282old cln": 2.9433140745133928
+   }
+  }
+ ]
+}
