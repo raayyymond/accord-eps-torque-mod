@@ -1,0 +1,55 @@
+============================================================================================================
+A. GAIN LOCKED AT 1.0 -- what survives when the shrinkage channel is closed
+
+  T64   raw        J as flown 1.3512
+    pure LEAD, best      0.4457  closure   99.6%  cmd shake x1.000   lead 390 ms
+    LEAD + first-order lag 0.4353  closure  100.7%  cmd shake x0.685   lead 524 ms, lag 132 ms
+    lead sweep (ms : J) 50:1.129 100:0.932 150:0.768 200:0.639 300:0.485 400:0.446 500:0.508
+
+  V282  raw        J as flown 0.4705
+    pure LEAD, best      0.2510  closure  121.0%  cmd shake x1.000   lead 255 ms
+    LEAD + first-order lag 0.2509  closure  121.0%  cmd shake x0.913   lead 287 ms, lag 34 ms
+    lead sweep (ms : J) 50:0.396 100:0.336 150:0.291 200:0.262 300:0.259 400:0.341 500:0.510
+
+  T64   corrected  J as flown 0.9994
+    pure LEAD, best      0.5761  closure   85.3%  cmd shake x1.000   lead 380 ms
+    LEAD + first-order lag 0.3756  closure  107.3%  cmd shake x0.592   lead 811 ms, lag 609 ms
+    lead sweep (ms : J) 50:0.920 100:0.846 150:0.775 200:0.709 300:0.606 400:0.578 500:0.642
+
+  V282  corrected  J as flown 0.3214
+    pure LEAD, best      0.2905  closure  116.7%  cmd shake x1.000   lead 120 ms
+    LEAD + first-order lag 0.2594  closure  120.1%  cmd shake x0.415   lead 432 ms, lag 304 ms
+    lead sweep (ms : J) 50:0.301 100:0.291 150:0.292 200:0.302 300:0.346 400:0.413 500:0.501
+
+============================================================================================================
+B. THE LEVERS COMPOSED.  Loop gain (rho on D) x setpoint lead, on the metric as defined.
+                              lead 0ms  lead 100ms  lead 200ms  lead 300ms  lead 400ms
+    as flown                    1.3512      0.9319      0.6392      0.4853      0.4463
+    ARM-KP2 3.0 Q0.60           1.0026      0.6697      0.4564      0.3694      0.3809
+    SteerKP 6.0                 0.7431      0.4748      0.3316      0.3137      0.3869
+    infinite gain               0.4692      0.2710      0.2303      0.3312      0.5276
+    (closure %, same rows)
+    as flown                     -0.0%       46.1%       78.3%       95.2%       99.5%
+    ARM-KP2 3.0 Q0.60            38.3%       75.0%       98.4%      108.0%      106.7%
+    SteerKP 6.0                  66.9%       96.4%      112.1%      114.1%      106.1%
+    infinite gain                97.0%      118.8%      123.3%      112.2%       90.6%
+
+============================================================================================================
+C. IS THE LEAD ALREADY THERE?  The fork's own delay compensation, measured on the wire.
+   Z is built as expected_lataccel(t - lat_delay) + jerk*lat_delay, then ref-filtered.
+   The NET lead of Z over X is measurable: argmax_t Re(sum conj(X) Z e^{-j2 pi f t}).
+   T64     Z leads X by   -132 ms (gain 1.019)   |   Y lags X by   +400 ms as flown (includes the 102 ms instrument)
+   V282    Z leads X by    -48 ms (gain 1.055)   |   Y lags X by   +264 ms as flown (includes the 102 ms instrument)
+
+============================================================================================================
+D. THE ANSWER TABLE.  J, closure, and the shake the operator pays, all on one denominator.
+   configuration                         J   closure  cmd shake  reachable by               note
+   as flown (rev 6.4)               1.3512     -0.0%     x1.000  -                          -
+   ARM-KP2 (toggle ceiling)         1.0026     38.3%     x1.148  toggle                     brief: J 1.058 / 33.3 % on V_h1
+   setpoint lead +100 ms            0.9319     46.1%     x1.000  fork code (reference path) gain locked 1.0
+   setpoint lead +200 ms            0.6392     78.3%     x1.000  fork code (reference path) gain locked 1.0
+   setpoint lead +300 ms            0.4853     95.2%     x1.000  fork code (reference path) gain locked 1.0
+   ARM-KP2 + lead +200 ms           0.4564     98.4%          -  toggle + fork code         composed
+   infinite loop gain               0.4692     97.0%          -  unreachable                algebraic limit of the gain class
+
+wrote out/d9.json

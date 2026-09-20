@@ -1,0 +1,53 @@
+============================================================================================================
+1. THE BIAS LAW.  If Y = V*M + noise with the noise exogenous to M, then
+     plim(dir) = V exactly ;  plim(rev) = V / coh(M,Y) ;  weak-instrument IV -> rev.
+   Test: does rev/dir equal 1/coh, bin by bin?  And how strong is the IV's first stage?
+
+  T64
+    band Hz      |dir|  |rev|   |iv|  coh(M,Y)  dir/coh  rev/dir  coh(X,M)  demand%
+     0.15-0.30  0.943  0.958  0.928     0.984    0.958    1.016     0.910   76.20%
+     0.30-0.60  1.013  1.043  1.009     0.971    1.043    1.030     0.880   20.04%
+     0.60-1.20  1.074  1.416  1.317     0.788    1.363    1.319     0.660    2.83%
+     1.20-2.40  1.311  4.740  6.172     0.300    4.362    3.617     0.122    0.93%
+
+  V282
+    band Hz      |dir|  |rev|   |iv|  coh(M,Y)  dir/coh  rev/dir  coh(X,M)  demand%
+     0.15-0.30  0.949  0.976  0.943     0.973    0.976    1.028     0.985   90.22%
+     0.30-0.60  1.086  1.294  1.090     0.843    1.289    1.192     0.944    6.19%
+     0.60-1.20  1.356  1.630  1.399     0.835    1.624    1.202     0.934    2.75%
+     1.20-2.40  2.680  7.043  4.768     0.560    4.781    2.628     0.649    0.84%
+
+   READ: rev/dir tracks 1/coh(M,Y) -- one noise term on Y explains the whole spread.
+   The IV's first stage coh(X,M) collapses in the band that decides the asymptote, so the
+   IV estimate there is a weak-instrument artefact, not a measurement of the car.
+
+============================================================================================================
+2. IS dir (H1) BIASED?  Stratify the metric's own windows by steering excitation power in
+   1.2-2.4 Hz.  Correlated-noise or feedback bias => H1 drifts with SNR.  Unbiased => flat.
+    excitation tercile      nwin   |M|rms  |dir| 1.2-2.4    coh
+    Q1 9.03e-01-9.07e+00    60    2.351          2.460  0.202
+    Q2 9.07e+00-2.56e+01    60    4.094          2.407  0.260
+    Q3 2.56e+01-6.77e+01    60    6.391          1.838  0.337
+    Q4 6.77e+01-2.47e+03    60   17.892          1.209  0.459
+
+============================================================================================================
+3. THE SAME TRANSFER ON 7x THE DATA (all engaged >= 15 m/s, 20 Hz pose clock, no run-length
+   or hands-off requirement).  If dir is measuring the car, the two must agree.
+    584 windows, 3738 s, median v 26.6 m/s
+    band Hz       |H1|           95% CI    coh  arg deg  grp delay ms
+     0.15-0.30  0.959 [ 0.953, 0.964]  0.989     -7.1         120.1
+     0.30-0.60  0.986 [ 0.970, 1.002]  0.952    -15.5         111.2
+     0.60-1.20  1.078 [ 1.050, 1.114]  0.802    -26.0          13.3
+     1.20-2.40  1.002 [ 0.966, 1.176]  0.365    -59.4         125.1
+     2.40-3.50  1.002 [ 0.971, 1.211]  0.402    -87.0          55.3
+
+============================================================================================================
+4. THE PHYSICAL SCREEN.  Bicycle model over a PARAMETER SWEEP, |V|/|V_LF| in 1.2-2.4 Hz.
+    729 parameter sets (mass 1500-1800, Iz 2400-3400, Cf 70-140 kN/rad,
+    Cr 90-170 kN/rad, a 1.05-1.30 m, v 16-29 m/s):
+      |V|/|V_LF| over 1.2-2.4 Hz : min 0.78  p5 0.97  median 1.15  p95 1.41  max 1.69
+      yaw mode wn 1.15-4.92 Hz, zeta 0.71-1.26
+    A steer->yaw gain of 3.9-6.3 relative to DC needs zeta < 0.10 at wn inside the band.
+    No admissible sedan parameter set produces it; the minimum zeta in the sweep is above.
+
+wrote out/d3_screen.json

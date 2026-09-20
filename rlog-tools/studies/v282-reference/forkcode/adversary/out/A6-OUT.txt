@@ -1,0 +1,40 @@
+================================================================================================================
+1. THE NOISE FLOOR.  Metric per route and per run, and a run-cluster bootstrap.
+route                   runs  win       J   per-run J
+0000006c--68c6e94b17       2   43   1.290   0.73 1.61
+0000006d--05e83bb04f       3   29   1.492   1.54 1.44 2.16
+00000064--ce6b0b0ebb       2   44   0.465   0.60 0.27
+
+   T64 pooled J = 1.3512   run-cluster bootstrap 95 % CI [0.885, 1.628]   (width 0.742 = 55 % of J)
+   predicted ARM-KP2 J = 1.058.   Is it outside the CI of the BASELINE?  NO
+
+   AND THE DRIVE THAT WOULD READ IT BACK.  A new drive is ONE route; simulate a single
+   route by resampling n runs from the pool and ask how often its J lands below 1.16
+   (the config's own PASS gate) and below 1.30 (its FAIL gate) with NO change made.
+      a 2-run drive, NOTHING CHANGED:  P(J <= 1.16) =  28.5 %   P(J >= 1.30) =  64.1 %   median 1.482   5-95 % [0.80, 1.68]
+      a 3-run drive, NOTHING CHANGED:  P(J <= 1.16) =  29.6 %   P(J >= 1.30) =  68.0 %   median 1.453   5-95 % [0.80, 1.64]
+      a 4-run drive, NOTHING CHANGED:  P(J <= 1.16) =  29.2 %   P(J >= 1.30) =  64.1 %   median 1.341   5-95 % [0.86, 1.62]
+   (the pool has 5 runs across the two rev 6.4 routes; a typical single route contributed 2)
+
+================================================================================================================
+2. WHAT THE PAIR DOES BELOW THE METRIC'S FLOOR.  Feedback-path authority vs the flown
+   config, at the frequency low-speed steering actually uses.
+ v m/s  notch f0  f used |    P x    I x  notch x  net P x  net I x |  with Ki 0.6 repair
+   2.0     0.815    0.30 |  1.057  0.352    0.887    0.937    0.312 |               0.625
+   4.0     0.942    0.30 |  1.219  0.406    0.913    1.114    0.371 |               0.742
+   6.0     1.180    0.40 |  1.452  0.484    0.903    1.311    0.437 |               0.874
+   8.0     1.283    0.40 |  1.709  0.570    0.917    1.567    0.522 |               1.045
+  12.0     1.673    0.50 |  2.180  0.727    0.924    2.014    0.671 |               1.342
+  17.0     1.792    0.50 |  2.581  0.860    0.933    2.408    0.803 |               1.605
+  22.0     2.008    0.50 |  2.797  0.932    0.946    2.647    0.882 |               1.764
+  28.0     2.251    0.50 |  2.923  0.974    0.957    2.798    0.933 |               1.865
+
+   The low-speed outward deficit that REPORT.md measured (+0.0231 torque at 0.6-2.5 deg)
+   is carried by whichever integrator is enabled -- the PID's I when the observer is off,
+   the observer otherwise.  This table is what SteerKP 3.0 + Q 0.6 does to that carrier.
+
+================================================================================================================
+3. AND THE PART OF THE DRIVE THE METRIC NEVER SEES, AS A SHARE OF THE WHOLE
+       0- 8 m/s :  17.8 %  (   213 s)   NOT SCORED by the metric
+       8-15 m/s :  32.0 %  (   382 s)   NOT SCORED by the metric
+      15-99 m/s :  50.2 %  (   599 s)   SCORED

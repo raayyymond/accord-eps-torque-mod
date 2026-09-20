@@ -1,0 +1,53 @@
+============================================================================================================
+A. tau_i PER ROUTE, two unwrap-free estimators, plus a positive control
+   CONTROL: inserting a known +100 ms moves E1 from 98 to 195 ms (delta +97 ms, expected +100)
+
+   route                    EPS    fork       nwin   E1 ms   E2 ms    coh
+   00000064--ce6b0b0ebb     V282   0f98d8c7     45      94      50   0.97
+   00000065--b9f78988bd     V282   0f98d8c7     52     107     100   0.98
+   0000006c--2bc842dbac     V282   57410c3b    344     103     100   0.97
+   00000039--f56039af87     V282   8a28dcef     59     112     100   0.99
+   0000003a--283a39a1d6     V282   ffe28378     43     131     100   0.98
+   0000003c--927965c2b4     V282   ffe28378     43     121     100   0.98
+   0000006c--68c6e94b17     V293   84766cdc     55      98     100   0.98
+   0000006d--05e83bb04f     V293   84766cdc     54      99     100   0.99
+   0000006e--6ca3e014fd     V293   84766cdc     64      92     100   0.99
+   00000076--d0b7ea7e4d     V293   e44b6cd3     46     102     100   0.99
+   00000075--6c8687d5bd     V293   08a5a706     55      94     100   0.99
+
+   E1 across 11 routes: median 102 ms  range 92-131   E2 median 100 ms
+   V282 EPS median 110 ms  |  V293 torque EPS median 98 ms  |  difference 12 ms
+   Same offset on both EPS builds and four fork commits, by two estimators. EVIDENCE.
+
+============================================================================================================
+B. WHAT THE FLOOR IS MADE OF.  At infinite loop gain E_inf = b + c + d + e; allocate
+   J_inf among them by projection (shares add to exactly 1).
+
+   T64: J_inf 0.4692
+     term              own/|X|^2  share of J_inf   x J_inf
+     b_setpoint           0.0895           0.275    0.1289
+     c_wheel2yaw          0.0028           0.023    0.0109
+     d_incoh              0.1889           0.136    0.0636
+     e_instrument         0.3073           0.566    0.2658
+
+   V282: J_inf 0.3181
+     term              own/|X|^2  share of J_inf   x J_inf
+     b_setpoint           0.0458           0.142    0.0452
+     c_wheel2yaw          0.0046           0.006    0.0018
+     d_incoh              0.2339           0.300    0.0954
+     e_instrument         0.2657           0.552    0.1757
+
+============================================================================================================
+C. PER ROUTE -- how much of the 'gap' could be the ROAD?  (the two builds never shared one)
+   route                    fam     nwin       J   J_inf  J_floor   d own   e own
+   0000006c--68c6e94b17     T64       43  1.2903  0.5020   0.2880  0.2125  0.3440
+   0000006d--05e83bb04f     T64       29  1.4922  0.3932   0.1920  0.1343  0.2222
+   00000064--ce6b0b0ebb     V282      44  0.4653  0.3195   0.3125  0.2333  0.2876
+   00000065--b9f78988bd     V282      28  0.4311  0.2278   0.2106  0.1532  0.1715
+   0000006c--2bc842dbac     V282     349  0.4733  0.3229   0.3159  0.2384  0.2682
+
+   J_inf spread: T64 0.393-0.502 (n 2)   V282 0.228-0.323 (n 3)
+   The floor is ROAD-dependent.  The two builds share no route, so part of the quoted
+   gap is road; the per-route spread is the honest scale of that confound.
+
+wrote out/d6.json

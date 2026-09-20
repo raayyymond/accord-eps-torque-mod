@@ -1,0 +1,73 @@
+============================================================================================================
+A. tau_i PER ROUTE.  A control-path artefact would differ across EPS builds; a localiser
+   publish latency would not.
+   route                    EPS    fork       nwin  tau_i ms  coh 0.2-1.2
+   00000064--ce6b0b0ebb     V282   0f98d8c7     45   -1890.1        0.825
+   00000065--b9f78988bd     V282   0f98d8c7     52   -1835.0        0.749
+   0000006c--2bc842dbac     V282   57410c3b    346   -2708.7        0.629
+   00000039--f56039af87     V282   8a28dcef     59   -1393.2        0.756
+   0000003a--283a39a1d6     V282   ffe28378     43   -1606.4        0.813
+   0000003c--927965c2b4     V282   ffe28378     43   -1466.6        0.793
+   0000006c--68c6e94b17     V293   84766cdc     55   -1415.4        0.818
+   0000006d--05e83bb04f     V293   84766cdc     54   -1241.4        0.735
+   0000006e--6ca3e014fd     V293   84766cdc     64   -1573.9        0.715
+   00000076--d0b7ea7e4d     V293   e44b6cd3     54   -1709.7        0.642
+   00000075--6c8687d5bd     V293   08a5a706     55   -1239.2        0.750
+
+   all 11 routes: median -1573.9 ms, range -2708.7--1239.2
+   V282 EPS (6): -1720.7 ms   |   V293 torque EPS (5): -1415.4 ms   difference 305.3 ms
+   => the same offset on both EPS builds and four fork commits: it is the INSTRUMENT.
+
+============================================================================================================
+B. THE ABSOLUTE FLOOR OF THE METRIC -- a PERFECT loop AND a PERFECT reference.
+   build       J flown    J_inf  J_floor(perfect ref too)  pure instrument
+   T64          1.3512   0.4744                    0.2629           0.0559
+   V282         0.4705   0.3172                    0.3141           0.0425
+
+   'pure instrument' is what the metric reads for a car that tracks the demand EXACTLY:
+   it is only the 107 ms, nothing else.  It is a property of the MEASUREMENT, identical
+   for every build, and it is 100% of neither build's score -- but it is a floor.
+
+============================================================================================================
+C. THE METRIC WITH THE INSTRUMENT LAG TAKEN OUT (Y advanced by the measured tau_i)
+   build       J as defined  J instrument-corrected   ratio to V282
+   T64               1.3512                  0.9866            2.87
+   V282              0.4705                  0.3175            1.00
+   instrument-corrected ratio T64/V282 = 3.11x (as defined: 2.87x)
+   Taking the lag out makes the torque build look WORSE relative to V282, not better:
+   the lag is a common additive that COMPRESSES the apparent ratio.
+
+============================================================================================================
+D1. MEASURED: command -> steering-rate gain, V282 rate-servo EPS vs V293 torque EPS.
+    (both on the metric's window set; |SR/U| = |Suu->sr|/Suu, the direct estimator, which is
+     near-unbiased where |L| is small -- it is 0.10-0.25 in 1.2-3.5 Hz on both builds.)
+    band Hz       V282 deg/s per unit   V293 torque   RATIO  coh V282  coh V293
+    0.3-0.6                      67.2          57.9    0.86      0.92      0.89
+    0.6-1.2                      78.2         115.7    1.48      0.93      0.66
+    1.2-1.8                      68.9         158.5    2.30      0.81      0.14
+    1.8-2.6                      77.7         542.7    6.99      0.65      0.39
+    2.6-3.5                      77.8         616.2    7.92      0.45      0.50
+    => the V293 plant is flat-to-rising; the V282 plant is flat.  The ratio in the shake
+       band is the suppression the EPS's own 1 kHz rate servo was providing.
+
+============================================================================================================
+D2. WHAT THE FORK CAN CARRY AT 100 Hz THROUGH 55-75 ms, vs WHAT THE EPS CARRIED AT 1 kHz
+        v  Td ms  mode Hz  phase x Hz  AccordRateLoopGain max    at 6 dB GM | suppression 1.8-3.5 Hz:   flown   6 dB GM   limit
+        8   55.3     1.28        4.53                 0.00226       0.00113 |                          0.88      0.90    1.43
+        8   65.0     1.28        4.02                 0.00197       0.00099 |                          0.75      0.75    1.00
+        8   75.0     1.28        3.62                 0.00175       0.00087 |                          0.62      0.66    0.54
+       16   55.3     1.76        4.57                 0.00284       0.00142 |                          0.99      1.06    1.76
+       16   65.0     1.76        4.08                 0.00244       0.00122 |                          0.87      0.86    1.26
+       16   75.0     1.76        3.69                 0.00213       0.00106 |                          0.75      0.74    0.76
+       26   55.3     2.17        4.63                 0.00431       0.00215 |                          1.07      1.28    2.19
+       26   65.0     2.17        4.15                 0.00364       0.00182 |                          0.99      1.03    1.62
+       26   75.0     2.17        3.78                 0.00313       0.00156 |                          0.91      0.86    1.08
+
+    EPS at 1 kHz, MEASURED suppression in the shake band = 7.45x
+    Fork at 100 Hz through 55-75 ms, best defensible (6 dB GM) = 1.28x
+    STRUCTURAL COST OF TORQUE MODE = 5.8x  of shake-band suppression
+
+    What loop delay would the fork need to carry the EPS's suppression?
+      at 26 m/s, 6 dB GM, suppression 7.5x needs Td <= 6.0 ms  (measured: 55-75 ms)
+
+wrote out/d5_servo.json

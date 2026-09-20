@@ -1,0 +1,67 @@
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\forkcode\adversary\a4_margin.py:48: RuntimeWarning: invalid value encountered in divide
+  L1 = (Lt + Lpid * (C1 / C0 - 1.0)) if mode == "tot_correct" else Lpid * (C1 / C0)
+================================================================================================================
+0. COHERENCE UP THERE -- state it before using it.  coh(X,U) / coh(X,M) / coh(M,Y) / coh(Mp,Up)
+    0.15- 0.60 Hz   XU 0.88  XM 0.88  MY 0.97  MpUp 0.74   |P|    4.272
+    0.60- 1.20 Hz   XU 0.77  XM 0.56  MY 0.68  MpUp 0.76   |P|    4.531
+    1.20- 1.80 Hz   XU 0.62  XM 0.12  MY 0.33  MpUp 0.66   |P|    3.874
+    1.80- 3.50 Hz   XU 0.62  XM 0.09  MY 0.20  MpUp 0.56   |P|    3.933
+    3.50- 6.00 Hz   XU 0.22  XM 0.02  MY 0.03  MpUp 0.76   |P|    2.507
+    6.00-12.00 Hz   XU 0.03  XM 0.02  MY 0.04  MpUp 0.72   |P|    6.363
+   => everything above ~1.2 Hz is BELIEF-grade identification.  Reported as a bracket, not a fact.
+
+================================================================================================================
+1. THE LOOP'S SHAPE.  |L| vs frequency at each dose (pooled windows, tot_correct loop).
+config                   0.20   0.39   0.78   1.17   1.76   2.34   3.03   4.00   5.08   6.05   8.01  10.06
+as flown KP1 Q1.0       1.482  0.799  0.641  0.379  0.322  0.110  0.192  0.244  0.173  0.217  0.181  0.358
+ARM-KP  KP2 Q1.0        1.475  0.896  0.915  0.595  0.467  0.180  0.316  0.375  0.258  0.348  0.276  0.501
+ARM-KP2 KP3 Q0.6        1.622  1.109  1.136  0.650  0.433  0.164  0.324  0.437  0.317  0.451  0.362  0.642
+KP4 Q0.6                1.794  1.308  1.397  0.814  0.526  0.208  0.411  0.544  0.393  0.572  0.454  0.784
+KP5 Q0.6                2.019  1.527  1.659  0.978  0.620  0.253  0.497  0.652  0.469  0.693  0.546  0.928
+KP8 Q0.6                2.874  2.242  2.452  1.471  0.908  0.387  0.757  0.975  0.698  1.058  0.823  1.359
+  arg L (deg) @KP3       -102   -109   -112    -65     86   -151   -113   -141    179    -13    162    -69
+
+================================================================================================================
+2. GAIN MARGIN AT THE -180 deg CROSSING, 1-12 Hz, with the measured 55-75 ms loop delay
+   added explicitly (the identification already contains whatever delay the logs carry;
+   the extra column is the sensitivity to the unmeasured post-tap stage).
+config                  set  f(-180)  |L| there     GM  max|L| 1-12  f of max
+as flown KP1           pool     2.31      0.106   9.47        4.389      9.38
+as flown KP1          hi|X|     2.30      0.170   5.87        2.347      9.38
+ARM-KP KP2             pool     2.29      0.153   6.55        6.324      9.38
+ARM-KP KP2            hi|X|     2.25      0.263   3.80        3.373      9.38
+KP2.5                  pool     2.29      0.122   8.23        7.261      9.38
+KP2.5                 hi|X|     2.26      0.202   4.96        3.855      9.38
+ARM-KP2 KP3            pool     2.28      0.134   7.47        8.225      9.38
+ARM-KP2 KP3           hi|X|     2.25      0.225   4.45        4.361      9.38
+KP3.5                  pool     2.27      0.146   6.87        9.192      9.38
+KP3.5                 hi|X|     2.24      0.255   3.92        4.869      9.38
+KP4                    pool     2.27      0.157   6.37       10.163      9.38
+KP4                   hi|X|     2.23      0.288   3.48        5.377      9.38
+KP5                    pool     2.26      0.179   5.58       12.108      9.38
+KP5                   hi|X|     2.22      0.350   2.86        6.397      9.38
+KP6                    pool     2.25      0.201   4.97       14.059      9.38
+KP6                   hi|X|     2.22      0.409   2.44        7.436      7.32
+KP8                    pool     2.24      0.262   3.81       17.968      9.38
+KP8                   hi|X|     2.21      0.522   1.92        9.579      7.32
+
+   the SteerKP at which the high-demand gain margin reaches 2.0 and 1.0 (linear in kp above
+   the integral corner, so GM scales as 1/kp to good accuracy):
+     pool: |L(-180)| = 0.134 at SteerKP 3.0  ->  GM 2.0 at SteerKP 11.21,  GM 1.0 (limit cycle) at SteerKP 22.42
+     hi|X|: |L(-180)| = 0.225 at SteerKP 3.0  ->  GM 2.0 at SteerKP 6.68,  GM 1.0 (limit cycle) at SteerKP 13.35
+
+================================================================================================================
+3. SATURATION.  output_lataccel = clip(p + i + f, +/- 14).  Frame-by-frame on EVERY
+   laterally-engaged hands-off frame (the metric drops >2 %-saturated windows, so this
+   regime is invisible to the closure and to the shake number).
+route                     speed  n frames  sat now %     KP2 %     KP3 %     KP4 %     KP5 %     KP8 %
+0000006c--68c6e94b17        all     57707       0.02      0.02      0.02      0.03      0.03      0.04
+0000006c--68c6e94b17       >=15     30052       0.00      0.00      0.00      0.00      0.00      0.00
+0000006c--68c6e94b17       8-15     17873       0.00      0.00      0.00      0.00      0.00      0.00
+0000006c--68c6e94b17         <8      9782       0.13      0.14      0.14      0.15      0.17      0.21
+0000006d--05e83bb04f        all     61656       0.04      0.04      0.04      0.04      0.04      0.08
+0000006d--05e83bb04f       >=15     29818       0.00      0.00      0.00      0.00      0.00      0.00
+0000006d--05e83bb04f       8-15     20320       0.00      0.00      0.00      0.00      0.00      0.11
+0000006d--05e83bb04f         <8     11518       0.19      0.20      0.21      0.21      0.20      0.22
+   (upper bound: it ignores the loop reducing the error, but the loop only reduces error
+    where it has gain, and |L| < 0.4 below 1 Hz, so the reduction is at most ~30 %.)

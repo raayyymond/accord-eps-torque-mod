@@ -1,0 +1,21 @@
+====================================================================================================
+CAUSAL LEAD-LAG ON THE SETPOINT.  best J at each command-shake ceiling,
+with the instrument-corrected J shown beside it (it must also fall, else the lever is the lag).
+ shake ceil   T1 s   T2 s  HF gain        J  closure   J corr  corr vs 0.9994
+       1.02   0.02  0.015     1.33   1.3289     2.5%   0.9920           -0.7%
+       1.05   0.02  0.005     4.00   1.2839     7.4%   0.9767           -2.3%
+       1.10   0.03  0.005     6.00   1.2408    12.1%   0.9634           -3.6%
+       1.20   0.05  0.005    10.00   1.1589    21.1%   0.9411           -5.8%
+       1.40   0.07  0.005    14.00   1.0828    29.5%   0.9245           -7.5%
+       1.70   0.10  0.005    20.00   0.9793    40.9%   0.9103           -8.9%
+       2.00   0.13  0.005    26.00   0.8887    50.9%   0.9090           -9.0%
+
+NOW RANK ON THE INSTRUMENT-CORRECTED METRIC INSTEAD (the honest objective):
+ shake ceil   T1 s   T2 s  HF gain   J corr  corr gain    J raw  raw closure
+       1.02   0.02  0.015     1.33   0.9920       0.7%   1.3289         2.5%
+       1.05   0.02  0.005     4.00   0.9767       2.3%   1.2839         7.4%
+       1.10   0.03  0.005     6.00   0.9634       3.6%   1.2408        12.1%
+       1.20   0.05  0.005    10.00   0.9411       5.8%   1.1589        21.1%
+       1.40   0.07  0.005    14.00   0.9245       7.5%   1.0828        29.5%
+
+wrote out/d12.json

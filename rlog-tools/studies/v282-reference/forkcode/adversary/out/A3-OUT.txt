@@ -1,0 +1,57 @@
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\forkcode\adversary\a3_loop.py:51: RuntimeWarning: invalid value encountered in divide
+  K = C1 / C0
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\forkcode\adversary\a3_loop.py:61: RuntimeWarning: invalid value encountered in divide
+  rho = (1.0 + L0) / (1.0 + L1)
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\forkcode\adversary\a3_loop.py:73: RuntimeWarning: invalid value encountered in divide
+  Ms=float(np.max(np.abs(1.0 / (1.0 + np.mean(L1, axis=0)))[(f >= 0.1) & (f <= 2.5)])))
+================================================================================================================
+reference: J_flown 1.3512, J_V282 0.4705 (my own, nps 1024)
+
+1. THE SAME DOSES ON THREE LOOP MODELS
+   pid         = the frontier's:  L0 = P*C_pid,            L1 = L0*K     (misses 1.4-2.7x of the loop)
+   tot_scaled  = f7's robustness row: L0 = L_tot,          L1 = L_tot*K  (scales feedback SteerKP cannot move)
+   tot_correct = measured total loop, PID part scaled only: L1 = L_tot + L_pid*(K-1)
+
+config                   |             pid              |          tot_scaled          |         tot_correct         
+                         |       J  clos% |L|shk     Ms |       J  clos% |L|shk     Ms |       J  clos% |L|shk     Ms
+as flown KP1.0 Q1.0      |   1.351    0.0  0.113   1.07 |   1.351    0.0  0.170   1.39 |   1.351    0.0  0.170   1.39
+ARM-KP   KP2.0 Q1.0      |   1.153   22.5  0.213   1.14 |   0.902   51.0  0.323   1.25 |   1.079   30.9  0.261   1.19
+KP3.0 Q1.0               |   1.010   38.7  0.314   1.22 |   0.707   73.2  0.477   1.41 |   0.919   49.1  0.356   1.28
+ARM-KP2  KP3.0 Q0.6      |   1.058   33.3  0.212   1.11 |   0.739   69.5  0.316   1.21 |   0.945   46.1  0.260   1.16
+KP4.0 Q0.6               |   0.947   45.9  0.280   1.15 |   0.630   81.9  0.418   1.29 |   0.839   58.2  0.324   1.20
+KP5.0 Q0.6               |   0.863   55.5  0.348   1.19 |   0.575   88.1  0.520   1.38 |   0.766   66.5  0.389   1.25
+KP6.0 Q0.6               |   0.799   62.7  0.416   1.23 |   0.543   91.7  0.622   1.49 |   0.714   72.4  0.454   1.29
+KP8.0 Q0.6               |   0.713   72.4  0.552   1.32 |   0.510   95.5  0.825   1.73 |   0.645   80.1  0.587   1.38
+KP12.0 Q0.6              |   0.620   83.0  0.823   1.55 |   0.484   98.4  1.232   2.33 |   0.587   86.7  0.855   1.63
+KP 1e4 (asymptote)       |   0.419  105.9678.990   0.02 |   0.418  105.91017.552   0.00 |   0.419  105.9679.007   0.02
+
+   measured |Ky|/|C_pid| by band: 0.15-0.6 2.67  0.6-1.2 1.74  1.8-3.5 1.43
+   coherence of that regression:  0.15-0.6 0.74  0.6-1.2 0.76  1.8-3.5 0.56
+
+================================================================================================================
+2. THE FLOWN ANCHORS, RE-MEASURED.  r71 limit-cycled at 2.34 Hz; r72 flew clean; identical
+   SteerKP 0.85 / SteerLatAccel 14 / no notch.  T64 = rev 6.4 (SteerKP 1.0, notch Q 1.0).
+
+route                  grp       n  kp/LAF  SRrms 1.8-3.5  |L|shk  |L|shk hi|X|   |P|shk  peak line
+00000071--f2c9d073a3   r71 LC   22  0.0607         2439.4   0.561         0.672    8.321        1.4
+00000072--8001fc3048   r72 ok   37  0.0607          268.8   1.101         2.859   16.834        2.7
+00000073--79fd149dd8   r73      24  0.0607          253.1   0.106         0.114    1.536        2.2
+00000070--717f5a7866   r70      68  0.0500         1098.4   0.998         1.018   13.836        1.4
+0000006c--68c6e94b17   T64 6c   43  0.0714          485.2   0.115         0.243    4.540        1.5
+0000006d--05e83bb04f   T64 6d   29  0.0714          388.6   0.120         0.137    3.481        1.5
+
+================================================================================================================
+3. WHERE THE CASE AGAINST SteerKP > 3.0 BECOMES DECISIVE.
+   Pooled AND high-demand |L| in 1.8-3.5 Hz on the tot_correct loop, against r71's own
+   re-measured value.  kp/LAF flown on THIS EPS: 0.0500 (r70) .. 0.0714 (T64).
+
+ SteerKP     Q  kp/LAF x flown max   clos%  |L|shk pool  |L|shk hi|X|  % of r71 hi   Ms hi  cmd shake
+     1.0  1.00  0.0714        1.00     0.0        0.170         0.251           37    1.26      1.000
+     2.0  0.60  0.1429        2.00    27.4        0.198         0.297           44    1.19      1.030
+     2.5  0.60  0.1786        2.50    37.8        0.229         0.348           52    1.24      1.086
+     3.0  0.60  0.2143        3.00    46.1        0.260         0.400           60    1.29      1.147
+     3.5  0.60  0.2500        3.50    52.7        0.292         0.452           67    1.34      1.210
+     4.0  0.60  0.2857        4.00    58.2        0.324         0.506           75    1.39      1.276
+     5.0  0.60  0.3571        5.00    66.5        0.389         0.613           91    1.50      1.416
+     6.0  0.60  0.4286        6.00    72.4        0.454         0.722          107    1.61      1.568
+     8.0  0.60  0.5714        8.00    80.1        0.587         0.941          140    1.83      1.944

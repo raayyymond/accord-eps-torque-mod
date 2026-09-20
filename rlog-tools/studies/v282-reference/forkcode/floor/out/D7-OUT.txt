@@ -1,0 +1,54 @@
+  T = np.abs(Lm / (1.0 + Lm))
+============================================================================================================
+A. REFERENCE AUTHORITY.  H_ZM = shaped setpoint -> wheel-angle measurement, measured.
+   If the reference only acted through the feedback it would be bounded by |T| = |L/(1+L)|,
+   which is 0.24-0.28 in band.  The feedforward is what makes it near unity.
+   band Hz       |H_ZM|  arg deg    coh   |T| = |L/(1+L)|
+    0.15-0.30     1.226    -16.2  0.925             0.284
+    0.30-0.60     1.270    -39.2  0.892             0.260
+    0.60-1.20     1.254    -31.1  0.673             0.291
+    1.20-2.40     0.946     72.3  0.119             0.112
+   => the reference path has ~unity authority over the wheel.  b_setpoint IS reachable,
+      by reference-path code -- and NOT by gain (d4 part 4 shows it identical at every KP).
+
+============================================================================================================
+B. THE REFERENCE-CLASS BOUND: the best any LTI setpoint prefilter can do, per bin.
+
+   T64:  J as flown 1.3512
+     best LTI reference prefilter, loop AS FLOWN        J 0.2946  closure 116.2%
+     infinite loop gain, reference AS FLOWN             J 0.4692  closure  97.0%
+     BOTH (infinite gain + best prefilter)              J 0.1174  closure 135.7%
+
+   V282:  J as flown 0.4705
+     best LTI reference prefilter, loop AS FLOWN        J 0.1322
+     infinite loop gain, reference AS FLOWN             J 0.3181
+     BOTH (infinite gain + best prefilter)              J 0.1020
+
+============================================================================================================
+C. CONSOLIDATED REACHABILITY BUDGET for the torque build (T64, rev 6.4 as flown).
+   Every row is J on the same denominator; 'gap' is measured against the brief's V282 0.442.
+   configuration                                        J  gap closed   note
+   as flown (rev 6.4)                              1.3512       -0.0%   -
+   ARM-KP2  KP 3.0 Q 0.60 (toggle ceiling)         1.0026       38.3%   loop gain only
+   SteerKP 6.0  (needs STEER_KP_MAX_MULT)          0.7431       66.9%   loop gain only
+   SteerKP 12.0 (needs STEER_KP_MAX_MULT)          0.5836       84.4%   loop gain only
+   best LTI reference prefilter, loop as flown     0.2946      116.2%   reference code only
+   delay-limited ideal loop, 65 ms, PM 45 deg      0.4877       95.0%   from d4 part 3
+   infinite loop gain (algebraic limit)            0.4692       97.0%   no fork can exceed
+   infinite gain + best prefilter                  0.1174      135.7%   both classes maxed
+   PERFECT car: only the 102 ms instrument         0.0513      143.0%   not reachable by anything
+
+   V282 reference: brief 0.4420 | this kit's own re-derivation on the same windows 0.4705
+   95% CI over the V bootstrap:  infinite gain [0.4627, 0.4805]   infinite gain + prefilter [0.1150, 0.1244]
+
+============================================================================================================
+D. ARM-KP2 re-priced on BOTH V's, so it is comparable to the brief's 33.3 %
+   config                         V = frontier V_h1   V = screened (d3)
+   as flown                       J 1.3512 ( -0.0%)   J 1.3512 ( -0.0%)
+   ARM-KP 2.0                     J 1.1547 ( 21.6%)   J 1.1253 ( 24.8%)
+   ARM-KP2 3.0 + Q0.60            J 1.0609 ( 31.9%)   J 1.0026 ( 38.3%)
+   infinite gain                  J 0.4143 (103.0%)   J 0.4692 ( 97.0%)
+   The brief's ARM-KP2 = J 1.058 / 33.3 %.  The frontier's V_h1 column reproduces it;
+   the screened V moves it because V_h1 over-reads |V| above 1 Hz (d3).
+
+wrote out/d7.json

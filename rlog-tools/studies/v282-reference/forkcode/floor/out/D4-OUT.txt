@@ -1,0 +1,89 @@
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\shapedgain\frontier\f5_frontier.py:78: RuntimeWarning: divide by zero encountered in divide
+  pi = kp + kie * LP.DT / (1.0 - z)
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\shapedgain\frontier\f5_frontier.py:78: RuntimeWarning: invalid value encountered in divide
+  pi = kp + kie * LP.DT / (1.0 - z)
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\forkcode\floor\d4_floor.py:246: RuntimeWarning: invalid value encountered in divide
+  L1 = eng.L0 * (C1 / eng.C0)
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\forkcode\floor\d4_floor.py:247: RuntimeWarning: invalid value encountered in divide
+  rho = (1.0 + eng.L0) / (1.0 + L1)
+============================================================================================================
+1. THE INSTRUMENT LAG ON Y (livePose yaw vs carState steering angle, both logMonoTime)
+   group delay of the measured angle->yaw transfer, 0.12-1.2 Hz, coh >= 0.60:
+     tau_i = 106.6 ms   95% CI [103.7, 109.7]
+   bicycle model's own group delay over the same band: -12 to +20 ms (a LEAD at low f).
+   => 107 ms is the localiser's publish latency.  EVIDENCE (measurement + the
+      physical impossibility of transport delay between a steering angle and a yaw rate).
+
+============================================================================================================
+2. THE FIVE-WAY DECOMPOSITION, with the SCREENED V (broad-window H1) and the measured tau_i
+
+  T64 (torque, rev 6.4)   band 0.15-2.4 (the metric)   J 1.3512   (identity rel 1.2e-16, shares sum 1.000000)
+    term             reachable by            own/|X|^2    SHARE      x J
+    a_loop           LOOP GAIN                  0.4782    0.501   0.6775
+    b_setpoint       reference-path code only     0.0895    0.190   0.2561
+    c_wheel2yaw      NOTHING (outside loop)     0.0026    0.008   0.0107
+    d_incoh          NOTHING (exogenous)        0.1889    0.043   0.0585
+    e_instrument     NOTHING (not the car)      0.3324    0.258   0.3485
+
+  T64 (torque, rev 6.4)   band 0.15-0.60 (98% of the gap)   J 1.1072   (identity rel 1.2e-16, shares sum 1.000000)
+    term             reachable by            own/|X|^2    SHARE      x J
+    a_loop           LOOP GAIN                  0.4228    0.582   0.6446
+    b_setpoint       reference-path code only     0.0587    0.197   0.2182
+    c_wheel2yaw      NOTHING (outside loop)     0.0014    0.014   0.0151
+    d_incoh          NOTHING (exogenous)        0.0341    0.034   0.0381
+    e_instrument     NOTHING (not the car)      0.0709    0.173   0.1912
+
+  T64 (torque, rev 6.4): J_inf (infinite loop gain) = 0.4743  95% CI over the V bootstrap [0.4678, 0.4859]
+
+  V282 (reference)   band 0.15-2.4 (the metric)   J 0.4705   (identity rel 1.1e-16, shares sum 1.000000)
+    term             reachable by            own/|X|^2    SHARE      x J
+    a_loop           LOOP GAIN                  0.0575    0.224   0.1054
+    b_setpoint       reference-path code only     0.0458    0.108   0.0508
+    c_wheel2yaw      NOTHING (outside loop)     0.0049   -0.002  -0.0008
+    d_incoh          NOTHING (exogenous)        0.2339    0.202   0.0951
+    e_instrument     NOTHING (not the car)      0.2871    0.468   0.2200
+
+  V282 (reference)   band 0.15-0.60 (98% of the gap)   J 0.2096   (identity rel 1.2e-16, shares sum 1.000000)
+    term             reachable by            own/|X|^2    SHARE      x J
+    a_loop           LOOP GAIN                  0.0395    0.362   0.0758
+    b_setpoint       reference-path code only     0.0083    0.040   0.0084
+    c_wheel2yaw      NOTHING (outside loop)     0.0017    0.046   0.0097
+    d_incoh          NOTHING (exogenous)        0.0420    0.287   0.0601
+    e_instrument     NOTHING (not the car)      0.0272    0.265   0.0556
+
+  V282 (reference): J_inf (infinite loop gain) = 0.3172  95% CI over the V bootstrap [0.3112, 0.3213]
+
+============================================================================================================
+3. THE DELAY-LIMITED FLOOR.  The metric's a_loop term scales by rho = (1+L0)/(1+L1).
+   L1 is swept over REALIZABLE loops: L1 = (wc/s) * exp(-s*Td) / (1 + s/wa), wa = 5.05 Hz
+   (the firmware's own measured output-lag cell), Td the measured loop delay.  wc is set by
+   the phase-margin budget.  This is the best ANY fork-side compensator can do at that delay.
+
+     Td ms  PM budget   wc Hz        J  closure vs 0.442  |S| peak  |S| 1.8-3.5
+      55.3         60   0.964   0.5488             88.3%      1.55         1.45
+      55.3         45   1.454   0.4669             97.3%      2.01         1.82
+      55.3         30   1.952   0.4536             98.7%      2.76         2.32
+      65.0         60   0.866   0.5881             83.9%      1.57         1.41
+      65.0         45   1.304   0.4877             95.0%      2.04         1.76
+      65.0         30   1.748   0.4729             96.6%      2.86         2.28
+      75.0         60   0.784   0.6329             79.0%      1.58         1.36
+      75.0         45   1.180   0.5139             92.1%      2.07         1.66
+      75.0         30   1.579   0.4997             93.7%      2.93         2.14
+
+    (|S| > 1 in 1.8-3.5 Hz is the waterbed: every one of these loops AMPLIFIES the
+     shake band, on a plant whose gain there is already 5.3-13x V282's.)
+
+============================================================================================================
+4. WHAT ARM-KP2 (SteerKP 3.0 + AccordErrorNotchQ 0.60) ACTUALLY MOVES, term by term
+    config                             J  clos% |  a_loop own   b own   c own   d own   e own
+    as flown (rev 6.4)            1.3512   -0.0 |      0.4782  0.0895  0.0026  0.1889  0.3324
+    ARM-KP  SteerKP 2.0           1.1240   25.0 |      0.3409  0.0895  0.0026  0.1889  0.3324
+    ARM-KP2 KP 3.0 + Q 0.60       1.0000   38.6 |      0.2829  0.0895  0.0026  0.1889  0.3324
+    SteerKP 6.0 (needs code)      0.7408   67.1 |      0.1406  0.0895  0.0026  0.1889  0.3324
+    SteerKP 12.0 (needs code)     0.5832   84.5 |      0.0581  0.0895  0.0026  0.1889  0.3324
+    infinite gain                 0.4743   96.4 |      0.0000  0.0895  0.0026  0.1889  0.3324
+
+    b, c, d and e are IDENTICAL in every row -- by construction, no feedback gain touches them.
+    Only a_loop moves, and it is bounded below by 0.
+
+wrote out/d4_floor.json

@@ -1,0 +1,30 @@
+ARM-KP2 IS WITHDRAWN ON A SAFETY FINDING. Do not fly it. Withdrawn 2026-09-20, hours after delivery.
+
+Its own safety argument was aimed at the WRONG FREQUENCY. The docstring argued "lower Q is the
+conservative direction at the 2.34 Hz mode that limit-cycled r71". True at 2.34 Hz, irrelevant here:
+on this build the margin binds at 3.4-4.9 Hz, where the 2.05 Hz notch at Q 0.60 has already recovered
+to |N| 0.686. So a SteerKP x3 raise lands 2.44x more loop gain at the binding frequency, putting
+|L| = 1.03 at a -180 deg crossing at 4.22 Hz.
+
+Hand-verified notch magnitudes (f0 = 2.05 Hz), net loop gain of KP x3 vs the flown KP 1.0 / Q 1.0:
+    2.34 Hz  Q0.60 1.84x   Q0.30 0.93x   Q0.20 0.62x
+    4.22 Hz  Q0.60 2.44x   Q0.30 1.52x   Q0.20 1.07x   <- where it binds
+
+MEASURED: on the vector margin VM = min|1+L| over 2-6 Hz -- the only statistic that correctly ORDERS
+the flown anchors -- ARM-KP2 sits BELOW the only route that has ever limit-cycled, on two independent
+plant estimators and in both speed bins:
+    V282 0.842/0.882 - r73 0.913/0.828 - r72 (flew clean) -/0.527 - rev 6.4 flown 0.686/0.505
+    r71 (LIMIT-CYCLED at 2.34 Hz) 0.322/0.079  vs  ARM-KP2 AS DELIVERED 0.254/0.049
+
+Two further defects in what was delivered:
+ - its reported Ms of 1.09 was computed over 0.10-2.5 Hz; over 0.15-12 Hz it is ~20;
+ - its readout gate G6 screened 1.8-3.5 Hz, BLIND to its own predicted hazard at 3.4-4.9 Hz.
+
+The "shake-band |L|" cost axis it was sized on is also FALSIFIED: it reads r72 (flew clean) at 1.8-3.3x
+r71 (limit-cycled), i.e. it does not order its own anchors. Logged COMMAND shake does, and so does the
+vector margin. Both replace it.
+
+REPLACED BY: toggle-config_V293_r64_ARM-KP3_margin-safe.json
+  SteerKP 3.0, AccordErrorNotchQ 0.30, AccordTorqueKi 0.60.
+  15.9% of the gap at command shake x0.964 (BELOW as flown), VM 0.479/0.377 -- above every flown
+  anchor's limit-cycle reading. Half the closure ARM-KP2 claimed, on a cost axis that works.

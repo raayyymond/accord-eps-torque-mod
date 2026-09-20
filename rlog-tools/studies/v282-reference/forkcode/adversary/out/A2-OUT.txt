@@ -1,0 +1,83 @@
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\forkcode\adversary\a2_shake.py:42: RuntimeWarning: invalid value encountered in divide
+  K = C1 / C0
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\forkcode\adversary\a2_shake.py:45: RuntimeWarning: invalid value encountered in divide
+  rho = (1.0 + L0) / (1.0 + L1)
+================================================================================================================
+0. THE WINDOW SETS
+   T64 >=15 m/s: 72 windows, 415 s   T64 >=8 m/s: 131 windows   V282 >=15: 421 windows
+
+================================================================================================================
+(A) IS UFF EXOGENOUS?  Coherent transfer from the MEASURED wheel rate SR to UFF, and the
+    share of UFF's power that SR explains.  If UFF were the pure feedforward the
+    re-synthesis assumes, both are ~0.
+        band  coh(SR,UFF)  |H| SR->UFF  expl. frac of UFF  coh(SR,U)  coh(UFB,UFF)
+   0.15-0.60        0.828    1.827e-02              0.828      0.834         0.783
+   0.60-1.20        0.596    4.327e-03              0.596      0.576         0.535
+   1.20-1.80        0.044    4.377e-04              0.044      0.115         0.133
+   1.80-3.50        0.295    5.277e-04              0.295      0.417         0.126
+   3.50-6.00        0.511    4.400e-04              0.511      0.692         0.365
+
+    TOTAL feedback vs PID-ONLY feedback.  Project the exogenous demand X out of U and of M,
+    then regress: Ky = <M_perp, U_perp>/<M_perp,M_perp> is the WHOLE measurement->command
+    path.  |Ky| / |C_fb_analytic| > 1 means the frontier's loop is missing feedback.
+        band       |Ky|     |C_fb|    ratio    coh
+   0.15-0.60     0.2103     0.0786     2.67   0.74
+   0.60-1.20     0.1186     0.0681     1.74   0.76
+   1.20-1.80     0.0638     0.0397     1.61   0.66
+   1.80-3.50     0.0486     0.0340     1.43   0.56
+   3.50-6.00     0.1085     0.0691     1.57   0.76
+
+================================================================================================================
+(B) THE FELT QUANTITY.  Command -> wheel-rate transfer Psr measured on EACH build, then
+    the wheel-rate shake predicted directly:  SR1 = SR + Psr*(U1-U).
+
+    first, the plant fact the brief quotes -- |SR/U| per band, V293 vs V282 (IV, instrument X)
+        band  V293 |Psr|   coh  V282 |Psr|   coh   ratio
+   0.15-0.60        56.7  0.88        63.9  0.92    0.89
+   0.60-1.20       135.1  0.51        79.4  0.93    1.70
+   1.20-1.80       224.2  0.18        66.4  0.79    3.38
+   1.80-3.50       412.9  0.46        86.5  0.54    4.78
+   3.50-6.00       428.2  0.70        86.8  0.50    4.93
+
+    NOW THE COST ITSELF.  Same doses, three cost measures on the SAME windows:
+      cmd     = the delivered number, |U1|/|U| in 1.8-3.5 Hz
+      wheel   = |SR1|/|SR| with SR1 = SR + Psr*(U1-U), Psr measured by IV (instrument X)
+      wheelH1 = same with Psr by H1 (U->SR), the opposite-side bracket
+config                         cmd   wheel  wheelH1  |L|shk  |S|shk
+KP 1.0 Q1.0 (control)        1.000   1.000    1.000   0.113   1.048
+KP 2.0 Q1.0 (ARM-KP)         1.199   1.036    1.143   0.213   1.090
+KP 3.0 Q1.0                  1.440   1.083    1.303   0.314   1.133
+KP 3.0 Q0.6 (ARM-KP2)        1.148   1.000    1.105   0.212   1.051
+KP 4.0 Q0.6                  1.280   1.016    1.191   0.280   1.067
+KP 5.0 Q0.6                  1.424   1.038    1.280   0.348   1.084
+KP 6.0 Q0.6                  1.581   1.066    1.374   0.416   1.104
+KP 8.0 Q0.6                  2.001   1.172    1.614   0.552   1.166
+
+    THE SAME, WITH THE HIDDEN FEEDBACK PUT BACK.  The rate loop + observer inside UFF
+    respond to the extra wheel motion:  dUFF = H_sr_uff * Psr * dU, iterated to fixed point.
+config                      cmd frozen  cmd w/ inner  wheel frozen  wheel w/ inner
+KP 2.0 Q1.0 (ARM-KP)             1.199         1.246         1.036           1.041
+KP 3.0 Q0.6 (ARM-KP2)            1.148         1.180         1.000           0.997
+KP 5.0 Q0.6                      1.424         1.534         1.038           1.053
+KP 8.0 Q0.6                      2.001         2.297         1.172           1.273
+    |g| in 1.8-3.5 Hz = 0.218  (the inner paths' return ratio on the command; >=1 would be divergent)
+
+================================================================================================================
+(C) THE WINDOWS ARE THE CALM ONES.  Demand-amplitude terciles, plant re-identified in each.
+ tercile    n config                     cmd   wheel  |L|shk   |P|shk
+ low |X|   24 as flown                 1.000   1.000   0.061   2.0118
+ low |X|   24 ARM-KP2 KP3 Q0.6         1.089   1.019   0.115   2.0118
+ low |X|   24 KP 5.0 Q0.6              1.259   1.064   0.187   2.0118
+ mid |X|   24 as flown                 1.000   1.000   0.099   3.8264
+ mid |X|   24 ARM-KP2 KP3 Q0.6         1.121   1.034   0.188   3.8264
+ mid |X|   24 KP 5.0 Q0.6              1.373   1.130   0.309   3.8264
+ high|X|   24 as flown                 1.000   1.000   0.188   6.4796
+ high|X|   24 ARM-KP2 KP3 Q0.6         1.187   0.988   0.351   6.4796
+ high|X|   24 KP 5.0 Q0.6              1.732   1.111   0.574   6.4796
+
+    AND BELOW THE METRIC'S FLOOR: the same doses on 8-15 m/s windows, which the metric
+    never scores but the car still drives.
+config                         cmd   wheel  |L|shk  (n=32 windows 8-15 m/s)
+as flown                     1.000   1.000   0.061
+ARM-KP2 KP3 Q0.6             1.125   1.007   0.095
+KP 5.0 Q0.6                  1.313   1.026   0.148

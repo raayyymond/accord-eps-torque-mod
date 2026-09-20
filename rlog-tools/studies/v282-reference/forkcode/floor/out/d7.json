@@ -1,0 +1,86 @@
+{
+ "Hzm": {
+  "0.15-0.3": 1.2262901508300517,
+  "0.3-0.6": 1.2695264804501005,
+  "0.6-1.2": 1.2542216544205953,
+  "1.2-2.4": 0.9458946076690775
+ },
+ "refbound": {
+  "T64": {
+   "J": 1.3512241830924534,
+   "J_ref": 0.29463783282965794,
+   "J_inf": 0.46918860975707205,
+   "J_both": 0.11744681484341422
+  },
+  "V282": {
+   "J": 0.47053347612169566,
+   "J_ref": 0.1321604518302492,
+   "J_inf": 0.3181343377018991,
+   "J_both": 0.10198189221356815
+  }
+ },
+ "budget": [
+  {
+   "name": "as flown (rev 6.4)",
+   "J": 1.3512241830924534,
+   "gap_closed": -2.6598209913599586e-05,
+   "note": "-"
+  },
+  {
+   "name": "ARM-KP2  KP 3.0 Q 0.60 (toggle ceiling)",
+   "J": 1.0025721234565803,
+   "gap_closed": 0.38344465083966084,
+   "note": "loop gain only"
+  },
+  {
+   "name": "SteerKP 6.0  (needs STEER_KP_MAX_MULT)",
+   "J": 0.7430993652361773,
+   "gap_closed": 0.6688304385875744,
+   "note": "loop gain only"
+  },
+  {
+   "name": "SteerKP 12.0 (needs STEER_KP_MAX_MULT)",
+   "J": 0.5836224864769265,
+   "gap_closed": 0.8442339568005648,
+   "note": "loop gain only"
+  },
+  {
+   "name": "best LTI reference prefilter, loop as flown",
+   "J": 0.29463783282965794,
+   "gap_closed": 1.1620789344152465,
+   "note": "reference code only"
+  },
+  {
+   "name": "delay-limited ideal loop, 65 ms, PM 45 deg",
+   "J": 0.4877,
+   "gap_closed": 0.9497360316761988,
+   "note": "from d4 part 3"
+  },
+  {
+   "name": "infinite loop gain (algebraic limit)",
+   "J": 0.46918860975707205,
+   "gap_closed": 0.9700961177330927,
+   "note": "no fork can exceed"
+  },
+  {
+   "name": "infinite gain + best prefilter",
+   "J": 0.11744681484341422,
+   "gap_closed": 1.3569656677921091,
+   "note": "both classes maxed"
+  },
+  {
+   "name": "PERFECT car: only the 102 ms instrument",
+   "J": 0.05134777167292253,
+   "gap_closed": 1.4296658912528348,
+   "note": "not reachable by anything"
+  }
+ ],
+ "ci_inf": [
+  0.46271282880327724,
+  0.48053482622989324
+ ],
+ "ci_both": [
+  0.11502169707053547,
+  0.12438208608434445
+ ]
+}

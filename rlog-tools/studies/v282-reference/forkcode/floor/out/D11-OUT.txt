@@ -1,0 +1,36 @@
+========================================================================================================
+POSITIVE CONTROL: the written-out chain vs the MEASURED Z/X
+   build    source |Z/X| 0.15-0.6   measured |  source lag ms   measured
+   T64                      1.021      1.027 |            126        121
+   V282                     1.017      1.054 |              2         15
+   (V282's fork carries no reference filter -- AccordRefFilter ABSENT in its initData.)
+
+========================================================================================================
+THE MINIMAL DIFF, PRICED.  W = chain(D, lead) / chain(D, 0) applied to the flown setpoint.
+   HONDA_ACCORD_SETPOINT_LEAD          J  closure   J corr  cmd shake  |W| 0.15-0.6  |W| @2.5Hz  net Z lag ms
+                           0.00   1.3512    -0.0%   0.9994      1.000         1.000        1.00           126
+                           0.05   1.2423    12.0%   0.9959      1.189         1.030        1.40            83
+                           0.10   1.1609    20.9%   1.0199      1.439         1.066        1.91            41
+                           0.15   1.1071    26.9%   1.0715      1.724         1.107        2.46             3
+                           0.20   1.0808    29.7%   1.1507      2.029         1.152        3.03           -33
+                           0.30   1.1109    26.4%   1.3916      2.672         1.253        4.20           -98
+
+   and composed with the toggle ceiling ARM-KP2 (SteerKP 3.0, AccordErrorNotchQ 0.60):
+   lead + ARM-KP2                      J  closure
+                           0.00   1.0026    38.3%
+                           0.05   0.9294    46.4%
+                           0.10   0.8837    51.4%
+                           0.15   0.8657    53.4%
+                           0.20   0.8751    52.4%
+
+========================================================================================================
+THE ALTERNATIVE NAMED IN THE BRIEF, priced on the same denominator:
+   STEER_KP_MAX_MULT 5.0 -> higher, i.e. SteerKP past 3.00 (one constant, starpilot_variables.py:459)
+      SteerKP        J  closure  shake-band |L|  vs r71 (0.515)
+          3.0   1.0026    38.3%           0.157           0.30x
+          4.0   0.8871    51.0%           0.207           0.40x
+          6.0   0.7431    66.9%           0.309           0.60x
+          9.0   0.6360    78.7%           0.461           0.90x
+         12.0   0.5836    84.4%           0.613           1.19x
+
+wrote out/d11.json

@@ -1,0 +1,68 @@
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\forkcode\adversary\a1_indep.py:45: RuntimeWarning: invalid value encountered in divide
+  K = C1 / C0
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\rlog-tools\studies\v282-reference\forkcode\adversary\a1_indep.py:47: RuntimeWarning: invalid value encountered in divide
+  rho = (1.0 + L0) / (1.0 + L1)
+==============================================================================================================
+POSITIVE CONTROLS  (flown SteerKP 1.0, SteerLatAccel 14.0 on T64; 0.9 / 6.0 on V282)
+  0000006c--68c6e94b17  kp_measured  1.0000 (expect 1.0)   LAF_measured 14.0000 (expect 14.0)
+  0000006d--05e83bb04f  kp_measured  1.0000 (expect 1.0)   LAF_measured 14.0000 (expect 14.0)
+  00000064--ce6b0b0ebb  kp_measured  0.9000 (expect 0.9)   LAF_measured  6.0000 (expect 6.0)
+
+==============================================================================================================
+1. THE METRIC AND ARM-KP2's CLOSURE UNDER EVERY NUISANCE CHOICE THAT WAS NEVER WRITTEN DOWN
+   'closure' = (J_flown - J_new)/(J_flown - J_V282) with BOTH ends recomputed at that setting.
+
+  nps   sat   detr  Pest  Vest nwinT nwinV  J_flown  J_V282   J_KP2   clos%  shkCmd   shkL
+  512  0.02 linear     P  V_h1   153   855   1.5871  0.6804  1.2143    41.1   1.161  0.250
+  512  0.02 linear     P  V_iv   153   855   1.5871  0.6804  1.2212    40.4   1.161  0.250
+  512  0.02 linear  P_h1  V_h1   153   855   1.5871  0.6804  1.2676    35.2   1.310  0.408
+  512  0.02 linear     P  unit   153   855   1.5871  0.6804  1.1432    49.0   1.161  0.250
+ 1024  0.02 linear     P  V_h1    72   421   1.3512  0.4705  1.0576    33.3   1.148  0.186
+ 1024  0.02 linear     P  V_iv    72   421   1.3512  0.4705  1.0605    33.0   1.148  0.186
+ 1024  0.02 linear  P_h1  V_h1    72   421   1.3512  0.4705  1.0953    29.1   1.298  0.301
+ 1024  0.02 linear     P  unit    72   421   1.3512  0.4705  0.9865    41.4   1.148  0.186
+ 1024  None linear     P  V_h1    72   421   1.3512  0.4705  1.0576    33.3   1.148  0.186
+ 1024  None linear     P  V_iv    72   421   1.3512  0.4705  1.0605    33.0   1.148  0.186
+ 1024  None linear  P_h1  V_h1    72   421   1.3512  0.4705  1.0953    29.1   1.298  0.301
+ 1024  None linear     P  unit    72   421   1.3512  0.4705  0.9865    41.4   1.148  0.186
+ 1024  0.02 constant     P  V_h1    72   421   1.3164  0.4443  1.0295    32.9   1.148  0.186
+ 1024  0.02 constant     P  V_iv    72   421   1.3164  0.4443  1.0323    32.6   1.148  0.186
+ 1024  0.02 constant  P_h1  V_h1    72   421   1.3164  0.4443  1.0662    28.7   1.298  0.301
+ 1024  0.02 constant     P  unit    72   421   1.3164  0.4443  0.9603    40.8   1.148  0.186
+ 2048  0.02 linear     P  V_h1    32   202   1.5661  0.7995  1.2369    42.9   1.152  0.215
+ 2048  0.02 linear     P  V_iv    32   202   1.5661  0.7995  1.2377    42.8   1.152  0.215
+ 2048  0.02 linear  P_h1  V_h1    32   202   1.5661  0.7995  1.2831    36.9   1.367  0.348
+ 2048  0.02 linear     P  unit    32   202   1.5661  0.7995  1.1513    54.1   1.152  0.215
+
+==============================================================================================================
+2. LEAVE-ONE-ROUTE-OUT on the reference denominator and on the target (nps 1024)
+   V282 pooled J 0.4705;  per route 00000064-- 0.465  00000065-- 0.431  0000006c-- 0.473
+   T64  pooled J 1.3512;  per route 0000006c-- 1.290  0000006d-- 1.492
+
+        drop  J_flown   J_V282    J_KP2   clos%
+        none   1.3512   0.4705   1.0576    33.3
+00000064--ce   1.3512   0.4711   1.0576    33.4
+00000065--b9   1.3512   0.4725   1.0576    33.4
+0000006c--2b   1.3512   0.4548   1.0576    32.8
+T:0000006c--   1.4922   0.4705   1.1868    29.9
+T:0000006d--   1.2903   0.4705   1.0059    34.7
+
+==============================================================================================================
+3. SPEED BIN (the metric pools 15-22 and 22+; the plant and lsf differ a lot between them)
+   15-22 m/s  n   23  J_flown 1.9169  J_KP2 1.5849  closure  23.0%  shkCmd 1.119  |L|shake 0.053 (today 0.030)
+   22-99 m/s  n   49  J_flown 1.2586  J_KP2 0.9763  closure  35.8%  shkCmd 1.155  |L|shake 0.210 (today 0.114)
+
+==============================================================================================================
+4. DOSE LADDER on MY numbers (LAF 14, Q as noted), and the kp/LAF each dose implies
+config                      kp/LAF       J   clos%  shkCmd  |L|shk
+as flown  KP 1.0 Q1.0       0.0714  1.3512     0.0   1.000   0.101
+KP 1.5 Q1.0                 0.1071  1.2437    12.2   1.093   0.147
+ARM-KP    KP 2.0 Q1.0       0.1429  1.1527    22.5   1.199   0.192
+KP 2.5 Q1.0                 0.1786  1.0757    31.3   1.315   0.237
+KP 3.0 Q1.0 (ceiling)       0.2143  1.0104    38.7   1.440   0.282
+ARM-KP2   KP 3.0 Q0.6       0.2143  1.0576    33.3   1.148   0.186
+KP 4.0 Q0.6 (code)          0.2857  0.9467    45.9   1.280   0.246
+KP 5.0 Q0.6 (code)          0.3571  0.8627    55.5   1.424   0.305
+KP 6.0 Q0.6 (code)          0.4286  0.7990    62.7   1.581   0.365
+KP 8.0 Q0.6 (code)          0.5714  0.7134    72.4   2.001   0.484
+KP 12.0 Q0.6 (code)         0.8571  0.6198    83.0   3.337   0.723

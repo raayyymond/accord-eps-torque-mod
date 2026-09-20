@@ -1,0 +1,26 @@
+========================================================================================================
+A. THE EXACT AccordRefFilter INVERSE on the torque build (toggle AccordRefFilter 0.06 -> 0.0)
+   raw        J 1.3512 -> 0.8703   closure  52.9%   cmd shake x1.696   |W| in band 1.024, at 2.5 Hz 1.92
+   corrected  J 0.9994 -> 0.8662   closure  53.3%   cmd shake x1.696   |W| in band 1.024, at 2.5 Hz 1.92
+   NOTE |W| rises as f^2 -- at 2.5 Hz the exact inverse is a large boost.  The TOGGLE does
+   not apply an inverse, it REMOVES the filter, which is the same thing only if the rest of
+   the chain is unchanged.  It is: the filter sits alone on the setpoint.
+
+========================================================================================================
+B. FALSIFICATION TEST -- run the model BACKWARDS on the V282 routes
+   V282 + AccordRefFilter 0.06 inserted:  J 0.4705 -> 0.6714  (+43 %)   cmd shake x0.656
+   V282 + AccordRefFilter 0.12 inserted:  J 0.4705 -> 0.8530  (+81 %)   cmd shake x0.437
+   The model says the torque build's own filter costs it that much.  The flown contrast
+   (r70/r71 carry no filter) read ~null, but at kp/LAF 0.050-0.061 on different roads.
+
+========================================================================================================
+C. WHERE THE 400 ms GOES (this stream's numbers beside the withdrawn ARM-RF stream's)
+   leg                                  this stream   ARM-RF stream
+   AccordRefFilter (2 x RC, toggle)          119 ms        124.7 ms
+   the loop, setpoint -> wheel angle        ~197 ms        197.2 ms
+   livePose publish latency                  102 ms   not split out
+   delay canceller + jerk filter         in the 132         -2.2 ms
+   vehicle (wheel -> yaw)                        ~0         -6.3 ms
+   MEASURED X -> Y total                     400 ms       307 + 102
+
+wrote out/d10.json
