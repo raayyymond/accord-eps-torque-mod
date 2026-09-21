@@ -103,7 +103,7 @@ SteerLatAccel 14.0 + SteerFriction 0.011 + every torque-mode term at stock; reve
   lane delivers −4.80 T-counts per x-count) gives **x = 7.1–7.8 counts per deg/s at every rate bin**
   (`studies/v294/x_scale_from_v292_wire.py`). **8 stands, now EVIDENCE.** Its ISR finding (the rate former
   differences a 16384-count/rev position at ~3 ms → 1 count/deg/s of that shaft, ×1.6978 to x) is consistent
-  with 8 if that shaft is geared ~4.71:1 to the steering wheel (claim B's 4.7121 × 1.6978 = 8.00) — BELIEF.
+  with 8 if that shaft is geared ~4.71:1 to the steering wheel (claim B's 4.7121 × 1.6978 = 8.00). **Adversary C then retracted C3 from the bytes (advC_report2.md): the 0x14A rate field is written by FUN_00055a98 as `(gp-0x69ea) >> 3` at 0x55B48 with gp-0x69ea = −gp-0x6a56, so the bus field is −x/8 and **x = 8.00 counts per deg/s exactly**; the ±1500.0 plausibility bound there × 8 = 12000 = the operand's own clamp. The 0x14A buffer is gp-0x1518 (checksum call with the literal 0x14a); gp-0x14ce belongs to a table-dispatched frame of unresolved ID. The rate former differences the MOTOR RESOLVER electrical angle (atan2 over the sin/cos ADC channels, 2π/16384), so the shaft ratio × ISR period product is fixed at 0.0141 s and its split is BELIEF; x itself no longer depends on it.
 
 ## Not verified / BELIEF
 J = 8e-5 and the light-b world; the shaft ratio behind the ISR constant (the x scale itself is now measured); the pole
