@@ -89,6 +89,12 @@ comparable to the wheel's own light-world 0.0006). The 25 % cap binds only above
   (a, b) must now be a documented ladder rung. The four missed mutations are in the test: 20/20 caught,
   same image hash.
 
+## The third adversary, and the operand scale measured (2026-09-21)
+
+**Third adversary (2026-09-21, Opus with GhidraMCP reconnected; the operator clarified the subagent cap was on Fable only):** C1/C2/C4/C5 PASS from the real decompiler — both edits and their following instructions as claimed, all 1874 instruction boundaries of FUN_00028ea6 identical to V293 (two texts differ), the diagnostic packer at 0x4E82E is a pure record with no threshold, the cell census matches; one refinement: `0x2A0C8 cmp r0,r26` is a second in-function reader of the operand on the unreachable `gp-0x680a == 1` damper lane (zero writers, boots 0). **C3 was reported FAIL — "x = 1.0–1.7 counts per deg/s, the trim 5–8× weaker than designed" — and is WITHDRAWN on the wire.** Its chain identified the frame at gp-0x14ce as 0x14A; the record places the 0x14A buffer at gp-0x1518 (`FUN_00057b24(gp-0x1518, 8, 0x14a)`, TRACE-2026-08-13-v100-6ad6-and-ivar6). The direct measurement — three V292 routes (6d/6e/6f) where the rate loop was live and the lane delivers −4.80 T-counts per x-count — reads **x = 7.1–7.8 counts per deg/s at every rate bin from ±2 to ±12 deg/s** (`analysis-2020accord/studies/v294/x_scale_from_v292_wire.py`; median of 15 bins 7.5). **The design's 8 stands, upgraded from BELIEF to EVIDENCE; K_α/J = 1.0 at 8 is 0.9–1.0 at the measured value; no re-cut.** C's ISR reading (the rate former differences a 16384-count/rev position at ~3 ms → 1 count per deg/s of that shaft, ×1.6978 to x) is consistent with 8 if that shaft is geared ~4.71:1 to the steering wheel (the record's 4.7121 × 1.6978 = 8.00) — BELIEF, open.
+
+The rest of the page and this handoff carried the scale as BELIEF; every deg/s figure now stands on the measurement. The two subagents used on 2026-09-20 were Opus; the operator's cap was on Fable subagents, which is why a third could be run once that was clarified.
+
 ## The instrument, and the sentence a null licenses
 
 The CAN-427 tap and the 0x18F wheel rate, both untouched. Because the FF is byte-exact V293's,
@@ -123,8 +129,8 @@ fitted THROUGH the rate servo. This is a starting point for a torque-map plant w
 class as any stock torque-EPS car in openpilot; it has not flown.
 
 ## What this session did NOT do
-- Did not resolve the 8 x-counts-per-deg/s scale (BELIEF; K_α/J is 0.5 / 1.0 / 2.0 at 4 / 8 / 16). The
-  producer chain is `x = pol·((raw·48·[0xC613A = 1159]) >> 15)`; the raw sensor's unit needs Ghidra.
+- The 8 x-counts-per-deg/s scale was RESOLVED on 2026-09-21 (measured 7.1–7.8 on the V292 wire, section
+  above). Still open: the shaft ratio behind the ISR constant, and a Ghidra read of the ISR period.
 - Did not simulate the reverted fork's closed loop on the V294 plant. The EPS edit is attributable from the
   wire regardless; the feel is the operator's.
 - Did not run the fork's pytest suite (environment).

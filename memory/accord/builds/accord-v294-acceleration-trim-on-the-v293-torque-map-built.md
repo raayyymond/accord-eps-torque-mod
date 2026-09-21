@@ -93,8 +93,20 @@ SteerLatAccel 14.0 + SteerFriction 0.011 + every torque-mode term at stock; reve
   by B's census 41 vs the script's 66; `decode_one` mis-decodes the 6-byte `mov imm32` (neither V294 window
   contains one); the record's 30th `gp-0x6a56` access at 0x14B1E is a `jarl` (count is 29 — erratum added).
 
+- **C (Ghidra, 2026-09-21, after GhidraMCP reconnected and the subagent cap was clarified to Fable-only):**
+  C1/C2/C4/C5 PASS from the decompiler — the two edits and their following instructions, 1874 instruction
+  boundaries identical to V293, the diagnostic packer at 0x4E82E is a pure record (no threshold), the cell
+  census matches; one refinement: `0x2A0C8 cmp r0,r26` is a second in-function reader of the operand on the
+  unreachable `gp-0x680a == 1` damper lane (zero writers, boots 0). **C3 was reported FAIL (x = 1.0–1.7, trim
+  5–8× weak) and is WITHDRAWN on the wire:** its chain identified the frame at gp-0x14ce as 0x14A, but the
+  record places the 0x14A buffer at gp-0x1518; the direct measurement on three V292 routes (rate loop live,
+  lane delivers −4.80 T-counts per x-count) gives **x = 7.1–7.8 counts per deg/s at every rate bin**
+  (`studies/v294/x_scale_from_v292_wire.py`). **8 stands, now EVIDENCE.** Its ISR finding (the rate former
+  differences a 16384-count/rev position at ~3 ms → 1 count/deg/s of that shaft, ×1.6978 to x) is consistent
+  with 8 if that shaft is geared ~4.71:1 to the steering wheel (claim B's 4.7121 × 1.6978 = 8.00) — BELIEF.
+
 ## Not verified / BELIEF
-The 8 counts/deg/s scale of x (every deg/s² figure inherits it); J = 8e-5 and the light-b world; the pole
+J = 8e-5 and the light-b world; the shaft ratio behind the ISR constant (the x scale itself is now measured); the pole
 choice is the design's ONE free parameter — one cal cell (0xC63E8) moves it, the ladder is in the build script.
 Two code bytes change: NOT cal-only, the class of V57's displacement repoint (in-place, same length).
 

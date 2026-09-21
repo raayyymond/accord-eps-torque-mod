@@ -29,11 +29,13 @@ which is the 20 Hz crossover resonance V282 ground on.  The trim anti-damps only
 180 deg, ~40 Hz, where the output lag has already cut it x0.05.
 
 EVIDENCE / BELIEF: opcode decode, the integer mirror and the sum-count ratios are EVIDENCE (bytes).  The
-physical scale (8 x-counts per deg/s) is BELIEF inherited from the record; every deg/s^2 figure carries it.
+physical scale (8 x-counts per deg/s) was BELIEF when this was written; on 2026-09-21 it was MEASURED on the
+V292 wire at 7.1-7.8 (x_scale_from_v292_wire.py) -- EVIDENCE now, 8 stands.
 J = 8e-5, b, k(v) are the fork's identified plant (latcontrol_vehicle_tunes.py @ Dom 84766cdc5), BELIEF.
 """
 import json
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -73,9 +75,12 @@ LEVEL_BP, LEVEL_V = [12.5, 17.5], [1.15, 1.45]
 EPS_G_BP, EPS_G_V = [5.0, 12.5, 18.5, 28.5], [550.0, 271.0, 246.0, 167.0]   # deg/s per unit torque = 1/b
 B_LIGHT = 0.0006                                               # the "light damping" world, rev 4/5 fits
 COUNTS_PER_TQ = 2605.0          # lane counts per unit fork torque: T(idx) = 10.25/idx, idx 240 = 0.9448 u
-X_PER_DEGS = 8.0                # x counts per deg/s  [BELIEF]
+X_PER_DEGS = float(os.environ.get("V294_X_SCALE", "8.0"))   # x counts per deg/s.  8 was inherited (BELIEF) and is now
+                                                             # MEASURED on the V292 wire: 7.1-7.8 at every rate bin, three
+                                                             # routes (x_scale_from_v292_wire.py, 2026-09-21).  EVIDENCE.
 TS = 1e-3
-KP_NEW, E_SHIFT_NEW, KP_OLD, E_SHIFT_OLD = 960, 2, 120, 5
+E_SHIFT_NEW = int(os.environ.get("V294_E_SHIFT", "2"))
+KP_NEW, KP_OLD, E_SHIFT_OLD = 120 << (5 - E_SHIFT_NEW), 120, 5
 GAIN_FWD = (254 / 256) * (5346 / 32768)   # taper x forward gain; the output lag is modelled explicitly
 OUT_A, OUT_B = 992, 507
 

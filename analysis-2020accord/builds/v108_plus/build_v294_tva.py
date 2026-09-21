@@ -114,9 +114,12 @@ hundreds of sigma):
       columns V293's own table records), and s_new - s_old has the same sign convention as s + s_new, so
       subr gives r26 > 0 for a wheel ACCELERATING in the +T sense and P falls.  A `sub` instead of `subr`
       would invert it; [2] decodes the mnemonic from the built bytes and [3e] runs the integer mirror.
-  (c) THE PHYSICAL SCALE IS BELIEF (8 x-counts per deg/s).  K_alpha/J = 1.0 assumes it; at 4 counts/deg/s
-      it is 0.5, at 16 it is 2.0 -- and the sweep shows 2.0 still improves damping above 8 m/s with -21 dB
-      at 20 Hz.  The 25 % clamp is scale-free.
+  (c) THE PHYSICAL SCALE: 8 x-counts per deg/s was BELIEF at build time and is now MEASURED (2026-09-21,
+      studies/v294/x_scale_from_v292_wire.py): on three V292 routes, where the rate loop was live and the
+      lane delivers -4.80 T-counts per x-count, the 427 tap moves 7.1-7.8 x-counts per deg/s of wheel rate
+      at every bin from +-2 to +-12 deg/s.  K_alpha/J = 1.0 at 8 is 0.9-1.0 at the measured value.  (An
+      adversary's C3 claim of 1.0-1.7 rested on mis-identifying the frame at gp-0x14ce as 0x14A; the 0x14A
+      buffer is at gp-0x1518.)  The 25 % clamp is scale-free either way.
   (d) THE FIRST DRIVE IS ON A REVERTED FORK (toggle-config_V294_accel-trim_r1.json: every torque-mode fork
       term off, standard torque controller).  Two things change at once; the within-frame instrument in
       sec.3 attributes the EPS edit regardless, the FEEL is the operator's to score.
