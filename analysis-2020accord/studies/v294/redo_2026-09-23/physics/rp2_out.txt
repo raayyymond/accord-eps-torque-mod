@@ -1,0 +1,45 @@
+=== constants ===
+T per r26 at DC = -3.75 * 254/256 * 0.990234 * 5346/32768 = -0.60109
+K_alpha (below the pole) = 0.20974 T counts per deg/s^2
+r26 clamp 1024 -> P 3840 -> after taper 3810 -> T 615.5 counts = 0.250 of the 2461 rail
+clamp binds: below the pole at alpha = 2935 deg/s^2; at high f at rate amplitude 231 deg/s (sinusoid)
+
+=== (L) linear: T per deg/s of wheel rate, and per deg/s^2 ===
+ f(Hz)  |T/rate| (T per deg/s)  phase vs rate   |T/alpha| (T per deg/s^2)  rate amp at which |r26|=1024
+ 0.25      0.327                 -99.8           0.2079                  1882 deg/s
+ 0.50      0.637                -109.5           0.2027                   962 deg/s
+ 1.00      1.160                -127.4           0.1846                   521 deg/s
+ 1.50      1.525                -143.0           0.1618                   387 deg/s
+ 2.00      1.747                -156.1           0.1390                   328 deg/s
+ 2.40      1.847                -165.1           0.1225                   301 deg/s
+ 3.00      1.907                -176.6           0.1012                   277 deg/s
+ 5.00      1.764                 157.4           0.0562                   248 deg/s
+10.00      1.184                 128.3           0.0188                   234 deg/s
+20.00      0.652                 110.0           0.0052                   231 deg/s
+
+=== (G) golden-model integer march at idx 0 (sp = 0): T per deg/s, phase re the rate ===
+  f  0.50 Hz amp   20 deg/s: T/rate   0.640 ph  -109.6 | linear   0.637 ph  -109.5 | mean  -1.04 T range [-14,12] max|r26| 22
+  f  1.00 Hz amp   20 deg/s: T/rate   1.160 ph  -127.3 | linear   1.160 ph  -127.4 | mean  -1.04 T range [-24,22] max|r26| 40
+  f  2.00 Hz amp   10 deg/s: T/rate   1.740 ph  -156.1 | linear   1.747 ph  -156.1 | mean  -1.02 T range [-18,16] max|r26| 32
+  f  2.00 Hz amp   40 deg/s: T/rate   1.748 ph  -156.1 | linear   1.747 ph  -156.1 | mean  -1.03 T range [-71,69] max|r26| 125
+  f  2.00 Hz amp   88 deg/s: T/rate   1.748 ph  -156.1 | linear   1.747 ph  -156.1 | mean  -1.03 T range [-155,153] max|r26| 276
+  f  3.00 Hz amp   20 deg/s: T/rate   1.907 ph  -176.5 | linear   1.907 ph  -176.6 | mean  -1.03 T range [-39,37] max|r26| 74
+  f 10.00 Hz amp    5 deg/s: T/rate   1.193 ph   128.4 | linear   1.184 ph   128.3 | mean  -1.05 T range [-7,5] max|r26| 22
+  f 20.00 Hz amp    5 deg/s: T/rate   0.637 ph   110.9 | linear   0.652 ph   110.0 | mean  -0.98 T range [-4,2] max|r26| 23
+  f  2.00 Hz amp  400 deg/s: T/rate   1.590 ph  -156.1 | linear   1.747 ph  -156.1 | mean  -0.99 T range [-606,604] max|r26| 1024
+
+=== the FEEDFORWARD scale: T per demand index and per fork unit torque (STEER_MAX 4096, 16.125736 wire/idx) ===
+T(idx) linear fit idx 0..229: slope 10.3360 T/idx, intercept -1.86; T(120) = 1237, T(240) = 2461
+T per fork unit torque u = slope * 4096/16.125736 = 2625.4 T counts (u >= 0.945 is the rail)
+fork plant J 8e-5 u/(deg/s^2) -> J_T = 0.2100 T/(deg/s^2); K_alpha/J = 0.999
+trim in fork units: K_alpha_u = 7.989e-05 u per deg/s^2; at 2 Hz 6.65e-04 u per deg/s (light b 6e-4, identified 1/G 1.8e-3..6e-3)
+
+=== the P-clamp interaction near the rail (the trim is one-sided when 15*sp is near 15360) ===
+  idx   0 (sp    0, FF T    0): 2 Hz 40 deg/s: T/rate  1.748 ph -156.1 mean    -1.0 (FF 0) range [-71,69]
+  idx 120 (sp  515, FF T 1237): 2 Hz 40 deg/s: T/rate  1.747 ph -156.1 mean  1237.2 (FF 1237) range [1167,1307]
+  idx 200 (sp  860, FF T 2067): 2 Hz 40 deg/s: T/rate  1.748 ph -156.1 mean  2066.7 (FF 2067) range [1997,2137]
+  idx 230 (sp  989, FF T 2377): 2 Hz 40 deg/s: T/rate  1.748 ph -156.1 mean  2376.9 (FF 2377) range [2307,2447]
+  idx 236 (sp 1014, FF T 2437): 2 Hz 40 deg/s: T/rate  1.225 ph -156.1 mean  2423.9 (FF 2437) range [2367,2461]
+  idx 238 (sp 1023, FF T 2459): 2 Hz 40 deg/s: T/rate  0.911 ph -156.0 mean  2435.9 (FF 2459) range [2389,2461]
+  idx 239 (sp 1027, FF T 2461): 2 Hz 40 deg/s: T/rate  0.768 ph -156.1 mean  2440.7 (FF 2461) range [2398,2461]
+  idx 240 (sp 1032, FF T 2461): 2 Hz 40 deg/s: T/rate  0.594 ph -156.0 mean  2446.0 (FF 2461) range [2410,2461]

@@ -1,0 +1,14 @@
+INVERTED sign (gain -1), light b: unstable poles (s-plane, Hz) 
+  v 5 gain -1.0: max|z| 0.9991; unstable: 
+  v 5 gain -0.5: max|z| 0.9971; unstable: 
+  v 8 gain -1.0: max|z| 0.9995; unstable: 
+  v 8 gain -0.5: max|z| 0.9976; unstable: 
+  v 19 gain -1.0: max|z| 1.0002; unstable: +0.2+2.10Hz
+  v 19 gain -0.5: max|z| 0.9983; unstable: 
+  v 26 gain -1.0: max|z| 1.0004; unstable: +0.4+2.33Hz
+  v 26 gain -0.5: max|z| 0.9985; unstable: 
+
+loop gain with the design's LEVELLED k (x1.15 <=12.5 -> x1.45 >=17.5), light b, d=1 m=3
+  v 12.5: |L|(2.4 Hz) 0.90; max |L| 1.08 at 1.91 Hz phase +16; min Re L -0.142; -180: 20.8 Hz |L| 0.023
+  v 19: |L|(2.4 Hz) 1.14; max |L| 1.16 at 2.30 Hz phase +10; min Re L -0.125; -180: 20.8 Hz |L| 0.023
+  v 26: |L|(2.4 Hz) 1.10; max |L| 1.19 at 2.64 Hz phase +5; min Re L -0.108; -180: 20.8 Hz |L| 0.023

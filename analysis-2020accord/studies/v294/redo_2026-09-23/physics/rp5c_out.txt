@@ -1,0 +1,13 @@
+largest phase LOSSES at the V293 crossover (deg), |L| ratio, case, fc, V293 PM there:
+  -27.10 deg  |L|x0.715  v 3 light lev Jx0.5 tau 15 fric 0.0  fc 0.953 Hz  PM293 +85
+  -27.10 deg  |L|x0.715  v 3 light map Jx0.5 tau 15 fric 0.0  fc 0.953 Hz  PM293 +85
+  -27.10 deg  |L|x0.715  v 3 light lev Jx0.5 tau 25 fric 0.0  fc 0.953 Hz  PM293 +81
+  -27.10 deg  |L|x0.715  v 3 light map Jx0.5 tau 25 fric 0.0  fc 0.953 Hz  PM293 +81
+  -27.10 deg  |L|x0.715  v 3 light lev Jx0.5 tau 40 fric 0.0  fc 0.953 Hz  PM293 +76
+  -27.10 deg  |L|x0.715  v 3 light map Jx0.5 tau 40 fric 0.0  fc 0.953 Hz  PM293 +76
+  -24.48 deg  |L|x1.015  v 5 light lev Jx0.5 tau 40 fric 0.0  fc 0.751 Hz  PM293 +109
+  -24.48 deg  |L|x1.015  v 5 light map Jx0.5 tau 40 fric 0.0  fc 0.751 Hz  PM293 +109
+  -24.48 deg  |L|x1.015  v 5 light lev Jx0.5 tau 15 fric 0.0  fc 0.751 Hz  PM293 +116
+  -24.48 deg  |L|x1.015  v 5 light lev Jx0.5 tau 25 fric 0.0  fc 0.751 Hz  PM293 +113
+cases with a phase loss > 10 deg at the fork's crossover: 117 / 1008; > 5 deg: 195
+largest phase GAINS: [(44.2, 32, 'vlight'), (44.2, 32, 'vlight'), (47.0, 32, 'vlight'), (47.0, 32, 'vlight'), (47.0, 32, 'vlight')]

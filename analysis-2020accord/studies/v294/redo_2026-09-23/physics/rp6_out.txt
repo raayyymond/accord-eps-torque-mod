@@ -1,0 +1,64 @@
+embedded integer chain vs golden model, 20000 ticks: mismatches 0
+FF table: idx 10 102, 60 617, 120 1237, 240 2461
+
+=== v 19.0 m/s, k 0.0111, reference amplitude 8.0 deg, episode 20.0 s, 12 episodes per arm ===
+  eps +0.00 live: E1 +0.119+-0.019 (se~0.053)  E2 +0.163+-0.017 (se~0.061)  E3 +0.178+-0.024 (se~0.067) | rate rms 8.7 deg/s, resid rms 6.9, lag 5 fr
+  eps +0.00 null: E1 +0.015+-0.007 (se~0.015)  E2 +0.017+-0.002 (se~0.012)  E3 +0.018+-0.003 (se~0.014) | rate rms 10.9 deg/s, resid rms 5.0, lag 3 fr
+  eps +0.00 inv : E1 -0.039+-0.000 (se~0.003)  E2 -0.072+-0.004 (se~0.043)  E3 -0.034+-0.004 (se~0.052) | rate rms 832.4 deg/s, resid rms 330.4, lag 4 fr
+      E1: correct classification (half-slope thresholds +-0.105): live 0.67 null 1.00 inv 0.00
+      E2: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+      E3: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+  eps +0.05 live: E1 +0.068+-0.014 (se~0.068)  E2 +0.163+-0.018 (se~0.061)  E3 +0.178+-0.024 (se~0.066) | rate rms 8.7 deg/s, resid rms 7.4, lag 5 fr
+  eps +0.05 null: E1 +0.011+-0.013 (se~0.024)  E2 +0.017+-0.002 (se~0.012)  E3 +0.018+-0.003 (se~0.014) | rate rms 10.9 deg/s, resid rms 7.9, lag 3 fr
+  eps +0.05 inv : E1 -0.031+-0.000 (se~0.003)  E2 -0.072+-0.004 (se~0.043)  E3 -0.034+-0.004 (se~0.052) | rate rms 832.4 deg/s, resid rms 270.6, lag 4 fr
+      E1: correct classification (half-slope thresholds +-0.105): live 0.00 null 1.00 inv 0.00
+      E2: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+      E3: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+  eps -0.05 live: E1 +0.171+-0.025 (se~0.054)  E2 +0.163+-0.017 (se~0.061)  E3 +0.178+-0.024 (se~0.067) | rate rms 8.7 deg/s, resid rms 8.3, lag 5 fr
+  eps -0.05 null: E1 +0.018+-0.002 (se~0.013)  E2 +0.017+-0.002 (se~0.012)  E3 +0.018+-0.003 (se~0.014) | rate rms 10.9 deg/s, resid rms 4.3, lag 3 fr
+  eps -0.05 inv : E1 -0.047+-0.000 (se~0.003)  E2 -0.072+-0.004 (se~0.043)  E3 -0.034+-0.004 (se~0.052) | rate rms 832.4 deg/s, resid rms 391.6, lag 4 fr
+      E1: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+      E2: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+      E3: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+
+=== v 8.0 m/s, k 0.0052, reference amplitude 25.0 deg, episode 20.0 s, 12 episodes per arm ===
+  eps +0.00 live: E1 +0.066+-0.034 (se~0.043)  E2 +0.097+-0.036 (se~0.058)  E3 +0.100+-0.037 (se~0.057) | rate rms 24.4 deg/s, resid rms 10.1, lag 9 fr
+  eps +0.00 null: E1 -0.010+-0.004 (se~0.023)  E2 +0.004+-0.002 (se~0.027)  E3 +0.004+-0.002 (se~0.027) | rate rms 22.2 deg/s, resid rms 4.7, lag 3 fr
+  eps +0.00 inv : E1 -0.106+-0.000 (se~0.009)  E2 -0.111+-0.001 (se~0.026)  E3 -0.109+-0.001 (se~0.031) | rate rms 464.9 deg/s, resid rms 437.0, lag 5 fr
+      E1: correct classification (half-slope thresholds +-0.105): live 0.17 null 1.00 inv 1.00
+      E2: correct classification (half-slope thresholds +-0.105): live 0.25 null 1.00 inv 1.00
+      E3: correct classification (half-slope thresholds +-0.105): live 0.25 null 1.00 inv 1.00
+  eps +0.05 live: E1 +0.038+-0.019 (se~0.048)  E2 +0.096+-0.033 (se~0.059)  E3 +0.098+-0.034 (se~0.058) | rate rms 24.4 deg/s, resid rms 9.7, lag 9 fr
+  eps +0.05 null: E1 -0.035+-0.013 (se~0.040)  E2 +0.004+-0.002 (se~0.027)  E3 +0.004+-0.002 (se~0.027) | rate rms 22.2 deg/s, resid rms 8.2, lag 3 fr
+  eps +0.05 inv : E1 -0.100+-0.000 (se~0.008)  E2 -0.111+-0.001 (se~0.026)  E3 -0.109+-0.001 (se~0.031) | rate rms 464.9 deg/s, resid rms 412.7, lag 5 fr
+      E1: correct classification (half-slope thresholds +-0.105): live 0.00 null 1.00 inv 0.00
+      E2: correct classification (half-slope thresholds +-0.105): live 0.25 null 1.00 inv 1.00
+      E3: correct classification (half-slope thresholds +-0.105): live 0.25 null 1.00 inv 1.00
+  eps -0.05 live: E1 +0.094+-0.048 (se~0.048)  E2 +0.099+-0.036 (se~0.057)  E3 +0.101+-0.037 (se~0.056) | rate rms 24.4 deg/s, resid rms 12.3, lag 9 fr
+  eps -0.05 null: E1 +0.015+-0.006 (se~0.022)  E2 +0.004+-0.002 (se~0.027)  E3 +0.004+-0.002 (se~0.027) | rate rms 22.2 deg/s, resid rms 4.4, lag 3 fr
+  eps -0.05 inv : E1 -0.112+-0.000 (se~0.009)  E2 -0.111+-0.001 (se~0.026)  E3 -0.109+-0.001 (se~0.031) | rate rms 464.9 deg/s, resid rms 461.4, lag 5 fr
+      E1: correct classification (half-slope thresholds +-0.105): live 0.33 null 1.00 inv 1.00
+      E2: correct classification (half-slope thresholds +-0.105): live 0.33 null 1.00 inv 1.00
+      E3: correct classification (half-slope thresholds +-0.105): live 0.33 null 1.00 inv 1.00
+
+=== v 19.0 m/s, k 0.0111, reference amplitude 3.0 deg, episode 20.0 s, 12 episodes per arm ===
+  eps +0.00 live: E1 +0.148+-0.011 (se~0.047)  E2 +0.165+-0.010 (se~0.042)  E3 +0.188+-0.013 (se~0.050) | rate rms 3.6 deg/s, resid rms 5.4, lag 2 fr
+  eps +0.00 null: E1 +0.024+-0.003 (se~0.019)  E2 +0.013+-0.003 (se~0.016)  E3 +0.013+-0.003 (se~0.018) | rate rms 6.1 deg/s, resid rms 4.5, lag 3 fr
+  eps +0.00 inv : E1 -0.039+-0.000 (se~0.003)  E2 -0.158+-0.011 (se~0.087)  E3 +0.039+-0.008 (se~0.112) | rate rms 834.4 deg/s, resid rms 332.4, lag 4 fr
+      E1: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+      E2: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 1.00
+      E3: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+  eps +0.05 live: E1 +0.138+-0.014 (se~0.055)  E2 +0.165+-0.010 (se~0.042)  E3 +0.188+-0.013 (se~0.050) | rate rms 3.6 deg/s, resid rms 6.0, lag 2 fr
+  eps +0.05 null: E1 +0.030+-0.005 (se~0.023)  E2 +0.013+-0.003 (se~0.016)  E3 +0.012+-0.004 (se~0.019) | rate rms 6.1 deg/s, resid rms 5.5, lag 3 fr
+  eps +0.05 inv : E1 -0.031+-0.000 (se~0.003)  E2 -0.158+-0.011 (se~0.087)  E3 +0.039+-0.008 (se~0.112) | rate rms 834.4 deg/s, resid rms 272.4, lag 4 fr
+      E1: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+      E2: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 1.00
+      E3: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+  eps -0.05 live: E1 +0.158+-0.011 (se~0.042)  E2 +0.165+-0.010 (se~0.042)  E3 +0.188+-0.013 (se~0.050) | rate rms 3.6 deg/s, resid rms 5.2, lag 2 fr
+  eps -0.05 null: E1 +0.017+-0.002 (se~0.016)  E2 +0.013+-0.003 (se~0.016)  E3 +0.013+-0.004 (se~0.018) | rate rms 6.1 deg/s, resid rms 3.9, lag 3 fr
+  eps -0.05 inv : E1 -0.047+-0.000 (se~0.003)  E2 -0.158+-0.011 (se~0.087)  E3 +0.039+-0.008 (se~0.112) | rate rms 834.4 deg/s, resid rms 393.7, lag 4 fr
+      E1: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+      E2: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 1.00
+      E3: correct classification (half-slope thresholds +-0.105): live 1.00 null 1.00 inv 0.00
+
+[32 s]  expected live slope from the chain (below the pole): +0.2097 T counts per deg/s^2

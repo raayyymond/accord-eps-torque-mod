@@ -1,0 +1,43 @@
+C:\Users\dudei\AppData\Local\Temp\claude\C--Users-dudei-Desktop-Projects-accord-eps-torque-mod\27ce7f37-df5e-4689-817b-7896520413eb\scratchpad\rp5b_sensitivity.py:63: DeprecationWarning: `pade` is deprecated and will be removed in SciPy 1.20.0. Use `mpmath.pade` instead.
+  p, q = _p(c, N)
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\scipy\interpolate\_pade.py:76: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 9.933404341093605e-40.
+  pq = linalg.solve(C, an)
+C:\Users\dudei\anaconda3\envs\bin_decompile\Lib\site-packages\scipy\interpolate\_pade.py:76: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 8.412219140558649e-17.
+  pq = linalg.solve(C, an)
+=== the 12 largest PM LOSSES (worst-crossover PM, V294 - V293) ===
+  dPM  -55.5 | v 12.5 free0.0009 k:map J x0.5 tau 40 ms fric 0.011 | V293 PM +158 (xover 0.21 Hz) GMinv 0.48 -> V294 PM +102 (xover 0.94 Hz) GMinv 0.25
+  dPM  -51.6 | v 12.5 free0.0009 k:map J x0.5 tau 25 ms fric 0.011 | V293 PM +159 (xover 0.21 Hz) GMinv 0.39 -> V294 PM +107 (xover 0.94 Hz) GMinv 0.19
+  dPM  -48.9 | v 12.5 free0.0009 k:map J x0.5 tau 15 ms fric 0.011 | V293 PM +160 (xover 0.21 Hz) GMinv 0.33 -> V294 PM +111 (xover 0.94 Hz) GMinv 0.16
+  dPM  -46.4 | v 32 free0.0009 k:map J x0.5 tau 40 ms fric 0.0 | V293 PM +152 (xover 0.13 Hz) GMinv 0.68 -> V294 PM +106 (xover 0.14 Hz) GMinv 0.36
+  dPM  -44.8 | v 12.5 free0.0009 k:lev J x1.0 tau 40 ms fric 0.011 | V293 PM +146 (xover 0.06 Hz) GMinv 0.56 -> V294 PM +101 (xover 0.06 Hz) GMinv 0.31
+  dPM  -44.3 | v 12.5 light k:lev J x0.5 tau 40 ms fric 0.011 | V293 PM +147 (xover 0.06 Hz) GMinv 0.71 -> V294 PM +102 (xover 0.06 Hz) GMinv 0.30
+  dPM  -40.8 | v 32 free0.0009 k:map J x0.5 tau 25 ms fric 0.0 | V293 PM +153 (xover 0.13 Hz) GMinv 0.57 -> V294 PM +112 (xover 0.14 Hz) GMinv 0.29
+  dPM  -40.0 | v 12.5 free0.0009 k:lev J x1.0 tau 25 ms fric 0.011 | V293 PM +146 (xover 0.06 Hz) GMinv 0.46 -> V294 PM +106 (xover 0.06 Hz) GMinv 0.24
+  dPM  -38.7 | v 12.5 light k:lev J x0.5 tau 25 ms fric 0.011 | V293 PM +147 (xover 0.06 Hz) GMinv 0.60 -> V294 PM +108 (xover 0.06 Hz) GMinv 0.24
+  dPM  -37.1 | v 32 free0.0009 k:map J x0.5 tau 15 ms fric 0.0 | V293 PM +153 (xover 0.13 Hz) GMinv 0.48 -> V294 PM +116 (xover 0.14 Hz) GMinv 0.24
+  dPM  -36.8 | v 12.5 free0.0009 k:lev J x1.0 tau 15 ms fric 0.011 | V293 PM +146 (xover 0.06 Hz) GMinv 0.39 -> V294 PM +110 (xover 0.06 Hz) GMinv 0.19
+  dPM  -34.9 | v 12.5 light k:lev J x0.5 tau 15 ms fric 0.011 | V293 PM +147 (xover 0.06 Hz) GMinv 0.51 -> V294 PM +112 (xover 0.06 Hz) GMinv 0.20
+
+  cases with PM loss > 10 deg: 62 of 1008; > 5 deg: 128
+  stable by margins: V293 plant 747/1008, V294 plant 994/1008
+  V293-stable -> V294-unstable: 0;  V293-unstable -> V294-stable: 247
+
+=== median / range of dPM by world at the nominal (map k, J x1, tau 25, fric on) ===
+  light     : 3:+12(+29->+40)  5:+15(+31->+46)  8:+23(+28->+50)  12.5:+41(+19->+61)  19:+47(-3->+44)  26:+53(-20->+34)  32:+51(-30->+21)
+  vlight    : 3:+26(-5->+22)  5:+32(-6->+26)  8:+40(-10->+30)  12.5:+56(-19->+37)  19:+56(-32->+24)  26:+58(-44->+14)  32:+53(-51->+1)
+  free0.0009: 3:-1(+57->+56)  5:-1(+64->+63)  8:+3(+66->+69)  12.5:+13(+70->+83)  19:+31(+30->+61)  26:+43(+7->+50)  32:+44(-8->+37)
+  ident     : 3:-6(+91->+85)  5:-7(+103->+96)  8:-5(+119->+114)  12.5:-0(+145->+145)  19:-2(+131->+129)  26:-2(+128->+126)  32:-2(+116->+114)
+
+=== closed-loop poles (Pade): max real part and the worst-damped pair below 10 Hz ===
+  light v   3.0: V293 max Re   -0.152, worst pair zeta +0.148 @ 1.49 Hz | V294 max Re   -0.152, worst pair zeta +0.278 @ 1.10 Hz
+  light v   5.0: V293 max Re   -0.136, worst pair zeta +0.134 @ 1.61 Hz | V294 max Re   -0.136, worst pair zeta +0.283 @ 1.20 Hz
+  light v   8.0: V293 max Re   -0.123, worst pair zeta +0.103 @ 1.79 Hz | V294 max Re   -0.123, worst pair zeta +0.280 @ 1.37 Hz
+  light v  12.5: V293 max Re   -0.106, worst pair zeta +0.055 @ 2.16 Hz | V294 max Re   -0.106, worst pair zeta +0.278 @ 1.75 Hz
+  light v  19.0: V293 max Re   +0.151, worst pair zeta -0.010 @ 2.41 Hz | V294 max Re   -0.116, worst pair zeta +0.218 @ 2.10 Hz
+  light v  26.0: V293 max Re   +1.036, worst pair zeta -0.060 @ 2.74 Hz | V294 max Re   -0.118, worst pair zeta +0.150 @ 2.54 Hz
+  ident v   3.0: V293 max Re   -0.156, worst pair zeta +0.817 @ 1.41 Hz | V294 max Re   -0.156, worst pair zeta +0.673 @ 0.89 Hz
+  ident v   5.0: V293 max Re   -0.138, worst pair zeta +0.751 @ 1.52 Hz | V294 max Re   -0.138, worst pair zeta +0.649 @ 0.97 Hz
+  ident v   8.0: V293 max Re   -0.126, worst pair zeta +0.843 @ 1.65 Hz | V294 max Re   -0.126, worst pair zeta +0.707 @ 1.03 Hz
+  ident v  12.5: V293 max Re   -0.108, worst pair zeta +nan @ nan Hz | V294 max Re   -0.108, worst pair zeta +0.832 @ 1.09 Hz
+  ident v  19.0: V293 max Re   -0.119, worst pair zeta +0.946 @ 1.94 Hz | V294 max Re   -0.118, worst pair zeta +0.799 @ 1.24 Hz
+  ident v  26.0: V293 max Re   -0.120, worst pair zeta +0.948 @ 2.05 Hz | V294 max Re   -0.120, worst pair zeta +0.822 @ 1.34 Hz

@@ -1,0 +1,56 @@
+=== 1a. transfer function ===
+p = a/1024 = 0.987305; pole = -ln(p)/(2 pi Ts) = 2.0335 Hz  (continuous-matched s-pole 12.777 rad/s)
+g = b/1024 = 0.553711;  DC(x->s) = g/(1-p) = 43.6154;  high-f |r26/x| -> g = 0.5537 (Nyquist 2g/(1+p) = 0.5572)
+DC(alpha -> r26) = g*Ts/(1-p) = 0.043615 r26 per (x-count/s) = 0.34892 r26 per deg/s^2
+   a=923: pole 16.527 Hz
+   a=1011: pole 2.033 Hz
+   a=1015: pole 1.405 Hz
+   a=1018: pole 0.935 Hz
+
+ f(Hz)   |r26/x|   ph(deg)   |r26/alpha|/DC   ph_alpha(deg)   1st-order LP@pole: mag, ph
+  0.10    0.0274     87.18       0.9988        -2.82    0.9988,   -2.82
+  0.50    0.1331     76.19       0.9711       -13.81    0.9711,  -13.81
+  1.00    0.2459     63.81       0.8974       -26.19    0.8974,  -26.19
+  2.00    0.3908     45.47       0.7129       -44.53    0.7129,  -44.52
+  2.03    0.3937     45.05       0.7077       -44.95    0.7077,  -44.95
+  3.00    0.4613     34.13       0.5611       -55.87    0.5611,  -55.87
+  5.00    0.5162     22.13       0.3767       -67.87    0.3767,  -67.87
+ 10.00    0.5461     11.49       0.1993       -78.51    0.1993,  -78.51
+ 16.00    0.5528      7.24       0.1261       -82.76    0.1261,  -82.76
+ 20.00    0.5544      5.80       0.1012       -84.20    0.1012,  -84.19
+ 26.00    0.5556      4.46       0.0780       -85.54    0.0780,  -85.53
+ 30.00    0.5560      3.87       0.0676       -86.13    0.0676,  -86.12
+ 50.00    0.5568      2.31       0.0406       -87.69    0.0406,  -87.67
+
+  simulated linear recursion vs formula (float):
+   f=  1.0: sim |H| 0.24592 ph   63.81  | formula 0.24592   63.81
+   f=  2.0: sim |H| 0.39076 ph   45.47  | formula 0.39076   45.47
+   f= 20.0: sim |H| 0.55440 ph    5.80  | formula 0.55440    5.80
+
+=== 1b. settle to exactly 0 at constant x (integer) ===
+all 24001 x values x 4 start states reach r26 == 0 exactly; worst ticks to settle 822; failures 0
+   x=     0: fixed-point interval of s = [-78, 0] width 79  (1/(1-p) = 78.8)
+   x=     1: fixed-point interval of s = [-78, 0] width 79  (1/(1-p) = 78.8)
+   x=    80: fixed-point interval of s = [3388, 3465] width 78  (1/(1-p) = 78.8)
+   x=   800: fixed-point interval of s = [34738, 34816] width 79  (1/(1-p) = 78.8)
+   x= 12000: fixed-point interval of s = [523265, 523342] width 78  (1/(1-p) = 78.8)
+   x=  -800: fixed-point interval of s = [-34973, -34895] width 79  (1/(1-p) = 78.8)
+
+=== 1c. dither: integer r26 minus the linear (float) r26 ===
+   white x +-12000           : dither min -1.058 max +1.052 mean -0.0000 rms 0.410
+   slow ramp 0.02 cnt/tick   : dither min -0.820 max +1.019 mean -0.0000 rms 0.368
+   2 Hz sine amp 400         : dither min -1.002 max +1.002 mean +0.0000 rms 0.405
+   20 Hz sine amp 40         : dither min -0.904 max +0.904 mean +0.0000 rms 0.482
+   random walk               : dither min -1.145 max +1.163 mean -0.0000 rms 0.412
+   adversarial random search (300 x 3000 ticks): max |dither| 1.9606  (bound < 2)
+
+=== 1d. constant acceleration (x ramp): the operand's mean equals the linear value; it is PWM-quantised ===
+   beta  0.001 cnt/ms =   0.125 deg/s^2: mean r26   0.0436 vs linear   0.0436; values [0, 1]
+   beta  0.005 cnt/ms =   0.625 deg/s^2: mean r26   0.2179 vs linear   0.2181; values [0, 1]
+   beta  0.010 cnt/ms =   1.250 deg/s^2: mean r26   0.4361 vs linear   0.4362; values [0, 1]
+   beta  0.023 cnt/ms =   2.875 deg/s^2: mean r26   1.0032 vs linear   1.0032; values [0, 1, 2]
+   beta  0.050 cnt/ms =   6.250 deg/s^2: mean r26   2.1808 vs linear   2.1808; values [2, 3]
+   beta  0.200 cnt/ms =  25.000 deg/s^2: mean r26   8.7231 vs linear   8.7231; values [8, 9]
+   beta  1.000 cnt/ms = 125.000 deg/s^2: mean r26  43.6154 vs linear  43.6154; values [43, 44]
+
+cross-check vs golden-model lkas_fb_lag (fb_op diff): mismatches 0/100000

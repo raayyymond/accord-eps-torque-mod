@@ -1,0 +1,61 @@
+=== open-loop wheel mode (fork plant, BELIEF) ===
+  v   5.0  k 0.00360  b light 6e-4    : f_n 1.07 Hz, zeta 0.559
+  v   5.0  k 0.00360  b ident 1.8e-03 : f_n 1.07 Hz, zeta 1.694
+  v   8.0  k 0.00520  b light 6e-4    : f_n 1.28 Hz, zeta 0.465
+  v   8.0  k 0.00520  b ident 2.3e-03 : f_n 1.28 Hz, zeta 1.768
+  v  12.5  k 0.00920  b light 6e-4    : f_n 1.71 Hz, zeta 0.350
+  v  12.5  k 0.00920  b ident 3.7e-03 : f_n 1.71 Hz, zeta 2.151
+  v  19.0  k 0.01108  b light 6e-4    : f_n 1.87 Hz, zeta 0.319
+  v  19.0  k 0.01108  b ident 4.1e-03 : f_n 1.87 Hz, zeta 2.194
+  v  26.0  k 0.01492  b light 6e-4    : f_n 2.17 Hz, zeta 0.275
+  v  26.0  k 0.01492  b ident 5.4e-03 : f_n 2.17 Hz, zeta 2.451
+
+=== zeta ratio (with trim / without) by pole, light-b world, d = 1 tick, m = 3; the worst-damped pair in 0.2-6 Hz ===
+ pole     a/b               5 m/s       8 m/s    12.5 m/s      19 m/s      26 m/s
+ 16.5 Hz  923/ 4405.2    0.77x@0.73Hz    0.82x@0.87Hz    0.92x@1.17Hz    0.97x@1.28Hz    1.08x@1.49Hz
+ 8 Hz     973/ 2224.4    0.79x@0.72Hz    0.84x@0.87Hz    0.97x@1.16Hz    1.03x@1.27Hz    1.16x@1.48Hz
+ 2.0 Hz   1011/  567.0    0.89x@0.69Hz    1.00x@0.83Hz    1.29x@1.13Hz    1.43x@1.25Hz    1.73x@1.48Hz
+ 1.4 Hz   1015/  392.5    0.95x@0.68Hz    1.10x@0.82Hz    1.50x@1.14Hz    1.70x@1.28Hz    2.13x@1.56Hz
+
+=== zeta ratio (with trim / without) by pole, ident-b world, d = 1 tick, m = 3; the worst-damped pair in 0.2-6 Hz ===
+ pole     a/b               5 m/s       8 m/s    12.5 m/s      19 m/s      26 m/s
+ 16.5 Hz  923/ 4405.2  overdamped->ovd  overdamped->ovd  overdamped->ovd  overdamped->ovd  overdamped->ovd
+ 8 Hz     973/ 2224.4  overdamped->ovd  overdamped->ovd  overdamped->ovd  overdamped->ovd  overdamped->ovd
+ 2.0 Hz   1011/  567.0  overdamped->0.78@6.00  overdamped->ovd  overdamped->ovd  overdamped->ovd  overdamped->ovd
+ 1.4 Hz   1015/  392.5  overdamped->0.82@5.39  overdamped->0.84@5.77  overdamped->ovd  overdamped->ovd  overdamped->ovd
+
+=== shipped (1011/567): absolute zeta, frequency, loop gain, -180 crossings, encirclements; light world ===
+ light v   5.0: zeta 0.559@1.07 -> 0.495@0.69 Hz (x0.89); max|pole| 0.99785; |L|(2.4) 0.62, max |L| 0.84 @ 1.33 Hz ph 19; min Re L -0.136; enc(1+L) -0.000
+        -180 crossings: 20.82 Hz |L| 0.023
+ light v   8.0: zeta 0.465@1.28 -> 0.465@0.83 Hz (x1.00); max|pole| 0.99756; |L|(2.4) 0.67, max |L| 0.92 @ 1.47 Hz ph 20; min Re L -0.145; enc(1+L) -0.000
+        -180 crossings: 20.82 Hz |L| 0.023
+ light v  12.5: zeta 0.350@1.71 -> 0.451@1.13 Hz (x1.29); max|pole| 0.99680; |L|(2.4) 0.83, max |L| 1.05 @ 1.80 Hz ph 18; min Re L -0.145; enc(1+L) -0.000
+        -180 crossings: 20.82 Hz |L| 0.023
+ light v  19.0: zeta 0.319@1.87 -> 0.456@1.25 Hz (x1.43); max|pole| 0.99642; |L|(2.4) 0.92, max |L| 1.09 @ 1.95 Hz ph 16; min Re L -0.140; enc(1+L) -0.000
+        -180 crossings: 20.83 Hz |L| 0.023
+ light v  26.0: zeta 0.275@2.17 -> 0.474@1.48 Hz (x1.73); max|pole| 0.99560; |L|(2.4) 1.10, max |L| 1.14 @ 2.22 Hz ph 12; min Re L -0.128; enc(1+L) -0.000
+        -180 crossings: 20.83 Hz |L| 0.023
+ ident v   5.0: zeta nan@nan -> 0.777@6.00 Hz (xnan); max|pole| 0.99717; |L|(2.4) 0.34, max |L| 0.34 @ 2.22 Hz ph -9; min Re L -0.059; enc(1+L) -0.000
+        -180 crossings: 23.70 Hz |L| 0.017
+ ident v   8.0: zeta nan@nan -> nan@nan Hz (xnan); max|pole| 0.99687; |L|(2.4) 0.29, max |L| 0.29 @ 2.42 Hz ph -9; min Re L -0.051; enc(1+L) -0.000
+        -180 crossings: 24.70 Hz |L| 0.016
+ ident v  12.5: zeta nan@nan -> nan@nan Hz (xnan); max|pole| 0.99705; |L|(2.4) 0.19, max |L| 0.19 @ 2.78 Hz ph -9; min Re L -0.035; enc(1+L) -0.000
+        -180 crossings: 27.45 Hz |L| 0.013
+ ident v  19.0: zeta nan@nan -> nan@nan Hz (xnan); max|pole| 0.99684; |L|(2.4) 0.17, max |L| 0.17 @ 2.85 Hz ph -8; min Re L -0.032; enc(1+L) -0.000
+        -180 crossings: 28.25 Hz |L| 0.012
+ ident v  26.0: zeta nan@nan -> nan@nan Hz (xnan); max|pole| 0.99685; |L|(2.4) 0.13, max |L| 0.13 @ 2.99 Hz ph -7; min Re L -0.025; enc(1+L) -0.000
+        -180 crossings: 30.30 Hz |L| 0.010
+
+=== sensitivity: transport delay d (ticks) and rate-former window m; worst zeta ratio over 2..35 m/s, both worlds, K/J 0.5/1/2 ===
+  d 0 m 1: worst zeta ratio 0.613 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.5871055306692733), np.float64(0.33033439890170235)); unstable closed loops 0
+  d 0 m 3: worst zeta ratio 0.613 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.5873279914329629), np.float64(0.3301034204559552)); unstable closed loops 0
+  d 1 m 1: worst zeta ratio 0.613 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.587327458933392), np.float64(0.33010352674226284)); unstable closed loops 0
+  d 1 m 3: worst zeta ratio 0.613 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.5875497871597328), np.float64(0.3298729111384666)); unstable closed loops 0
+  d 2 m 1: worst zeta ratio 0.613 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.5875491487280249), np.float64(0.32987307079432454)); unstable closed loops 0
+  d 2 m 3: worst zeta ratio 0.613 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.587770886612182), np.float64(0.3296430452071563)); unstable closed loops 0
+  d 3 m 1: worst zeta ratio 0.613 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.5877704696258772), np.float64(0.3296430942157615)); unstable closed loops 0
+  d 3 m 3: worst zeta ratio 0.614 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.5879918060504509), np.float64(0.3294135630716352)); unstable closed loops 0
+  d 5 m 1: worst zeta ratio 0.608 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.5823655356944412), np.float64(6.016083291243021)); unstable closed loops 0
+  d 5 m 3: worst zeta ratio 0.595 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.5698566471556114), np.float64(6.001408889371779)); unstable closed loops 0
+  d 8 m 1: worst zeta ratio 0.568 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.5447903771514245), np.float64(5.966705686704196)); unstable closed loops 0
+  d 8 m 3: worst zeta ratio 0.555 at gain/world/kmul/v/z0/z1/f (2.0, 'light', 0.5, np.float64(3.0), np.float64(0.9583145865718765), np.float64(0.5321154036046516), np.float64(5.943612577861717)); unstable closed loops 0

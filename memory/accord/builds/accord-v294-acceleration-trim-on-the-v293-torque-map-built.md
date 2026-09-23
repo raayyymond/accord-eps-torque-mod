@@ -1,6 +1,6 @@
 ---
 name: accord-v294-acceleration-trim-on-the-v293-torque-map-built
-description: "V294 BUILT 2026-09-20, NOT FLOWN: V293's torque map + a 1 kHz ACCELERATION trim through the stock PID's own P gain -- two in-place opcode halfwords (0x28FA4 add->subr: r26 = s_new - s_old; 0x29D76 shl 5->2) + fb clamp 0->1024 + fb-lag pole 923->1011 (2.0 Hz) + b 1560->567 + Kp 120->960 on all 28 records; the feedforward is BIT-IDENTICAL to V293 at every demand index, the trim is bounded at 25 % of the rail, 27 dB below V282's 20 Hz loop gain; damping ratio of the wheel mode x1.02-2.05 across 5-26 m/s (BELIEF plant). Fork REVERTED: every torque-mode term defaults off, toggle-config_V294_accel-trim_r1."
+description: "V294 BUILT 2026-09-20, NOT FLOWN, REDONE AND RE-VERIFIED 2026-09-23 by four Opus agents (flash-eligible; zeta table corrected to exact poles x0.89 at 5 m/s; instrument rule replaced; fork deploy conditions: import parked + Rebuild Params): V293's torque map + a 1 kHz ACCELERATION trim through the stock PID's own P gain -- two in-place opcode halfwords (0x28FA4 add->subr: r26 = s_new - s_old; 0x29D76 shl 5->2) + fb clamp 0->1024 + fb-lag pole 923->1011 (2.0 Hz) + b 1560->567 + Kp 120->960 on all 28 records; the feedforward is BIT-IDENTICAL to V293 at every demand index, the trim is bounded at 25 % of the rail, 27 dB below V282's 20 Hz loop gain; damping ratio of the wheel mode x1.02-2.05 across 5-26 m/s (BELIEF plant). Fork REVERTED: every torque-mode term defaults off, toggle-config_V294_accel-trim_r1."
 metadata:
   type: project
 ---
@@ -38,7 +38,7 @@ first-order low-pass at the lag pole. Pole sweep at K_α/J = 1 (fork plant J 8e-
 |---|---|---|
 | 16.5 Hz (stock) | 0.81 · 0.86 · 0.98 · 1.13 · 1.28 | −10 dB — inertia dominates below 5 Hz, WORSE at low speed |
 | 8 Hz | 0.84 · 0.91 · 1.06 · 1.25 · 1.45 | −15 dB |
-| **2.0 Hz (shipped)** | **1.02 · 1.16 · 1.49 · 1.82 · 2.05** | **−27 dB** |
+| **2.0 Hz (shipped)** | ~~1.02 · 1.16 · 1.49 · 1.82 · 2.05~~ **quasi-static, SUPERSEDED 2026-09-23 → exact poles 0.89 · 1.00 · 1.29 · 1.43 · 1.73 (map k)** | **−27 dB** |
 | 1.4 Hz | 1.13 · 1.30 · 1.62 · 1.84 · 1.93 | −30 dB |
 
 The trim anti-damps only where the total lag passes 180° (~26 Hz here), where the 5 Hz output lag has cut it
@@ -54,9 +54,7 @@ V282 on the acceleration axis and AT V293 on the rate axis.
 
 ## The within-frame instrument (no cross-drive contrast needed)
 Because the FF is byte-exact V293's, on every engaged ramped frame `residual = T_tap − FF_V293(idx)·taper =
-the trim`. Regress it on −(0x18F rate through a 2 Hz LPF, differenced): slope > 0 with the FF identity R² ≥ 0.98
-on low-acceleration frames = LIVE, RIGHT SIGN. Flat = not live (nothing else licensed). POSITIVE correlation =
-SIGN INVERTED, stop, revert to V293. New line anywhere in 5–30 Hz = the revert signature.
+the trim`. ~~Regress it on −(0x18F rate through a 2 Hz LPF, differenced): slope > 0 = LIVE~~ **SUPERSEDED 2026-09-23 — that rule FAILED on real V293 null routes (read +0.021, overlapping live).** The rule that works (20/20 on real null windows + synthetic-live control): byte-exact 1 kHz predictor on the route's own command (fade + 5.05 Hz output lag), regressor = output-lag replica of −d/dt LPF_2.03(rate) in deg/s², nuisance FF + dFF/dt; **β > +0.10 T counts per deg/s² = LIVE (expected +0.21), |β| < 0.04 = NOT LIVE**. Sign-calibrate the regressor against the feedforward on the same route: the v280 cache `rate` column is the RAW 0x18F field = −8 × carState rate. New line anywhere in 5–30 Hz = the revert signature; if the trim is not live, route 71's 2.34 Hz limit cycle at ≥ 19 m/s is the expected symptom.
 
 ## The fork side (Dom, uncommitted at the time of writing → see the handoff for the commit)
 Every V293 torque-mode term now DEFAULTS OFF (params_keys.h default = stock; starpilot_variables defaults; the
@@ -112,3 +110,21 @@ Two code bytes change: NOT cal-only, the class of V57's displacement repoint (in
 
 Related: [[accord-v293-torque-mode-built-cleared-over-one-dissent]] · [[accord-the-relay-is-not-the-instability-mechanism-tier-b-closed]] ·
 [[accord-the-creep-grind-is-the-lkas-rate-loop-crossover-resonance-d-dominated]] · [[accord-feedback-operand-is-a-two-sample-sum-dc-30-89]]
+
+## Redo audit 2026-09-23 — four fresh Opus agents, disjoint surfaces: ALL PASS (flash-eligible / deployable)
+Reports + scripts: `analysis-2020accord/studies/v294/redo_2026-09-23/{build,ghidra,physics,fork}/`. Each wrote FAIL criteria first
+and re-derived from the images / the fork source, not from the build script.
+- **Bytes:** own CRC walker, both opcodes hand-decoded from the ISA, own rebuild reproduces `3143616d…`, own rwd decoder, FF identity
+  over all 2³² sp, operand settles to exactly 0 for every x. Corrections: restart transient is an 80–400 ms braking pulse (peak 73
+  counts at 50 deg/s, ≤ 615), not one tick; gp-0x6a34 and gp-0x6cf8 change value (dead readers); substantive assertions 32 not 66.
+- **Ghidra:** r26 = s_new − s_old (state gp-0x3d30, NOT gp-0x6a5c), polarity cancels, x = 8.00 from 0x55B48 + DBC factor −1 +
+  d(angle)/dt ÷ rate = 1.002–1.007; `x_scale_from_v292_wire.py` is CIRCULAR for the unit (divides by carState rate = x/8).
+- **Physics:** sign / 20 Hz (−26.69 dB) / stability (|L| 0.023 at 20.8 Hz, 0 unstable in 3,456 variants) / outer loop (never
+  destabilised a V293-stable loop, stabilised 247) hold. **ζ× table was quasi-static: exact poles ×0.89/1.00/1.29/1.43/1.73 —
+  below ~8 m/s the wheel is slightly LESS damped and slower** (orchestrator reproduced the exact roots). 180° crossing 19–24 Hz;
+  max |L| 1.1–1.2; one-sided from idx 236; "PID" is a misnomer (P-only on lagged accel + FF; Ki/Kd zero by structure).
+  **Instrument replaced** (see the section above). If the trim is not live → route 71's limit cycle at ≥ 19 m/s.
+- **Fork:** HEAD + r1 bit-identical to the pre-V293 base and the generic path (real LatControlTorque); HEAD + REVERT = rev 6.4.
+  **Deploy PARKED; run Rebuild Params after pulling.** Five Accord tests broke on 54ff1ea39 → fixed (explicit rev-6.4 toggles) +
+  LaneChangeTurnGate known() guard, in the working tree (commit/push blocked for the agent). LaneChangeTurnGate stays ON;
+  UseAutoSteerDelay stays true (operator's own); V282 revert config STALE; `fork_revert_patch.py` partial (header note).

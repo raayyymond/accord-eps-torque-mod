@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """Apply the V294 fork revert to the operator's StarPilot clone (Dom).  Exact-string edits, each asserted to
 match exactly once, so a drifted file fails loudly instead of being half-patched.  Idempotent-unsafe: run once."""
+# 🛑 PARTIAL RECORD (redo audit 2026-09-23): this script reproduces the params_keys.h, starpilot_variables.py and
+# device_settings_layout.json edits of Dom 54ff1ea39 exactly, but the commit ALSO carried three edits made by hand:
+# the 8 getattr fallback flips in selfdrive/controls/lib/latcontrol_torque.py, the AccordJerkLpHz key in
+# starpilot/common/safe_mode.py, and the test_device_settings_layout.py CUSTOM_PATCH_KEYS/pinned-default edits.
+# The commit is the record; this script is not a full replay.
 import json
 import sys
 from pathlib import Path

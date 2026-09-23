@@ -1,0 +1,58 @@
+r70_v293: tap delta -4 ms, tap sign +1; dynamic-pred resid 7.4 vs static 9.1 counts; POLARITY: x_tapconv = +1 * wire (peak HP corr +0.33 at 0 ms); 4 windows
+    null_static_E1: median +0.008  5-95% [-0.006, +0.023]
+    null_static_E2: median +0.009  5-95% [-0.006, +0.026]
+    null_dyn_E1 : median -0.007  5-95% [-0.022, +0.000]
+    null_dyn_E2 : median -0.002  5-95% [-0.013, +0.009]
+    null_dyn_E3 : median -0.000  5-95% [-0.025, +0.016]
+    live_dyn_E1 : median +0.066  5-95% [+0.031, +0.097]
+    live_dyn_E2 : median +0.076  5-95% [+0.034, +0.105]
+    live_dyn_E3 : median +0.191  5-95% [+0.175, +0.227]
+r71_v293r2: tap delta -4 ms, tap sign +1; dynamic-pred resid 7.9 vs static 11.5 counts; POLARITY: x_tapconv = +1 * wire (peak HP corr +0.28 at 0 ms); 3 windows
+    null_static_E1: median +0.031  5-95% [+0.025, +0.081]
+    null_static_E2: median +0.031  5-95% [+0.031, +0.079]
+    null_dyn_E1 : median +0.001  5-95% [-0.008, +0.002]
+    null_dyn_E2 : median +0.000  5-95% [-0.000, +0.002]
+    null_dyn_E3 : median +0.005  5-95% [-0.008, +0.010]
+    live_dyn_E1 : median +0.075  5-95% [+0.042, +0.127]
+    live_dyn_E2 : median +0.075  5-95% [+0.049, +0.126]
+    live_dyn_E3 : median +0.208  5-95% [+0.186, +0.219]
+r72_v293r3: tap delta -4 ms, tap sign +1; dynamic-pred resid 15.1 vs static 15.7 counts; POLARITY: x_tapconv = +1 * wire (peak HP corr +0.37 at 0 ms); 7 windows
+    null_static_E1: median +0.002  5-95% [-0.028, +0.034]
+    null_static_E2: median +0.010  5-95% [-0.023, +0.040]
+    null_dyn_E1 : median -0.015  5-95% [-0.029, +0.002]
+    null_dyn_E2 : median -0.002  5-95% [-0.011, +0.020]
+    null_dyn_E3 : median +0.011  5-95% [-0.033, +0.027]
+    live_dyn_E1 : median +0.063  5-95% [-0.014, +0.090]
+    live_dyn_E2 : median +0.069  5-95% [+0.010, +0.115]
+    live_dyn_E3 : median +0.195  5-95% [+0.148, +0.243]
+r73_v293r3: tap delta -4 ms, tap sign +1; dynamic-pred resid 26.3 vs static 30.7 counts; POLARITY: x_tapconv = +1 * wire (peak HP corr +0.57 at 0 ms); 3 windows
+    null_static_E1: median +0.055  5-95% [+0.035, +0.097]
+    null_static_E2: median +0.051  5-95% [+0.024, +0.095]
+    null_dyn_E1 : median -0.002  5-95% [-0.038, +0.001]
+    null_dyn_E2 : median -0.017  5-95% [-0.039, -0.015]
+    null_dyn_E3 : median -0.006  5-95% [-0.052, -0.001]
+    live_dyn_E1 : median +0.066  5-95% [+0.041, +0.067]
+    live_dyn_E2 : median +0.043  5-95% [+0.035, +0.050]
+    live_dyn_E3 : median +0.179  5-95% [+0.145, +0.192]
+r75_v293r4: tap delta -4 ms, tap sign +1; dynamic-pred resid 7.2 vs static 7.8 counts; POLARITY: x_tapconv = +1 * wire (peak HP corr +0.37 at 0 ms); 3 windows
+    null_static_E1: median +0.018  5-95% [+0.009, +0.024]
+    null_static_E2: median +0.021  5-95% [+0.018, +0.024]
+    null_dyn_E1 : median -0.009  5-95% [-0.019, +0.004]
+    null_dyn_E2 : median +0.003  5-95% [-0.005, +0.007]
+    null_dyn_E3 : median +0.005  5-95% [-0.004, +0.007]
+    live_dyn_E1 : median +0.126  5-95% [+0.072, +0.131]
+    live_dyn_E2 : median +0.125  5-95% [+0.090, +0.133]
+    live_dyn_E3 : median +0.208  5-95% [+0.197, +0.223]
+
+ALL 20 windows:
+  null_static_E1: median +0.021  5-95% [-0.027, +0.087]  frac>+0.05 0.15
+  null_static_E2: median +0.021  5-95% [-0.022, +0.085]  frac>+0.05 0.15
+  null_dyn_E1 : median -0.007  5-95% [-0.031, +0.002]  frac>+0.05 0.00
+  null_dyn_E2 : median -0.001  5-95% [-0.018, +0.014]  frac>+0.05 0.00
+  null_dyn_E3 : median +0.004  5-95% [-0.037, +0.024]  frac>+0.05 0.00
+  live_dyn_E1 : median +0.067  5-95% [-0.002, +0.132]  frac>+0.05 0.70
+  live_dyn_E2 : median +0.075  5-95% [+0.012, +0.132]  frac>+0.05 0.65
+  live_dyn_E3 : median +0.196  5-95% [+0.145, +0.233]  frac>+0.05 1.00
+  E1: separation -- live median +0.067, null median -0.007; with threshold +0.033: live correct 0.80, null correct 1.00
+  E2: separation -- live median +0.075, null median -0.001; with threshold +0.037: live correct 0.75, null correct 1.00
+  E3: separation -- live median +0.196, null median +0.004; with threshold +0.098: live correct 1.00, null correct 1.00

@@ -1,0 +1,8 @@
+K_alpha_u = 7.9889e-05; wp = 12.777 rad/s (2.033 Hz); wo = 31.749 rad/s (5.053 Hz)
+
+ v    open: zeta f_n | exact-discrete: all complex pairs < 10 Hz (zeta, f_n) | continuous 4th-order roots | perturbation @f_open, @f_closed
+  5.0  0.559 1.07 | [(np.float64(0.495), np.float64(0.69)), (np.float64(0.745), np.float64(4.95))] reals(Hz) [] | cont [(np.float64(0.493), np.float64(0.69)), (np.float64(0.768), np.float64(4.95))] reals [] | pert@open zeta 0.647 (x1.16; Je/J 1.67, be/b 1.49)  pert@closed x0.92
+  8.0  0.465 1.28 | [(np.float64(0.465), np.float64(0.83)), (np.float64(0.741), np.float64(4.92))] reals(Hz) [] | cont [(np.float64(0.462), np.float64(0.84)), (np.float64(0.764), np.float64(4.91))] reals [] | pert@open zeta 0.609 (x1.31; Je/J 1.56, be/b 1.64)  pert@closed x1.00
+ 12.5  0.350 1.71 | [(np.float64(0.451), np.float64(1.13)), (np.float64(0.729), np.float64(4.83))] reals(Hz) [] | cont [(np.float64(0.446), np.float64(1.13)), (np.float64(0.753), np.float64(4.82))] reals [] | pert@open zeta 0.562 (x1.61; Je/J 1.38, be/b 1.89)  pert@closed x1.20
+ 19.0  0.319 1.87 | [(np.float64(0.456), np.float64(1.25)), (np.float64(0.723), np.float64(4.79))] reals(Hz) [] | cont [(np.float64(0.45), np.float64(1.26)), (np.float64(0.748), np.float64(4.78))] reals [] | pert@open zeta 0.546 (x1.71; Je/J 1.31, be/b 1.96)  pert@closed x1.29
+ 26.0  0.275 2.17 | [(np.float64(0.474), np.float64(1.48)), (np.float64(0.709), np.float64(4.7))] reals(Hz) [] | cont [(np.float64(0.467), np.float64(1.49)), (np.float64(0.736), np.float64(4.68))] reals [] | pert@open zeta 0.517 (x1.88; Je/J 1.21, be/b 2.07)  pert@closed x1.45

@@ -1,0 +1,89 @@
+=== P-counts per x-count at 20 Hz (before taper/output lag): V294 vs V282 ===
+V294 2.079  V282 44.90  ratio 0.0463 = -26.69 dB
+
+=== |Cr| ratio V294/V282 across frequency (scale-free: same sensor, same actuator, same Td cancels in the ratio) ===
+    1.0 Hz: |Cr294|   1.160  |Cr282|   37.790 T/(deg/s)   ratio 0.0307 ( -30.3 dB)   phase294    52.6  phase282    -8.7
+    2.0 Hz: |Cr294|   1.747  |Cr282|   36.222 T/(deg/s)   ratio 0.0482 ( -26.3 dB)   phase294    23.9  phase282   -16.8
+    3.0 Hz: |Cr294|   1.907  |Cr282|   34.092 T/(deg/s)   ratio 0.0559 ( -25.0 dB)   phase294     3.4  phase282   -23.8
+    5.0 Hz: |Cr294|   1.764  |Cr282|   29.597 T/(deg/s)   ratio 0.0596 ( -24.5 dB)   phase294   -22.6  phase282   -34.3
+    7.0 Hz: |Cr294|   1.506  |Cr282|   25.820 T/(deg/s)   ratio 0.0583 ( -24.7 dB)   phase294   -38.0  phase282   -41.6
+   10.0 Hz: |Cr294|   1.184  |Cr282|   21.655 T/(deg/s)   ratio 0.0547 ( -25.2 dB)   phase294   -51.7  phase282   -49.3
+   13.0 Hz: |Cr294|   0.959  |Cr282|   18.681 T/(deg/s)   ratio 0.0513 ( -25.8 dB)   phase294   -59.9  phase282   -55.1
+   16.0 Hz: |Cr294|   0.800  |Cr282|   16.414 T/(deg/s)   ratio 0.0487 ( -26.2 dB)   phase294   -65.3  phase282   -59.8
+   18.0 Hz: |Cr294|   0.719  |Cr282|   15.169 T/(deg/s)   ratio 0.0474 ( -26.5 dB)   phase294   -67.9  phase282   -62.5
+   20.0 Hz: |Cr294|   0.652  |Cr282|   14.085 T/(deg/s)   ratio 0.0463 ( -26.7 dB)   phase294   -70.0  phase282   -65.0
+   22.0 Hz: |Cr294|   0.596  |Cr282|   13.132 T/(deg/s)   ratio 0.0454 ( -26.9 dB)   phase294   -71.8  phase282   -67.2
+   26.0 Hz: |Cr294|   0.509  |Cr282|   11.535 T/(deg/s)   ratio 0.0441 ( -27.1 dB)   phase294   -74.6  phase282   -71.1
+   30.0 Hz: |Cr294|   0.443  |Cr282|   10.254 T/(deg/s)   ratio 0.0432 ( -27.3 dB)   phase294   -76.6  phase282   -74.4
+   35.0 Hz: |Cr294|   0.381  |Cr282|    8.975 T/(deg/s)   ratio 0.0424 ( -27.4 dB)   phase294   -78.5  phase282   -77.9
+   40.0 Hz: |Cr294|   0.334  |Cr282|    7.958 T/(deg/s)   ratio 0.0419 ( -27.6 dB)   phase294   -79.9  phase282   -80.8
+   60.0 Hz: |Cr294|   0.222  |Cr282|    5.388 T/(deg/s)   ratio 0.0412 ( -27.7 dB)   phase294   -83.3  phase282   -89.6
+
+=== where the V294 added torque crosses 180 deg of total lag re acceleration (Re Cr294 = 0 crossing; damping below) ===
+  Td  0.0 ms: damping -> anti-damping at    nan Hz; worst anti-damping Re Cr +0.0000 T/(deg/s) at nan Hz (= 0.0 % of the trim's 2.4 Hz damping 1.785)
+  Td  1.0 ms: damping -> anti-damping at  33.43 Hz; worst anti-damping Re Cr -0.0695 T/(deg/s) at 105.5 Hz (= 3.9 % of the trim's 2.4 Hz damping 1.785)
+  Td  2.0 ms: damping -> anti-damping at  23.59 Hz; worst anti-damping Re Cr -0.1335 T/(deg/s) at 68.1 Hz (= 7.5 % of the trim's 2.4 Hz damping 1.785)
+  Td  3.0 ms: damping -> anti-damping at  19.21 Hz; worst anti-damping Re Cr -0.1921 T/(deg/s) at 51.4 Hz (= 10.8 % of the trim's 2.4 Hz damping 1.785)
+  Td  4.0 ms: damping -> anti-damping at  16.60 Hz; worst anti-damping Re Cr -0.2467 T/(deg/s) at 42.0 Hz (= 13.8 % of the trim's 2.4 Hz damping 1.785)
+  Td  5.0 ms: damping -> anti-damping at  14.80 Hz; worst anti-damping Re Cr -0.2981 T/(deg/s) at 35.8 Hz (= 16.7 % of the trim's 2.4 Hz damping 1.785)
+  Td  6.0 ms: damping -> anti-damping at  13.48 Hz; worst anti-damping Re Cr -0.3470 T/(deg/s) at 31.5 Hz (= 19.4 % of the trim's 2.4 Hz damping 1.785)
+  Td  8.0 ms: damping -> anti-damping at  11.61 Hz; worst anti-damping Re Cr -0.4380 T/(deg/s) at 25.7 Hz (= 24.5 % of the trim's 2.4 Hz damping 1.785)
+  Td 10.0 ms: damping -> anti-damping at  10.33 Hz; worst anti-damping Re Cr -0.5217 T/(deg/s) at 22.0 Hz (= 29.2 % of the trim's 2.4 Hz damping 1.785)
+
+=== V282's anti-damping for comparison (the loop that ground at 17-21 Hz) ===
+  Td 0 ms: V282 Re Cr282 changes sign at  61.15 Hz; Re Cr at 20 Hz +5.960, at 26 Hz +3.738; V294 Re Cr at 20 Hz +0.2226, 26 Hz +0.1353
+  Td 1 ms: V282 Re Cr282 changes sign at  34.55 Hz; Re Cr at 20 Hz +4.313, at 26 Hz +1.914; V294 Re Cr at 20 Hz +0.1440, 26 Hz +0.0538
+  Td 2 ms: V282 Re Cr282 changes sign at  26.12 Hz; Re Cr at 20 Hz +2.599, at 26 Hz +0.038; V294 Re Cr at 20 Hz +0.0632, 26 Hz -0.0291
+  Td 3 ms: V282 Re Cr282 changes sign at  21.55 Hz; Re Cr at 20 Hz +0.843, at 26 Hz -1.838; V294 Re Cr at 20 Hz -0.0187, 26 Hz -0.1113
+  Td 5 ms: V282 Re Cr282 changes sign at  16.44 Hz; Re Cr at 20 Hz -2.680, at 26 Hz -5.396; V294 Re Cr at 20 Hz -0.1802, 26 Hz -0.2647
+
+=== consistency check: V282's rate loop crossover in this plant (J_T = J * T_per_u), rigid body ===
+  Td 0 ms: V282 |L| = 1 at 13.7 Hz, phase -146 deg (PM 34); V294 |L| there 0.0507
+  Td 2 ms: V282 |L| = 1 at 13.7 Hz, phase -156 deg (PM 24); V294 |L| there 0.0507
+  Td 4 ms: V282 |L| = 1 at 13.7 Hz, phase -166 deg (PM 14); V294 |L| there 0.0507
+
+=== collocated two-mass family: flexible-mode zeta, open / with V294 trim / with V282 loop (d = 2 ticks, m = 3) ===
+  mode  12 Hz, J_w/J 0.2, zeta_open 0.02: open 0.0329@12.0 | V294 0.0368@12.1 (max|z| 0.9972) | V282 0.0649@17.9 (max|z| 0.9993)
+  mode  12 Hz, J_w/J 0.2, zeta_open 0.05: open 0.0628@12.0 | V294 0.0666@12.1 (max|z| 0.9964) | V282 0.0735@18.0 (max|z| 0.9993)
+  mode  12 Hz, J_w/J 0.5, zeta_open 0.02: open 0.0712@12.1 | V294 0.0841@12.5 (max|z| 0.9964) | V282 -0.0179@22.7 (max|z| 1.0026)
+  mode  12 Hz, J_w/J 0.5, zeta_open 0.05: open 0.1009@12.1 | V294 0.1130@12.5 (max|z| 0.9964) | V282 -0.0083@22.7 (max|z| 1.0012)
+  mode  12 Hz, J_w/J 0.8, zeta_open 0.02: open 0.2194@12.4 | V294 0.2233@14.4 (max|z| 0.9965) | V282 0.0757@5.1 (max|z| 1.0318)
+  mode  12 Hz, J_w/J 0.8, zeta_open 0.05: open 0.2484@12.4 | V294 0.2473@14.4 (max|z| 0.9965) | V282 0.0869@5.0 (max|z| 1.0302)
+  mode  16 Hz, J_w/J 0.2, zeta_open 0.02: open 0.0295@16.0 | V294 0.0303@16.1 (max|z| 0.9969) | V282 0.0296@19.6 (max|z| 0.9993)
+  mode  16 Hz, J_w/J 0.2, zeta_open 0.05: open 0.0595@16.0 | V294 0.0601@16.1 (max|z| 0.9964) | V282 0.0464@19.7 (max|z| 0.9993)
+  mode  16 Hz, J_w/J 0.5, zeta_open 0.02: open 0.0579@16.1 | V294 0.0599@16.4 (max|z| 0.9964) | V282 -0.0308@24.3 (max|z| 1.0047)
+  mode  16 Hz, J_w/J 0.5, zeta_open 0.05: open 0.0878@16.1 | V294 0.0891@16.4 (max|z| 0.9964) | V282 -0.0170@24.3 (max|z| 1.0026)
+  mode  16 Hz, J_w/J 0.8, zeta_open 0.02: open 0.1695@16.3 | V294 0.1614@17.7 (max|z| 0.9964) | V282 -0.1531@33.3 (max|z| 1.0325)
+  mode  16 Hz, J_w/J 0.8, zeta_open 0.05: open 0.1989@16.3 | V294 0.1880@17.7 (max|z| 0.9964) | V282 -0.1433@33.3 (max|z| 1.0305)
+  mode  20 Hz, J_w/J 0.2, zeta_open 0.02: open 0.0275@20.0 | V294 0.0273@20.1 (max|z| 0.9966) | V282 0.0087@22.3 (max|z| 0.9993)
+  mode  20 Hz, J_w/J 0.2, zeta_open 0.05: open 0.0575@20.0 | V294 0.0572@20.1 (max|z| 0.9964) | V282 0.0316@22.4 (max|z| 0.9993)
+  mode  20 Hz, J_w/J 0.5, zeta_open 0.02: open 0.0501@20.1 | V294 0.0488@20.3 (max|z| 0.9964) | V282 -0.0390@26.4 (max|z| 1.0065)
+  mode  20 Hz, J_w/J 0.5, zeta_open 0.05: open 0.0800@20.1 | V294 0.0782@20.3 (max|z| 0.9964) | V282 -0.0213@26.5 (max|z| 1.0035)
+  mode  20 Hz, J_w/J 0.8, zeta_open 0.02: open 0.1395@20.2 | V294 0.1270@21.3 (max|z| 0.9964) | V282 -0.1496@34.8 (max|z| 1.0332)
+  mode  20 Hz, J_w/J 0.8, zeta_open 0.05: open 0.1692@20.2 | V294 0.1547@21.3 (max|z| 0.9964) | V282 -0.1375@34.8 (max|z| 1.0305)
+  mode  26 Hz, J_w/J 0.2, zeta_open 0.02: open 0.0258@26.0 | V294 0.0252@26.1 (max|z| 0.9964) | V282 0.0023@27.4 (max|z| 0.9996)
+  mode  26 Hz, J_w/J 0.2, zeta_open 0.05: open 0.0558@26.0 | V294 0.0551@26.1 (max|z| 0.9964) | V282 0.0290@27.4 (max|z| 0.9993)
+  mode  26 Hz, J_w/J 0.5, zeta_open 0.02: open 0.0431@26.0 | V294 0.0404@26.2 (max|z| 0.9964) | V282 -0.0406@30.4 (max|z| 1.0078)
+  mode  26 Hz, J_w/J 0.5, zeta_open 0.05: open 0.0730@26.0 | V294 0.0701@26.2 (max|z| 0.9964) | V282 -0.0188@30.4 (max|z| 1.0036)
+  mode  26 Hz, J_w/J 0.8, zeta_open 0.02: open 0.1119@26.2 | V294 0.0984@26.9 (max|z| 0.9964) | V282 -0.1406@37.6 (max|z| 1.0337)
+  mode  26 Hz, J_w/J 0.8, zeta_open 0.05: open 0.1417@26.2 | V294 0.1270@26.9 (max|z| 0.9964) | V282 -0.1255@37.6 (max|z| 1.0301)
+  mode  31 Hz, J_w/J 0.2, zeta_open 0.02: open 0.0248@31.0 | V294 0.0242@31.0 (max|z| 0.9964) | V282 0.0035@31.9 (max|z| 0.9993)
+  mode  31 Hz, J_w/J 0.2, zeta_open 0.05: open 0.0548@31.0 | V294 0.0541@31.0 (max|z| 0.9964) | V282 0.0315@31.9 (max|z| 0.9993)
+  mode  31 Hz, J_w/J 0.5, zeta_open 0.02: open 0.0393@31.0 | V294 0.0366@31.2 (max|z| 0.9964) | V282 -0.0361@34.3 (max|z| 1.0078)
+  mode  31 Hz, J_w/J 0.5, zeta_open 0.05: open 0.0693@31.0 | V294 0.0663@31.2 (max|z| 0.9964) | V282 -0.0122@34.3 (max|z| 1.0026)
+  mode  31 Hz, J_w/J 0.8, zeta_open 0.02: open 0.0970@31.1 | V294 0.0845@31.7 (max|z| 0.9964) | V282 -0.1302@40.3 (max|z| 1.0335)
+  mode  31 Hz, J_w/J 0.8, zeta_open 0.05: open 0.1269@31.1 | V294 0.1134@31.7 (max|z| 0.9964) | V282 -0.1130@40.3 (max|z| 1.0290)
+  mode  40 Hz, J_w/J 0.2, zeta_open 0.02: open 0.0237@40.0 | V294 0.0232@40.0 (max|z| 0.9964) | V282 0.0075@40.5 (max|z| 0.9993)
+  mode  40 Hz, J_w/J 0.2, zeta_open 0.05: open 0.0537@40.0 | V294 0.0531@40.0 (max|z| 0.9964) | V282 0.0364@40.5 (max|z| 0.9993)
+  mode  40 Hz, J_w/J 0.5, zeta_open 0.02: open 0.0350@40.0 | V294 0.0326@40.1 (max|z| 0.9964) | V282 -0.0244@41.8 (max|z| 1.0064)
+  mode  40 Hz, J_w/J 0.5, zeta_open 0.05: open 0.0649@40.0 | V294 0.0624@40.1 (max|z| 0.9964) | V282 0.0018@41.8 (max|z| 0.9995)
+  mode  40 Hz, J_w/J 0.8, zeta_open 0.02: open 0.0797@40.1 | V294 0.0696@40.5 (max|z| 0.9964) | V282 -0.1074@45.9 (max|z| 1.0315)
+  mode  40 Hz, J_w/J 0.8, zeta_open 0.05: open 0.1096@40.1 | V294 0.0988@40.5 (max|z| 0.9964) | V282 -0.0873@45.8 (max|z| 1.0255)
+
+  worst relative zeta change of the flexible mode under V294: -12.9 % at mode 31 Hz, J_w/J 0.8, zeta 0.02
+  V294 unstable in any case: False;  V282 unstable in any case: True
+  d 0 ticks: worst flexible-mode zeta change under V294 -4.6 % (mode 40 Hz, J_w/J 0.8); any unstable False
+  d 1 ticks: worst flexible-mode zeta change under V294 -7.4 % (mode 31 Hz, J_w/J 0.8); any unstable False
+  d 3 ticks: worst flexible-mode zeta change under V294 -13.8 % (mode 26 Hz, J_w/J 0.8); any unstable False
+  d 5 ticks: worst flexible-mode zeta change under V294 -20.2 % (mode 20 Hz, J_w/J 0.8); any unstable False
+  d 8 ticks: worst flexible-mode zeta change under V294 -30.1 % (mode 16 Hz, J_w/J 0.8); any unstable False

@@ -177,8 +177,32 @@ def plant_D(f, v, b_world):
     return k - J * w ** 2 + 1j * bb * w
 
 
+def mode_zeta_exact(v, a, b, b_world, out_hz=5.05):
+    """EXACT closed-loop poles of the wheel mode (redo audit 2026-09-23): (J s^2 + b s + k)(s + w_p)(s + w_o) + K w_p w_o s^2 = 0,
+    K/J = the trim's inertia ratio (1.0 on the shipped ladder), w_p the fb-lag pole, w_o the 5.05 Hz output lag.  The
+    quasi-static estimate in mode_analysis() OVERSTATES the low-speed benefit by ~10 %: on the design's own inputs the
+    shipped pole gives zeta x 0.92 / 1.05 / 1.38 / 1.79 / 2.25 at 5 / 8 / 12.5 / 19 / 26 m/s (the page and memory carried
+    1.02 / 1.16 / 1.49 / 1.82 / 2.05).  Below ~8 m/s the mode sits under the 2 Hz pole where the trim is mostly inertia,
+    so zeta FALLS (the heavier wheel is slower); the decay rate falls at every speed below ~21 m/s.  Confirmed by the
+    orchestrator's own 4th-order roots and by the auditor's exact 1 kHz discrete model (studies/v294/redo_2026-09-23/physics)."""
+    import numpy as np
+    J = J_TQ * COUNTS_PER_TQ
+    bb = (B_LIGHT if b_world == "light" else b_ident(v)) * COUNTS_PER_TQ
+    k = k_of_v(v) * COUNTS_PER_TQ
+    z0 = bb / (2 * math.sqrt(k * J))
+    K = J * 1.0     # the ladder holds K_alpha/J = 1.0 by construction of b_for_kalpha(a, 1.0)
+    wp, wo = 2 * math.pi * f_pole(a), 2 * math.pi * out_hz
+    p = np.polymul(np.polymul([J, bb, k], [1.0, wp]), [1.0, wo])
+    p[-3] += K * wp * wo
+    r = np.roots(p)
+    r = r[np.abs(r.imag) > 1e-9]
+    z1 = float(np.min(-r.real / np.abs(r)))
+    return dict(zeta0=z0, zeta1=z1, ratio=z1 / z0)
+
+
 def mode_analysis(v, a, b, tau_d, b_world):
-    """Quasi-static effective inertia/damping at the wheel mode, and the mode's zeta before/after."""
+    """Quasi-static effective inertia/damping at the wheel mode, and the mode's zeta before/after.
+    !! SUPERSEDED for the zeta ratio by mode_zeta_exact() (redo audit 2026-09-23) -- kept for the inertia/damping split."""
     J = J_TQ * COUNTS_PER_TQ
     bb = (B_LIGHT if b_world == "light" else b_ident(v)) * COUNTS_PER_TQ
     k = k_of_v(v) * COUNTS_PER_TQ
@@ -284,6 +308,14 @@ def main():
                   f"{ours20:6.2f} / {pd282:6.2f} = {ours20/pd282:5.3f} ({20*math.log10(ours20/pd282):6.1f} dB)"
                   f"   {alpha_clamp:7.0f} deg/s^2            {100*cap:4.1f} % of rail")
     print(f"    (V282 at 20 Hz: P {p282:.2f} + D {d282:.2f} P-counts per x count; V282's loop was MARGINAL there)")
+
+    print("\n[E0x] EXACT closed-loop poles (redo 2026-09-23) -- zeta ratio of the wheel mode, light world, K/J = 1, 5.05 Hz output lag")
+    print("    a     f_pole   zeta x @5    @8    @12.5  @19   @26")
+    for a in (923, 992, 1005, 1011, 1015, 1018):
+        b = b_for_kalpha(a, 1.0)
+        ex = [mode_zeta_exact(v, a, b, "light")["ratio"] for v in (5.0, 8.0, 12.5, 19.0, 26.0)]
+        print(f"   {a:4d}   {f_pole(a):5.2f} Hz   " + "  ".join(f"{r:5.2f}" for r in ex))
+    print("    (the quasi-static table below is the 2026-09-20 estimate; it overstates the low-speed ratio by ~10 %)")
 
     print("\n[E0] POLE SWEEP -- zeta ratio at the wheel mode (light world) per speed, the 20 Hz margin vs V282, 7 Hz sign")
     print("    a     f_pole  K/J   b     zeta x @5   @8   @12.5 @19  @26    f1/f0@19   20Hz vs V282   7Hz b_add/b@19")
