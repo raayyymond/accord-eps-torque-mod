@@ -61,7 +61,7 @@ Every V293 torque-mode term now DEFAULTS OFF (params_keys.h default = stock; sta
 controller's getattr fallbacks) and `AccordRatePlantFF` defaults off (its model is a rate servo or a bare
 torque map, V294 is neither). One new toggle `AccordJerkLpHz` (default 1.2 = generic; 4.0 = rev 6's measured
 value) gates the one torque-mode-era edit that had no switch. Nothing deleted. Config
-`toggle-config_V294_accel-trim_r1.json` = the V282-era values (SteerKP 0.9, Ki 0.3) + AccordRatePlantFF false +
+`toggle-config_V294_accel-trim_r1.json` = the operator's LATE-V282 toggles (SteerKP 0.9 read on the wire r6f, Ki 0.3; earlier V282 routes flew 0.6) + AccordRatePlantFF false +
 SteerLatAccel 14.0 + SteerFriction 0.011 + every torque-mode term at stock; revert file
 `…_REVERT_to_V293_r64.json`.
 
@@ -128,3 +128,12 @@ and re-derived from the images / the fork source, not from the build script.
   **Deploy PARKED; run Rebuild Params after pulling.** Five Accord tests broke on 54ff1ea39 → fixed (explicit rev-6.4 toggles) +
   LaneChangeTurnGate known() guard, in the working tree (commit/push blocked for the agent). LaneChangeTurnGate stays ON;
   UseAutoSteerDelay stays true (operator's own); V282 revert config STALE; `fork_revert_patch.py` partial (header note).
+
+## Is the r1 fork config TUNED to V294? NO (2026-09-23, operator's question)
+Wired correctly (real controller bit-identical to the pre-V293 generic path), but every value is inherited: Kp 0.9 / Ki 0.3 = the
+operator's late-V282 toggles; LAF 14 / friction 0.011 = measured on V293 route 70; torque-mode terms off. Nothing has flown on
+V294. Route 71 (same Kp 0.85 / LAF 14 / friction 0.011 on V293) limit-cycled at 2.34 Hz above 20 m/s — the trim is what the
+BELIEF-plant model says rescues it (+34° PM at 26 m/s, light world). Margin-safe alternative for a first drive: SteerKP 0.6.
+Also (operator's point, confirmed by three refuters): there is NO feedforward block in the firmware — P = Kp·(4·sp − r26) is one
+P multiply; the map rides through it because r26 (lagged acceleration) has no DC; the only structural acceleration-feedforward
+path is the D term's setpoint half, zeroed twice (Kd 0, D clamp 0). "PID + feedforward" was a description of behaviour, not code.
