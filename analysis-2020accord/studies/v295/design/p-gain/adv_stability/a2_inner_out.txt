@@ -1,0 +1,325 @@
+a2 inner loop: 394 cases (member x speed x delay x topology)
+A1 candidate unstable where V294 stable: 0
+   any case unstable at all (V294 / cand): 0 / 0
+A2 tracked poles with zeta < 0.3 whose zeta falls below 0.9x V294's: 2
+    ('nominal+T3_13_0.10_0.2', 11.9, 9, 5.809554310720062, 0.24228645896522294, 5.907053066881521, 0.21633514289432076)
+    ('nominal+T2_20_0.02_0.5', 26.9, 9, 15.16971031371005, 0.1277219181674324, 15.305532552911805, 0.11490038912495815)
+A3 Ms > 2 or > 1.25x V294: 0
+
+-- summary by group: max Ms (V294 -> cand), min GM, max |L| 1-3 Hz, min tracked zeta (V294 -> cand)
+  nominal                            Ms 1.144 -> 1.194 | GM 9.70 -> 7.46 | |L|1-3 0.34 -> 0.44 | min zeta V294 0.408->0.396 @141.6Hz ; cand 0.408->0.396 @141.6Hz
+  J_lo                               Ms 1.079 -> 1.104 | GM 28.88 -> 22.22 | |L|1-3 0.38 -> 0.49 | min zeta V294 0.759->0.717 @5.6Hz ; cand 0.759->0.717 @5.6Hz
+  J_hi                               Ms 1.036 -> 1.047 | GM 86.80 -> 66.77 | |L|1-3 0.23 -> 0.30 | min zeta V294 0.768->0.745 @0.5Hz ; cand 0.768->0.745 @0.5Hz
+  J_hi2                              Ms 1.051 -> 1.067 | GM 28.11 -> 21.62 | |L|1-3 0.19 -> 0.25 | min zeta V294 0.471->0.460 @139.2Hz ; cand 0.471->0.460 @139.2Hz
+  b_lo                               Ms 1.078 -> 1.102 | GM 37.75 -> 29.04 | |L|1-3 0.46 -> 0.60 | min zeta V294 0.703->0.673 @0.6Hz ; cand 0.703->0.673 @0.6Hz
+  b_hi                               Ms 1.048 -> 1.063 | GM 50.53 -> 38.87 | |L|1-3 0.24 -> 0.31 | min zeta V294 0.816->0.783 @4.1Hz ; cand 0.816->0.783 @4.0Hz
+  ms_free                            Ms 1.055 -> 1.072 | GM 51.80 -> 39.84 | |L|1-3 0.30 -> 0.39 | min zeta V294 0.337->0.338 @0.6Hz ; cand 0.337->0.338 @0.6Hz
+  light_b                            Ms 1.242 -> 1.330 | GM 6.97 -> 5.37 | |L|1-3 1.13 -> 1.46 | min zeta V294 0.414->0.402 @140.5Hz ; cand 0.414->0.402 @140.5Hz
+  nominal_Jx0.5                      Ms 1.077 -> 1.101 | GM 29.35 -> 22.58 | |L|1-3 0.37 -> 0.48 | min zeta V294 0.768->0.726 @5.5Hz ; cand 0.768->0.726 @5.5Hz
+  nominal_Jx2.5                      Ms 1.039 -> 1.051 | GM 82.81 -> 63.70 | |L|1-3 0.26 -> 0.34 | min zeta V294 0.717->0.696 @0.5Hz ; cand 0.717->0.696 @0.5Hz
+  light_b_Jx0.5                      Ms 1.170 -> 1.222 | GM 18.78 -> 14.44 | |L|1-3 1.21 -> 1.57 | min zeta V294 0.545->0.517 @1.0Hz ; cand 0.545->0.517 @1.0Hz
+  light_b_Jx2.5                      Ms 1.137 -> 1.175 | GM 75.46 -> 58.04 | |L|1-3 0.89 -> 1.16 | min zeta V294 0.270->0.281 @1.1Hz ; cand 0.270->0.281 @1.1Hz
+  light_b_bx0.5                      Ms 1.252 -> 1.319 | GM 30.43 -> 23.41 | |L|1-3 2.24 -> 2.92 | min zeta V294 0.325->0.320 @0.8Hz ; cand 0.325->0.320 @0.8Hz
+  light_b_kx0.35                     Ms 1.134 -> 1.172 | GM 33.13 -> 25.49 | |L|1-3 0.89 -> 1.16 | min zeta V294 0.473->0.455 @0.7Hz ; cand 0.473->0.455 @0.7Hz
+  nominal+T1_13_0.10_0.2             Ms 1.089 -> 1.117 | GM 16.04 -> 12.34 | |L|1-3 0.33 -> 0.43 | min zeta V294 0.137->0.137 @12.9Hz ; cand 0.137->0.137 @12.9Hz
+  nominal+T2_13_0.10_0.2             Ms 1.368 -> 1.499 | GM 6.96 -> 5.35 | |L|1-3 0.41 -> 0.54 | min zeta V294 0.181->0.177 @6.7Hz ; cand 0.181->0.177 @6.7Hz
+  nominal+T3_13_0.10_0.2             Ms 1.269 -> 1.377 | GM 5.28 -> 4.06 | |L|1-3 0.39 -> 0.50 | min zeta V294 0.125->0.116 @5.8Hz ; cand 0.125->0.116 @5.8Hz
+  nominal+T1_20_0.05_0.2             Ms 1.097 -> 1.128 | GM 18.45 -> 14.19 | |L|1-3 0.33 -> 0.43 | min zeta V294 0.072->0.071 @19.9Hz ; cand 0.072->0.071 @19.9Hz
+  nominal+T2_20_0.05_0.2             Ms 1.280 -> 1.387 | GM 6.55 -> 5.04 | |L|1-3 0.35 -> 0.46 | min zeta V294 0.160->0.150 @9.5Hz ; cand 0.160->0.150 @9.5Hz
+  nominal+T3_20_0.05_0.2             Ms 1.174 -> 1.237 | GM 7.63 -> 5.87 | |L|1-3 0.35 -> 0.46 | min zeta V294 0.164->0.156 @8.8Hz ; cand 0.164->0.156 @8.8Hz
+  nominal+T1_20_0.02_0.5             Ms 1.113 -> 1.152 | GM 10.34 -> 7.95 | |L|1-3 0.33 -> 0.43 | min zeta V294 0.106->0.102 @19.8Hz ; cand 0.106->0.102 @19.8Hz
+  nominal+T2_20_0.02_0.5             Ms 1.304 -> 1.432 | GM 4.72 -> 3.63 | |L|1-3 0.34 -> 0.44 | min zeta V294 0.100->0.094 @19.6Hz ; cand 0.100->0.094 @19.6Hz
+  nominal+T3_20_0.02_0.5             Ms 1.139 -> 1.187 | GM 9.14 -> 7.03 | |L|1-3 0.34 -> 0.44 | min zeta V294 0.120->0.122 @19.2Hz ; cand 0.120->0.122 @19.2Hz
+  nominal+T1_16_0.03_0.3             Ms 1.102 -> 1.136 | GM 12.03 -> 9.25 | |L|1-3 0.33 -> 0.43 | min zeta V294 0.078->0.077 @15.9Hz ; cand 0.078->0.077 @15.9Hz
+  nominal+T2_16_0.03_0.3             Ms 1.388 -> 1.546 | GM 5.26 -> 4.04 | |L|1-3 0.35 -> 0.46 | min zeta V294 0.132->0.122 @9.6Hz ; cand 0.132->0.122 @9.6Hz
+  nominal+T3_16_0.03_0.3             Ms 1.200 -> 1.276 | GM 6.35 -> 4.88 | |L|1-3 0.35 -> 0.46 | min zeta V294 0.135->0.126 @8.7Hz ; cand 0.135->0.126 @8.7Hz
+  nominal+T1_25_0.03_0.3             Ms 1.097 -> 1.128 | GM 17.61 -> 13.55 | |L|1-3 0.33 -> 0.43 | min zeta V294 0.059->0.058 @24.9Hz ; cand 0.059->0.058 @24.9Hz
+  nominal+T2_25_0.03_0.3             Ms 1.157 -> 1.214 | GM 8.17 -> 6.29 | |L|1-3 0.34 -> 0.44 | min zeta V294 0.205->0.193 @14.2Hz ; cand 0.205->0.193 @14.2Hz
+  nominal+T3_25_0.03_0.3             Ms 1.132 -> 1.177 | GM 10.33 -> 7.95 | |L|1-3 0.34 -> 0.44 | min zeta V294 0.223->0.226 @23.5Hz ; cand 0.230->0.224 @13.7Hz
+  light_b+T1_13_0.10_0.2             Ms 1.150 -> 1.197 | GM 12.38 -> 9.53 | |L|1-3 1.12 -> 1.46 | min zeta V294 0.109->0.108 @13.1Hz ; cand 0.109->0.108 @13.1Hz
+  light_b+T2_13_0.10_0.2             Ms 1.160 -> 1.211 | GM 12.47 -> 9.59 | |L|1-3 1.41 -> 1.84 | min zeta V294 0.272->0.270 @13.0Hz ; cand 0.272->0.270 @13.0Hz
+  light_b+T3_13_0.10_0.2             Ms 1.260 -> 1.363 | GM 5.30 -> 4.08 | |L|1-3 1.25 -> 1.62 | min zeta V294 0.293->0.298 @12.5Hz ; cand 0.293->0.298 @12.5Hz
+  light_b+T1_20_0.05_0.2             Ms 1.159 -> 1.210 | GM 13.63 -> 10.48 | |L|1-3 1.13 -> 1.46 | min zeta V294 0.055->0.054 @20.0Hz ; cand 0.055->0.054 @20.0Hz
+  light_b+T2_20_0.05_0.2             Ms 1.160 -> 1.211 | GM 14.67 -> 11.28 | |L|1-3 1.24 -> 1.62 | min zeta V294 0.165->0.164 @20.0Hz ; cand 0.165->0.164 @20.0Hz
+  light_b+T3_20_0.05_0.2             Ms 1.199 -> 1.268 | GM 8.05 -> 6.19 | |L|1-3 1.18 -> 1.53 | min zeta V294 0.176->0.178 @19.7Hz ; cand 0.176->0.178 @19.7Hz
+  light_b+T1_20_0.02_0.5             Ms 1.302 -> 1.430 | GM 4.51 -> 3.47 | |L|1-3 1.12 -> 1.46 | min zeta V294 0.039->0.035 @20.1Hz ; cand 0.039->0.035 @20.1Hz
+  light_b+T2_20_0.02_0.5             Ms 1.331 -> 1.476 | GM 4.09 -> 3.14 | |L|1-3 1.17 -> 1.52 | min zeta V294 0.037->0.034 @20.1Hz ; cand 0.037->0.034 @20.1Hz
+  light_b+T3_20_0.02_0.5             Ms 1.189 -> 1.255 | GM 8.51 -> 6.54 | |L|1-3 1.15 -> 1.49 | min zeta V294 0.053->0.053 @19.7Hz ; cand 0.053->0.053 @19.7Hz
+  light_b+T1_16_0.03_0.3             Ms 1.193 -> 1.265 | GM 6.85 -> 5.27 | |L|1-3 1.12 -> 1.46 | min zeta V294 0.041->0.039 @16.1Hz ; cand 0.041->0.039 @16.1Hz
+  light_b+T2_16_0.03_0.3             Ms 1.147 -> 1.192 | GM 10.58 -> 8.14 | |L|1-3 1.25 -> 1.63 | min zeta V294 0.108->0.106 @15.9Hz ; cand 0.108->0.106 @15.9Hz
+  light_b+T3_16_0.03_0.3             Ms 1.216 -> 1.293 | GM 6.67 -> 5.13 | |L|1-3 1.18 -> 1.54 | min zeta V294 0.121->0.122 @15.5Hz ; cand 0.121->0.122 @15.5Hz
+  light_b+T1_25_0.03_0.3             Ms 1.159 -> 1.210 | GM 11.63 -> 8.95 | |L|1-3 1.13 -> 1.46 | min zeta V294 0.037->0.036 @25.0Hz ; cand 0.037->0.036 @25.0Hz
+  light_b+T2_25_0.03_0.3             Ms 1.157 -> 1.207 | GM 14.57 -> 11.21 | |L|1-3 1.18 -> 1.53 | min zeta V294 0.082->0.081 @24.9Hz ; cand 0.082->0.081 @24.9Hz
+  light_b+T3_25_0.03_0.3             Ms 1.182 -> 1.243 | GM 9.56 -> 7.36 | |L|1-3 1.15 -> 1.49 | min zeta V294 0.090->0.091 @24.7Hz ; cand 0.090->0.091 @24.7Hz
+
+-- stress modes: the flexible pole (8-40 Hz) open / V294 / cand zeta, per topology, delay
+  nominal+T1_13_0.10_0.2           v  3.1 tau 2 : open 12.74Hz z 0.1361 | V294 12.82Hz z 0.1419 (+0.0058) | cand 12.84Hz z 0.1439 (+0.0078) | cand/V294 shift 1.33
+  nominal+T1_13_0.10_0.2           v  3.1 tau 6 : open 12.74Hz z 0.1361 | V294 12.85Hz z 0.1394 (+0.0033) | cand 12.88Hz z 0.1404 (+0.0043) | cand/V294 shift 1.30
+  nominal+T1_13_0.10_0.2           v  3.1 tau 9 : open 12.74Hz z 0.1361 | V294 12.86Hz z 0.1371 (+0.0010) | cand 12.90Hz z 0.1372 (+0.0011) | cand/V294 shift 1.14
+  nominal+T2_13_0.10_0.2           v  3.1 tau 2 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T2_13_0.10_0.2           v  3.1 tau 6 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T2_13_0.10_0.2           v  3.1 tau 9 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T3_13_0.10_0.2           v  3.1 tau 2 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T3_13_0.10_0.2           v  3.1 tau 6 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T3_13_0.10_0.2           v  3.1 tau 9 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T1_20_0.05_0.2           v  3.1 tau 2 : open 19.85Hz z 0.0740 | V294 19.92Hz z 0.0746 (+0.0006) | cand 19.94Hz z 0.0748 (+0.0008) | cand/V294 shift 1.29
+  nominal+T1_20_0.05_0.2           v  3.1 tau 6 : open 19.85Hz z 0.0740 | V294 19.92Hz z 0.0728 (-0.0012) | cand 19.95Hz z 0.0724 (-0.0016) | cand/V294 shift 1.33
+  nominal+T1_20_0.05_0.2           v  3.1 tau 9 : open 19.85Hz z 0.0740 | V294 19.91Hz z 0.0716 (-0.0025) | cand 19.93Hz z 0.0708 (-0.0032) | cand/V294 shift 1.32
+  nominal+T2_20_0.05_0.2           v  3.1 tau 2 : open 16.11Hz z 0.4653 | V294 16.08Hz z 0.4589 (-0.0064) | cand 16.07Hz z 0.4569 (-0.0084) | cand/V294 shift 1.31
+  nominal+T2_20_0.05_0.2           v  3.1 tau 6 : open 16.11Hz z 0.4653 | V294 15.99Hz z 0.4609 (-0.0044) | cand 15.95Hz z 0.4596 (-0.0057) | cand/V294 shift 1.28
+  nominal+T2_20_0.05_0.2           v  3.1 tau 9 : open 16.11Hz z 0.4653 | V294 15.92Hz z 0.4638 (-0.0015) | cand 15.85Hz z 0.4636 (-0.0017) | cand/V294 shift 1.11
+  nominal+T3_20_0.05_0.2           v  3.1 tau 2 : open 16.11Hz z 0.4653 | V294 15.63Hz z 0.4954 (+0.0301) | cand 15.48Hz z 0.5057 (+0.0404) | cand/V294 shift 1.34
+  nominal+T3_20_0.05_0.2           v  3.1 tau 6 : open 16.11Hz z 0.4653 | V294 15.81Hz z 0.5036 (+0.0383) | cand 15.75Hz z 0.5152 (+0.0499) | cand/V294 shift 1.30
+  nominal+T3_20_0.05_0.2           v  3.1 tau 9 : open 16.11Hz z 0.4653 | V294 16.06Hz z 0.5050 (+0.0397) | cand 16.10Hz z 0.5153 (+0.0500) | cand/V294 shift 1.26
+  nominal+T1_20_0.02_0.5           v  3.1 tau 2 : open 19.49Hz z 0.1168 | V294 19.79Hz z 0.1188 (+0.0020) | cand 19.88Hz z 0.1193 (+0.0025) | cand/V294 shift 1.22
+  nominal+T1_20_0.02_0.5           v  3.1 tau 6 : open 19.49Hz z 0.1168 | V294 19.80Hz z 0.1111 (-0.0057) | cand 19.89Hz z 0.1091 (-0.0077) | cand/V294 shift 1.34
+  nominal+T1_20_0.02_0.5           v  3.1 tau 9 : open 19.49Hz z 0.1168 | V294 19.75Hz z 0.1059 (-0.0110) | cand 19.83Hz z 0.1025 (-0.0144) | cand/V294 shift 1.31
+  nominal+T2_20_0.02_0.5           v  3.1 tau 2 : open 19.49Hz z 0.1168 | V294 19.77Hz z 0.1074 (-0.0094) | cand 19.85Hz z 0.1045 (-0.0123) | cand/V294 shift 1.30
+  nominal+T2_20_0.02_0.5           v  3.1 tau 6 : open 19.49Hz z 0.1168 | V294 19.67Hz z 0.1017 (-0.0151) | cand 19.72Hz z 0.0971 (-0.0197) | cand/V294 shift 1.30
+  nominal+T2_20_0.02_0.5           v  3.1 tau 9 : open 19.49Hz z 0.1168 | V294 19.56Hz z 0.0995 (-0.0173) | cand 19.57Hz z 0.0944 (-0.0224) | cand/V294 shift 1.30
+  nominal+T3_20_0.02_0.5           v  3.1 tau 2 : open 19.49Hz z 0.1168 | V294 19.18Hz z 0.1205 (+0.0037) | cand 19.08Hz z 0.1216 (+0.0048) | cand/V294 shift 1.31
+  nominal+T3_20_0.02_0.5           v  3.1 tau 6 : open 19.49Hz z 0.1168 | V294 19.22Hz z 0.1283 (+0.0115) | cand 19.13Hz z 0.1321 (+0.0153) | cand/V294 shift 1.33
+  nominal+T3_20_0.02_0.5           v  3.1 tau 9 : open 19.49Hz z 0.1168 | V294 19.30Hz z 0.1329 (+0.0161) | cand 19.24Hz z 0.1382 (+0.0214) | cand/V294 shift 1.33
+  nominal+T1_16_0.03_0.3           v  3.1 tau 2 : open 15.75Hz z 0.0807 | V294 15.88Hz z 0.0849 (+0.0042) | cand 15.93Hz z 0.0862 (+0.0055) | cand/V294 shift 1.31
+  nominal+T1_16_0.03_0.3           v  3.1 tau 6 : open 15.75Hz z 0.0807 | V294 15.91Hz z 0.0811 (+0.0004) | cand 15.96Hz z 0.0811 (+0.0004) | cand/V294 shift 1.02
+  nominal+T1_16_0.03_0.3           v  3.1 tau 9 : open 15.75Hz z 0.0807 | V294 15.91Hz z 0.0781 (-0.0026) | cand 15.96Hz z 0.0771 (-0.0036) | cand/V294 shift 1.37
+  nominal+T2_16_0.03_0.3           v  3.1 tau 2 : open 13.99Hz z 0.3209 | V294 14.14Hz z 0.3031 (-0.0178) | cand 14.19Hz z 0.2975 (-0.0235) | cand/V294 shift 1.32
+  nominal+T2_16_0.03_0.3           v  3.1 tau 6 : open 13.99Hz z 0.3209 | V294 14.05Hz z 0.3004 (-0.0205) | cand 14.07Hz z 0.2938 (-0.0271) | cand/V294 shift 1.32
+  nominal+T2_16_0.03_0.3           v  3.1 tau 9 : open 13.99Hz z 0.3209 | V294 13.96Hz z 0.3003 (-0.0206) | cand 13.94Hz z 0.2937 (-0.0272) | cand/V294 shift 1.32
+  nominal+T3_16_0.03_0.3           v  3.1 tau 2 : open 13.99Hz z 0.3209 | V294 13.34Hz z 0.3412 (+0.0203) | cand 13.11Hz z 0.3490 (+0.0280) | cand/V294 shift 1.38
+  nominal+T3_16_0.03_0.3           v  3.1 tau 6 : open 13.99Hz z 0.3209 | V294 13.35Hz z 0.3589 (+0.0379) | cand 13.12Hz z 0.3742 (+0.0533) | cand/V294 shift 1.40
+  nominal+T3_16_0.03_0.3           v  3.1 tau 9 : open 13.99Hz z 0.3209 | V294 13.45Hz z 0.3704 (+0.0494) | cand 13.28Hz z 0.3894 (+0.0685) | cand/V294 shift 1.39
+  nominal+T1_25_0.03_0.3           v  3.1 tau 2 : open 24.83Hz z 0.0632 | V294 24.92Hz z 0.0629 (-0.0004) | cand 24.95Hz z 0.0627 (-0.0005) | cand/V294 shift 1.35
+  nominal+T1_25_0.03_0.3           v  3.1 tau 6 : open 24.83Hz z 0.0632 | V294 24.90Hz z 0.0606 (-0.0026) | cand 24.93Hz z 0.0598 (-0.0035) | cand/V294 shift 1.31
+  nominal+T1_25_0.03_0.3           v  3.1 tau 9 : open 24.83Hz z 0.0632 | V294 24.87Hz z 0.0595 (-0.0038) | cand 24.88Hz z 0.0583 (-0.0049) | cand/V294 shift 1.30
+  nominal+T2_25_0.03_0.3           v  3.1 tau 2 : open 23.71Hz z 0.2150 | V294 23.77Hz z 0.2101 (-0.0049) | cand 23.79Hz z 0.2086 (-0.0064) | cand/V294 shift 1.31
+  nominal+T2_25_0.03_0.3           v  3.1 tau 6 : open 23.71Hz z 0.2150 | V294 23.70Hz z 0.2095 (-0.0055) | cand 23.69Hz z 0.2078 (-0.0072) | cand/V294 shift 1.30
+  nominal+T2_25_0.03_0.3           v  3.1 tau 9 : open 23.71Hz z 0.2150 | V294 23.63Hz z 0.2104 (-0.0046) | cand 23.60Hz z 0.2090 (-0.0060) | cand/V294 shift 1.29
+  nominal+T3_25_0.03_0.3           v  3.1 tau 2 : open 23.71Hz z 0.2150 | V294 23.45Hz z 0.2231 (+0.0081) | cand 23.37Hz z 0.2257 (+0.0107) | cand/V294 shift 1.32
+  nominal+T3_25_0.03_0.3           v  3.1 tau 6 : open 23.71Hz z 0.2150 | V294 23.57Hz z 0.2282 (+0.0132) | cand 23.53Hz z 0.2324 (+0.0174) | cand/V294 shift 1.31
+  nominal+T3_25_0.03_0.3           v  3.1 tau 9 : open 23.71Hz z 0.2150 | V294 23.72Hz z 0.2293 (+0.0143) | cand 23.73Hz z 0.2337 (+0.0186) | cand/V294 shift 1.30
+  nominal+T1_13_0.10_0.2           v 11.9 tau 2 : open 12.36Hz z 0.1583 | V294 12.36Hz z 0.1664 (+0.0081) | cand 12.36Hz z 0.1691 (+0.0108) | cand/V294 shift 1.33
+  nominal+T1_13_0.10_0.2           v 11.9 tau 6 : open 12.36Hz z 0.1583 | V294 12.40Hz z 0.1658 (+0.0075) | cand 12.41Hz z 0.1684 (+0.0101) | cand/V294 shift 1.34
+  nominal+T1_13_0.10_0.2           v 11.9 tau 9 : open 12.36Hz z 0.1583 | V294 12.43Hz z 0.1647 (+0.0064) | cand 12.45Hz z 0.1668 (+0.0085) | cand/V294 shift 1.33
+  nominal+T2_13_0.10_0.2           v 11.9 tau 2 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T2_13_0.10_0.2           v 11.9 tau 6 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T2_13_0.10_0.2           v 11.9 tau 9 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T3_13_0.10_0.2           v 11.9 tau 2 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T3_13_0.10_0.2           v 11.9 tau 6 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T3_13_0.10_0.2           v 11.9 tau 9 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T1_20_0.05_0.2           v 11.9 tau 2 : open 19.58Hz z 0.0938 | V294 19.63Hz z 0.0956 (+0.0018) | cand 19.65Hz z 0.0962 (+0.0024) | cand/V294 shift 1.31
+  nominal+T1_20_0.05_0.2           v 11.9 tau 6 : open 19.58Hz z 0.0938 | V294 19.65Hz z 0.0939 (+0.0002) | cand 19.67Hz z 0.0940 (+0.0002) | cand/V294 shift 1.14
+  nominal+T1_20_0.05_0.2           v 11.9 tau 9 : open 19.58Hz z 0.0938 | V294 19.65Hz z 0.0926 (-0.0012) | cand 19.67Hz z 0.0922 (-0.0016) | cand/V294 shift 1.34
+  nominal+T2_20_0.05_0.2           v 11.9 tau 2 : open 8.40Hz z 0.5326 | V294 9.35Hz z 0.4482 (-0.0844) | cand 9.61Hz z 0.4277 (-0.1049) | cand/V294 shift 1.24
+  nominal+T2_20_0.05_0.2           v 11.9 tau 6 : open 8.40Hz z 0.5326 | V294 9.30Hz z 0.4284 (-0.1042) | cand 9.55Hz z 0.4028 (-0.1298) | cand/V294 shift 1.25
+  nominal+T2_20_0.05_0.2           v 11.9 tau 9 : open 8.40Hz z 0.5326 | V294 9.23Hz z 0.4144 (-0.1182) | cand 9.46Hz z 0.3851 (-0.1475) | cand/V294 shift 1.25
+  nominal+T3_20_0.05_0.2           v 11.9 tau 2 : open 8.40Hz z 0.5326 | V294 8.38Hz z 0.4275 (-0.1051) | cand 8.46Hz z 0.3958 (-0.1368) | cand/V294 shift 1.30
+  nominal+T3_20_0.05_0.2           v 11.9 tau 6 : open 8.40Hz z 0.5326 | V294 8.15Hz z 0.4227 (-0.1099) | cand 8.21Hz z 0.3875 (-0.1451) | cand/V294 shift 1.32
+  nominal+T3_20_0.05_0.2           v 11.9 tau 9 : open 8.40Hz z 0.5326 | V294 nanHz z nan (+nan) | cand 8.01Hz z 0.3825 (-0.1501) | cand/V294 shift nan
+  nominal+T1_20_0.02_0.5           v 11.9 tau 2 : open 18.15Hz z 0.1982 | V294 18.39Hz z 0.2085 (+0.0103) | cand 18.47Hz z 0.2115 (+0.0133) | cand/V294 shift 1.29
+  nominal+T1_20_0.02_0.5           v 11.9 tau 6 : open 18.15Hz z 0.1982 | V294 18.51Hz z 0.2004 (+0.0022) | cand 18.62Hz z 0.2005 (+0.0023) | cand/V294 shift 1.06
+  nominal+T1_20_0.02_0.5           v 11.9 tau 9 : open 18.15Hz z 0.1982 | V294 18.54Hz z 0.1932 (-0.0050) | cand 18.66Hz z 0.1911 (-0.0072) | cand/V294 shift 1.42
+  nominal+T2_20_0.02_0.5           v 11.9 tau 2 : open 18.15Hz z 0.1982 | V294 18.48Hz z 0.1795 (-0.0187) | cand 18.58Hz z 0.1740 (-0.0242) | cand/V294 shift 1.30
+  nominal+T2_20_0.02_0.5           v 11.9 tau 6 : open 18.15Hz z 0.1982 | V294 18.33Hz z 0.1729 (-0.0253) | cand 18.38Hz z 0.1654 (-0.0328) | cand/V294 shift 1.30
+  nominal+T2_20_0.02_0.5           v 11.9 tau 9 : open 18.15Hz z 0.1982 | V294 18.17Hz z 0.1710 (-0.0272) | cand 18.17Hz z 0.1629 (-0.0353) | cand/V294 shift 1.30
+  nominal+T3_20_0.02_0.5           v 11.9 tau 2 : open 18.15Hz z 0.1982 | V294 17.74Hz z 0.2010 (+0.0028) | cand 17.61Hz z 0.2016 (+0.0034) | cand/V294 shift 1.24
+  nominal+T3_20_0.02_0.5           v 11.9 tau 6 : open 18.15Hz z 0.1982 | V294 17.73Hz z 0.2120 (+0.0137) | cand 17.59Hz z 0.2166 (+0.0184) | cand/V294 shift 1.34
+  nominal+T3_20_0.02_0.5           v 11.9 tau 9 : open 18.15Hz z 0.1982 | V294 17.79Hz z 0.2197 (+0.0215) | cand 17.68Hz z 0.2271 (+0.0289) | cand/V294 shift 1.35
+  nominal+T1_16_0.03_0.3           v 11.9 tau 2 : open 15.19Hz z 0.1176 | V294 15.26Hz z 0.1256 (+0.0080) | cand 15.28Hz z 0.1282 (+0.0106) | cand/V294 shift 1.32
+  nominal+T1_16_0.03_0.3           v 11.9 tau 6 : open 15.19Hz z 0.1176 | V294 15.31Hz z 0.1231 (+0.0055) | cand 15.35Hz z 0.1248 (+0.0072) | cand/V294 shift 1.31
+  nominal+T1_16_0.03_0.3           v 11.9 tau 9 : open 15.19Hz z 0.1176 | V294 15.34Hz z 0.1205 (+0.0028) | cand 15.39Hz z 0.1212 (+0.0035) | cand/V294 shift 1.25
+  nominal+T2_16_0.03_0.3           v 11.9 tau 2 : open 9.35Hz z 0.4279 | V294 10.22Hz z 0.3581 (-0.0698) | cand 10.47Hz z 0.3410 (-0.0868) | cand/V294 shift 1.24
+  nominal+T2_16_0.03_0.3           v 11.9 tau 6 : open 9.35Hz z 0.4279 | V294 10.16Hz z 0.3392 (-0.0887) | cand 10.39Hz z 0.3171 (-0.1108) | cand/V294 shift 1.25
+  nominal+T2_16_0.03_0.3           v 11.9 tau 9 : open 9.35Hz z 0.4279 | V294 10.07Hz z 0.3262 (-0.1016) | cand 10.27Hz z 0.3007 (-0.1271) | cand/V294 shift 1.25
+  nominal+T3_16_0.03_0.3           v 11.9 tau 2 : open 9.35Hz z 0.4279 | V294 9.06Hz z 0.3477 (-0.0801) | cand 9.06Hz z 0.3207 (-0.1071) | cand/V294 shift 1.34
+  nominal+T3_16_0.03_0.3           v 11.9 tau 6 : open 9.35Hz z 0.4279 | V294 8.81Hz z 0.3502 (-0.0777) | cand 8.78Hz z 0.3204 (-0.1074) | cand/V294 shift 1.38
+  nominal+T3_16_0.03_0.3           v 11.9 tau 9 : open 9.35Hz z 0.4279 | V294 8.60Hz z 0.3541 (-0.0737) | cand 8.55Hz z 0.3220 (-0.1058) | cand/V294 shift 1.44
+  nominal+T1_25_0.03_0.3           v 11.9 tau 2 : open 24.42Hz z 0.0925 | V294 24.51Hz z 0.0934 (+0.0008) | cand 24.54Hz z 0.0936 (+0.0011) | cand/V294 shift 1.29
+  nominal+T1_25_0.03_0.3           v 11.9 tau 6 : open 24.42Hz z 0.0925 | V294 24.51Hz z 0.0909 (-0.0017) | cand 24.54Hz z 0.0903 (-0.0022) | cand/V294 shift 1.32
+  nominal+T1_25_0.03_0.3           v 11.9 tau 9 : open 24.42Hz z 0.0925 | V294 24.49Hz z 0.0893 (-0.0033) | cand 24.51Hz z 0.0882 (-0.0043) | cand/V294 shift 1.31
+  nominal+T2_25_0.03_0.3           v 11.9 tau 2 : open 19.84Hz z 0.3965 | V294 19.84Hz z 0.3854 (-0.0110) | cand 19.83Hz z 0.3820 (-0.0145) | cand/V294 shift 1.32
+  nominal+T2_25_0.03_0.3           v 11.9 tau 6 : open 19.84Hz z 0.3965 | V294 19.66Hz z 0.3876 (-0.0089) | cand 19.61Hz z 0.3848 (-0.0117) | cand/V294 shift 1.31
+  nominal+T2_25_0.03_0.3           v 11.9 tau 9 : open 19.84Hz z 0.3965 | V294 19.52Hz z 0.3921 (-0.0043) | cand 19.42Hz z 0.3909 (-0.0056) | cand/V294 shift 1.28
+  nominal+T3_25_0.03_0.3           v 11.9 tau 2 : open 19.84Hz z 0.3965 | V294 19.33Hz z 0.4157 (+0.0192) | cand 19.17Hz z 0.4223 (+0.0258) | cand/V294 shift 1.35
+  nominal+T3_25_0.03_0.3           v 11.9 tau 6 : open 19.84Hz z 0.3965 | V294 19.47Hz z 0.4264 (+0.0299) | cand 19.37Hz z 0.4363 (+0.0398) | cand/V294 shift 1.33
+  nominal+T3_25_0.03_0.3           v 11.9 tau 9 : open 19.84Hz z 0.3965 | V294 19.73Hz z 0.4299 (+0.0334) | cand 19.73Hz z 0.4398 (+0.0433) | cand/V294 shift 1.30
+  nominal+T1_13_0.10_0.2           v 26.9 tau 2 : open 11.66Hz z 0.1416 | V294 11.63Hz z 0.1427 (+0.0011) | cand 11.62Hz z 0.1430 (+0.0014) | cand/V294 shift 1.27
+  nominal+T1_13_0.10_0.2           v 26.9 tau 6 : open 11.66Hz z 0.1416 | V294 11.63Hz z 0.1434 (+0.0017) | cand 11.63Hz z 0.1439 (+0.0023) | cand/V294 shift 1.29
+  nominal+T1_13_0.10_0.2           v 26.9 tau 9 : open 11.66Hz z 0.1416 | V294 11.64Hz z 0.1438 (+0.0022) | cand 11.63Hz z 0.1445 (+0.0029) | cand/V294 shift 1.31
+  nominal+T2_13_0.10_0.2           v 26.9 tau 2 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T2_13_0.10_0.2           v 26.9 tau 6 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T2_13_0.10_0.2           v 26.9 tau 9 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T3_13_0.10_0.2           v 26.9 tau 2 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T3_13_0.10_0.2           v 26.9 tau 6 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T3_13_0.10_0.2           v 26.9 tau 9 : open nanHz z nan | V294 nanHz z nan (+nan) | cand nanHz z nan (+nan) | cand/V294 shift nan
+  nominal+T1_20_0.05_0.2           v 26.9 tau 2 : open 18.48Hz z 0.1076 | V294 18.47Hz z 0.1095 (+0.0019) | cand 18.47Hz z 0.1100 (+0.0025) | cand/V294 shift 1.31
+  nominal+T1_20_0.05_0.2           v 26.9 tau 6 : open 18.48Hz z 0.1076 | V294 18.49Hz z 0.1095 (+0.0019) | cand 18.49Hz z 0.1101 (+0.0025) | cand/V294 shift 1.31
+  nominal+T1_20_0.05_0.2           v 26.9 tau 9 : open 18.48Hz z 0.1076 | V294 18.50Hz z 0.1092 (+0.0016) | cand 18.51Hz z 0.1097 (+0.0022) | cand/V294 shift 1.31
+  nominal+T2_20_0.05_0.2           v 26.9 tau 2 : open 8.78Hz z 0.1952 | V294 9.53Hz z 0.1922 (-0.0030) | cand 9.74Hz z 0.1900 (-0.0052) | cand/V294 shift 1.74
+  nominal+T2_20_0.05_0.2           v 26.9 tau 6 : open 8.78Hz z 0.1952 | V294 9.56Hz z 0.1740 (-0.0212) | cand 9.77Hz z 0.1669 (-0.0283) | cand/V294 shift 1.34
+  nominal+T2_20_0.05_0.2           v 26.9 tau 9 : open 8.78Hz z 0.1952 | V294 9.55Hz z 0.1605 (-0.0347) | cand 9.76Hz z 0.1500 (-0.0452) | cand/V294 shift 1.30
+  nominal+T3_20_0.05_0.2           v 26.9 tau 2 : open 8.78Hz z 0.1952 | V294 8.88Hz z 0.1671 (-0.0281) | cand 8.91Hz z 0.1592 (-0.0360) | cand/V294 shift 1.28
+  nominal+T3_20_0.05_0.2           v 26.9 tau 6 : open 8.78Hz z 0.1952 | V294 8.83Hz z 0.1651 (-0.0301) | cand 8.84Hz z 0.1566 (-0.0386) | cand/V294 shift 1.28
+  nominal+T3_20_0.05_0.2           v 26.9 tau 9 : open 8.78Hz z 0.1952 | V294 8.78Hz z 0.1644 (-0.0308) | cand 8.79Hz z 0.1556 (-0.0396) | cand/V294 shift 1.29
+  nominal+T1_20_0.02_0.5           v 26.9 tau 2 : open 14.67Hz z 0.1752 | V294 14.58Hz z 0.1797 (+0.0045) | cand 14.55Hz z 0.1810 (+0.0058) | cand/V294 shift 1.29
+  nominal+T1_20_0.02_0.5           v 26.9 tau 6 : open 14.67Hz z 0.1752 | V294 14.60Hz z 0.1818 (+0.0066) | cand 14.57Hz z 0.1839 (+0.0087) | cand/V294 shift 1.31
+  nominal+T1_20_0.02_0.5           v 26.9 tau 9 : open 14.67Hz z 0.1752 | V294 14.62Hz z 0.1830 (+0.0078) | cand 14.61Hz z 0.1855 (+0.0103) | cand/V294 shift 1.32
+  nominal+T2_20_0.02_0.5           v 26.9 tau 2 : open 14.67Hz z 0.1752 | V294 15.40Hz z 0.1542 (-0.0210) | cand 15.61Hz z 0.1483 (-0.0269) | cand/V294 shift 1.28
+  nominal+T2_20_0.02_0.5           v 26.9 tau 6 : open 14.67Hz z 0.1752 | V294 15.31Hz z 0.1377 (-0.0375) | cand 15.48Hz z 0.1274 (-0.0478) | cand/V294 shift 1.28
+  nominal+T2_20_0.02_0.5           v 26.9 tau 9 : open 14.67Hz z 0.1752 | V294 15.17Hz z 0.1277 (-0.0475) | cand 15.31Hz z 0.1149 (-0.0603) | cand/V294 shift 1.27
+  nominal+T3_20_0.02_0.5           v 26.9 tau 2 : open 14.67Hz z 0.1752 | V294 14.56Hz z 0.1592 (-0.0160) | cand 14.53Hz z 0.1543 (-0.0209) | cand/V294 shift 1.31
+  nominal+T3_20_0.02_0.5           v 26.9 tau 6 : open 14.67Hz z 0.1752 | V294 14.46Hz z 0.1628 (-0.0124) | cand 14.40Hz z 0.1587 (-0.0165) | cand/V294 shift 1.33
+  nominal+T3_20_0.02_0.5           v 26.9 tau 9 : open 14.67Hz z 0.1752 | V294 14.39Hz z 0.1671 (-0.0081) | cand 14.31Hz z 0.1641 (-0.0111) | cand/V294 shift 1.36
+  nominal+T1_16_0.03_0.3           v 26.9 tau 2 : open 13.76Hz z 0.1099 | V294 13.73Hz z 0.1123 (+0.0024) | cand 13.71Hz z 0.1130 (+0.0030) | cand/V294 shift 1.29
+  nominal+T1_16_0.03_0.3           v 26.9 tau 6 : open 13.76Hz z 0.1099 | V294 13.74Hz z 0.1132 (+0.0032) | cand 13.73Hz z 0.1142 (+0.0042) | cand/V294 shift 1.31
+  nominal+T1_16_0.03_0.3           v 26.9 tau 9 : open 13.76Hz z 0.1099 | V294 13.75Hz z 0.1136 (+0.0037) | cand 13.74Hz z 0.1148 (+0.0049) | cand/V294 shift 1.32
+  nominal+T2_16_0.03_0.3           v 26.9 tau 2 : open 8.72Hz z 0.1649 | V294 9.55Hz z 0.1677 (+0.0029) | cand 9.79Hz z 0.1665 (+0.0017) | cand/V294 shift 0.58
+  nominal+T2_16_0.03_0.3           v 26.9 tau 6 : open 8.72Hz z 0.1649 | V294 9.58Hz z 0.1473 (-0.0176) | cand 9.83Hz z 0.1406 (-0.0243) | cand/V294 shift 1.38
+  nominal+T2_16_0.03_0.3           v 26.9 tau 9 : open 8.72Hz z 0.1649 | V294 9.57Hz z 0.1322 (-0.0327) | cand 9.80Hz z 0.1217 (-0.0431) | cand/V294 shift 1.32
+  nominal+T3_16_0.03_0.3           v 26.9 tau 2 : open 8.72Hz z 0.1649 | V294 8.81Hz z 0.1373 (-0.0275) | cand 8.84Hz z 0.1296 (-0.0352) | cand/V294 shift 1.28
+  nominal+T3_16_0.03_0.3           v 26.9 tau 6 : open 8.72Hz z 0.1649 | V294 8.76Hz z 0.1356 (-0.0293) | cand 8.77Hz z 0.1272 (-0.0376) | cand/V294 shift 1.28
+  nominal+T3_16_0.03_0.3           v 26.9 tau 9 : open 8.72Hz z 0.1649 | V294 8.72Hz z 0.1350 (-0.0299) | cand 8.72Hz z 0.1264 (-0.0384) | cand/V294 shift 1.29
+  nominal+T1_25_0.03_0.3           v 26.9 tau 2 : open 22.37Hz z 0.1284 | V294 22.38Hz z 0.1311 (+0.0028) | cand 22.38Hz z 0.1320 (+0.0036) | cand/V294 shift 1.31
+  nominal+T1_25_0.03_0.3           v 26.9 tau 6 : open 22.37Hz z 0.1284 | V294 22.41Hz z 0.1305 (+0.0022) | cand 22.43Hz z 0.1312 (+0.0028) | cand/V294 shift 1.31
+  nominal+T1_25_0.03_0.3           v 26.9 tau 9 : open 22.37Hz z 0.1284 | V294 22.44Hz z 0.1295 (+0.0011) | cand 22.46Hz z 0.1298 (+0.0015) | cand/V294 shift 1.28
+  nominal+T2_25_0.03_0.3           v 26.9 tau 2 : open 13.75Hz z 0.2495 | V294 14.34Hz z 0.2265 (-0.0230) | cand 14.51Hz z 0.2201 (-0.0294) | cand/V294 shift 1.28
+  nominal+T2_25_0.03_0.3           v 26.9 tau 6 : open 13.75Hz z 0.2495 | V294 14.27Hz z 0.2133 (-0.0362) | cand 14.41Hz z 0.2032 (-0.0463) | cand/V294 shift 1.28
+  nominal+T2_25_0.03_0.3           v 26.9 tau 9 : open 13.75Hz z 0.2495 | V294 14.16Hz z 0.2050 (-0.0445) | cand 14.28Hz z 0.1928 (-0.0567) | cand/V294 shift 1.27
+  nominal+T3_25_0.03_0.3           v 26.9 tau 2 : open 13.75Hz z 0.2495 | V294 13.68Hz z 0.2301 (-0.0194) | cand 13.66Hz z 0.2242 (-0.0253) | cand/V294 shift 1.31
+  nominal+T3_25_0.03_0.3           v 26.9 tau 6 : open 13.75Hz z 0.2495 | V294 13.56Hz z 0.2328 (-0.0166) | cand 13.51Hz z 0.2274 (-0.0220) | cand/V294 shift 1.32
+  nominal+T3_25_0.03_0.3           v 26.9 tau 9 : open 13.75Hz z 0.2495 | V294 13.48Hz z 0.2367 (-0.0128) | cand 13.40Hz z 0.2322 (-0.0172) | cand/V294 shift 1.35
+  light_b+T1_13_0.10_0.2           v  3.1 tau 2 : open 12.91Hz z 0.1115 | V294 13.01Hz z 0.1138 (+0.0023) | cand 13.05Hz z 0.1145 (+0.0030) | cand/V294 shift 1.31
+  light_b+T1_13_0.10_0.2           v  3.1 tau 6 : open 12.91Hz z 0.1115 | V294 13.03Hz z 0.1110 (-0.0006) | cand 13.06Hz z 0.1107 (-0.0009) | cand/V294 shift 1.50
+  light_b+T1_13_0.10_0.2           v  3.1 tau 9 : open 12.91Hz z 0.1115 | V294 13.02Hz z 0.1087 (-0.0028) | cand 13.06Hz z 0.1077 (-0.0038) | cand/V294 shift 1.37
+  light_b+T2_13_0.10_0.2           v  3.1 tau 2 : open 12.36Hz z 0.2860 | V294 12.47Hz z 0.2792 (-0.0068) | cand 12.50Hz z 0.2770 (-0.0090) | cand/V294 shift 1.33
+  light_b+T2_13_0.10_0.2           v  3.1 tau 6 : open 12.36Hz z 0.2860 | V294 12.45Hz z 0.2768 (-0.0092) | cand 12.48Hz z 0.2737 (-0.0123) | cand/V294 shift 1.33
+  light_b+T2_13_0.10_0.2           v  3.1 tau 9 : open 12.36Hz z 0.2860 | V294 12.43Hz z 0.2754 (-0.0106) | cand 12.44Hz z 0.2720 (-0.0140) | cand/V294 shift 1.32
+  light_b+T3_13_0.10_0.2           v  3.1 tau 2 : open 12.36Hz z 0.2860 | V294 11.82Hz z 0.2999 (+0.0140) | cand 11.62Hz z 0.3051 (+0.0191) | cand/V294 shift 1.37
+  light_b+T3_13_0.10_0.2           v  3.1 tau 6 : open 12.36Hz z 0.2860 | V294 11.80Hz z 0.3151 (+0.0291) | cand 11.60Hz z 0.3267 (+0.0407) | cand/V294 shift 1.40
+  light_b+T3_13_0.10_0.2           v  3.1 tau 9 : open 12.36Hz z 0.2860 | V294 11.84Hz z 0.3260 (+0.0400) | cand 11.67Hz z 0.3417 (+0.0557) | cand/V294 shift 1.39
+  light_b+T1_20_0.05_0.2           v  3.1 tau 2 : open 19.96Hz z 0.0575 | V294 20.03Hz z 0.0572 (-0.0003) | cand 20.05Hz z 0.0570 (-0.0004) | cand/V294 shift 1.34
+  light_b+T1_20_0.05_0.2           v  3.1 tau 6 : open 19.96Hz z 0.0575 | V294 20.02Hz z 0.0555 (-0.0019) | cand 20.04Hz z 0.0549 (-0.0026) | cand/V294 shift 1.32
+  light_b+T1_20_0.05_0.2           v  3.1 tau 9 : open 19.96Hz z 0.0575 | V294 20.00Hz z 0.0546 (-0.0029) | cand 20.02Hz z 0.0537 (-0.0038) | cand/V294 shift 1.31
+  light_b+T2_20_0.05_0.2           v  3.1 tau 2 : open 19.65Hz z 0.1700 | V294 19.71Hz z 0.1674 (-0.0026) | cand 19.72Hz z 0.1665 (-0.0034) | cand/V294 shift 1.31
+  light_b+T2_20_0.05_0.2           v  3.1 tau 6 : open 19.65Hz z 0.1700 | V294 19.68Hz z 0.1662 (-0.0038) | cand 19.69Hz z 0.1650 (-0.0049) | cand/V294 shift 1.31
+  light_b+T2_20_0.05_0.2           v  3.1 tau 9 : open 19.65Hz z 0.1700 | V294 19.65Hz z 0.1659 (-0.0041) | cand 19.65Hz z 0.1646 (-0.0053) | cand/V294 shift 1.30
+  light_b+T3_20_0.05_0.2           v  3.1 tau 2 : open 19.65Hz z 0.1700 | V294 19.36Hz z 0.1772 (+0.0072) | cand 19.27Hz z 0.1796 (+0.0096) | cand/V294 shift 1.33
+  light_b+T3_20_0.05_0.2           v  3.1 tau 6 : open 19.65Hz z 0.1700 | V294 19.43Hz z 0.1838 (+0.0139) | cand 19.36Hz z 0.1883 (+0.0184) | cand/V294 shift 1.33
+  light_b+T3_20_0.05_0.2           v  3.1 tau 9 : open 19.65Hz z 0.1700 | V294 19.53Hz z 0.1870 (+0.0170) | cand 19.49Hz z 0.1924 (+0.0224) | cand/V294 shift 1.32
+  light_b+T1_20_0.02_0.5           v  3.1 tau 2 : open 19.96Hz z 0.0499 | V294 20.22Hz z 0.0486 (-0.0013) | cand 20.30Hz z 0.0481 (-0.0018) | cand/V294 shift 1.37
+  light_b+T1_20_0.02_0.5           v  3.1 tau 6 : open 19.96Hz z 0.0499 | V294 20.18Hz z 0.0423 (-0.0076) | cand 20.25Hz z 0.0400 (-0.0099) | cand/V294 shift 1.31
+  light_b+T1_20_0.02_0.5           v  3.1 tau 9 : open 19.96Hz z 0.0499 | V294 20.12Hz z 0.0388 (-0.0111) | cand 20.16Hz z 0.0355 (-0.0144) | cand/V294 shift 1.30
+  light_b+T2_20_0.02_0.5           v  3.1 tau 2 : open 19.96Hz z 0.0499 | V294 20.21Hz z 0.0457 (-0.0042) | cand 20.29Hz z 0.0444 (-0.0055) | cand/V294 shift 1.32
+  light_b+T2_20_0.02_0.5           v  3.1 tau 6 : open 19.96Hz z 0.0499 | V294 20.14Hz z 0.0401 (-0.0098) | cand 20.20Hz z 0.0371 (-0.0128) | cand/V294 shift 1.31
+  light_b+T2_20_0.02_0.5           v  3.1 tau 9 : open 19.96Hz z 0.0499 | V294 20.06Hz z 0.0375 (-0.0124) | cand 20.09Hz z 0.0338 (-0.0161) | cand/V294 shift 1.30
+  light_b+T3_20_0.02_0.5           v  3.1 tau 2 : open 19.96Hz z 0.0499 | V294 19.70Hz z 0.0525 (+0.0026) | cand 19.61Hz z 0.0533 (+0.0034) | cand/V294 shift 1.31
+  light_b+T3_20_0.02_0.5           v  3.1 tau 6 : open 19.96Hz z 0.0499 | V294 19.74Hz z 0.0589 (+0.0090) | cand 19.67Hz z 0.0618 (+0.0119) | cand/V294 shift 1.32
+  light_b+T3_20_0.02_0.5           v  3.1 tau 9 : open 19.96Hz z 0.0499 | V294 19.82Hz z 0.0624 (+0.0125) | cand 19.78Hz z 0.0664 (+0.0165) | cand/V294 shift 1.32
+  light_b+T1_16_0.03_0.3           v  3.1 tau 2 : open 15.97Hz z 0.0460 | V294 16.11Hz z 0.0471 (+0.0011) | cand 16.16Hz z 0.0475 (+0.0014) | cand/V294 shift 1.28
+  light_b+T1_16_0.03_0.3           v  3.1 tau 6 : open 15.97Hz z 0.0460 | V294 16.11Hz z 0.0435 (-0.0025) | cand 16.16Hz z 0.0426 (-0.0034) | cand/V294 shift 1.34
+  light_b+T1_16_0.03_0.3           v  3.1 tau 9 : open 15.97Hz z 0.0460 | V294 16.10Hz z 0.0410 (-0.0050) | cand 16.13Hz z 0.0394 (-0.0066) | cand/V294 shift 1.33
+  light_b+T2_16_0.03_0.3           v  3.1 tau 2 : open 15.84Hz z 0.1174 | V294 15.99Hz z 0.1136 (-0.0039) | cand 16.03Hz z 0.1123 (-0.0051) | cand/V294 shift 1.32
+  light_b+T2_16_0.03_0.3           v  3.1 tau 6 : open 15.84Hz z 0.1174 | V294 15.96Hz z 0.1102 (-0.0072) | cand 15.99Hz z 0.1079 (-0.0095) | cand/V294 shift 1.32
+  light_b+T2_16_0.03_0.3           v  3.1 tau 9 : open 15.84Hz z 0.1174 | V294 15.92Hz z 0.1084 (-0.0090) | cand 15.95Hz z 0.1056 (-0.0119) | cand/V294 shift 1.31
+  light_b+T3_16_0.03_0.3           v  3.1 tau 2 : open 15.84Hz z 0.1174 | V294 15.48Hz z 0.1212 (+0.0037) | cand 15.37Hz z 0.1223 (+0.0049) | cand/V294 shift 1.30
+  light_b+T3_16_0.03_0.3           v  3.1 tau 6 : open 15.84Hz z 0.1174 | V294 15.50Hz z 0.1306 (+0.0132) | cand 15.39Hz z 0.1351 (+0.0176) | cand/V294 shift 1.34
+  light_b+T3_16_0.03_0.3           v  3.1 tau 9 : open 15.84Hz z 0.1174 | V294 15.56Hz z 0.1368 (+0.0194) | cand 15.47Hz z 0.1434 (+0.0260) | cand/V294 shift 1.34
+  light_b+T1_25_0.03_0.3           v  3.1 tau 2 : open 24.97Hz z 0.0402 | V294 25.06Hz z 0.0392 (-0.0011) | cand 25.09Hz z 0.0389 (-0.0014) | cand/V294 shift 1.32
+  light_b+T1_25_0.03_0.3           v  3.1 tau 6 : open 24.97Hz z 0.0402 | V294 25.03Hz z 0.0373 (-0.0029) | cand 25.05Hz z 0.0364 (-0.0038) | cand/V294 shift 1.31
+  light_b+T1_25_0.03_0.3           v  3.1 tau 9 : open 24.97Hz z 0.0402 | V294 24.99Hz z 0.0366 (-0.0036) | cand 25.00Hz z 0.0355 (-0.0047) | cand/V294 shift 1.30
+  light_b+T2_25_0.03_0.3           v  3.1 tau 2 : open 24.88Hz z 0.0858 | V294 24.96Hz z 0.0835 (-0.0023) | cand 24.98Hz z 0.0828 (-0.0030) | cand/V294 shift 1.31
+  light_b+T2_25_0.03_0.3           v  3.1 tau 6 : open 24.88Hz z 0.0858 | V294 24.91Hz z 0.0821 (-0.0037) | cand 24.92Hz z 0.0810 (-0.0049) | cand/V294 shift 1.30
+  light_b+T2_25_0.03_0.3           v  3.1 tau 9 : open 24.88Hz z 0.0858 | V294 24.87Hz z 0.0819 (-0.0039) | cand 24.86Hz z 0.0807 (-0.0051) | cand/V294 shift 1.30
+  light_b+T3_25_0.03_0.3           v  3.1 tau 2 : open 24.88Hz z 0.0858 | V294 24.68Hz z 0.0901 (+0.0042) | cand 24.61Hz z 0.0914 (+0.0056) | cand/V294 shift 1.31
+  light_b+T3_25_0.03_0.3           v  3.1 tau 6 : open 24.88Hz z 0.0858 | V294 24.76Hz z 0.0943 (+0.0085) | cand 24.73Hz z 0.0969 (+0.0111) | cand/V294 shift 1.31
+  light_b+T3_25_0.03_0.3           v  3.1 tau 9 : open 24.88Hz z 0.0858 | V294 24.87Hz z 0.0954 (+0.0096) | cand 24.87Hz z 0.0984 (+0.0126) | cand/V294 shift 1.31
+  light_b+T1_13_0.10_0.2           v 11.9 tau 2 : open 12.93Hz z 0.1116 | V294 13.04Hz z 0.1139 (+0.0023) | cand 13.07Hz z 0.1147 (+0.0030) | cand/V294 shift 1.31
+  light_b+T1_13_0.10_0.2           v 11.9 tau 6 : open 12.93Hz z 0.1116 | V294 13.05Hz z 0.1110 (-0.0006) | cand 13.08Hz z 0.1107 (-0.0010) | cand/V294 shift 1.49
+  light_b+T1_13_0.10_0.2           v 11.9 tau 9 : open 12.93Hz z 0.1116 | V294 13.05Hz z 0.1087 (-0.0029) | cand 13.08Hz z 0.1077 (-0.0040) | cand/V294 shift 1.37
+  light_b+T2_13_0.10_0.2           v 11.9 tau 2 : open 12.70Hz z 0.2829 | V294 12.79Hz z 0.2771 (-0.0058) | cand 12.82Hz z 0.2752 (-0.0077) | cand/V294 shift 1.33
+  light_b+T2_13_0.10_0.2           v 11.9 tau 6 : open 12.70Hz z 0.2829 | V294 12.77Hz z 0.2750 (-0.0079) | cand 12.79Hz z 0.2724 (-0.0106) | cand/V294 shift 1.33
+  light_b+T2_13_0.10_0.2           v 11.9 tau 9 : open 12.70Hz z 0.2829 | V294 12.75Hz z 0.2739 (-0.0091) | cand 12.76Hz z 0.2709 (-0.0120) | cand/V294 shift 1.32
+  light_b+T3_13_0.10_0.2           v 11.9 tau 2 : open 12.70Hz z 0.2829 | V294 12.19Hz z 0.2964 (+0.0135) | cand 12.02Hz z 0.3014 (+0.0185) | cand/V294 shift 1.37
+  light_b+T3_13_0.10_0.2           v 11.9 tau 6 : open 12.70Hz z 0.2829 | V294 12.19Hz z 0.3101 (+0.0271) | cand 12.01Hz z 0.3205 (+0.0376) | cand/V294 shift 1.38
+  light_b+T3_13_0.10_0.2           v 11.9 tau 9 : open 12.70Hz z 0.2829 | V294 12.23Hz z 0.3196 (+0.0367) | cand 12.08Hz z 0.3335 (+0.0506) | cand/V294 shift 1.38
+  light_b+T1_20_0.05_0.2           v 11.9 tau 2 : open 19.98Hz z 0.0575 | V294 20.04Hz z 0.0572 (-0.0003) | cand 20.06Hz z 0.0571 (-0.0004) | cand/V294 shift 1.34
+  light_b+T1_20_0.05_0.2           v 11.9 tau 6 : open 19.98Hz z 0.0575 | V294 20.03Hz z 0.0555 (-0.0020) | cand 20.05Hz z 0.0549 (-0.0026) | cand/V294 shift 1.32
+  light_b+T1_20_0.05_0.2           v 11.9 tau 9 : open 19.98Hz z 0.0575 | V294 20.02Hz z 0.0546 (-0.0029) | cand 20.03Hz z 0.0537 (-0.0038) | cand/V294 shift 1.31
+  light_b+T2_20_0.05_0.2           v 11.9 tau 2 : open 19.85Hz z 0.1694 | V294 19.91Hz z 0.1669 (-0.0025) | cand 19.92Hz z 0.1662 (-0.0032) | cand/V294 shift 1.31
+  light_b+T2_20_0.05_0.2           v 11.9 tau 6 : open 19.85Hz z 0.1694 | V294 19.88Hz z 0.1658 (-0.0036) | cand 19.89Hz z 0.1647 (-0.0047) | cand/V294 shift 1.31
+  light_b+T2_20_0.05_0.2           v 11.9 tau 9 : open 19.85Hz z 0.1694 | V294 19.85Hz z 0.1656 (-0.0038) | cand 19.85Hz z 0.1644 (-0.0050) | cand/V294 shift 1.30
+  light_b+T3_20_0.05_0.2           v 11.9 tau 2 : open 19.85Hz z 0.1694 | V294 19.57Hz z 0.1765 (+0.0071) | cand 19.49Hz z 0.1788 (+0.0094) | cand/V294 shift 1.33
+  light_b+T3_20_0.05_0.2           v 11.9 tau 6 : open 19.85Hz z 0.1694 | V294 19.64Hz z 0.1829 (+0.0135) | cand 19.58Hz z 0.1872 (+0.0178) | cand/V294 shift 1.32
+  light_b+T3_20_0.05_0.2           v 11.9 tau 9 : open 19.85Hz z 0.1694 | V294 19.74Hz z 0.1858 (+0.0165) | cand 19.71Hz z 0.1910 (+0.0217) | cand/V294 shift 1.32
+  light_b+T1_20_0.02_0.5           v 11.9 tau 2 : open 20.01Hz z 0.0501 | V294 20.27Hz z 0.0487 (-0.0013) | cand 20.35Hz z 0.0482 (-0.0018) | cand/V294 shift 1.37
+  light_b+T1_20_0.02_0.5           v 11.9 tau 6 : open 20.01Hz z 0.0501 | V294 20.23Hz z 0.0424 (-0.0076) | cand 20.30Hz z 0.0400 (-0.0100) | cand/V294 shift 1.31
+  light_b+T1_20_0.02_0.5           v 11.9 tau 9 : open 20.01Hz z 0.0501 | V294 20.17Hz z 0.0389 (-0.0112) | cand 20.21Hz z 0.0355 (-0.0145) | cand/V294 shift 1.30
+  light_b+T2_20_0.02_0.5           v 11.9 tau 2 : open 20.01Hz z 0.0501 | V294 20.26Hz z 0.0459 (-0.0042) | cand 20.33Hz z 0.0446 (-0.0055) | cand/V294 shift 1.32
+  light_b+T2_20_0.02_0.5           v 11.9 tau 6 : open 20.01Hz z 0.0501 | V294 20.19Hz z 0.0404 (-0.0097) | cand 20.24Hz z 0.0374 (-0.0127) | cand/V294 shift 1.31
+  light_b+T2_20_0.02_0.5           v 11.9 tau 9 : open 20.01Hz z 0.0501 | V294 20.11Hz z 0.0378 (-0.0123) | cand 20.14Hz z 0.0341 (-0.0160) | cand/V294 shift 1.30
+  light_b+T3_20_0.02_0.5           v 11.9 tau 2 : open 20.01Hz z 0.0501 | V294 19.75Hz z 0.0527 (+0.0027) | cand 19.66Hz z 0.0535 (+0.0035) | cand/V294 shift 1.31
+  light_b+T3_20_0.02_0.5           v 11.9 tau 6 : open 20.01Hz z 0.0501 | V294 19.79Hz z 0.0591 (+0.0090) | cand 19.73Hz z 0.0620 (+0.0119) | cand/V294 shift 1.32
+  light_b+T3_20_0.02_0.5           v 11.9 tau 9 : open 20.01Hz z 0.0501 | V294 19.87Hz z 0.0625 (+0.0125) | cand 19.83Hz z 0.0665 (+0.0165) | cand/V294 shift 1.32
+  light_b+T1_16_0.03_0.3           v 11.9 tau 2 : open 16.00Hz z 0.0462 | V294 16.14Hz z 0.0473 (+0.0011) | cand 16.19Hz z 0.0476 (+0.0014) | cand/V294 shift 1.28
+  light_b+T1_16_0.03_0.3           v 11.9 tau 6 : open 16.00Hz z 0.0462 | V294 16.14Hz z 0.0436 (-0.0026) | cand 16.18Hz z 0.0427 (-0.0035) | cand/V294 shift 1.34
+  light_b+T1_16_0.03_0.3           v 11.9 tau 9 : open 16.00Hz z 0.0462 | V294 16.12Hz z 0.0411 (-0.0051) | cand 16.16Hz z 0.0394 (-0.0068) | cand/V294 shift 1.32
+  light_b+T2_16_0.03_0.3           v 11.9 tau 2 : open 15.99Hz z 0.1177 | V294 16.13Hz z 0.1139 (-0.0038) | cand 16.17Hz z 0.1127 (-0.0049) | cand/V294 shift 1.32
+  light_b+T2_16_0.03_0.3           v 11.9 tau 6 : open 15.99Hz z 0.1177 | V294 16.10Hz z 0.1108 (-0.0069) | cand 16.13Hz z 0.1086 (-0.0091) | cand/V294 shift 1.32
+  light_b+T2_16_0.03_0.3           v 11.9 tau 9 : open 15.99Hz z 0.1177 | V294 16.07Hz z 0.1090 (-0.0086) | cand 16.09Hz z 0.1064 (-0.0113) | cand/V294 shift 1.31
+  light_b+T3_16_0.03_0.3           v 11.9 tau 2 : open 15.99Hz z 0.1177 | V294 15.64Hz z 0.1216 (+0.0039) | cand 15.53Hz z 0.1228 (+0.0051) | cand/V294 shift 1.31
+  light_b+T3_16_0.03_0.3           v 11.9 tau 6 : open 15.99Hz z 0.1177 | V294 15.66Hz z 0.1308 (+0.0131) | cand 15.55Hz z 0.1352 (+0.0176) | cand/V294 shift 1.34
+  light_b+T3_16_0.03_0.3           v 11.9 tau 9 : open 15.99Hz z 0.1177 | V294 15.72Hz z 0.1368 (+0.0191) | cand 15.64Hz z 0.1433 (+0.0256) | cand/V294 shift 1.34
+  light_b+T1_25_0.03_0.3           v 11.9 tau 2 : open 24.99Hz z 0.0403 | V294 25.08Hz z 0.0392 (-0.0011) | cand 25.10Hz z 0.0389 (-0.0014) | cand/V294 shift 1.32
+  light_b+T1_25_0.03_0.3           v 11.9 tau 6 : open 24.99Hz z 0.0403 | V294 25.05Hz z 0.0373 (-0.0029) | cand 25.07Hz z 0.0364 (-0.0038) | cand/V294 shift 1.30
+  light_b+T1_25_0.03_0.3           v 11.9 tau 9 : open 24.99Hz z 0.0403 | V294 25.01Hz z 0.0366 (-0.0036) | cand 25.01Hz z 0.0356 (-0.0047) | cand/V294 shift 1.30
+  light_b+T2_25_0.03_0.3           v 11.9 tau 2 : open 24.97Hz z 0.0859 | V294 25.05Hz z 0.0836 (-0.0022) | cand 25.07Hz z 0.0829 (-0.0029) | cand/V294 shift 1.31
+  light_b+T2_25_0.03_0.3           v 11.9 tau 6 : open 24.97Hz z 0.0859 | V294 25.01Hz z 0.0822 (-0.0037) | cand 25.01Hz z 0.0811 (-0.0048) | cand/V294 shift 1.30
+  light_b+T2_25_0.03_0.3           v 11.9 tau 9 : open 24.97Hz z 0.0859 | V294 24.96Hz z 0.0820 (-0.0038) | cand 24.96Hz z 0.0809 (-0.0050) | cand/V294 shift 1.30
+  light_b+T3_25_0.03_0.3           v 11.9 tau 2 : open 24.97Hz z 0.0859 | V294 24.77Hz z 0.0901 (+0.0042) | cand 24.71Hz z 0.0914 (+0.0056) | cand/V294 shift 1.31
+  light_b+T3_25_0.03_0.3           v 11.9 tau 6 : open 24.97Hz z 0.0859 | V294 24.86Hz z 0.0942 (+0.0084) | cand 24.82Hz z 0.0969 (+0.0110) | cand/V294 shift 1.31
+  light_b+T3_25_0.03_0.3           v 11.9 tau 9 : open 24.97Hz z 0.0859 | V294 24.96Hz z 0.0954 (+0.0095) | cand 24.96Hz z 0.0983 (+0.0124) | cand/V294 shift 1.31
+  light_b+T1_13_0.10_0.2           v 26.9 tau 2 : open 12.95Hz z 0.1117 | V294 13.05Hz z 0.1140 (+0.0023) | cand 13.09Hz z 0.1147 (+0.0030) | cand/V294 shift 1.31
+  light_b+T1_13_0.10_0.2           v 26.9 tau 6 : open 12.95Hz z 0.1117 | V294 13.06Hz z 0.1110 (-0.0007) | cand 13.10Hz z 0.1107 (-0.0010) | cand/V294 shift 1.48
+  light_b+T1_13_0.10_0.2           v 26.9 tau 9 : open 12.95Hz z 0.1117 | V294 13.06Hz z 0.1087 (-0.0030) | cand 13.10Hz z 0.1076 (-0.0041) | cand/V294 shift 1.37
+  light_b+T2_13_0.10_0.2           v 26.9 tau 2 : open 12.94Hz z 0.2805 | V294 13.02Hz z 0.2753 (-0.0052) | cand 13.05Hz z 0.2735 (-0.0069) | cand/V294 shift 1.33
+  light_b+T2_13_0.10_0.2           v 26.9 tau 6 : open 12.94Hz z 0.2805 | V294 13.01Hz z 0.2733 (-0.0071) | cand 13.03Hz z 0.2710 (-0.0095) | cand/V294 shift 1.33
+  light_b+T2_13_0.10_0.2           v 26.9 tau 9 : open 12.94Hz z 0.2805 | V294 12.99Hz z 0.2723 (-0.0081) | cand 13.00Hz z 0.2697 (-0.0107) | cand/V294 shift 1.32
+  light_b+T3_13_0.10_0.2           v 26.9 tau 2 : open 12.94Hz z 0.2805 | V294 12.47Hz z 0.2935 (+0.0130) | cand 12.30Hz z 0.2982 (+0.0178) | cand/V294 shift 1.37
+  light_b+T3_13_0.10_0.2           v 26.9 tau 6 : open 12.94Hz z 0.2805 | V294 12.47Hz z 0.3061 (+0.0257) | cand 12.30Hz z 0.3158 (+0.0353) | cand/V294 shift 1.38
+  light_b+T3_13_0.10_0.2           v 26.9 tau 9 : open 12.94Hz z 0.2805 | V294 12.51Hz z 0.3149 (+0.0345) | cand 12.37Hz z 0.3277 (+0.0472) | cand/V294 shift 1.37
+  light_b+T1_20_0.05_0.2           v 26.9 tau 2 : open 19.98Hz z 0.0575 | V294 20.05Hz z 0.0572 (-0.0003) | cand 20.07Hz z 0.0571 (-0.0005) | cand/V294 shift 1.34
+  light_b+T1_20_0.05_0.2           v 26.9 tau 6 : open 19.98Hz z 0.0575 | V294 20.04Hz z 0.0556 (-0.0020) | cand 20.06Hz z 0.0549 (-0.0026) | cand/V294 shift 1.32
+  light_b+T1_20_0.05_0.2           v 26.9 tau 9 : open 19.98Hz z 0.0575 | V294 20.03Hz z 0.0546 (-0.0029) | cand 20.04Hz z 0.0537 (-0.0038) | cand/V294 shift 1.31
+  light_b+T2_20_0.05_0.2           v 26.9 tau 2 : open 20.00Hz z 0.1689 | V294 20.06Hz z 0.1666 (-0.0024) | cand 20.07Hz z 0.1658 (-0.0031) | cand/V294 shift 1.31
+  light_b+T2_20_0.05_0.2           v 26.9 tau 6 : open 20.00Hz z 0.1689 | V294 20.03Hz z 0.1655 (-0.0034) | cand 20.04Hz z 0.1645 (-0.0045) | cand/V294 shift 1.31
+  light_b+T2_20_0.05_0.2           v 26.9 tau 9 : open 20.00Hz z 0.1689 | V294 20.00Hz z 0.1653 (-0.0037) | cand 20.00Hz z 0.1642 (-0.0048) | cand/V294 shift 1.30
+  light_b+T3_20_0.05_0.2           v 26.9 tau 2 : open 20.00Hz z 0.1689 | V294 19.73Hz z 0.1759 (+0.0070) | cand 19.65Hz z 0.1782 (+0.0093) | cand/V294 shift 1.33
+  light_b+T3_20_0.05_0.2           v 26.9 tau 6 : open 20.00Hz z 0.1689 | V294 19.80Hz z 0.1821 (+0.0132) | cand 19.74Hz z 0.1864 (+0.0174) | cand/V294 shift 1.32
+  light_b+T3_20_0.05_0.2           v 26.9 tau 9 : open 20.00Hz z 0.1689 | V294 19.90Hz z 0.1850 (+0.0160) | cand 19.87Hz z 0.1900 (+0.0211) | cand/V294 shift 1.32
+  light_b+T1_20_0.02_0.5           v 26.9 tau 2 : open 20.05Hz z 0.0502 | V294 20.31Hz z 0.0488 (-0.0014) | cand 20.39Hz z 0.0483 (-0.0019) | cand/V294 shift 1.37
+  light_b+T1_20_0.02_0.5           v 26.9 tau 6 : open 20.05Hz z 0.0502 | V294 20.27Hz z 0.0425 (-0.0077) | cand 20.34Hz z 0.0401 (-0.0101) | cand/V294 shift 1.31
+  light_b+T1_20_0.02_0.5           v 26.9 tau 9 : open 20.05Hz z 0.0502 | V294 20.20Hz z 0.0389 (-0.0112) | cand 20.25Hz z 0.0356 (-0.0146) | cand/V294 shift 1.30
+  light_b+T2_20_0.02_0.5           v 26.9 tau 2 : open 20.05Hz z 0.0502 | V294 20.29Hz z 0.0460 (-0.0042) | cand 20.37Hz z 0.0447 (-0.0055) | cand/V294 shift 1.32
+  light_b+T2_20_0.02_0.5           v 26.9 tau 6 : open 20.05Hz z 0.0502 | V294 20.23Hz z 0.0406 (-0.0096) | cand 20.28Hz z 0.0376 (-0.0126) | cand/V294 shift 1.31
+  light_b+T2_20_0.02_0.5           v 26.9 tau 9 : open 20.05Hz z 0.0502 | V294 20.14Hz z 0.0380 (-0.0122) | cand 20.17Hz z 0.0344 (-0.0158) | cand/V294 shift 1.30
+  light_b+T3_20_0.02_0.5           v 26.9 tau 2 : open 20.05Hz z 0.0502 | V294 19.78Hz z 0.0529 (+0.0027) | cand 19.70Hz z 0.0537 (+0.0035) | cand/V294 shift 1.31
+  light_b+T3_20_0.02_0.5           v 26.9 tau 6 : open 20.05Hz z 0.0502 | V294 19.83Hz z 0.0592 (+0.0090) | cand 19.76Hz z 0.0621 (+0.0120) | cand/V294 shift 1.32
+  light_b+T3_20_0.02_0.5           v 26.9 tau 9 : open 20.05Hz z 0.0502 | V294 19.91Hz z 0.0626 (+0.0125) | cand 19.87Hz z 0.0666 (+0.0165) | cand/V294 shift 1.32
+  light_b+T1_16_0.03_0.3           v 26.9 tau 2 : open 16.02Hz z 0.0463 | V294 16.16Hz z 0.0474 (+0.0011) | cand 16.21Hz z 0.0477 (+0.0014) | cand/V294 shift 1.28
+  light_b+T1_16_0.03_0.3           v 26.9 tau 6 : open 16.02Hz z 0.0463 | V294 16.16Hz z 0.0437 (-0.0026) | cand 16.21Hz z 0.0428 (-0.0035) | cand/V294 shift 1.34
+  light_b+T1_16_0.03_0.3           v 26.9 tau 9 : open 16.02Hz z 0.0463 | V294 16.14Hz z 0.0412 (-0.0052) | cand 16.18Hz z 0.0395 (-0.0068) | cand/V294 shift 1.32
+  light_b+T2_16_0.03_0.3           v 26.9 tau 2 : open 16.10Hz z 0.1178 | V294 16.23Hz z 0.1142 (-0.0037) | cand 16.27Hz z 0.1130 (-0.0048) | cand/V294 shift 1.32
+  light_b+T2_16_0.03_0.3           v 26.9 tau 6 : open 16.10Hz z 0.1178 | V294 16.20Hz z 0.1111 (-0.0067) | cand 16.24Hz z 0.1090 (-0.0089) | cand/V294 shift 1.32
+  light_b+T2_16_0.03_0.3           v 26.9 tau 9 : open 16.10Hz z 0.1178 | V294 16.17Hz z 0.1095 (-0.0083) | cand 16.19Hz z 0.1069 (-0.0109) | cand/V294 shift 1.31
+  light_b+T3_16_0.03_0.3           v 26.9 tau 2 : open 16.10Hz z 0.1178 | V294 15.75Hz z 0.1219 (+0.0040) | cand 15.64Hz z 0.1231 (+0.0053) | cand/V294 shift 1.31
+  light_b+T3_16_0.03_0.3           v 26.9 tau 6 : open 16.10Hz z 0.1178 | V294 15.78Hz z 0.1309 (+0.0130) | cand 15.67Hz z 0.1353 (+0.0175) | cand/V294 shift 1.34
+  light_b+T3_16_0.03_0.3           v 26.9 tau 9 : open 16.10Hz z 0.1178 | V294 15.84Hz z 0.1367 (+0.0188) | cand 15.76Hz z 0.1431 (+0.0253) | cand/V294 shift 1.34
+  light_b+T1_25_0.03_0.3           v 26.9 tau 2 : open 25.00Hz z 0.0403 | V294 25.09Hz z 0.0392 (-0.0011) | cand 25.12Hz z 0.0389 (-0.0014) | cand/V294 shift 1.32
+  light_b+T1_25_0.03_0.3           v 26.9 tau 6 : open 25.00Hz z 0.0403 | V294 25.06Hz z 0.0374 (-0.0030) | cand 25.08Hz z 0.0365 (-0.0039) | cand/V294 shift 1.30
+  light_b+T1_25_0.03_0.3           v 26.9 tau 9 : open 25.00Hz z 0.0403 | V294 25.02Hz z 0.0367 (-0.0037) | cand 25.03Hz z 0.0356 (-0.0047) | cand/V294 shift 1.30
+  light_b+T2_25_0.03_0.3           v 26.9 tau 2 : open 25.04Hz z 0.0859 | V294 25.12Hz z 0.0837 (-0.0022) | cand 25.14Hz z 0.0830 (-0.0029) | cand/V294 shift 1.31
+  light_b+T2_25_0.03_0.3           v 26.9 tau 6 : open 25.04Hz z 0.0859 | V294 25.07Hz z 0.0823 (-0.0036) | cand 25.08Hz z 0.0812 (-0.0047) | cand/V294 shift 1.30
+  light_b+T2_25_0.03_0.3           v 26.9 tau 9 : open 25.04Hz z 0.0859 | V294 25.03Hz z 0.0821 (-0.0038) | cand 25.02Hz z 0.0810 (-0.0049) | cand/V294 shift 1.30
+  light_b+T3_25_0.03_0.3           v 26.9 tau 2 : open 25.04Hz z 0.0859 | V294 24.84Hz z 0.0901 (+0.0042) | cand 24.78Hz z 0.0914 (+0.0055) | cand/V294 shift 1.31
+  light_b+T3_25_0.03_0.3           v 26.9 tau 6 : open 25.04Hz z 0.0859 | V294 24.93Hz z 0.0942 (+0.0083) | cand 24.89Hz z 0.0968 (+0.0109) | cand/V294 shift 1.31
+  light_b+T3_25_0.03_0.3           v 26.9 tau 9 : open 25.04Hz z 0.0859 | V294 25.03Hz z 0.0953 (+0.0094) | cand 25.03Hz z 0.0982 (+0.0123) | cand/V294 shift 1.31

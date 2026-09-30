@@ -1,0 +1,105 @@
+my FF and live marches == plib T1k_null / T1k_live bit-for-bit (1,020,390 ticks)
+tap frames 50935, engaged 40036 (801 s), hands-off engaged 35441 (709 s) ; tap residual vs V294 march (hands-off) 3.64 counts rms
+trim-reconstruction error proxies on hands-off engaged frames: ZOH-x 0.86, linear-x 0.25 counts rms (TRIM itself 14.31)
+
+W1 hands-off engaged, 5 s of tap frames: 141 windows (frames per window median 250)
+   V294 real      c1 median 0.985 [p5 0.911 p95 1.005] | c2 median 0.984 [p5 0.674 p95 1.123] min 0.199 max 2.018
+   A synth        c1 median 0.984 [p5 0.928 p95 1.009] | c2 median 1.888 [p5 1.095 p95 2.072] min 0.359 max 2.746
+   A stress(zoh)  c1 median 0.984 [p5 0.928 p95 1.009] | c2 median 1.874 [p5 1.025 p95 2.040] min 0.262 max 2.728
+   B b850 synth   c1 median 0.983 [p5 0.915 p95 1.008] | c2 median 1.464 [p5 0.809 p95 1.653] min 0.095 max 2.422
+   rule c2 > 1.45 => 'A live': false-alarm on V294 2/141, miss on A 11/141, miss on A-stress 13/141 ; TRIM rms per window median 3.1 (min 0.5) counts
+
+W1 hands-off engaged, 10 s of tap frames: 70 windows (frames per window median 500)
+   V294 real      c1 median 0.983 [p5 0.936 p95 1.000] | c2 median 0.981 [p5 0.766 p95 1.093] min 0.448 max 1.487
+   A synth        c1 median 0.983 [p5 0.936 p95 1.001] | c2 median 1.896 [p5 1.573 p95 2.009] min 0.988 max 2.469
+   A stress(zoh)  c1 median 0.983 [p5 0.936 p95 1.001] | c2 median 1.892 [p5 1.521 p95 1.994] min 0.910 max 2.438
+   B b850 synth   c1 median 0.983 [p5 0.936 p95 1.001] | c2 median 1.470 [p5 1.205 p95 1.581] min 0.833 max 1.952
+   rule c2 > 1.45 => 'A live': false-alarm on V294 1/70, miss on A 3/70, miss on A-stress 3/70 ; TRIM rms per window median 4.1 (min 0.8) counts
+
+W1 hands-off engaged, 15 s of tap frames: 47 windows (frames per window median 750)
+   V294 real      c1 median 0.986 [p5 0.942 p95 0.999] | c2 median 0.985 [p5 0.880 p95 1.087] min 0.689 max 1.121
+   A synth        c1 median 0.986 [p5 0.944 p95 0.999] | c2 median 1.910 [p5 1.684 p95 1.987] min 1.458 max 2.003
+   A stress(zoh)  c1 median 0.986 [p5 0.945 p95 0.998] | c2 median 1.912 [p5 1.646 p95 1.974] min 1.392 max 1.989
+   B b850 synth   c1 median 0.986 [p5 0.942 p95 0.999] | c2 median 1.481 [p5 1.276 p95 1.559] min 1.076 max 1.585
+   rule c2 > 1.45 => 'A live': false-alarm on V294 0/47, miss on A 0/47, miss on A-stress 1/47 ; TRIM rms per window median 5.1 (min 1.0) counts
+
+W1 hands-off engaged, 20 s of tap frames: 35 windows (frames per window median 1000)
+   V294 real      c1 median 0.987 [p5 0.956 p95 0.995] | c2 median 0.981 [p5 0.881 p95 1.062] min 0.679 max 1.101
+   A synth        c1 median 0.987 [p5 0.957 p95 0.995] | c2 median 1.921 [p5 1.710 p95 1.980] min 1.480 max 2.018
+   A stress(zoh)  c1 median 0.987 [p5 0.957 p95 0.995] | c2 median 1.925 [p5 1.691 p95 1.974] min 1.405 max 1.989
+   B b850 synth   c1 median 0.987 [p5 0.956 p95 0.995] | c2 median 1.478 [p5 1.290 p95 1.552] min 1.231 max 1.580
+   rule c2 > 1.45 => 'A live': false-alarm on V294 0/35, miss on A 0/35, miss on A-stress 1/35 ; TRIM rms per window median 5.1 (min 1.2) counts
+
+W1 hands-off engaged, 30 s of tap frames: 23 windows (frames per window median 1500)
+   V294 real      c1 median 0.989 [p5 0.965 p95 0.995] | c2 median 0.986 [p5 0.934 p95 1.043] min 0.895 max 1.050
+   A synth        c1 median 0.989 [p5 0.965 p95 0.995] | c2 median 1.923 [p5 1.828 p95 1.958] min 1.687 max 1.980
+   A stress(zoh)  c1 median 0.989 [p5 0.965 p95 0.995] | c2 median 1.919 [p5 1.818 p95 1.958] min 1.635 max 1.974
+   B b850 synth   c1 median 0.989 [p5 0.965 p95 0.995] | c2 median 1.482 [p5 1.399 p95 1.522] min 1.225 max 1.556
+   rule c2 > 1.45 => 'A live': false-alarm on V294 0/23, miss on A 0/23, miss on A-stress 0/23 ; TRIM rms per window median 5.8 (min 1.4) counts
+
+W2 contiguous 15 s windows, ALL engaged frames (>= 80 % engaged): 49 windows (frames per window median 750)
+   V294 real      c1 median 0.985 [p5 0.945 p95 0.998] | c2 median 0.980 [p5 0.800 p95 1.041] min 0.749 max 1.120
+   A synth        c1 median 0.985 [p5 0.946 p95 0.998] | c2 median 1.899 [p5 1.680 p95 1.968] min 1.494 max 2.067
+   A stress(zoh)  c1 median 0.984 [p5 0.946 p95 0.998] | c2 median 1.893 [p5 1.627 p95 1.969] min 1.429 max 2.044
+   B b850 synth   c1 median 0.985 [p5 0.945 p95 0.998] | c2 median 1.462 [p5 1.250 p95 1.545] min 1.142 max 1.634
+   rule c2 > 1.45 => 'A live': false-alarm on V294 0/49, miss on A 0/49, miss on A-stress 0/49 ; TRIM rms per window median 5.6 (min 1.0) counts
+
+W2 contiguous 15 s windows, hands-off frames only (>= 50 % hands-off): 49 windows (frames per window median 724)
+   V294 real      c1 median 0.985 [p5 0.946 p95 0.999] | c2 median 0.980 [p5 0.796 p95 1.043] min 0.699 max 1.108
+   A synth        c1 median 0.985 [p5 0.948 p95 0.999] | c2 median 1.905 [p5 1.639 p95 1.973] min 1.473 max 2.024
+   A stress(zoh)  c1 median 0.985 [p5 0.948 p95 0.999] | c2 median 1.900 [p5 1.613 p95 1.964] min 1.408 max 1.998
+   B b850 synth   c1 median 0.985 [p5 0.946 p95 0.999] | c2 median 1.473 [p5 1.256 p95 1.525] min 1.089 max 1.579
+   rule c2 > 1.45 => 'A live': false-alarm on V294 0/49, miss on A 0/49, miss on A-stress 0/49 ; TRIM rms per window median 4.4 (min 1.0) counts
+
+W2 contiguous 30 s windows, ALL engaged frames (>= 80 % engaged): 23 windows (frames per window median 1500)
+   V294 real      c1 median 0.985 [p5 0.963 p95 0.993] | c2 median 0.972 [p5 0.894 p95 1.009] min 0.743 max 1.024
+   A synth        c1 median 0.985 [p5 0.963 p95 0.993] | c2 median 1.893 [p5 1.726 p95 1.956] min 1.560 max 1.970
+   A stress(zoh)  c1 median 0.985 [p5 0.963 p95 0.993] | c2 median 1.885 [p5 1.702 p95 1.958] min 1.502 max 1.964
+   B b850 synth   c1 median 0.986 [p5 0.963 p95 0.993] | c2 median 1.452 [p5 1.358 p95 1.505] min 1.196 max 1.517
+   rule c2 > 1.45 => 'A live': false-alarm on V294 0/23, miss on A 0/23, miss on A-stress 0/23 ; TRIM rms per window median 6.0 (min 1.3) counts
+
+W2 contiguous 30 s windows, hands-off frames only (>= 50 % hands-off): 25 windows (frames per window median 1326)
+   V294 real      c1 median 0.987 [p5 0.962 p95 0.994] | c2 median 0.983 [p5 0.895 p95 1.011] min 0.720 max 1.047
+   A synth        c1 median 0.986 [p5 0.963 p95 0.994] | c2 median 1.921 [p5 1.715 p95 1.954] min 1.554 max 1.979
+   A stress(zoh)  c1 median 0.986 [p5 0.962 p95 0.994] | c2 median 1.919 [p5 1.699 p95 1.956] min 1.497 max 1.957
+   B b850 synth   c1 median 0.986 [p5 0.962 p95 0.994] | c2 median 1.480 [p5 1.361 p95 1.501] min 1.169 max 1.545
+   rule c2 > 1.45 => 'A live': false-alarm on V294 0/25, miss on A 0/25, miss on A-stress 0/25 ; TRIM rms per window median 5.6 (min 1.3) counts
+
+medium-speed hard-turn events (v 5-22, |la_des| >= 1.0 m/s^2 for >= 1 s, merged within 5 s): 15
+   event at route 76 s: hard for 10.3 s, v 9.9 m/s ; window engaged 30.3 s, hands-off 27.8 s
+   event at route 98 s: hard for 2.0 s, v 5.6 m/s ; window engaged 22.0 s, hands-off 19.1 s
+   event at route 134 s: hard for 13.6 s, v 9.8 m/s ; window engaged 33.5 s, hands-off 30.0 s
+   event at route 200 s: hard for 9.6 s, v 11.2 m/s ; window engaged 29.5 s, hands-off 24.7 s
+   event at route 225 s: hard for 2.2 s, v 5.3 m/s ; window engaged 22.2 s, hands-off 19.0 s
+   event at route 332 s: hard for 2.2 s, v 6.0 m/s ; window engaged 22.2 s, hands-off 15.8 s
+   event at route 369 s: hard for 2.8 s, v 5.9 m/s ; window engaged 16.6 s, hands-off 11.3 s
+   event at route 407 s: hard for 8.4 s, v 5.6 m/s ; window engaged 28.4 s, hands-off 23.7 s
+   event at route 533 s: hard for 17.8 s, v 18.2 m/s ; window engaged 37.7 s, hands-off 36.0 s
+   event at route 611 s: hard for 4.2 s, v 6.3 m/s ; window engaged 18.5 s, hands-off 14.7 s
+   event at route 678 s: hard for 4.0 s, v 6.8 m/s ; window engaged 24.0 s, hands-off 21.4 s
+   event at route 697 s: hard for 1.8 s, v 16.7 m/s ; window engaged 21.8 s, hands-off 21.7 s
+   event at route 849 s: hard for 2.3 s, v 15.4 m/s ; window engaged 22.3 s, hands-off 22.0 s
+   event at route 947 s: hard for 4.9 s, v 14.7 m/s ; window engaged 20.9 s, hands-off 16.8 s
+   event at route 968 s: hard for 2.0 s, v 6.5 m/s ; window engaged 16.9 s, hands-off 12.6 s
+
+W3 SYMPTOMATIC windows (event +-10 s), ALL engaged frames: 15 windows (frames per window median 1112)
+   V294 real      c1 median 0.992 [p5 0.978 p95 0.994] | c2 median 1.002 [p5 0.950 p95 1.023] min 0.915 max 1.024
+   A synth        c1 median 0.991 [p5 0.978 p95 0.994] | c2 median 1.945 [p5 1.885 p95 1.968] min 1.860 max 1.972
+   A stress(zoh)  c1 median 0.991 [p5 0.978 p95 0.994] | c2 median 1.942 [p5 1.875 p95 1.965] min 1.855 max 1.966
+   B b850 synth   c1 median 0.991 [p5 0.978 p95 0.994] | c2 median 1.495 [p5 1.426 p95 1.531] min 1.414 max 1.552
+   rule c2 > 1.45 => 'A live': false-alarm on V294 0/15, miss on A 0/15, miss on A-stress 0/15 ; TRIM rms per window median 23.3 (min 3.5) counts
+
+W3 SYMPTOMATIC windows (event +-10 s), hands-off frames only: 15 windows (frames per window median 1070)
+   V294 real      c1 median 0.992 [p5 0.978 p95 0.994] | c2 median 0.988 [p5 0.964 p95 1.016] min 0.957 max 1.024
+   A synth        c1 median 0.991 [p5 0.978 p95 0.995] | c2 median 1.937 [p5 1.896 p95 1.967] min 1.882 max 1.983
+   A stress(zoh)  c1 median 0.991 [p5 0.978 p95 0.994] | c2 median 1.946 [p5 1.886 p95 1.969] min 1.878 max 1.988
+   B b850 synth   c1 median 0.992 [p5 0.978 p95 0.995] | c2 median 1.492 [p5 1.445 p95 1.524] min 1.442 max 1.528
+   rule c2 > 1.45 => 'A live': false-alarm on V294 0/15, miss on A 0/15, miss on A-stress 0/15 ; TRIM rms per window median 20.2 (min 3.4) counts
+   per-event c2 (all engaged): V294 [1.01, 1.01, 0.98, 0.99, 0.91, 1.01, 0.97, 0.99, 1.0, 1.0, 0.99, 0.98, 1.0, 1.02, 1.02]
+                               A    [1.95, 1.96, 1.93, 1.94, 1.86, 1.96, 1.9, 1.92, 1.95, 1.95, 1.94, 1.9, 1.94, 1.97, 1.97]
+                               Astr [1.95, 1.96, 1.93, 1.94, 1.85, 1.96, 1.89, 1.92, 1.95, 1.95, 1.94, 1.88, 1.93, 1.97, 1.96]
+
+SYMPTOM band, per hard-turn event (event +-1 s): 1.6-3 Hz wheel-rate rms deg/s: [8.4, 9.9, 11.7, 8.3, 8.9, 7.8, 9.2, 19.6, 6.8, 6.2, 16.7, 2.8, 2.5, 6.1, 10.5]
+   raw rate rms                ln-sd across events 0.55 -> one-event-vs-one-event ratio 90 % band x0.28..x3.59 ; smallest detectable drop (one-sided 95 %): 1 event x0.28, mean of 3 events x0.48
+   rate / command (1.6-3 Hz)   ln-sd across events 0.41 -> one-event-vs-one-event ratio 90 % band x0.39..x2.60 ; smallest detectable drop (one-sided 95 %): 1 event x0.39, mean of 3 events x0.58
+   rate / tap (1.6-3 Hz)       ln-sd across events 0.47 -> one-event-vs-one-event ratio 90 % band x0.34..x2.97 ; smallest detectable drop (one-sided 95 %): 1 event x0.34, mean of 3 events x0.53

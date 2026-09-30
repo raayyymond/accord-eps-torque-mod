@@ -1,0 +1,116 @@
+seed 0 (x_noise 0.00) done
+seed 11 (x_noise 1.93) done
+seed 22 (x_noise 1.93) done
+seed 33 (x_noise 1.93) done
+seed 44 (x_noise 1.93) done
+seed 55 (x_noise 1.93) done
+
+TURN: paired A1017/V294 ratios over 6 runs (seed 0 noise-free): median [min, max]
+  TURN v  8.0 a 1.5 F_hi      hard_mask 1.030 [1.026, 1.038]  early 1.105 [1.064, 1.150]  late 0.938 [0.932, 0.940]  | V294 hard_mask 0.389 fpk 2.15 still 0.02 ; A1017 fpk 0.59 still 0.02
+  TURN v  8.0 a 1.5 J_hi2     hard_mask 0.954 [0.943, 0.988]  early 0.776 [0.702, 0.829]  late 0.998 [0.972, 1.081]  | V294 hard_mask 0.175 fpk 0.68 still 0.01 ; A1017 fpk 0.68 still 0.01
+  TURN v  8.0 a 1.5 J_lo      hard_mask 0.959 [0.947, 0.976]  early 0.910 [0.903, 0.945]  late 0.922 [0.898, 0.943]  | V294 hard_mask 0.404 fpk 2.15 still 0.01 ; A1017 fpk 2.15 still 0.02
+  TURN v  8.0 a 1.5 b_lo      hard_mask 0.881 [0.864, 0.903]  early 0.918 [0.902, 0.941]  late 0.967 [0.945, 1.022]  | V294 hard_mask 0.473 fpk 2.54 still 0.01 ; A1017 fpk 2.73 still 0.01
+  TURN v  8.0 a 1.5 lb_J2.5x  hard_mask 0.849 [0.824, 0.878]  early 0.904 [0.898, 0.920]  late 0.664 [0.528, 1.075]  | V294 hard_mask 0.860 fpk 0.59 still 0.13 ; A1017 fpk 0.59 still 0.12
+  TURN v  8.0 a 1.5 lb_b0.5x  hard_mask 0.890 [0.864, 0.902]  early 0.911 [0.898, 0.932]  late 0.695 [0.629, 0.753]  | V294 hard_mask 1.777 fpk 0.59 still 0.16 ; A1017 fpk 0.59 still 0.15
+  TURN v  8.0 a 1.5 light_b   hard_mask 0.869 [0.820, 0.918]  early 0.872 [0.823, 0.935]  late 0.753 [0.624, 0.878]  | V294 hard_mask 1.295 fpk 0.59 still 0.16 ; A1017 fpk 0.78 still 0.12
+  TURN v  8.0 a 1.5 nominal   hard_mask 0.987 [0.977, 0.997]  early 0.969 [0.912, 0.997]  late 0.961 [0.943, 0.978]  | V294 hard_mask 0.361 fpk 2.54 still 0.01 ; A1017 fpk 0.59 still 0.01
+  TURN v  8.0 a 3.0 F_hi      hard_mask 0.973 [0.953, 0.978]  early 1.169 [1.133, 1.205]  late 1.027 [0.965, 1.035]  | V294 hard_mask 0.908 fpk 0.59 still 0.04 ; A1017 fpk 0.59 still 0.04
+  TURN v  8.0 a 3.0 J_hi2     hard_mask 0.992 [0.988, 0.995]  early 0.914 [0.890, 0.964]  late 0.986 [0.983, 0.990]  | V294 hard_mask 0.402 fpk 0.78 still 0.01 ; A1017 fpk 0.78 still 0.01
+  TURN v  8.0 a 3.0 J_lo      hard_mask 0.940 [0.926, 0.948]  early 0.938 [0.902, 0.974]  late 0.941 [0.938, 0.985]  | V294 hard_mask 0.954 fpk 0.59 still 0.03 ; A1017 fpk 0.59 still 0.03
+  TURN v  8.0 a 3.0 b_lo      hard_mask 0.980 [0.953, 0.996]  early 1.130 [1.001, 1.344]  late 0.815 [0.734, 0.913]  | V294 hard_mask 1.054 fpk 2.54 still 0.03 ; A1017 fpk 1.56 still 0.03
+  TURN v  8.0 a 3.0 lb_J2.5x  hard_mask 1.002 [0.988, 1.023]  early 0.881 [0.857, 0.900]  late 1.474 [1.426, 1.540]  | V294 hard_mask 1.051 fpk 0.59 still 0.14 ; A1017 fpk 0.59 still 0.14
+  TURN v  8.0 a 3.0 lb_b0.5x  hard_mask 1.008 [0.989, 1.063]  early 1.396 [1.364, 1.451]  late 0.725 [0.710, 0.995]  | V294 hard_mask 2.408 fpk 0.98 still 0.16 ; A1017 fpk 0.59 still 0.18
+  TURN v  8.0 a 3.0 light_b   hard_mask 0.904 [0.891, 0.906]  early 1.163 [1.157, 1.222]  late 1.002 [0.932, 1.006]  | V294 hard_mask 1.940 fpk 0.59 still 0.17 ; A1017 fpk 0.59 still 0.16
+  TURN v  8.0 a 3.0 nominal   hard_mask 0.965 [0.954, 0.979]  early 1.163 [1.117, 1.283]  late 0.918 [0.877, 0.956]  | V294 hard_mask 0.865 fpk 0.59 still 0.04 ; A1017 fpk 0.59 still 0.03
+  TURN v 12.0 a 1.5 F_hi      hard_mask 1.026 [1.004, 1.042]  early 0.905 [0.851, 1.013]  late 0.988 [0.946, 1.016]  | V294 hard_mask 0.171 fpk 1.07 still 0.02 ; A1017 fpk 0.98 still 0.02
+  TURN v 12.0 a 1.5 J_hi2     hard_mask 0.888 [0.863, 0.903]  early 0.820 [0.800, 0.863]  late 0.958 [0.912, 0.995]  | V294 hard_mask 0.186 fpk 0.59 still 0.08 ; A1017 fpk 0.59 still 0.07
+  TURN v 12.0 a 1.5 J_lo      hard_mask 0.985 [0.966, 1.030]  early 0.984 [0.917, 1.003]  late 0.965 [0.930, 1.019]  | V294 hard_mask 0.156 fpk 0.98 still 0.02 ; A1017 fpk 1.17 still 0.02
+  TURN v 12.0 a 1.5 b_lo      hard_mask 0.968 [0.954, 0.981]  early 1.008 [0.952, 1.040]  late 0.929 [0.912, 0.940]  | V294 hard_mask 0.253 fpk 0.98 still 0.08 ; A1017 fpk 0.98 still 0.08
+  TURN v 12.0 a 1.5 lb_J2.5x  hard_mask 0.966 [0.949, 0.989]  early 0.916 [0.902, 0.940]  late 0.941 [0.852, 1.037]  | V294 hard_mask 0.665 fpk 0.59 still 0.17 ; A1017 fpk 0.59 still 0.18
+  TURN v 12.0 a 1.5 lb_b0.5x  hard_mask 0.903 [0.885, 0.917]  early 0.905 [0.884, 0.940]  late 0.868 [0.830, 0.903]  | V294 hard_mask 0.957 fpk 1.56 still 0.20 ; A1017 fpk 2.25 still 0.20
+  TURN v 12.0 a 1.5 light_b   hard_mask 0.961 [0.777, 0.965]  early 0.865 [0.841, 0.937]  late 1.044 [0.737, 1.051]  | V294 hard_mask 0.850 fpk 0.59 still 0.19 ; A1017 fpk 0.88 still 0.19
+  TURN v 12.0 a 1.5 nominal   hard_mask 0.997 [0.945, 1.037]  early 0.972 [0.853, 1.131]  late 0.953 [0.923, 1.032]  | V294 hard_mask 0.164 fpk 0.98 still 0.02 ; A1017 fpk 0.98 still 0.03
+  TURN v 12.0 a 3.0 F_hi      hard_mask 0.987 [0.970, 1.004]  early 0.746 [0.535, 0.998]  late 1.038 [1.008, 1.086]  | V294 hard_mask 0.352 fpk 1.37 still 0.16 ; A1017 fpk 1.17 still 0.17
+  TURN v 12.0 a 3.0 J_hi2     hard_mask 1.074 [1.071, 1.097]  early 1.199 [1.112, 1.311]  late 0.999 [0.992, 1.003]  | V294 hard_mask 0.386 fpk 0.78 still 0.19 ; A1017 fpk 0.68 still 0.18
+  TURN v 12.0 a 3.0 J_lo      hard_mask 0.979 [0.965, 0.988]  early 0.930 [0.660, 1.245]  late 0.964 [0.962, 0.967]  | V294 hard_mask 0.303 fpk 0.59 still 0.14 ; A1017 fpk 0.59 still 0.14
+  TURN v 12.0 a 3.0 b_lo      hard_mask 0.975 [0.969, 0.977]  early 1.993 [1.314, 2.581]  late 0.890 [0.878, 0.895]  | V294 hard_mask 0.638 fpk 3.32 still 0.18 ; A1017 fpk 1.17 still 0.17
+  TURN v 12.0 a 3.0 lb_J2.5x  hard_mask 1.034 [1.028, 1.044]  early 1.124 [1.103, 1.155]  late 0.677 [0.661, 0.717]  | V294 hard_mask 0.910 fpk 0.78 still 0.15 ; A1017 fpk 0.59 still 0.18
+  TURN v 12.0 a 3.0 lb_b0.5x  hard_mask 0.785 [0.783, 0.793]  early 1.129 [1.043, 1.147]  late 0.778 [0.773, 0.783]  | V294 hard_mask 2.910 fpk 0.98 still 0.19 ; A1017 fpk 0.59 still 0.19
+  TURN v 12.0 a 3.0 light_b   hard_mask 0.916 [0.910, 0.921]  early 1.559 [1.518, 1.583]  late 0.866 [0.858, 0.882]  | V294 hard_mask 1.714 fpk 0.59 still 0.18 ; A1017 fpk 0.59 still 0.18
+  TURN v 12.0 a 3.0 nominal   hard_mask 0.968 [0.961, 0.975]  early 1.130 [0.918, 1.240]  late 0.996 [0.988, 1.000]  | V294 hard_mask 0.354 fpk 0.59 still 0.17 ; A1017 fpk 0.98 still 0.18
+  TURN v 16.0 a 1.5 F_hi      hard_mask 0.980 [0.964, 0.987]  early 1.002 [0.908, 1.045]  late 0.985 [0.979, 1.003]  | V294 hard_mask 0.081 fpk 3.61 still 0.01 ; A1017 fpk 3.61 still 0.01
+  TURN v 16.0 a 1.5 J_hi2     hard_mask 0.976 [0.941, 1.010]  early 1.015 [0.892, 1.091]  late 0.998 [0.983, 1.011]  | V294 hard_mask 0.100 fpk 3.52 still 0.02 ; A1017 fpk 3.52 still 0.02
+  TURN v 16.0 a 1.5 J_lo      hard_mask 1.004 [0.989, 1.034]  early 0.952 [0.672, 1.260]  late 0.994 [0.982, 1.003]  | V294 hard_mask 0.078 fpk 3.52 still 0.01 ; A1017 fpk 3.71 still 0.01
+  TURN v 16.0 a 1.5 b_lo      hard_mask 0.958 [0.947, 0.968]  early 0.880 [0.789, 0.900]  late 0.989 [0.974, 1.000]  | V294 hard_mask 0.118 fpk 3.71 still 0.02 ; A1017 fpk 3.71 still 0.02
+  TURN v 16.0 a 1.5 lb_J2.5x  hard_mask 0.956 [0.936, 0.971]  early 0.995 [0.973, 1.006]  late 1.036 [1.015, 1.085]  | V294 hard_mask 0.705 fpk 2.64 still 0.19 ; A1017 fpk 2.64 still 0.19
+  TURN v 16.0 a 1.5 lb_b0.5x  hard_mask 0.797 [0.782, 0.807]  early 0.845 [0.818, 0.856]  late 0.372 [0.338, 0.381]  | V294 hard_mask 0.950 fpk 2.64 still 0.20 ; A1017 fpk 2.64 still 0.20
+  TURN v 16.0 a 1.5 light_b   hard_mask 0.989 [0.952, 1.019]  early 0.799 [0.750, 0.861]  late 0.925 [0.891, 0.929]  | V294 hard_mask 0.623 fpk 2.15 still 0.20 ; A1017 fpk 2.64 still 0.20
+  TURN v 16.0 a 1.5 nominal   hard_mask 0.998 [0.977, 1.010]  early 0.963 [0.879, 1.071]  late 0.991 [0.974, 1.000]  | V294 hard_mask 0.102 fpk 3.71 still 0.01 ; A1017 fpk 3.71 still 0.01
+  TURN v 16.0 a 3.0 F_hi      hard_mask 0.953 [0.947, 0.960]  early 1.062 [0.925, 1.209]  late 0.975 [0.960, 0.996]  | V294 hard_mask 0.201 fpk 3.81 still 0.00 ; A1017 fpk 3.81 still 0.00
+  TURN v 16.0 a 3.0 J_hi2     hard_mask 1.013 [1.008, 1.019]  early 0.995 [0.941, 1.018]  late 0.983 [0.971, 0.997]  | V294 hard_mask 0.205 fpk 3.71 still 0.00 ; A1017 fpk 3.61 still 0.00
+  TURN v 16.0 a 3.0 J_lo      hard_mask 0.971 [0.952, 0.978]  early 1.059 [0.919, 1.111]  late 0.983 [0.974, 0.998]  | V294 hard_mask 0.198 fpk 3.71 still 0.00 ; A1017 fpk 3.71 still 0.00
+  TURN v 16.0 a 3.0 b_lo      hard_mask 0.981 [0.974, 0.986]  early 1.315 [1.204, 1.470]  late 0.959 [0.951, 0.966]  | V294 hard_mask 0.346 fpk 4.10 still 0.00 ; A1017 fpk 4.20 still 0.00
+  TURN v 16.0 a 3.0 lb_J2.5x  hard_mask 0.882 [0.856, 0.901]  early 0.513 [0.498, 0.530]  late 1.296 [1.177, 1.451]  | V294 hard_mask 1.014 fpk 0.78 still 0.19 ; A1017 fpk 1.07 still 0.18
+  TURN v 16.0 a 3.0 lb_b0.5x  hard_mask 0.796 [0.792, 0.806]  early 1.700 [1.640, 1.789]  late 0.870 [0.852, 0.901]  | V294 hard_mask 2.993 fpk 3.32 still 0.20 ; A1017 fpk 2.34 still 0.21
+  TURN v 16.0 a 3.0 light_b   hard_mask 0.876 [0.860, 0.887]  early 1.053 [0.860, 1.087]  late 0.762 [0.758, 0.828]  | V294 hard_mask 1.832 fpk 0.68 still 0.20 ; A1017 fpk 3.22 still 0.22
+  TURN v 16.0 a 3.0 nominal   hard_mask 0.999 [0.987, 1.023]  early 1.122 [1.027, 1.433]  late 0.983 [0.962, 1.002]  | V294 hard_mask 0.196 fpk 4.39 still 0.00 ; A1017 fpk 4.00 still 0.00
+  TURN v 20.0 a 1.5 F_hi      hard_mask 0.984 [0.963, 0.994]  early 1.000 [0.947, 1.014]  late 0.993 [0.986, 1.002]  | V294 hard_mask 0.102 fpk 2.54 still 0.06 ; A1017 fpk 2.54 still 0.06
+  TURN v 20.0 a 1.5 J_hi2     hard_mask 0.970 [0.952, 0.988]  early 0.979 [0.961, 0.996]  late 0.987 [0.960, 1.014]  | V294 hard_mask 0.092 fpk 2.34 still 0.07 ; A1017 fpk 2.34 still 0.07
+  TURN v 20.0 a 1.5 J_lo      hard_mask 0.981 [0.975, 0.992]  early 0.995 [0.982, 1.010]  late 0.994 [0.984, 1.004]  | V294 hard_mask 0.104 fpk 2.54 still 0.07 ; A1017 fpk 2.54 still 0.07
+  TURN v 20.0 a 1.5 b_lo      hard_mask 0.972 [0.963, 0.982]  early 0.999 [0.974, 1.008]  late 0.967 [0.946, 0.991]  | V294 hard_mask 0.147 fpk 2.54 still 0.08 ; A1017 fpk 2.54 still 0.08
+  TURN v 20.0 a 1.5 lb_J2.5x  hard_mask 0.984 [0.982, 0.986]  early 1.017 [1.004, 1.019]  late 1.051 [1.048, 1.060]  | V294 hard_mask 0.673 fpk 2.25 still 0.21 ; A1017 fpk 2.25 still 0.21
+  TURN v 20.0 a 1.5 lb_b0.5x  hard_mask 1.159 [1.076, 1.176]  early 0.679 [0.661, 0.780]  late 0.871 [0.868, 0.876]  | V294 hard_mask 0.635 fpk 2.25 still 0.21 ; A1017 fpk 2.25 still 0.21
+  TURN v 20.0 a 1.5 light_b   hard_mask 0.929 [0.923, 0.997]  early 0.934 [0.807, 0.939]  late 0.879 [0.874, 0.881]  | V294 hard_mask 0.594 fpk 2.25 still 0.21 ; A1017 fpk 2.25 still 0.21
+  TURN v 20.0 a 1.5 nominal   hard_mask 1.004 [0.986, 1.020]  early 1.000 [0.977, 1.014]  late 0.998 [0.995, 1.005]  | V294 hard_mask 0.096 fpk 2.34 still 0.06 ; A1017 fpk 2.34 still 0.06
+  TURN v 20.0 a 3.0 F_hi      hard_mask 0.984 [0.979, 0.999]  early 1.063 [1.033, 1.251]  late 0.989 [0.978, 0.997]  | V294 hard_mask 0.172 fpk 3.12 still 0.00 ; A1017 fpk 3.12 still 0.00
+  TURN v 20.0 a 3.0 J_hi2     hard_mask 0.986 [0.979, 0.997]  early 0.967 [0.934, 1.051]  late 0.985 [0.980, 0.993]  | V294 hard_mask 0.166 fpk 3.03 still 0.00 ; A1017 fpk 3.03 still 0.00
+  TURN v 20.0 a 3.0 J_lo      hard_mask 0.975 [0.965, 0.990]  early 1.016 [0.954, 1.063]  late 0.984 [0.976, 1.001]  | V294 hard_mask 0.163 fpk 3.12 still 0.00 ; A1017 fpk 3.42 still 0.00
+  TURN v 20.0 a 3.0 b_lo      hard_mask 0.961 [0.959, 0.967]  early 0.907 [0.865, 1.006]  late 0.977 [0.973, 0.982]  | V294 hard_mask 0.266 fpk 3.32 still 0.01 ; A1017 fpk 3.32 still 0.01
+  TURN v 20.0 a 3.0 lb_J2.5x  hard_mask 0.842 [0.825, 0.856]  early 0.505 [0.487, 0.518]  late 0.859 [0.829, 0.873]  | V294 hard_mask 1.067 fpk 0.78 still 0.20 ; A1017 fpk 0.78 still 0.21
+  TURN v 20.0 a 3.0 lb_b0.5x  hard_mask 0.815 [0.805, 0.822]  early 1.161 [1.134, 1.175]  late 0.846 [0.836, 0.879]  | V294 hard_mask 2.907 fpk 2.64 still 0.22 ; A1017 fpk 2.64 still 0.22
+  TURN v 20.0 a 3.0 light_b   hard_mask 0.853 [0.823, 0.859]  early 0.972 [0.856, 0.990]  late 0.813 [0.801, 0.816]  | V294 hard_mask 1.964 fpk 2.64 still 0.22 ; A1017 fpk 2.64 still 0.22
+  TURN v 20.0 a 3.0 nominal   hard_mask 0.969 [0.959, 0.978]  early 0.937 [0.879, 1.050]  late 0.990 [0.977, 0.998]  | V294 hard_mask 0.169 fpk 3.12 still 0.00 ; A1017 fpk 3.03 still 0.00
+
+CENTRE: paired A1017/V294 ratios: median [min, max]
+  v  3.1 F_hi      r035 1.000 [1.000, 1.000]  r163 1.000 [1.000, 1.000]
+  v  3.1 J_hi2     r035 1.000 [1.000, 1.000]  r163 1.000 [1.000, 1.000]
+  v  3.1 J_lo      r035 1.000 [1.000, 1.000]  r163 1.000 [1.000, 1.000]
+  v  3.1 b_lo      r035 1.000 [1.000, 1.000]  r163 1.000 [1.000, 1.000]
+  v  3.1 lb_J2.5x  r035 0.996 [0.970, 1.000]  r163 0.996 [0.972, 1.000]
+  v  3.1 lb_b0.5x  r035 0.983 [0.952, 1.000]  r163 0.982 [0.956, 1.000]
+  v  3.1 light_b   r035 0.988 [0.969, 1.000]  r163 0.989 [0.970, 1.000]
+  v  3.1 nominal   r035 1.000 [1.000, 1.000]  r163 1.000 [1.000, 1.000]
+  v  8.0 F_hi      r035 0.995 [0.963, 1.125]  r163 0.995 [0.955, 1.088]
+  v  8.0 J_hi2     r035 0.996 [0.983, 1.168]  r163 0.995 [0.967, 1.127]
+  v  8.0 J_lo      r035 0.939 [0.924, 1.022]  r163 0.957 [0.932, 0.995]
+  v  8.0 b_lo      r035 0.954 [0.899, 1.048]  r163 0.943 [0.868, 1.054]
+  v  8.0 lb_J2.5x  r035 0.981 [0.968, 1.000]  r163 0.980 [0.974, 1.000]
+  v  8.0 lb_b0.5x  r035 0.927 [0.905, 0.966]  r163 0.950 [0.904, 0.965]
+  v  8.0 light_b   r035 0.964 [0.933, 0.969]  r163 0.961 [0.931, 0.968]
+  v  8.0 nominal   r035 0.952 [0.913, 0.977]  r163 0.974 [0.921, 1.001]
+  v 17.0 F_hi      r035 0.995 [0.975, 1.009]  r163 0.991 [0.963, 0.999]
+  v 17.0 J_hi2     r035 0.983 [0.974, 0.998]  r163 0.991 [0.966, 1.017]
+  v 17.0 J_lo      r035 0.977 [0.962, 0.985]  r163 0.970 [0.948, 0.986]
+  v 17.0 b_lo      r035 0.974 [0.956, 0.993]  r163 0.971 [0.951, 1.003]
+  v 17.0 lb_J2.5x  r035 0.999 [0.974, 1.081]  r163 0.999 [0.974, 1.119]
+  v 17.0 lb_b0.5x  r035 0.943 [0.845, 1.221]  r163 0.940 [0.842, 1.203]
+  v 17.0 light_b   r035 0.958 [0.940, 1.021]  r163 0.955 [0.932, 1.058]
+  v 17.0 nominal   r035 0.983 [0.976, 0.990]  r163 0.972 [0.969, 0.991]
+  v 27.0 F_hi      r035 0.978 [0.960, 1.000]  r163 0.971 [0.949, 1.024]
+  v 27.0 J_hi2     r035 0.994 [0.975, 1.029]  r163 0.987 [0.972, 0.997]
+  v 27.0 J_lo      r035 0.983 [0.976, 1.012]  r163 0.989 [0.970, 0.999]
+  v 27.0 b_lo      r035 0.981 [0.956, 0.985]  r163 0.963 [0.948, 0.978]
+  v 27.0 lb_J2.5x  r035 0.969 [0.882, 1.000]  r163 0.970 [0.881, 1.000]
+  v 27.0 lb_b0.5x  r035 0.960 [0.546, 1.142]  r163 0.959 [0.745, 1.146]
+  v 27.0 light_b   r035 0.949 [0.928, 0.960]  r163 0.947 [0.925, 0.978]
+  v 27.0 nominal   r035 0.985 [0.980, 1.013]  r163 0.984 [0.979, 1.022]
+
+TURN hard_mask, pooled over v, a, seeds: median ratio per member [p10, p90]
+  nominal   median 0.985 [0.962, 1.010]  fraction > 1.05: 0.00
+  J_lo      median 0.976 [0.945, 1.003]  fraction > 1.05: 0.00
+  J_hi2     median 0.988 [0.901, 1.071]  fraction > 1.05: 0.12
+  b_lo      median 0.968 [0.898, 0.983]  fraction > 1.05: 0.00
+  F_hi      median 0.983 [0.957, 1.029]  fraction > 1.05: 0.00
+  light_b   median 0.909 [0.840, 0.971]  fraction > 1.05: 0.00
+  lb_J2.5x  median 0.959 [0.842, 1.028]  fraction > 1.05: 0.00
+  lb_b0.5x  median 0.843 [0.786, 1.099]  fraction > 1.05: 0.15

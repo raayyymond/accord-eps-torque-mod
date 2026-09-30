@@ -1,0 +1,21 @@
+H6 SENSITIVITY  (V294 cells, nominal plant, 21 chunks)
+  measured: track 0.873 0.871 0.583 0.830 0.924 | hard16 nan 14.88 nan 7.62 1.77 | dwell 25.7 11.2 10.8 7.2 4.2 | slew share 0.0029 0.0000 0.0000 0.0000 0.0000
+  dist full pipe  2 ms: angle R2 0.9993 rate R2 0.9687 cmd R2 0.9982 | track 0.875 0.872 0.576 0.830 0.922 | hard16 nan 14.46 nan 7.43 1.73 | slew 0.0029 0.0002 0.0000 0.0000 0.0000 | lc 1.27 Hz +2.9 dB (16 s)
+  dist full pipe 12 ms: angle R2 0.9992 rate R2 0.9687 cmd R2 0.9989 | track 0.875 0.872 0.576 0.830 0.922 | hard16 nan 14.69 nan 7.49 1.74 | slew 0.0029 0.0002 0.0000 0.0000 0.0000 | lc 1.27 Hz +3.0 dB (15 s)
+  dist full pipe 17 ms: angle R2 0.9992 rate R2 0.9682 cmd R2 0.9989 | track 0.875 0.872 0.575 0.830 0.922 | hard16 nan 14.79 nan 7.52 1.75 | slew 0.0029 0.0002 0.0000 0.0000 0.0000 | lc 1.27 Hz +3.0 dB (15 s)
+  dist full pipe 22 ms: angle R2 0.9991 rate R2 0.9674 cmd R2 0.9991 | track 0.874 0.872 0.575 0.830 0.922 | hard16 nan 14.89 nan 7.54 1.75 | slew 0.0029 0.0002 0.0000 0.0000 0.0000 | lc 1.27 Hz +3.0 dB (15 s)
+  dist full pipe 27 ms: angle R2 0.9990 rate R2 0.9670 cmd R2 0.9991 | track 0.874 0.873 0.575 0.830 0.922 | hard16 nan 14.97 nan 7.57 1.76 | slew 0.0029 0.0001 0.0000 0.0000 0.0000 | lc 1.27 Hz +3.1 dB (15 s)
+  dist full pipe 32 ms: angle R2 0.9990 rate R2 0.9666 cmd R2 0.9986 | track 0.874 0.873 0.574 0.830 0.922 | hard16 nan 15.02 nan 7.59 1.76 | slew 0.0027 0.0001 0.0000 0.0000 0.0000 | lc 1.27 Hz +3.1 dB (15 s)
+  dist full pipe 42 ms: angle R2 0.9989 rate R2 0.9646 cmd R2 0.9979 | track 0.874 0.873 0.574 0.830 0.922 | hard16 nan 15.13 nan 7.64 1.78 | slew 0.0027 0.0001 0.0000 0.0000 0.0000 | lc 1.27 Hz +3.2 dB (15 s)
+  dist full pipe 62 ms: angle R2 0.9985 rate R2 0.9577 cmd R2 0.9964 | track 0.873 0.874 0.573 0.830 0.922 | hard16 nan 15.17 nan 7.70 1.80 | slew 0.0027 0.0001 0.0000 0.0000 0.0000 | lc 1.27 Hz +3.3 dB (15 s)
+  dist lp   pipe  2 ms: angle R2 0.9787 rate R2 0.2854 cmd R2 0.9832 | track 0.839 0.864 0.588 0.763 0.917 | hard16 nan 1.21 nan 0.16 0.17 | slew 0.0022 0.0001 0.0000 0.0000 0.0000 | lc 1.07 Hz -4.9 dB (15 s)
+  dist lp   pipe 12 ms: angle R2 0.9799 rate R2 0.2844 cmd R2 0.9830 | track 0.840 0.864 0.587 0.763 0.917 | hard16 nan 1.24 nan 0.16 0.17 | slew 0.0022 0.0001 0.0000 0.0000 0.0000 | lc 1.07 Hz -4.8 dB (15 s)
+  dist lp   pipe 17 ms: angle R2 0.9805 rate R2 0.2836 cmd R2 0.9832 | track 0.840 0.865 0.587 0.764 0.917 | hard16 nan 1.25 nan 0.16 0.18 | slew 0.0022 0.0001 0.0000 0.0000 0.0000 | lc 1.07 Hz -4.7 dB (15 s)
+  dist lp   pipe 22 ms: angle R2 0.9810 rate R2 0.2850 cmd R2 0.9825 | track 0.840 0.865 0.586 0.764 0.917 | hard16 nan 1.25 nan 0.16 0.17 | slew 0.0022 0.0001 0.0000 0.0000 0.0000 | lc 1.07 Hz -4.8 dB (15 s)
+  dist lp   pipe 27 ms: angle R2 0.9815 rate R2 0.2850 cmd R2 0.9824 | track 0.840 0.865 0.586 0.764 0.917 | hard16 nan 1.28 nan 0.16 0.18 | slew 0.0022 0.0001 0.0000 0.0000 0.0000 | lc 1.07 Hz -4.8 dB (15 s)
+  dist lp   pipe 32 ms: angle R2 0.9819 rate R2 0.2858 cmd R2 0.9826 | track 0.840 0.865 0.585 0.764 0.917 | hard16 nan 1.29 nan 0.16 0.18 | slew 0.0022 0.0001 0.0000 0.0000 0.0000 | lc 1.07 Hz -4.7 dB (15 s)
+  dist lp   pipe 42 ms: angle R2 0.9825 rate R2 0.2825 cmd R2 0.9816 | track 0.840 0.866 0.585 0.764 0.916 | hard16 nan 1.31 nan 0.15 0.19 | slew 0.0024 0.0001 0.0000 0.0000 0.0000 | lc 1.07 Hz -4.5 dB (15 s)
+  dist lp   pipe 62 ms: angle R2 0.9821 rate R2 0.2742 cmd R2 0.9778 | track 0.840 0.867 0.583 0.764 0.916 | hard16 nan 1.31 nan 0.16 0.19 | slew 0.0024 0.0001 0.0000 0.0000 0.0000 | lc 1.07 Hz -4.4 dB (15 s)
+  dist full x_noise 0.00: dwell/min 49.9 30.5 36.9 32.0 18.6  r_hi 1.44 2.58 1.16 1.39 0.67
+  dist full x_noise 1.93: dwell/min 62.7 19.3 14.2 5.7 1.7  r_hi 1.44 2.58 1.16 1.40 0.67
+  dist full x_noise 4.00: dwell/min 0.0 0.0 0.0 0.0 0.0  r_hi 1.46 2.58 1.17 1.40 0.68

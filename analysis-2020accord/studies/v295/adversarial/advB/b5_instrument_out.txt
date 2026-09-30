@@ -1,0 +1,144 @@
+tap frames 50936 ; settled engaged 786.9 s ; hands-off (pressed-dilated) 695.1 s ; hands-off |bar|<400 696.0 s
+
+[I0] reproduction of the REAL tap by my V294 march, hands-off settled engaged frames (rms counts), by delta / x mode
+   delta -8 ms x lin: HO rms live 4.68 | FF-only 15.82 | inverted 30.28 ; all-engaged live 6.54 ; |trim|>=24 frames (1766): live 13.1 FF-only 65.2 inv 127.4
+   delta -4 ms x lin: HO rms live 3.63 | FF-only 15.51 | inverted 30.12 ; all-engaged live 5.16 ; |trim|>=24 frames (1757): live 9.6 FF-only 64.6 inv 127.3
+   delta +0 ms x lin: HO rms live 2.59 | FF-only 15.27 | inverted 30.03 ; all-engaged live 3.91 ; |trim|>=24 frames (1757): live 6.4 FF-only 63.8 inv 127.1
+   delta +2 ms x lin: HO rms live 2.32 | FF-only 15.22 | inverted 29.99 ; all-engaged live 3.59 ; |trim|>=24 frames (1756): live 5.5 FF-only 63.7 inv 126.9
+   delta +4 ms x lin: HO rms live 2.25 | FF-only 15.21 | inverted 29.92 ; all-engaged live 3.46 ; |trim|>=24 frames (1755): live 5.2 FF-only 63.7 inv 126.7
+   delta +6 ms x lin: HO rms live 2.43 | FF-only 15.17 | inverted 29.90 ; all-engaged live 3.59 ; |trim|>=24 frames (1768): live 5.5 FF-only 63.2 inv 126.1
+   delta +8 ms x lin: HO rms live 2.90 | FF-only 15.19 | inverted 29.88 ; all-engaged live 4.03 ; |trim|>=24 frames (1759): live 6.8 FF-only 63.3 inv 126.3
+   delta +0 ms x zoh: HO rms live 2.86 | FF-only 15.28 | inverted 30.02 ; all-engaged live 4.49 ; |trim|>=24 frames (1769): live 7.6 FF-only 63.6 inv 126.6
+   delta +4 ms x zoh: HO rms live 2.27 | FF-only 15.21 | inverted 29.93 ; all-engaged live 3.83 ; |trim|>=24 frames (1776): live 5.4 FF-only 63.4 inv 126.0
+   best alignment: delta +4 ms, x lin (HO rms 2.25)
+
+[I1-I3, I6] per-window c1/c2, delta +4 ms, x lin   (FA = null c2 > 1.45 ; miss = c2 <= 1.45 ; inverted c2 >= 0)
+   HO 15 s (exposure)         n  46 | NULL c2 0.98 [0.87,1.02] FA 0.000 | PA c2 1.81 [1.64,1.85] miss 0.022 | PB c2 1.65 [1.31,1.85] miss 0.196 | PB2 c2 1.81 [1.52,1.87] miss 0.022 | INV5 c2 -1.83 [-1.89,-1.60] c2>=0 0.000 | INV4 c2 -0.99 [-1.08,-0.85] c2>=0 0.000 | 
+   HO 30 s (exposure)         n  23 | NULL c2 0.98 [0.89,1.01] FA 0.000 | PA c2 1.83 [1.73,1.85] miss 0.000 | PB c2 1.79 [1.37,1.85] miss 0.130 | PB2 c2 1.83 [1.59,1.87] miss 0.000 | INV5 c2 -1.85 [-1.88,-1.70] c2>=0 0.000 | INV4 c2 -1.01 [-1.04,-0.88] c2>=0 0.000 | 
+   HO|bar|<400 15 s           n  46 | NULL c2 0.99 [0.86,1.04] FA 0.000 | PA c2 1.82 [1.62,1.86] miss 0.022 | PB c2 1.69 [1.27,1.84] miss 0.130 | PB2 c2 1.82 [1.51,1.89] miss 0.022 | INV5 c2 -1.83 [-1.87,-1.61] c2>=0 0.000 | INV4 c2 -0.99 [-1.08,-0.83] c2>=0 0.000 | 
+   HO|bar|<400 30 s           n  23 | NULL c2 0.99 [0.93,1.04] FA 0.000 | PA c2 1.83 [1.72,1.86] miss 0.000 | PB c2 1.72 [1.42,1.83] miss 0.087 | PB2 c2 1.83 [1.69,1.90] miss 0.043 | INV5 c2 -1.84 [-1.86,-1.62] c2>=0 0.000 | INV4 c2 -1.00 [-1.02,-0.83] c2>=0 0.000 | 
+   HO 10 s (exposure)         n  69 | NULL c2 0.99 [0.85,1.06] FA 0.000 | PA c2 1.81 [1.55,1.87] miss 0.029 | PB c2 1.63 [1.23,1.85] miss 0.246 | PB2 c2 1.81 [1.43,1.95] miss 0.087 | INV5 c2 -1.82 [-1.90,-1.53] c2>=0 0.000 | INV4 c2 -0.99 [-1.09,-0.78] c2>=0 0.000 | 
+   HO 5 s (exposure)          n 139 | NULL c2 0.99 [0.77,1.14] FA 0.007 | PA c2 1.79 [1.13,1.89] miss 0.108 | PB c2 1.58 [1.06,1.87] miss 0.317 | PB2 c2 1.80 [1.01,1.98] miss 0.122 | INV5 c2 -1.81 [-1.92,-1.24] c2>=0 0.000 | INV4 c2 -0.99 [-1.11,-0.67] c2>=0 0.000 | 
+   ALL 15 s contiguous        n  48 | NULL c2 0.97 [0.85,1.03] FA 0.000 | PA c2 1.80 [1.63,1.86] miss 0.000 | PB c2 1.67 [1.25,1.85] miss 0.188 | PB2 c2 1.80 [1.52,1.90] miss 0.042 | INV5 c2 -1.83 [-1.88,-1.64] c2>=0 0.000 | INV4 c2 -1.00 [-1.05,-0.85] c2>=0 0.000 | 
+   ALL 30 s contiguous        n  22 | NULL c2 0.97 [0.90,1.00] FA 0.000 | PA c2 1.82 [1.70,1.85] miss 0.000 | PB c2 1.72 [1.41,1.83] miss 0.182 | PB2 c2 1.81 [1.70,1.87] miss 0.045 | INV5 c2 -1.85 [-1.86,-1.67] c2>=0 0.000 | INV4 c2 -1.00 [-1.03,-0.91] c2>=0 0.000 | 
+   ALL 15 s sliding 2.5 s     n 285 | NULL c2 0.98 [0.85,1.05] FA 0.000 | PA c2 1.81 [1.62,1.86] miss 0.007 | PB c2 1.69 [1.29,1.84] miss 0.151 | PB2 c2 1.81 [1.47,1.91] miss 0.049 | INV5 c2 -1.83 [-1.88,-1.60] c2>=0 0.000 | INV4 c2 -0.99 [-1.05,-0.84] c2>=0 0.000 | 
+   HT +-10 s all engaged      n  12 | NULL c2 0.98 [0.97,1.01] FA 0.000 | PA c2 1.83 [1.81,1.86] miss 0.000 | PB c2 1.81 [1.76,1.85] miss 0.000 | PB2 c2 1.84 [1.79,1.88] miss 0.000 | INV5 c2 -1.85 [-1.87,-1.81] c2>=0 0.000 | INV4 c2 -1.01 [-1.02,-0.97] c2>=0 0.000 | 
+   HT +-10 s hands-off (>=4 s) n  12 | NULL c2 0.99 [0.97,1.02] FA 0.000 | PA c2 1.84 [1.82,1.87] miss 0.000 | PB c2 1.82 [1.80,1.85] miss 0.000 | PB2 c2 1.84 [1.81,1.90] miss 0.000 | INV5 c2 -1.86 [-1.87,-1.80] c2>=0 0.000 | INV4 c2 -1.00 [-1.02,-0.95] c2>=0 0.000 | 
+   POOLED hands-off (695 s, 10 s block bootstrap): NULL c1 0.991 c2 0.989 [0.977, 0.999] | PA c1 0.991 c2 1.837 [1.829, 1.844] | PB c1 0.986 c2 1.819 [1.796, 1.833] | PB2 c1 0.993 c2 1.840 [1.822, 1.857] | INV5 c1 0.991 c2 -1.851 [-1.863, -1.837] | INV4 c1 0.991 c2 -1.001 [-1.013, -0.989]
+
+[I1-I3, I6] per-window c1/c2, delta +0 ms, x lin   (FA = null c2 > 1.45 ; miss = c2 <= 1.45 ; inverted c2 >= 0)
+   HO 15 s (exposure)         n  46 | NULL c2 0.98 [0.87,1.05] FA 0.000 | PA c2 1.81 [1.66,1.88] miss 0.000 | PB c2 1.63 [1.34,1.86] miss 0.152 | PB2 c2 1.82 [1.58,1.90] miss 0.022 | INV5 c2 -1.84 [-1.89,-1.61] c2>=0 0.000 | INV4 c2 -1.00 [-1.06,-0.84] c2>=0 0.000 | 
+   HO 30 s (exposure)         n  23 | NULL c2 0.98 [0.89,1.04] FA 0.000 | PA c2 1.82 [1.71,1.88] miss 0.000 | PB c2 1.77 [1.36,1.89] miss 0.087 | PB2 c2 1.82 [1.57,1.89] miss 0.000 | INV5 c2 -1.85 [-1.88,-1.72] c2>=0 0.000 | INV4 c2 -1.00 [-1.06,-0.90] c2>=0 0.000 | 
+   HO|bar|<400 15 s           n  46 | NULL c2 0.98 [0.90,1.05] FA 0.000 | PA c2 1.81 [1.66,1.87] miss 0.022 | PB c2 1.66 [1.38,1.84] miss 0.152 | PB2 c2 1.81 [1.56,1.89] miss 0.022 | INV5 c2 -1.84 [-1.89,-1.63] c2>=0 0.000 | INV4 c2 -1.00 [-1.07,-0.80] c2>=0 0.000 | 
+   HO|bar|<400 30 s           n  23 | NULL c2 0.98 [0.91,1.02] FA 0.000 | PA c2 1.82 [1.71,1.86] miss 0.000 | PB c2 1.71 [1.43,1.84] miss 0.087 | PB2 c2 1.82 [1.66,1.88] miss 0.043 | INV5 c2 -1.84 [-1.88,-1.64] c2>=0 0.000 | INV4 c2 -1.00 [-1.05,-0.83] c2>=0 0.000 | 
+   HO 10 s (exposure)         n  69 | NULL c2 0.98 [0.87,1.08] FA 0.000 | PA c2 1.81 [1.57,1.88] miss 0.029 | PB c2 1.60 [1.26,1.85] miss 0.246 | PB2 c2 1.80 [1.48,1.96] miss 0.029 | INV5 c2 -1.82 [-1.89,-1.54] c2>=0 0.000 | INV4 c2 -0.99 [-1.08,-0.78] c2>=0 0.000 | 
+   HO 5 s (exposure)          n 139 | NULL c2 0.98 [0.78,1.20] FA 0.000 | PA c2 1.81 [1.27,1.94] miss 0.086 | PB c2 1.59 [1.10,1.90] miss 0.288 | PB2 c2 1.80 [1.22,2.05] miss 0.094 | INV5 c2 -1.81 [-1.91,-1.17] c2>=0 0.000 | INV4 c2 -0.99 [-1.13,-0.58] c2>=0 0.007 | 
+   ALL 15 s contiguous        n  48 | NULL c2 0.97 [0.87,1.04] FA 0.000 | PA c2 1.81 [1.61,1.87] miss 0.000 | PB c2 1.64 [1.28,1.85] miss 0.146 | PB2 c2 1.80 [1.56,1.89] miss 0.042 | INV5 c2 -1.83 [-1.91,-1.62] c2>=0 0.000 | INV4 c2 -1.00 [-1.08,-0.80] c2>=0 0.000 | 
+   ALL 30 s contiguous        n  22 | NULL c2 0.97 [0.90,1.00] FA 0.000 | PA c2 1.80 [1.72,1.84] miss 0.000 | PB c2 1.69 [1.44,1.82] miss 0.136 | PB2 c2 1.80 [1.64,1.85] miss 0.000 | INV5 c2 -1.85 [-1.88,-1.63] c2>=0 0.000 | INV4 c2 -1.01 [-1.06,-0.92] c2>=0 0.000 | 
+   ALL 15 s sliding 2.5 s     n 285 | NULL c2 0.97 [0.86,1.06] FA 0.000 | PA c2 1.81 [1.63,1.87] miss 0.011 | PB c2 1.67 [1.31,1.84] miss 0.165 | PB2 c2 1.80 [1.50,1.94] miss 0.046 | INV5 c2 -1.84 [-1.91,-1.61] c2>=0 0.000 | INV4 c2 -1.00 [-1.07,-0.81] c2>=0 0.000 | 
+   HT +-10 s all engaged      n  12 | NULL c2 0.99 [0.96,1.01] FA 0.000 | PA c2 1.83 [1.81,1.85] miss 0.000 | PB c2 1.81 [1.75,1.84] miss 0.000 | PB2 c2 1.83 [1.79,1.87] miss 0.000 | INV5 c2 -1.85 [-1.88,-1.80] c2>=0 0.000 | INV4 c2 -1.01 [-1.04,-0.96] c2>=0 0.000 | 
+   HT +-10 s hands-off (>=4 s) n  12 | NULL c2 0.99 [0.97,1.03] FA 0.000 | PA c2 1.84 [1.81,1.89] miss 0.000 | PB c2 1.82 [1.77,1.87] miss 0.000 | PB2 c2 1.84 [1.79,1.91] miss 0.000 | INV5 c2 -1.86 [-1.88,-1.79] c2>=0 0.000 | INV4 c2 -1.01 [-1.03,-0.93] c2>=0 0.000 | 
+   POOLED hands-off (695 s, 10 s block bootstrap): NULL c1 0.991 c2 0.994 [0.976, 1.015] | PA c1 0.991 c2 1.843 [1.827, 1.860] | PB c1 0.986 c2 1.825 [1.785, 1.862] | PB2 c1 0.993 c2 1.849 [1.814, 1.885] | INV5 c1 0.991 c2 -1.846 [-1.864, -1.824] | INV4 c1 0.991 c2 -0.997 [-1.018, -0.973]
+
+[I1-I3, I6] per-window c1/c2, delta +4 ms, x lin   (FA = null c2 > 1.45 ; miss = c2 <= 1.45 ; inverted c2 >= 0)
+   HO 15 s (exposure)         n  46 | NULL c2 0.98 [0.87,1.02] FA 0.000 | PA c2 1.81 [1.64,1.85] miss 0.022 | PB c2 1.65 [1.31,1.85] miss 0.196 | PB2 c2 1.81 [1.52,1.87] miss 0.022 | INV5 c2 -1.83 [-1.89,-1.60] c2>=0 0.000 | INV4 c2 -0.99 [-1.08,-0.85] c2>=0 0.000 | 
+   HO 30 s (exposure)         n  23 | NULL c2 0.98 [0.89,1.01] FA 0.000 | PA c2 1.83 [1.73,1.85] miss 0.000 | PB c2 1.79 [1.37,1.85] miss 0.130 | PB2 c2 1.83 [1.59,1.87] miss 0.000 | INV5 c2 -1.85 [-1.88,-1.70] c2>=0 0.000 | INV4 c2 -1.01 [-1.04,-0.88] c2>=0 0.000 | 
+   HO|bar|<400 15 s           n  46 | NULL c2 0.99 [0.86,1.04] FA 0.000 | PA c2 1.82 [1.62,1.86] miss 0.022 | PB c2 1.69 [1.27,1.84] miss 0.130 | PB2 c2 1.82 [1.51,1.89] miss 0.022 | INV5 c2 -1.83 [-1.87,-1.61] c2>=0 0.000 | INV4 c2 -0.99 [-1.08,-0.83] c2>=0 0.000 | 
+   HO|bar|<400 30 s           n  23 | NULL c2 0.99 [0.93,1.04] FA 0.000 | PA c2 1.83 [1.72,1.86] miss 0.000 | PB c2 1.72 [1.42,1.83] miss 0.087 | PB2 c2 1.83 [1.69,1.90] miss 0.043 | INV5 c2 -1.84 [-1.86,-1.62] c2>=0 0.000 | INV4 c2 -1.00 [-1.02,-0.83] c2>=0 0.000 | 
+   HO 10 s (exposure)         n  69 | NULL c2 0.99 [0.85,1.06] FA 0.000 | PA c2 1.81 [1.55,1.87] miss 0.029 | PB c2 1.63 [1.23,1.85] miss 0.246 | PB2 c2 1.81 [1.43,1.95] miss 0.087 | INV5 c2 -1.82 [-1.90,-1.53] c2>=0 0.000 | INV4 c2 -0.99 [-1.09,-0.78] c2>=0 0.000 | 
+   HO 5 s (exposure)          n 139 | NULL c2 0.99 [0.77,1.14] FA 0.007 | PA c2 1.79 [1.13,1.89] miss 0.108 | PB c2 1.58 [1.06,1.87] miss 0.317 | PB2 c2 1.80 [1.01,1.98] miss 0.122 | INV5 c2 -1.81 [-1.92,-1.24] c2>=0 0.000 | INV4 c2 -0.99 [-1.11,-0.67] c2>=0 0.000 | 
+   ALL 15 s contiguous        n  48 | NULL c2 0.97 [0.85,1.03] FA 0.000 | PA c2 1.80 [1.63,1.86] miss 0.000 | PB c2 1.67 [1.25,1.85] miss 0.188 | PB2 c2 1.80 [1.52,1.90] miss 0.042 | INV5 c2 -1.83 [-1.88,-1.64] c2>=0 0.000 | INV4 c2 -1.00 [-1.05,-0.85] c2>=0 0.000 | 
+   ALL 30 s contiguous        n  22 | NULL c2 0.97 [0.90,1.00] FA 0.000 | PA c2 1.82 [1.70,1.85] miss 0.000 | PB c2 1.72 [1.41,1.83] miss 0.182 | PB2 c2 1.81 [1.70,1.87] miss 0.045 | INV5 c2 -1.85 [-1.86,-1.67] c2>=0 0.000 | INV4 c2 -1.00 [-1.03,-0.91] c2>=0 0.000 | 
+   ALL 15 s sliding 2.5 s     n 285 | NULL c2 0.98 [0.85,1.05] FA 0.000 | PA c2 1.81 [1.62,1.86] miss 0.007 | PB c2 1.69 [1.29,1.84] miss 0.151 | PB2 c2 1.81 [1.47,1.91] miss 0.049 | INV5 c2 -1.83 [-1.88,-1.60] c2>=0 0.000 | INV4 c2 -0.99 [-1.05,-0.84] c2>=0 0.000 | 
+   HT +-10 s all engaged      n  12 | NULL c2 0.98 [0.97,1.01] FA 0.000 | PA c2 1.83 [1.81,1.86] miss 0.000 | PB c2 1.81 [1.76,1.85] miss 0.000 | PB2 c2 1.84 [1.79,1.88] miss 0.000 | INV5 c2 -1.85 [-1.87,-1.81] c2>=0 0.000 | INV4 c2 -1.01 [-1.02,-0.97] c2>=0 0.000 | 
+   HT +-10 s hands-off (>=4 s) n  12 | NULL c2 0.99 [0.97,1.02] FA 0.000 | PA c2 1.84 [1.82,1.87] miss 0.000 | PB c2 1.82 [1.80,1.85] miss 0.000 | PB2 c2 1.84 [1.81,1.90] miss 0.000 | INV5 c2 -1.86 [-1.87,-1.80] c2>=0 0.000 | INV4 c2 -1.00 [-1.02,-0.95] c2>=0 0.000 | 
+   POOLED hands-off (695 s, 10 s block bootstrap): NULL c1 0.991 c2 0.989 [0.979, 0.998] | PA c1 0.991 c2 1.837 [1.828, 1.845] | PB c1 0.986 c2 1.819 [1.796, 1.834] | PB2 c1 0.993 c2 1.840 [1.824, 1.857] | INV5 c1 0.991 c2 -1.851 [-1.863, -1.839] | INV4 c1 0.991 c2 -1.001 [-1.013, -0.988]
+
+[I1-I3, I6] per-window c1/c2, delta -4 ms, x lin   (FA = null c2 > 1.45 ; miss = c2 <= 1.45 ; inverted c2 >= 0)
+   HO 15 s (exposure)         n  46 | NULL c2 0.96 [0.83,1.05] FA 0.000 | PA c2 1.79 [1.58,1.89] miss 0.000 | PB c2 1.61 [1.26,1.92] miss 0.217 | PB2 c2 1.76 [1.54,1.94] miss 0.043 | INV5 c2 -1.83 [-1.92,-1.51] c2>=0 0.000 | INV4 c2 -1.01 [-1.07,-0.82] c2>=0 0.000 | 
+   HO 30 s (exposure)         n  23 | NULL c2 0.96 [0.85,1.04] FA 0.000 | PA c2 1.80 [1.69,1.87] miss 0.000 | PB c2 1.74 [1.29,1.92] miss 0.217 | PB2 c2 1.78 [1.49,1.93] miss 0.043 | INV5 c2 -1.85 [-1.91,-1.76] c2>=0 0.000 | INV4 c2 -1.00 [-1.07,-0.94] c2>=0 0.000 | 
+   HO|bar|<400 15 s           n  46 | NULL c2 0.96 [0.87,1.05] FA 0.000 | PA c2 1.79 [1.69,1.88] miss 0.022 | PB c2 1.61 [1.28,1.86] miss 0.174 | PB2 c2 1.77 [1.47,1.93] miss 0.065 | INV5 c2 -1.84 [-1.93,-1.53] c2>=0 0.000 | INV4 c2 -1.00 [-1.08,-0.82] c2>=0 0.000 | 
+   HO|bar|<400 30 s           n  23 | NULL c2 0.97 [0.89,1.01] FA 0.000 | PA c2 1.79 [1.67,1.86] miss 0.000 | PB c2 1.70 [1.34,1.86] miss 0.130 | PB2 c2 1.78 [1.63,1.90] miss 0.043 | INV5 c2 -1.85 [-1.91,-1.64] c2>=0 0.000 | INV4 c2 -1.01 [-1.06,-0.89] c2>=0 0.000 | 
+   HO 10 s (exposure)         n  69 | NULL c2 0.97 [0.84,1.09] FA 0.000 | PA c2 1.79 [1.56,1.90] miss 0.043 | PB c2 1.59 [1.24,1.91] miss 0.319 | PB2 c2 1.77 [1.45,1.98] miss 0.058 | INV5 c2 -1.83 [-1.92,-1.51] c2>=0 0.000 | INV4 c2 -0.99 [-1.09,-0.78] c2>=0 0.000 | 
+   HO 5 s (exposure)          n 139 | NULL c2 0.97 [0.70,1.17] FA 0.007 | PA c2 1.78 [1.11,1.91] miss 0.094 | PB c2 1.57 [1.06,1.90] miss 0.309 | PB2 c2 1.76 [1.05,2.06] miss 0.144 | INV5 c2 -1.81 [-1.95,-1.26] c2>=0 0.000 | INV4 c2 -0.99 [-1.13,-0.71] c2>=0 0.000 | 
+   ALL 15 s contiguous        n  48 | NULL c2 0.95 [0.82,1.05] FA 0.000 | PA c2 1.78 [1.64,1.86] miss 0.000 | PB c2 1.62 [1.22,1.87] miss 0.167 | PB2 c2 1.76 [1.55,1.95] miss 0.042 | INV5 c2 -1.83 [-1.96,-1.56] c2>=0 0.000 | INV4 c2 -1.00 [-1.10,-0.83] c2>=0 0.000 | 
+   ALL 30 s contiguous        n  22 | NULL c2 0.95 [0.85,1.00] FA 0.000 | PA c2 1.78 [1.70,1.84] miss 0.000 | PB c2 1.65 [1.33,1.84] miss 0.182 | PB2 c2 1.76 [1.61,1.85] miss 0.045 | INV5 c2 -1.86 [-1.93,-1.68] c2>=0 0.000 | INV4 c2 -1.02 [-1.08,-0.90] c2>=0 0.000 | 
+   ALL 15 s sliding 2.5 s     n 285 | NULL c2 0.95 [0.84,1.07] FA 0.000 | PA c2 1.79 [1.62,1.87] miss 0.018 | PB c2 1.64 [1.22,1.87] miss 0.186 | PB2 c2 1.77 [1.47,1.95] miss 0.046 | INV5 c2 -1.84 [-1.94,-1.58] c2>=0 0.000 | INV4 c2 -1.00 [-1.09,-0.83] c2>=0 0.000 | 
+   HT +-10 s all engaged      n  12 | NULL c2 0.97 [0.95,1.02] FA 0.000 | PA c2 1.82 [1.79,1.86] miss 0.000 | PB c2 1.77 [1.74,1.88] miss 0.000 | PB2 c2 1.80 [1.76,1.88] miss 0.000 | INV5 c2 -1.87 [-1.91,-1.79] c2>=0 0.000 | INV4 c2 -1.02 [-1.06,-0.96] c2>=0 0.000 | 
+   HT +-10 s hands-off (>=4 s) n  12 | NULL c2 0.99 [0.94,1.05] FA 0.000 | PA c2 1.84 [1.79,1.89] miss 0.000 | PB c2 1.82 [1.73,1.92] miss 0.000 | PB2 c2 1.84 [1.76,1.96] miss 0.000 | INV5 c2 -1.86 [-1.91,-1.76] c2>=0 0.000 | INV4 c2 -1.01 [-1.06,-0.93] c2>=0 0.000 | 
+   POOLED hands-off (695 s, 10 s block bootstrap): NULL c1 0.991 c2 0.996 [0.964, 1.029] | PA c1 0.991 c2 1.843 [1.812, 1.874] | PB c1 0.986 c2 1.832 [1.774, 1.895] | PB2 c1 0.993 c2 1.853 [1.798, 1.916] | INV5 c1 0.991 c2 -1.847 [-1.879, -1.804] | INV4 c1 0.991 c2 -0.995 [-1.027, -0.960]
+
+[I1-I3, I6] per-window c1/c2, delta +8 ms, x lin   (FA = null c2 > 1.45 ; miss = c2 <= 1.45 ; inverted c2 >= 0)
+   HO 15 s (exposure)         n  46 | NULL c2 0.98 [0.88,1.04] FA 0.000 | PA c2 1.81 [1.67,1.87] miss 0.022 | PB c2 1.65 [1.31,1.86] miss 0.174 | PB2 c2 1.82 [1.56,1.90] miss 0.022 | INV5 c2 -1.83 [-1.89,-1.61] c2>=0 0.000 | INV4 c2 -0.99 [-1.04,-0.86] c2>=0 0.000 | 
+   HO 30 s (exposure)         n  23 | NULL c2 0.99 [0.90,1.02] FA 0.000 | PA c2 1.83 [1.73,1.86] miss 0.000 | PB c2 1.78 [1.42,1.84] miss 0.130 | PB2 c2 1.82 [1.60,1.89] miss 0.000 | INV5 c2 -1.84 [-1.88,-1.73] c2>=0 0.000 | INV4 c2 -1.00 [-1.04,-0.89] c2>=0 0.000 | 
+   HO|bar|<400 15 s           n  46 | NULL c2 0.99 [0.86,1.06] FA 0.000 | PA c2 1.81 [1.65,1.89] miss 0.022 | PB c2 1.71 [1.28,1.88] miss 0.130 | PB2 c2 1.84 [1.56,1.93] miss 0.022 | INV5 c2 -1.82 [-1.88,-1.61] c2>=0 0.000 | INV4 c2 -0.98 [-1.05,-0.84] c2>=0 0.000 | 
+   HO|bar|<400 30 s           n  23 | NULL c2 0.99 [0.94,1.06] FA 0.000 | PA c2 1.83 [1.73,1.89] miss 0.000 | PB c2 1.74 [1.46,1.88] miss 0.043 | PB2 c2 1.85 [1.70,1.93] miss 0.043 | INV5 c2 -1.83 [-1.87,-1.61] c2>=0 0.000 | INV4 c2 -0.98 [-1.03,-0.87] c2>=0 0.000 | 
+   HO 10 s (exposure)         n  69 | NULL c2 0.99 [0.85,1.08] FA 0.000 | PA c2 1.81 [1.49,1.88] miss 0.043 | PB c2 1.62 [1.25,1.86] miss 0.246 | PB2 c2 1.81 [1.47,1.96] miss 0.043 | INV5 c2 -1.82 [-1.89,-1.56] c2>=0 0.000 | INV4 c2 -0.99 [-1.08,-0.81] c2>=0 0.000 | 
+   HO 5 s (exposure)          n 139 | NULL c2 0.98 [0.77,1.11] FA 0.000 | PA c2 1.79 [1.04,1.89] miss 0.115 | PB c2 1.59 [0.98,1.88] miss 0.309 | PB2 c2 1.80 [0.96,2.04] miss 0.108 | INV5 c2 -1.80 [-1.93,-1.28] c2>=0 0.000 | INV4 c2 -0.98 [-1.13,-0.73] c2>=0 0.007 | 
+   ALL 15 s contiguous        n  48 | NULL c2 0.98 [0.84,1.04] FA 0.000 | PA c2 1.80 [1.60,1.87] miss 0.000 | PB c2 1.69 [1.26,1.87] miss 0.167 | PB2 c2 1.82 [1.50,1.91] miss 0.042 | INV5 c2 -1.82 [-1.88,-1.63] c2>=0 0.000 | INV4 c2 -0.98 [-1.05,-0.87] c2>=0 0.000 | 
+   ALL 30 s contiguous        n  22 | NULL c2 0.98 [0.91,1.02] FA 0.000 | PA c2 1.82 [1.66,1.86] miss 0.000 | PB c2 1.75 [1.43,1.86] miss 0.182 | PB2 c2 1.82 [1.64,1.90] miss 0.045 | INV5 c2 -1.83 [-1.87,-1.70] c2>=0 0.000 | INV4 c2 -0.99 [-1.04,-0.91] c2>=0 0.000 | 
+   ALL 15 s sliding 2.5 s     n 285 | NULL c2 0.99 [0.84,1.05] FA 0.000 | PA c2 1.82 [1.58,1.87] miss 0.014 | PB c2 1.70 [1.28,1.87] miss 0.158 | PB2 c2 1.82 [1.48,1.92] miss 0.046 | INV5 c2 -1.83 [-1.88,-1.60] c2>=0 0.000 | INV4 c2 -0.98 [-1.04,-0.86] c2>=0 0.000 | 
+   HT +-10 s all engaged      n  12 | NULL c2 0.99 [0.95,1.03] FA 0.000 | PA c2 1.85 [1.79,1.87] miss 0.000 | PB c2 1.83 [1.72,1.86] miss 0.000 | PB2 c2 1.85 [1.76,1.90] miss 0.000 | INV5 c2 -1.85 [-1.89,-1.80] c2>=0 0.000 | INV4 c2 -0.99 [-1.05,-0.96] c2>=0 0.000 | 
+   HT +-10 s hands-off (>=4 s) n  12 | NULL c2 1.00 [0.95,1.02] FA 0.000 | PA c2 1.85 [1.80,1.86] miss 0.000 | PB c2 1.83 [1.76,1.86] miss 0.000 | PB2 c2 1.86 [1.77,1.89] miss 0.000 | INV5 c2 -1.85 [-1.90,-1.80] c2>=0 0.000 | INV4 c2 -1.00 [-1.05,-0.95] c2>=0 0.000 | 
+   POOLED hands-off (695 s, 10 s block bootstrap): NULL c1 0.991 c2 0.983 [0.974, 0.991] | PA c1 0.991 c2 1.832 [1.821, 1.843] | PB c1 0.986 c2 1.807 [1.785, 1.824] | PB2 c1 0.993 c2 1.829 [1.812, 1.847] | INV5 c1 0.991 c2 -1.860 [-1.868, -1.851] | INV4 c1 0.991 c2 -1.010 [-1.019, -1.001]
+
+[I1-I3, I6] per-window c1/c2, delta +0 ms, x zoh   (FA = null c2 > 1.45 ; miss = c2 <= 1.45 ; inverted c2 >= 0)
+   HO 15 s (exposure)         n  46 | NULL c2 0.97 [0.86,1.02] FA 0.000 | PA c2 1.80 [1.62,1.88] miss 0.022 | PB c2 1.61 [1.31,1.86] miss 0.196 | PB2 c2 1.79 [1.55,1.88] miss 0.022 | INV5 c2 -1.84 [-1.89,-1.55] c2>=0 0.000 | INV4 c2 -1.00 [-1.08,-0.85] c2>=0 0.000 | 
+   HO 30 s (exposure)         n  23 | NULL c2 0.98 [0.89,1.02] FA 0.000 | PA c2 1.83 [1.69,1.86] miss 0.000 | PB c2 1.76 [1.34,1.88] miss 0.174 | PB2 c2 1.80 [1.54,1.87] miss 0.000 | INV5 c2 -1.85 [-1.88,-1.73] c2>=0 0.000 | INV4 c2 -1.01 [-1.04,-0.94] c2>=0 0.000 | 
+   HO|bar|<400 15 s           n  46 | NULL c2 0.96 [0.87,1.03] FA 0.000 | PA c2 1.80 [1.67,1.86] miss 0.022 | PB c2 1.61 [1.36,1.83] miss 0.152 | PB2 c2 1.77 [1.54,1.89] miss 0.022 | INV5 c2 -1.85 [-1.91,-1.60] c2>=0 0.000 | INV4 c2 -1.01 [-1.06,-0.77] c2>=0 0.000 | 
+   HO|bar|<400 30 s           n  23 | NULL c2 0.96 [0.90,1.00] FA 0.000 | PA c2 1.80 [1.67,1.85] miss 0.000 | PB c2 1.68 [1.43,1.81] miss 0.130 | PB2 c2 1.78 [1.63,1.84] miss 0.043 | INV5 c2 -1.86 [-1.89,-1.71] c2>=0 0.000 | INV4 c2 -1.01 [-1.07,-0.88] c2>=0 0.000 | 
+   HO 10 s (exposure)         n  69 | NULL c2 0.98 [0.84,1.07] FA 0.000 | PA c2 1.79 [1.53,1.87] miss 0.029 | PB c2 1.57 [1.21,1.85] miss 0.290 | PB2 c2 1.80 [1.48,1.90] miss 0.043 | INV5 c2 -1.84 [-1.92,-1.55] c2>=0 0.000 | INV4 c2 -0.99 [-1.09,-0.75] c2>=0 0.000 | 
+   HO 5 s (exposure)          n 139 | NULL c2 0.97 [0.78,1.15] FA 0.007 | PA c2 1.79 [1.01,1.90] miss 0.086 | PB c2 1.55 [1.08,1.86] miss 0.331 | PB2 c2 1.78 [1.17,2.03] miss 0.108 | INV5 c2 -1.82 [-1.93,-1.31] c2>=0 0.000 | INV4 c2 -0.99 [-1.14,-0.55] c2>=0 0.000 | 
+   ALL 15 s contiguous        n  48 | NULL c2 0.97 [0.85,1.03] FA 0.000 | PA c2 1.79 [1.66,1.85] miss 0.000 | PB c2 1.61 [1.24,1.84] miss 0.188 | PB2 c2 1.79 [1.55,1.89] miss 0.042 | INV5 c2 -1.83 [-1.93,-1.65] c2>=0 0.000 | INV4 c2 -1.00 [-1.09,-0.82] c2>=0 0.000 | 
+   ALL 30 s contiguous        n  22 | NULL c2 0.97 [0.89,1.00] FA 0.000 | PA c2 1.79 [1.70,1.84] miss 0.000 | PB c2 1.71 [1.37,1.82] miss 0.182 | PB2 c2 1.80 [1.65,1.86] miss 0.045 | INV5 c2 -1.86 [-1.90,-1.67] c2>=0 0.000 | INV4 c2 -1.01 [-1.06,-0.92] c2>=0 0.000 | 
+   ALL 15 s sliding 2.5 s     n 285 | NULL c2 0.97 [0.85,1.04] FA 0.000 | PA c2 1.79 [1.63,1.86] miss 0.014 | PB c2 1.64 [1.29,1.83] miss 0.200 | PB2 c2 1.79 [1.49,1.90] miss 0.042 | INV5 c2 -1.84 [-1.92,-1.63] c2>=0 0.000 | INV4 c2 -1.00 [-1.09,-0.81] c2>=0 0.000 | 
+   HT +-10 s all engaged      n  12 | NULL c2 0.98 [0.97,1.01] FA 0.000 | PA c2 1.83 [1.81,1.86] miss 0.000 | PB c2 1.79 [1.75,1.85] miss 0.000 | PB2 c2 1.82 [1.80,1.87] miss 0.000 | INV5 c2 -1.85 [-1.88,-1.80] c2>=0 0.000 | INV4 c2 -1.01 [-1.03,-0.95] c2>=0 0.000 | 
+   HT +-10 s hands-off (>=4 s) n  12 | NULL c2 0.99 [0.97,1.01] FA 0.000 | PA c2 1.84 [1.81,1.88] miss 0.000 | PB c2 1.80 [1.77,1.87] miss 0.000 | PB2 c2 1.83 [1.79,1.89] miss 0.000 | INV5 c2 -1.85 [-1.88,-1.81] c2>=0 0.000 | INV4 c2 -1.01 [-1.03,-0.96] c2>=0 0.000 | 
+   POOLED hands-off (695 s, 10 s block bootstrap): NULL c1 0.991 c2 0.993 [0.974, 1.014] | PA c1 0.991 c2 1.842 [1.825, 1.859] | PB c1 0.986 c2 1.822 [1.785, 1.857] | PB2 c1 0.993 c2 1.845 [1.809, 1.882] | INV5 c1 0.991 c2 -1.849 [-1.869, -1.826] | INV4 c1 0.991 c2 -1.000 [-1.021, -0.978]
+
+[I4] alignment: does the -4 / 0 / +4 ms choice flip the call?  (HO 15 s windows, same frames)
+   delta -4 vs +0  NULL: median c2 0.962 vs 0.979 (diff 0.017), call flips on 0.000 of 46 windows, max |dc2| 0.069
+   delta -4 vs +0  PA  : median c2 1.786 vs 1.805 (diff 0.019), call flips on 0.000 of 46 windows, max |dc2| 0.158
+   delta +0 vs +4  NULL: median c2 0.979 vs 0.982 (diff 0.003), call flips on 0.000 of 46 windows, max |dc2| 0.140
+   delta +0 vs +4  PA  : median c2 1.805 vs 1.810 (diff 0.005), call flips on 0.022 of 46 windows, max |dc2| 0.110
+   delta +4 vs +8  NULL: median c2 0.982 vs 0.981 (diff -0.001), call flips on 0.000 of 46 windows, max |dc2| 0.059
+   delta +4 vs +8  PA  : median c2 1.810 vs 1.812 (diff 0.002), call flips on 0.000 of 46 windows, max |dc2| 0.214
+   delta -4 vs +4  NULL: median c2 0.962 vs 0.982 (diff 0.019), call flips on 0.000 of 46 windows, max |dc2| 0.140
+   delta -4 vs +4  PA  : median c2 1.786 vs 1.810 (diff 0.024), call flips on 0.022 of 46 windows, max |dc2| 0.198
+
+[I3b] trim excitation vs c2 scatter (best alignment, HO 15 s): does a minimum-trim gate help?
+   trim rms  0-  4 counts: n 21  NULL c2 [0.94 1.01 0.89 1.01 0.97 0.93 1.08 1.01 0.83 0.89 0.94 0.94 0.91 0.78
+ 0.86 0.88 1.02 1.04 0.95 0.92 1.01]  PA c2 [1.68 1.69 1.73 1.8  1.73 1.72 1.81 1.84 1.6  1.73 1.63 1.7  1.75 1.45
+ 1.73 1.74 1.81 1.86 1.78 1.71 1.76]
+   trim rms  4-  6 counts: n  4  NULL c2 [0.95 1.01 0.96 0.97]  PA c2 [1.78 1.81 1.74 1.82]
+   trim rms  6- 10 counts: n  4  NULL c2 [0.97 1.01 0.97 1.  ]  PA c2 [1.84 1.84 1.82 1.86]
+   trim rms 10-100 counts: n 17  NULL c2 [1.   0.99 1.01 1.   0.96 0.99 1.   0.98 0.99 0.97 1.   0.98 0.94 1.
+ 0.99 1.   0.99]  PA c2 [1.84 1.85 1.85 1.84 1.81 1.84 1.85 1.83 1.84 1.82 1.85 1.84 1.79 1.85
+ 1.85 1.85 1.85]
+   pooled HO NULL : continuous regressors c1 0.991 c2 0.989 | quantised regressors c1 1.000 c2 0.995 | + sign(FF) term c1 0.999 c2 0.997
+   pooled HO PA   : continuous regressors c1 0.991 c2 1.837 | quantised regressors c1 1.000 c2 1.811 | + sign(FF) term c1 0.999 c2 1.845
+   pooled HO INV5 : continuous regressors c1 0.991 c2 -1.851 | quantised regressors c1 1.000 c2 -1.787 | + sign(FF) term c1 0.999 c2 -1.844
+
+[I3c] the same windows GATED on excitation: a window is scored only if rms(TRIM_V294 regressor) >= 4 counts (half a tap LSB); best alignment
+   (64 of 139 windows qualify)
+   HO 5 s gated               n  64 | NULL c2 0.99 [0.93,1.04] FA 0.000 | PA c2 1.84 [1.73,1.89] miss 0.000 | PB c2 1.76 [1.42,1.88] miss 0.062 | PB2 c2 1.84 [1.71,1.91] miss 0.000 | INV5 c2 -1.85 [-1.91,-1.70] c2>=0 0.000 | INV4 c2 -0.99 [-1.06,-0.88] c2>=0 0.000 | 
+   (34 of 69 windows qualify)
+   HO 10 s gated              n  34 | NULL c2 0.99 [0.94,1.04] FA 0.000 | PA c2 1.84 [1.76,1.88] miss 0.000 | PB c2 1.80 [1.48,1.85] miss 0.059 | PB2 c2 1.84 [1.74,1.91] miss 0.000 | INV5 c2 -1.85 [-1.90,-1.73] c2>=0 0.000 | INV4 c2 -0.99 [-1.04,-0.88] c2>=0 0.000 | 
+   (25 of 46 windows qualify)
+   HO 15 s gated              n  25 | NULL c2 0.99 [0.95,1.01] FA 0.000 | PA c2 1.84 [1.78,1.85] miss 0.000 | PB c2 1.81 [1.56,1.86] miss 0.040 | PB2 c2 1.84 [1.74,1.87] miss 0.000 | INV5 c2 -1.85 [-1.89,-1.74] c2>=0 0.000 | INV4 c2 -0.99 [-1.04,-0.87] c2>=0 0.000 | 
+   (15 of 23 windows qualify)
+   HO 30 s gated              n  15 | NULL c2 0.99 [0.97,1.00] FA 0.000 | PA c2 1.84 [1.82,1.85] miss 0.000 | PB c2 1.81 [1.72,1.85] miss 0.000 | PB2 c2 1.83 [1.79,1.87] miss 0.000 | INV5 c2 -1.85 [-1.87,-1.83] c2>=0 0.000 | INV4 c2 -1.01 [-1.03,-0.98] c2>=0 0.000 | 
+   (30 of 48 windows qualify)
+   ALL 15 s gated             n  30 | NULL c2 0.98 [0.92,1.03] FA 0.000 | PA c2 1.83 [1.73,1.87] miss 0.000 | PB c2 1.78 [1.56,1.86] miss 0.000 | PB2 c2 1.82 [1.73,1.90] miss 0.000 | INV5 c2 -1.85 [-1.88,-1.77] c2>=0 0.000 | INV4 c2 -1.00 [-1.05,-0.93] c2>=0 0.000 | 
+   (15 of 22 windows qualify)
+   ALL 30 s gated             n  15 | NULL c2 0.98 [0.95,1.00] FA 0.000 | PA c2 1.83 [1.77,1.85] miss 0.000 | PB c2 1.80 [1.62,1.83] miss 0.000 | PB2 c2 1.82 [1.75,1.88] miss 0.000 | INV5 c2 -1.85 [-1.86,-1.79] c2>=0 0.000 | INV4 c2 -1.00 [-1.02,-0.96] c2>=0 0.000 | 
+   (177 of 285 windows qualify)
+   ALL 15 s sliding gated     n 177 | NULL c2 0.98 [0.94,1.03] FA 0.000 | PA c2 1.83 [1.75,1.87] miss 0.000 | PB c2 1.78 [1.61,1.85] miss 0.006 | PB2 c2 1.82 [1.76,1.90] miss 0.000 | INV5 c2 -1.85 [-1.88,-1.77] c2>=0 0.000 | INV4 c2 -1.00 [-1.04,-0.92] c2>=0 0.000 | 
+
+[I3d] the C clamp: V295 r26 at +-C on r71b's recorded motion, and c2 on the top-trim frames
+   V294: r26 at the clamp on 0 of 1020412 route ticks (0.00000 %)
+   V295: r26 at the clamp on 69 of 1020412 route ticks (0.00676 %)
+   top-5 % |TRIM| hands-off frames (1755): NULL c1 0.995 c2 0.995
+   top-5 % |TRIM| hands-off frames (1755): PA c1 0.995 c2 1.845
+
+best alignment used for [I3b]: delta +4 x lin

@@ -1,0 +1,57 @@
+marches 246 s
+
+R1.3_8_100  Kp X (0, 8, 54, 100, 208) Y (1248, 1248, 1104, 960, 960)
+  R1 identity on own march (synthetic flight): a 0.9913 b 0.9926 resid 4.88 R2 0.99970
+  R2 identity on V294 march (synthetic flight): a 1.1360 b 1.3702 resid 20.78 R2 0.99450
+  R3 own-march fits better in 29 / 38 20 s windows (live)
+  NULL (real r71b tap = V294): own-march a 0.8591 resid 21.02 vs V294-march a 0.9906 resid 4.13; candidate fits better in 0 / 38 windows
+   idx   0-  5 (  185 s of tap): a 1.181 / V294's own 0.893 = 1.322  (Kp/960 mean 1.300)
+   idx   5-  9 (  147 s of tap): a 1.248 / V294's own 0.947 = 1.318  (Kp/960 mean 1.300)
+   idx   9- 18 (  167 s of tap): a 1.256 / V294's own 0.973 = 1.290  (Kp/960 mean 1.286)
+   idx  18- 30 (   97 s of tap): a 1.234 / V294's own 0.985 = 1.253  (Kp/960 mean 1.253)
+   idx  30- 50 (   73 s of tap): a 1.191 / V294's own 0.990 = 1.202  (Kp/960 mean 1.206)
+   idx  50- 80 (   29 s of tap): a 1.105 / V294's own 0.995 = 1.111  (Kp/960 mean 1.120)
+   idx  80-241 (   12 s of tap): a 1.025 / V294's own 0.997 = 1.028  (Kp/960 mean 1.030)
+  plateau ratio (idx 0-8) per 20 s window, / V294's own baseline 0.938: median 1.321 [p2.5 1.292, p97.5 1.356] n 33
+
+R1.35_4_100  Kp X (0, 4, 52, 100, 208) Y (1296, 1296, 1128, 960, 960)
+  R1 identity on own march (synthetic flight): a 0.9914 b 0.9923 resid 4.92 R2 0.99970
+  R2 identity on V294 march (synthetic flight): a 1.1531 b 1.4155 resid 23.32 R2 0.99328
+  R3 own-march fits better in 28 / 38 20 s windows (live)
+  NULL (real r71b tap = V294): own-march a 0.8454 resid 22.96 vs V294-march a 0.9906 resid 4.13; candidate fits better in 0 / 38 windows
+   idx   0-  5 (  185 s of tap): a 1.234 / V294's own 0.893 = 1.382  (Kp/960 mean 1.350)
+   idx   5-  9 (  147 s of tap): a 1.283 / V294's own 0.947 = 1.356  (Kp/960 mean 1.341)
+   idx   9- 18 (  167 s of tap): a 1.288 / V294's own 0.973 = 1.324  (Kp/960 mean 1.319)
+   idx  18- 30 (   97 s of tap): a 1.264 / V294's own 0.985 = 1.283  (Kp/960 mean 1.283)
+   idx  30- 50 (   73 s of tap): a 1.214 / V294's own 0.990 = 1.226  (Kp/960 mean 1.230)
+   idx  50- 80 (   29 s of tap): a 1.118 / V294's own 0.995 = 1.124  (Kp/960 mean 1.133)
+   idx  80-241 (   12 s of tap): a 1.028 / V294's own 0.997 = 1.032  (Kp/960 mean 1.033)
+  plateau ratio (idx 0-8) per 20 s window, / V294's own baseline 0.938: median 1.360 [p2.5 1.335, p97.5 1.391] n 33
+
+R-offset  Kp X (0, 24, 50, 100, 208) Y (1248, 1248, 1097, 1029, 993)
+  R1 identity on own march (synthetic flight): a 0.9916 b 0.9920 resid 4.92 R2 0.99971
+  R2 identity on V294 march (synthetic flight): a 1.1616 b 1.3081 resid 18.99 R2 0.99560
+  R3 own-march fits better in 37 / 38 20 s windows (live)
+  NULL (real r71b tap = V294): own-march a 0.8415 resid 19.04 vs V294-march a 0.9906 resid 4.13; candidate fits better in 2 / 38 windows
+   idx   0-  5 (  185 s of tap): a 1.181 / V294's own 0.893 = 1.323  (Kp/960 mean 1.300)
+   idx   5-  9 (  147 s of tap): a 1.248 / V294's own 0.947 = 1.318  (Kp/960 mean 1.300)
+   idx   9- 18 (  167 s of tap): a 1.274 / V294's own 0.973 = 1.309  (Kp/960 mean 1.300)
+   idx  18- 30 (   97 s of tap): a 1.277 / V294's own 0.985 = 1.296  (Kp/960 mean 1.295)
+   idx  30- 50 (   73 s of tap): a 1.203 / V294's own 0.990 = 1.214  (Kp/960 mean 1.221)
+   idx  50- 80 (   29 s of tap): a 1.115 / V294's own 0.995 = 1.121  (Kp/960 mean 1.124)
+   idx  80-241 (   12 s of tap): a 1.081 / V294's own 0.997 = 1.084  (Kp/960 mean 1.084)
+  plateau ratio (idx 0-8) per 20 s window, / V294's own baseline 0.938: median 1.321 [p2.5 1.292, p97.5 1.357] n 33
+
+g1.2  Kp X (0, 68, 112, 136, 208) Y (1152, 1152, 1152, 1152, 1152)
+  R1 identity on own march (synthetic flight): a 0.9921 b 0.9934 resid 5.02 R2 0.99971
+  R2 identity on V294 march (synthetic flight): a 1.1905 b 1.1912 resid 5.04 R2 0.99970
+  R3 own-march fits better in 38 / 38 20 s windows (live)
+  NULL (real r71b tap = V294): own-march a 0.8255 resid 4.14 vs V294-march a 0.9906 resid 4.13; candidate fits better in 10 / 38 windows
+   idx   0-  5 (  185 s of tap): a 1.084 / V294's own 0.893 = 1.214  (Kp/960 mean 1.200)
+   idx   5-  9 (  147 s of tap): a 1.145 / V294's own 0.947 = 1.210  (Kp/960 mean 1.200)
+   idx   9- 18 (  167 s of tap): a 1.174 / V294's own 0.973 = 1.207  (Kp/960 mean 1.200)
+   idx  18- 30 (   97 s of tap): a 1.185 / V294's own 0.985 = 1.203  (Kp/960 mean 1.200)
+   idx  30- 50 (   73 s of tap): a 1.191 / V294's own 0.990 = 1.202  (Kp/960 mean 1.200)
+   idx  50- 80 (   29 s of tap): a 1.195 / V294's own 0.995 = 1.201  (Kp/960 mean 1.200)
+   idx  80-241 (   12 s of tap): a 1.197 / V294's own 0.997 = 1.201  (Kp/960 mean 1.200)
+  plateau ratio (idx 0-8) per 20 s window, / V294's own baseline 0.938: median 1.212 [p2.5 1.184, p97.5 1.258] n 33

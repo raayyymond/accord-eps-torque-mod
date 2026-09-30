@@ -1,0 +1,18 @@
+G1. tap vs byte-exact march (tick offset -4 ms, sign +1), rms counts
+    band        tap s       live       null    tap rms  R2 live
+    all           709       3.64      14.79      244.4   0.9998
+    0-5            81       6.31      25.97      306.9   0.9996
+    5-10          191       3.23      19.52      307.5   0.9999
+    10-15         208       3.08       9.76      195.0   0.9997
+    15-22         157       3.06       6.30      201.3   0.9998
+    22+            72       3.16       4.49      181.4   0.9997
+    G1 PASS (criterion: live rms <= 10 counts hands-off engaged)
+ALIGN. tick offset: live march (all hands-off) -4 ms ; null march on |al|<10 deg/s^2 frames +0 ms (n 18505) ; record V293 FF-only -4 ms
+G2. d(th)/dt = 1.0199*om -0.208 on hands-off engaged frames ; phase(dth/om) {0.5: np.float64(0.2), 1: np.float64(-0.4), 2: np.float64(-1.5), 5: np.float64(-1.7)} deg -> PASS
+SIGN. corr(T_trim[k], al[k-0]) on hands-off engaged: +0.178
+SIGN. corr(T_trim[k], al[k-2]) on hands-off engaged: +0.401
+SIGN. corr(T_trim[k], al[k-5]) on hands-off engaged: +0.533
+SIGN. corr(T_trim[k], al[k-10]) on hands-off engaged: +0.482
+SIGN. corr(tap - null march, al) at the tap instants, hands-off engaged: +0.181  (+ = trim opposes acceleration)
+CLAMP. |r26| == 1024 on 0.0000 % of engaged ticks (0 ticks), 0.0000 % of hands-off engaged ; max |r26| engaged 637 ; p99.9 |r26| 368
+CLAMP. |P| == 15360 (P clamp) on 0.0576 % of engaged ticks

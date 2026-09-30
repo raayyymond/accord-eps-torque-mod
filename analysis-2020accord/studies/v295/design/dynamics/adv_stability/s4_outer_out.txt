@@ -1,0 +1,137 @@
+cross-check nominal  v  8.0  V294 harness Ms 1.185 GM 10.41 PM 145.3 | mine Ms 1.185 GM 10.37 PM 145.1  ||  A1017 harness Ms 1.154 GM 10.97 PM 145.4 | mine Ms 1.155 GM 10.92 PM 145.2
+cross-check light_b  v 26.9  V294 harness Ms 3.066 GM 1.69 PM 31.1 | mine Ms 3.091 GM 1.68 PM 30.7  ||  A1017 harness Ms 2.440 GM 1.87 PM 48.9 | mine Ms 2.450 GM 1.86 PM 48.5
+cross-check nominal  v 26.9  V294 harness Ms 1.087 GM 19.97 PM 139.2 | mine Ms 1.087 GM 19.74 PM 139.0  ||  A1017 harness Ms 1.083 GM 20.05 PM 139.2 | mine Ms 1.084 GM 19.97 PM 139.0
+cross-check light_b  v  8.0  V294 harness Ms 1.737 GM 4.04 PM 53.1 | mine Ms 1.741 GM 4.01 PM 52.9  ||  A1017 harness Ms 1.462 GM 4.75 PM 67.0 | mine Ms 1.464 GM 4.69 PM 67.2
+cross-check light_b  v 17.0  V294 harness Ms 2.000 GM 2.63 PM 50.3 | mine Ms 2.007 GM 2.62 PM 50.0  ||  A1017 harness Ms 1.689 GM 2.95 PM 70.6 | mine Ms 1.692 GM 2.93 PM 70.3
+grid 4032 cells in 38 s
+F-c: GM_A < 0.9 GM_V: 0 cells ; Ms_A > 1.1 Ms_V: 5 ; DF crossing (GM < 1 at some relay fraction) for A only: 0 ; V294 itself GM < 1 somewhere: 29 cells
+   Ms light_b   v 22.0 J x2.5 tau  6 pipe 44 sr 13.50 | V GM 0.77 Ms 32.059 PM 2.5 | A GM 1.01 Ms 63.105 PM 1.5
+   Ms light_b   v 26.9 J x1.5 tau  6 pipe 44 sr 13.50 | V GM 0.80 Ms 54.921 PM 1.2 | A GM 0.97 Ms 66.763 PM 1.3
+   Ms light_b   v 26.9 J x1.5 tau 12 pipe 44 sr 13.50 | V GM 0.76 Ms 27.647 PM 3.6 | A GM 0.93 Ms 42.362 PM 2.8
+   Ms light_b   v 26.9 J x2.5 tau 12 pipe 44 sr 16.84 | V GM 0.77 Ms 32.071 PM 2.9 | A GM 1.00 Ms 197.450 PM 0.1
+   Ms light_b   v 26.9 J x2.5 tau 12 pipe 44 sr 13.50 | V GM 0.62 Ms 32.493 PM 2.0 | A GM 0.80 Ms 47.492 PM 1.4
+GM ratio A/V (DF-min): min 1.003 p5 1.010 median 1.048 max 1.457 ; Ms ratio A/V (DF-max): min 0.014 median 0.982 p95 0.997 max 6.157
+the 10 worst GM ratios:
+   mode13    v 26.9 J x1.0 tau  6 pipe 22 sr 13.50 | V GM 12.71 Ms 1.121 | A GM 12.74 Ms 1.117
+   mode13    v 26.9 J x1.0 tau  6 pipe 22 sr 16.84 | V GM 15.85 Ms 1.096 | A GM 15.90 Ms 1.093
+   mode20_lo v 26.9 J x1.0 tau  2 pipe 22 sr 16.84 | V GM 17.91 Ms 1.090 | A GM 17.97 Ms 1.086
+   mode20_lo v 26.9 J x1.0 tau  2 pipe 22 sr 13.50 | V GM 14.36 Ms 1.113 | A GM 14.41 Ms 1.108
+   mode20    v 26.9 J x0.5 tau  2 pipe 22 sr 16.84 | V GM 20.20 Ms 1.083 | A GM 20.28 Ms 1.080
+   mode20    v 26.9 J x0.5 tau  2 pipe 22 sr 13.50 | V GM 16.19 Ms 1.104 | A GM 16.26 Ms 1.100
+   b_hi      v 17.0 J x1.0 tau 12 pipe 22 sr 16.84 | V GM 31.17 Ms 1.049 | A GM 31.29 Ms 1.048
+   b_hi      v 17.0 J x1.0 tau 12 pipe 22 sr 13.50 | V GM 24.98 Ms 1.062 | A GM 25.08 Ms 1.060
+   ms_free   v 26.9 J x0.5 tau  6 pipe 22 sr 16.84 | V GM 18.69 Ms 1.089 | A GM 18.76 Ms 1.086
+   ms_free   v 26.9 J x0.5 tau  6 pipe 22 sr 13.50 | V GM 14.98 Ms 1.112 | A GM 15.04 Ms 1.108
+the 10 worst Ms ratios:
+   light_b   v 26.9 J x2.5 tau 12 pipe 44 sr 16.84 | V GM 0.77 Ms 32.071 @1.65 Hz | A GM 1.00 Ms 197.450 @1.68 Hz
+   light_b   v 22.0 J x2.5 tau  6 pipe 44 sr 13.50 | V GM 0.77 Ms 32.059 @1.62 Hz | A GM 1.01 Ms 63.105 @1.64 Hz
+   light_b   v 26.9 J x1.5 tau 12 pipe 44 sr 13.50 | V GM 0.76 Ms 27.647 @2.08 Hz | A GM 0.93 Ms 42.362 @2.15 Hz
+   light_b   v 26.9 J x2.5 tau 12 pipe 44 sr 13.50 | V GM 0.62 Ms 32.493 @1.76 Hz | A GM 0.80 Ms 47.492 @1.77 Hz
+   light_b   v 26.9 J x1.5 tau  6 pipe 44 sr 13.50 | V GM 0.80 Ms 54.921 @2.11 Hz | A GM 0.97 Ms 66.763 @2.17 Hz
+   b_hi      v 17.0 J x0.5 tau  2 pipe 22 sr 16.84 | V GM 41.97 Ms 1.040 @2.21 Hz | A GM 42.18 Ms 1.039 @2.26 Hz
+   b_hi      v 17.0 J x0.5 tau  6 pipe 22 sr 16.84 | V GM 37.91 Ms 1.043 @2.15 Hz | A GM 38.08 Ms 1.042 @2.19 Hz
+   b_hi      v 17.0 J x1.0 tau  2 pipe 22 sr 16.84 | V GM 38.57 Ms 1.043 @2.16 Hz | A GM 39.04 Ms 1.041 @2.20 Hz
+   b_hi      v 17.0 J x1.0 tau  6 pipe 22 sr 16.84 | V GM 35.12 Ms 1.045 @2.09 Hz | A GM 35.52 Ms 1.044 @2.14 Hz
+   b_hi      v 17.0 J x1.5 tau  2 pipe 22 sr 16.84 | V GM 36.18 Ms 1.045 @2.11 Hz | A GM 36.35 Ms 1.044 @2.15 Hz
+
+per member x speed, nominal corner (J x1, tau 2, pipe 22, sr 16.84, relay full): V294 | A1017  Ms / GM / PM, and DF-min GM
+  nominal   v  3.1 | Ms 1.225 GM  11.04 PM   87.8 GMdf  11.04 | Ms 1.189 GM  11.79 PM   85.3 GMdf  11.79
+  nominal   v  5.0 | Ms 1.198 GM  11.06 PM  113.1 GMdf  11.06 | Ms 1.164 GM  11.73 PM  109.5 GMdf  11.73
+  nominal   v  8.0 | Ms 1.185 GM  10.37 PM  145.1 GMdf  10.37 | Ms 1.155 GM  10.92 PM  145.2 GMdf  10.92
+  nominal   v 12.0 | Ms 1.117 GM  15.44 PM  141.4 GMdf  15.44 | Ms 1.105 GM  15.76 PM  141.5 GMdf  15.76
+  nominal   v 17.0 | Ms 1.060 GM  25.88 PM  110.6 GMdf  25.88 | Ms 1.058 GM  26.16 PM  110.6 GMdf  26.16
+  nominal   v 22.0 | Ms 1.074 GM  22.21 PM  122.2 GMdf  22.21 | Ms 1.071 GM  22.46 PM  122.2 GMdf  22.46
+  nominal   v 26.9 | Ms 1.087 GM  19.74 PM  139.0 GMdf  19.74 | Ms 1.084 GM  19.97 PM  139.0 GMdf  19.97
+  J_lo      v  3.1 | Ms 1.190 GM  12.98 PM   89.2 GMdf  12.98 | Ms 1.158 GM  13.58 PM   86.6 GMdf  13.58
+  J_lo      v  5.0 | Ms 1.166 GM  12.97 PM  113.4 GMdf  12.97 | Ms 1.136 GM  13.58 PM  109.9 GMdf  13.58
+  J_lo      v  8.0 | Ms 1.154 GM  12.17 PM  147.0 GMdf  12.17 | Ms 1.129 GM  12.58 PM  147.1 GMdf  12.58
+  J_lo      v 12.0 | Ms 1.087 GM  20.86 PM  137.0 GMdf  20.86 | Ms 1.080 GM  21.32 PM  137.0 GMdf  21.32
+  J_lo      v 17.0 | Ms 1.055 GM  29.20 PM  110.6 GMdf  29.20 | Ms 1.053 GM  29.53 PM  110.6 GMdf  29.53
+  J_lo      v 22.0 | Ms 1.065 GM  25.96 PM  121.6 GMdf  25.96 | Ms 1.063 GM  26.27 PM  121.6 GMdf  26.27
+  J_lo      v 26.9 | Ms 1.075 GM  23.77 PM  137.2 GMdf  23.77 | Ms 1.072 GM  24.06 PM  137.3 GMdf  24.06
+  J_hi      v  3.1 | Ms 1.240 GM  10.75 PM   95.8 GMdf  10.75 | Ms 1.211 GM  11.72 PM   93.5 GMdf  11.72
+  J_hi      v  5.0 | Ms 1.220 GM  10.59 PM  132.2 GMdf  10.59 | Ms 1.190 GM  11.37 PM  129.0 GMdf  11.37
+  J_hi      v  8.0 | Ms 1.217 GM   9.52 PM  133.6 GMdf   9.52 | Ms 1.187 GM  10.23 PM  133.6 GMdf  10.23
+  J_hi      v 12.0 | Ms 1.216 GM   9.37 PM  146.0 GMdf   9.37 | Ms 1.190 GM   9.88 PM  146.1 GMdf   9.88
+  J_hi      v 17.0 | Ms 1.085 GM  18.09 PM  111.5 GMdf  18.09 | Ms 1.081 GM  18.42 PM  111.5 GMdf  18.42
+  J_hi      v 22.0 | Ms 1.092 GM  17.71 PM  122.3 GMdf  17.71 | Ms 1.088 GM  17.91 PM  122.3 GMdf  17.91
+  J_hi      v 26.9 | Ms 1.097 GM  17.29 PM  137.2 GMdf  17.29 | Ms 1.094 GM  17.50 PM  137.2 GMdf  17.50
+  J_hi2     v  3.1 | Ms 1.203 GM  12.47 PM  113.4 GMdf  12.47 | Ms 1.185 GM  13.49 PM  111.3 GMdf  13.49
+  J_hi2     v  5.0 | Ms 1.194 GM  11.97 PM  138.1 GMdf  11.97 | Ms 1.173 GM  12.84 PM  138.1 GMdf  12.84
+  J_hi2     v  8.0 | Ms 1.202 GM  10.47 PM  123.6 GMdf  10.47 | Ms 1.178 GM  11.16 PM  123.6 GMdf  11.16
+  J_hi2     v 12.0 | Ms 1.341 GM   6.95 PM  146.3 GMdf   6.95 | Ms 1.294 GM   7.57 PM  146.4 GMdf   7.57
+  J_hi2     v 17.0 | Ms 1.107 GM  15.06 PM  111.6 GMdf  15.06 | Ms 1.101 GM  15.39 PM  111.6 GMdf  15.39
+  J_hi2     v 22.0 | Ms 1.103 GM  16.08 PM  121.6 GMdf  16.08 | Ms 1.098 GM  16.40 PM  121.6 GMdf  16.40
+  J_hi2     v 26.9 | Ms 1.102 GM  16.72 PM  134.9 GMdf  16.72 | Ms 1.098 GM  16.93 PM  134.9 GMdf  16.93
+  J_0.3     v  3.1 | Ms 1.267 GM   9.90 PM   84.2 GMdf   9.90 | Ms 1.225 GM  10.67 PM   82.2 GMdf  10.67
+  J_0.3     v  5.0 | Ms 1.235 GM   9.86 PM  109.0 GMdf   9.86 | Ms 1.195 GM  10.63 PM  106.0 GMdf  10.63
+  J_0.3     v  8.0 | Ms 1.220 GM   9.25 PM  145.1 GMdf   9.25 | Ms 1.184 GM   9.82 PM  145.2 GMdf   9.82
+  J_0.3     v 12.0 | Ms 1.132 GM  13.83 PM  141.5 GMdf  13.83 | Ms 1.119 GM  14.34 PM  141.5 GMdf  14.34
+  J_0.3     v 17.0 | Ms 1.065 GM  23.75 PM  110.6 GMdf  23.75 | Ms 1.062 GM  24.00 PM  110.6 GMdf  24.00
+  J_0.3     v 22.0 | Ms 1.079 GM  20.51 PM  122.2 GMdf  20.51 | Ms 1.076 GM  20.73 PM  122.2 GMdf  20.73
+  J_0.3     v 26.9 | Ms 1.093 GM  18.34 PM  139.0 GMdf  18.34 | Ms 1.089 GM  18.55 PM  139.1 GMdf  18.55
+  b_lo      v  3.1 | Ms 1.340 GM   8.15 PM   74.8 GMdf   8.15 | Ms 1.266 GM   8.90 PM   74.8 GMdf   8.90
+  b_lo      v  5.0 | Ms 1.289 GM   8.15 PM   98.2 GMdf   8.15 | Ms 1.224 GM   8.83 PM   96.6 GMdf   8.83
+  b_lo      v  8.0 | Ms 1.262 GM   7.66 PM  147.1 GMdf   7.66 | Ms 1.208 GM   8.18 PM  147.2 GMdf   8.18
+  b_lo      v 12.0 | Ms 1.207 GM   8.87 PM  145.9 GMdf   8.87 | Ms 1.176 GM   9.28 PM  146.0 GMdf   9.28
+  b_lo      v 17.0 | Ms 1.099 GM  14.71 PM  111.2 GMdf  14.71 | Ms 1.094 GM  14.93 PM  111.2 GMdf  14.93
+  b_lo      v 22.0 | Ms 1.125 GM  12.47 PM  123.5 GMdf  12.47 | Ms 1.118 GM  12.67 PM  123.5 GMdf  12.67
+  b_lo      v 26.9 | Ms 1.150 GM  10.96 PM  144.2 GMdf  10.96 | Ms 1.141 GM  11.14 PM  144.2 GMdf  11.14
+  b_hi      v  3.1 | Ms 1.142 GM  16.22 PM   96.0 GMdf  16.22 | Ms 1.127 GM  16.87 PM   93.9 GMdf  16.87
+  b_hi      v  5.0 | Ms 1.129 GM  16.15 PM  119.7 GMdf  16.15 | Ms 1.113 GM  16.80 PM  117.7 GMdf  16.80
+  b_hi      v  8.0 | Ms 1.124 GM  15.10 PM  141.7 GMdf  15.10 | Ms 1.109 GM  15.61 PM  141.7 GMdf  15.61
+  b_hi      v 12.0 | Ms 1.079 GM  23.14 PM  136.6 GMdf  23.14 | Ms 1.073 GM  23.51 PM  136.7 GMdf  23.51
+  b_hi      v 17.0 | Ms 1.043 GM  38.57 PM  110.0 GMdf  38.57 | Ms 1.041 GM  39.04 PM  110.0 GMdf  39.04
+  b_hi      v 22.0 | Ms 1.052 GM  33.20 PM  120.5 GMdf  33.20 | Ms 1.050 GM  33.61 PM  120.5 GMdf  33.61
+  b_hi      v 26.9 | Ms 1.060 GM  29.77 PM  133.6 GMdf  29.77 | Ms 1.059 GM  29.93 PM  133.7 GMdf  29.93
+  ms_free   v  3.1 | Ms 1.239 GM  10.61 PM   88.1 GMdf  10.61 | Ms 1.202 GM  11.40 PM   85.6 GMdf  11.40
+  ms_free   v  5.0 | Ms 1.218 GM  10.43 PM  122.9 GMdf  10.43 | Ms 1.184 GM  11.11 PM  119.2 GMdf  11.11
+  ms_free   v  8.0 | Ms 1.215 GM   9.61 PM  133.7 GMdf   9.61 | Ms 1.185 GM  10.23 PM  133.7 GMdf  10.23
+  ms_free   v 12.0 | Ms 1.618 GM   5.10 PM  127.0 GMdf   5.10 | Ms 1.538 GM   5.78 PM  127.0 GMdf   5.78
+  ms_free   v 17.0 | Ms 1.149 GM  12.12 PM  109.7 GMdf  12.12 | Ms 1.140 GM  12.60 PM  109.7 GMdf  12.60
+  ms_free   v 22.0 | Ms 1.120 GM  14.20 PM  121.0 GMdf  14.20 | Ms 1.114 GM  14.52 PM  121.0 GMdf  14.52
+  ms_free   v 26.9 | Ms 1.095 GM  17.67 PM  137.7 GMdf  17.67 | Ms 1.092 GM  17.87 PM  137.7 GMdf  17.87
+  light_b   v  3.1 | Ms 1.867 GM   4.47 PM   41.9 GMdf   4.47 | Ms 1.538 GM   5.42 PM   51.5 GMdf   5.42
+  light_b   v  5.0 | Ms 1.777 GM   4.38 PM   47.6 GMdf   4.38 | Ms 1.480 GM   5.28 PM   58.7 GMdf   5.28
+  light_b   v  8.0 | Ms 1.741 GM   4.01 PM   52.9 GMdf   4.01 | Ms 1.464 GM   4.69 PM   67.2 GMdf   4.69
+  light_b   v 12.0 | Ms 1.721 GM   3.42 PM   63.8 GMdf   3.42 | Ms 1.488 GM   3.91 PM   84.2 GMdf   3.91
+  light_b   v 17.0 | Ms 2.007 GM   2.62 PM   50.0 GMdf   2.62 | Ms 1.692 GM   2.93 PM   70.3 GMdf   2.93
+  light_b   v 22.0 | Ms 2.443 GM   2.04 PM   39.4 GMdf   2.04 | Ms 2.004 GM   2.27 PM   59.3 GMdf   2.27
+  light_b   v 26.9 | Ms 3.091 GM   1.68 PM   30.7 GMdf   1.68 | Ms 2.450 GM   1.86 PM   48.5 GMdf   1.86
+  mode13    v  3.1 | Ms 1.228 GM  10.28 PM   87.8 GMdf  10.28 | Ms 1.191 GM  10.82 PM   85.3 GMdf  10.82
+  mode13    v  5.0 | Ms 1.202 GM  10.25 PM  112.9 GMdf  10.25 | Ms 1.167 GM  10.72 PM  109.5 GMdf  10.72
+  mode13    v  8.0 | Ms 1.190 GM   9.48 PM  145.1 GMdf   9.48 | Ms 1.160 GM   9.92 PM  145.2 GMdf   9.92
+  mode13    v 12.0 | Ms 1.120 GM  13.79 PM  141.4 GMdf  13.79 | Ms 1.109 GM  14.10 PM  141.5 GMdf  14.10
+  mode13    v 17.0 | Ms 1.063 GM  22.23 PM  110.6 GMdf  22.23 | Ms 1.061 GM  22.41 PM  110.6 GMdf  22.41
+  mode13    v 22.0 | Ms 1.077 GM  19.11 PM  122.2 GMdf  19.11 | Ms 1.074 GM  19.27 PM  122.2 GMdf  19.27
+  mode13    v 26.9 | Ms 1.091 GM  17.01 PM  139.0 GMdf  17.01 | Ms 1.087 GM  17.15 PM  139.0 GMdf  17.15
+  mode20    v  3.1 | Ms 1.227 GM  10.75 PM   87.8 GMdf  10.75 | Ms 1.190 GM  11.36 PM   85.3 GMdf  11.36
+  mode20    v  5.0 | Ms 1.200 GM  10.74 PM  113.1 GMdf  10.74 | Ms 1.165 GM  11.35 PM  109.5 GMdf  11.35
+  mode20    v  8.0 | Ms 1.187 GM   9.97 PM  145.1 GMdf   9.97 | Ms 1.157 GM  10.48 PM  145.2 GMdf  10.48
+  mode20    v 12.0 | Ms 1.118 GM  14.71 PM  141.4 GMdf  14.71 | Ms 1.107 GM  15.09 PM  141.5 GMdf  15.09
+  mode20    v 17.0 | Ms 1.062 GM  24.43 PM  110.6 GMdf  24.43 | Ms 1.059 GM  24.67 PM  110.6 GMdf  24.67
+  mode20    v 22.0 | Ms 1.075 GM  20.85 PM  122.2 GMdf  20.85 | Ms 1.072 GM  21.06 PM  122.2 GMdf  21.06
+  mode20    v 26.9 | Ms 1.089 GM  18.54 PM  139.0 GMdf  18.54 | Ms 1.085 GM  18.73 PM  139.0 GMdf  18.73
+  mode20_lo v  3.1 | Ms 1.227 GM  10.53 PM   87.8 GMdf  10.53 | Ms 1.190 GM  11.12 PM   85.3 GMdf  11.12
+  mode20_lo v  5.0 | Ms 1.201 GM  10.51 PM  112.9 GMdf  10.51 | Ms 1.166 GM  11.03 PM  109.5 GMdf  11.03
+  mode20_lo v  8.0 | Ms 1.189 GM   9.75 PM  145.1 GMdf   9.75 | Ms 1.159 GM  10.23 PM  145.2 GMdf  10.23
+  mode20_lo v 12.0 | Ms 1.119 GM  14.27 PM  141.4 GMdf  14.27 | Ms 1.108 GM  14.62 PM  141.5 GMdf  14.62
+  mode20_lo v 17.0 | Ms 1.062 GM  23.29 PM  110.6 GMdf  23.29 | Ms 1.060 GM  23.64 PM  110.6 GMdf  23.64
+  mode20_lo v 22.0 | Ms 1.076 GM  20.01 PM  122.2 GMdf  20.01 | Ms 1.073 GM  20.20 PM  122.2 GMdf  20.20
+  mode20_lo v 26.9 | Ms 1.090 GM  17.91 PM  139.0 GMdf  17.91 | Ms 1.086 GM  17.97 PM  139.0 GMdf  17.97
+
+light_b worst corners (pipe 44, sr 13.5, J x2.5 / x0.5): V294 | A1017
+  J x0.5 v  3.1 | Ms 2.162 GMdf 2.80 PMdf 36.5 | Ms 1.683 GMdf 3.55 PMdf 47.2
+  J x2.5 v  3.1 | Ms 6.155 GMdf 1.50 PMdf 10.7 | Ms 3.302 GMdf 2.17 PMdf 20.8
+  J x0.5 v  5.0 | Ms 2.037 GMdf 2.81 PMdf 41.7 | Ms 1.623 GMdf 3.49 PMdf 53.7
+  J x2.5 v  5.0 | Ms 5.687 GMdf 1.50 PMdf 12.2 | Ms 3.074 GMdf 2.15 PMdf 23.4
+  J x0.5 v  8.0 | Ms 2.002 GMdf 2.65 PMdf 46.6 | Ms 1.623 GMdf 3.19 PMdf 60.8
+  J x2.5 v  8.0 | Ms 6.200 GMdf 1.40 PMdf 11.5 | Ms 3.100 GMdf 1.98 PMdf 24.4
+  J x0.5 v 12.0 | Ms 1.991 GMdf 2.38 PMdf 57.0 | Ms 1.673 GMdf 2.77 PMdf 74.7
+  J x2.5 v 12.0 | Ms 7.929 GMdf 1.25 PMdf 9.4 | Ms 3.368 GMdf 1.71 PMdf 25.3
+  J x0.5 v 17.0 | Ms 2.529 GMdf 1.84 PMdf 43.0 | Ms 2.023 GMdf 2.12 PMdf 61.7
+  J x2.5 v 17.0 | Ms 63.193 GMdf 0.97 PMdf 0.5 | Ms 6.224 GMdf 1.29 PMdf 12.9
+  J x0.5 v 22.0 | Ms 3.579 GMdf 1.47 PMdf 30.6 | Ms 2.642 GMdf 1.67 PMdf 49.3
+  J x2.5 v 22.0 | Ms 32.059 GMdf 0.77 PMdf 2.5 | Ms 63.105 GMdf 1.01 PMdf 1.5
+  J x0.5 v 26.9 | Ms 5.973 GMdf 1.24 PMdf 19.1 | Ms 3.772 GMdf 1.39 PMdf 37.1
+  J x2.5 v 26.9 | Ms 770.235 GMdf 0.65 PMdf 0.0 | Ms 67.543 GMdf 0.84 PMdf 1.3

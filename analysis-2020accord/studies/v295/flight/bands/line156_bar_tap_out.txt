@@ -1,0 +1,6 @@
+episode 41-47 s: eng share 0.96, v 0.0-1.8 m/s, |bar| p50 2394, |cmd| p50 1334 (max 4096), |angle| 0-374 deg
+  bar (driver torque, counts)  14.5-16.8 Hz amplitude  107.79   PSD peak in 12-20 Hz at 15.62 Hz
+  wheel rate, deg/s            14.5-16.8 Hz amplitude    3.67   PSD peak in 12-20 Hz at 15.62 Hz
+  0xE4 command, counts         14.5-16.8 Hz amplitude    2.67   PSD peak in 12-20 Hz at 13.28 Hz
+  427 tap, counts              14.5-16.8 Hz amplitude   23.55   PSD peak in 12-20 Hz at 15.62 Hz
+  coherence 14-17 Hz: bar->tap 0.91   rate->tap 0.95   command->tap 0.15

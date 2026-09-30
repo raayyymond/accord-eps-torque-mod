@@ -1,0 +1,8 @@
+rate  100.0 v294: zero-cmd peak 145, ms > 50/150/300: 160/0/0 | worst lane idx 233 peak 165, ms > 50/150/300: 169/43/0
+rate  100.0 v295: zero-cmd peak 269, ms > 50/150/300: 215/113/0 | worst lane idx 227 peak 287, ms > 50/150/300: 219/120/0
+rate  300.0 v294: zero-cmd peak 419, ms > 50/150/300: 253/159/84 | worst lane idx 227 peak 436, ms > 50/150/300: 257/163/89
+rate  300.0 v295: zero-cmd peak 555, ms > 50/150/300: 302/208/137 | worst lane idx 215 peak 562, ms > 50/150/300: 305/213/142
+rate 1500.0 v294: zero-cmd peak 610, ms > 50/150/300: 380/286/216 | worst lane idx 112 peak 611, ms > 50/150/300: 382/289/218
+rate 1500.0 v295: zero-cmd peak 614, ms > 50/150/300: 428/335/265 | worst lane idx 1 peak 615, ms > 50/150/300: 428/335/265
+V294 |trim| > 300: total 0.042 s ; hands-on 0.042 s ; by band: 0-5 0.042, 5-10 0.000, 10-15 0.000, 15+ 0.000 ; episodes (>= 1 ms runs): 1
+V295 |trim| > 300: total 1.362 s ; hands-on 0.963 s ; by band: 0-5 1.313, 5-10 0.049, 10-15 0.000, 15+ 0.000 ; episodes (>= 1 ms runs): 13

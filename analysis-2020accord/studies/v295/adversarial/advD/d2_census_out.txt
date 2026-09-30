@@ -1,0 +1,117 @@
+=== raw Format VII / XIV hits (gp r4 / tp r5 / r0 bases), V295 image ===
+b 0xC63EA                      1 : 0x28F86 ld.hu R
+b RAM alias 0xFA8003EA         0 : 
+s fb state gp-0x3d30           2 : 0x28F7C ld.w R, 0x28FA8 st.w W
+sentinel gp-0x3d2c             2 : 0x28F66 ld.bu R, 0x290D4 st.b W
+fbstate2 gp-0x3d34             2 : 0x28F78 ld.w R, 0x29080 st.w W
+|r26>>5| gp-0x6a34             3 : 0x290CA st.h W, 0x2A0CA ld.hu R, 0x2AFAE ld.hu R
+sp gp-0x6a32                   2 : 0x29D72 st.h W, 0x2AC68 st.h W
+S gp-0x6b2e                    3 : 0x2A17C st.h W, 0x2A896 ld.h R, 0x2B064 st.h W
+yr gp-0x6b30                   4 : 0x2A1D4 ld.h R, 0x2A206 st.h W, 0x2A8DE ld.h R, 0x2A900 st.h W
+P gp-0x6b32                    2 : 0x2A188 st.h W, 0x2B054 st.h W
+sum gp-0x6b34                  2 : 0x2A1A2 st.h W, 0x2B068 st.h W
+D gp-0x6b36                    2 : 0x2A19C st.h W, 0x2B060 st.h W
+T gp-0x6b38                    7 : 0x2A23C st.h W, 0x2A934 st.h W, 0x2B418 ld.h R, 0x4E8D2 ld.h R, 0x4E8E2 ld.h R, 0x55DF0 ld.h R, 0xC4B40 ld.h R
+fwd gp-0x6b3a                  2 : 0x2B45C st.h W, 0x2B5B2 ld.h R
+fwd gp-0x6b3c                  3 : 0x2A2EA st.h W, 0x2B41C st.h W, 0x2B42E ld.h R
+E_prev gp-0x6cf8               4 : 0x29E5E ld.w R, 0x2A18C st.w W, 0x2AD4A ld.w R, 0x2B058 st.w W
+I gp-0x6dd0                    4 : 0x29DA4 ld.w R, 0x2A190 st.w W, 0x2AC96 ld.w R, 0x2B05C st.w W
+out-lag gp-0x3d3c              4 : 0x2A178 ld.w R, 0x2A1B0 st.w W, 0x2A89A ld.w R, 0x2A8BA st.w W
+idx gp-0x697a                  2 : 0x29DDA st.h W, 0x2ACCE st.h W
+x gp-0x6a56                   29 : 0x28F4C ld.h R, 0x2BBAA ld.h R, 0x2D9BE ld.h R, 0x2F07A ld.h R, 0x34AB8 ld.h R, 0x34E8E ld.h R, 0x3B49A ld.h R, 0x3EC2A ld.h R, 0x3F782 ld.h R, 0x3F7B8 st.h W, 0x3F7D0 st.h W, 0x3F7E0 st.h W, 0x3F7F2 ld.h R, 0x3F81E st.h W, 0x40B48 ld.h R, 0x40C42 ld.h R, 0x4D946 ld.h R, 0x4D956 ld.h R, 0x4DE62 ld.h R, 0x4DE72 ld.h R, 0x4E8BC ld.h R, 0x4E8CC ld.h R, 0x4F942 ld.h R, 0x4F964 ld.h R, 0x4FE3E ld.h R, 0x5150E ld.h R, 0x51850 ld.h R, 0x557D6 ld.h R, 0x55C62 ld.h R
+CTRL bar gp-0x4f60            76 : 0x1C09E ld.h R, 0x1C0CC ld.h R, 0x1C234 ld.h R, 0x28F26 ld.h R, 0x29A90 ld.h R, 0x2A992 ld.h R, 0x2B69E ld.h R, 0x2C480 ld.h R, 0x2D9A2 ld.h R, 0x2DAE6 ld.h R, 0x2DF32 ld.h R, 0x2EC66 ld.h R, 0x2ECBA ld.h R, 0x2F318 ld.h R, 0x2F330 ld.h R, 0x2F33E ld.h R, 0x33D2A ld.h R, 0x34392 ld.h R, 0x34ACE ld.h R, 0x354D2 ld.h R, 0x35AA4 ld.h R, 0x36682 ld.h R, 0x36846 ld.h R, 0x3A6CA ld.h R, 0x3A7CA ld.h R, 0x3B4A8 ld.h R, 0x3B672 ld.h R, 0x3B908 ld.h R, 0x3F8E2 ld.h R, 0x3FCC6 ld.h R, 0x42C20 ld.h R, 0x43EDA ld.h R, 0x4C784 fmtXIV(op3C,sub7) R, 0x4D8F6 ld.h R, 0x4DE12 ld.h R, 0x4E452 ld.h R, 0x4E8A2 ld.h R, 0x4F996 ld.h R, 0x4FC32 ld.h R, 0x5004C ld.h R, 0x55624 ld.h R, 0x55C50 ld.h R, 0x55F3E ld.h R, 0x56542 ld.h R, 0x5654A ld.h R, 0x59BFA fmtXIV(op3C,sub7) R, 0x59C02 fmtXIV(op3C,sub7) R, 0x59C44 fmtXIV(op3C,sub7) R, 0x59C4C fmtXIV(op3C,sub7) R, 0x5A0BC fmtXIV(op3C,sub7) R, 0x5A0C4 fmtXIV(op3D,sub7) R, 0x69C12 ld.h R, 0x7E78E ld.h R, 0x7F2D8 ld.h R, 0x7F2EA st.h W, 0x7F7C0 ld.h R, 0x7F924 ld.h R, 0x7F934 st.h W, 0x7F9BC ld.h R, 0x7F9C8 st.h W, 0x7F9E6 ld.h R, 0x7FCB6 ld.h R, 0x7FCC6 ld.h R, 0x7FCD6 ld.h R, 0x7FCE6 st.h W, 0x7FCFA ld.h R, 0x7FD06 ld.h R, 0x7FD0E ld.h R, 0x7FD1A st.h W, 0x7FD34 ld.h R, 0x7FDF2 ld.h R, 0x7FE88 ld.h R, 0x7FE9A ld.h R, 0x7FEA8 ld.h R, 0x80F82 ld.h R, 0x815C2 ld.h R
+CTRL pol gp-0x6752            56 : 0x23A6E ld.b R, 0x23F8A ld.b R, 0x244A2 ld.b R, 0x276C8 ld.b R, 0x2858C ld.b R, 0x28F22 ld.b R, 0x2A1F2 ld.b R, 0x2A90A ld.b R, 0x2B6A2 ld.b R, 0x2C490 ld.b R, 0x2E3F2 ld.b R, 0x33D2E ld.b R, 0x343AC ld.b R, 0x34AE2 ld.b R, 0x355DC ld.b R, 0x358B6 ld.b R, 0x36232 ld.b R, 0x36394 ld.b R, 0x3668E ld.b R, 0x3684E ld.b R, 0x36FC8 ld.b R, 0x381EE ld.b R, 0x3A71A ld.b R, 0x3AB78 ld.b R, 0x3B02C ld.b R, 0x3B698 ld.b R, 0x3B92E ld.b R, 0x3C010 ld.b R, 0x3C0B4 ld.b R, 0x3C1E6 ld.b R, 0x3C2A4 ld.b R, 0x3C7F0 ld.b R, 0x3C850 ld.b R, 0x3C902 ld.b R, 0x3D3BA ld.b R, 0x3DEDE ld.b R, 0x3E6FC ld.b R, 0x3E73C ld.b R, 0x3F79C ld.b R, 0x3FF22 ld.b R, 0x4096C ld.b R, 0x409DA ld.b R, 0x40B76 ld.b R, 0x43146 ld.b R, 0x445E4 ld.b R, 0x48E56 fmtXIV(op3C,sub5) R, 0x48E68 fmtXIV(op3C,subD) W, 0x48E76 fmtXIV(op3C,sub5) R, 0x48E88 fmtXIV(op3C,subD) W, 0x490B4 ld.b R, 0x490C0 st.b W, 0x4981E ld.b R, 0x49838 st.b W, 0x49844 st.b W, 0x569DC ld.b R, 0x56AB2 ld.b R
+CTRL gp-0x674e                 7 : 0x28FC8 ld.bu R, 0x29AA0 ld.bu R, 0x29B7C ld.bu R, 0x29CC4 ld.bu R, 0x2A9A6 ld.bu R, 0x2ABBA ld.bu R, 0x4272A st.b W
+
+=== absolute LE32 pointers equal to a target (any alignment even) ===
+b 0xC63EA                    []
+b RAM alias 0xFA8003EA       []
+s fb state gp-0x3d30         []
+sentinel gp-0x3d2c           []
+fbstate2 gp-0x3d34           []
+|r26>>5| gp-0x6a34           []
+sp gp-0x6a32                 []
+S gp-0x6b2e                  []
+yr gp-0x6b30                 []
+P gp-0x6b32                  []
+sum gp-0x6b34                []
+D gp-0x6b36                  []
+T gp-0x6b38                  []
+fwd gp-0x6b3a                []
+fwd gp-0x6b3c                []
+E_prev gp-0x6cf8             []
+I gp-0x6dd0                  []
+out-lag gp-0x3d3c            []
+idx gp-0x697a                []
+x gp-0x6a56                  []
+CTRL bar gp-0x4f60           ['0x89c6c', '0xbbc80', '0xbbca0']
+CTRL pol gp-0x6752           []
+CTRL gp-0x674e               []
+
+=== register-built bases reaching a target (movea/addi gp|tp|r0, movhi, mov imm32; 64-byte look-ahead) ===
+  I gp-0x6dd0                mat@0x14766 val 0xFEDF11B0 r30  access@- ep-reach(sld/sst) disp 128 ?
+  I gp-0x6dd0                mat@0x3AAD8 val 0xFEDF11D0 r30  access@- ep-reach(sld/sst) disp 96 ?
+  I gp-0x6dd0                mat@0x3ABA4 val 0xFEDF11C0 r30  access@- ep-reach(sld/sst) disp 112 ?
+  I gp-0x6dd0                mat@0x3AE42 val 0xFEDF11C0 r30  access@- ep-reach(sld/sst) disp 112 ?
+  I gp-0x6dd0                mat@0x3AF64 val 0xFEDF11D0 r30  access@- ep-reach(sld/sst) disp 96 ?
+  CTRL pol gp-0x6752         mat@0x4CD12 val 0xFEDF17C0 r30  access@- ep-reach(sld/sst) disp 238 ?
+  CTRL gp-0x674e             mat@0x4CD12 val 0xFEDF17C0 r30  access@- ep-reach(sld/sst) disp 242 ?
+  CTRL pol gp-0x6752         mat@0x4CD26 val 0xFEDF17C1 r30  access@- ep-reach(sld/sst) disp 237 ?
+  CTRL gp-0x674e             mat@0x4CD26 val 0xFEDF17C1 r30  access@- ep-reach(sld/sst) disp 241 ?
+  CTRL pol gp-0x6752         mat@0x4CD34 val 0xFEDF17C0 r30  access@- ep-reach(sld/sst) disp 238 ?
+  CTRL gp-0x674e             mat@0x4CD34 val 0xFEDF17C0 r30  access@- ep-reach(sld/sst) disp 242 ?
+  I gp-0x6dd0                mat@0x52D9C val 0xFEDF11EC r30  access@- ep-reach(sld/sst) disp 68 ?
+  I gp-0x6dd0                mat@0x52DA4 val 0xFEDF11F0 r30  access@- ep-reach(sld/sst) disp 64 ?
+  I gp-0x6dd0                mat@0x52E12 val 0xFEDF11F0 r30  access@- ep-reach(sld/sst) disp 64 ?
+  I gp-0x6dd0                mat@0x534A0 val 0xFEDF11F0 r30  access@- ep-reach(sld/sst) disp 64 ?
+  I gp-0x6dd0                mat@0x5645E val 0xFEDF11E0 r30  access@- ep-reach(sld/sst) disp 80 ?
+  CTRL bar gp-0x4f60         mat@0x66178 val 0xFEDF3040 r30  access@- ep-reach(sld/sst) disp 96 ?
+  CTRL bar gp-0x4f60         mat@0x668AA val 0xFEDF3000 r30  access@- ep-reach(sld/sst) disp 160 ?
+  CTRL bar gp-0x4f60         mat@0x66906 val 0xFEDF3040 r30  access@- ep-reach(sld/sst) disp 96 ?
+  CTRL bar gp-0x4f60         mat@0x687B2 val 0xFEDF2FF0 r30  access@- ep-reach(sld/sst) disp 176 ?
+  CTRL bar gp-0x4f60         mat@0x687BA val 0xFEDF2FF4 r30  access@- ep-reach(sld/sst) disp 172 ?
+  CTRL bar gp-0x4f60         mat@0x6880C val 0xFEDF2FF0 r30  access@- ep-reach(sld/sst) disp 176 ?
+  CTRL bar gp-0x4f60         mat@0x6881E val 0xFEDF2FF4 r30  access@- ep-reach(sld/sst) disp 172 ?
+  CTRL bar gp-0x4f60         mat@0x68830 val 0xFEDF3040 r30  access@- ep-reach(sld/sst) disp 96 ?
+  CTRL bar gp-0x4f60         mat@0x68844 val 0xFEDF303C r30  access@- ep-reach(sld/sst) disp 100 ?
+  CTRL bar gp-0x4f60         mat@0x6885E val 0xFEDF303C r30  access@- ep-reach(sld/sst) disp 100 ?
+  CTRL bar gp-0x4f60         mat@0x688DA val 0xFEDF3020 r30  access@- ep-reach(sld/sst) disp 128 ?
+  CTRL bar gp-0x4f60         mat@0x688E6 val 0xFEDF3024 r30  access@- ep-reach(sld/sst) disp 124 ?
+  CTRL bar gp-0x4f60         mat@0x6896E val 0xFEDF303C r30  access@- ep-reach(sld/sst) disp 100 ?
+  CTRL bar gp-0x4f60         mat@0x68976 val 0xFEDF3040 r30  access@- ep-reach(sld/sst) disp 96 ?
+  CTRL bar gp-0x4f60         mat@0x68A4A val 0xFEDF2FF0 r30  access@- ep-reach(sld/sst) disp 176 ?
+  CTRL bar gp-0x4f60         mat@0x68A5C val 0xFEDF2FF4 r30  access@- ep-reach(sld/sst) disp 172 ?
+  CTRL bar gp-0x4f60         mat@0x68A74 val 0xFEDF3004 r30  access@- ep-reach(sld/sst) disp 156 ?
+  CTRL bar gp-0x4f60         mat@0x68ACC val 0xFEDF2FEC r30  access@- ep-reach(sld/sst) disp 180 ?
+  CTRL bar gp-0x4f60         mat@0x68AF4 val 0xFEDF3020 r30  access@- ep-reach(sld/sst) disp 128 ?
+  CTRL bar gp-0x4f60         mat@0x68AFC val 0xFEDF3024 r30  access@- ep-reach(sld/sst) disp 124 ?
+  CTRL bar gp-0x4f60         mat@0x68B08 val 0xFEDF2FF8 r30  access@- ep-reach(sld/sst) disp 168 ?
+  CTRL bar gp-0x4f60         mat@0x68B6C val 0xFEDF3040 r30  access@- ep-reach(sld/sst) disp 96 ?
+  CTRL bar gp-0x4f60         mat@0x68BAE val 0xFEDF303C r30  access@- ep-reach(sld/sst) disp 100 ?
+  CTRL bar gp-0x4f60         mat@0x68C12 val 0xFEDF3000 r30  access@- ep-reach(sld/sst) disp 160 ?
+  CTRL bar gp-0x4f60         mat@0x68C1A val 0xFEDF3040 r30  access@- ep-reach(sld/sst) disp 96 ?
+  CTRL bar gp-0x4f60         mat@0x68C98 val 0xFEDF2FEC r30  access@- ep-reach(sld/sst) disp 180 ?
+  CTRL bar gp-0x4f60         mat@0x68CC0 val 0xFEDF3020 r30  access@- ep-reach(sld/sst) disp 128 ?
+  CTRL bar gp-0x4f60         mat@0x68EB0 val 0xFEDF2FFC r30  access@- ep-reach(sld/sst) disp 164 ?
+  CTRL bar gp-0x4f60         mat@0x68EFA val 0xFEDF3024 r30  access@- ep-reach(sld/sst) disp 124 ?
+  CTRL bar gp-0x4f60         mat@0x68F1C val 0xFEDF3020 r30  access@- ep-reach(sld/sst) disp 128 ?
+  CTRL bar gp-0x4f60         mat@0x7E620 val 0xFEDF2FB8 r30  access@- ep-reach(sld/sst) disp 232 ?
+  CTRL bar gp-0x4f60         mat@0x7E6D0 val 0xFEDF2FAC r30  access@- ep-reach(sld/sst) disp 244 ?
+  CTRL bar gp-0x4f60         mat@0x7E6DA val 0xFEDF2FB8 r30  access@- ep-reach(sld/sst) disp 232 ?
+  CTRL bar gp-0x4f60         mat@0x7E72C val 0xFEDF2FB4 r30  access@- ep-reach(sld/sst) disp 236 ?
+  CTRL bar gp-0x4f60         mat@0x7EA26 val 0xFEDF2FB8 r30  access@- ep-reach(sld/sst) disp 232 ?
+  CTRL bar gp-0x4f60         mat@0x7EA2E val 0xFEDF2FB0 r30  access@- ep-reach(sld/sst) disp 240 ?
+  CTRL bar gp-0x4f60         mat@0x7EA4E val 0xFEDF3074 r30  access@- ep-reach(sld/sst) disp 44 ?
+  CTRL bar gp-0x4f60         mat@0x7F082 val 0xFEDF3074 r30  access@- ep-reach(sld/sst) disp 44 ?
+  CTRL bar gp-0x4f60         mat@0x7F0EE val 0xFEDF3074 r30  access@- ep-reach(sld/sst) disp 44 ?
+  CTRL bar gp-0x4f60         mat@0x7F4C6 val 0xFEDF2FAC r30  access@- ep-reach(sld/sst) disp 244 ?
+  CTRL bar gp-0x4f60         mat@0x7F4D2 val 0xFEDF3078 r30  access@- ep-reach(sld/sst) disp 40 ?
+  CTRL bar gp-0x4f60         mat@0x7F4DA val 0xFEDF3076 r30  access@- ep-reach(sld/sst) disp 42 ?
+  CTRL bar gp-0x4f60         mat@0x7F50A val 0xFEDF3074 r30  access@- ep-reach(sld/sst) disp 44 ?
+  CTRL bar gp-0x4f60         mat@0x815CA val 0xFEDF2FB8 r30  access@- ep-reach(sld/sst) disp 232 ?
+  CTRL bar gp-0x4f60         mat@0x81612 val 0xFEDF2FA4 r30  access@- ep-reach(sld/sst) disp 252 ?
+  CTRL bar gp-0x4f60         mat@0x82898 val 0xFEDF307A r30  access@- ep-reach(sld/sst) disp 38 ?
+  CTRL bar gp-0x4f60         mat@0x8298A val 0xFEDF307A r30  access@- ep-reach(sld/sst) disp 38 ?
+
+=== any-base (not gp/tp/r0) accesses with disp 0x73E8/0x73EA/0x73EB/0x3EA/0x3E8 ===
+  0xBC3BA st.w base r11 disp 0x3EA W

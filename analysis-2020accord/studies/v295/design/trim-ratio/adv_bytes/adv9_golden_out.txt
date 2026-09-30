@@ -1,0 +1,1 @@
+golden model vs adversary mirror, b 964: 8000 ticks, 0 mismatches (fb_lag_b in cal = 964)

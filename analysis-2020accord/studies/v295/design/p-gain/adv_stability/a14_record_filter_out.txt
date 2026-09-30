@@ -1,0 +1,19 @@
+stress cases: 270 ; record-consistent (V282 linear lane stable): 72 ; excluded (V282 unstable): 198
+
+ALL: min flex-pole zeta ratio cand/V294 0.900 ; min tracked-pole (zeta<0.3) ratio 0.893 ; cases < 0.9 (tracked): 2
+   nominal+T2_20_0.02_0.5       v 26.9 tau 9 V282 rho 1.0316 | open 14.67/0.1752 V294 15.17/0.1277 cand 15.31/0.1149 ratio 0.900
+   light_b+T2_20_0.02_0.5       v  3.1 tau 9 V282 rho 1.0246 | open 19.96/0.0499 V294 20.06/0.0375 cand 20.09/0.0338 ratio 0.901
+   light_b+T2_20_0.02_0.5       v 11.9 tau 9 V282 rho 1.0245 | open 20.01/0.0501 V294 20.11/0.0378 cand 20.14/0.0341 ratio 0.903
+   light_b+T2_20_0.02_0.5       v 26.9 tau 9 V282 rho 1.0244 | open 20.05/0.0502 V294 20.14/0.0380 cand 20.17/0.0344 ratio 0.904
+   nominal+T3_16_0.03_0.3       v 11.9 tau 9 V282 rho 1.0165 | open 9.35/0.4279 V294 8.60/0.3541 cand 8.55/0.3220 ratio 0.909
+   light_b+T1_20_0.02_0.5       v 26.9 tau 9 V282 rho 1.0221 | open 20.05/0.0502 V294 20.20/0.0389 cand 20.25/0.0356 ratio 0.913
+   flex poles with V294 zeta < 0.06: 52 ; min cand zeta 0.0338 ; max de-damping cand vs open -0.0161 ; cand vs V294 -0.0037
+
+RECORD-CONSISTENT: min flex-pole zeta ratio cand/V294 0.952 ; min tracked-pole (zeta<0.3) ratio 0.972 ; cases < 0.9 (tracked): 0
+   nominal+T2_16_0.03_0.3       v 11.9 tau 2 V282 rho 0.9995 | open 9.35/0.4279 V294 10.22/0.3581 cand 10.47/0.3410 ratio 0.952
+   nominal+T2_20_0.05_0.2       v 11.9 tau 2 V282 rho 0.9995 | open 8.40/0.5326 V294 9.35/0.4482 cand 9.61/0.4277 ratio 0.954
+   nominal+T2_25_0.03_0.3       v 26.9 tau 2 V282 rho 0.9995 | open 13.75/0.2495 V294 14.34/0.2265 cand 14.51/0.2201 ratio 0.972
+   nominal+T2_16_0.03_0.3       v  3.1 tau 2 V282 rho 0.9999 | open 13.99/0.3209 V294 14.14/0.3031 cand 14.19/0.2975 ratio 0.981
+   nominal+T2_20_0.05_0.2       v 26.9 tau 2 V282 rho 0.9992 | open 8.78/0.1952 V294 9.53/0.1922 cand 9.74/0.1900 ratio 0.989
+   nominal+T1_25_0.03_0.3       v 11.9 tau 9 V282 rho 0.9995 | open 24.42/0.0925 V294 24.49/0.0893 cand 24.51/0.0882 ratio 0.989
+   flex poles with V294 zeta < 0.06: 6 ; min cand zeta 0.0475 ; max de-damping cand vs open -0.0005 ; cand vs V294 -0.0001

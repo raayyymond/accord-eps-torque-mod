@@ -1,0 +1,47 @@
+VOID (2026-09-30): produced with the c0 SIGN BUG in oe_lib.Batch.c0 (fixed afterwards) and the flat rate-former start; superseded by p5b_ms_out.txt / p5c_jprofile_out.txt. Kept as the record.
+OUTPUT-ERROR FIT, closed inner-loop replay through the byte-exact V294 lane (tau 2 ms, rate window 3 ms, sat = prior) -- mode: strict
+
+BAND 0-5 m/s: 3 fit segs (15 s, v 3.2), 2 held (14 s); NM cost 0.1655 (204 evals); 414 s wall
+  J 0.9377 +-0.0437 T/(deg/s^2) | b 4.762 +-10.675 T/(deg/s) | k 15.38 +-35.59 T/deg | Fc 127.4 +-96.5 T | Fs 159.7 +-119.4 T
+  -> open-plant mode f_n 0.64 Hz, zeta 0.627 (linear, sliding); in x units J_x 0.11721, b_x 0.5953 T per count(/s)
+  fit_scores     th R2 +0.946 fit  76.7% rms  1.14 deg | om R2 +0.865 fit  63.3% rms  2.89 deg/s | tap R2 +0.9963 rms   5.0
+  held_nominal   th R2 -0.064 fit  -3.1% rms  1.25 deg | om R2 -0.194 fit  -9.3% rms  3.47 deg/s | tap R2 +0.9949 rms   4.8
+  held_light_b   th R2 -46.965 fit -592.6% rms  8.42 deg | om R2 -19.725 fit -355.2% rms 14.47 deg/s | tap R2 +0.9736 rms  11.0
+  held_trim_off  th R2 -0.095 fit  -4.6% rms  1.27 deg | om R2 -0.146 fit  -7.0% rms  3.40 deg/s | tap R2 +0.9946 rms   5.0
+  fit_light_b    th R2 -2.420 fit -84.9% rms  9.08 deg | om R2 -0.912 fit -38.3% rms 10.90 deg/s | tap R2 +0.9873 rms   9.2
+
+BAND 5-10 m/s: 6 fit segs (69 s, v 7.5), 6 held (39 s); NM cost 0.2970 (137 evals); 1774 s wall
+  J 0.0712 +-0.0478 T/(deg/s^2) | b 5.162 +-1.087 T/(deg/s) | k 9.82 +-1.40 T/deg | Fc 190.6 +-152.9 T | Fs 256.5 +-205.6 T
+  -> open-plant mode f_n 1.87 Hz, zeta 3.086 (linear, sliding); in x units J_x 0.00890, b_x 0.6452 T per count(/s)
+  fit_scores     th R2 +0.876 fit  64.8% rms  3.39 deg | om R2 +0.809 fit  56.3% rms  4.53 deg/s | tap R2 +0.9971 rms   5.2
+  held_nominal   th R2 -0.026 fit  -1.3% rms  3.96 deg | om R2 -1.754 fit -66.0% rms  3.66 deg/s | tap R2 +0.9975 rms   4.8
+  held_light_b   th R2 -0.558 fit -24.8% rms  4.88 deg | om R2 -6.556 fit -174.9% rms  6.07 deg/s | tap R2 +0.9966 rms   5.6
+  held_trim_off  th R2 -0.018 fit  -0.9% rms  3.94 deg | om R2 -1.743 fit -65.6% rms  3.66 deg/s | tap R2 +0.9977 rms   4.6
+  fit_light_b    th R2 +0.038 fit   1.9% rms  9.44 deg | om R2 +0.140 fit   7.3% rms  9.60 deg/s | tap R2 +0.9878 rms  10.7
+
+BAND 10-15 m/s: 7 fit segs (60 s, v 11.6), 6 held (72 s); NM cost 0.5828 (138 evals); 1728 s wall
+  J 0.4483 +-0.1003 T/(deg/s^2) | b 3.961 +-5.535 T/(deg/s) | k 26.76 +-26.07 T/deg | Fc 117.2 +-124.6 T | Fs 150.8 +-161.2 T
+  -> open-plant mode f_n 1.23 Hz, zeta 0.572 (linear, sliding); in x units J_x 0.05603, b_x 0.4951 T per count(/s)
+  fit_scores     th R2 +0.876 fit  64.8% rms  1.23 deg | om R2 +0.444 fit  25.5% rms  1.79 deg/s | tap R2 +0.9982 rms   3.9
+  held_nominal   th R2 +0.803 fit  55.6% rms  1.36 deg | om R2 +0.427 fit  24.3% rms  2.38 deg/s | tap R2 +0.9968 rms   4.2
+  held_light_b   th R2 +0.392 fit  22.0% rms  2.38 deg | om R2 -0.357 fit -16.5% rms  3.66 deg/s | tap R2 +0.9960 rms   4.6
+  held_trim_off  th R2 +0.807 fit  56.1% rms  1.34 deg | om R2 +0.463 fit  26.7% rms  2.30 deg/s | tap R2 +0.9964 rms   4.4
+  fit_light_b    th R2 +0.631 fit  39.3% rms  2.13 deg | om R2 -1.316 fit -52.2% rms  3.66 deg/s | tap R2 +0.9974 rms   4.7
+
+BAND 15-22 m/s: 6 fit segs (66 s, v 17.3), 5 held (38 s); NM cost 1.2936 (162 evals); 1882 s wall
+  J 0.1778 +-1.0973 T/(deg/s^2) | b 3.142 +-10.144 T/(deg/s) | k 81.36 +-38.00 T/deg | Fc 40.6 +-14.8 T | Fs 53.1 +-18.1 T
+  -> open-plant mode f_n 3.40 Hz, zeta 0.413 (linear, sliding); in x units J_x 0.02222, b_x 0.3928 T per count(/s)
+  fit_scores     th R2 +0.732 fit  48.2% rms  0.41 deg | om R2 -0.063 fit  -3.1% rms  1.23 deg/s | tap R2 +0.9961 rms   3.4
+  held_nominal   th R2 +0.716 fit  46.7% rms  1.69 deg | om R2 +0.081 fit   4.1% rms  2.03 deg/s | tap R2 +0.9989 rms   4.3
+  held_light_b   th R2 +0.506 fit  29.7% rms  2.23 deg | om R2 -1.206 fit -48.5% rms  3.14 deg/s | tap R2 +0.9987 rms   4.6
+  held_trim_off  th R2 +0.717 fit  46.8% rms  1.68 deg | om R2 +0.023 fit   1.1% rms  2.09 deg/s | tap R2 +0.9989 rms   4.2
+  fit_light_b    th R2 -4.350 fit -131.3% rms  1.82 deg | om R2 -4.861 fit -142.1% rms  2.89 deg/s | tap R2 +0.9946 rms   4.0
+
+BAND 22+ m/s: 4 fit segs (26 s, v 28.4), 4 held (20 s); NM cost 0.6575 (212 evals); 713 s wall
+  J 1.0675 +-0.1195 T/(deg/s^2) | b 4.261 +-5.364 T/(deg/s) | k 52.98 +-50.01 T/deg | Fc 140.5 +-22.1 T | Fs 181.7 +-31.0 T
+  -> open-plant mode f_n 1.12 Hz, zeta 0.283 (linear, sliding); in x units J_x 0.13344, b_x 0.5327 T per count(/s)
+  fit_scores     th R2 +0.926 fit  72.8% rms  0.66 deg | om R2 +0.300 fit  16.3% rms  1.62 deg/s | tap R2 +0.9984 rms   4.2
+  held_nominal   th R2 +0.378 fit  21.1% rms  0.59 deg | om R2 -0.171 fit  -8.2% rms  1.33 deg/s | tap R2 +0.9959 rms   3.5
+  held_light_b   th R2 -0.182 fit  -8.7% rms  0.81 deg | om R2 -3.265 fit -106.5% rms  2.54 deg/s | tap R2 +0.9939 rms   4.3
+  held_trim_off  th R2 +0.383 fit  21.4% rms  0.59 deg | om R2 -0.152 fit  -7.3% rms  1.32 deg/s | tap R2 +0.9962 rms   3.4
+  fit_light_b    th R2 +0.703 fit  45.5% rms  1.33 deg | om R2 -1.218 fit -48.9% rms  2.88 deg/s | tap R2 +0.9978 rms   5.0

@@ -1,0 +1,7 @@
+CONTROL a  tp+0x73E8   4-byte ['0x28f8a'] | 6-byte [] | abs LE32 []  control FOUND
+CONTROL C  tp+0x72E6   4-byte ['0x28f96', '0x28f9c', '0x28fb8'] | 6-byte [] | abs LE32 []  control FOUND
+TARGET  b  tp+0x73EA   4-byte ['0x28f86'] | 6-byte [] | abs LE32 []
+value at 0xC63EA in the V294 image: 567 (u16 LE)
+6-byte control at 0x48E56: hw1 0784 base r4  format-XIV False  disp23 -26450 (-0x6752) -> expect -0x6752 (or -0x6753 with the bit-0 width flag): FOUND
+   and the fixed 6-byte predicate accepts it: True
+   6-byte scan of gp-0x6752 over the code region: ['0x48e56', '0x48e68', '0x48e76', '0x48e88'] (control FOUND)

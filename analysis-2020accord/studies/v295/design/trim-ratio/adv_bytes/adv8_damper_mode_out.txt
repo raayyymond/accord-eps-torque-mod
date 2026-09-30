@@ -1,0 +1,2 @@
+control gp-0x3d2c: [('0x28F66', 'ld.bu'), ('0x290D4', 'st.b')]
+gp-0x680a       : [('0x29A68', 'ld.bu'), ('0x2A96A', 'ld.bu')]

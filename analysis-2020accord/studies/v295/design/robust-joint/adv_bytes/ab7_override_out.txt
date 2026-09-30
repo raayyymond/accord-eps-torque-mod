@@ -1,0 +1,2 @@
+hands-on engaged     91.8 s: |trim| p50/p99/max  V294   8.0/165.5/ 309   A  17.0/323.0/ 564 ; |A-V294| p99 157.0 max 261
+hands-off engaged   708.9 s: |trim| p50/p99/max  V294   1.0/ 72.0/ 202   A   2.0/141.0/ 394 ; |A-V294| p99 68.0 max 192

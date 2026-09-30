@@ -1,0 +1,21 @@
+m20z05r8 motor tau 6 OPEN  rho 0.99732 modes [(8.41, 0.52)]
+m20z05r8 motor tau 6 V294  rho 0.99700 modes [(6.93, 0.507), (8.18, 0.8888)]
+m20z05r8 motor tau 6 A1017 rho 0.99656 modes [(0.16, 0.9587), (6.78, 0.5266), (7.54, 0.9005)]
+m20z05r8 motor tau 6 V282  rho 0.99948 modes [(7.88, 0.11), (28.93, 0.0267)]
+m20z05r8 wheel tau 9 OPEN  rho 0.99732 modes [(8.41, 0.52)]
+m20z05r8 wheel tau 9 V294  rho 0.99700 modes [(8.01, 0.411)]
+m20z05r8 wheel tau 9 A1017 rho 0.99657 modes [(0.16, 0.958), (7.87, 0.421)]
+m20z05r8 wheel tau 9 V282  rho 1.01413 modes [(10.33, -0.2112), (22.98, 0.722)]
+m20z05r8 motor tau 2 OPEN  rho 0.99732 modes [(8.41, 0.52)]
+m20z05r8 motor tau 2 V294  rho 0.99701 modes [(7.21, 0.4991)]
+m20z05r8 motor tau 2 A1017 rho 0.99655 modes [(0.16, 0.96), (7.08, 0.5157)]
+m20z05r8 motor tau 2 V282  rho 0.99948 modes [(8.01, 0.1244), (36.24, 0.179)]
+least-damped pair 5-45 Hz, A1017/V294 over 300 cells: min 0.9790 p1 0.9842 median 1.0019 max 1.0436 ; A1017 unstable cells 0 ; V294 unstable 0
+   worst m13z05r5 motor v 12 tau 12  zeta V294 0.3272 A1017 0.3203
+   worst m13z05r5 motor v 5 tau 9  zeta V294 0.2035 A1017 0.2001
+   worst m13z05r5 motor v 5 tau 6  zeta V294 0.2148 A1017 0.2112
+   worst m13z05r5 motor v 5 tau 12  zeta V294 0.1919 A1017 0.1889
+   worst m13z05r5 motor v 5 tau 3  zeta V294 0.2245 A1017 0.2212
+   worst m13z05r5 motor v 5 tau 2  zeta V294 0.2272 A1017 0.2240
+   worst m13z05r5 motor v 12 tau 9  zeta V294 0.3307 A1017 0.3261
+   worst m16z02r5 motor v 5 tau 6  zeta V294 0.1431 A1017 0.1415

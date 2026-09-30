@@ -1,0 +1,7 @@
+cell values: a @0xC63E8 = 1011, b @0xC63EA = 567 (LE bytes 3702)
+control a tp+0x73E8: 1 hits
+   0x28F8A  hw1 4f25 hw2 73e8  op 0x39 ld.h/ld.w  reg2 r9  bit0 0
+b tp+0x73EA: 1 hits
+   0x28F86  hw1 87e5 hw2 73eb  op 0x3F ld.hu/st.hu  reg2 r16  bit0 1
+LE32 0x000C63EA in code region: []
+LE32 0x000073EA in code region: []

@@ -1,0 +1,2 @@
+V294: 42 ticks |trim|>300 T; engaged 1.00; |bar|>=400 1.00; max|bar| 897; pressed 0.00; speed 3.9-3.9 m/s; trim same sign as FF 1.00; corr(trim, bar) +0.03; |T_total| max 503; distinct episodes 1
+A1017: 776 ticks |trim|>300 T; engaged 0.85; |bar|>=400 0.75; max|bar| 1971; pressed 0.07; speed 0.5-4.6 m/s; trim same sign as FF 0.61; corr(trim, bar) +0.58; |T_total| max 1356; distinct episodes 8

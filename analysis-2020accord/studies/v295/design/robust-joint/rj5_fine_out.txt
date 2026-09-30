@@ -1,0 +1,32 @@
+fine grid: 900
+evaluated in 39 s
+feasible 530 of 900
+  g1.30_t1.85_fb1.70_lag5.05_kd0_flat_C1024        J -0.157 HF 1.86 oGM 1.29 lbH 2.15 jerk 0.941/0.879/0.666 lo -0.0735 hw -0.0123 tr +0.0103 inMs 1.25 i32 2.41 rp 284 cap 800 ob 0.99 ('ms_free', 12.0, 10, True)
+  g1.27_t1.95_fb2.03_lag5.05_kd0_flat_C1024        J -0.157 HF 1.95 oGM 1.31 lbH 2.18 jerk 0.936/0.886/0.673 lo -0.0671 hw -0.0122 tr +0.0114 inMs 1.25 i32 2.65 rp 283 cap 784 ob 1.00 ('ms_free', 12.0, 10, True)
+  g1.27_t1.90_fb1.85_lag5.05_kd0_flat_C1024        J -0.156 HF 1.90 oGM 1.32 lbH 2.19 jerk 0.937/0.881/0.666 lo -0.0680 hw -0.0123 tr +0.0109 inMs 1.25 i32 2.51 rp 283 cap 784 ob 0.99 ('ms_free', 12.0, 10, True)
+  g1.27_t1.85_fb1.70_lag5.05_kd0_flat_C1024        J -0.155 HF 1.86 oGM 1.32 lbH 2.19 jerk 0.939/0.877/0.660 lo -0.0691 hw -0.0123 tr +0.0103 inMs 1.25 i32 2.36 rp 283 cap 784 ob 0.98 ('ms_free', 12.0, 10, True)
+  g1.25_t1.95_fb2.03_lag5.05_kd0_flat_C1024        J -0.155 HF 1.95 oGM 1.34 lbH 2.23 jerk 0.934/0.884/0.667 lo -0.0626 hw -0.0123 tr +0.0114 inMs 1.25 i32 2.60 rp 283 cap 769 ob 0.99 ('ms_free', 12.0, 10, True)
+  g1.25_t2.00_fb2.20_lag5.05_kd0_flat_C1024        J -0.155 HF 2.00 oGM 1.33 lbH 2.21 jerk 0.933/0.889/0.675 lo -0.0618 hw -0.0122 tr +0.0117 inMs 1.25 i32 2.73 rp 282 cap 769 ob 1.00 ('ms_free', 12.0, 10, True)
+  g1.25_t1.90_fb1.85_lag5.05_kd0_flat_C1024        J -0.154 HF 1.91 oGM 1.34 lbH 2.24 jerk 0.935/0.879/0.661 lo -0.0635 hw -0.0123 tr +0.0109 inMs 1.25 i32 2.46 rp 283 cap 769 ob 0.98 ('ms_free', 12.0, 10, True)
+  g1.25_t1.85_fb1.70_lag5.05_kd0_flat_C1024        J -0.153 HF 1.86 oGM 1.34 lbH 2.24 jerk 0.937/0.875/0.656 lo -0.0646 hw -0.0124 tr +0.0103 inMs 1.25 i32 2.32 rp 284 cap 769 ob 0.97 ('ms_free', 12.0, 10, True)
+  g1.23_t2.00_fb2.20_lag5.05_kd0_flat_C1024        J -0.152 HF 2.00 oGM 1.36 lbH 2.26 jerk 0.931/0.887/0.670 lo -0.0572 hw -0.0123 tr +0.0117 inMs 1.25 i32 2.68 rp 282 cap 754 ob 0.98 ('ms_free', 12.0, 10, True)
+  g1.23_t1.95_fb2.03_lag5.05_kd0_flat_C1024        J -0.152 HF 1.95 oGM 1.37 lbH 2.27 jerk 0.932/0.882/0.662 lo -0.0579 hw -0.0124 tr +0.0114 inMs 1.25 i32 2.55 rp 283 cap 754 ob 0.98 ('ms_free', 12.0, 10, True)
+  g1.23_t2.05_fb2.40_lag5.05_kd0_flat_C1024        J -0.152 HF 2.05 oGM 1.34 lbH 2.24 jerk 0.931/0.892/0.678 lo -0.0565 hw -0.0123 tr +0.0119 inMs 1.25 i32 2.80 rp 282 cap 754 ob 1.00 ('light_b', 3.1, 10, False)
+  g1.23_t1.90_fb1.85_lag5.05_kd0_flat_C1024        J -0.151 HF 1.90 oGM 1.37 lbH 2.28 jerk 0.933/0.877/0.656 lo -0.0588 hw -0.0124 tr +0.0109 inMs 1.25 i32 2.41 rp 283 cap 754 ob 0.97 ('ms_free', 12.0, 10, True)
+
+per (g): the best feasible t/fb and its J (the g-direction of the front)
+  g 1.000: t 2.00 fb 2.20  J -0.107  jerk 0.914  lo -0.0041 hw -0.0012 tr +0.0117  oGM 1.66  rp 282  i32 2.19  ob 0.92 ('light_b', 3.1, 40, False)
+  g 1.025: t 2.05 fb 2.40  J -0.122  jerk 0.915  lo -0.0111 hw -0.0106 tr +0.0119  oGM 1.61  rp 282  i32 2.35  ob 0.94 ('light_b', 3.1, 40, False)
+  g 1.050: t 2.05 fb 2.40  J -0.130  jerk 0.917  lo -0.0183 hw -0.0132 tr +0.0119  oGM 1.57  rp 282  i32 2.40  ob 0.94 ('light_b', 3.1, 40, False)
+  g 1.075: t 2.00 fb 2.20  J -0.134  jerk 0.920  lo -0.0257 hw -0.0131 tr +0.0117  oGM 1.55  rp 282  i32 2.35  ob 0.94 ('light_b', 3.1, 40, False)
+  g 1.100: t 2.00 fb 2.20  J -0.138  jerk 0.921  lo -0.0316 hw -0.0129 tr +0.0117  oGM 1.51  rp 282  i32 2.41  ob 0.95 ('light_b', 3.1, 40, False)
+  g 1.125: t 2.00 fb 2.20  J -0.141  jerk 0.923  lo -0.0370 hw -0.0128 tr +0.0117  oGM 1.48  rp 282  i32 2.46  ob 0.95 ('light_b', 3.1, 40, False)
+  g 1.150: t 2.00 fb 2.20  J -0.144  jerk 0.925  lo -0.0423 hw -0.0126 tr +0.0117  oGM 1.44  rp 282  i32 2.52  ob 0.96 ('light_b', 3.1, 40, False)
+  g 1.175: t 2.00 fb 2.20  J -0.147  jerk 0.927  lo -0.0474 hw -0.0125 tr +0.0117  oGM 1.41  rp 282  i32 2.57  ob 0.97 ('light_b', 3.1, 40, False)
+  g 1.200: t 2.00 fb 2.20  J -0.150  jerk 0.929  lo -0.0523 hw -0.0124 tr +0.0117  oGM 1.38  rp 282  i32 2.62  ob 0.98 ('light_b', 3.1, 10, False)
+  g 1.225: t 2.00 fb 2.20  J -0.152  jerk 0.931  lo -0.0572 hw -0.0123 tr +0.0117  oGM 1.36  rp 282  i32 2.68  ob 0.98 ('ms_free', 12.0, 10, True)
+  g 1.250: t 1.95 fb 2.03  J -0.155  jerk 0.934  lo -0.0626 hw -0.0123 tr +0.0114  oGM 1.34  rp 283  i32 2.60  ob 0.99 ('ms_free', 12.0, 10, True)
+  g 1.275: t 1.95 fb 2.03  J -0.157  jerk 0.936  lo -0.0671 hw -0.0122 tr +0.0114  oGM 1.31  rp 283  i32 2.65  ob 1.00 ('ms_free', 12.0, 10, True)
+  g 1.300: t 1.85 fb 1.70  J -0.157  jerk 0.941  lo -0.0735 hw -0.0123 tr +0.0103  oGM 1.29  rp 284  i32 2.41  ob 0.99 ('ms_free', 12.0, 10, True)
+  g 1.325: none feasible; reasons [(('H_LOOP2',), 50), (('H_LOOP2', 'H_SAFE3'), 6), (('H_SAFE3',), 4)]; binding outer key [("('ms_free', 12.0, 10, True)", 55), ("('light_b', 3.1, 10, True)", 1)]
+  g 1.350: none feasible; reasons [(('H_LOOP2',), 50), (('H_LOOP2', 'H_SAFE3'), 10)]; binding outer key [("('ms_free', 12.0, 10, True)", 59), ("('light_b', 26.9, 10, True)", 1)]

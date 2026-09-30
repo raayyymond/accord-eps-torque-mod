@@ -1,0 +1,28 @@
+rows 120
+GM ratio V295/V294 min 1.048 at (62, 'nominal', 26.9, False)
+Ms ratio V295/V294 max 1.002 at (22, 'nominal', 5.0, False)
+PM change min -48.7 at (62, 'light_b', 17.0, False)
+  pipe 22 light_b  17.0 relay True  GM 4.22 / 2.63  Ms 1.631 / 2.000  PM 57.1 / 50.2
+  pipe 22 light_b  17.0 relay False GM 6.56 / 4.09  Ms 1.391 / 1.541  PM 98.1 / 134.1
+  pipe 22 light_b  26.9 relay True  GM 2.69 / 1.69  Ms 1.960 / 3.066  PM 45.4 / 31.0
+  pipe 22 light_b  26.9 relay False GM 4.20 / 2.65  Ms 1.542 / 1.893  PM 71.6 / 64.3
+  pipe 42 light_b   5.0 relay True  GM 4.48 / 2.96  Ms 1.921 / 2.104  PM 41.3 / 40.3
+  pipe 42 light_b   8.0 relay True  GM 4.18 / 2.75  Ms 1.833 / 2.070  PM 46.9 / 44.8
+  pipe 42 light_b  12.0 relay True  GM 3.71 / 2.45  Ms 1.734 / 2.063  PM 58.6 / 54.3
+  pipe 42 light_b  17.0 relay True  GM 2.85 / 1.89  Ms 1.973 / 2.635  PM 47.7 / 38.8
+  pipe 42 light_b  17.0 relay False GM 4.43 / 2.93  Ms 1.546 / 1.759  PM 91.4 / 133.7
+  pipe 42 light_b  26.9 relay True  GM 1.89 / 1.25  Ms 2.721 / 6.258  PM 33.0 / 15.6
+  pipe 42 light_b  26.9 relay False GM 2.93 / 1.94  Ms 1.819 / 2.400  PM 62.1 / 52.8
+  pipe 62 light_b   5.0 relay True  GM 2.99 / 2.17  Ms 2.269 / 2.584  PM 35.1 / 33.0
+  pipe 62 light_b   8.0 relay True  GM 2.87 / 2.06  Ms 2.161 / 2.556  PM 39.9 / 36.6
+  pipe 62 light_b  12.0 relay True  GM 2.66 / 1.89  Ms 2.038 / 2.567  PM 50.5 / 44.8
+  pipe 62 light_b  12.0 relay False GM 4.11 / 2.93  Ms 1.561 / 1.722  PM 126.0 / 126.0
+  pipe 62 light_b  17.0 relay True  GM 2.08 / 1.47  Ms 2.491 / 3.821  PM 38.3 / 27.5
+  pipe 62 light_b  17.0 relay False GM 3.23 / 2.29  Ms 1.736 / 2.036  PM 84.7 / 133.3
+  pipe 62 light_b  26.9 relay True  GM 1.41 / 1.00  Ms 4.431 / 261.487  PM 20.5 / 0.2
+  pipe 62 light_b  26.9 relay False GM 2.20 / 1.55  Ms 2.208 / 3.223  PM 52.6 / 41.2
+
+identified family (nominal, b_lo, J_hi): worst PM change per pipe, and the Ms there
+  pipe 22: PM -7.7 deg at b_lo 5.0 relay True (PM 90.2 / 97.9, Ms 1.275 / 1.288, GM 11.51 / 8.25)
+  pipe 42: PM -7.6 deg at b_lo 5.0 relay True (PM 85.9 / 93.6, Ms 1.361 / 1.379, GM 7.61 / 5.73)
+  pipe 62: PM -7.6 deg at b_lo 5.0 relay True (PM 81.7 / 89.3, Ms 1.457 / 1.482, GM 5.43 / 4.33)

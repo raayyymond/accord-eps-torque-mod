@@ -1,0 +1,46 @@
+V294 image sha256 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85  MATCH
+cells: a[0xC63E8] s16 = 1011 ; b[0xC63EA] u16 = 567 (0x0237) ; C[0xC62E6] u16 = 1024 ; outlag 0xC63EC s16 992 / 0xC63EE 507
+bytes 0xC63E0..0xC63F0: 00 04 1f 00 7a 02 00 00 f3 03 37 02 e0 03 fb 01
+
+== S1/S2 direct forms, whole image ==
+  TARGET b [0xC63EA,0xC63EC): 1 hit(s)
+     0x28F86  4-byte ld.hu  disp +0x73ea [r5] -> EA 0xC63EA   (code)
+  CONTROL a [0xC63E8,0xC63EA)  expect 0x28F8A: 1 hit(s)
+     0x28F8A  4-byte ld.h   disp +0x73e8 [r5] -> EA 0xC63E8   (code)
+  CONTROL C [0xC62E6,0xC62E8)  expect 0x28F96/9C/B8: 3 hit(s)
+     0x28F96  4-byte ld.hu  disp +0x72e6 [r5] -> EA 0xC62E6   (code)
+     0x28F9C  4-byte ld.hu  disp +0x72e6 [r5] -> EA 0xC62E6   (code)
+     0x28FB8  4-byte ld.hu  disp +0x72e6 [r5] -> EA 0xC62E6   (code)
+  CONTROL 6-byte gp-0x6752 @0x48E56: FOUND
+
+== S1b 4-byte, ANY base, disp16 hitting tp-offset 0x73E8..0x73EB (tp-copy bases) ==
+  0 hit(s) with a non-r0/gp/tp base: []
+  6-byte any-base disp in window: 0 []
+
+== S3 absolute LE32 in [0xC62EC, 0xC63EB] anywhere in the image ==
+  0 hit(s): []
+  CONTROL LE32 0xCB994 (Kp bank, mov imm32 @0x29DC6 imm at 0x29DC8): FOUND
+
+== S4 register-built bases within disp16 reach, 48-byte look-ahead for a load hitting the cell ==
+  constant/base materialisations: 7693 total, 588 within disp16 reach of the cell
+  CONTROL mov imm32 0xCB994 @0x29DC6 materialisation found: True
+  look-ahead loads hitting the cell through a built base: 0
+  ep (r30) constant writes anywhere: 552 ['0x146C0 mov imm32 0xFEDEC000', '0x146E4 movhi 0xFA800000', '0x1474C mov imm32 0xFA001300', '0x14754 mov imm32 0xFA001304', '0x14766 mov imm32 0xFEDF11B0', '0x14796 mov imm32 0xFEDEC000', '0x157CC mov imm32 0xFEDF5B20', '0x158AA mov imm32 0xFEDF5B20', '0x158BE mov imm32 0xFEDF5B20', '0x158EA mov imm32 0xFEDF5B20', '0x15936 mov imm32 0xFEDF5B20', '0x15B04 mov imm32 0xFEDF5B20', '0x15B22 mov imm32 0xFEDF5B20', '0x15B44 mov imm32 0xB701A', '0x15B56 mov imm32 0xB7014', '0x15B60 mov imm32 0xB7016', '0x15B76 mov imm32 0xB7018', '0x15C70 mov imm32 0xFEDF5B20', '0x15DEE mov imm32 0xFEDF5B20', '0x15E56 mov imm32 0xFEDF5B20']
+  tp-derived bases (mov tp,rX / movea|addi imm,tp,rX): 550 ['0x140D2 movea tp r5=0xC6000', '0x1608E movea tp r11=0xB974F', '0x16172 movea tp r16=0xB7D58', '0x1638A movea tp r15=0xB7D58', '0x1648A movea tp r11=0xB7D58', '0x1654E movea tp r10=0xB7D58', '0x165D4 movea tp r10=0xB7D58', '0x1665A movea tp r13=0xB7D58', '0x166E6 movea tp r14=0xB7D58', '0x16838 movea tp r8=0xB974F', '0x168E0 movea tp r15=0xB7D58', '0x1693A movea tp r10=0xB7D58', '0x16A34 movea tp r9=0xB974F', '0x16BD4 movea tp r6=0xB7D58', '0x16CEC movea tp r15=0xB7D58', '0x16E56 movea tp r15=0xB7D58', '0x16E8C movea tp r8=0xB7D58', '0x17158 movea tp r6=0xB7D58', '0x172F8 movea tp r13=0xB7D58', '0x1741A movea tp r6=0xB7D58', '0x175B4 movea tp r13=0xB7D58', '0x1771C movea tp r12=0xB974D', '0x1775C movea tp r12=0xB974E', '0x17992 movea tp r13=0xB974C', '0x17F9C movea tp r11=0xB7D58', '0x18088 movea tp r9=0xB7D58', '0x18654 movea tp r12=0xB7D58', '0x186FA movea tp r16=0xB7D58', '0x1877C movea tp r12=0xB7D58', '0x187C4 movea tp r13=0xB7D58', '0x188A6 movea tp r13=0xB7D58', '0x188E2 movea tp r11=0xB7D58', '0x1899E movea tp r22=0xB9A18', '0x190CA mov tp r2=0xBF000', '0x1B47E movea tp r30=0xB703C', '0x1C5EE movea tp r21=0xBF63E', '0x1E4BA movea tp r26=0xB739C', '0x1E4C0 movea tp r11=0xB7124', '0x1E4D4 movea tp r14=0xB7D0C', '0x1E500 movea tp r12=0xB7D0C']
+
+== S5 fb-state and fb-derived gp cells (4- and 6-byte, whole image) ==
+  s  gp-0x3d30  control FOUND ALL: 2 hit(s)
+     0x28F7C  4-byte ld.w   disp -0x3d30 [r4] -> EA 0xFEDF42D0   (code)
+     0x28FA8  4-byte st.w   disp -0x3d30 [r4] -> EA 0xFEDF42D0   (code)
+  sentinel gp-0x3d2c: 2 hit(s)
+     0x28F66  4-byte ld.bu  disp -0x3d2c [r4] -> EA 0xFEDF42D4   (code)
+     0x290D4  4-byte st.b   disp -0x3d2c [r4] -> EA 0xFEDF42D4   (code)
+  |r26>>5| gp-0x6a34  control FOUND ALL: 3 hit(s)
+     0x290CA  4-byte st.h   disp -0x6a34 [r4] -> EA 0xFEDF15CC   (code)
+     0x2A0CA  4-byte ld.hu  disp -0x6a34 [r4] -> EA 0xFEDF15CC   (code)
+     0x2AFAE  4-byte ld.hu  disp -0x6a34 [r4] -> EA 0xFEDF15CC   (code)
+
+== S6 callers (jarl/jr disp22, disp32, LE32 pointers) ==
+  CONTROL FUN_00028ea6: ['0x22522 jarl/jr d22 r31'] (expect 0x22522)
+  TWIN    FUN_0002a93a: []
+  TWIN    FUN_0002a892: []

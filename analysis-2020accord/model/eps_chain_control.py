@@ -875,7 +875,8 @@ def lkas_rate_pid_tick(sp: int, fb: int, idx: int, st: EpsState, cal: Calibratio
     E = _s32((sp << cal.e_shift) - fb)           # 0x29D76 shl imm5,r16 (5 stock..V293, 2 on V294) ; 0x29D78 sub r26,r16
 
     # ---- I : a DEADBAND on E>>5, then Ki, into a 32-bit accumulator that holds 8*I -----------------
-    e5 = E >> 5                                  # 0x29D6C sar 0x5 (feeds the deadband compare only)
+    e5 = E >> 5                                  # 0x29D7C sar 0x5 (feeds the deadband compare only; 0x29D6C is the
+                                                 #   mulh that forms sp -- address erratum fixed 2026-09-30, census c3)
     db = cal.pid_err_deadband                    # 0xC62E4, read at 0x29D6E/0x29D84/0x29D8C/0x29D96
     exc = e5 - db if e5 > db else (e5 + db if e5 < -db else 0)
     i_clamp = (cal.pid_i_clamp << 10) >> 3       # 0xC61BA = 10240 -> 1,310,720
@@ -1014,6 +1015,63 @@ def _self_check_v294():
     s_max = 567 * 12000 // (1024 - 1011)
     assert 1011 * s_max < 2 ** 31 and 1011 * s_max == 529141224
     assert all(((sp << 5) * 120) >> 8 == ((sp << 2) * 960) >> 8 for sp in range(-2048, 2049))
+
+
+def _self_check_v295():
+    """V295 assertions (2026-09-30): V294's acceleration trim x1.852 through ONE cal cell, the fb-lag input
+    gain b 0xC63EA 567 -> 1050. Called from _self_check(); prints NOTHING. Every expected number is
+    build_v295_tva.py's / the four adversaries' own output on the BUILT image (sha256 5c044d65...40452ed),
+    reproduced here by marching this model's tick -- an independent implementation."""
+    v293 = replace(Calibration(), fb_clamp=0, kd_y=(0, 0, 0, 0), pid_d_clamp=0, kp_y=(120,) * 5)
+    v294 = replace(v293, fb_clamp=1024, fb_lag_a=1011, fb_lag_b=567, kp_y=(960,) * 5, fb_op="diff", e_shift=2)
+    v295 = replace(v294, fb_lag_b=1050)
+
+    # 0. the FEEDFORWARD is BIT-IDENTICAL to V294 (and so to V293) at every demand index, both signs
+    for idx in range(0, 241):
+        for pol in (1, -1):
+            a, b = lkas_rate_pid_surface(idx, v295, pol=pol), lkas_rate_pid_surface(idx, v294, pol=pol)
+            assert (a["P"], a["S"], a["T"], a["T_lo"], a["T_hi"]) == (b["P"], b["S"], b["T"], b["T_lo"], b["T_hi"]), (idx, pol)
+    #    (the build scripts' -2463 is the NEGATIVE-DEMAND arm, where the map's floors land one count lower; the
+    #     polarity arm here mirrors the positive rail to -2462)
+    assert lkas_rate_pid_surface(240, v295)["T"] == 2461 and lkas_rate_pid_surface(240, v295, pol=-1)["T"] == -2462
+
+    # 1. the operand still settles to EXACTLY 0 at any constant rate; its first tick is (b*x)>>10 = x1.852 of V294's
+    def fb_settle(x, cal):
+        st, seen, last = EpsState(), set(), None
+        for _ in range(300000):
+            if st.fb_lag_s in seen:
+                break
+            seen.add(st.fb_lag_s)
+            last = lkas_fb_lag(x, st, cal)
+        return last
+    assert [fb_settle(x, v295) for x in (0, 80, 800, 12000)] == [0, 0, 0, 0]
+    st = EpsState()
+    seq = [lkas_fb_lag(800 if k >= 5 else 0, st, v295) for k in range(40)]
+    assert seq[5] == (1050 * 800) >> 10 == 820 and all(v >= 0 for v in seq) and seq[-1] < seq[5]
+
+    # 2. the TRIM CAP is unchanged (C and Kp untouched): +-615/616 counts at idx 120, 25 % of the rail
+    t0 = lkas_rate_pid_surface(120, v295)["T"]
+    assert t0 == 1237
+    assert (lkas_rate_pid_surface(120, v295, fb=-1024)["T"] - t0, lkas_rate_pid_surface(120, v295, fb=+1024)["T"] - t0) == (616, -615)
+
+    # 3. int32 headroom at the +-12000 rate guard: margin 2.19 (V294 4.06); b_max at this pole is 2301
+    s_max = 1050 * 12000 // (1024 - 1011)
+    assert 1011 * s_max < 2 ** 31 and (2 ** 31) / (1011 * s_max) > 2.19
+    assert (2 ** 31 * (1024 - 1011)) // (12000 * 1011) == 2301
+
+    # 4. the trim's gain ratio is EXACTLY b's ratio at every frequency: the same sine march on both lanes.
+    #    T per deg/s at 2.5 Hz: V294 ~1.86, V295 ~3.45 (adversary B: 1.86 -> 3.45); ratio 1.852 +- 1 %
+    import math
+    def march_gain(cal, f=2.5, amp=160, n=6000):
+        st, ys = EpsState(), []
+        st.pid_ramp = 0x8000
+        for k in range(n):
+            x = int(round(amp * math.sin(2 * math.pi * f * k * 1e-3)))
+            ys.append(lkas_rate_pid_tick(0, lkas_fb_lag(x, st, cal), 0, st, cal)["T"])
+        tail = ys[3000:]
+        return (max(tail) - min(tail)) / 2 / (amp / 8)
+    g4, g5 = march_gain(v294), march_gain(v295)
+    assert 1.80 <= g4 <= 1.92 and 3.35 <= g5 <= 3.55 and abs(g5 / g4 - 1050 / 567) < 0.02, (g4, g5)
 
 
 def _self_check_v293():

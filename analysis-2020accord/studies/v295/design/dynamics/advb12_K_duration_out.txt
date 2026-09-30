@@ -1,0 +1,6 @@
+V294 real   60 s windows n 12: |K| min 0.130 med 0.201 max 0.246 ; >=0.28 0.00 ; >0.45 0.00 ; phase-157 < -30: 0.00
+V294 real  120 s windows n  5: |K| min 0.175 med 0.200 max 0.203 ; >=0.28 0.00 ; >0.45 0.00 ; phase-157 < -30: 0.00
+V294 real  300 s windows n  3: |K| min 0.178 med 0.199 max 0.201 ; >=0.28 0.00 ; >0.45 0.00 ; phase-157 < -30: 0.00
+A1017 syn   60 s windows n 12: |K| min 0.206 med 0.319 max 0.346 ; >=0.28 0.92 ; >0.45 0.00 ; phase-157 < -30: 0.00
+A1017 syn  120 s windows n  5: |K| min 0.300 med 0.313 max 0.327 ; >=0.28 1.00 ; >0.45 0.00 ; phase-157 < -30: 0.00
+A1017 syn  300 s windows n  3: |K| min 0.300 med 0.319 max 0.325 ; >=0.28 1.00 ; >0.45 0.00 ; phase-157 < -30: 0.00

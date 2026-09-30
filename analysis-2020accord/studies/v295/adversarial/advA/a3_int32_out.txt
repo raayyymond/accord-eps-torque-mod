@@ -1,0 +1,20 @@
+v294 a=1011 b=567: s*(+12000)=523265 (735 ticks) s*(-12000)=-523422 (734 ticks); max|a*s|=529179642 margin 4.0581 ; |b*x|max=6804000
+   monotone in s (sampled 2006 points) and a,b > 0: True
+   from s0 = s*+ + 100000: settles 523342, max|a*s| on the way 630120915 (margin 3.408)
+v295 a=1011 b=1050: s*(+12000)=969098 (782 ticks) s*(-12000)=-969256 (783 ticks); max|a*s|=979917816 margin 2.1915 ; |b*x|max=12600000
+   monotone in s (sampled 2006 points) and a,b > 0: True
+   from s0 = s*+ + 100000: settles 969176, max|a*s| on the way 1080858078 (margin 1.987)
+V295 hostile march (200 x 20000 ticks, reversals at +-12000, bails): max |product|:
+   bx          12600000  margin 170.435
+   as         979917816  margin 2.191
+   pp           4945920  margin 434.193
+   mS           3901440  margin 550.434
+   S_lb         7726680  margin 277.931
+   la_o       141303456  margin 15.198
+   y_ramp     288456704  margin 7.445
+   y_gain      47060838  margin 45.632
+E max |4*1032 + 1024| = 5152 ; E*Kp = 4945920 (margin 434.2)
+taper*P max 255*15360 = 3916800 ; S*lb max 7787520 ; la*o max ~241413120 (o <= 243360) ; y*ramp max ~498401280
+largest b with margin >= 2.0 at a=1011: 1150 (margin 2.0009); b+1 -> 1.9991
+largest b with margin >= 1.0 at a=1011: 2301 (margin 1.0000); b+1 -> 0.9996
+margin at b=1050: 2.1915 ; b=1051: 2.1894

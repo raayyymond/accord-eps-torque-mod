@@ -1,0 +1,22 @@
+xn0 done
+seed1 done
+seed2 done
+seed3 done
+  b_hi        5-10   hard16 ratio xn0 0.991, seeds [0.997, 0.977, 0.994] | r_mid xn0 0.950 seeds [0.949, 0.946, 0.947] | V294 hard16 abs 0.976 deg/s
+  b_hi        15-22  hard16 ratio xn0 1.005, seeds [0.978, 1.002, 1.121] | r_mid xn0 0.976 seeds [0.967, 0.963, 0.978] | V294 hard16 abs 0.116 deg/s
+  b_hi        22+    hard16 ratio xn0 0.986, seeds [0.991, 0.977, 1.004] | r_mid xn0 0.992 seeds [0.952, 0.923, 0.977] | V294 hard16 abs 0.115 deg/s
+  nom_J0.5nr  5-10   hard16 ratio xn0 1.063, seeds [1.06, 1.064, 1.071] | r_mid xn0 0.913 seeds [0.912, 0.919, 0.914] | V294 hard16 abs 1.007 deg/s
+  nom_J0.5nr  15-22  hard16 ratio xn0 0.962, seeds [1.067, 0.933, 1.013] | r_mid xn0 0.970 seeds [0.973, 0.957, 0.965] | V294 hard16 abs 0.160 deg/s
+  nom_J0.5nr  22+    hard16 ratio xn0 0.985, seeds [0.963, 0.985, 0.939] | r_mid xn0 0.979 seeds [1.014, 0.964, 0.961] | V294 hard16 abs 0.168 deg/s
+  J_hi2       5-10   hard16 ratio xn0 1.025, seeds [1.03, 1.021, 1.039] | r_mid xn0 0.935 seeds [0.933, 0.938, 0.931] | V294 hard16 abs 0.721 deg/s
+  J_hi2       15-22  hard16 ratio xn0 0.990, seeds [1.061, 1.055, 0.95] | r_mid xn0 0.970 seeds [0.981, 0.994, 0.982] | V294 hard16 abs 0.177 deg/s
+  J_hi2       22+    hard16 ratio xn0 0.997, seeds [0.976, 1.033, 1.042] | r_mid xn0 0.986 seeds [1.05, 1.031, 0.974] | V294 hard16 abs 0.147 deg/s
+  lb_J2.5x    5-10   hard16 ratio xn0 1.050, seeds [1.034, 1.041, 1.041] | r_mid xn0 0.809 seeds [0.808, 0.808, 0.809] | V294 hard16 abs 1.623 deg/s
+  lb_J2.5x    15-22  hard16 ratio xn0 1.026, seeds [1.03, 1.032, 1.012] | r_mid xn0 0.897 seeds [0.896, 0.879, 0.897] | V294 hard16 abs 1.330 deg/s
+  lb_J2.5x    22+    hard16 ratio xn0 1.079, seeds [1.093, 1.051, 1.092] | r_mid xn0 0.915 seeds [0.914, 0.909, 0.943] | V294 hard16 abs 1.013 deg/s
+  nominal     5-10   hard16 ratio xn0 0.994, seeds [1.002, 1.001, 0.997] | r_mid xn0 0.907 seeds [0.909, 0.91, 0.907] | V294 hard16 abs 1.251 deg/s
+  nominal     15-22  hard16 ratio xn0 0.988, seeds [0.912, 0.942, 1.019] | r_mid xn0 0.975 seeds [0.946, 0.961, 0.97] | V294 hard16 abs 0.158 deg/s
+  nominal     22+    hard16 ratio xn0 0.990, seeds [1.072, 1.0, 0.96] | r_mid xn0 0.990 seeds [1.007, 0.991, 0.954] | V294 hard16 abs 0.166 deg/s
+  light_b     5-10   hard16 ratio xn0 0.896, seeds [0.895, 0.89, 0.893] | r_mid xn0 0.816 seeds [0.813, 0.813, 0.815] | V294 hard16 abs 3.255 deg/s
+  light_b     15-22  hard16 ratio xn0 0.855, seeds [0.872, 0.858, 0.855] | r_mid xn0 0.841 seeds [0.84, 0.838, 0.844] | V294 hard16 abs 2.078 deg/s
+  light_b     22+    hard16 ratio xn0 0.874, seeds [0.866, 0.907, 0.966] | r_mid xn0 0.881 seeds [0.886, 0.899, 0.879] | V294 hard16 abs 1.307 deg/s

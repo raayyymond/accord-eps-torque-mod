@@ -1,0 +1,5 @@
+15 s engaged windows at 5-15 m/s: 32; hard-turn half (|cmd| >= median): 16; 1.6-3 Hz rate rms med 5.23 deg/s, CV 0.72
+  k = 1 windows per 'drive' ( 15 s of hard-turn driving): null ratio 5-95 % [0.10, 9.48]; P(ratio <= 0.94) 0.51, P(<= 0.89) 0.48
+  k = 2 windows per 'drive' ( 30 s of hard-turn driving): null ratio 5-95 % [0.22, 4.62]; P(ratio <= 0.94) 0.47, P(<= 0.89) 0.44
+  k = 4 windows per 'drive' ( 60 s of hard-turn driving): null ratio 5-95 % [0.39, 2.62]; P(ratio <= 0.94) 0.46, P(<= 0.89) 0.42
+  k = 8 windows per 'drive' (120 s of hard-turn driving): null ratio 5-95 % [0.53, 1.90]; P(ratio <= 0.94) 0.43, P(<= 0.89) 0.38

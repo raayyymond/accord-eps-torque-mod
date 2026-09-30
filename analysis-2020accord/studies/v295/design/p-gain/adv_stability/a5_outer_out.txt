@@ -1,0 +1,192 @@
+1. METHOD CHECK: my L_out vs the harness outer_frf (theta0 = 0, k small-angle, V294, relay on, pipe 22)
+  nominal  v  3.1: harness Ms 1.224 GM 11.204@3.04 | mine Ms 1.226 GM 11.078@3.02 | max |Lm/Lh - 1| 0.141
+  nominal  v  8.0: harness Ms 1.185 GM 10.483@3.27 | mine Ms 1.186 GM 10.371@3.25 | max |Lm/Lh - 1| 0.141
+  nominal  v 17.0: harness Ms 1.060 GM 26.211@4.29 | mine Ms 1.061 GM 25.886@4.25 | max |Lm/Lh - 1| 0.141
+  nominal  v 26.9: harness Ms 1.087 GM 19.986@4.24 | mine Ms 1.088 GM 19.724@4.20 | max |Lm/Lh - 1| 0.141
+  light_b  v  3.1: harness Ms 1.862 GM 4.521@2.25 | mine Ms 1.871 GM 4.464@2.23 | max |Lm/Lh - 1| 0.141
+  light_b  v  8.0: harness Ms 1.737 GM 4.057@2.43 | mine Ms 1.745 GM 4.011@2.42 | max |Lm/Lh - 1| 0.141
+  light_b  v 17.0: harness Ms 2.000 GM 2.639@2.73 | mine Ms 2.013 GM 2.612@2.72 | max |Lm/Lh - 1| 0.141
+  light_b  v 26.9: harness Ms 3.066 GM 1.700@2.90 | mine Ms 3.109 GM 1.684@2.89 | max |Lm/Lh - 1| 0.141
+
+   designer's s12 op points, MY linearisation, small-angle k, same idx for both builds (their convention):
+  nominal  low-speed st  v  3.1 i  14: V294 Ms 1.22 GM 11.21 | cand Ms 1.27 GM 10.02
+  nominal  low-speed tu  v  3.1 i  62: V294 Ms 1.22 GM 11.28 | cand Ms 1.21 GM 12.71
+  nominal  hold 5-10     v  8.0 i  50: V294 Ms 1.19 GM 10.37 | cand Ms 1.18 GM 10.88
+  nominal  hard 5-10     v  8.0 i  75: V294 Ms 1.19 GM 10.37 | cand Ms 1.15 GM 12.73
+  nominal  hold 10-15    v 12.0 i  36: V294 Ms 1.12 GM 15.40 | cand Ms 1.13 GM 14.65
+  nominal  straight 10+  v 17.0 i   6: V294 Ms 1.06 GM 26.29 | cand Ms 1.08 GM 21.08
+  nominal  hold 15-22    v 17.0 i  34: V294 Ms 1.06 GM 25.89 | cand Ms 1.07 GM 24.02
+  nominal  hard 15-22    v 17.0 i  50: V294 Ms 1.06 GM 25.89 | cand Ms 1.06 GM 26.18
+  nominal  hold 22+      v 26.9 i  18: V294 Ms 1.09 GM 19.96 | cand Ms 1.10 GM 17.00
+  nominal  straight 22+  v 26.9 i   6: V294 Ms 1.09 GM 20.03 | cand Ms 1.11 GM 15.97
+  b_lo     low-speed st  v  3.1 i  14: V294 Ms 1.34 GM 8.24 | cand Ms 1.41 GM 7.54
+  b_lo     low-speed tu  v  3.1 i  62: V294 Ms 1.33 GM 8.29 | cand Ms 1.31 GM 9.44
+  b_lo     hold 5-10     v  8.0 i  50: V294 Ms 1.26 GM 7.68 | cand Ms 1.26 GM 8.16
+  b_lo     hard 5-10     v  8.0 i  75: V294 Ms 1.26 GM 7.68 | cand Ms 1.21 GM 9.49
+  b_lo     hold 10-15    v 12.0 i  36: V294 Ms 1.21 GM 8.86 | cand Ms 1.22 GM 8.63
+  b_lo     straight 10+  v 17.0 i   6: V294 Ms 1.10 GM 14.96 | cand Ms 1.12 GM 12.24
+  b_lo     hold 15-22    v 17.0 i  34: V294 Ms 1.10 GM 14.73 | cand Ms 1.11 GM 13.86
+  b_lo     hard 15-22    v 17.0 i  50: V294 Ms 1.10 GM 14.73 | cand Ms 1.10 GM 15.06
+  b_lo     hold 22+      v 26.9 i  18: V294 Ms 1.15 GM 11.10 | cand Ms 1.18 GM 9.60
+  b_lo     straight 22+  v 26.9 i   6: V294 Ms 1.15 GM 11.13 | cand Ms 1.19 GM 9.03
+  J_hi     low-speed st  v  3.1 i  14: V294 Ms 1.24 GM 10.92 | cand Ms 1.29 GM 9.52
+  J_hi     low-speed tu  v  3.1 i  62: V294 Ms 1.24 GM 10.99 | cand Ms 1.22 GM 12.24
+  J_hi     hold 5-10     v  8.0 i  50: V294 Ms 1.22 GM 9.56 | cand Ms 1.22 GM 9.91
+  J_hi     hard 5-10     v  8.0 i  75: V294 Ms 1.22 GM 9.56 | cand Ms 1.18 GM 11.66
+  J_hi     hold 10-15    v 12.0 i  36: V294 Ms 1.22 GM 9.37 | cand Ms 1.24 GM 8.96
+  J_hi     straight 10+  v 17.0 i   6: V294 Ms 1.08 GM 18.42 | cand Ms 1.11 GM 14.82
+  J_hi     hold 15-22    v 17.0 i  34: V294 Ms 1.09 GM 18.13 | cand Ms 1.09 GM 16.87
+  J_hi     hard 15-22    v 17.0 i  50: V294 Ms 1.09 GM 18.13 | cand Ms 1.09 GM 18.37
+  J_hi     hold 22+      v 26.9 i  18: V294 Ms 1.10 GM 17.53 | cand Ms 1.12 GM 14.91
+  J_hi     straight 22+  v 26.9 i   6: V294 Ms 1.10 GM 17.59 | cand Ms 1.12 GM 14.00
+  light_b  low-speed st  v  3.1 i  14: V294 Ms 1.86 GM 4.52 | cand Ms 2.00 GM 4.39
+  light_b  low-speed tu  v  3.1 i  62: V294 Ms 1.85 GM 4.55 | cand Ms 1.76 GM 5.32
+  light_b  hold 5-10     v  8.0 i  50: V294 Ms 1.74 GM 4.01 | cand Ms 1.70 GM 4.43
+  light_b  hard 5-10     v  8.0 i  75: V294 Ms 1.74 GM 4.01 | cand Ms 1.58 GM 5.05
+  light_b  hold 10-15    v 12.0 i  36: V294 Ms 1.72 GM 3.43 | cand Ms 1.72 GM 3.57
+  light_b  straight 10+  v 17.0 i   6: V294 Ms 1.99 GM 2.65 | cand Ms 2.16 GM 2.48
+  light_b  hold 15-22    v 17.0 i  34: V294 Ms 2.01 GM 2.61 | cand Ms 1.99 GM 2.71
+  light_b  hard 15-22    v 17.0 i  50: V294 Ms 2.01 GM 2.61 | cand Ms 1.90 GM 2.88
+  light_b  hold 22+      v 26.9 i  18: V294 Ms 3.05 GM 1.70 | cand Ms 3.20 GM 1.67
+  light_b  straight 22+  v 26.9 i   6: V294 Ms 3.03 GM 1.71 | cand Ms 3.47 GM 1.59
+
+2. ANCHORS (spring linearised at theta0: k_loc = k sech^2(theta0/sat))
+(A) r71-old: V293 (no trim, FF slope = V294's) + fork rev 2, v 21.8, sustained curve 16-29 deg -- the car LIMIT-CYCLED at 2.34 Hz
+   light_b  th 16 (T  406 idx  40): GM 0.84@2.11Hz Ms 8.7 [small-angle k: GM 0.90@2.44] | th 22 (T  488 idx  48): GM 0.81@1.95Hz Ms 7.8 [small-angle k: GM 0.90@2.44] | th 29 (T  545 idx  53): GM 0.78@1.81Hz Ms 6.7 [small-angle k: GM 0.89@2.44]
+   nominal  th 16 (T  900 idx  88): GM 19.99@4.00Hz Ms 1.1 [small-angle k: GM 20.81@4.14] | th 22 (T 1082 idx 105): GM 19.98@3.94Hz Ms 1.1 [small-angle k: GM 21.20@4.14] | th 29 (T 1207 idx 118): GM 19.33@3.89Hz Ms 1.1 [small-angle k: GM 20.81@4.14]
+   b_lo     th 16 (T  900 idx  88): GM 10.25@3.73Hz Ms 1.2 [small-angle k: GM 10.91@3.94] | th 22 (T 1082 idx 105): GM 10.14@3.63Hz Ms 1.2 [small-angle k: GM 11.11@3.94] | th 29 (T 1207 idx 118): GM 9.73@3.55Hz Ms 1.2 [small-angle k: GM 10.91@3.94]
+   J_hi     th 16 (T  894 idx  87): GM 15.97@3.32Hz Ms 1.1 [small-angle k: GM 16.50@3.44] | th 22 (T 1075 idx 105): GM 16.02@3.27Hz Ms 1.1 [small-angle k: GM 16.80@3.44] | th 29 (T 1199 idx 117): GM 15.55@3.22Hz Ms 1.1 [small-angle k: GM 16.50@3.44]
+   J_hi2    th 16 (T  911 idx  89): GM 14.64@2.91Hz Ms 1.1 [small-angle k: GM 15.04@3.02] | th 22 (T 1095 idx 107): GM 14.46@2.86Hz Ms 1.1 [small-angle k: GM 15.04@3.02] | th 29 (T 1222 idx 119): GM 14.58@2.82Hz Ms 1.1 [small-angle k: GM 15.31@3.02]
+   ms_free  th 16 (T  938 idx  91): GM 12.89@2.59Hz Ms 1.1 [small-angle k: GM 13.21@2.69] | th 22 (T 1128 idx 110): GM 12.75@2.54Hz Ms 1.1 [small-angle k: GM 13.21@2.69] | th 29 (T 1259 idx 122): GM 12.79@2.50Hz Ms 1.2 [small-angle k: GM 13.37@2.69]
+(B) r71b V294 + r1 on its sustained curves (drive medians: 15-19 m/s 18.4 deg idx 38 ; 19-22 9.8 deg idx 38 ; 22+ 11.0 deg idx 33) -- no limit cycle; rate-only 1.95 Hz line
+(C) r71b V294 + r1 straights (idx < 9, angle ~1 deg) at > 20 m/s -- no 1-4 Hz prominence
+  light_b  curve 15-19     v 17.0 th  18.4 idx  38-> 32: V294 Ms 2.48 GM 2.42@2.42 | cand Ms 2.52 GM 2.45@2.51 (same-idx 2.42/2.56) | pipe33 GM 1.93->1.94 | kappa1.15 GM 2.10->2.13
+  light_b  curve 19-22     v 20.5 th   9.8 idx  38-> 32: V294 Ms 2.49 GM 2.14@2.65 | cand Ms 2.50 GM 2.16@2.73 (same-idx 2.39/2.26) | pipe33 GM 1.75->1.75 | kappa1.15 GM 1.86->1.88
+  light_b  curve 22+       v 26.9 th  11.0 idx  33-> 27: V294 Ms 3.66 GM 1.60@2.70 | cand Ms 3.66 GM 1.61@2.79 (same-idx 3.53/1.64) | pipe33 GM 1.31->1.31 | kappa1.15 GM 1.39->1.40
+  light_b  straight 22+    v 26.9 th   0.6 idx   5->  4: V294 Ms 3.08 GM 1.69@2.89 | cand Ms 3.57 GM 1.57@3.00 (same-idx 3.52/1.58) | pipe33 GM 1.42->1.30 | kappa1.15 GM 1.47->1.36
+  light_b  straight 15-22  v 17.0 th   0.6 idx   5->  4: V294 Ms 2.00 GM 2.63@2.72 | cand Ms 2.18 GM 2.44@2.83 (same-idx 2.17/2.46) | pipe33 GM 2.16->1.99 | kappa1.15 GM 2.29->2.12
+  light_b  straight 10-15  v 12.0 th   0.6 idx   5->  4: V294 Ms 1.72 GM 3.45@2.64 | cand Ms 1.85 GM 3.21@2.75 (same-idx 1.84/3.23) | pipe33 GM 2.82->2.59 | kappa1.15 GM 3.00->2.79
+  light_b  straight 5-10   v  8.0 th   1.2 idx   5->  4: V294 Ms 1.74 GM 4.04@2.42 | cand Ms 1.89 GM 3.76@2.54 (same-idx 1.88/3.79) | pipe33 GM 3.23->2.97 | kappa1.15 GM 3.51->3.27
+  light_b  straight 0-5    v  3.1 th   1.5 idx   5->  4: V294 Ms 1.86 GM 4.49@2.23 | cand Ms 2.05 GM 4.21@2.36 (same-idx 2.05/4.24) | pipe33 GM 3.52->3.24 | kappa1.15 GM 3.91->3.66
+  light_b  hold 10-15      v 12.0 th   9.6 idx  36-> 30: V294 Ms 1.77 GM 3.38@2.59 | cand Ms 1.80 GM 3.44@2.68 (same-idx 1.77/3.51) | pipe33 GM 2.75->2.78 | kappa1.15 GM 2.94->2.99
+  light_b  hold 5-10       v  8.0 th  27.0 idx  45-> 38: V294 Ms 1.82 GM 3.97@2.35 | cand Ms 1.83 GM 4.22@2.43 (same-idx 1.80/4.33) | pipe33 GM 3.16->3.32 | kappa1.15 GM 3.46->3.67
+  light_b  hard 5-10       v  8.0 th  76.0 idx  75-> 68: V294 Ms 2.53 GM 3.11@2.14 | cand Ms 2.29 GM 3.77@2.18 (same-idx 2.23/3.93) | pipe33 GM 2.41->2.90 | kappa1.15 GM 2.71->3.28
+  light_b  low-speed turn  v  3.1 th 161.0 idx  80-> 74: V294 Ms 2.33 GM 3.44@2.15 | cand Ms 2.09 GM 4.28@2.19 (same-idx 2.04/4.48) | pipe33 GM 2.67->3.30 | kappa1.15 GM 2.99->3.72
+  nominal  curve 15-19     v 17.0 th  18.4 idx  38-> 32: V294 Ms 1.07 GM 24.83@4.07 | cand Ms 1.08 GM 22.42@4.09 (same-idx 1.08/23.65) | pipe33 GM 19.66->17.71 | kappa1.15 GM 21.59->19.50
+  nominal  curve 19-22     v 20.5 th   9.8 idx  38-> 32: V294 Ms 1.07 GM 22.98@4.17 | cand Ms 1.08 GM 20.71@4.19 (same-idx 1.08/21.84) | pipe33 GM 18.18->16.35 | kappa1.15 GM 19.98->18.01
+  nominal  curve 22+       v 26.9 th  11.0 idx  33-> 27: V294 Ms 1.09 GM 19.39@4.15 | cand Ms 1.11 GM 17.20@4.17 (same-idx 1.10/17.73) | pipe33 GM 15.22->13.48 | kappa1.15 GM 16.86->14.96
+  nominal  straight 22+    v 26.9 th   0.6 idx   5->  4: V294 Ms 1.09 GM 19.85@4.20 | cand Ms 1.11 GM 15.74@4.23 (same-idx 1.11/15.87) | pipe33 GM 15.62->12.36 | kappa1.15 GM 17.26->13.69
+  nominal  straight 15-22  v 17.0 th   0.6 idx   5->  4: V294 Ms 1.06 GM 26.05@4.25 | cand Ms 1.08 GM 20.78@4.28 (same-idx 1.08/20.94) | pipe33 GM 20.76->16.52 | kappa1.15 GM 22.65->18.07
+  nominal  straight 10-15  v 12.0 th   0.6 idx   5->  4: V294 Ms 1.12 GM 15.50@3.66 | cand Ms 1.15 GM 12.72@3.71 (same-idx 1.15/12.82) | pipe33 GM 12.52->10.23 | kappa1.15 GM 13.47->11.06
+  nominal  straight 5-10   v  8.0 th   1.2 idx   5->  4: V294 Ms 1.18 GM 10.44@3.25 | cand Ms 1.23 GM 8.89@3.32 (same-idx 1.23/8.96) | pipe33 GM 8.52->7.21 | kappa1.15 GM 9.08->7.73
+  nominal  straight 0-5    v  3.1 th   1.5 idx   5->  4: V294 Ms 1.22 GM 11.15@3.02 | cand Ms 1.29 GM 9.55@3.10 (same-idx 1.29/9.62) | pipe33 GM 9.00->7.64 | kappa1.15 GM 9.70->8.30
+  nominal  hold 10-15      v 12.0 th   9.6 idx  36-> 30: V294 Ms 1.12 GM 15.30@3.64 | cand Ms 1.14 GM 14.15@3.68 (same-idx 1.13/14.56) | pipe33 GM 12.35->11.38 | kappa1.15 GM 13.31->12.31
+  nominal  hold 5-10       v  8.0 th  27.0 idx  45-> 38: V294 Ms 1.20 GM 10.36@3.20 | cand Ms 1.21 GM 10.31@3.25 (same-idx 1.20/10.66) | pipe33 GM 8.43->8.35 | kappa1.15 GM 9.01->8.97
+  nominal  hard 5-10       v  8.0 th  76.0 idx  75-> 68: V294 Ms 1.30 GM 8.37@3.04 | cand Ms 1.27 GM 9.79@3.07 (same-idx 1.26/10.28) | pipe33 GM 6.75->7.87 | kappa1.15 GM 7.28->8.52
+  nominal  low-speed turn  v  3.1 th 161.0 idx  80-> 74: V294 Ms 1.31 GM 8.67@2.98 | cand Ms 1.26 GM 10.51@3.00 (same-idx 1.25/11.07) | pipe33 GM 6.97->8.44 | kappa1.15 GM 7.54->9.14
+  b_lo     curve 15-19     v 17.0 th  18.4 idx  38-> 32: V294 Ms 1.12 GM 13.78@3.85 | cand Ms 1.14 GM 12.64@3.88 (same-idx 1.13/13.31) | pipe33 GM 11.14->10.19 | kappa1.15 GM 11.98->10.99
+  b_lo     curve 19-22     v 20.5 th   9.8 idx  38-> 32: V294 Ms 1.12 GM 12.84@3.99 | cand Ms 1.14 GM 11.74@4.03 (same-idx 1.13/12.36) | pipe33 GM 10.40->9.48 | kappa1.15 GM 11.16->10.20
+  b_lo     curve 22+       v 26.9 th  11.0 idx  33-> 27: V294 Ms 1.16 GM 10.68@3.95 | cand Ms 1.19 GM 9.61@3.98 (same-idx 1.18/9.89) | pipe33 GM 8.56->7.68 | kappa1.15 GM 9.29->8.36
+  b_lo     straight 22+    v 26.9 th   0.6 idx   5->  4: V294 Ms 1.15 GM 11.03@4.04 | cand Ms 1.19 GM 8.90@4.08 (same-idx 1.19/8.97) | pipe33 GM 8.88->7.14 | kappa1.15 GM 9.59->7.74
+  b_lo     straight 15-22  v 17.0 th   0.6 idx   5->  4: V294 Ms 1.10 GM 14.82@4.13 | cand Ms 1.13 GM 12.06@4.17 (same-idx 1.12/12.16) | pipe33 GM 12.14->9.84 | kappa1.15 GM 12.89->10.49
+  b_lo     straight 10-15  v 12.0 th   0.6 idx   5->  4: V294 Ms 1.21 GM 8.92@3.35 | cand Ms 1.26 GM 7.57@3.42 (same-idx 1.26/7.62) | pipe33 GM 7.31->6.16 | kappa1.15 GM 7.76->6.58
+  b_lo     straight 5-10   v  8.0 th   1.2 idx   5->  4: V294 Ms 1.26 GM 7.73@3.05 | cand Ms 1.33 GM 6.74@3.14 (same-idx 1.32/6.80) | pipe33 GM 6.33->5.47 | kappa1.15 GM 6.72->5.86
+  b_lo     straight 0-5    v  3.1 th   1.5 idx   5->  4: V294 Ms 1.34 GM 8.19@2.77 | cand Ms 1.43 GM 7.19@2.87 (same-idx 1.43/7.25) | pipe33 GM 6.59->5.72 | kappa1.15 GM 7.12->6.26
+  b_lo     hold 10-15      v 12.0 th   9.6 idx  36-> 30: V294 Ms 1.21 GM 8.79@3.31 | cand Ms 1.24 GM 8.34@3.37 (same-idx 1.23/8.56) | pipe33 GM 7.19->6.78 | kappa1.15 GM 7.64->7.25
+  b_lo     hold 5-10       v  8.0 th  27.0 idx  45-> 38: V294 Ms 1.28 GM 7.64@2.98 | cand Ms 1.29 GM 7.74@3.05 (same-idx 1.28/7.99) | pipe33 GM 6.23->6.27 | kappa1.15 GM 6.65->6.73
+  b_lo     hard 5-10       v  8.0 th  76.0 idx  75-> 68: V294 Ms 1.46 GM 6.12@2.79 | cand Ms 1.41 GM 7.22@2.82 (same-idx 1.39/7.56) | pipe33 GM 4.91->5.77 | kappa1.15 GM 5.32->6.28
+  b_lo     low-speed turn  v  3.1 th 161.0 idx  80-> 74: V294 Ms 1.48 GM 6.35@2.72 | cand Ms 1.41 GM 7.76@2.75 (same-idx 1.38/8.16) | pipe33 GM 5.08->6.19 | kappa1.15 GM 5.52->6.75
+  b_hi     curve 15-19     v 17.0 th  18.4 idx  38-> 32: V294 Ms 1.05 GM 37.59@4.19 | cand Ms 1.05 GM 33.70@4.20 (same-idx 1.05/35.56) | pipe33 GM 29.36->26.28 | kappa1.15 GM 32.69->29.30
+  b_hi     curve 19-22     v 20.5 th   9.8 idx  38-> 32: V294 Ms 1.05 GM 34.62@4.26 | cand Ms 1.06 GM 30.98@4.28 (same-idx 1.05/32.70) | pipe33 GM 27.01->24.14 | kappa1.15 GM 30.10->26.94
+  b_hi     curve 22+       v 26.9 th  11.0 idx  33-> 27: V294 Ms 1.06 GM 29.38@4.25 | cand Ms 1.07 GM 25.90@4.26 (same-idx 1.07/26.71) | pipe33 GM 22.79->20.07 | kappa1.15 GM 25.55->22.52
+  b_hi     straight 22+    v 26.9 th   0.6 idx   5->  4: V294 Ms 1.06 GM 29.94@4.29 | cand Ms 1.08 GM 23.56@4.31 (same-idx 1.08/23.74) | pipe33 GM 23.25->18.27 | kappa1.15 GM 26.03->20.48
+  b_hi     straight 15-22  v 17.0 th   0.6 idx   5->  4: V294 Ms 1.04 GM 38.88@4.32 | cand Ms 1.05 GM 30.72@4.34 (same-idx 1.05/30.96) | pipe33 GM 30.50->24.06 | kappa1.15 GM 33.81->26.71
+  b_hi     straight 10-15  v 12.0 th   0.6 idx   5->  4: V294 Ms 1.08 GM 23.28@3.86 | cand Ms 1.10 GM 18.79@3.90 (same-idx 1.10/18.94) | pipe33 GM 18.57->14.94 | kappa1.15 GM 20.25->16.34
+  b_hi     straight 5-10   v  8.0 th   1.2 idx   5->  4: V294 Ms 1.12 GM 15.18@3.48 | cand Ms 1.16 GM 12.62@3.54 (same-idx 1.16/12.71) | pipe33 GM 12.31->10.17 | kappa1.15 GM 13.20->10.97
+  b_hi     straight 0-5    v  3.1 th   1.5 idx   5->  4: V294 Ms 1.14 GM 16.32@3.30 | cand Ms 1.18 GM 13.62@3.36 (same-idx 1.18/13.73) | pipe33 GM 13.14->10.90 | kappa1.15 GM 14.19->11.84
+  b_hi     hold 10-15      v 12.0 th   9.6 idx  36-> 30: V294 Ms 1.08 GM 23.03@3.84 | cand Ms 1.09 GM 21.02@3.87 (same-idx 1.09/21.65) | pipe33 GM 18.36->16.71 | kappa1.15 GM 20.02->18.27
+  b_hi     hold 5-10       v  8.0 th  27.0 idx  45-> 38: V294 Ms 1.13 GM 15.10@3.44 | cand Ms 1.14 GM 14.79@3.48 (same-idx 1.13/15.32) | pipe33 GM 12.22->11.92 | kappa1.15 GM 13.13->12.86
+  b_hi     hard 5-10       v  8.0 th  76.0 idx  75-> 68: V294 Ms 1.19 GM 12.32@3.32 | cand Ms 1.17 GM 14.28@3.34 (same-idx 1.16/15.02) | pipe33 GM 9.91->11.46 | kappa1.15 GM 10.71->12.42
+  b_hi     low-speed turn  v  3.1 th 161.0 idx  80-> 74: V294 Ms 1.19 GM 12.71@3.27 | cand Ms 1.16 GM 15.30@3.29 (same-idx 1.16/16.14) | pipe33 GM 10.22->12.28 | kappa1.15 GM 11.05->13.31
+  J_lo     curve 15-19     v 17.0 th  18.4 idx  38-> 32: V294 Ms 1.06 GM 27.85@4.42 | cand Ms 1.07 GM 25.14@4.44 (same-idx 1.07/26.51) | pipe33 GM 21.54->19.41 | kappa1.15 GM 24.22->21.86
+  J_lo     curve 19-22     v 20.5 th   9.8 idx  38-> 32: V294 Ms 1.07 GM 26.61@4.50 | cand Ms 1.07 GM 23.95@4.51 (same-idx 1.07/25.27) | pipe33 GM 20.57->18.48 | kappa1.15 GM 23.14->20.83
+  J_lo     curve 22+       v 26.9 th  11.0 idx  33-> 27: V294 Ms 1.08 GM 23.40@4.44 | cand Ms 1.09 GM 20.72@4.46 (same-idx 1.09/21.36) | pipe33 GM 17.97->15.88 | kappa1.15 GM 20.35->18.02
+  J_lo     straight 22+    v 26.9 th   0.6 idx   5->  4: V294 Ms 1.07 GM 23.96@4.50 | cand Ms 1.10 GM 18.95@4.52 (same-idx 1.10/19.10) | pipe33 GM 18.42->14.55 | kappa1.15 GM 20.83->16.48
+  J_lo     straight 15-22  v 17.0 th   0.6 idx   5->  4: V294 Ms 1.05 GM 29.34@4.60 | cand Ms 1.07 GM 23.39@4.63 (same-idx 1.07/23.57) | pipe33 GM 22.84->18.16 | kappa1.15 GM 25.51->20.34
+  J_lo     straight 10-15  v 12.0 th   0.6 idx   5->  4: V294 Ms 1.09 GM 21.02@4.25 | cand Ms 1.11 GM 17.13@4.30 (same-idx 1.11/17.26) | pipe33 GM 16.48->13.37 | kappa1.15 GM 18.28->14.90
+  J_lo     straight 5-10   v  8.0 th   1.2 idx   5->  4: V294 Ms 1.15 GM 12.21@3.95 | cand Ms 1.19 GM 10.44@4.04 (same-idx 1.19/10.52) | pipe33 GM 9.78->8.30 | kappa1.15 GM 10.61->9.08
+  J_lo     straight 0-5    v  3.1 th   1.5 idx   5->  4: V294 Ms 1.19 GM 13.06@3.70 | cand Ms 1.24 GM 11.24@3.81 (same-idx 1.24/11.33) | pipe33 GM 10.33->8.82 | kappa1.15 GM 11.35->9.77
+  J_lo     hold 10-15      v 12.0 th   9.6 idx  36-> 30: V294 Ms 1.09 GM 20.75@4.23 | cand Ms 1.10 GM 19.08@4.27 (same-idx 1.10/19.64) | pipe33 GM 16.25->14.89 | kappa1.15 GM 18.05->16.59
+  J_lo     hold 5-10       v  8.0 th  27.0 idx  45-> 38: V294 Ms 1.16 GM 12.08@3.89 | cand Ms 1.17 GM 12.07@3.96 (same-idx 1.17/12.47) | pipe33 GM 9.64->9.58 | kappa1.15 GM 10.51->10.50
+  J_lo     hard 5-10       v  8.0 th  76.0 idx  75-> 68: V294 Ms 1.26 GM 9.70@3.71 | cand Ms 1.23 GM 11.37@3.74 (same-idx 1.22/11.93) | pipe33 GM 7.66->8.95 | kappa1.15 GM 8.43->9.89
+  J_lo     low-speed turn  v  3.1 th 161.0 idx  80-> 74: V294 Ms 1.26 GM 10.14@3.66 | cand Ms 1.22 GM 12.32@3.69 (same-idx 1.21/12.96) | pipe33 GM 8.00->9.69 | kappa1.15 GM 8.81->10.71
+  J_hi     curve 15-19     v 17.0 th  18.4 idx  38-> 32: V294 Ms 1.10 GM 17.55@3.25 | cand Ms 1.11 GM 15.88@3.27 (same-idx 1.11/16.75) | pipe33 GM 14.41->13.01 | kappa1.15 GM 15.26->13.81
+  J_hi     curve 19-22     v 20.5 th   9.8 idx  38-> 32: V294 Ms 1.09 GM 17.76@3.44 | cand Ms 1.11 GM 16.01@3.45 (same-idx 1.10/16.89) | pipe33 GM 14.55->13.10 | kappa1.15 GM 15.44->13.93
+  J_hi     curve 22+       v 26.9 th  11.0 idx  33-> 27: V294 Ms 1.10 GM 17.07@3.55 | cand Ms 1.12 GM 15.13@3.56 (same-idx 1.11/15.60) | pipe33 GM 13.84->12.25 | kappa1.15 GM 14.85->13.16
+  J_hi     straight 22+    v 26.9 th   0.6 idx   5->  4: V294 Ms 1.10 GM 17.43@3.60 | cand Ms 1.13 GM 13.80@3.62 (same-idx 1.12/13.91) | pipe33 GM 14.16->11.19 | kappa1.15 GM 15.15->12.00
+  J_hi     straight 15-22  v 17.0 th   0.6 idx   5->  4: V294 Ms 1.09 GM 18.25@3.42 | cand Ms 1.11 GM 14.61@3.45 (same-idx 1.11/14.72) | pipe33 GM 15.10->12.05 | kappa1.15 GM 15.87->12.70
+  J_hi     straight 10-15  v 12.0 th   0.6 idx   5->  4: V294 Ms 1.22 GM 9.44@2.56 | cand Ms 1.28 GM 7.80@2.60 (same-idx 1.28/7.86) | pipe33 GM 7.81->6.42 | kappa1.15 GM 8.20->6.78
+  J_hi     straight 5-10   v  8.0 th   1.2 idx   5->  4: V294 Ms 1.22 GM 9.62@2.41 | cand Ms 1.28 GM 8.03@2.46 (same-idx 1.28/8.10) | pipe33 GM 7.96->6.60 | kappa1.15 GM 8.37->6.99
+  J_hi     straight 0-5    v  3.1 th   1.5 idx   5->  4: V294 Ms 1.24 GM 10.86@2.26 | cand Ms 1.31 GM 9.06@2.30 (same-idx 1.31/9.13) | pipe33 GM 8.91->7.38 | kappa1.15 GM 9.44->7.88
+  J_hi     hold 10-15      v 12.0 th   9.6 idx  36-> 30: V294 Ms 1.22 GM 9.33@2.54 | cand Ms 1.25 GM 8.67@2.57 (same-idx 1.24/8.92) | pipe33 GM 7.71->7.14 | kappa1.15 GM 8.11->7.54
+  J_hi     hold 5-10       v  8.0 th  27.0 idx  45-> 38: V294 Ms 1.23 GM 9.57@2.37 | cand Ms 1.24 GM 9.40@2.40 (same-idx 1.23/9.73) | pipe33 GM 7.90->7.72 | kappa1.15 GM 8.32->8.17
+  J_hi     hard 5-10       v  8.0 th  76.0 idx  75-> 68: V294 Ms 1.35 GM 7.79@2.24 | cand Ms 1.31 GM 9.03@2.26 (same-idx 1.29/9.50) | pipe33 GM 6.38->7.38 | kappa1.15 GM 6.77->7.86
+  J_hi     low-speed turn  v  3.1 th 161.0 idx  80-> 74: V294 Ms 1.33 GM 8.45@2.22 | cand Ms 1.28 GM 10.17@2.24 (same-idx 1.27/10.72) | pipe33 GM 6.91->8.30 | kappa1.15 GM 7.35->8.84
+  J_hi2    curve 15-19     v 17.0 th  18.4 idx  38-> 32: V294 Ms 1.12 GM 14.67@2.75 | cand Ms 1.14 GM 13.27@2.77 (same-idx 1.13/14.00) | pipe33 GM 12.19->11.01 | kappa1.15 GM 12.76->11.54
+  J_hi2    curve 19-22     v 20.5 th   9.8 idx  38-> 32: V294 Ms 1.11 GM 15.82@2.99 | cand Ms 1.12 GM 14.26@3.00 (same-idx 1.12/15.04) | pipe33 GM 13.13->11.81 | kappa1.15 GM 13.76->12.40
+  J_hi2    curve 22+       v 26.9 th  11.0 idx  33-> 27: V294 Ms 1.11 GM 16.51@3.18 | cand Ms 1.12 GM 14.61@3.20 (same-idx 1.12/15.06) | pipe33 GM 13.57->11.99 | kappa1.15 GM 14.36->12.70
+  J_hi2    straight 22+    v 26.9 th   0.6 idx   5->  4: V294 Ms 1.10 GM 16.82@3.23 | cand Ms 1.13 GM 13.30@3.25 (same-idx 1.13/13.40) | pipe33 GM 13.85->10.93 | kappa1.15 GM 14.63->11.56
+  J_hi2    straight 15-22  v 17.0 th   0.6 idx   5->  4: V294 Ms 1.11 GM 15.16@2.90 | cand Ms 1.14 GM 12.14@2.92 (same-idx 1.14/12.23) | pipe33 GM 12.69->10.13 | kappa1.15 GM 13.18->10.55
+  J_hi2    straight 10-15  v 12.0 th   0.6 idx   5->  4: V294 Ms 1.34 GM 7.02@1.98 | cand Ms 1.44 GM 5.80@2.01 (same-idx 1.44/5.85) | pipe33 GM 5.83->4.79 | kappa1.15 GM 6.11->5.05
+  J_hi2    straight 5-10   v  8.0 th   1.2 idx   5->  4: V294 Ms 1.20 GM 10.52@2.13 | cand Ms 1.26 GM 8.64@2.16 (same-idx 1.26/8.71) | pipe33 GM 8.76->7.16 | kappa1.15 GM 9.15->7.52
+  J_hi2    straight 0-5    v  3.1 th   1.5 idx   5->  4: V294 Ms 1.20 GM 12.62@2.03 | cand Ms 1.26 GM 10.33@2.06 (same-idx 1.26/10.41) | pipe33 GM 10.43->8.49 | kappa1.15 GM 10.97->8.99
+  J_hi2    hold 10-15      v 12.0 th   9.6 idx  36-> 30: V294 Ms 1.35 GM 6.94@1.96 | cand Ms 1.40 GM 6.45@1.98 (same-idx 1.38/6.63) | pipe33 GM 5.76->5.32 | kappa1.15 GM 6.04->5.61
+  J_hi2    hold 5-10       v  8.0 th  27.0 idx  45-> 38: V294 Ms 1.21 GM 10.47@2.09 | cand Ms 1.23 GM 10.17@2.11 (same-idx 1.22/10.54) | pipe33 GM 8.70->8.41 | kappa1.15 GM 9.11->8.84
+  J_hi2    hard 5-10       v  8.0 th  76.0 idx  75-> 68: V294 Ms 1.33 GM 8.54@1.97 | cand Ms 1.29 GM 9.85@1.98 (same-idx 1.27/10.37) | pipe33 GM 7.05->8.11 | kappa1.15 GM 7.43->8.57
+  J_hi2    low-speed turn  v  3.1 th 161.0 idx  80-> 74: V294 Ms 1.28 GM 9.82@2.00 | cand Ms 1.24 GM 11.75@2.01 (same-idx 1.23/12.41) | pipe33 GM 8.11->9.69 | kappa1.15 GM 8.54->10.22
+  ms_free  curve 15-19     v 17.0 th  18.4 idx  38-> 32: V294 Ms 1.18 GM 11.95@2.04 | cand Ms 1.20 GM 10.78@2.05 (same-idx 1.19/11.37) | pipe33 GM 10.02->9.01 | kappa1.15 GM 10.39->9.37
+  ms_free  curve 19-22     v 20.5 th   9.8 idx  38-> 32: V294 Ms 1.13 GM 13.52@2.52 | cand Ms 1.15 GM 12.18@2.54 (same-idx 1.14/12.85) | pipe33 GM 11.32->10.17 | kappa1.15 GM 11.76->10.59
+  ms_free  curve 22+       v 26.9 th  11.0 idx  33-> 27: V294 Ms 1.10 GM 17.49@3.59 | cand Ms 1.12 GM 15.49@3.61 (same-idx 1.11/15.97) | pipe33 GM 14.14->12.51 | kappa1.15 GM 15.20->13.47
+  ms_free  straight 22+    v 26.9 th   0.6 idx   5->  4: V294 Ms 1.10 GM 17.84@3.64 | cand Ms 1.12 GM 14.13@3.66 (same-idx 1.12/14.24) | pipe33 GM 14.46->11.43 | kappa1.15 GM 15.52->12.29
+  ms_free  straight 15-22  v 17.0 th   0.6 idx   5->  4: V294 Ms 1.15 GM 12.26@2.17 | cand Ms 1.19 GM 9.78@2.18 (same-idx 1.19/9.85) | pipe33 GM 10.34->8.22 | kappa1.15 GM 10.66->8.50
+  ms_free  straight 10-15  v 12.0 th   0.6 idx   5->  4: V294 Ms 1.62 GM 5.14@1.24 | cand Ms 1.84 GM 4.16@1.25 (same-idx 1.83/4.19) | pipe33 GM 4.30->3.47 | kappa1.15 GM 4.47->3.62
+  ms_free  straight 5-10   v  8.0 th   1.2 idx   5->  4: V294 Ms 1.21 GM 9.66@2.44 | cand Ms 1.28 GM 8.07@2.49 (same-idx 1.27/8.13) | pipe33 GM 7.99->6.63 | kappa1.15 GM 8.40->7.02
+  ms_free  straight 0-5    v  3.1 th   1.5 idx   5->  4: V294 Ms 1.24 GM 10.68@2.75 | cand Ms 1.31 GM 9.09@2.82 (same-idx 1.30/9.16) | pipe33 GM 8.66->7.31 | kappa1.15 GM 9.29->7.91
+  ms_free  hold 10-15      v 12.0 th   9.6 idx  36-> 30: V294 Ms 1.65 GM 5.07@1.23 | cand Ms 1.74 GM 4.64@1.23 (same-idx 1.71/4.78) | pipe33 GM 4.25->3.87 | kappa1.15 GM 4.41->4.03
+  ms_free  hold 5-10       v  8.0 th  27.0 idx  45-> 38: V294 Ms 1.23 GM 9.60@2.40 | cand Ms 1.24 GM 9.43@2.43 (same-idx 1.23/9.77) | pipe33 GM 7.93->7.75 | kappa1.15 GM 8.35->8.20
+  ms_free  hard 5-10       v  8.0 th  76.0 idx  75-> 68: V294 Ms 1.35 GM 7.81@2.27 | cand Ms 1.31 GM 9.07@2.28 (same-idx 1.29/9.53) | pipe33 GM 6.40->7.40 | kappa1.15 GM 6.79->7.88
+  ms_free  low-speed turn  v  3.1 th 161.0 idx  80-> 74: V294 Ms 1.33 GM 8.30@2.71 | cand Ms 1.28 GM 10.05@2.73 (same-idx 1.27/10.59) | pipe33 GM 6.72->8.11 | kappa1.15 GM 7.22->8.74
+  tau6     curve 15-19     v 17.0 th  18.4 idx  38-> 32: V294 Ms 1.07 GM 22.72@3.82 | cand Ms 1.08 GM 20.52@3.84 (same-idx 1.08/21.64) | pipe33 GM 18.37->16.56 | kappa1.15 GM 19.76->17.84
+  tau6     curve 19-22     v 20.5 th   9.8 idx  38-> 32: V294 Ms 1.08 GM 21.01@3.91 | cand Ms 1.09 GM 18.94@3.93 (same-idx 1.08/19.98) | pipe33 GM 16.99->15.28 | kappa1.15 GM 18.27->16.47
+  tau6     curve 22+       v 26.9 th  11.0 idx  33-> 27: V294 Ms 1.10 GM 17.67@3.88 | cand Ms 1.11 GM 15.68@3.90 (same-idx 1.11/16.16) | pipe33 GM 14.19->12.57 | kappa1.15 GM 15.37->13.63
+  tau6     straight 22+    v 26.9 th   0.6 idx   5->  4: V294 Ms 1.09 GM 18.10@3.94 | cand Ms 1.12 GM 14.36@3.96 (same-idx 1.12/14.47) | pipe33 GM 14.57->11.53 | kappa1.15 GM 15.74->12.49
+  tau6     straight 15-22  v 17.0 th   0.6 idx   5->  4: V294 Ms 1.06 GM 23.89@4.00 | cand Ms 1.08 GM 19.06@4.03 (same-idx 1.08/19.21) | pipe33 GM 19.45->15.48 | kappa1.15 GM 20.78->16.57
+  tau6     straight 10-15  v 12.0 th   0.6 idx   5->  4: V294 Ms 1.12 GM 14.34@3.47 | cand Ms 1.16 GM 11.77@3.52 (same-idx 1.16/11.86) | pipe33 GM 11.79->9.63 | kappa1.15 GM 12.47->10.24
+  tau6     straight 5-10   v  8.0 th   1.2 idx   5->  4: V294 Ms 1.19 GM 9.74@3.11 | cand Ms 1.24 GM 8.29@3.19 (same-idx 1.24/8.36) | pipe33 GM 8.07->6.83 | kappa1.15 GM 8.47->7.21
+  tau6     straight 0-5    v  3.1 th   1.5 idx   5->  4: V294 Ms 1.23 GM 10.37@2.88 | cand Ms 1.30 GM 8.88@2.96 (same-idx 1.30/8.95) | pipe33 GM 8.49->7.21 | kappa1.15 GM 9.02->7.72
+  tau6     hold 10-15      v 12.0 th   9.6 idx  36-> 30: V294 Ms 1.13 GM 14.16@3.45 | cand Ms 1.14 GM 13.09@3.49 (same-idx 1.14/13.47) | pipe33 GM 11.63->10.71 | kappa1.15 GM 12.31->11.39
+  tau6     hold 5-10       v  8.0 th  27.0 idx  45-> 38: V294 Ms 1.21 GM 9.65@3.06 | cand Ms 1.22 GM 9.61@3.11 (same-idx 1.21/9.94) | pipe33 GM 7.98->7.91 | kappa1.15 GM 8.39->8.36
+  tau6     hard 5-10       v  8.0 th  76.0 idx  75-> 68: V294 Ms 1.32 GM 7.78@2.90 | cand Ms 1.28 GM 9.10@2.93 (same-idx 1.27/9.55) | pipe33 GM 6.37->7.42 | kappa1.15 GM 6.77->7.92
+  tau6     low-speed turn  v  3.1 th 161.0 idx  80-> 74: V294 Ms 1.32 GM 8.06@2.84 | cand Ms 1.28 GM 9.77@2.86 (same-idx 1.26/10.29) | pipe33 GM 6.58->7.96 | kappa1.15 GM 7.01->8.50
+
+3. GRID: worst candidate margin vs V294 over theta0 0..30 deg (T0 = member's static hold), relay on, pipe 22
+  J_hi     min cand GM 7.80 (V294 9.43) at v 12.0 th 2 idx 5->4 | worst GM ratio 0.790 at v 26.9 th 0 (17.74->14.02) | max cand Ms 1.31 (V294 1.24) at v 3.1 th 1
+           cand GM < 1.5: 0 of 70 ; cand GM < V294 GM where V294 GM < 2: []
+  J_hi2    min cand GM 5.80 (V294 7.08) at v 12.0 th 2 idx 6->4 | worst GM ratio 0.789 at v 26.9 th 0 (17.13->13.51) | max cand Ms 1.44 (V294 1.34) at v 12.0 th 2
+           cand GM < 1.5: 0 of 70 ; cand GM < V294 GM where V294 GM < 2: []
+  J_lo     min cand GM 10.47 (V294 12.36) at v 8.0 th 1 idx 3->2 | worst GM ratio 0.789 at v 26.9 th 0 (24.39->19.25) | max cand Ms 1.24 (V294 1.19) at v 3.1 th 1
+           cand GM < 1.5: 0 of 70 ; cand GM < V294 GM where V294 GM < 2: []
+  b_hi     min cand GM 12.61 (V294 15.18) at v 8.0 th 2 idx 5->4 | worst GM ratio 0.785 at v 26.9 th 0 (30.48->23.93) | max cand Ms 1.18 (V294 1.14) at v 3.1 th 1
+           cand GM < 1.5: 0 of 70 ; cand GM < V294 GM where V294 GM < 2: []
+  b_lo     min cand GM 6.74 (V294 7.73) at v 8.0 th 2 idx 5->4 | worst GM ratio 0.805 at v 26.9 th 0 (11.23->9.04) | max cand Ms 1.43 (V294 1.34) at v 3.1 th 1
+           cand GM < 1.5: 0 of 70 ; cand GM < V294 GM where V294 GM < 2: []
+  light_b  min cand GM 1.53 (V294 1.38) at v 26.9 th 30 idx 61->53 | worst GM ratio 0.917 at v 5.0 th 1 (4.48->4.11) | max cand Ms 5.41 (V294 6.89) at v 26.9 th 30
+           cand GM < 1.5: 0 of 70 ; cand GM < V294 GM where V294 GM < 2: [(21.8, 11.0, 1.97, 1.97), (26.9, 0.0, 1.73, 1.59), (26.9, 1.0, 1.69, 1.59), (26.9, 2.0, 1.71, 1.59), (26.9, 5.0, 1.69, 1.59)]
+  ms_free  min cand GM 4.21 (V294 5.12) at v 12.0 th 1 idx 4->3 | worst GM ratio 0.790 at v 26.9 th 0 (18.17->14.36) | max cand Ms 1.82 (V294 1.62) at v 12.0 th 1
+           cand GM < 1.5: 0 of 70 ; cand GM < V294 GM where V294 GM < 2: []
+  nominal  min cand GM 8.89 (V294 10.44) at v 8.0 th 2 idx 5->4 | worst GM ratio 0.791 at v 26.9 th 0 (20.21->15.99) | max cand Ms 1.29 (V294 1.23) at v 3.1 th 1
+           cand GM < 1.5: 0 of 70 ; cand GM < V294 GM where V294 GM < 2: []
+  tau0     min cand GM 9.22 (V294 10.83) at v 8.0 th 2 idx 5->4 | worst GM ratio 0.791 at v 26.9 th 0 (21.25->16.82) | max cand Ms 1.28 (V294 1.22) at v 3.1 th 1
+           cand GM < 1.5: 0 of 70 ; cand GM < V294 GM where V294 GM < 2: []
+  tau6     min cand GM 8.29 (V294 9.74) at v 8.0 th 2 idx 5->4 | worst GM ratio 0.791 at v 26.9 th 0 (18.43->14.59) | max cand Ms 1.30 (V294 1.23) at v 3.1 th 1
+           cand GM < 1.5: 0 of 70 ; cand GM < V294 GM where V294 GM < 2: []

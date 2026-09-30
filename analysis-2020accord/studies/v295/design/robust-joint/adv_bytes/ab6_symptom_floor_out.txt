@@ -1,0 +1,4 @@
+v  5-15 m/s:  54.0 s of hard frames (54 blocks), pooled 1.6-3 Hz rate rms 12.05 deg/s | 15 s: vs pool x[0.78, 1.26], drive-vs-drive x[0.71, 1.42] (5-95 %) | 30 s: vs pool x[0.83, 1.19], drive-vs-drive x[0.77, 1.29] (5-95 %)
+v  5-22 m/s:  75.0 s of hard frames (74 blocks), pooled 1.6-3 Hz rate rms 10.89 deg/s | 15 s: vs pool x[0.74, 1.30], drive-vs-drive x[0.67, 1.49] (5-95 %) | 30 s: vs pool x[0.81, 1.21], drive-vs-drive x[0.75, 1.33] (5-95 %)
+v 15-22 m/s:  21.0 s of hard frames (20 blocks), pooled 1.6-3 Hz rate rms 6.84 deg/s | 15 s: vs pool x[0.62, 1.32], drive-vs-drive x[0.58, 1.73] (5-95 %) | 30 s: vs pool x[0.74, 1.22], drive-vs-drive x[0.70, 1.44] (5-95 %)
+design's predicted direction for A, hard turn 5-10 m/s: x0.68..x0.93 (nominal x0.83); 15-22: x0.67..x1.03

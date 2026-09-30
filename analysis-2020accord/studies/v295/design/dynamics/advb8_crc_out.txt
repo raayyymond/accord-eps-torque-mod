@@ -1,0 +1,8 @@
+V294 base: BL walk fails 0, full chain fails 0
+block(s) owning 0xC63E8 (full chain): [('0xc6000', '0xc6ffc')]
+covered by the BOOTLOADER walk too: True
+trailer 0xC6FFC: 0xF3441165 -> 0x5BF1D146
+edited (in memory): BL walk fails 0, full chain fails 0
+differing bytes in [0x13000,0x100000): 5 -> [('0xc63e8', 'F3->F9'), ('0xc6ffc', '65->46'), ('0xc6ffd', '11->D1'), ('0xc6ffe', '44->F1'), ('0xc6fff', 'F3->5B')]
+code region [0x13000,0xC0000) bytes changed: 0
+V293 -> V294 differences inside this block + trailer: ['0xc62e7', '0xc63e8', '0xc63ea', '0xc63eb', '0xc6ffc', '0xc6ffd', '0xc6ffe', '0xc6fff']

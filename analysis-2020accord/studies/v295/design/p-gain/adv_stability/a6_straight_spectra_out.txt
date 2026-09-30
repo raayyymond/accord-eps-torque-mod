@@ -1,0 +1,10 @@
+straight 22+    3 segs 15 s | rate peak +1.9 dB @2.34 (mean -0.6) | angle peak +1.2 dB @2.34 (mean +0.3) | cmd peak +2.9 dB @2.73 (mean +1.8)
+straight 15-22  5 segs 33 s | rate peak -1.0 dB @2.34 (mean -1.7) | angle peak -0.1 dB @3.12 (mean -0.6) | cmd peak +3.6 dB @2.34 (mean +3.5)
+straight 10-15  6 segs 42 s | rate peak +2.7 dB @3.12 (mean +0.2) | angle peak -0.1 dB @3.12 (mean -0.7) | cmd peak +7.3 dB @2.73 (mean +6.3)
+curve 22+       1 segs 4 s | rate peak +0.9 dB @2.73 (mean -0.1) | angle peak -1.4 dB @2.73 (mean -3.2) | cmd peak +0.3 dB @2.34 (mean -3.4)
+curve 15-22     1 segs 5 s | rate peak -2.2 dB @2.34 (mean -2.9) | angle peak +1.0 dB @2.73 (mean -0.7) | cmd peak +2.3 dB @3.12 (mean -1.7)
+all 22+         9 segs 53 s | rate peak +2.0 dB @3.12 (mean +0.8) | angle peak +2.0 dB @3.12 (mean +0.8) | cmd peak +4.5 dB @3.12 (mean +3.0)
+
+positive control (synthetic): r71b 22+ straight rate + a 2.9 Hz zeta 0.16 second-order line at 50 % / 100 % of its rms
+  added line at 50 % rms: peak +4.4 dB @2.73 (mean +2.5)
+  added line at 100 % rms: peak +6.2 dB @2.73 (mean +5.3)

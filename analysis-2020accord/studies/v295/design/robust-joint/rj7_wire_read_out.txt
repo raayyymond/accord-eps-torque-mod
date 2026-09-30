@@ -1,0 +1,13 @@
+hands-off engaged tap frames 35441 -> 23 windows of 1500 (~30 s at the tap's ~50 Hz)
+(1) V294 real tap, per 30 s window: c1 (FF) median 0.9892  [p5 0.9647, p95 0.9951]  sd 0.0100 | c2 (trim) median 0.986 [p5 0.934, p95 1.043] sd 0.034
+    trim rms per window (T counts): median 5.8  min 1.4 ; FF rms median 172.6
+    harness Lane V294 march == plib T1k_live on all 1020390 ticks (second method)
+(2) pick g1.20 t1.95   design (g 1.200, t 1.949): recovered c1 median 1.1895 [p5 1.1663 p95 1.1950] | c2 median 1.927 [p5 1.821 p95 1.974]  | windows with |c1-1| > 0.05: 23/23, with c2 > 1.5: 23/23
+    identity: synthetic-V295 tap vs V294 march 50.51 counts rms, vs its own march 3.64
+(2) g1.10 t1.95        design (g 1.100, t 1.950): recovered c1 median 1.0894 [p5 1.0635 p95 1.0951] | c2 median 1.918 [p5 1.833 p95 1.958]  | windows with |c1-1| > 0.05: 23/23, with c2 > 1.5: 23/23
+    identity: synthetic-V295 tap vs V294 march 27.76 counts rms, vs its own march 3.64
+(2) g1.20 t1.00        design (g 1.200, t 0.999): recovered c1 median 1.1894 [p5 1.1659 p95 1.1952] | c2 median 0.983 [p5 0.931 p95 1.041]  | windows with |c1-1| > 0.05: 23/23, with c2 > 1.5: 0/23
+    identity: synthetic-V295 tap vs V294 march 49.89 counts rms, vs its own march 3.64
+(2) g1.00 t1.95        design (g 1.000, t 1.951): recovered c1 median 0.9892 [p5 0.9646 p95 0.9949] | c2 median 1.923 [p5 1.828 p95 1.958]  | windows with |c1-1| > 0.05: 0/23, with c2 > 1.5: 23/23
+    identity: synthetic-V295 tap vs V294 march 14.46 counts rms, vs its own march 3.64
+(3) the REAL r71b tap vs the V294 march: 3.64 counts rms (plib G1 3.64)

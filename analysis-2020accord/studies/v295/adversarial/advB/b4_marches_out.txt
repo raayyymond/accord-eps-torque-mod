@@ -1,0 +1,9 @@
+delta +0 ms x=lin: n 1020412 ticks, 14 s ; N5==N4 True ; max|L5| 1274 max|L4| 1450 -> C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\v295\adversarial\advB\_scratch\marches_d+0_lin.npz
+delta +4 ms x=lin: n 1020412 ticks, 14 s ; N5==N4 True ; max|L5| 1274 max|L4| 1450 -> C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\v295\adversarial\advB\_scratch\marches_d+4_lin.npz
+delta -4 ms x=lin: n 1020412 ticks, 14 s ; N5==N4 True ; max|L5| 1275 max|L4| 1450 -> C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\v295\adversarial\advB\_scratch\marches_d-4_lin.npz
+delta +8 ms x=lin: n 1020412 ticks, 14 s ; N5==N4 True ; max|L5| 1274 max|L4| 1450 -> C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\v295\adversarial\advB\_scratch\marches_d+8_lin.npz
+delta +2 ms x=lin: n 1020412 ticks, 14 s ; N5==N4 True ; max|L5| 1274 max|L4| 1450 -> C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\v295\adversarial\advB\_scratch\marches_d+2_lin.npz
+delta +6 ms x=lin: n 1020412 ticks, 14 s ; N5==N4 True ; max|L5| 1274 max|L4| 1450 -> C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\v295\adversarial\advB\_scratch\marches_d+6_lin.npz
+delta -8 ms x=lin: n 1020412 ticks, 15 s ; N5==N4 True ; max|L5| 1288 max|L4| 1450 -> C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\v295\adversarial\advB\_scratch\marches_d-8_lin.npz
+delta +0 ms x=zoh: n 1020412 ticks, 14 s ; N5==N4 True ; max|L5| 1281 max|L4| 1453 -> C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\v295\adversarial\advB\_scratch\marches_d+0_zoh.npz
+delta +4 ms x=zoh: n 1020412 ticks, 14 s ; N5==N4 True ; max|L5| 1275 max|L4| 1454 -> C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\v295\adversarial\advB\_scratch\marches_d+4_zoh.npz

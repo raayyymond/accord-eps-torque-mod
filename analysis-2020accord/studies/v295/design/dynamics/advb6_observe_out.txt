@@ -1,0 +1,35 @@
+marched 2 lanes x 1020390 ticks in 1 s
+POSITIVE CONTROL: plib.march(V294) * sg vs the cached T1k_live: 0 mismatching ticks of 1020390 (must be 0)
+route 1020 s; engaged tap frames 801 s; hands-off engaged 709 s; hands-on engaged 92 s
+real residual e rms: hands-off 3.64, hands-on 8.98 counts; footprint |dT| rms hands-off 9.88 (p99 48.0), hands-on 20.40
+
+(A1) the designer's windows: N consecutive hands-off engaged tap frames
+  1500 hands-off frames (30 s of hands-off engaged)          n  23 | syn beta med 1.01 [p5 0.90] z1 med 12.7 (frac>3 0.96) z3 med 13.5 (frac>3 0.96) | null beta med +0.028 [p5 -0.02, p95 +0.29] |z1|>3 0.04 |z3|>3 0.04 | RULE: syn<0.5 0.00, null>0.3 0.09, null>=0.5 0.04 | |dT| rms med 2.2 | route time spanned med 34 s [min 30, max 81]
+  750 hands-off frames (15 s of hands-off engaged)           n  47 | syn beta med 1.01 [p5 0.76] z1 med  7.8 (frac>3 0.91) z3 med  7.5 (frac>3 0.85) | null beta med +0.022 [p5 -0.08, p95 +0.44] |z1|>3 0.04 |z3|>3 0.04 | RULE: syn<0.5 0.00, null>0.3 0.15, null>=0.5 0.04 | |dT| rms med 2.0 | route time spanned med 16 s [min 15, max 66]
+
+(A2) CONTIGUOUS route-time windows
+  contiguous 30 s, hands-off frames only (>= 50 % usable)    n  25 | syn beta med 1.01 [p5 0.88] z1 med 11.8 (frac>3 0.92) z3 med 14.0 (frac>3 0.96) | null beta med +0.017 [p5 -0.05, p95 +0.36] |z1|>3 0.08 |z3|>3 0.12 | RULE: syn<0.5 0.00, null>0.3 0.12, null>=0.5 0.04 | |dT| rms med 2.4 
+  contiguous 30 s, ALL engaged frames (hands-on incl.) (>= 50 % usable) n  28 | syn beta med 1.02 [p5 0.89] z1 med 15.9 (frac>3 1.00) z3 med 14.0 (frac>3 1.00) | null beta med +0.025 [p5 -0.06, p95 +0.37] |z1|>3 0.07 |z3|>3 0.14 | RULE: syn<0.5 0.00, null>0.3 0.11, null>=0.5 0.04 | |dT| rms med 3.5 
+  contiguous 15 s, hands-off frames only (>= 50 % usable)    n  49 | syn beta med 1.02 [p5 0.75] z1 med  6.9 (frac>3 0.94) z3 med  5.8 (frac>3 0.84) | null beta med +0.014 [p5 -0.10, p95 +0.38] |z1|>3 0.04 |z3|>3 0.06 | RULE: syn<0.5 0.02, null>0.3 0.08, null>=0.5 0.02 | |dT| rms med 1.7 
+  contiguous 15 s, ALL engaged frames (hands-on incl.) (>= 50 % usable) n  52 | syn beta med 1.03 [p5 0.83] z1 med  9.4 (frac>3 0.94) z3 med  9.2 (frac>3 0.90) | null beta med +0.031 [p5 -0.09, p95 +0.36] |z1|>3 0.08 |z3|>3 0.12 | RULE: syn<0.5 0.02, null>0.3 0.12, null>=0.5 0.02 | |dT| rms med 2.4 
+
+(A3) SYMPTOMATIC windows: contiguous, mean speed 5-15 m/s, ranked by 1.6-3 Hz wheel-rate energy (hard turns)
+  symptomatic 30 s x12, hands-off frames only                n  12 | syn beta med 1.01 [p5 0.96] z1 med 58.7 (frac>3 0.92) z3 med 34.0 (frac>3 1.00) | null beta med +0.015 [p5 -0.02, p95 +0.05] |z1|>3 0.00 |z3|>3 0.08 | RULE: syn<0.5 0.00, null>0.3 0.00, null>=0.5 0.00 | |dT| rms med 12.8 | hands-off share med 0.86
+  symptomatic 30 s x12, ALL engaged frames                   n  12 | syn beta med 1.02 [p5 0.91] z1 med 28.5 (frac>3 1.00) z3 med 26.9 (frac>3 1.00) | null beta med +0.019 [p5 -0.06, p95 +0.06] |z1|>3 0.00 |z3|>3 0.00 | RULE: syn<0.5 0.00, null>0.3 0.00, null>=0.5 0.00 | |dT| rms med 13.6 | hands-off share med 0.86
+  symptomatic 15 s x12, hands-off frames only                n  12 | syn beta med 1.02 [p5 0.97] z1 med 48.5 (frac>3 1.00) z3 med 42.0 (frac>3 0.83) | null beta med +0.014 [p5 -0.02, p95 +0.05] |z1|>3 0.00 |z3|>3 0.08 | RULE: syn<0.5 0.00, null>0.3 0.00, null>=0.5 0.00 | |dT| rms med 17.2 | hands-off share med 0.75
+  symptomatic 15 s x12, ALL engaged frames                   n  12 | syn beta med 1.02 [p5 0.95] z1 med 35.3 (frac>3 1.00) z3 med 25.3 (frac>3 1.00) | null beta med +0.025 [p5 -0.04, p95 +0.14] |z1|>3 0.00 |z3|>3 0.08 | RULE: syn<0.5 0.00, null>0.3 0.00, null>=0.5 0.00 | |dT| rms med 18.0 | hands-off share med 0.75
+
+(B) the metric agent's trim-footprint |K| on its OWN grid and code: real V294 tap vs synthetic A1017 tap
+  alignment check: corr(metric T, -interp(plib tap)) = 1.00000 at shift +0 frames (must be ~1 at 0)
+  real V294 tap    0.3-1  pooled |K| 0.193 [0.184, 0.200] phase +157 deg (659 s) | 30 s windows n 24 |K| med 0.209 p5-p95 [0.116, 0.327] | 15 s windows n 47 |K| med 0.206 p5-p95 [0.107, 0.458]
+  real V294 tap    1-3    pooled |K| 0.128 [0.122, 0.131] phase +114 deg (681 s) | 30 s windows n 25 |K| med 0.123 p5-p95 [0.103, 0.138] | 15 s windows n 47 |K| med 0.125 p5-p95 [0.103, 0.161]
+  real V294 tap    3-8    pooled |K| 0.060 [0.057, 0.062] phase +66 deg (681 s) | 30 s windows n 25 |K| med 0.052 p5-p95 [0.043, 0.065] | 15 s windows n 47 |K| med 0.053 p5-p95 [0.041, 0.067]
+  synthetic A1017  0.3-1  pooled |K| 0.316 [0.307, 0.325] phase +141 deg (659 s) | 30 s windows n 24 |K| med 0.329 p5-p95 [0.173, 0.399] | 15 s windows n 47 |K| med 0.319 p5-p95 [0.211, 0.502]
+  synthetic A1017  1-3    pooled |K| 0.155 [0.146, 0.162] phase +96 deg (681 s) | 30 s windows n 25 |K| med 0.146 p5-p95 [0.110, 0.170] | 15 s windows n 47 |K| med 0.152 p5-p95 [0.109, 0.185]
+  synthetic A1017  3-8    pooled |K| 0.067 [0.063, 0.069] phase +56 deg (681 s) | 30 s windows n 25 |K| med 0.058 p5-p95 [0.047, 0.072] | 15 s windows n 47 |K| med 0.058 p5-p95 [0.044, 0.074]
+
+  pre-registered |K| sentences, per window (0.3-1 Hz):
+   30 s: synthetic A1017: |K| >= 0.28 (LIVE) in 0.83 of 24 windows; |K| > 0.45 ('arithmetic wrong') in 0.04; dphase < -30 deg vs the V294 pooled phase in 0.12
+         real V294 (the null): |K| >= 0.28 (false LIVE) in 0.08 of 24 windows; |K| > 0.45 in 0.04
+   15 s: synthetic A1017: |K| >= 0.28 (LIVE) in 0.79 of 47 windows; |K| > 0.45 ('arithmetic wrong') in 0.11; dphase < -30 deg vs the V294 pooled phase in 0.11
+         real V294 (the null): |K| >= 0.28 (false LIVE) in 0.21 of 47 windows; |K| > 0.45 in 0.09

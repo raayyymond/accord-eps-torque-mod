@@ -1,0 +1,202 @@
+=== M_SAFE ===
+  V295 rail +2461/-2463  subrail 0.6409  cap 616  int32 min 2.192  restart {'10.0': (26, 0), '30.0': (80, 99), '100.0': (268, 212), '300.0': (554, 300)}
+  V294 rail +2461/-2463  subrail 0.6409  cap 616  int32 min 4.058  restart {'10.0': (14, 0), '30.0': (43, 0), '100.0': (144, 159), '300.0': (419, 252)}
+
+=== M_LOOP inner: V295 vs V294 (same members/speeds); worst rows ===
+  rows 60; unstable-on-V295-only: 0; V295 max Ms 1.240 (light_b 8.0); max Ms at delay x1.5 1.250 (tau9 3.1); min GM 8.78 (tau9 3.1)
+  plant             v | Ms V295/V294 | Ms x1.5 V295/V294 | GMmin V295/V294 | |L|1-3 V295/V294
+  nominal         3.1 | 1.120 / 1.064 | 1.130 / 1.069 |   22.9 /   42.3 | 0.56 / 0.30
+  nominal         8.0 | 1.116 / 1.062 | 1.126 / 1.067 |   23.4 /   43.3 | 0.55 / 0.30
+  nominal        12.0 | 1.071 / 1.038 | 1.078 / 1.041 |   31.7 /   58.7 | 0.30 / 0.16
+  nominal        17.0 | 1.035 / 1.019 | 1.039 / 1.021 |   51.8 /   95.9 | 0.14 / 0.07
+  nominal        26.9 | 1.027 / 1.014 | 1.030 / 1.016 |   63.1 /  116.9 | 0.11 / 0.06
+  b_lo            3.1 | 1.146 / 1.078 | 1.158 / 1.084 |   20.3 /   37.6 | 0.76 / 0.41
+  b_lo            8.0 | 1.143 / 1.077 | 1.155 / 1.082 |   20.5 /   38.0 | 0.76 / 0.41
+  b_lo           12.0 | 1.112 / 1.060 | 1.122 / 1.065 |   23.7 /   44.0 | 0.52 / 0.28
+  b_lo           17.0 | 1.063 / 1.034 | 1.069 / 1.037 |   34.4 /   63.7 | 0.23 / 0.13
+  b_lo           26.9 | 1.050 / 1.027 | 1.055 / 1.029 |   40.4 /   74.7 | 0.20 / 0.11
+  light_b         3.1 | 1.207 / 1.116 | 1.206 / 1.115 |   17.9 /   33.2 | 1.25 / 0.68
+  light_b         8.0 | 1.240 / 1.136 | 1.239 / 1.135 |   17.9 /   33.1 | 1.43 / 0.77
+  light_b        12.0 | 1.236 / 1.134 | 1.234 / 1.133 |   17.8 /   33.0 | 1.48 / 0.80
+  light_b        17.0 | 1.230 / 1.131 | 1.228 / 1.130 |   17.8 /   32.9 | 1.46 / 0.79
+  light_b        26.9 | 1.213 / 1.122 | 1.215 / 1.120 |   17.7 /   32.8 | 1.39 / 0.75
+  mode20_lo       3.1 | 1.130 / 1.067 | 1.147 / 1.075 |   14.3 /   26.4 | 0.56 / 0.30
+  mode20_lo       8.0 | 1.123 / 1.064 | 1.139 / 1.071 |   14.9 /   27.5 | 0.55 / 0.30
+  mode20_lo      12.0 | 1.065 / 1.034 | 1.073 / 1.038 |   24.6 /   45.5 | 0.30 / 0.16
+  mode20_lo      17.0 | 1.032 / 1.017 | 1.035 / 1.019 |   47.2 /   87.3 | 0.14 / 0.08
+  mode20_lo      26.9 | 1.025 / 1.013 | 1.028 / 1.015 |   59.8 /  110.8 | 0.11 / 0.06
+  tau9            3.1 | 1.195 / 1.100 | 1.250 / 1.124 |    8.8 /   16.3 | 0.56 / 0.30
+  tau9            8.0 | 1.190 / 1.097 | 1.244 / 1.122 |    8.9 /   16.5 | 0.55 / 0.30
+  tau9           12.0 | 1.119 / 1.062 | 1.151 / 1.077 |   12.5 /   23.1 | 0.30 / 0.16
+  tau9           17.0 | 1.061 / 1.032 | 1.077 / 1.041 |   21.1 /   39.1 | 0.14 / 0.07
+  tau9           26.9 | 1.048 / 1.025 | 1.060 / 1.032 |   26.1 /   48.4 | 0.11 / 0.06
+  J_hi2           3.1 | 1.045 / 1.024 | 1.048 / 1.026 |   71.7 /  132.8 | 0.26 / 0.14
+  J_hi2           8.0 | 1.046 / 1.025 | 1.049 / 1.026 |   71.0 /  131.5 | 0.29 / 0.16
+  J_hi2          12.0 | 1.052 / 1.028 | 1.052 / 1.028 |   68.8 /  127.4 | 0.32 / 0.17
+  J_hi2          17.0 | 1.032 / 1.017 | 1.035 / 1.019 |   86.5 /  160.2 | 0.17 / 0.09
+  J_hi2          26.9 | 1.022 / 1.012 | 1.024 / 1.013 |  108.7 /  201.4 | 0.10 / 0.05
+
+=== M_DRIVE outer loop (unchanged fork law r1): V295 vs V294 ===
+  plant        v relay | GM V295/V294 (ratio) | PM V295/V294 (d) | Ms V295/V294
+  nominal    5.0 True  |  14.55 /  11.20 (x1.299) |  107.5 /  113.1 (-5.6) | 1.195 / 1.197
+  nominal    5.0 False |  22.83 /  17.34 (x1.317) |  133.0 /  132.9 (+0.2) | 1.131 / 1.128
+  nominal    8.0 True  |  13.50 /  10.39 (x1.299) |  145.4 /  145.3 (+0.1) | 1.173 / 1.185
+  nominal    8.0 False |  21.18 /  16.30 (x1.299) |  120.4 /  120.4 (-0.0) | 1.113 / 1.117
+  nominal   12.0 True  |  18.24 /  15.51 (x1.176) |  141.6 /  141.5 (+0.1) | 1.113 / 1.116
+  nominal   12.0 False |  28.63 /  24.02 (x1.192) |  118.4 /  118.4 (-0.0) | 1.074 / 1.075
+  nominal   17.0 True  |  28.58 /  26.18 (x1.091) |  110.7 /  110.7 (-0.0) | 1.058 / 1.060
+  nominal   17.0 False |  44.28 /  40.55 (x1.092) |  102.5 /  102.5 (-0.0) | 1.037 / 1.038
+  nominal   26.9 True  |  21.28 /  19.73 (x1.079) |  139.2 /  139.2 (-0.0) | 1.085 / 1.087
+  nominal   26.9 False |  33.39 /  30.96 (x1.079) |  117.2 /  117.2 (-0.0) | 1.055 / 1.056
+  b_lo       5.0 True  |  11.43 /   8.25 (x1.384) |   90.5 /   98.3 (-7.8) | 1.275 / 1.288
+  b_lo       5.0 False |  17.93 /  12.77 (x1.404) |  137.5 /  137.3 (+0.2) | 1.185 / 1.185
+  b_lo       8.0 True  |  10.64 /   7.66 (x1.388) |  147.4 /  147.4 (-0.0) | 1.234 / 1.261
+  b_lo       8.0 False |  16.69 /  12.03 (x1.388) |  121.4 /  121.4 (-0.0) | 1.152 / 1.164
+  b_lo      12.0 True  |  11.47 /   8.86 (x1.294) |  146.2 /  146.2 (-0.0) | 1.187 / 1.206
+  b_lo      12.0 False |  17.77 /  13.91 (x1.278) |  120.9 /  120.9 (-0.0) | 1.121 / 1.129
+  b_lo      17.0 True  |  16.95 /  14.72 (x1.151) |  111.3 /  111.3 (-0.0) | 1.090 / 1.099
+  b_lo      17.0 False |  26.60 /  23.11 (x1.151) |  103.0 /  103.0 (-0.0) | 1.057 / 1.062
+  b_lo      26.9 True  |  12.41 /  10.99 (x1.129) |  144.4 /  144.4 (-0.0) | 1.140 / 1.149
+  b_lo      26.9 False |  19.48 /  17.25 (x1.129) |  119.9 /  119.9 (-0.0) | 1.089 / 1.094
+  F_hi       5.0 True  |  14.55 /  11.20 (x1.299) |  107.5 /  113.1 (-5.6) | 1.195 / 1.197
+  F_hi       5.0 False |  22.83 /  17.34 (x1.317) |  133.0 /  132.9 (+0.2) | 1.131 / 1.128
+  F_hi       8.0 True  |  13.50 /  10.39 (x1.299) |  145.4 /  145.3 (+0.1) | 1.173 / 1.185
+  F_hi       8.0 False |  21.18 /  16.30 (x1.299) |  120.4 /  120.4 (-0.0) | 1.113 / 1.117
+  F_hi      12.0 True  |  18.24 /  15.51 (x1.176) |  141.6 /  141.5 (+0.1) | 1.113 / 1.116
+  F_hi      12.0 False |  28.63 /  24.02 (x1.192) |  118.4 /  118.4 (-0.0) | 1.074 / 1.075
+  F_hi      17.0 True  |  28.58 /  26.18 (x1.091) |  110.7 /  110.7 (-0.0) | 1.058 / 1.060
+  F_hi      17.0 False |  44.28 /  40.55 (x1.092) |  102.5 /  102.5 (-0.0) | 1.037 / 1.038
+  F_hi      26.9 True  |  21.28 /  19.73 (x1.079) |  139.2 /  139.2 (-0.0) | 1.085 / 1.087
+  F_hi      26.9 False |  33.39 /  30.96 (x1.079) |  117.2 /  117.2 (-0.0) | 1.055 / 1.056
+  J_hi       5.0 True  |  13.02 /  10.65 (x1.222) |  128.0 /  131.9 (-3.9) | 1.213 / 1.220
+  J_hi       5.0 False |  20.43 /  16.45 (x1.241) |  124.5 /  124.6 (-0.0) | 1.140 / 1.141
+  J_hi       8.0 True  |  11.81 /   9.62 (x1.228) |  133.7 /  133.7 (-0.0) | 1.202 / 1.217
+  J_hi       8.0 False |  18.25 /  14.85 (x1.229) |  115.0 /  115.0 (-0.0) | 1.130 / 1.136
+  J_hi      12.0 True  |  11.35 /   9.41 (x1.207) |  146.3 /  146.2 (+0.1) | 1.203 / 1.216
+  J_hi      12.0 False |  17.56 /  14.53 (x1.208) |  120.8 /  120.8 (-0.0) | 1.131 / 1.136
+  J_hi      17.0 True  |  20.10 /  18.30 (x1.098) |  111.5 /  111.5 (-0.0) | 1.081 / 1.085
+  J_hi      17.0 False |  31.11 /  28.31 (x1.099) |  103.0 /  103.0 (-0.0) | 1.051 / 1.054
+  J_hi      26.9 True  |  18.72 /  17.41 (x1.075) |  137.3 /  137.4 (-0.0) | 1.095 / 1.097
+  J_hi      26.9 False |  28.99 /  27.32 (x1.061) |  116.2 /  116.2 (-0.0) | 1.061 / 1.062
+  light_b    5.0 True  |   7.20 /   4.41 (x1.630) |   47.8 /   47.8 (+0.0) | 1.666 / 1.773
+  light_b    5.0 False |  11.29 /   6.82 (x1.656) |   66.5 /   71.6 (-5.1) | 1.455 / 1.485
+  light_b    8.0 True  |   6.52 /   4.02 (x1.622) |   54.0 /   53.4 (+0.7) | 1.591 / 1.737
+  light_b    8.0 False |  10.23 /   6.21 (x1.648) |   82.1 /   89.1 (-7.1) | 1.392 / 1.447
+  light_b   12.0 True  |   5.56 /   3.43 (x1.623) |   66.8 /   64.3 (+2.5) | 1.507 / 1.717
+  light_b   12.0 False |   8.61 /   5.38 (x1.601) |  126.5 /  126.5 (-0.0) | 1.322 / 1.413
+  light_b   17.0 True  |   4.19 /   2.61 (x1.608) |   57.6 /   50.2 (+7.4) | 1.631 / 2.000
+  light_b   17.0 False |   6.49 /   4.09 (x1.586) |   98.5 /  134.2 (-35.6) | 1.391 / 1.541
+  light_b   26.9 True  |   2.67 /   1.70 (x1.575) |   45.9 /   31.0 (+14.9) | 1.960 / 3.066
+  light_b   26.9 False |   4.19 /   2.62 (x1.601) |   72.2 /   65.1 (+7.1) | 1.542 / 1.893
+  tau6       5.0 True  |  13.65 /  10.38 (x1.315) |  106.9 /  112.5 (-5.7) | 1.202 / 1.206
+  tau6       5.0 False |  21.17 /  16.08 (x1.316) |  132.9 /  132.8 (+0.1) | 1.135 / 1.133
+  tau6       8.0 True  |  12.66 /   9.75 (x1.298) |  145.3 /  145.2 (+0.1) | 1.179 / 1.193
+  tau6       8.0 False |  19.63 /  15.11 (x1.299) |  120.3 /  120.3 (-0.0) | 1.117 / 1.122
+  tau6      12.0 True  |  16.97 /  14.26 (x1.190) |  141.5 /  141.4 (+0.1) | 1.118 / 1.122
+  tau6      12.0 False |  26.31 /  22.37 (x1.176) |  118.3 /  118.3 (-0.0) | 1.077 / 1.078
+  tau6      17.0 True  |  25.97 /  23.80 (x1.091) |  110.7 /  110.7 (-0.0) | 1.061 / 1.064
+  tau6      17.0 False |  40.76 /  37.35 (x1.091) |  102.4 /  102.4 (-0.0) | 1.039 / 1.040
+  tau6      26.9 True  |  19.35 /  18.18 (x1.064) |  139.1 /  139.1 (-0.0) | 1.090 / 1.092
+  tau6      26.9 False |  30.37 /  28.16 (x1.078) |  117.1 /  117.1 (-0.0) | 1.058 / 1.059
+  GM ratio range 1.061 .. 1.656 ; PM change range -35.6 .. +14.9 deg
+
+=== M_HF simulated delivered torque, V295 / V294 ===
+  sim_A V295|nominal             5-9 x1.43  9-13 x1.41  13-17 x1.55  17-23 x1.18  23-30 x1.24
+  sim_A V295|b_lo                5-9 x1.43  9-13 x1.42  13-17 x1.55  17-23 x1.18  23-30 x1.23
+  sim_A V295|F_hi                5-9 x1.43  9-13 x1.41  13-17 x1.55  17-23 x1.19  23-30 x1.25
+  sim_A V295|J_hi                5-9 x1.46  9-13 x1.39  13-17 x1.52  17-23 x1.16  23-30 x1.21
+  sim_A V295|light_b             5-9 x1.44  9-13 x1.41  13-17 x1.53  17-23 x1.17  23-30 x1.20
+  sim_A V295|tau6                5-9 x1.45  9-13 x1.43  13-17 x1.56  17-23 x1.19  23-30 x1.25
+  sim_B full|V295|nominal        5-9 x1.43  9-13 x1.43  13-17 x1.58  17-23 x1.18  23-30 x1.26
+  sim_B full|V295|b_lo           5-9 x1.45  9-13 x1.43  13-17 x1.58  17-23 x1.16  23-30 x1.24
+  sim_B full|V295|F_hi           5-9 x1.44  9-13 x1.42  13-17 x1.58  17-23 x1.17  23-30 x1.28
+  sim_B full|V295|J_hi           5-9 x1.47  9-13 x1.40  13-17 x1.56  17-23 x1.16  23-30 x1.22
+  sim_B full|V295|light_b        5-9 x1.45  9-13 x1.44  13-17 x1.57  17-23 x1.17  23-30 x1.24
+  sim_B full|V295|tau6           5-9 x1.45  9-13 x1.45  13-17 x1.59  17-23 x1.17  23-30 x1.27
+  WORST band ratio x1.587 at ('sim_B', 'full|V295|tau6', '13-17')
+  |P/x| 20 Hz: V295 3.850  V294 2.079  V282 44.900 -> x1.852 of V294, 8.6 % of V282
+  stress mode13|5.0       zeta V295 0.1515  V294 0.1452  open 0.1388  (V295-open +0.0127, V294-open +0.0064)
+  stress mode13|12.0      zeta V295 0.1794  V294 0.1709  open 0.1623  (V295-open +0.0170, V294-open +0.0085)
+  stress mode13|25.0      zeta V295 0.1471  V294 0.1464  open 0.1454  (V295-open +0.0017, V294-open +0.0010)
+  stress mode20|5.0       zeta V295 0.0772  V294 0.0764  open 0.0756  (V295-open +0.0016, V294-open +0.0009)
+  stress mode20|12.0      zeta V295 0.1013  V294 0.0994  open 0.0972  (V295-open +0.0042, V294-open +0.0022)
+  stress mode20|25.0      zeta V295 0.1168  V294 0.1149  open 0.1128  (V295-open +0.0039, V294-open +0.0021)
+  stress mode20_lo|5.0    zeta V295 0.1278  V294 0.1258  open 0.1228  (V295-open +0.0050, V294-open +0.0031)
+  stress mode20_lo|12.0   zeta V295 0.2364  V294 0.2260  open 0.2134  (V295-open +0.0230, V294-open +0.0126)
+  stress mode20_lo|25.0   zeta V295 0.1940  V294 0.1906  open 0.1863  (V295-open +0.0077, V294-open +0.0043)
+
+=== M_DRIVE sim (mode B, fork in loop): V295 vs V294, per dist x plant x band ===
+  -- full nominal  limit-cycle V295 1.27 Hz +2.2 dB rms 3.10 | V294 1.27 Hz +3.0 dB rms 3.47
+     0-5    track_ +0.003 turn_h n/t straig +0.002 J_err x0.991 r_lo x1.043 r_mid x0.886 r_hi x0.925 hard16 n/t i_shar -0.001 cmd_rm x0.995
+     5-10   track_ +0.002 turn_h +0.011 straig +0.001 J_err x1.004 r_lo x0.990 r_mid x0.863 r_hi x0.878 hard16 x0.843 i_shar +0.000 cmd_rm x0.997
+     10-15  track_ +0.000 turn_h -0.001 straig -0.002 J_err x0.999 r_lo x0.988 r_mid x0.913 r_hi x0.909 hard16 n/t i_shar -0.000 cmd_rm x0.999
+     15-22  track_ +0.000 turn_h +0.001 straig +0.000 J_err x1.001 r_lo x0.996 r_mid x0.952 r_hi x0.943 hard16 x0.944 i_shar +0.000 cmd_rm x1.000
+     22+    track_ +0.000 turn_h +0.001 straig +0.004 J_err x1.005 r_lo x1.016 r_mid x0.962 r_hi x0.951 hard16 x0.962 i_shar +0.002 cmd_rm x1.000
+  -- full b_lo  limit-cycle V295 1.27 Hz +1.7 dB rms 2.94 | V294 1.27 Hz +3.1 dB rms 3.49
+     0-5    track_ +0.004 turn_h n/t straig +0.003 J_err x1.014 r_lo x1.084 r_mid x0.861 r_hi x0.936 hard16 n/t i_shar -0.000 cmd_rm x0.994
+     5-10   track_ +0.001 turn_h +0.007 straig +0.002 J_err x1.016 r_lo x1.001 r_mid x0.813 r_hi x0.866 hard16 x0.797 i_shar +0.001 cmd_rm x0.998
+     10-15  track_ +0.001 turn_h -0.004 straig -0.001 J_err x0.997 r_lo x0.990 r_mid x0.871 r_hi x0.888 hard16 n/t i_shar +0.000 cmd_rm x0.999
+     15-22  track_ +0.000 turn_h +0.000 straig +0.000 J_err x1.003 r_lo x1.005 r_mid x0.922 r_hi x0.908 hard16 x0.902 i_shar +0.000 cmd_rm x1.000
+     22+    track_ +0.000 turn_h -0.002 straig +0.002 J_err x1.006 r_lo x1.015 r_mid x0.939 r_hi x0.928 hard16 x0.912 i_shar +0.002 cmd_rm x1.000
+  -- full F_hi  limit-cycle V295 1.27 Hz +2.3 dB rms 3.11 | V294 1.27 Hz +3.0 dB rms 3.48
+     0-5    track_ +0.003 turn_h n/t straig +0.003 J_err x0.986 r_lo x1.039 r_mid x0.897 r_hi x0.945 hard16 n/t i_shar -0.001 cmd_rm x0.995
+     5-10   track_ +0.002 turn_h +0.007 straig +0.000 J_err x1.002 r_lo x0.988 r_mid x0.868 r_hi x0.880 hard16 x0.846 i_shar -0.000 cmd_rm x0.996
+     10-15  track_ +0.000 turn_h +0.001 straig -0.002 J_err x0.999 r_lo x0.985 r_mid x0.919 r_hi x0.915 hard16 n/t i_shar +0.000 cmd_rm x1.000
+     15-22  track_ +0.000 turn_h +0.000 straig +0.000 J_err x1.000 r_lo x0.993 r_mid x0.952 r_hi x0.945 hard16 x0.943 i_shar +0.000 cmd_rm x1.000
+     22+    track_ +0.000 turn_h -0.000 straig +0.005 J_err x1.005 r_lo x1.003 r_mid x0.964 r_hi x0.960 hard16 x0.952 i_shar +0.002 cmd_rm x1.000
+  -- full J_hi  limit-cycle V295 1.27 Hz +2.2 dB rms 3.05 | V294 1.27 Hz +3.1 dB rms 3.47
+     0-5    track_ +0.002 turn_h n/t straig +0.001 J_err x0.974 r_lo x1.013 r_mid x0.898 r_hi x0.961 hard16 n/t i_shar -0.001 cmd_rm x0.996
+     5-10   track_ +0.002 turn_h +0.011 straig +0.001 J_err x0.991 r_lo x0.979 r_mid x0.872 r_hi x0.948 hard16 x0.876 i_shar +0.000 cmd_rm x0.997
+     10-15  track_ +0.000 turn_h +0.001 straig -0.002 J_err x0.996 r_lo x0.978 r_mid x0.897 r_hi x0.953 hard16 n/t i_shar +0.000 cmd_rm x0.999
+     15-22  track_ +0.000 turn_h +0.000 straig +0.000 J_err x1.000 r_lo x0.991 r_mid x0.944 r_hi x0.955 hard16 x0.938 i_shar +0.000 cmd_rm x1.000
+     22+    track_ +0.000 turn_h -0.000 straig +0.004 J_err x1.004 r_lo x1.005 r_mid x0.962 r_hi x0.964 hard16 x0.955 i_shar +0.001 cmd_rm x0.999
+  -- full light_b  limit-cycle V295 1.07 Hz -2.2 dB rms 3.85 | V294 1.27 Hz +2.9 dB rms 3.51
+     0-5    track_ +0.004 turn_h n/t straig +0.008 J_err x1.115 r_lo x1.239 r_mid x0.757 r_hi x0.935 hard16 n/t i_shar -0.001 cmd_rm x0.998
+     5-10   track_ +0.000 turn_h -0.008 straig +0.001 J_err x1.074 r_lo x1.052 r_mid x0.690 r_hi x0.878 hard16 x0.717 i_shar -0.002 cmd_rm x1.000
+     10-15  track_ +0.000 turn_h -0.009 straig -0.004 J_err x0.990 r_lo x0.970 r_mid x0.791 r_hi x0.891 hard16 n/t i_shar +0.000 cmd_rm x1.001
+     15-22  track_ +0.000 turn_h +0.004 straig -0.003 J_err x1.023 r_lo x1.024 r_mid x0.769 r_hi x0.852 hard16 x0.692 i_shar +0.000 cmd_rm x1.001
+     22+    track_ +0.001 turn_h -0.000 straig +0.008 J_err x1.008 r_lo x1.021 r_mid x0.849 r_hi x0.905 hard16 x0.726 i_shar +0.000 cmd_rm x0.999
+  -- full tau6  limit-cycle V295 1.27 Hz +2.2 dB rms 3.10 | V294 1.27 Hz +3.0 dB rms 3.48
+     0-5    track_ +0.003 turn_h n/t straig +0.002 J_err x0.989 r_lo x1.040 r_mid x0.882 r_hi x0.927 hard16 n/t i_shar -0.001 cmd_rm x0.995
+     5-10   track_ +0.002 turn_h +0.011 straig +0.001 J_err x1.003 r_lo x0.989 r_mid x0.861 r_hi x0.886 hard16 x0.842 i_shar +0.000 cmd_rm x0.997
+     10-15  track_ +0.000 turn_h +0.000 straig -0.002 J_err x0.998 r_lo x0.985 r_mid x0.911 r_hi x0.915 hard16 n/t i_shar +0.000 cmd_rm x0.999
+     15-22  track_ +0.000 turn_h +0.000 straig +0.000 J_err x1.001 r_lo x0.996 r_mid x0.951 r_hi x0.942 hard16 x0.942 i_shar +0.000 cmd_rm x1.000
+     22+    track_ +0.000 turn_h +0.000 straig +0.003 J_err x1.006 r_lo x1.002 r_mid x0.962 r_hi x0.955 hard16 x0.950 i_shar +0.002 cmd_rm x1.000
+  -- lp nominal  limit-cycle V295 1.07 Hz -5.5 dB rms 0.94 | V294 1.07 Hz -4.7 dB rms 0.98
+     0-5    track_ -0.000 turn_h n/t straig -0.002 J_err x1.048 r_lo x1.058 r_mid x0.886 r_hi x0.918 hard16 n/t i_shar -0.002 cmd_rm x1.002
+     5-10   track_ +0.001 turn_h -0.001 straig -0.000 J_err x1.029 r_lo x1.020 r_mid x0.884 r_hi x0.910 hard16 x0.847 i_shar -0.001 cmd_rm x0.999
+     10-15  track_ +0.000 turn_h +0.001 straig +0.000 J_err x1.006 r_lo x1.021 r_mid x0.953 r_hi x0.952 hard16 n/t i_shar -0.000 cmd_rm x1.000
+     15-22  track_ +0.000 turn_h +0.000 straig +0.001 J_err x1.001 r_lo x1.006 r_mid x0.985 r_hi x0.960 hard16 x0.964 i_shar +0.000 cmd_rm x1.000
+     22+    track_ +0.000 turn_h +0.001 straig +0.002 J_err x1.004 r_lo x1.027 r_mid x1.006 r_hi x0.923 hard16 x0.960 i_shar +0.001 cmd_rm x1.000
+  -- lp b_lo  limit-cycle V295 1.07 Hz -3.7 dB rms 1.39 | V294 1.07 Hz -2.6 dB rms 1.42
+     0-5    track_ +0.000 turn_h n/t straig +0.006 J_err x1.079 r_lo x1.099 r_mid x0.827 r_hi x0.946 hard16 n/t i_shar -0.002 cmd_rm x1.001
+     5-10   track_ +0.001 turn_h +0.000 straig -0.002 J_err x1.042 r_lo x1.030 r_mid x0.854 r_hi x0.896 hard16 x0.770 i_shar -0.001 cmd_rm x0.999
+     10-15  track_ -0.000 turn_h +0.003 straig -0.001 J_err x1.005 r_lo x1.026 r_mid x0.924 r_hi x0.895 hard16 n/t i_shar +0.000 cmd_rm x1.000
+     15-22  track_ +0.000 turn_h +0.000 straig +0.000 J_err x1.002 r_lo x1.013 r_mid x0.972 r_hi x0.937 hard16 x0.921 i_shar +0.000 cmd_rm x1.000
+     22+    track_ +0.000 turn_h +0.000 straig +0.003 J_err x1.007 r_lo x1.012 r_mid x0.944 r_hi x0.954 hard16 x0.926 i_shar +0.002 cmd_rm x1.000
+  -- lp F_hi  limit-cycle V295 1.07 Hz -5.4 dB rms 1.01 | V294 1.07 Hz -4.9 dB rms 1.05
+     0-5    track_ -0.001 turn_h n/t straig +0.004 J_err x1.040 r_lo x1.052 r_mid x0.880 r_hi x0.904 hard16 n/t i_shar -0.002 cmd_rm x1.003
+     5-10   track_ +0.001 turn_h +0.000 straig +0.000 J_err x1.027 r_lo x1.016 r_mid x0.883 r_hi x0.917 hard16 x0.864 i_shar -0.001 cmd_rm x0.999
+     10-15  track_ -0.000 turn_h +0.001 straig -0.001 J_err x1.005 r_lo x1.017 r_mid x0.946 r_hi x0.932 hard16 n/t i_shar -0.000 cmd_rm x1.000
+     15-22  track_ +0.000 turn_h +0.006 straig +0.000 J_err x1.002 r_lo x1.010 r_mid x0.950 r_hi x0.984 hard16 x0.975 i_shar -0.000 cmd_rm x1.000
+     22+    track_ +0.000 turn_h +0.000 straig +0.002 J_err x1.005 r_lo x0.999 r_mid x1.016 r_hi x0.979 hard16 x0.954 i_shar +0.001 cmd_rm x1.000
+  -- lp J_hi  limit-cycle V295 1.07 Hz -5.0 dB rms 0.92 | V294 1.07 Hz -4.2 dB rms 0.98
+     0-5    track_ -0.000 turn_h n/t straig +0.001 J_err x1.034 r_lo x1.022 r_mid x0.900 r_hi x0.941 hard16 n/t i_shar -0.001 cmd_rm x1.002
+     5-10   track_ +0.001 turn_h +0.000 straig -0.001 J_err x1.024 r_lo x1.012 r_mid x0.892 r_hi x0.961 hard16 x0.894 i_shar -0.000 cmd_rm x0.999
+     10-15  track_ +0.000 turn_h +0.003 straig +0.000 J_err x1.004 r_lo x1.023 r_mid x0.915 r_hi x0.953 hard16 n/t i_shar -0.000 cmd_rm x0.999
+     15-22  track_ +0.000 turn_h +0.000 straig +0.000 J_err x1.002 r_lo x1.003 r_mid x0.988 r_hi x0.998 hard16 x0.909 i_shar +0.000 cmd_rm x1.000
+     22+    track_ +0.000 turn_h +0.000 straig +0.003 J_err x1.002 r_lo x1.001 r_mid x0.996 r_hi x0.991 hard16 x0.968 i_shar +0.002 cmd_rm x1.000
+  -- lp light_b  limit-cycle V295 1.07 Hz -0.9 dB rms 2.83 | V294 1.07 Hz +0.8 dB rms 2.78
+     0-5    track_ +0.000 turn_h n/t straig -0.007 J_err x1.150 r_lo x1.220 r_mid x0.704 r_hi x0.886 hard16 n/t i_shar -0.002 cmd_rm x1.006
+     5-10   track_ +0.001 turn_h +0.003 straig -0.002 J_err x1.104 r_lo x1.085 r_mid x0.797 r_hi x0.906 hard16 x0.703 i_shar +0.000 cmd_rm x1.002
+     10-15  track_ -0.000 turn_h -0.000 straig -0.009 J_err x1.015 r_lo x1.033 r_mid x0.830 r_hi x0.861 hard16 n/t i_shar +0.004 cmd_rm x1.000
+     15-22  track_ +0.000 turn_h -0.007 straig -0.005 J_err x1.024 r_lo x1.040 r_mid x0.833 r_hi x0.787 hard16 x0.729 i_shar +0.003 cmd_rm x0.998
+     22+    track_ +0.003 turn_h +0.012 straig +0.015 J_err x1.000 r_lo x1.003 r_mid x0.824 r_hi x0.769 hard16 x0.973 i_shar +0.007 cmd_rm x0.992
+  -- lp tau6  limit-cycle V295 1.07 Hz -5.4 dB rms 0.95 | V294 1.07 Hz -4.8 dB rms 0.98
+     0-5    track_ -0.000 turn_h n/t straig +0.001 J_err x1.048 r_lo x1.058 r_mid x0.859 r_hi x0.914 hard16 n/t i_shar -0.001 cmd_rm x1.002
+     5-10   track_ +0.001 turn_h -0.002 straig +0.001 J_err x1.029 r_lo x1.018 r_mid x0.876 r_hi x0.908 hard16 x0.816 i_shar +0.000 cmd_rm x0.999
+     10-15  track_ -0.000 turn_h -0.000 straig -0.000 J_err x1.006 r_lo x1.015 r_mid x0.942 r_hi x0.936 hard16 n/t i_shar -0.000 cmd_rm x1.000
+     15-22  track_ +0.000 turn_h +0.000 straig -0.000 J_err x1.002 r_lo x1.006 r_mid x0.961 r_hi x0.947 hard16 x0.928 i_shar +0.000 cmd_rm x1.000
+     22+    track_ +0.000 turn_h +0.000 straig +0.002 J_err x1.003 r_lo x0.997 r_mid x1.000 r_hi x0.998 hard16 x0.894 i_shar +0.001 cmd_rm x1.000
+
+FLAGS (tracking gain / turn-hold worse than V294 by > 0.01): []

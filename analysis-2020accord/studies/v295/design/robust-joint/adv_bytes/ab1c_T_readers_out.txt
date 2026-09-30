@@ -1,0 +1,21 @@
+   gp-0x6b38 (T, short): 7 accesses
+      0x2A23C st.h      w2 gp-0x6b38
+      0x2A934 st.h      w2 gp-0x6b38
+      0x2B418 ld.h      w2 gp-0x6b38
+      0x4E8D2 ld.h      w2 gp-0x6b38
+      0x4E8E2 ld.h      w2 gp-0x6b38
+      0x55DF0 ld.h      w2 gp-0x6b38
+      0xC4B40 ld.h      w2 gp-0x6b38
+   gp-0x6b30 (yr prev): 4 accesses
+      0x2A1D4 ld.h      w2 gp-0x6b30
+      0x2A206 st.h      w2 gp-0x6b30
+      0x2A8DE ld.h      w2 gp-0x6b30
+      0x2A900 st.h      w2 gp-0x6b30
+   gp-0x6b2e (S publish): 3 accesses
+      0x2A17C st.h      w2 gp-0x6b2e
+      0x2A896 ld.h      w2 gp-0x6b2e
+      0x2B064 st.h      w2 gp-0x6b2e
+   gp-0x6b3c (T gated copy): 3 accesses
+      0x2A2EA st.h      w2 gp-0x6b3c
+      0x2B41C st.h      w2 gp-0x6b3c
+      0x2B42E ld.h      w2 gp-0x6b3c

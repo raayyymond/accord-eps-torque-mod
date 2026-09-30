@@ -1,0 +1,15 @@
+TURN-HOLD (|la_des| 0.8-1.5 m/s^2 holds >= 1 s, act/des per episode, weighted by duration), r71b:
+   8-15 m/s:  9 episodes,   17 s: point 0.734  95% bootstrap [0.593, 0.856]  (half-width 0.132)
+  15-22 m/s:  5 episodes,   11 s: point 0.633  95% bootstrap [0.524, 0.737]  (half-width 0.107)
+  22-99: 1 episodes -- too few
+
+TRACKING GAIN (slope of la_act on la_des, engaged, block bootstrap over 20 s blocks), r71b:
+   8-15 m/s:  37 blocks ( 344 s): gain 0.803  95% [0.713, 0.843]  (half-width 0.065)
+  15-22 m/s:  13 blocks ( 163 s): gain 0.830  95% [0.800, 0.856]  (half-width 0.028)
+  22-99 m/s:   4 blocks (  74 s): gain 0.919  95% [0.763, 0.936]  (half-width 0.087)
+
+MATCHED HARD-TURN CELL r16 (1.6-3 Hz wheel-rate rms), bootstrap over the cell's own >= 2 s stretches, r71b:
+  hands-off  5-10 |D|>=1.5: 3 stretches, 11.3 s: r16 11.80 deg/s  95% [8.14, 13.72]  = x0.69 .. x1.16 of the point
+  hands-off 15-22 |D|>=1.5: 2 stretches, 13.6 s: r16 7.47 deg/s  95% [3.02, 12.19]  = x0.40 .. x1.63 of the point
+  engaged    5-10 |D|>=1.5: 4 stretches, 13.7 s: r16 10.89 deg/s  95% [6.78, 12.73]  = x0.62 .. x1.17 of the point
+  engaged   15-22 |D|>=1.5: 2 stretches, 13.6 s: r16 7.47 deg/s  95% [3.02, 12.19]  = x0.40 .. x1.63 of the point

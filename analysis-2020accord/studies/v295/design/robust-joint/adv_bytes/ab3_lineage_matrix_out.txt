@@ -1,0 +1,19 @@
+297 images read; distinct (a, b, C, operand, shl, Kp live rec) classes: 12
+
+    a     b      C operand      shl Kp rec7 Y                  |PID/x|20Hz* images
+  923  1560   7680 add(sum)       5 [248, 512, 645, 696, 696]  44.90      DO-NOT-FLASH-UNDRIVE, DO-NOT-FLASH-UNDRIVE, DO-NOT-FLASH-UNDRIVE, DO-NOT-FLASH-UNDRIVE, DO-NOT-FLASH-UNDRIVE, DO-NOT-FLASH-UNDRIVE, DO-NOT-FLASH-UNDRIVE, DO-NOT-FLASH-UNDRIVE, SUPERSEDED-DO-NOT-FL(SUPERSEDED), SUPERSEDED-DO-NOT-FL(SUPERSEDED), SUPERSEDED-DO-NOT-FL(SUPERSEDED), SUPERSEDED-DO-NOT-FL(SUPERSEDED) ...(+261)
+  923  1560  46080 add(sum)       5 [248, 248, 248, 248, 248]  44.90      SUPERSEDED-DO-NOT-FL(SUPERSEDED), SUPERSEDED-DO-NOT-FL(SUPERSEDED), v281r3, v282, v283, v287r2, v288r2
+  923  1560  15360 add(sum)       5 [248, 512, 645, 696, 696]  44.90      SUPERSEDED_v278_rev2(SUPERSEDED), v278
+  923  1560      0 add(sum)       5 [256, 256, 256, 256, 256]  0.00       SUPERSEDED_v279_rev1(SUPERSEDED), v279
+  923  1560  46080 add(sum)       5 [248, 512, 645, 696, 696]  44.90      SUPERSEDED_v280_rev1(SUPERSEDED), v276, v277, v280
+  923  1560  46080 add(sum)       5 [248, 341, 341, 341, 341]  44.90      SUPERSEDED_v281_rev1(SUPERSEDED), SUPERSEDED_v281_rev2(SUPERSEDED)
+  923  1560  46080 add(sum)       5 [248, 248, 512, 512, 248]  44.90      v284
+  923  1560  46080 add(sum)       5 [0, 0, 0, 0, 0]            39.49      v285
+  875  2301  46080 add(sum)       5 [248, 248, 248, 248, 248]  55.05      v289
+  962   958  46080 add(sum)       5 [248, 248, 248, 248, 248]  31.38      v291c10(SUPERSEDED), v292
+  923  1560      0 add(sum)       5 [120, 120, 120, 120, 120]  0.00       v293
+ 1011   567   1024 subr(diff)     2 [960, 960, 960, 960, 960]  2.08       v294
+
+* |PID/x| at 20 Hz = |(Kp/256)*r26/x + (Kd/8)*(1-z^-1)*r26/x|, S counts per x count, exact 1 kHz transfer of the
+  fb former (diff: (1-z^-1)S, sum: (1+z^-1)S, S = (b/1024)/(1-(a/1024)z^-1)); Kd counted only when the D clamp != 0;
+  zero when C = 0.  Candidate A (a 1011, b 1106, Kp 960, diff, Kd 0): 4.055  (V294 x1.951)

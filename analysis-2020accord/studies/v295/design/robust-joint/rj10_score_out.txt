@@ -1,0 +1,4 @@
+score(): F1  99.1 s  hash 61870a890336379a
+done F1 hash 61870a890336379a runtime 99 s
+score(): F3  98.7 s  hash 29d0d37760b48e1d
+done F3 hash 29d0d37760b48e1d runtime 99 s

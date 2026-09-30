@@ -1,0 +1,4 @@
+record-consistent two-mass plants: 1702 ; A < 0.8 x min(V294, open) on 3 ; min zeta_A among those 0.3267
+largest absolute zeta loss A vs V294: 0.2621 (nominal f2 25 z2 0.10 r2 0.8 tau 2 v 11.9: open 0.7081 V294 0.8136 A 0.5515)
+modes with zeta_open < 0.10 (the grinding class): n 484 ; worst A/open 0.829 (J_lo f2 8 z2 0.02 r2 0.5 tau 2 v 11.9: open 0.0921 V294 0.0837 A 0.0764) ; min zeta_A 0.0218
+designer-like sub-scan (r2 <= 0.5, tau <= 9, no record filter): worst A/min 0.720 (light_b f2 16 z2 0.02 r2 0.5 tau 9 v 26.9: open 0.0580 V294 0.0456 A 0.0328)

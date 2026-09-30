@@ -1,0 +1,12 @@
+bail 1 end lo: max |T295 - T294| over the restart = 124 T (idx 0 ds +1 rs +1); T_pre equal on all lanes: True
+bail 1 end hi: max |T295 - T294| over the restart = 124 T (idx 0 ds +1 rs +1); T_pre equal on all lanes: True
+bail 2 end lo: max |T295 - T294| over the restart = 124 T (idx 0 ds +1 rs +1); T_pre equal on all lanes: True
+bail 2 end hi: max |T295 - T294| over the restart = 124 T (idx 0 ds +1 rs +1); T_pre equal on all lanes: True
+bail 5 end lo: max |T295 - T294| over the restart = 124 T (idx 0 ds +1 rs +1); T_pre equal on all lanes: True
+bail 5 end hi: max |T295 - T294| over the restart = 124 T (idx 0 ds +1 rs +1); T_pre equal on all lanes: True
+bail 1: largest b with worst pulse <= 288 at 100 deg/s over the envelope (both ends + boot): 1053 (288 T); b 1054 -> 289 T
+bail 2: largest b with worst pulse <= 288 at 100 deg/s over the envelope (both ends + boot): 970 (288 T); b 971 -> 289 T
+scalar: settled S -15226, o -241248, fixed-point interval [-241279 .. -241248] (32 points)
+  end lo: T_pre -2461, pulse max |T-T_pre| = 288 at tick 42 after the bail (T -2173); first 6 T after the bail [-2422, -2377, -2365, -2353, -2341, -2330]
+  end hi: T_pre -2460, pulse max |T-T_pre| = 287 at tick 42 after the bail (T -2173); first 6 T after the bail [-2422, -2377, -2364, -2352, -2341, -2330]
+reachability: after idx 240 -> 238 (demand magnitude falling), o settles at -241279 (interval [-241279..-241248]) -> LOW(most negative) end

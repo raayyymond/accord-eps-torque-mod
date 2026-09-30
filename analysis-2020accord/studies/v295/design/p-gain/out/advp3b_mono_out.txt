@@ -1,0 +1,19 @@
+fb -1024: CAND non-monotone steps []  T(0) 799 T(240) 2461
+fb  -896: CAND non-monotone steps []  T(0) 699 T(240) 2461
+fb  -768: CAND non-monotone steps []  T(0) 599 T(240) 2461
+fb  -640: CAND non-monotone steps []  T(0) 499 T(240) 2461
+fb  -512: CAND non-monotone steps []  T(0) 399 T(240) 2461
+fb  -384: CAND non-monotone steps []  T(0) 299 T(240) 2461
+fb  -256: CAND non-monotone steps []  T(0) 199 T(240) 2461
+fb  -128: CAND non-monotone steps []  T(0) 99 T(240) 2461
+fb    +0: CAND non-monotone steps []  T(0) 0 T(240) 2461
+fb  +128: CAND non-monotone steps []  T(0) -101 T(240) 2403
+fb  +256: CAND non-monotone steps []  T(0) -201 T(240) 2326
+fb  +384: CAND non-monotone steps []  T(0) -301 T(240) 2249
+fb  +512: CAND non-monotone steps []  T(0) -401 T(240) 2173
+fb  +640: CAND non-monotone steps []  T(0) -501 T(240) 2096
+fb  +768: CAND non-monotone steps []  T(0) -601 T(240) 2019
+fb  +896: CAND non-monotone steps []  T(0) -701 T(240) 1942
+fb +1024: CAND non-monotone steps []  T(0) -801 T(240) 1865
+lowest local-slope ratios (+-2 idx centred): [(98, 0.683), (92, 0.707), (93, 0.707), (95, 0.707), (97, 0.707), (94, 0.721)]
+analytic (map' Kp + map Kp')/(map' 960) at idx 92, 96, 99: [0.728, 0.701, 0.683]

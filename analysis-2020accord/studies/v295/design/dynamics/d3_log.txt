@@ -1,0 +1,23 @@
+d3_attribution: marched 9 lanes x 1020390 ticks in 129 s
+positive control: V294 march vs plib T1k_live mismatching ticks = 0 (must be 0)
+real residual (tap - quant(V294 march)), hands-off engaged: 3.64 counts rms over 35441 tap frames (709 s)
+30 s groups of hands-off engaged tap frames: 23
+  L7.0         |dT| rms at tap (hands-off) 2.31 counts, p99 8.0 | 30 s windows: synthetic beta median 1.142, z median 9.3, min 0.3, frac z>3 0.87 | NULL (real tap) beta median +0.189, |z| median 2.20, frac |z|>3 0.22 | pooled syn 1.030+-0.062 null +0.039+-0.063
+  L8.0         |dT| rms at tap (hands-off) 3.09 counts, p99 11.0 | 30 s windows: synthetic beta median 1.117, z median 12.8, min 1.0, frac z>3 0.91 | NULL (real tap) beta median +0.148, |z| median 2.03, frac |z|>3 0.17 | pooled syn 1.025+-0.043 null +0.031+-0.047
+  L10.0        |dT| rms at tap (hands-off) 4.25 counts, p99 16.0 | 30 s windows: synthetic beta median 1.074, z median 15.4, min 1.5, frac z>3 0.96 | NULL (real tap) beta median +0.102, |z| median 2.07, frac |z|>3 0.26 | pooled syn 1.010+-0.033 null +0.022+-0.034
+  L12.0        |dT| rms at tap (hands-off) 5.08 counts, p99 18.0 | 30 s windows: synthetic beta median 1.053, z median 19.0, min 2.2, frac z>3 0.96 | NULL (real tap) beta median +0.084, |z| median 2.01, frac |z|>3 0.26 | pooled syn 1.009+-0.026 null +0.019+-0.030
+  D256         |dT| rms at tap (hands-off) 2.54 counts, p99 9.0 | 30 s windows: synthetic beta median 1.108, z median 10.7, min 1.0, frac z>3 0.96 | NULL (real tap) beta median +0.125, |z| median 1.90, frac |z|>3 0.22 | pooled syn 1.024+-0.047 null +0.039+-0.051
+  A1014_bheld  |dT| rms at tap (hands-off) 3.82 counts, p99 19.0 | 30 s windows: synthetic beta median 1.050, z median 6.9, min 2.3, frac z>3 0.96 | NULL (real tap) beta median +0.066, |z| median 1.26, frac |z|>3 0.00 | pooled syn 1.024+-0.019 null +0.026+-0.014
+  A1017_bheld  |dT| rms at tap (hands-off) 9.88 counts, p99 48.0 | 30 s windows: synthetic beta median 1.014, z median 13.5, min 2.5, frac z>3 0.96 | NULL (real tap) beta median +0.028, |z| median 1.20, frac |z|>3 0.04 | pooled syn 1.006+-0.007 null +0.011+-0.006
+  L10+A1014    |dT| rms at tap (hands-off) 5.92 counts, p99 25.0 | 30 s windows: synthetic beta median 1.053, z median 18.5, min 1.6, frac z>3 0.96 | NULL (real tap) beta median +0.071, |z| median 1.98, frac |z|>3 0.22 | pooled syn 1.015+-0.023 null +0.021+-0.021
+
+SECOND READ: FF-identity lag.  tap vs static surface sign*surface(idx)*m/254 at tick (tap tick - L); best L by resid rms
+   V294 real tap              best lag +20 ms (resid 26.5) | per-30 s-window best lags median +18 IQR [+10, +20] n 23
+   L7.0 synthetic             best lag +12 ms (resid 26.1) | per-30 s-window best lags median +10 IQR [+8, +17] n 23
+   L8.0 synthetic             best lag +12 ms (resid 25.9) | per-30 s-window best lags median +10 IQR [+7, +16] n 23
+   L10.0 synthetic            best lag +10 ms (resid 25.7) | per-30 s-window best lags median +8 IQR [+0, +10] n 23
+   L12.0 synthetic            best lag +10 ms (resid 25.6) | per-30 s-window best lags median +8 IQR [+0, +10] n 23
+   D256 synthetic             best lag +10 ms (resid 26.2) | per-30 s-window best lags median +10 IQR [+0, +18] n 23
+   A1014_bheld synthetic      best lag +16 ms (resid 31.2) | per-30 s-window best lags median +12 IQR [+8, +18] n 23
+   A1017_bheld synthetic      best lag +16 ms (resid 38.2) | per-30 s-window best lags median +10 IQR [+7, +17] n 23
+   L10+A1014 synthetic        best lag +10 ms (resid 30.7) | per-30 s-window best lags median +6 IQR [+0, +10] n 23

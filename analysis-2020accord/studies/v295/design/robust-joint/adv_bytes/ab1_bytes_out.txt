@@ -1,0 +1,70 @@
+V294 sha256 OK 1048576
+
+[1] cells read from the V294 image (LE):
+   a 0xC63E8        bytes f3 03 -> 1011
+   b 0xC63EA        bytes 37 02 -> 567
+   C 0xC62E6        bytes 00 04 -> 1024
+   lag_a 0xC63EC    bytes e0 03 -> 992
+   lag_b 0xC63EE    bytes fb 01 -> 507
+   Ki 0xC63E6       bytes 00 00 -> 0
+   Dclamp 0xC61B6   bytes 00 00 -> 0
+   Pclamp 0xC61BC   bytes 00 3c -> 15360
+   Sclamp 0xC61BE   bytes 00 3c -> 15360
+   lane 0xC61B4     bytes 00 0c -> 3072
+   fwd 0xC61B2      bytes 00 0c -> 3072
+   gain 0xC6CD0     bytes e2 14 -> 5346
+   deadband 0xC62E4 bytes 04 00 -> 4
+   1106 LE = 52 04 (design says 52 04)
+
+[2] raw scan: 223593 candidate decodes over [0x13000,0x100000)
+   positive controls:
+     ld.hu tp+0x73EA @0x28F86 (b reader)            PASS  ['0x28F86']
+     ld.h tp+0x73E8 @0x28F8A (a reader)             PASS  ['0x28F8A']
+     6-byte gp-0x6752 @0x48E56                      PASS  ['0x48E56']
+     mov imm32 0xCB994 @0x29DC6                     PASS  ['0x29DC6']
+     ld.hu tp+0x72E6 (C reader) somewhere           PASS  ['0x28F96', '0x28F9C', '0x28FB8']
+     ld.w gp-0x3d30 (s load) somewhere              PASS  ['0x28F7C']
+     st.h gp-0x6a34 somewhere (the |r26>>5| store)  PASS  ['0x290CA']
+
+[3] accesses overlapping the b cell (tp+0x73EA..0x73EB), any width, any encoding:
+   tp+[0x73EA,0x73EB]: 1 accesses
+      0x28F86 ld.hu     w2 tp+0x73ea
+   (and the a cell, for the ld.w-both-cells case) :
+   tp+[0x73E8,0x73E9]: 1 accesses
+      0x28F8A ld.h      w2 tp+0x73e8
+
+[4] address-forming references that could reach 0xC63EA register-indirectly:
+   LE32 constants in [0xC63E0,0xC63EF] anywhere in the image: []
+   mov imm32 in [0xC6000,0xC63EB]: [('0x146DC', '0xC6000'), ('0x59560', '0xC6000'), ('0x5963E', '0xC6000'), ('0x59862', '0xC6000')]
+   movea/addi imm, tp -> ptr into tp+[0x7000,0x73EB]: 3  [('0x140D2', 'movea', '0x7000'), ('0x3ADFC', 'movea', '0x7010'), ('0x3AF1E', 'movea', '0x7010')]
+   movhi 0x000C sites: 7; followed (<=5 insns) by movea/addi 0x6000..0x63EB: []
+   instructions writing ep (r30) via movea/addi/movhi (reg2=30): 2014
+     distinct (op, imm): [('addi', -10249), ('addi', -106), ('addi', -28), ('addi', -20), ('addi', -4), ('addi', -2), ('addi', -1), ('addi', 0), ('addi', 1), ('addi', 2), ('addi', 3), ('addi', 4), ('addi', 5), ('addi', 6), ('addi', 7), ('addi', 12), ('addi', 13), ('addi', 16), ('addi', 18), ('addi', 24), ('addi', 28), ('addi', 32), ('addi', 40), ('addi', 48), ('addi', 50), ('addi', 64), ('addi', 96), ('addi', 99), ('addi', 156), ('addi', 302)]
+   mov imm32 -> ep: [('0x146C0', '0xFEDEC000'), ('0x1474C', '0xFA001300'), ('0x14754', '0xFA001304'), ('0x14766', '0xFEDF11B0'), ('0x14796', '0xFEDEC000'), ('0x157CC', '0xFEDF5B20'), ('0x158AA', '0xFEDF5B20'), ('0x158BE', '0xFEDF5B20'), ('0x158EA', '0xFEDF5B20'), ('0x15936', '0xFEDF5B20'), ('0x15B04', '0xFEDF5B20'), ('0x15B22', '0xFEDF5B20'), ('0x15B44', '0xB701A'), ('0x15B56', '0xB7014'), ('0x15B60', '0xB7016'), ('0x15B76', '0xB7018'), ('0x15C70', '0xFEDF5B20'), ('0x15DEE', '0xFEDF5B20'), ('0x15E56', '0xFEDF5B20'), ('0x15F1A', '0xFEDF5B20')]
+   Format-I 'mov rX, ep' source registers seen (raw, may include data): [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31]
+
+[5] gp cells the b edit scales: r26's published |r26>>5| (gp-0x6a34), the fb state s (gp-0x3d30), sentinel (gp-0x3d2c)
+   gp-0x6a34 (|r26>>5|, short): 3 accesses
+      0x290CA st.h      w2 gp-0x6a34
+      0x2A0CA ld.hu     w2 gp-0x6a34
+      0x2AFAE ld.hu     w2 gp-0x6a34
+   gp-0x3d30 (s, word): 2 accesses
+      0x28F7C ld.w      w4 gp-0x3d30
+      0x28FA8 st.w      w4 gp-0x3d30
+   gp-0x3d2c (sentinel, byte): 2 accesses
+      0x28F66 ld.bu     w1 gp-0x3d2c
+      0x290D4 st.b      w1 gp-0x3d2c
+   LE32 absolute GP-0x6a34 / GP-0x6a36 / GP-0x3d30 anywhere: []
+
+[6] code-region diff V294 vs stock over [0x13000, 0xC0000) (validity of stock Ghidra xrefs for V294):
+   47 bytes in 13 runs: ['0x13109-0x13109', '0x14120-0x14120', '0x28FA4-0x28FA4', '0x29D76-0x29D76', '0x2A1F0-0x2A1F1', '0x35A08-0x35A09', '0x35A12-0x35A12', '0x35A18-0x35A18', '0x3AA96-0x3AA96', '0x454FE-0x454FE', '0x55C0E-0x55C11', '0x55DF2-0x55E0D', '0x55E0F-0x55E11']
+
+[7] CRC blocks (linked list, no bridge): 50
+   V294 blocks with a CRC mismatch: []
+   block(s) covering 0xC63EA: [('0xC6000', '0xC6FFC')]
+   bootloader main bridge block [0x13000, 0xC4FFC) covers 0xC63EA: False
+   in-memory candidate: 6 bytes differ from V294: ['0xC63EA', '0xC63EB', '0xC6FFC', '0xC6FFD', '0xC6FFE', '0xC6FFF']
+   candidate blocks with CRC mismatch (full chain): []
+   candidate sha256 (in memory, NOT written): 1daf040d5532c4269d7301a24b107eb85d82f32b7797603cd114ae1c9eb88330
+   kit verifier on the in-memory candidate: bootloader walk fails 0, full chain fails 0
+   precedent: V293->V294 changed 8 bytes inside that block incl. its trailer (flown on r71b): ['0xC62E7', '0xC63E8', '0xC63EA', '0xC63EB', '0xC6FFC', '0xC6FFD', '0xC6FFE', '0xC6FFF']

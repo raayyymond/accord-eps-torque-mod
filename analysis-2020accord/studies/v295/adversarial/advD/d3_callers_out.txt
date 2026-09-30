@@ -1,0 +1,8 @@
+CONTROL 0x22522 -> 0x28EA6 found: True
+CONTROL 0x22530 -> 0x2B422 found: True
+CONTROL 0x22514 -> 0x1CBA6 found: True
+twin output-lag/T writer [0x2A892,0x2A93A): calls/jumps in from outside: [] ; bcond in from outside: []
+   LE32 constants pointing inside: []
+twin PID FUN_0002a93a [0x2A93A,0x2B0A0): calls/jumps in from outside: [] ; bcond in from outside: [('0x2b0b8', '0x2afdc'), ('0x2b0d2', '0x2aff2'), ('0x2b15e', '0x2b07e'), ('0x2b166', '0x2b086'), ('0x2b178', '0x2b098')]
+   LE32 constants pointing inside: ['0x15536', '0x1e4c8', '0x5a368']
+first return-ish after 0x2A93A at 0x2B06C (hw 0x0640)

@@ -1,0 +1,4 @@
+FF identity (identity_block, V293 cells, bar fade) on r71b:
+  V294 real tap (control)        best lag -30 ms | all engaged R2 0.9868 (resid 22.4, n 40037) | |acc|<20 R2 0.9981 (resid 5.8, n 27954)
+  b964 fake tap                  best lag -20 ms | all engaged R2 0.9698 (resid 33.8, n 40036) | |acc|<20 R2 0.9977 (resid 6.5, n 27959)
+  b964 fake tap, residual x1.5   best lag -20 ms | all engaged R2 0.9693 (resid 34.1, n 40036) | |acc|<20 R2 0.9970 (resid 7.3, n 27959)

@@ -1,0 +1,26 @@
+H2 PLANT GATE
+  H2a open   nominal  v  3.0: max |d| th/om/x = 0
+  H2a open   nominal  v 12.0: max |d| th/om/x = 0
+  H2a open   nominal  v 26.0: max |d| th/om/x = 0
+  H2a open   tau6     v  3.0: max |d| th/om/x = 0
+  H2a open   tau6     v 12.0: max |d| th/om/x = 0
+  H2a open   tau6     v 26.0: max |d| th/om/x = 0
+  H2a open   mode20   v  3.0: max |d| th/om/x = 0
+  H2a open   mode20   v 12.0: max |d| th/om/x = 0
+  H2a open   mode20   v 26.0: max |d| th/om/x = 0
+  H2a open   mode13   v  3.0: max |d| th/om/x = 0
+  H2a open   mode13   v 12.0: max |d| th/om/x = 0
+  H2a open   mode13   v 26.0: max |d| th/om/x = 0
+  H2a open   light_b  v  3.0: max |d| th/om/x = 0
+  H2a open   light_b  v 12.0: max |d| th/om/x = 0
+  H2a open   light_b  v 26.0: max |d| th/om/x = 0
+  H2a open   F_hi     v  3.0: max |d| th/om/x = 0
+  H2a open   F_hi     v 12.0: max |d| th/om/x = 0
+  H2a open   F_hi     v 26.0: max |d| th/om/x = 0
+  H2a closed nominal  (lane + x noise 1.93, seeded): max |d| th/om/T = 0   |T| max 1221
+  H2a closed mode20   (lane + x noise 1.93, seeded): max |d| th/om/T = 0   |T| max 1173
+  H2a closed tau6     (lane + x noise 1.93, seeded): max |d| th/om/T = 0   |T| max 1315
+H2a PASS (worst 0)
+  H2b kappa: dW/dtheta = 1.146 on centre (want 1.16 +- 0.03), 0.963 beyond 160 deg (want 0.965 +- 0.02); round trip 5.7e-14 deg
+H2b PASS
+H2 PASS

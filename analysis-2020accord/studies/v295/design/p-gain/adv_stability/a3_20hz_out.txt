@@ -1,0 +1,69 @@
+B3  controller at HF: |P/x| (record metric) and the opposing-torque phase per wheel rate incl. 3 ms former + ZOH + tau
+  V282  tau 0 ms: |T/omega| [18.629 16.345 13.992 11.779]  phase [-64.4 -71.3 -79.4 -88.2] deg  (damping component [8.044 5.241 2.582 0.374] T per deg/s)
+  V282  tau 2 ms: |T/omega| [18.629 16.345 13.992 11.779]  phase [ -73.8  -82.8  -93.8 -106.2] deg  (damping component [ 5.204  2.043 -0.92  -3.282] T per deg/s)
+  V282  tau 6 ms: |T/omega| [18.629 16.345 13.992 11.779]  phase [ -92.5 -105.9 -122.6 -142.2] deg  (damping component [-0.812 -4.467 -7.532 -9.304] T per deg/s)
+  V282  tau 9 ms: |T/omega| [18.629 16.345 13.992 11.779]  phase [-106.5 -123.1 -144.2 -169.2] deg  (damping component [ -5.303  -8.935 -11.344 -11.569] T per deg/s)
+  V294  tau 0 ms: |T/omega| [0.956 0.797 0.648 0.523]  phase [-69.2 -76.8 -84.4 -92. ] deg  (damping component [ 0.339  0.182  0.063 -0.018] T per deg/s)
+  V294  tau 2 ms: |T/omega| [0.956 0.797 0.648 0.523]  phase [ -78.6  -88.3  -98.8 -110. ] deg  (damping component [ 0.189  0.024 -0.1   -0.178] T per deg/s)
+  V294  tau 6 ms: |T/omega| [0.956 0.797 0.648 0.523]  phase [ -97.3 -111.3 -127.6 -146. ] deg  (damping component [-0.122 -0.29  -0.396 -0.433] T per deg/s)
+  V294  tau 9 ms: |T/omega| [0.956 0.797 0.648 0.523]  phase [-111.4 -128.6 -149.2 -173. ] deg  (damping component [-0.348 -0.497 -0.557 -0.519] T per deg/s)
+  cand  tau 0 ms: |T/omega| [1.243 1.035 0.842 0.679]  phase [-69.2 -76.8 -84.4 -92. ] deg  (damping component [ 0.44   0.237  0.082 -0.023] T per deg/s)
+  cand  tau 2 ms: |T/omega| [1.243 1.035 0.842 0.679]  phase [ -78.6  -88.3  -98.8 -110. ] deg  (damping component [ 0.245  0.031 -0.129 -0.232] T per deg/s)
+  cand  tau 6 ms: |T/omega| [1.243 1.035 0.842 0.679]  phase [ -97.3 -111.3 -127.6 -146. ] deg  (damping component [-0.158 -0.377 -0.514 -0.563] T per deg/s)
+  cand  tau 9 ms: |T/omega| [1.243 1.035 0.842 0.679]  phase [-111.4 -128.6 -149.2 -173. ] deg  (damping component [-0.453 -0.646 -0.724 -0.674] T per deg/s)
+
+(1) V282 lane on RIGID members: closed-loop pairs 8-40 Hz (f, zeta)
+  nominal  v  3.1 tau 2: rho 0.9999  [(np.float64(15.71), np.float64(0.225))]
+  nominal  v  3.1 tau 6: rho 0.9999  [(np.float64(14.56), np.float64(0.061))]
+  nominal  v  8.0 tau 2: rho 0.9995  [(np.float64(15.8), np.float64(0.229))]
+  nominal  v  8.0 tau 6: rho 0.9995  [(np.float64(14.66), np.float64(0.066))]
+  nominal  v 11.9 tau 2: rho 0.9995  [(np.float64(16.43), np.float64(0.317))]
+  nominal  v 11.9 tau 6: rho 0.9995  [(np.float64(15.35), np.float64(0.158))]
+  b_lo     v  3.1 tau 2: rho 0.9998  [(np.float64(15.46), np.float64(0.192))]
+  b_lo     v  3.1 tau 6: rho 0.9998  [(np.float64(14.29), np.float64(0.028))]
+  b_lo     v  8.0 tau 2: rho 0.9995  [(np.float64(15.55), np.float64(0.195))]
+  b_lo     v  8.0 tau 6: rho 0.9995  [(np.float64(14.38), np.float64(0.031))]
+  b_lo     v 11.9 tau 2: rho 0.9995  [(np.float64(15.84), np.float64(0.232))]
+  b_lo     v 11.9 tau 6: rho 0.9995  [(np.float64(14.7), np.float64(0.069))]
+  J_lo     v  3.1 tau 2: rho 0.9999  [(np.float64(22.12), np.float64(0.1))]
+  J_lo     v  3.1 tau 6: rho 1.0087  [(np.float64(18.98), np.float64(-0.072))]
+  J_lo     v  8.0 tau 2: rho 0.9996  [(np.float64(22.25), np.float64(0.106))]
+  J_lo     v  8.0 tau 6: rho 1.0079  [(np.float64(19.11), np.float64(-0.066))]
+  J_lo     v 11.9 tau 2: rho 0.9995  [(np.float64(23.41), np.float64(0.279))]
+  J_lo     v 11.9 tau 6: rho 0.9995  [(np.float64(20.34), np.float64(0.109))]
+  J_hi     v  3.1 tau 2: rho 0.9998  [(np.float64(8.99), np.float64(0.429))]
+  J_hi     v  3.1 tau 6: rho 0.9998  [(np.float64(9.19), np.float64(0.301))]
+  J_hi     v  8.0 tau 2: rho 0.9995  [(np.float64(9.03), np.float64(0.426))]
+  J_hi     v  8.0 tau 6: rho 0.9995  [(np.float64(9.23), np.float64(0.298))]
+  J_hi     v 11.9 tau 2: rho 0.9995  [(np.float64(9.12), np.float64(0.442))]
+  J_hi     v 11.9 tau 6: rho 0.9995  [(np.float64(9.33), np.float64(0.315))]
+  light_b  v  3.1 tau 2: rho 0.9998  [(np.float64(14.74), np.float64(0.161))]
+  light_b  v  3.1 tau 6: rho 1.0004  [(np.float64(13.64), np.float64(-0.004))]
+  light_b  v  8.0 tau 2: rho 0.9997  [(np.float64(14.76), np.float64(0.159))]
+  light_b  v  8.0 tau 6: rho 1.0005  [(np.float64(13.67), np.float64(-0.006))]
+  light_b  v 11.9 tau 2: rho 0.9994  [(np.float64(14.8), np.float64(0.157))]
+  light_b  v 11.9 tau 6: rho 1.0006  [(np.float64(13.71), np.float64(-0.007))]
+
+(2) stress members CONSISTENT with the record (V282 flex pole 15-25 Hz, zeta 0.008-0.03; open flex zeta >= 0.05)
+  consistent members found: 344
+  zeta shift from open:  V294 min -0.0190 median -0.0027 max +0.0064 ;  cand min -0.0252 median -0.0035 max +0.0081
+  cand zeta / V294 zeta: min 0.9807 median 0.9941 ; cases with cand below open by > 0.005: 146 ; cand shift > 1.5x V294's (de-damping): 13
+  min closed-loop flex zeta: V294 0.0513 cand 0.0511 (open min 0.0512) ; any unstable: 0
+   T1 tau 2: n  18  open zeta 0.051-0.158 ; V282 0.016-0.030 ; V294 shift -0.0009..+0.0064 ; cand shift -0.0012..+0.0081
+   T1 tau 4: n  80  open zeta 0.052-0.294 ; V282 0.008-0.030 ; V294 shift -0.0083..+0.0048 ; cand shift -0.0110..+0.0061
+   T1 tau 6: n  71  open zeta 0.053-0.319 ; V282 0.008-0.030 ; V294 shift -0.0118..+0.0002 ; cand shift -0.0154..+0.0003
+   T1 tau 9: n  27  open zeta 0.062-0.297 ; V282 0.008-0.030 ; V294 shift -0.0175..-0.0007 ; cand shift -0.0226..-0.0009
+   T2 tau 0: n   2  open zeta 0.057-0.058 ; V282 0.027-0.027 ; V294 shift +0.0005..+0.0005 ; cand shift +0.0006..+0.0007
+   T2 tau 2: n  47  open zeta 0.093-0.364 ; V282 0.008-0.030 ; V294 shift -0.0190..-0.0026 ; cand shift -0.0252..-0.0035
+   T2 tau 4: n  52  open zeta 0.140-0.738 ; V282 0.008-0.030 ; V294 shift -0.0135..+0.0047 ; cand shift -0.0178..+0.0061
+   T2 tau 6: n  32  open zeta 0.138-0.574 ; V282 0.009-0.030 ; V294 shift -0.0080..-0.0009 ; cand shift -0.0105..-0.0010
+   T2 tau 9: n  15  open zeta 0.143-0.399 ; V282 0.009-0.029 ; V294 shift -0.0127..-0.0048 ; cand shift -0.0164..-0.0063
+  the 8 most de-damped by the candidate:
+    {'base': 'nominal', 'v': 8.0, 'top': 'T2', 'f2': 16.0, 'r2': 0.3, 'z2': 0.05, 'tau': 2, 'open': (np.float64(13.719), np.float64(0.3636)), 'v282': (np.float64(20.4331), np.float64(0.0211)), 'V294': (np.float64(13.8491), np.float64(0.3445)), 'V294_rho': 0.9955882022709697, 'cand': (np.float64(13.8923), np.float64(0.3384)), 'cand_rho': 0.996009621825049}
+    {'base': 'nominal', 'v': 8.0, 'top': 'T2', 'f2': 16.0, 'r2': 0.3, 'z2': 0.03, 'tau': 2, 'open': (np.float64(13.8543), np.float64(0.3418)), 'v282': (np.float64(20.4589), np.float64(0.0132)), 'V294': (np.float64(13.9883), np.float64(0.3229)), 'V294_rho': 0.9955882083748229, 'cand': (np.float64(14.0328), np.float64(0.3169)), 'cand_rho': 0.9960095784951838}
+    {'base': 'nominal', 'v': 8.0, 'top': 'T2', 'f2': 16.0, 'r2': 0.3, 'z2': 0.02, 'tau': 2, 'open': (np.float64(13.9186), np.float64(0.3309)), 'v282': (np.float64(20.4703), np.float64(0.0093)), 'V294': (np.float64(14.0544), np.float64(0.3122)), 'V294_rho': 0.9955882115537125, 'cand': (np.float64(14.0996), np.float64(0.3061)), 'cand_rho': 0.9960095570050959}
+    {'base': 'nominal', 'v': 3.1, 'top': 'T2', 'f2': 16.0, 'r2': 0.3, 'z2': 0.05, 'tau': 2, 'open': (np.float64(13.863), np.float64(0.3426)), 'v282': (np.float64(20.4715), np.float64(0.0203)), 'V294': (np.float64(14.0104), np.float64(0.3246)), 'V294_rho': 0.9984836918948793, 'cand': (np.float64(14.0585), np.float64(0.3188)), 'cand_rho': 0.998429968619074}
+    {'base': 'nominal', 'v': 3.1, 'top': 'T2', 'f2': 16.0, 'r2': 0.3, 'z2': 0.03, 'tau': 2, 'open': (np.float64(13.9906), np.float64(0.3209)), 'v282': (np.float64(20.4958), np.float64(0.0123)), 'V294': (np.float64(14.1406), np.float64(0.3031)), 'V294_rho': 0.998483691565491, 'cand': (np.float64(14.1896), np.float64(0.2975)), 'cand_rho': 0.9984299680001566}
+    {'base': 'nominal', 'v': 3.1, 'top': 'T2', 'f2': 16.0, 'r2': 0.3, 'z2': 0.02, 'tau': 2, 'open': (np.float64(14.0511), np.float64(0.3101)), 'v282': (np.float64(20.5062), np.float64(0.0082)), 'V294': (np.float64(14.2023), np.float64(0.2924)), 'V294_rho': 0.9984836914009254, 'cand': (np.float64(14.2517), np.float64(0.2868)), 'cand_rho': 0.998429967690984}
+    {'base': 'nominal', 'v': 8.0, 'top': 'T1', 'f2': 22.0, 'r2': 0.5, 'z2': 0.2, 'tau': 9, 'open': (np.float64(20.6584), np.float64(0.297)), 'v282': (np.float64(23.0038), np.float64(0.0296)), 'V294': (np.float64(20.9817), np.float64(0.2795)), 'V294_rho': 0.9956835054440949, 'cand': (np.float64(21.067), np.float64(0.2744)), 'cand_rho': 0.9960788101008546}
+    {'base': 'nominal', 'v': 3.1, 'top': 'T1', 'f2': 22.0, 'r2': 0.5, 'z2': 0.2, 'tau': 9, 'open': (np.float64(20.7022), np.float64(0.2912)), 'v282': (np.float64(22.9413), np.float64(0.0258)), 'V294': (np.float64(21.0113), np.float64(0.2739)), 'V294_rho': 0.998481383306133, 'cand': (np.float64(21.093), np.float64(0.2689)), 'cand_rho': 0.9984261383196362}

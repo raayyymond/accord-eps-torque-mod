@@ -1,0 +1,48 @@
+LERP mirror vs golden over 241 idx x 3 tables: mismatches = 0
+ticks 140000, field/state comparisons 1400000, mismatches 0
+coverage: {'unbound_live': 30307, 'bail': 6577, 'restart': 4004, 'r26_bind': 102397, 'P_bind': 16860, 'S_bind': 0, 'T_bind': 0, 'ramp_partial': 136, 'taper_non254': 42560}
+max |32-bit product| seen (low word): {'bx': 12600000, 'as_': 976745298, 'pp': 4945920, 'mS': 3916800, 'S_lb': 7757100, 'la_o': 237928224, 'y_ramp': 488996864, 'y_gain': 79778358}
+golden surface V295 vs V294, 241 idx x pol +-1: cells differing = 0 ; rail (T, T_lo, T_hi) pol+1 (2461, 2461, 2461) pol-1 (-2462, -2462, -2462)
+zero command idx 0: V295 T = 0, V294 T = 0
+mirror surface (demand sign +-1, x = 0): differing 0 ; V295 extremes 2461 / -2463 ; slope check T(120)=1237
+constant-x settle, 2176 lanes (x grid [0, 1, -1, 7, -7, 80, -80, 800, -800, 2400, -2400, 8000, -8000, 11999, -11999, 12000, -12000], idx [0, 1, 60, 120, 180, 230, 238, 240], sign +-1, 8 start states), 8000 ticks:
+   v294: r26 == 0 on 2176/2176 lanes ; T constant over last 500 ticks on 2176/2176 ; max products {'bx': 6804000, 'as': 979917816, 'E*Kp': 4945920, 'm*S': 3901440, 'S*lb': 7726680, 'y*ramp': 494534656, 'y*gain': 80681832, 'la*o': 239540224}
+   v295: r26 == 0 on 2176/2176 lanes ; T constant over last 500 ticks on 2176/2176 ; max products {'bx': 12600000, 'as': 979917816, 'E*Kp': 4945920, 'm*S': 3901440, 'S*lb': 7726680, 'y*ramp': 494534656, 'y*gain': 80681832, 'la*o': 239540224}
+   settled T V295 - V294: lanes differing 31, max |diff| 1
+   settled T at constant x vs the x = 0 surface: max |diff| = 1 (fixed-point interval of the output lag: <= 1 expected)
+DC bias under zero-mean x (N = 200000 ticks, after a 5000-tick settle), mean T minus the no-noise T, per idx:
+  white sd 2                 mean r26 V294 -0.00039 V295 -0.00039 | max |sum r26 - (s_end - s_start)| V294 0 V295 0 (0 = telescopes exactly)
+       idx   0  dT V294 (+,-)   -1.00   -1.00 | V295   -1.00   -1.00
+       idx 120  dT V294 (+,-)   +0.00   -0.00 | V295   +0.01   -0.07
+       idx 238  dT V294 (+,-)   -0.00   -1.00 | V295   -0.06   -0.98
+       idx 240  dT V294 (+,-)   +0.00   +0.00 | V295   +0.00   +0.00
+  white sd 20                mean r26 V294 +0.00010 V295 +0.00051 | max |sum r26 - (s_end - s_start)| V294 0 V295 0 (0 = telescopes exactly)
+       idx   0  dT V294 (+,-)   -0.97   -0.97 | V295   -1.00   -1.00
+       idx 120  dT V294 (+,-)   +0.17   -0.27 | V295   +0.19   -0.27
+       idx 238  dT V294 (+,-)   -1.99   +0.99 | V295   -4.10   +3.18
+       idx 240  dT V294 (+,-)   +0.00   +0.00 | V295   -0.09   +0.18
+  white sd 200               mean r26 V294 +0.00368 V295 +0.00715 | max |sum r26 - (s_end - s_start)| V294 0 V295 0 (0 = telescopes exactly)
+       idx   0  dT V294 (+,-)   -1.03   -1.03 | V295   -1.04   -1.04
+       idx 120  dT V294 (+,-)   +0.22   -0.29 | V295   +0.21   -0.29
+       idx 238  dT V294 (+,-)  -25.77  +24.82 | V295  -48.46  +47.51
+       idx 240  dT V294 (+,-)  -18.01  +18.12 | V295  -40.21  +40.31
+  20 Hz sine amp 100 + white 2 mean r26 V294 -0.00265 V295 -0.00459 | max |sum r26 - (s_end - s_start)| V294 0 V295 0 (0 = telescopes exactly)
+       idx   0  dT V294 (+,-)   -1.01   -1.01 | V295   -1.03   -1.03
+       idx 120  dT V294 (+,-)   +0.23   -0.32 | V295   +0.19   -0.27
+       idx 238  dT V294 (+,-)   -9.74   +8.80 | V295  -18.84  +17.89
+       idx 240  dT V294 (+,-)   -2.70   +2.87 | V295  -10.92  +10.99
+  20 Hz sine amp 400 + white 2 mean r26 V294 -0.00918 V295 -0.01667 | max |sum r26 - (s_end - s_start)| V294 0 V295 0 (0 = telescopes exactly)
+       idx   0  dT V294 (+,-)   -1.03   -1.03 | V295   -1.03   -1.03
+       idx 120  dT V294 (+,-)   +0.16   -0.22 | V295   +0.16   -0.23
+       idx 238  dT V294 (+,-)  -41.55  +40.60 | V295  -77.65  +76.69
+       idx 240  dT V294 (+,-)  -33.13  +33.20 | V295  -69.11  +69.16
+  2.4 Hz sine amp 400        mean r26 V294 -0.04369 V295 -0.08057 | max |sum r26 - (s_end - s_start)| V294 0 V295 0 (0 = telescopes exactly)
+       idx   0  dT V294 (+,-)   -1.00   -1.00 | V295   -0.97   -0.97
+       idx 120  dT V294 (+,-)   +0.24   -0.26 | V295   +0.24   -0.22
+       idx 238  dT V294 (+,-)  -31.63  +30.69 | V295  -59.30  +58.42
+       idx 240  dT V294 (+,-)  -23.38  +23.44 | V295  -50.81  +50.92
+  2.4 Hz sine amp 1500       mean r26 V294 -0.16275 V295 -0.25469 | max |sum r26 - (s_end - s_start)| V294 0 V295 9275 (0 = telescopes exactly)
+       idx   0  dT V294 (+,-)   -0.93   -0.93 | V295   -0.81   -0.81
+       idx 120  dT V294 (+,-)   +0.32   -0.18 | V295   +0.40   -0.07
+       idx 238  dT V294 (+,-) -121.02 +120.18 | V295 -214.50 +213.74
+       idx 240  dT V294 (+,-) -112.34 +112.50 | V295 -205.72 +206.01

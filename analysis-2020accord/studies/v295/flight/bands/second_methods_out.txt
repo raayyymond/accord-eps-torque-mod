@@ -1,0 +1,6 @@
+M1 raw-rlog spot check, segment 5: 0x14A byte 4, 6000 raw frames vs 6000 loader frames -> sequence identical True;  0x18F rate raw, 6000 vs 6000 -> identical True   (duplicate-timestamp share in the raw: 0.026 / 0.024)
+M2 0x14A byte-4 duties, engaged frames (n 80071), extract loader:  b7 0.481  b6 0.043  b5 0.037  b4 0.347  b3 0.461  b2 1.000  b1 1.000  b0 1.000
+   SCA=0 frames (n 21793): b7 0.001  b6 0.999  b5 0.019  b4 0.151  b3 0.382
+M3 r71b_v294   runs >= 30 s: 3, windows 18:  J(gyro x v) = 0.3501   J(livePose via ident cache) = 0.4495
+M3 r75_v293r4  runs >= 30 s: 2, windows 25:  J(gyro x v) = 0.8743   J(livePose via ident cache) = 1.0681
+M3 r76_v293r5  runs >= 30 s: 3, windows 27:  J(gyro x v) = 1.0441   J(livePose via ident cache) = 1.2733

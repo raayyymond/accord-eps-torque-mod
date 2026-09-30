@@ -1,0 +1,12 @@
+  (1) V294                             8000 ticks: mismatches 0   max|T| 1525
+  (1) shl1 Kp1920 a1017 b600 C512      8000 ticks: mismatches 0   max|T| 1496
+  (1) shl0 Kp3840 a1020 b400 C256      8000 ticks: mismatches 0   max|T| 1944
+  (1) shl2 Kp960 a1011 b1700 C1024     8000 ticks: mismatches 0   max|T| 1380
+  (1) shl2 Kp960 a1017 b1231 C1024     8000 ticks: mismatches 0   max|T| 1704
+  (1) TOTAL 40000 ticks, 0 mismatches -> PASS
+  (2) lp  0-5    track_gain 0.8397  (report 0.840)
+  (2) lp  5-10   track_gain 0.8649  (report 0.865)
+  (2) lp  10-15  track_gain 0.5862  (report 0.586)
+  (2) lp  15-22  track_gain 0.7636  (report 0.764)
+  (2) lp  22+    track_gain 0.9167  (report 0.917)
+  (2) full 5-10 hard16 14.885 (report 14.89)   33 s  -> PASS

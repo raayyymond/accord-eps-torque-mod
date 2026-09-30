@@ -1,0 +1,2 @@
+  5-10   rate/cmd (deg/s per wire count, 1.6-3 Hz) whole 0.2621 | 15s: no-change ratio 5-95% [0.70, 1.40] | 30s: no-change ratio 5-95% [0.77, 1.28]
+  15-22  rate/cmd (deg/s per wire count, 1.6-3 Hz) whole 0.3344 | 15s n/a | 30s n/a

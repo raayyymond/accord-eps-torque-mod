@@ -1,0 +1,239 @@
+      V294 image 3143616d5b79bdb7...  V294 rwd a2b418f061160f66...  -> UNCHANGED
+======================================================================================================================
+  [0] ZERO-EDIT CONTROL -- b left at 567 must reproduce the V294 image BIT FOR BIT
+      [PASS] zero-edit sha256 3143616d5b79bdb7... == V294 3143616d5b79bdb7... (0 differing bytes; 4 assertion(s) fired with the dose pin relaxed)
+         - the diff is EXACTLY the 2 payload bytes the decision requires + 0 trailer bytes = 2 (got 0)
+         - the instruction the lane executes reads 0xC63EA = 567 (decision 1050); bytes 37 02
+         - |P/x| at 20 Hz 2.079 = 1.000 x V294's 2.079 (< x3.0); -26.7 dB below V282's 44.9
+         - the tag from the image's own halfwords == the decision's tag (V295-V294BASE-ACCELTRIM.B567-SUBR.SHL2-FB.DIFF.C
+
+  [0c] MUTATION TEST -- each flip must be CAUGHT
+      [CAUGHT] (a) wrong byte: 1050 at 0xC63EB     13 fire  (S 7 C 1 V 4 T 1 raised 0)
+                   - [S] every differing byte is 0xC63EA/0xC63EB or a trailer byte 0xC6FFC-FF (1 stray: ['0xc63ec'])
+                   - [S] the diff is EXACTLY the 2 payload bytes the decision requires + 4 trailer bytes = 6 (got 6)
+                   - [T] the instruction the lane executes reads 0xC63EA = 6711 (decision 1050); bytes 37 1a
+                   - [V] V295 == V294 at r26 = 0 on T, T_lo, T_hi, P, S at all 482 idx x sign (480 differ)  [entailed: b is not r
+      [CAUGHT] (a') low byte only                   4 fire  (S 3 C 0 V 0 T 1 raised 0)
+                   - [S] the diff is EXACTLY the 2 payload bytes the decision requires + 4 trailer bytes = 6 (got 5)
+                   - [T] the instruction the lane executes reads 0xC63EA = 538 (decision 1050); bytes 1a 02
+                   - [S] |P/x| at 20 Hz 1.973 = 0.949 x V294's 2.079 (< x3.0); -27.1 dB below V282's 44.9
+                   - [S] the tag from the image's own halfwords == the decision's tag (V295-V294BASE-ACCELTRIM.B538-SUBR.SHL2-FB.
+      [CAUGHT] (b) 1050 -> 1051                     2 fire  (S 1 C 0 V 0 T 1 raised 0)
+                   - [T] the instruction the lane executes reads 0xC63EA = 1051 (decision 1050); bytes 1b 04
+                   - [S] the tag from the image's own halfwords == the decision's tag (V295-V294BASE-ACCELTRIM.B1051-SUBR.SHL2-FB
+      [CAUGHT] (c) trailer bit flip                 3 fire  (S 2 C 0 V 1 T 0 raised 0)
+                   - [S] built image CRC chain 50/50 (the full linked list)
+                   - [S] built image BOOTLOADER CRC replay 49/49 (NRC 0x72 predictor)
+                   - [V] trailer 0xC6FFC == crc32([0xC6000,0xC6FFC)) recomputed directly  [entailed by the walk]
+      [CAUGHT] (d) neighbour a 1011 -> 1012         5 fire  (S 4 C 0 V 1 T 0 raised 0)
+                   - [S] every differing byte is 0xC63EA/0xC63EB or a trailer byte 0xC6FFC-FF (1 stray: ['0xc63e8'])
+                   - [S] the diff is EXACTLY the 2 payload bytes the decision requires + 4 trailer bytes = 6 (got 7)
+                   - [V] the neighbour a through 0x28F8A is still 1012  [entailed by the diff]
+                   - [S] restart pulse max 294 T <= 288 over all 964 lanes (bail tick included)
+      [CAUGHT] big-endian 04 1a                     7 fire  (S 5 C 1 V 0 T 1 raised 0)
+                   - [T] the instruction the lane executes reads 0xC63EA = 6660 (decision 1050); bytes 04 1a
+                   - [C] CONTROL: the numpy lane == the golden model tick for tick on 20 lanes x 3000 ticks (10 lanes differ)
+                   - [S] int32 audit of every product in the march: max |.| = 6,215,327,733 (< 2^31)
+                   - [S] int32 margin 0.346 >= 2.0 (V294 4.058; the largest b with margin >= 2.0 at this pole is 1150)
+      [CAUGHT] edit not taken (567)                 4 fire  (S 3 C 0 V 0 T 1 raised 0)
+                   - [S] the diff is EXACTLY the 2 payload bytes the decision requires + 0 trailer bytes = 2 (got 0)
+                   - [T] the instruction the lane executes reads 0xC63EA = 567 (decision 1050); bytes 37 02
+                   - [S] |P/x| at 20 Hz 2.079 = 1.000 x V294's 2.079 (< x3.0); -26.7 dB below V282's 44.9
+                   - [S] the tag from the image's own halfwords == the decision's tag (V295-V294BASE-ACCELTRIM.B567-SUBR.SHL2-FB.
+      [CAUGHT] stray code byte 0x2A1F0              5 fire  (S 4 C 0 V 1 T 0 raised 0)
+                   - [S] built image CRC chain 50/50 (the full linked list)
+                   - [S] built image BOOTLOADER CRC replay 49/49 (NRC 0x72 predictor)
+                   - [S] every differing byte is 0xC63EA/0xC63EB or a trailer byte 0xC6FFC-FF (1 stray: ['0x2a1f0'])
+                   - [S] the diff is EXACTLY the 2 payload bytes the decision requires + 4 trailer bytes = 6 (got 7)
+      [CAUGHT] D clamp 10240, same block            3 fire  (S 2 C 0 V 0 T 0 raised 1)
+                   - [S] every differing byte is 0xC63EA/0xC63EB or a trailer byte 0xC6FFC-FF (1 stray: ['0xc61b7'])
+                   - [S] the diff is EXACTLY the 2 payload bytes the decision requires + 4 trailer bytes = 6 (got 7)
+                   - [X] raised AssertionError: the np mirror assumes D = I = 0 (V294/V295)
+      [CAUGHT] Kp live knot 961                    10 fire  (S 6 C 0 V 4 T 0 raised 0)
+                   - [S] built image CRC chain 50/50 (the full linked list)
+                   - [S] built image BOOTLOADER CRC replay 49/49 (NRC 0x72 predictor)
+                   - [S] every differing byte is 0xC63EA/0xC63EB or a trailer byte 0xC6FFC-FF (1 stray: ['0xe5384'])
+                   - [S] the diff is EXACTLY the 2 payload bytes the decision requires + 4 trailer bytes = 6 (got 7)
+      [PASS] 10/10 mutations caught
+
+======================================================================================================================
+  V295 -- the V294 acceleration trim x1.852: ONE cal cell 0xC63EA (fb-lag input gain b) 567 -> 1050
+======================================================================================================================
+
+  [1] BASE = V294
+      [PASS] [S] V294 base sha256 == 3143616d5b79bdb7...
+      [PASS] [V] base CRC chain 50/50  [entailed]
+      [PASS] [V] base BOOTLOADER CRC replay 49/49  [entailed]
+      [PASS] [V] base 0xC61B2 == 3072  [entailed]
+      [PASS] [V] base 0xC61B4 == 3072  [entailed]
+      [PASS] [V] base 0xC61B6 == 0  [entailed]
+      [PASS] [V] base 0xC61B8 == 102  [entailed]
+      [PASS] [V] base 0xC61BA == 10240  [entailed]
+      [PASS] [V] base 0xC61BC == 15360  [entailed]
+      [PASS] [V] base 0xC61BE == 15360  [entailed]
+      [PASS] [V] base 0xC61F6 == 3  [entailed]
+      [PASS] [V] base 0xC61F8 == 1024  [entailed]
+      [PASS] [V] base 0xC61FA == 5530  [entailed]
+      [PASS] [V] base 0xC62E4 == 4  [entailed]
+      [PASS] [V] base 0xC62E6 == 1024  [entailed]
+      [PASS] [V] base 0xC63E6 == 0  [entailed]
+      [PASS] [V] base 0xC63E8 == 1011  [entailed]
+      [PASS] [V] base 0xC63EA == 567  [entailed]
+      [PASS] [V] base 0xC63EC == 992  [entailed]
+      [PASS] [V] base 0xC63EE == 507  [entailed]
+      [PASS] [V] base 0xC6440 == 2048  [entailed]
+      [PASS] [V] base 0xC6442 == 1024  [entailed]
+      [PASS] [V] base 0xC6444 == 512  [entailed]
+      [PASS] [V] base 0xC6446 == 2048  [entailed]
+      [PASS] [V] base 0xC6448 == 1024  [entailed]
+      [PASS] [V] base 0xC644A == 1024  [entailed]
+      [PASS] [V] base 0xC6500 == 771  [entailed]
+      [PASS] [V] base 0xC674E == 5120  [entailed]
+      [PASS] [V] base 0xC6750 == 5120  [entailed]
+      [PASS] [V] base 0xC675A == 60416  [entailed]
+      [PASS] [V] base 0xC675C == 60416  [entailed]
+      [PASS] [V] base 0xC6768 == 5120  [entailed]
+      [PASS] [V] base 0xC676A == 5120  [entailed]
+      [PASS] [V] base 0xC676C == 5120  [entailed]
+      [PASS] [V] base 0xC6AE6 == 2048  [entailed]
+      [PASS] [V] base 0xC6B12 == 98  [entailed]
+      [PASS] [V] base 0xC6B26 == 256  [entailed]
+      [PASS] [V] base 0xC6CD0 == 5346  [entailed]
+      [PASS] [V] base 0xC63EA-EB == 37 02 (567)  [entailed]
+      [PASS] [V] base carries V294's `subr r9,r26` @0x28FA4 and `shl 0x2,r16` @0x29D76  [entailed]
+      [PASS] [V] base Kp bank [960]x5 and Kd bank [0]x4 on all 28 records  [entailed]
+      [PASS] [T] b_new 1050 == the orchestrator's decision 1050 (a pin: bites only off the default path)
+      [PASS] [T] b < 32768: `ld.hu` reads it unsigned; no sign question
+
+  [2] THE READER, DECODED INDEPENDENTLY (V295's own decoder; tp resolved from the image's own boot code)
+      [PASS] [C] 0x140C0..0x140D6 executes ['ori', 'movhi', 'movea', 'add', 'movhi', 'movea', 'add']: tp = 0xBF000, gp = 0xFEDF8000
+      [PASS] [C] 0x28F86: ld.hu 0x73EA[r5=tp], r16 -> 0xC63EA = 567 (the EDIT's address 0xC63EA and V294's 567 -- anchored)
+      [PASS] [C] 0x28F8A: ld.h -> 0xC63E8 = 1011 (the neighbour a, SIGNED)
+      [PASS] [C] 0x28F8E: mul r16,r7,r0 -- b (r16) multiplies x (r7), low word kept
+      [PASS] [C] 0x28F86: the kit's decoder agrees (`ld.hu 0x73ea,tp,r16`)
+      [PASS] [C] 0x28F8A: the kit's decoder agrees (`ld.h 0x73e8,tp,r9`)
+      [PASS] [C] 0x28F8E: the kit's decoder agrees (`mul r16,r7,r0`)
+      [PASS] [C] 0x28FA4: the kit's decoder agrees (`subr r9,r26`)
+
+  [3] GATE 1 -- who reads [0xC63EA, 0xC63EC)?  raw census, V295's own scanner, positive controls FIRST
+      [PASS] [C] CONTROL 4-byte: b @0x28F86, a @0x28F8A and all three C readers FOUND
+      [PASS] [C] CONTROL 6-byte Format XIV: gp-0x6752 @0x48E56 FOUND
+      [PASS] [C] CONTROL mov imm32 0xCB994 @0x29DC6 FOUND
+      [PASS] [C] CONTROL LE32 absolute: the live Kp record pointer FOUND
+      [PASS] [C] 4-byte tp-relative accesses overlapping 0xC63EA-EB (any width): [('0x28f86', 'ld.hu')] -- ONE, a load
+      [PASS] [C] ... and overlapping 0xC63E8-E9 (the neighbour a): [('0x28f8a', 'ld.h')]
+      [PASS] [C] 6-byte tp-relative accesses overlapping 0xC63E8-EB: 0
+      [PASS] [C] no LE32 anywhere in [0x13000,0x100000) points into [0xC63E6, 0xC63EC)
+      [PASS] [C] mov imm32 into [0xC6000, 0xC63EC): ['0x146dc', '0x59560', '0x5963e', '0x59862'] == the adversaries' value-agnostic set
+      [PASS] [C] mov imm32 into the RAM alias [0xFA800000, 0xFA8003EC): 6 sites ['0x1bb48', '0x1bb50', '0x1bb8c', '0x1bb94', '0x1bb9c', '0x1bbaa'], ALL ep bases ['0xfa800050', '0xfa800054', '0xfa800058', '0xfa80005c'] whose Format IV reach (<= ep + 0x100) stops short of the cell's alias 0xFA8003EA
+      [PASS] [C] movea/addi on tp into [0xC6000, 0xC63EC): ['0x140d2', '0x3adfc', '0x3af1e'] == the adjudicated set
+      [PASS] [C] mov imm32 -> ep within sld reach (256 B) of the cell: []
+      [PASS] [C] movhi 0xC/0xD/0xFA80/0xFA81 bases in [0x13000,0xC5000): 23 == the pinned set; none whose next access lands on the cell or its alias ([])
+      [PASS] [C] any-base-register Format VII with the cell's displacement (0x63E8-EB / 0x3E8-EB): ['0xbc3ba'] == the one adjudicated DATA false positive
+
+  [4] APPLY -- one u16
+      [PASS] [T] 0xC63EA 567 -> 1050 (37 02 -> 1a 04)
+
+  [5] CRC -- the owning block located by walking the chain FROM THE IMAGE, trailer recomputed
+      [PASS] [C] the edit's owning block(s) [('0xc6000', '0xc6ffc')] == [0xC6000, 0xC6FFC)
+      block [0x0C6000,0x0C6FFC)  trailer 0xF3441165 -> 0x8D982BD9
+      [PASS] [S] built image CRC chain 50/50 (the full linked list)
+      [PASS] [S] built image BOOTLOADER CRC replay 49/49 (NRC 0x72 predictor)
+      [PASS] [V] trailer 0xC6FFC == crc32([0xC6000,0xC6FFC)) recomputed directly  [entailed by the walk]
+
+  [6] FULL BYTE DIFF vs V294 over [0x13000, 0x100000) -- EVERY differing offset listed
+      0x0C63EA-0x0C63EB (2 B)  gain b 0xC63EA         37 02 -> 1a 04
+      0x0C6FFC-0x0C6FFF (4 B)  CRC trailer 0xC6FFC    65 11 44 f3 -> d9 2b 98 8d
+      differing offsets: ['0xc63ea', '0xc63eb', '0xc6ffc', '0xc6ffd', '0xc6ffe', '0xc6fff']
+      [PASS] [S] every differing byte is 0xC63EA/0xC63EB or a trailer byte 0xC6FFC-FF (0 stray: [])
+      [PASS] [S] the diff is EXACTLY the 2 payload bytes the decision requires + 4 trailer bytes = 6 (got 6)
+      [PASS] [V] the code region [0x13000, 0xC0000) is BYTE-IDENTICAL to V294  [entailed by the line above]
+      [PASS] [V] the 0x14A cave and the CAN-427 tap window are V294's: THE INSTRUMENT IS ON THE WIRE  [entailed]
+
+  [7] b READ BACK THROUGH THE READER on the BUILT image (decode 0x28F86 -> tp from boot code -> value)
+      [PASS] [T] the instruction the lane executes reads 0xC63EA = 1050 (decision 1050); bytes 1a 04
+      [PASS] [V] the neighbour a through 0x28F8A is still 1011  [entailed by the diff]
+      [PASS] [V] C through all three readers is still 1024  [entailed by the diff]
+
+  [8] THE DELIVERED SURFACE (golden model, cells read from EACH image) -- 241 idx x both demand signs
+      [PASS] [C] CONTROL: the signed wrapper == lkas_rate_pid_surface itself at + sign [(0, 0), (381, 381), (1237, 1237), (2461, 2461), (2461, 2461)]
+      [PASS] [V] V295 == V294 at r26 = 0 on T, T_lo, T_hi, P, S at all 482 idx x sign (0 differ)  [entailed: b is not read at r26 = 0 and no other byte moved]
+      [PASS] [V] rail +2461 / -2463  [entailed]
+      idx    T(+)    T(-)
+        0       0       0
+       12     124    -126
+       32     331    -332
+       60     617    -619
+      120    1237   -1239
+      180    1860   -1862
+      238    2459   -2460
+      240    2461   -2463
+      [PASS] [V] the zero-command trim cap at r26 = +C / -C: -616 / 615 (V294 -616 / 615)  [entailed]
+      [PASS] [V] sub-rail slope 0.6410 T per wire count (V294 0.6410)  [entailed]
+
+  [9] THE FULL LANE WITH b IN THE TRANSIENT -- constant wheel rate x from cold boot, V295 vs V294
+      [PASS] [C] CONTROL: the numpy lane == the golden model tick for tick on 20 lanes x 3000 ticks (0 lanes differ)
+      [PASS] [S] int32 audit of every product in the march: max |.| = 979,917,816 (< 2^31)
+      [PASS] [S] r26 settles to EXACTLY 0 and T is constant over the last 500 ticks on all 2892 lanes (x in (80, -80, 800, -800, 12000, -12000))
+      [PASS] [S] the settled T equals V294's on all 2892 idx x sign x rate lanes (0 differ) -- b's transient does not land the output lag on a different fixed point
+      (settled T outside the golden fixed-point band [T_lo, T_hi]: 0 of 2892 lanes -- identical on V294)
+
+  [10] int32 -- the one b-dependent product a*s, at the exact fixed point of the |x| = 12000 bail edge
+      V295: s* = -969,256 / 969,098;  max |a*s| = 979,917,816;  margin 2.191;  |b*x| = 12,600,000
+      V294: s* = -523,422 / 523,265;  max |a*s| = 529,179,642;  margin 4.058;  |b*x| = 6,804,000
+      [PASS] [S] int32 margin 2.191 >= 2.0 (V294 4.058; the largest b with margin >= 2.0 at this pole is 1150)
+
+  [11] THE RESTART PULSE after one bail tick, 100 deg/s (x = +-800), over idx 0..240 x demand sign x rate sign
+      [PASS] [S] V295: every lane settled before the bail (r26 == 0 and T constant on the last 500 pre ticks)
+      [PASS] [V] V294: every lane settled before the bail (r26 == 0 and T constant on the last 500 pre ticks)  [entailed by the base hash]
+      V295 worst 287 T at idx 227 demand -1 rate -1 (excluding the bail tick itself: 287);  V294 worst 165
+      zero command (idx 0): V295 [268, 269]  V294 [144, 145];  worst per-point ratio 1.932 at idx 166;  worst/worst 1.739;  lanes over 288: 0
+        idx   0: V295 max  269   V294 max  145
+        idx  60: V295 max  274   V294 max  150
+        idx 120: V295 max  278   V294 max  154
+        idx 180: V295 max  283   V294 max  160
+        idx 238: V295 max  287   V294 max  165
+        idx 240: V295 max  273   V294 max  152
+      [PASS] [S] restart pulse max 287 T <= 288 over all 964 lanes (bail tick included)
+
+  [12] THE TRIM IN PHYSICAL TERMS, from the built cells
+      V294: K_alpha = 0.210 T counts per deg/s^2 below the 2.03 Hz pole;  |P/x| at 20 Hz 2.079;  2.4 Hz 1.594
+      V295: K_alpha = 0.388 T counts per deg/s^2 below the 2.03 Hz pole;  |P/x| at 20 Hz 3.850;  2.4 Hz 2.953
+      [PASS] [S] |P/x| at 20 Hz 3.850 = 1.852 x V294's 2.079 (< x3.0); -21.3 dB below V282's 44.9
+
+  [13] THE OUTPUT NAME, RE-DERIVED FROM THE BUILT IMAGE'S OWN BYTES
+      [PASS] [V] Kp flat [960] on all 28, Kd [0] and D clamp 0  [entailed]
+      [PASS] [S] the tag from the image's own halfwords == the decision's tag (V295-V294BASE-ACCELTRIM.B1050-SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.1050-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP)
+      _v295_V295-V294BASE-ACCELTRIM.B1050-SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.1050-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP_plain_image.bin
+      39990-TVA,A160-V295-V294BASE-ACCELTRIM.B1050-SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.1050-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP-0x13000-0x100000.rwd
+
+  [14] .rwd ENCODE + READBACK + an independent re-splice
+      [PASS] [C] V38 source .rwd sha256 matches (the container template)
+      [PASS] [S] the .rwd decoded back is BYTE-IDENTICAL to the built image
+      [PASS] [S] cipher table validated NON-CIRCULARLY against the known V38 plain image
+      [PASS] [S] independent re-splice (FF.crc_block_map locator) == the built image sha256
+
+  [15] THE CUMULATIVE NON-STOCK DELTA of the lane, read from the STOCK dump and the BUILT image
+      [PASS] [C] stock dump sha256 matches
+      [PASS] [C] fb clamp C       0xC62E6: stock   7680  ->  V295   1024
+      [PASS] [C] pole a           0xC63E8: stock    923  ->  V295   1011
+      [PASS] [C] gain b           0xC63EA: stock   1560  ->  V295   1050
+      [PASS] [C] D clamp          0xC61B6: stock  10240  ->  V295      0
+      [PASS] [C] r24 engaged arm  0xC6446: stock    512  ->  V295   2048
+      [PASS] [C] Ki               0xC63E6: stock      0  ->  V295      0
+      [PASS] [C] Kp slot 7 stock [248, 512, 645, 696, 696] -> V295 [960, 960, 960, 960, 960];  Kd stock [128, 128, 128, 128] -> V295 [0, 0, 0, 0]
+      [PASS] [C] 0x28FA4 stock `add` -> V295 `subr`;  0x29D76 stock `shl 0x5` -> V295 `shl 0x2`
+      bytes differing from STOCK in [0x13000,0x100000): V295 2182  V294 2182  (symmetric difference [])
+      [PASS] [V] V295's non-stock byte set == V294's up to the cell and the trailer  [entailed]
+      [PASS] [C] both output paths fit 259 chars (image 221, rwd 239)
+
+======================================================================================================================
+  PREDICTED image SHA256 5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed
+  PREDICTED .rwd  SHA256 f42a06bda5a737eb9f678d617603745ec21fb93c4bd229344f33259cfbeaae87
+  108/108 assertions -- census: 16 substantive, 36 constant-checks, 52 vacuous/entailed, 4 tautological
+======================================================================================================================
+
+  PREDICTION, printed BEFORE any write:  image 5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed
+                                          rwd   f42a06bda5a737eb9f678d617603745ec21fb93c4bd229344f33259cfbeaae87
+
+      NOT WRITTEN -- set ACCORD_V295_WRITE=rwd to emit the files.

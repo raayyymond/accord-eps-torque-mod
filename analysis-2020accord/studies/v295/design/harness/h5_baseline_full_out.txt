@@ -1,0 +1,665 @@
+==============================================================================================================
+SCORE V293   edit class opcode+cal   diff vs V294 {'fb_a': (1011, 923), 'fb_b': (567, 1560), 'fb_clamp': (1024, 0), 'fb_op': ('diff', 'sum'), 'e_shift': (2, 5), 'kp_y': ((960, 960, 960, 960, 960), (120, 120, 120, 120, 120))}
+  static problems: none
+  M_SAFE rail +2461 / -2463 | sub-rail 0.6409 T/wire | trim cap 0 T (0.0 % rail) | b 1560 / b_max 19583 | restart peak {10.0: 0, 30.0: 0, 100.0: 0, 300.0: 0}
+         int32 min margin 8.90 (la*o)
+  M_LOOP (plant, v): |L|1-3  |L|3-8  Ms   PMmin  GMmin  Ms(delay x1.5)  stable  modes
+     nominal        3.1   0.00   0.00   1.00    inf     inf   1.00  True  []
+     nominal        8.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     nominal       12.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     nominal       17.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     nominal       26.9   0.00   0.00   1.00    inf     inf   1.00  True  []
+     b_lo           3.1   0.00   0.00   1.00    inf     inf   1.00  True  []
+     b_lo           8.0   0.00   0.00   1.00    inf     inf   1.00  True  [(0.65, 0.916)]
+     b_lo          12.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     b_lo          17.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     b_lo          26.9   0.00   0.00   1.00    inf     inf   1.00  True  []
+     F_hi           3.1   0.00   0.00   1.00    inf     inf   1.00  True  []
+     F_hi           8.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     F_hi          12.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     F_hi          17.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     F_hi          26.9   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_lo           3.1   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_lo           8.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_lo          12.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_lo          17.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_lo          26.9   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_hi           3.1   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_hi           8.0   0.00   0.00   1.00    inf     inf   1.00  True  [(0.47, 0.905)]
+     J_hi          12.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_hi          17.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_hi          26.9   0.00   0.00   1.00    inf     inf   1.00  True  []
+     light_b        3.1   0.00   0.00   1.00    inf     inf   1.00  True  [(0.66, 0.674)]
+     light_b        8.0   0.00   0.00   1.00    inf     inf   1.00  True  [(1.14, 0.466)]
+     light_b       12.0   0.00   0.00   1.00    inf     inf   1.00  True  [(1.56, 0.358)]
+     light_b       17.0   0.00   0.00   1.00    inf     inf   1.00  True  [(1.69, 0.334)]
+     light_b       26.9   0.00   0.00   1.00    inf     inf   1.00  True  [(1.97, 0.291)]
+     tau6           3.1   0.00   0.00   1.00    inf  1000000000000.0   1.00  True  []
+     tau6           8.0   0.00   0.00   1.00    inf  1000000000000.0   1.00  True  []
+     tau6          12.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     tau6          17.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     tau6          26.9   0.00   0.00   1.00    inf     inf   1.00  True  []
+     nominal_kappa  3.1   0.00   0.00   1.00    inf     inf   1.00  True  []
+     nominal_kappa  8.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     nominal_kappa 12.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     nominal_kappa 17.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     nominal_kappa 26.9   0.00   0.00   1.00    inf     inf   1.00  True  []
+     mode13         3.1   0.00   0.00   1.00    inf     inf   1.00  True  [(12.81, 0.138)]
+     mode13         8.0   0.00   0.00   1.00    inf     inf   1.00  True  [(12.8, 0.14)]
+     mode13        12.0   0.00   0.00   1.00    inf     inf   1.00  True  [(12.39, 0.162)]
+     mode13        17.0   0.00   0.00   1.00    inf     inf   1.00  True  [(11.77, 0.155)]
+     mode13        26.9   0.00   0.00   1.00    inf     inf   1.00  True  [(11.68, 0.143)]
+     mode20         3.1   0.00   0.00   1.00    inf     inf   1.00  True  [(19.96, 0.075)]
+     mode20         8.0   0.00   0.00   1.00    inf     inf   1.00  True  [(19.95, 0.077)]
+     mode20        12.0   0.00   0.00   1.00    inf     inf   1.00  True  [(19.67, 0.097)]
+     mode20        17.0   0.00   0.00   1.00    inf     inf   1.00  True  [(18.82, 0.116)]
+     mode20        26.9   0.00   0.00   1.00    inf     inf   1.00  True  [(18.5, 0.112)]
+     mode20_lo      3.1   0.00   0.00   1.00    inf     inf   1.00  True  [(19.63, 0.12)]
+     mode20_lo      8.0   0.00   0.00   1.00    inf     inf   1.00  True  [(19.62, 0.127)]
+     mode20_lo     12.0   0.00   0.00   1.00    inf     inf   1.00  True  [(18.16, 0.213)]
+     mode20_lo     17.0   0.00   0.00   1.00    inf     inf   1.00  True  [(14.95, 0.22)]
+     mode20_lo     26.9   0.00   0.00   1.00    inf     inf   1.00  True  [(14.56, 0.18)]
+     tau9           3.1   0.00   0.00   1.00    inf  1000000000000.0   1.00  True  []
+     tau9           8.0   0.00   0.00   1.00    inf  1000000000000.0   1.00  True  []
+     tau9          12.0   0.00   0.00   1.00    inf  1000000000000.0   1.00  True  []
+     tau9          17.0   0.00   0.00   1.00    inf  1000000000000.0   1.00  True  []
+     tau9          26.9   0.00   0.00   1.00    inf  1000000000000.0   1.00  True  []
+     J_hi2          3.1   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_hi2          8.0   0.00   0.00   1.00    inf     inf   1.00  True  [(0.61, 0.786)]
+     J_hi2         12.0   0.00   0.00   1.00    inf     inf   1.00  True  [(0.61, 0.727)]
+     J_hi2         17.0   0.00   0.00   1.00    inf     inf   1.00  True  []
+     J_hi2         26.9   0.00   0.00   1.00    inf     inf   1.00  True  []
+  M_HF |T/x| 5..30 Hz [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  (x V294 [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+       |P/x| 20 Hz: cand 0.000  V294 2.079  V282 44.900
+       mode13     v  5.0: f 12.8 Hz zeta 0.139 (V294 0.145, open 0.139)
+       mode13     v 12.0: f 12.4 Hz zeta 0.162 (V294 0.171, open 0.162)
+       mode13     v 25.0: f 11.7 Hz zeta 0.145 (V294 0.146, open 0.145)
+       mode20     v  5.0: f 20.0 Hz zeta 0.076 (V294 0.076, open 0.076)
+       mode20     v 12.0: f 19.7 Hz zeta 0.097 (V294 0.099, open 0.097)
+       mode20     v 25.0: f 18.6 Hz zeta 0.113 (V294 0.115, open 0.113)
+       mode20_lo  v  5.0: f 19.6 Hz zeta 0.123 (V294 0.126, open 0.123)
+       mode20_lo  v 12.0: f 18.2 Hz zeta 0.213 (V294 0.226, open 0.213)
+       mode20_lo  v 25.0: f 14.6 Hz zeta 0.186 (V294 0.191, open 0.186)
+       staircase HF cand {'5-9': 21.27, '9-13': 7.5, '13-17': 2.73, '17-23': 1.49, '23-30': 0.84} | V294 {'5-9': 21.27, '9-13': 7.5, '13-17': 2.73, '17-23': 1.49, '23-30': 0.84}
+       sim_A ('V293', 'nominal'): {'5-9': 1.42, '9-13': 0.85, '13-17': 0.4, '17-23': 0.48, '23-30': 0.21}
+       sim_A ('V293', 'b_lo'): {'5-9': 1.42, '9-13': 0.85, '13-17': 0.4, '17-23': 0.48, '23-30': 0.21}
+       sim_A ('V293', 'F_hi'): {'5-9': 1.42, '9-13': 0.85, '13-17': 0.4, '17-23': 0.48, '23-30': 0.21}
+       sim_A ('V293', 'J_lo'): {'5-9': 1.42, '9-13': 0.85, '13-17': 0.4, '17-23': 0.48, '23-30': 0.21}
+       sim_A ('V293', 'J_hi'): {'5-9': 1.42, '9-13': 0.85, '13-17': 0.4, '17-23': 0.48, '23-30': 0.21}
+       sim_A ('V293', 'light_b'): {'5-9': 1.42, '9-13': 0.85, '13-17': 0.4, '17-23': 0.48, '23-30': 0.21}
+       sim_A ('V293', 'tau6'): {'5-9': 1.42, '9-13': 0.85, '13-17': 0.4, '17-23': 0.48, '23-30': 0.21}
+       sim_A ('V293', 'nominal_kappa'): {'5-9': 1.42, '9-13': 0.85, '13-17': 0.4, '17-23': 0.48, '23-30': 0.21}
+       sim_A ('V294', 'nominal'): {'5-9': 1.74, '9-13': 1.11, '13-17': 0.65, '17-23': 0.53, '23-30': 0.23}
+       sim_A ('V294', 'b_lo'): {'5-9': 1.76, '9-13': 1.11, '13-17': 0.64, '17-23': 0.53, '23-30': 0.23}
+       sim_A ('V294', 'F_hi'): {'5-9': 1.75, '9-13': 1.11, '13-17': 0.65, '17-23': 0.53, '23-30': 0.23}
+       sim_A ('V294', 'J_lo'): {'5-9': 1.74, '9-13': 1.14, '13-17': 0.67, '17-23': 0.55, '23-30': 0.24}
+       sim_A ('V294', 'J_hi'): {'5-9': 1.7, '9-13': 1.07, '13-17': 0.63, '17-23': 0.51, '23-30': 0.23}
+       sim_A ('V294', 'light_b'): {'5-9': 1.8, '9-13': 1.08, '13-17': 0.62, '17-23': 0.52, '23-30': 0.23}
+       sim_A ('V294', 'tau6'): {'5-9': 1.77, '9-13': 1.12, '13-17': 0.66, '17-23': 0.53, '23-30': 0.23}
+       sim_A ('V294', 'nominal_kappa'): {'5-9': 1.74, '9-13': 1.11, '13-17': 0.65, '17-23': 0.53, '23-30': 0.23}
+       sim_B ('full', 'V293', 'nominal'): {'5-9': 1.38, '9-13': 0.8, '13-17': 0.39, '17-23': 0.49, '23-30': 0.2}
+       sim_B ('full', 'V293', 'b_lo'): {'5-9': 1.39, '9-13': 0.8, '13-17': 0.38, '17-23': 0.49, '23-30': 0.2}
+       sim_B ('full', 'V293', 'F_hi'): {'5-9': 1.37, '9-13': 0.8, '13-17': 0.38, '17-23': 0.49, '23-30': 0.2}
+       sim_B ('full', 'V293', 'J_lo'): {'5-9': 1.39, '9-13': 0.8, '13-17': 0.39, '17-23': 0.49, '23-30': 0.2}
+       sim_B ('full', 'V293', 'J_hi'): {'5-9': 1.38, '9-13': 0.79, '13-17': 0.38, '17-23': 0.49, '23-30': 0.2}
+       sim_B ('full', 'V293', 'light_b'): {'5-9': 1.41, '9-13': 0.81, '13-17': 0.39, '17-23': 0.5, '23-30': 0.2}
+       sim_B ('full', 'V293', 'tau6'): {'5-9': 1.37, '9-13': 0.79, '13-17': 0.38, '17-23': 0.49, '23-30': 0.2}
+       sim_B ('full', 'V293', 'nominal_kappa'): {'5-9': 1.4, '9-13': 0.8, '13-17': 0.39, '17-23': 0.5, '23-30': 0.2}
+       sim_B ('full', 'V294', 'nominal'): {'5-9': 1.73, '9-13': 0.98, '13-17': 0.59, '17-23': 0.54, '23-30': 0.23}
+       sim_B ('full', 'V294', 'b_lo'): {'5-9': 1.74, '9-13': 0.96, '13-17': 0.58, '17-23': 0.54, '23-30': 0.22}
+       sim_B ('full', 'V294', 'F_hi'): {'5-9': 1.73, '9-13': 0.98, '13-17': 0.59, '17-23': 0.54, '23-30': 0.23}
+       sim_B ('full', 'V294', 'J_lo'): {'5-9': 1.74, '9-13': 0.99, '13-17': 0.6, '17-23': 0.56, '23-30': 0.24}
+       sim_B ('full', 'V294', 'J_hi'): {'5-9': 1.71, '9-13': 0.96, '13-17': 0.56, '17-23': 0.53, '23-30': 0.22}
+       sim_B ('full', 'V294', 'light_b'): {'5-9': 1.76, '9-13': 0.95, '13-17': 0.55, '17-23': 0.53, '23-30': 0.22}
+       sim_B ('full', 'V294', 'tau6'): {'5-9': 1.76, '9-13': 0.99, '13-17': 0.59, '17-23': 0.55, '23-30': 0.22}
+       sim_B ('full', 'V294', 'nominal_kappa'): {'5-9': 1.72, '9-13': 0.97, '13-17': 0.58, '17-23': 0.55, '23-30': 0.23}
+  M_TRACK closed-form nominal    v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.104, 0.257, 0.708, 1.412, 1.766, 1.857, 1.555] (V294 [0.107, 0.266, 0.654, 1.067, 1.364, 1.727, 1.636])
+  M_TRACK closed-form nominal    v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.074, 0.162, 0.383, 0.752, 1.014, 1.257, 1.237] (V294 [0.075, 0.164, 0.365, 0.644, 0.859, 1.154, 1.25])
+  M_TRACK closed-form nominal    v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.026, 0.062, 0.168, 0.357, 0.504, 0.681, 0.765] (V294 [0.026, 0.063, 0.166, 0.334, 0.461, 0.639, 0.753])
+  M_TRACK closed-form nominal    v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.031, 0.064, 0.144, 0.284, 0.394, 0.534, 0.612] (V294 [0.031, 0.064, 0.142, 0.267, 0.367, 0.507, 0.603])
+  M_TRACK closed-form b_lo       v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.11, 0.292, 0.952, 1.987, 2.286, 2.126, 1.654] (V294 [0.114, 0.309, 0.876, 1.361, 1.684, 2.028, 1.776])
+  M_TRACK closed-form b_lo       v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.085, 0.217, 0.639, 1.35, 1.721, 1.835, 1.547] (V294 [0.087, 0.225, 0.606, 1.034, 1.33, 1.695, 1.621])
+  M_TRACK closed-form b_lo       v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.028, 0.074, 0.245, 0.621, 0.906, 1.185, 1.197] (V294 [0.028, 0.075, 0.246, 0.557, 0.777, 1.074, 1.195])
+  M_TRACK closed-form b_lo       v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.037, 0.089, 0.24, 0.507, 0.708, 0.931, 0.994] (V294 [0.037, 0.09, 0.236, 0.459, 0.627, 0.861, 0.985])
+  M_TRACK closed-form F_hi       v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.104, 0.257, 0.708, 1.412, 1.766, 1.857, 1.555] (V294 [0.107, 0.266, 0.654, 1.067, 1.364, 1.727, 1.636])
+  M_TRACK closed-form F_hi       v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.074, 0.162, 0.383, 0.752, 1.014, 1.257, 1.237] (V294 [0.075, 0.164, 0.365, 0.644, 0.859, 1.154, 1.25])
+  M_TRACK closed-form F_hi       v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.026, 0.062, 0.168, 0.357, 0.504, 0.681, 0.765] (V294 [0.026, 0.063, 0.166, 0.334, 0.461, 0.639, 0.753])
+  M_TRACK closed-form F_hi       v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.031, 0.064, 0.144, 0.284, 0.394, 0.534, 0.612] (V294 [0.031, 0.064, 0.142, 0.267, 0.367, 0.507, 0.603])
+  M_TRACK closed-form J_lo       v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.106, 0.257, 0.703, 1.485, 2.034, 2.536, 2.492] (V294 [0.109, 0.267, 0.661, 1.123, 1.487, 2.109, 2.508])
+  M_TRACK closed-form J_lo       v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.066, 0.14, 0.323, 0.639, 0.888, 1.199, 1.362] (V294 [0.067, 0.142, 0.311, 0.563, 0.764, 1.074, 1.319])
+  M_TRACK closed-form J_lo       v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.026, 0.062, 0.164, 0.349, 0.495, 0.684, 0.807] (V294 [0.026, 0.062, 0.163, 0.327, 0.454, 0.638, 0.783])
+  M_TRACK closed-form J_lo       v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.029, 0.059, 0.13, 0.255, 0.355, 0.487, 0.578] (V294 [0.029, 0.059, 0.128, 0.242, 0.333, 0.464, 0.565])
+  M_TRACK closed-form J_hi       v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.09, 0.229, 0.627, 0.983, 1.012, 0.882, 0.671] (V294 [0.092, 0.235, 0.565, 0.803, 0.903, 0.889, 0.695])
+  M_TRACK closed-form J_hi       v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.085, 0.203, 0.509, 0.846, 0.927, 0.85, 0.661] (V294 [0.086, 0.207, 0.468, 0.708, 0.826, 0.849, 0.683])
+  M_TRACK closed-form J_hi       v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.028, 0.069, 0.195, 0.414, 0.551, 0.637, 0.574] (V294 [0.028, 0.07, 0.193, 0.38, 0.502, 0.616, 0.582])
+  M_TRACK closed-form J_hi       v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.03, 0.062, 0.14, 0.27, 0.366, 0.461, 0.466] (V294 [0.03, 0.062, 0.137, 0.255, 0.343, 0.447, 0.467])
+  M_TRACK closed-form light_b    v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.172, 0.502, 2.212, 3.394, 2.892, 2.248, 1.641] (V294 [0.181, 0.563, 1.721, 1.937, 2.199, 2.332, 1.806])
+  M_TRACK closed-form light_b    v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.101, 0.292, 1.398, 4.248, 3.298, 2.355, 1.671] (V294 [0.104, 0.316, 1.456, 2.139, 2.36, 2.434, 1.842])
+  M_TRACK closed-form light_b    v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.088, 0.252, 1.195, 4.525, 3.475, 2.398, 1.682] (V294 [0.09, 0.27, 1.296, 2.205, 2.422, 2.474, 1.855])
+  M_TRACK closed-form light_b    v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.066, 0.189, 0.871, 4.743, 3.969, 2.508, 1.71] (V294 [0.067, 0.199, 0.972, 2.317, 2.57, 2.574, 1.889])
+  M_TRACK closed-form tau6       v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.104, 0.257, 0.708, 1.412, 1.766, 1.857, 1.555] (V294 [0.107, 0.266, 0.651, 1.065, 1.374, 1.771, 1.676])
+  M_TRACK closed-form tau6       v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.074, 0.162, 0.383, 0.752, 1.014, 1.257, 1.237] (V294 [0.075, 0.164, 0.364, 0.643, 0.861, 1.171, 1.275])
+  M_TRACK closed-form tau6       v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.026, 0.062, 0.168, 0.357, 0.504, 0.681, 0.765] (V294 [0.026, 0.063, 0.166, 0.333, 0.461, 0.643, 0.763])
+  M_TRACK closed-form tau6       v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.031, 0.064, 0.144, 0.284, 0.394, 0.534, 0.612] (V294 [0.031, 0.064, 0.142, 0.267, 0.367, 0.51, 0.609])
+  M_TRACK closed-form nominal_kappa v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.104, 0.257, 0.708, 1.412, 1.766, 1.857, 1.555] (V294 [0.107, 0.266, 0.654, 1.067, 1.364, 1.727, 1.636])
+  M_TRACK closed-form nominal_kappa v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.074, 0.162, 0.383, 0.752, 1.014, 1.257, 1.237] (V294 [0.075, 0.164, 0.365, 0.644, 0.859, 1.154, 1.25])
+  M_TRACK closed-form nominal_kappa v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.026, 0.062, 0.168, 0.357, 0.504, 0.681, 0.765] (V294 [0.026, 0.063, 0.166, 0.334, 0.461, 0.639, 0.753])
+  M_TRACK closed-form nominal_kappa v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.031, 0.064, 0.144, 0.284, 0.394, 0.534, 0.612] (V294 [0.031, 0.064, 0.142, 0.267, 0.367, 0.507, 0.603])
+  M_TRACK mode A ('V293', 'nominal'): {'lit_0.3-1': {'R2': 0.196, 'G': 0.127, 'ph': 84.582}, 'lit_1-3': {'R2': 0.32, 'G': 1.867, 'ph': 31.868}, 'lit_3-8': {'R2': 0.181, 'G': 3.658, 'ph': 61.481}, 'probe_0.3-1': {'G': 0.186, 'ph': 92.701, 'coh': 0.05}, 'probe_1-3': {'G': 0.745, 'ph': 39.224, 'coh': 0.475}, 'probe_3-8': {'G': 0.977, 'ph': -36.126, 'coh': 0.713}}
+  M_TRACK mode A ('V293', 'b_lo'): {'lit_0.3-1': {'R2': 0.193, 'G': 0.137, 'ph': 85.477}, 'lit_1-3': {'R2': 0.333, 'G': 2.019, 'ph': 30.331}, 'lit_3-8': {'R2': 0.183, 'G': 3.617, 'ph': 56.243}, 'probe_0.3-1': {'G': 0.49, 'ph': 127.123, 'coh': 0.089}, 'probe_1-3': {'G': 0.914, 'ph': 37.819, 'coh': 0.413}, 'probe_3-8': {'G': 1.18, 'ph': -43.967, 'coh': 0.738}}
+  M_TRACK mode A ('V293', 'F_hi'): {'lit_0.3-1': {'R2': 0.186, 'G': 0.141, 'ph': 78.358}, 'lit_1-3': {'R2': 0.316, 'G': 1.838, 'ph': 31.891}, 'lit_3-8': {'R2': 0.18, 'G': 3.71, 'ph': 64.785}, 'probe_0.3-1': {'G': 0.283, 'ph': 78.985, 'coh': 0.066}, 'probe_1-3': {'G': 0.544, 'ph': 32.335, 'coh': 0.336}, 'probe_3-8': {'G': 0.812, 'ph': -37.406, 'coh': 0.603}}
+  M_TRACK mode A ('V293', 'J_lo'): {'lit_0.3-1': {'R2': 0.202, 'G': 0.127, 'ph': 84.716}, 'lit_1-3': {'R2': 0.318, 'G': 1.925, 'ph': 33.557}, 'lit_3-8': {'R2': 0.184, 'G': 4.037, 'ph': 61.476}, 'probe_0.3-1': {'G': 0.214, 'ph': 77.012, 'coh': 0.056}, 'probe_1-3': {'G': 0.802, 'ph': 53.087, 'coh': 0.487}, 'probe_3-8': {'G': 1.213, 'ph': -21.667, 'coh': 0.688}}
+  M_TRACK mode A ('V293', 'J_hi'): {'lit_0.3-1': {'R2': 0.183, 'G': 0.141, 'ph': 80.29}, 'lit_1-3': {'R2': 0.314, 'G': 1.681, 'ph': 29.721}, 'lit_3-8': {'R2': 0.177, 'G': 3.39, 'ph': 64.802}, 'probe_0.3-1': {'G': 0.262, 'ph': 97.298, 'coh': 0.077}, 'probe_1-3': {'G': 0.537, 'ph': 19.288, 'coh': 0.435}, 'probe_3-8': {'G': 0.567, 'ph': -54.022, 'coh': 0.769}}
+  M_TRACK mode A ('V293', 'light_b'): {'lit_0.3-1': {'R2': 0.163, 'G': 0.145, 'ph': 78.791}, 'lit_1-3': {'R2': 0.332, 'G': 2.316, 'ph': 21.587}, 'lit_3-8': {'R2': 0.161, 'G': 3.235, 'ph': 44.654}, 'probe_0.3-1': {'G': 1.037, 'ph': 64.966, 'coh': 0.061}, 'probe_1-3': {'G': 1.387, 'ph': 21.481, 'coh': 0.327}, 'probe_3-8': {'G': 1.231, 'ph': -67.825, 'coh': 0.577}}
+  M_TRACK mode A ('V293', 'tau6'): {'lit_0.3-1': {'R2': 0.192, 'G': 0.105, 'ph': 83.027}, 'lit_1-3': {'R2': 0.324, 'G': 1.879, 'ph': 31.182}, 'lit_3-8': {'R2': 0.178, 'G': 3.554, 'ph': 61.151}, 'probe_0.3-1': {'G': 0.405, 'ph': 97.166, 'coh': 0.08}, 'probe_1-3': {'G': 0.666, 'ph': 33.387, 'coh': 0.404}, 'probe_3-8': {'G': 0.923, 'ph': -43.409, 'coh': 0.724}}
+  M_TRACK mode A ('V293', 'nominal_kappa'): {'lit_0.3-1': {'R2': 0.254, 'G': 0.12, 'ph': 82.161}, 'lit_1-3': {'R2': 0.321, 'G': 1.869, 'ph': 31.863}, 'lit_3-8': {'R2': 0.184, 'G': 3.648, 'ph': 61.629}, 'probe_0.3-1': {'G': 0.324, 'ph': 102.028, 'coh': 0.097}, 'probe_1-3': {'G': 0.648, 'ph': 38.96, 'coh': 0.395}, 'probe_3-8': {'G': 0.963, 'ph': -37.411, 'coh': 0.727}}
+  M_TRACK mode A ('V294', 'nominal'): {'lit_0.3-1': {'R2': 0.195, 'G': 0.12, 'ph': 77.836}, 'lit_1-3': {'R2': 0.322, 'G': 1.445, 'ph': 29.79}, 'lit_3-8': {'R2': 0.175, 'G': 3.27, 'ph': 66.797}, 'probe_0.3-1': {'G': 0.163, 'ph': 44.311, 'coh': 0.051}, 'probe_1-3': {'G': 0.635, 'ph': 43.819, 'coh': 0.446}, 'probe_3-8': {'G': 0.923, 'ph': -29.784, 'coh': 0.739}}
+  M_TRACK mode A ('V294', 'b_lo'): {'lit_0.3-1': {'R2': 0.196, 'G': 0.13, 'ph': 78.267}, 'lit_1-3': {'R2': 0.335, 'G': 1.452, 'ph': 27.934}, 'lit_3-8': {'R2': 0.17, 'G': 3.08, 'ph': 62.661}, 'probe_0.3-1': {'G': 0.301, 'ph': 115.44, 'coh': 0.044}, 'probe_1-3': {'G': 0.838, 'ph': 36.892, 'coh': 0.483}, 'probe_3-8': {'G': 1.118, 'ph': -37.764, 'coh': 0.763}}
+  M_TRACK mode A ('V294', 'F_hi'): {'lit_0.3-1': {'R2': 0.191, 'G': 0.139, 'ph': 79.204}, 'lit_1-3': {'R2': 0.314, 'G': 1.424, 'ph': 29.572}, 'lit_3-8': {'R2': 0.174, 'G': 3.317, 'ph': 67.512}, 'probe_0.3-1': {'G': 0.162, 'ph': 91.58, 'coh': 0.1}, 'probe_1-3': {'G': 0.533, 'ph': 37.434, 'coh': 0.377}, 'probe_3-8': {'G': 0.789, 'ph': -28.936, 'coh': 0.625}}
+  M_TRACK mode A ('V294', 'J_lo'): {'lit_0.3-1': {'R2': 0.217, 'G': 0.121, 'ph': 83.613}, 'lit_1-3': {'R2': 0.315, 'G': 1.469, 'ph': 28.994}, 'lit_3-8': {'R2': 0.188, 'G': 3.365, 'ph': 66.394}, 'probe_0.3-1': {'G': 0.26, 'ph': 91.71, 'coh': 0.073}, 'probe_1-3': {'G': 0.614, 'ph': 46.728, 'coh': 0.435}, 'probe_3-8': {'G': 1.102, 'ph': -13.458, 'coh': 0.723}}
+  M_TRACK mode A ('V294', 'J_hi'): {'lit_0.3-1': {'R2': 0.187, 'G': 0.139, 'ph': 81.922}, 'lit_1-3': {'R2': 0.319, 'G': 1.411, 'ph': 30.329}, 'lit_3-8': {'R2': 0.172, 'G': 3.19, 'ph': 69.47}, 'probe_0.3-1': {'G': 0.241, 'ph': 87.046, 'coh': 0.126}, 'probe_1-3': {'G': 0.461, 'ph': 24.379, 'coh': 0.447}, 'probe_3-8': {'G': 0.566, 'ph': -51.088, 'coh': 0.772}}
+  M_TRACK mode A ('V294', 'light_b'): {'lit_0.3-1': {'R2': 0.168, 'G': 0.132, 'ph': 75.418}, 'lit_1-3': {'R2': 0.308, 'G': 1.659, 'ph': 24.503}, 'lit_3-8': {'R2': 0.129, 'G': 2.727, 'ph': 60.338}, 'probe_0.3-1': {'G': 0.526, 'ph': 80.971, 'coh': 0.051}, 'probe_1-3': {'G': 0.963, 'ph': 16.981, 'coh': 0.358}, 'probe_3-8': {'G': 1.094, 'ph': -55.439, 'coh': 0.557}}
+  M_TRACK mode A ('V294', 'tau6'): {'lit_0.3-1': {'R2': 0.197, 'G': 0.123, 'ph': 76.325}, 'lit_1-3': {'R2': 0.329, 'G': 1.448, 'ph': 29.715}, 'lit_3-8': {'R2': 0.173, 'G': 3.216, 'ph': 66.543}, 'probe_0.3-1': {'G': 0.424, 'ph': 84.545, 'coh': 0.125}, 'probe_1-3': {'G': 0.569, 'ph': 39.628, 'coh': 0.451}, 'probe_3-8': {'G': 0.896, 'ph': -38.305, 'coh': 0.735}}
+  M_TRACK mode A ('V294', 'nominal_kappa'): {'lit_0.3-1': {'R2': 0.194, 'G': 0.118, 'ph': 84.181}, 'lit_1-3': {'R2': 0.326, 'G': 1.444, 'ph': 29.929}, 'lit_3-8': {'R2': 0.177, 'G': 3.289, 'ph': 65.993}, 'probe_0.3-1': {'G': 0.259, 'ph': 97.98, 'coh': 0.048}, 'probe_1-3': {'G': 0.56, 'ph': 37.46, 'coh': 0.413}, 'probe_3-8': {'G': 0.943, 'ph': -30.024, 'coh': 0.756}}
+  M_TRACK flatness |alpha/cmd| 1-3 Hz by amplitude: {"('V293', 'nominal', 30.0)": 0.236, "('V293', 'nominal', 100.0)": 0.57, "('V293', 'nominal', 300.0)": 0.676, "('V293', 'b_lo', 30.0)": 0.404, "('V293', 'b_lo', 100.0)": 0.985, "('V293', 'b_lo', 300.0)": 1.166, "('V293', 'F_hi', 30.0)": 0.028, "('V293', 'F_hi', 100.0)": 0.418, "('V293', 'F_hi', 300.0)": 0.623, "('V294', 'nominal', 30.0)": 0.206, "('V294', 'nominal', 100.0)": 0.496, "('V294', 'nominal', 300.0)": 0.587, "('V294', 'b_lo', 30.0)": 0.328, "('V294', 'b_lo', 100.0)": 0.788, "('V294', 'b_lo', 300.0)": 0.932, "('V294', 'F_hi', 30.0)": 0.025, "('V294', 'F_hi', 100.0)": 0.366, "('V294', 'F_hi', 300.0)": 0.541}
+  M_DRIVE outer nominal  v  5.0 relay True  Ms 1.23@1.84 PM 119 GM 7.6 |T(0.2Hz)| 0.591
+  M_DRIVE outer nominal  v  5.0 relay False Ms 1.14@1.73 PM 133 GM 11.7 |T(0.2Hz)| 0.485
+  M_DRIVE outer nominal  v  8.0 relay True  Ms 1.23@2.10 PM 145 GM 7.1 |T(0.2Hz)| 0.485
+  M_DRIVE outer nominal  v  8.0 relay False Ms 1.14@2.02 PM 120 GM 11.1 |T(0.2Hz)| 0.380
+  M_DRIVE outer nominal  v 12.0 relay True  Ms 1.13@2.16 PM 142 GM 12.3 |T(0.2Hz)| 0.479
+  M_DRIVE outer nominal  v 12.0 relay False Ms 1.08@2.06 PM 118 GM 19.3 |T(0.2Hz)| 0.374
+  M_DRIVE outer nominal  v 17.0 relay True  Ms 1.06@2.59 PM 111 GM 23.3 |T(0.2Hz)| 0.277
+  M_DRIVE outer nominal  v 17.0 relay False Ms 1.04@2.51 PM 102 GM 36.5 |T(0.2Hz)| 0.199
+  M_DRIVE outer nominal  v 26.9 relay True  Ms 1.09@2.29 PM 139 GM 18.1 |T(0.2Hz)| 0.471
+  M_DRIVE outer nominal  v 26.9 relay False Ms 1.06@2.18 PM 117 GM 28.3 |T(0.2Hz)| 0.365
+  M_DRIVE outer b_lo     v  5.0 relay True  Ms 1.38@1.84 PM 110 GM 4.9 |T(0.2Hz)| 0.593
+  M_DRIVE outer b_lo     v  5.0 relay False Ms 1.23@1.73 PM 137 GM 7.7 |T(0.2Hz)| 0.489
+  M_DRIVE outer b_lo     v  8.0 relay True  Ms 1.38@2.10 PM 147 GM 4.7 |T(0.2Hz)| 0.486
+  M_DRIVE outer b_lo     v  8.0 relay False Ms 1.22@2.02 PM 121 GM 7.3 |T(0.2Hz)| 0.382
+  M_DRIVE outer b_lo     v 12.0 relay True  Ms 1.27@2.26 PM 146 GM 6.2 |T(0.2Hz)| 0.484
+  M_DRIVE outer b_lo     v 12.0 relay False Ms 1.16@2.18 PM 121 GM 9.7 |T(0.2Hz)| 0.380
+  M_DRIVE outer b_lo     v 17.0 relay True  Ms 1.11@2.93 PM 111 GM 12.3 |T(0.2Hz)| 0.281
+  M_DRIVE outer b_lo     v 17.0 relay False Ms 1.07@2.87 PM 103 GM 19.1 |T(0.2Hz)| 0.203
+  M_DRIVE outer b_lo     v 26.9 relay True  Ms 1.17@2.61 PM 144 GM 9.5 |T(0.2Hz)| 0.480
+  M_DRIVE outer b_lo     v 26.9 relay False Ms 1.10@2.49 PM 120 GM 14.7 |T(0.2Hz)| 0.376
+  M_DRIVE outer F_hi     v  5.0 relay True  Ms 1.23@1.84 PM 119 GM 7.6 |T(0.2Hz)| 0.591
+  M_DRIVE outer F_hi     v  5.0 relay False Ms 1.14@1.73 PM 133 GM 11.7 |T(0.2Hz)| 0.485
+  M_DRIVE outer F_hi     v  8.0 relay True  Ms 1.23@2.10 PM 145 GM 7.1 |T(0.2Hz)| 0.485
+  M_DRIVE outer F_hi     v  8.0 relay False Ms 1.14@2.02 PM 120 GM 11.1 |T(0.2Hz)| 0.380
+  M_DRIVE outer F_hi     v 12.0 relay True  Ms 1.13@2.16 PM 142 GM 12.3 |T(0.2Hz)| 0.479
+  M_DRIVE outer F_hi     v 12.0 relay False Ms 1.08@2.06 PM 118 GM 19.3 |T(0.2Hz)| 0.374
+  M_DRIVE outer F_hi     v 17.0 relay True  Ms 1.06@2.59 PM 111 GM 23.3 |T(0.2Hz)| 0.277
+  M_DRIVE outer F_hi     v 17.0 relay False Ms 1.04@2.51 PM 102 GM 36.5 |T(0.2Hz)| 0.199
+  M_DRIVE outer F_hi     v 26.9 relay True  Ms 1.09@2.29 PM 139 GM 18.1 |T(0.2Hz)| 0.471
+  M_DRIVE outer F_hi     v 26.9 relay False Ms 1.06@2.18 PM 117 GM 28.3 |T(0.2Hz)| 0.365
+  M_DRIVE outer J_lo     v  5.0 relay True  Ms 1.19@2.18 PM 120 GM 8.5 |T(0.2Hz)| 0.597
+  M_DRIVE outer J_lo     v  5.0 relay False Ms 1.12@2.06 PM 134 GM 13.4 |T(0.2Hz)| 0.491
+  M_DRIVE outer J_lo     v  8.0 relay True  Ms 1.19@2.49 PM 147 GM 8.1 |T(0.2Hz)| 0.490
+  M_DRIVE outer J_lo     v  8.0 relay False Ms 1.12@2.40 PM 121 GM 12.7 |T(0.2Hz)| 0.385
+  M_DRIVE outer J_lo     v 12.0 relay True  Ms 1.09@2.31 PM 137 GM 17.3 |T(0.2Hz)| 0.459
+  M_DRIVE outer J_lo     v 12.0 relay False Ms 1.06@2.20 PM 116 GM 27.1 |T(0.2Hz)| 0.354
+  M_DRIVE outer J_lo     v 17.0 relay True  Ms 1.06@2.69 PM 111 GM 26.5 |T(0.2Hz)| 0.276
+  M_DRIVE outer J_lo     v 17.0 relay False Ms 1.04@2.61 PM 102 GM 40.9 |T(0.2Hz)| 0.199
+  M_DRIVE outer J_lo     v 26.9 relay True  Ms 1.08@2.29 PM 137 GM 22.2 |T(0.2Hz)| 0.463
+  M_DRIVE outer J_lo     v 26.9 relay False Ms 1.05@2.18 PM 116 GM 34.8 |T(0.2Hz)| 0.357
+  M_DRIVE outer J_hi     v  5.0 relay True  Ms 1.24@1.37 PM 135 GM 8.0 |T(0.2Hz)| 0.541
+  M_DRIVE outer J_hi     v  5.0 relay False Ms 1.15@1.30 PM 125 GM 12.3 |T(0.2Hz)| 0.433
+  M_DRIVE outer J_hi     v  8.0 relay True  Ms 1.25@1.58 PM 134 GM 7.2 |T(0.2Hz)| 0.443
+  M_DRIVE outer J_hi     v  8.0 relay False Ms 1.16@1.52 PM 115 GM 11.2 |T(0.2Hz)| 0.341
+  M_DRIVE outer J_hi     v 12.0 relay True  Ms 1.25@1.64 PM 146 GM 7.3 |T(0.2Hz)| 0.498
+  M_DRIVE outer J_hi     v 12.0 relay False Ms 1.15@1.56 PM 121 GM 11.5 |T(0.2Hz)| 0.392
+  M_DRIVE outer J_hi     v 17.0 relay True  Ms 1.09@2.26 PM 112 GM 16.1 |T(0.2Hz)| 0.287
+  M_DRIVE outer J_hi     v 17.0 relay False Ms 1.06@2.20 PM 103 GM 24.9 |T(0.2Hz)| 0.207
+  M_DRIVE outer J_hi     v 26.9 relay True  Ms 1.10@2.06 PM 137 GM 16.0 |T(0.2Hz)| 0.464
+  M_DRIVE outer J_hi     v 26.9 relay False Ms 1.06@1.96 PM 116 GM 25.1 |T(0.2Hz)| 0.358
+  M_DRIVE outer light_b  v  5.0 relay True  Ms 2.83@1.64 PM 33 GM 1.9 |T(0.2Hz)| 0.653
+  M_DRIVE outer light_b  v  5.0 relay False Ms 1.85@1.50 PM 72 GM 2.9 |T(0.2Hz)| 0.553
+  M_DRIVE outer light_b  v  8.0 relay True  Ms 3.17@1.80 PM 31 GM 1.7 |T(0.2Hz)| 0.587
+  M_DRIVE outer light_b  v  8.0 relay False Ms 1.93@1.69 PM 90 GM 2.7 |T(0.2Hz)| 0.483
+  M_DRIVE outer light_b  v 12.0 relay True  Ms 4.18@2.14 PM 24 GM 1.4 |T(0.2Hz)| 0.507
+  M_DRIVE outer light_b  v 12.0 relay False Ms 2.12@2.02 PM 127 GM 2.2 |T(0.2Hz)| 0.403
+  M_DRIVE outer light_b  v 17.0 relay True  Ms 14.97@2.31 PM 6 GM 1.1 |T(0.2Hz)| 0.545
+  M_DRIVE outer light_b  v 17.0 relay False Ms 2.94@2.18 PM 47 GM 1.7 |T(0.2Hz)| 0.440
+  M_DRIVE outer light_b  v 26.9 relay True  Ms 3.74@2.71 PM 342 GM 0.7 |T(0.2Hz)| 0.596
+  M_DRIVE outer light_b  v 26.9 relay False Ms 14.31@2.49 PM 7 GM 1.1 |T(0.2Hz)| 0.492
+  M_DRIVE outer tau6     v  5.0 relay True  Ms 1.25@1.80 PM 119 GM 7.0 |T(0.2Hz)| 0.592
+  M_DRIVE outer tau6     v  5.0 relay False Ms 1.15@1.70 PM 133 GM 11.0 |T(0.2Hz)| 0.485
+  M_DRIVE outer tau6     v  8.0 relay True  Ms 1.24@2.06 PM 145 GM 6.7 |T(0.2Hz)| 0.485
+  M_DRIVE outer tau6     v  8.0 relay False Ms 1.15@1.98 PM 120 GM 10.3 |T(0.2Hz)| 0.381
+  M_DRIVE outer tau6     v 12.0 relay True  Ms 1.14@2.10 PM 141 GM 11.5 |T(0.2Hz)| 0.480
+  M_DRIVE outer tau6     v 12.0 relay False Ms 1.09@2.00 PM 118 GM 18.0 |T(0.2Hz)| 0.374
+  M_DRIVE outer tau6     v 17.0 relay True  Ms 1.07@2.49 PM 111 GM 21.4 |T(0.2Hz)| 0.277
+  M_DRIVE outer tau6     v 17.0 relay False Ms 1.04@2.44 PM 102 GM 33.2 |T(0.2Hz)| 0.199
+  M_DRIVE outer tau6     v 26.9 relay True  Ms 1.10@2.20 PM 139 GM 16.4 |T(0.2Hz)| 0.472
+  M_DRIVE outer tau6     v 26.9 relay False Ms 1.06@2.10 PM 117 GM 25.8 |T(0.2Hz)| 0.365
+  M_DRIVE outer nominal_kappa v  5.0 relay True  Ms 1.23@1.84 PM 119 GM 7.6 |T(0.2Hz)| 0.591
+  M_DRIVE outer nominal_kappa v  5.0 relay False Ms 1.14@1.73 PM 133 GM 11.7 |T(0.2Hz)| 0.485
+  M_DRIVE outer nominal_kappa v  8.0 relay True  Ms 1.23@2.10 PM 145 GM 7.1 |T(0.2Hz)| 0.485
+  M_DRIVE outer nominal_kappa v  8.0 relay False Ms 1.14@2.02 PM 120 GM 11.1 |T(0.2Hz)| 0.380
+  M_DRIVE outer nominal_kappa v 12.0 relay True  Ms 1.13@2.16 PM 142 GM 12.3 |T(0.2Hz)| 0.479
+  M_DRIVE outer nominal_kappa v 12.0 relay False Ms 1.08@2.06 PM 118 GM 19.3 |T(0.2Hz)| 0.374
+  M_DRIVE outer nominal_kappa v 17.0 relay True  Ms 1.06@2.59 PM 111 GM 23.3 |T(0.2Hz)| 0.277
+  M_DRIVE outer nominal_kappa v 17.0 relay False Ms 1.04@2.51 PM 102 GM 36.5 |T(0.2Hz)| 0.199
+  M_DRIVE outer nominal_kappa v 26.9 relay True  Ms 1.09@2.29 PM 139 GM 18.1 |T(0.2Hz)| 0.471
+  M_DRIVE outer nominal_kappa v 26.9 relay False Ms 1.06@2.18 PM 117 GM 28.3 |T(0.2Hz)| 0.365
+  M_DRIVE sim ('full', 'V293', 'nominal'):
+       0-5      41s track 0.872 hold nan str 0.74 J 0.039 ish 0.51 cmd  553 trim/FF 0.000 rate 12.85/5.94/1.65 hard nan dwell 59.5
+       5-10    154s track 0.872 hold 0.790 str 0.59 J 0.087 ish 0.38 cmd  518 trim/FF 0.000 rate 13.82/10.88/3.07 hard 19.30 dwell 16.4
+       10-15   182s track 0.575 hold 0.495 str 0.49 J 0.058 ish 0.38 cmd  251 trim/FF 0.000 rate 2.25/3.08/1.31 hard nan dwell 15.9
+       15-22   158s track 0.830 hold 0.672 str 0.96 J 0.075 ish 0.42 cmd  328 trim/FF 0.000 rate 1.58/3.33/1.51 hard 8.10 dwell 5.3
+       22+      71s track 0.922 hold 0.936 str 0.81 J 0.061 ish 0.27 cmd  281 trim/FF 0.000 rate 0.59/1.11/0.71 hard 1.85 dwell 0.0
+       limit-cycle peak 1.27 Hz +4.1 dB rms 4.01 deg/s
+  M_DRIVE sim ('full', 'V293', 'b_lo'):
+       0-5      41s track 0.871 hold nan str 0.74 J 0.038 ish 0.51 cmd  553 trim/FF 0.000 rate 12.13/6.33/1.69 hard nan dwell 67.6
+       5-10    154s track 0.872 hold 0.796 str 0.58 J 0.086 ish 0.38 cmd  517 trim/FF 0.000 rate 13.60/11.99/3.15 hard 21.46 dwell 21.7
+       10-15   182s track 0.580 hold 0.501 str 0.49 J 0.058 ish 0.38 cmd  249 trim/FF 0.000 rate 2.29/3.31/1.36 hard nan dwell 19.6
+       15-22   158s track 0.830 hold 0.672 str 0.96 J 0.075 ish 0.42 cmd  327 trim/FF 0.000 rate 1.62/3.49/1.57 hard 8.51 dwell 9.9
+       22+      71s track 0.923 hold 0.936 str 0.82 J 0.061 ish 0.26 cmd  281 trim/FF 0.000 rate 0.61/1.17/0.73 hard 1.93 dwell 5.1
+       limit-cycle peak 1.37 Hz +5.8 dB rms 4.26 deg/s
+  M_DRIVE sim ('full', 'V293', 'F_hi'):
+       0-5      41s track 0.871 hold nan str 0.73 J 0.039 ish 0.51 cmd  555 trim/FF 0.000 rate 12.92/5.89/1.62 hard nan dwell 78.8
+       5-10    154s track 0.871 hold 0.789 str 0.59 J 0.087 ish 0.38 cmd  519 trim/FF 0.000 rate 13.89/10.81/3.08 hard 19.14 dwell 22.5
+       10-15   182s track 0.575 hold 0.494 str 0.49 J 0.058 ish 0.38 cmd  251 trim/FF 0.000 rate 2.25/3.08/1.31 hard nan dwell 16.9
+       15-22   158s track 0.829 hold 0.670 str 0.96 J 0.075 ish 0.42 cmd  328 trim/FF 0.000 rate 1.58/3.34/1.51 hard 8.10 dwell 7.2
+       22+      71s track 0.921 hold 0.935 str 0.81 J 0.061 ish 0.27 cmd  281 trim/FF 0.000 rate 0.59/1.12/0.71 hard 1.87 dwell 2.5
+       limit-cycle peak 1.27 Hz +4.0 dB rms 4.00 deg/s
+  M_DRIVE sim ('full', 'V293', 'J_lo'):
+       0-5      41s track 0.872 hold nan str 0.74 J 0.039 ish 0.51 cmd  553 trim/FF 0.000 rate 12.73/5.93/1.82 hard nan dwell 69.2
+       5-10    154s track 0.871 hold 0.791 str 0.59 J 0.086 ish 0.38 cmd  518 trim/FF 0.000 rate 13.73/10.76/3.30 hard 19.40 dwell 16.0
+       10-15   182s track 0.575 hold 0.496 str 0.49 J 0.058 ish 0.38 cmd  251 trim/FF 0.000 rate 2.23/3.02/1.33 hard nan dwell 4.4
+       15-22   158s track 0.829 hold 0.672 str 0.96 J 0.075 ish 0.42 cmd  328 trim/FF 0.000 rate 1.57/3.32/1.51 hard 8.09 dwell 1.5
+       22+      71s track 0.921 hold 0.935 str 0.81 J 0.061 ish 0.27 cmd  281 trim/FF 0.000 rate 0.58/1.11/0.72 hard 1.85 dwell 0.0
+       limit-cycle peak 1.27 Hz +3.7 dB rms 3.92 deg/s
+  M_DRIVE sim ('full', 'V293', 'J_hi'):
+       0-5      41s track 0.872 hold nan str 0.74 J 0.041 ish 0.51 cmd  553 trim/FF 0.000 rate 13.39/5.77/1.49 hard nan dwell 35.4
+       5-10    154s track 0.871 hold 0.790 str 0.59 J 0.088 ish 0.38 cmd  519 trim/FF 0.000 rate 14.09/10.60/2.72 hard 17.84 dwell 14.4
+       10-15   182s track 0.577 hold 0.495 str 0.49 J 0.058 ish 0.38 cmd  250 trim/FF 0.000 rate 2.28/3.13/1.21 hard nan dwell 22.0
+       15-22   158s track 0.830 hold 0.672 str 0.96 J 0.075 ish 0.42 cmd  328 trim/FF 0.000 rate 1.59/3.36/1.47 hard 8.15 dwell 13.3
+       22+      71s track 0.922 hold 0.935 str 0.81 J 0.061 ish 0.27 cmd  281 trim/FF 0.000 rate 0.59/1.11/0.70 hard 1.86 dwell 5.1
+       limit-cycle peak 1.27 Hz +4.3 dB rms 4.11 deg/s
+  M_DRIVE sim ('full', 'V293', 'light_b'):
+       0-5      41s track 0.871 hold nan str 0.73 J 0.034 ish 0.51 cmd  549 trim/FF 0.000 rate 10.50/7.98/1.79 hard nan dwell 62.7
+       5-10    154s track 0.873 hold 0.805 str 0.58 J 0.085 ish 0.38 cmd  516 trim/FF 0.000 rate 12.75/16.23/3.08 hard 26.69 dwell 41.7
+       10-15   182s track 0.585 hold 0.509 str 0.49 J 0.059 ish 0.38 cmd  248 trim/FF 0.000 rate 2.34/4.25/1.39 hard nan dwell 55.8
+       15-22   158s track 0.830 hold 0.664 str 0.96 J 0.080 ish 0.42 cmd  326 trim/FF 0.000 rate 1.69/6.06/1.78 hard 16.55 dwell 51.0
+       22+      71s track 0.922 hold 0.935 str 0.82 J 0.064 ish 0.26 cmd  281 trim/FF 0.000 rate 0.67/1.48/0.91 hard 2.45 dwell 38.0
+       limit-cycle peak 1.37 Hz +9.6 dB rms 6.12 deg/s
+  M_DRIVE sim ('full', 'V293', 'tau6'):
+       0-5      41s track 0.871 hold nan str 0.74 J 0.040 ish 0.51 cmd  554 trim/FF 0.000 rate 12.92/6.00/1.66 hard nan dwell 61.1
+       5-10    154s track 0.872 hold 0.790 str 0.59 J 0.087 ish 0.38 cmd  519 trim/FF 0.000 rate 13.87/10.97/3.07 hard 19.42 dwell 16.0
+       10-15   182s track 0.575 hold 0.495 str 0.49 J 0.058 ish 0.38 cmd  251 trim/FF 0.000 rate 2.26/3.10/1.31 hard nan dwell 14.2
+       15-22   158s track 0.830 hold 0.672 str 0.96 J 0.075 ish 0.42 cmd  328 trim/FF 0.000 rate 1.58/3.35/1.51 hard 8.13 dwell 3.4
+       22+      71s track 0.922 hold 0.936 str 0.81 J 0.062 ish 0.27 cmd  281 trim/FF 0.000 rate 0.59/1.12/0.71 hard 1.87 dwell 1.7
+       limit-cycle peak 1.27 Hz +4.1 dB rms 4.05 deg/s
+  M_DRIVE sim ('full', 'V293', 'nominal_kappa'):
+       0-5      41s track 0.874 hold nan str 0.75 J 0.038 ish 0.50 cmd  542 trim/FF 0.000 rate 12.70/5.92/1.66 hard nan dwell 59.5
+       5-10    154s track 0.886 hold 0.813 str 0.62 J 0.086 ish 0.37 cmd  496 trim/FF 0.000 rate 13.56/10.92/3.09 hard 19.36 dwell 14.0
+       10-15   182s track 0.628 hold 0.555 str 0.52 J 0.057 ish 0.38 cmd  239 trim/FF 0.000 rate 2.19/3.08/1.31 hard nan dwell 16.6
+       15-22   158s track 0.894 hold 0.748 str 1.01 J 0.075 ish 0.39 cmd  296 trim/FF 0.000 rate 1.56/3.36/1.52 hard 8.22 dwell 4.6
+       22+      71s track 0.964 hold 0.986 str 0.87 J 0.060 ish 0.27 cmd  254 trim/FF 0.000 rate 0.58/1.12/0.71 hard 1.86 dwell 0.8
+       limit-cycle peak 1.27 Hz +4.2 dB rms 4.02 deg/s
+  M_DRIVE sim ('full', 'V294', 'nominal'):
+       0-5      41s track 0.874 hold nan str 0.74 J 0.039 ish 0.51 cmd  551 trim/FF 0.058 rate 13.88/4.95/1.44 hard nan dwell 57.9
+       5-10    154s track 0.872 hold 0.788 str 0.59 J 0.087 ish 0.38 cmd  517 trim/FF 0.063 rate 13.79/8.83/2.59 hard 14.89 dwell 12.8
+       10-15   182s track 0.575 hold 0.491 str 0.49 J 0.058 ish 0.38 cmd  251 trim/FF 0.034 rate 2.22/2.75/1.16 hard nan dwell 15.9
+       15-22   158s track 0.830 hold 0.670 str 0.96 J 0.075 ish 0.42 cmd  328 trim/FF 0.031 rate 1.57/3.13/1.40 hard 7.52 dwell 7.2
+       22+      71s track 0.922 hold 0.935 str 0.82 J 0.061 ish 0.27 cmd  281 trim/FF 0.015 rate 0.59/1.06/0.67 hard 1.75 dwell 1.7
+       limit-cycle peak 1.27 Hz +3.0 dB rms 3.47 deg/s
+  M_DRIVE sim ('full', 'V294', 'b_lo'):
+       0-5      41s track 0.874 hold nan str 0.74 J 0.039 ish 0.51 cmd  551 trim/FF 0.058 rate 13.89/4.97/1.42 hard nan dwell 49.9
+       5-10    154s track 0.873 hold 0.796 str 0.58 J 0.087 ish 0.38 cmd  516 trim/FF 0.063 rate 13.80/8.84/2.58 hard 14.88 dwell 19.7
+       10-15   182s track 0.579 hold 0.498 str 0.48 J 0.058 ish 0.38 cmd  249 trim/FF 0.035 rate 2.26/2.79/1.16 hard nan dwell 21.3
+       15-22   158s track 0.831 hold 0.672 str 0.96 J 0.075 ish 0.42 cmd  327 trim/FF 0.031 rate 1.63/3.15/1.39 hard 7.50 dwell 10.3
+       22+      71s track 0.923 hold 0.938 str 0.82 J 0.061 ish 0.27 cmd  281 trim/FF 0.015 rate 0.62/1.07/0.66 hard 1.75 dwell 2.5
+       limit-cycle peak 1.27 Hz +3.1 dB rms 3.49 deg/s
+  M_DRIVE sim ('full', 'V294', 'F_hi'):
+       0-5      41s track 0.875 hold nan str 0.73 J 0.040 ish 0.51 cmd  552 trim/FF 0.057 rate 13.89/4.94/1.43 hard nan dwell 78.8
+       5-10    154s track 0.872 hold 0.788 str 0.59 J 0.087 ish 0.38 cmd  518 trim/FF 0.063 rate 13.81/8.84/2.59 hard 14.88 dwell 24.9
+       10-15   182s track 0.575 hold 0.490 str 0.48 J 0.058 ish 0.38 cmd  251 trim/FF 0.035 rate 2.22/2.75/1.16 hard nan dwell 16.2
+       15-22   158s track 0.830 hold 0.670 str 0.96 J 0.075 ish 0.43 cmd  328 trim/FF 0.031 rate 1.56/3.14/1.40 hard 7.53 dwell 6.5
+       22+      71s track 0.922 hold 0.936 str 0.82 J 0.062 ish 0.28 cmd  281 trim/FF 0.015 rate 0.59/1.06/0.68 hard 1.75 dwell 0.0
+       limit-cycle peak 1.27 Hz +3.0 dB rms 3.48 deg/s
+  M_DRIVE sim ('full', 'V294', 'J_lo'):
+       0-5      41s track 0.875 hold nan str 0.74 J 0.039 ish 0.51 cmd  551 trim/FF 0.058 rate 13.87/4.95/1.46 hard nan dwell 62.7
+       5-10    154s track 0.872 hold 0.788 str 0.59 J 0.087 ish 0.38 cmd  517 trim/FF 0.063 rate 13.77/8.84/2.59 hard 14.91 dwell 12.0
+       10-15   182s track 0.575 hold 0.491 str 0.49 J 0.058 ish 0.38 cmd  251 trim/FF 0.035 rate 2.22/2.74/1.17 hard nan dwell 6.4
+       15-22   158s track 0.830 hold 0.670 str 0.96 J 0.075 ish 0.42 cmd  328 trim/FF 0.031 rate 1.57/3.13/1.40 hard 7.53 dwell 1.5
+       22+      71s track 0.922 hold 0.936 str 0.82 J 0.061 ish 0.28 cmd  281 trim/FF 0.015 rate 0.59/1.05/0.68 hard 1.73 dwell 0.0
+       limit-cycle peak 1.27 Hz +3.0 dB rms 3.48 deg/s
+  M_DRIVE sim ('full', 'V294', 'J_hi'):
+       0-5      41s track 0.875 hold nan str 0.74 J 0.040 ish 0.51 cmd  551 trim/FF 0.058 rate 13.92/4.91/1.41 hard nan dwell 37.0
+       5-10    154s track 0.872 hold 0.790 str 0.59 J 0.087 ish 0.38 cmd  517 trim/FF 0.062 rate 13.81/8.81/2.56 hard 14.86 dwell 16.0
+       10-15   182s track 0.576 hold 0.490 str 0.48 J 0.058 ish 0.38 cmd  251 trim/FF 0.034 rate 2.22/2.74/1.14 hard nan dwell 20.3
+       15-22   158s track 0.830 hold 0.667 str 0.96 J 0.075 ish 0.42 cmd  328 trim/FF 0.031 rate 1.57/3.13/1.39 hard 7.51 dwell 12.2
+       22+      71s track 0.922 hold 0.936 str 0.82 J 0.062 ish 0.28 cmd  281 trim/FF 0.015 rate 0.59/1.05/0.67 hard 1.75 dwell 4.2
+       limit-cycle peak 1.27 Hz +3.1 dB rms 3.47 deg/s
+  M_DRIVE sim ('full', 'V294', 'light_b'):
+       0-5      41s track 0.873 hold nan str 0.73 J 0.039 ish 0.51 cmd  551 trim/FF 0.058 rate 13.87/5.00/1.40 hard nan dwell 69.2
+       5-10    154s track 0.873 hold 0.810 str 0.58 J 0.087 ish 0.38 cmd  514 trim/FF 0.063 rate 13.78/8.85/2.59 hard 14.88 dwell 40.1
+       10-15   182s track 0.583 hold 0.500 str 0.48 J 0.058 ish 0.37 cmd  249 trim/FF 0.037 rate 2.36/2.97/1.19 hard nan dwell 53.1
+       15-22   158s track 0.833 hold 0.667 str 0.96 J 0.077 ish 0.42 cmd  325 trim/FF 0.031 rate 1.77/3.15/1.37 hard 7.17 dwell 45.7
+       22+      71s track 0.923 hold 0.943 str 0.82 J 0.065 ish 0.26 cmd  281 trim/FF 0.017 rate 0.68/1.27/0.74 hard 1.93 dwell 38.0
+       limit-cycle peak 1.27 Hz +3.0 dB rms 3.51 deg/s
+  M_DRIVE sim ('full', 'V294', 'tau6'):
+       0-5      41s track 0.874 hold nan str 0.74 J 0.040 ish 0.51 cmd  551 trim/FF 0.058 rate 13.97/4.97/1.46 hard nan dwell 56.3
+       5-10    154s track 0.873 hold 0.788 str 0.59 J 0.088 ish 0.38 cmd  517 trim/FF 0.063 rate 13.82/8.86/2.62 hard 14.95 dwell 18.9
+       10-15   182s track 0.575 hold 0.490 str 0.49 J 0.058 ish 0.38 cmd  251 trim/FF 0.035 rate 2.22/2.75/1.18 hard nan dwell 15.9
+       15-22   158s track 0.830 hold 0.670 str 0.96 J 0.075 ish 0.42 cmd  328 trim/FF 0.031 rate 1.57/3.14/1.40 hard 7.56 dwell 4.2
+       22+      71s track 0.922 hold 0.936 str 0.82 J 0.062 ish 0.27 cmd  281 trim/FF 0.015 rate 0.60/1.06/0.68 hard 1.74 dwell 0.8
+       limit-cycle peak 1.27 Hz +3.0 dB rms 3.48 deg/s
+  M_DRIVE sim ('full', 'V294', 'nominal_kappa'):
+       0-5      41s track 0.877 hold nan str 0.75 J 0.038 ish 0.50 cmd  540 trim/FF 0.059 rate 13.73/4.90/1.43 hard nan dwell 51.5
+       5-10    154s track 0.886 hold 0.823 str 0.62 J 0.087 ish 0.37 cmd  495 trim/FF 0.065 rate 13.55/8.86/2.59 hard 14.90 dwell 16.8
+       10-15   182s track 0.628 hold 0.543 str 0.51 J 0.057 ish 0.38 cmd  239 trim/FF 0.036 rate 2.16/2.75/1.16 hard nan dwell 16.9
+       15-22   158s track 0.894 hold 0.748 str 1.01 J 0.075 ish 0.39 cmd  296 trim/FF 0.035 rate 1.55/3.16/1.41 hard 7.63 dwell 6.8
+       22+      71s track 0.964 hold 0.986 str 0.87 J 0.060 ish 0.27 cmd  254 trim/FF 0.017 rate 0.58/1.07/0.68 hard 1.77 dwell 1.7
+       limit-cycle peak 1.27 Hz +3.1 dB rms 3.48 deg/s
+  M_DRIVE sim ('lp', 'V293', 'nominal'):
+       0-5      41s track 0.840 hold nan str 0.76 J 0.032 ish 0.52 cmd  602 trim/FF 0.000 rate 8.40/1.39/0.48 hard nan dwell 77.2
+       5-10    154s track 0.864 hold 0.783 str 0.66 J 0.081 ish 0.39 cmd  524 trim/FF 0.000 rate 7.07/1.32/0.40 hard 1.68 dwell 34.5
+       10-15   182s track 0.586 hold 0.591 str 0.54 J 0.047 ish 0.39 cmd  243 trim/FF 0.000 rate 1.26/0.28/0.15 hard nan dwell 34.5
+       15-22   158s track 0.763 hold 0.636 str 0.96 J 0.073 ish 0.44 cmd  350 trim/FF 0.000 rate 0.61/0.19/0.10 hard 0.17 dwell 26.3
+       22+      71s track 0.916 hold 0.938 str 0.86 J 0.060 ish 0.28 cmd  283 trim/FF 0.000 rate 0.43/0.18/0.10 hard 0.18 dwell 14.4
+       limit-cycle peak 1.07 Hz -4.1 dB rms 1.02 deg/s
+  M_DRIVE sim ('lp', 'V293', 'b_lo'):
+       0-5      41s track 0.847 hold nan str 0.75 J 0.030 ish 0.52 cmd  592 trim/FF 0.000 rate 9.39/2.52/0.51 hard nan dwell 78.8
+       5-10    154s track 0.865 hold 0.799 str 0.65 J 0.074 ish 0.40 cmd  522 trim/FF 0.000 rate 8.14/2.06/0.48 hard 2.52 dwell 32.1
+       10-15   182s track 0.595 hold 0.592 str 0.54 J 0.044 ish 0.39 cmd  241 trim/FF 0.000 rate 1.39/0.45/0.21 hard nan dwell 37.9
+       15-22   158s track 0.766 hold 0.636 str 0.96 J 0.068 ish 0.43 cmd  348 trim/FF 0.000 rate 0.73/0.30/0.14 hard 0.31 dwell 27.8
+       22+      71s track 0.918 hold 0.929 str 0.82 J 0.051 ish 0.27 cmd  281 trim/FF 0.000 rate 0.52/0.29/0.15 hard 0.36 dwell 16.1
+       limit-cycle peak 1.07 Hz -1.8 dB rms 1.48 deg/s
+  M_DRIVE sim ('lp', 'V293', 'F_hi'):
+       0-5      41s track 0.831 hold nan str 0.69 J 0.035 ish 0.53 cmd  633 trim/FF 0.000 rate 8.30/1.32/0.48 hard nan dwell 85.3
+       5-10    154s track 0.862 hold 0.771 str 0.67 J 0.083 ish 0.38 cmd  529 trim/FF 0.000 rate 6.89/1.31/0.39 hard 1.79 dwell 39.7
+       10-15   182s track 0.579 hold 0.579 str 0.52 J 0.049 ish 0.40 cmd  247 trim/FF 0.000 rate 1.22/0.30/0.15 hard nan dwell 45.3
+       15-22   158s track 0.763 hold 0.622 str 0.97 J 0.075 ish 0.44 cmd  351 trim/FF 0.000 rate 0.59/0.20/0.10 hard 0.18 dwell 34.6
+       22+      71s track 0.916 hold 0.942 str 0.86 J 0.062 ish 0.28 cmd  284 trim/FF 0.000 rate 0.41/0.18/0.10 hard 0.17 dwell 16.9
+       limit-cycle peak 1.07 Hz -4.2 dB rms 1.07 deg/s
+  M_DRIVE sim ('lp', 'V293', 'J_lo'):
+       0-5      41s track 0.843 hold nan str 0.76 J 0.031 ish 0.51 cmd  598 trim/FF 0.000 rate 8.04/1.40/0.64 hard nan dwell 77.2
+       5-10    154s track 0.863 hold 0.778 str 0.66 J 0.080 ish 0.39 cmd  525 trim/FF 0.000 rate 6.92/1.31/0.51 hard 1.81 dwell 28.9
+       10-15   182s track 0.579 hold 0.582 str 0.54 J 0.048 ish 0.40 cmd  244 trim/FF 0.000 rate 1.23/0.25/0.15 hard nan dwell 32.5
+       15-22   158s track 0.763 hold 0.636 str 0.96 J 0.073 ish 0.44 cmd  350 trim/FF 0.000 rate 0.60/0.19/0.10 hard 0.16 dwell 24.4
+       22+      71s track 0.914 hold 0.940 str 0.86 J 0.061 ish 0.29 cmd  284 trim/FF 0.000 rate 0.41/0.17/0.10 hard 0.16 dwell 10.1
+       limit-cycle peak 1.07 Hz -5.0 dB rms 0.96 deg/s
+  M_DRIVE sim ('lp', 'V293', 'J_hi'):
+       0-5      41s track 0.826 hold nan str 0.77 J 0.035 ish 0.52 cmd  621 trim/FF 0.000 rate 8.42/1.12/0.27 hard nan dwell 66.0
+       5-10    154s track 0.855 hold 0.787 str 0.66 J 0.084 ish 0.39 cmd  534 trim/FF 0.000 rate 6.76/1.09/0.22 hard 1.12 dwell 27.3
+       10-15   182s track 0.593 hold 0.603 str 0.54 J 0.045 ish 0.39 cmd  242 trim/FF 0.000 rate 1.30/0.35/0.12 hard nan dwell 38.6
+       15-22   158s track 0.766 hold 0.637 str 0.96 J 0.072 ish 0.44 cmd  350 trim/FF 0.000 rate 0.66/0.22/0.10 hard 0.19 dwell 27.0
+       22+      71s track 0.918 hold 0.957 str 0.85 J 0.061 ish 0.26 cmd  282 trim/FF 0.000 rate 0.42/0.18/0.10 hard 0.18 dwell 16.9
+       limit-cycle peak 1.07 Hz -3.4 dB rms 1.04 deg/s
+  M_DRIVE sim ('lp', 'V293', 'light_b'):
+       0-5      41s track 0.868 hold nan str 0.76 J 0.030 ish 0.52 cmd  558 trim/FF 0.000 rate 11.29/8.53/0.69 hard nan dwell 62.7
+       5-10    154s track 0.888 hold 0.827 str 0.68 J 0.071 ish 0.40 cmd  499 trim/FF 0.000 rate 10.60/5.87/0.69 hard 5.49 dwell 49.3
+       10-15   182s track 0.622 hold 0.618 str 0.53 J 0.044 ish 0.40 cmd  243 trim/FF 0.000 rate 1.76/1.70/0.49 hard nan dwell 69.4
+       15-22   158s track 0.849 hold 0.735 str 0.99 J 0.062 ish 0.42 cmd  320 trim/FF 0.000 rate 1.77/2.24/0.74 hard 3.09 dwell 63.6
+       22+      71s track 0.939 hold 0.936 str 0.89 J 0.064 ish 0.29 cmd  273 trim/FF 0.000 rate 0.88/1.77/0.92 hard 2.52 dwell 71.0
+       limit-cycle peak 1.27 Hz +5.8 dB rms 2.79 deg/s
+  M_DRIVE sim ('lp', 'V293', 'tau6'):
+       0-5      41s track 0.840 hold nan str 0.76 J 0.032 ish 0.52 cmd  603 trim/FF 0.000 rate 8.36/1.43/0.49 hard nan dwell 69.2
+       5-10    154s track 0.864 hold 0.781 str 0.66 J 0.081 ish 0.39 cmd  524 trim/FF 0.000 rate 7.11/1.33/0.40 hard 1.69 dwell 28.1
+       10-15   182s track 0.586 hold 0.591 str 0.54 J 0.047 ish 0.39 cmd  243 trim/FF 0.000 rate 1.28/0.28/0.15 hard nan dwell 34.9
+       15-22   158s track 0.763 hold 0.636 str 0.96 J 0.073 ish 0.44 cmd  350 trim/FF 0.000 rate 0.61/0.19/0.10 hard 0.17 dwell 25.1
+       22+      71s track 0.916 hold 0.937 str 0.86 J 0.060 ish 0.28 cmd  283 trim/FF 0.000 rate 0.43/0.18/0.10 hard 0.18 dwell 11.0
+       limit-cycle peak 1.07 Hz -4.0 dB rms 1.03 deg/s
+  M_DRIVE sim ('lp', 'V293', 'nominal_kappa'):
+       0-5      41s track 0.842 hold nan str 0.78 J 0.031 ish 0.51 cmd  593 trim/FF 0.000 rate 8.29/1.36/0.50 hard nan dwell 75.6
+       5-10    154s track 0.878 hold 0.814 str 0.70 J 0.077 ish 0.39 cmd  501 trim/FF 0.000 rate 6.92/1.32/0.40 hard 1.71 dwell 32.1
+       10-15   182s track 0.638 hold 0.644 str 0.57 J 0.044 ish 0.39 cmd  231 trim/FF 0.000 rate 1.22/0.29/0.15 hard nan dwell 38.6
+       15-22   158s track 0.825 hold 0.703 str 1.01 J 0.068 ish 0.41 cmd  319 trim/FF 0.000 rate 0.60/0.19/0.10 hard 0.18 dwell 25.9
+       22+      71s track 0.959 hold 0.989 str 0.91 J 0.057 ish 0.27 cmd  256 trim/FF 0.000 rate 0.42/0.19/0.11 hard 0.19 dwell 15.2
+       limit-cycle peak 1.07 Hz -4.4 dB rms 1.02 deg/s
+  M_DRIVE sim ('lp', 'V294', 'nominal'):
+       0-5      41s track 0.840 hold nan str 0.77 J 0.033 ish 0.51 cmd  603 trim/FF 0.028 rate 9.21/1.14/0.45 hard nan dwell 70.8
+       5-10    154s track 0.865 hold 0.780 str 0.66 J 0.083 ish 0.39 cmd  524 trim/FF 0.025 rate 7.27/1.10/0.34 hard 1.26 dwell 29.7
+       10-15   182s track 0.586 hold 0.592 str 0.54 J 0.047 ish 0.40 cmd  242 trim/FF 0.010 rate 1.29/0.26/0.14 hard nan dwell 34.2
+       15-22   158s track 0.764 hold 0.636 str 0.96 J 0.073 ish 0.44 cmd  350 trim/FF 0.004 rate 0.61/0.19/0.09 hard 0.17 dwell 25.9
+       22+      71s track 0.917 hold 0.940 str 0.86 J 0.060 ish 0.28 cmd  283 trim/FF 0.004 rate 0.43/0.17/0.10 hard 0.17 dwell 11.0
+       limit-cycle peak 1.07 Hz -4.7 dB rms 0.98 deg/s
+  M_DRIVE sim ('lp', 'V294', 'b_lo'):
+       0-5      41s track 0.847 hold nan str 0.76 J 0.032 ish 0.51 cmd  593 trim/FF 0.036 rate 11.01/1.92/0.49 hard nan dwell 72.4
+       5-10    154s track 0.866 hold 0.799 str 0.66 J 0.078 ish 0.40 cmd  521 trim/FF 0.029 rate 8.50/1.65/0.40 hard 1.72 dwell 32.9
+       10-15   182s track 0.595 hold 0.594 str 0.54 J 0.044 ish 0.39 cmd  240 trim/FF 0.012 rate 1.43/0.39/0.19 hard nan dwell 36.2
+       15-22   158s track 0.766 hold 0.636 str 0.96 J 0.068 ish 0.43 cmd  348 trim/FF 0.004 rate 0.74/0.28/0.13 hard 0.27 dwell 24.7
+       22+      71s track 0.919 hold 0.932 str 0.82 J 0.051 ish 0.28 cmd  281 trim/FF 0.005 rate 0.53/0.28/0.15 hard 0.32 dwell 12.7
+       limit-cycle peak 1.07 Hz -2.6 dB rms 1.43 deg/s
+  M_DRIVE sim ('lp', 'V294', 'F_hi'):
+       0-5      41s track 0.830 hold nan str 0.70 J 0.036 ish 0.52 cmd  636 trim/FF 0.026 rate 9.06/1.12/0.42 hard nan dwell 75.6
+       5-10    154s track 0.863 hold 0.771 str 0.67 J 0.085 ish 0.38 cmd  529 trim/FF 0.025 rate 7.07/1.10/0.34 hard 1.37 dwell 39.7
+       10-15   182s track 0.579 hold 0.580 str 0.52 J 0.049 ish 0.40 cmd  247 trim/FF 0.010 rate 1.25/0.27/0.14 hard nan dwell 46.7
+       15-22   158s track 0.763 hold 0.622 str 0.97 J 0.075 ish 0.44 cmd  351 trim/FF 0.003 rate 0.59/0.20/0.10 hard 0.18 dwell 36.2
+       22+      71s track 0.916 hold 0.942 str 0.86 J 0.062 ish 0.29 cmd  284 trim/FF 0.004 rate 0.41/0.17/0.10 hard 0.17 dwell 18.6
+       limit-cycle peak 1.07 Hz -4.8 dB rms 1.05 deg/s
+  M_DRIVE sim ('lp', 'V294', 'J_lo'):
+       0-5      41s track 0.842 hold nan str 0.77 J 0.032 ish 0.51 cmd  599 trim/FF 0.028 rate 8.89/1.18/0.51 hard nan dwell 75.6
+       5-10    154s track 0.864 hold 0.779 str 0.66 J 0.083 ish 0.39 cmd  524 trim/FF 0.025 rate 7.15/1.11/0.40 hard 1.37 dwell 26.9
+       10-15   182s track 0.579 hold 0.584 str 0.54 J 0.048 ish 0.40 cmd  243 trim/FF 0.010 rate 1.26/0.23/0.14 hard nan dwell 32.5
+       15-22   158s track 0.763 hold 0.636 str 0.96 J 0.073 ish 0.44 cmd  349 trim/FF 0.003 rate 0.61/0.18/0.10 hard 0.17 dwell 26.6
+       22+      71s track 0.914 hold 0.942 str 0.87 J 0.062 ish 0.29 cmd  284 trim/FF 0.004 rate 0.41/0.17/0.10 hard 0.16 dwell 14.4
+       limit-cycle peak 1.07 Hz -5.2 dB rms 0.94 deg/s
+  M_DRIVE sim ('lp', 'V294', 'J_hi'):
+       0-5      41s track 0.826 hold nan str 0.77 J 0.036 ish 0.51 cmd  623 trim/FF 0.023 rate 8.81/0.96/0.28 hard nan dwell 61.1
+       5-10    154s track 0.856 hold 0.785 str 0.66 J 0.086 ish 0.39 cmd  533 trim/FF 0.024 rate 6.90/0.93/0.21 hard 0.94 dwell 28.1
+       10-15   182s track 0.593 hold 0.606 str 0.54 J 0.045 ish 0.39 cmd  242 trim/FF 0.011 rate 1.33/0.31/0.12 hard nan dwell 36.5
+       15-22   158s track 0.766 hold 0.637 str 0.96 J 0.072 ish 0.44 cmd  350 trim/FF 0.004 rate 0.67/0.21/0.10 hard 0.18 dwell 26.3
+       22+      71s track 0.918 hold 0.957 str 0.85 J 0.061 ish 0.27 cmd  282 trim/FF 0.004 rate 0.43/0.17/0.09 hard 0.17 dwell 15.2
+       limit-cycle peak 1.07 Hz -4.2 dB rms 0.98 deg/s
+  M_DRIVE sim ('lp', 'V294', 'light_b'):
+       0-5      41s track 0.871 hold nan str 0.77 J 0.035 ish 0.51 cmd  556 trim/FF 0.064 rate 14.78/5.07/0.74 hard nan dwell 70.8
+       5-10    154s track 0.889 hold 0.828 str 0.68 J 0.079 ish 0.40 cmd  498 trim/FF 0.043 rate 11.65/3.52/0.62 hard 3.26 dwell 42.5
+       10-15   182s track 0.621 hold 0.613 str 0.55 J 0.044 ish 0.39 cmd  242 trim/FF 0.017 rate 1.79/1.10/0.35 hard nan dwell 62.3
+       15-22   158s track 0.851 hold 0.727 str 0.99 J 0.062 ish 0.42 cmd  319 trim/FF 0.016 rate 1.69/1.58/0.45 hard 2.10 dwell 62.0
+       22+      71s track 0.937 hold 0.961 str 0.84 J 0.057 ish 0.27 cmd  277 trim/FF 0.017 rate 0.75/1.29/0.66 hard 1.25 dwell 58.3
+       limit-cycle peak 1.07 Hz +0.8 dB rms 2.79 deg/s
+  M_DRIVE sim ('lp', 'V294', 'tau6'):
+       0-5      41s track 0.840 hold nan str 0.77 J 0.034 ish 0.51 cmd  604 trim/FF 0.028 rate 9.19/1.15/0.45 hard nan dwell 69.2
+       5-10    154s track 0.865 hold 0.780 str 0.66 J 0.084 ish 0.39 cmd  524 trim/FF 0.025 rate 7.30/1.10/0.35 hard 1.30 dwell 30.9
+       10-15   182s track 0.586 hold 0.592 str 0.54 J 0.047 ish 0.39 cmd  243 trim/FF 0.011 rate 1.30/0.26/0.14 hard nan dwell 33.8
+       15-22   158s track 0.764 hold 0.636 str 0.96 J 0.073 ish 0.44 cmd  350 trim/FF 0.004 rate 0.61/0.19/0.10 hard 0.16 dwell 23.6
+       22+      71s track 0.917 hold 0.942 str 0.86 J 0.061 ish 0.28 cmd  283 trim/FF 0.004 rate 0.44/0.18/0.10 hard 0.19 dwell 12.7
+       limit-cycle peak 1.07 Hz -4.8 dB rms 0.98 deg/s
+  M_DRIVE sim ('lp', 'V294', 'nominal_kappa'):
+       0-5      41s track 0.842 hold nan str 0.78 J 0.033 ish 0.51 cmd  594 trim/FF 0.028 rate 9.08/1.12/0.46 hard nan dwell 67.6
+       5-10    154s track 0.879 hold 0.814 str 0.70 J 0.079 ish 0.39 cmd  501 trim/FF 0.027 rate 7.11/1.10/0.34 hard 1.30 dwell 31.3
+       10-15   182s track 0.638 hold 0.646 str 0.57 J 0.044 ish 0.39 cmd  231 trim/FF 0.010 rate 1.24/0.27/0.14 hard nan dwell 37.2
+       15-22   158s track 0.826 hold 0.703 str 1.01 J 0.069 ish 0.41 cmd  319 trim/FF 0.004 rate 0.60/0.18/0.10 hard 0.18 dwell 24.7
+       22+      71s track 0.959 hold 0.990 str 0.92 J 0.057 ish 0.28 cmd  256 trim/FF 0.004 rate 0.42/0.18/0.10 hard 0.20 dwell 14.4
+       limit-cycle peak 1.07 Hz -5.1 dB rms 0.98 deg/s
+  runtime 101.9 s   hash 51c45d72d44ea225e4a5382f9f36dfeb6cae9985b1be133e2a702fc44c1e7036
+==============================================================================================================
+SCORE V294   edit class identical   diff vs V294 {}
+  static problems: none
+  M_SAFE rail +2461 / -2463 | sub-rail 0.6409 T/wire | trim cap 616 T (25.0 % rail) | b 567 / b_max 2301 | restart peak {10.0: 14, 30.0: 43, 100.0: 144, 300.0: 419}
+         int32 min margin 4.06 (a*s)
+  M_LOOP (plant, v): |L|1-3  |L|3-8  Ms   PMmin  GMmin  Ms(delay x1.5)  stable  modes
+     nominal        3.1   0.30   0.23   1.06    inf    42.3   1.07  True  [(3.94, 0.775)]
+     nominal        8.0   0.30   0.23   1.06    inf    43.3   1.07  True  [(0.43, 0.851), (4.02, 0.768)]
+     nominal       12.0   0.16   0.15   1.04    inf    58.7   1.04  True  [(3.91, 0.861)]
+     nominal       17.0   0.07   0.08   1.02    inf    95.9   1.02  True  []
+     nominal       26.9   0.06   0.06   1.01    inf   116.9   1.02  True  []
+     b_lo           3.1   0.41   0.26   1.08    inf    37.6   1.08  True  [(3.78, 0.752)]
+     b_lo           8.0   0.41   0.27   1.08    inf    38.0   1.08  True  [(0.64, 0.704), (3.86, 0.741)]
+     b_lo          12.0   0.28   0.23   1.06    inf    44.0   1.06  True  [(0.51, 0.827), (4.07, 0.769)]
+     b_lo          17.0   0.13   0.14   1.03    inf    63.7   1.04  True  [(0.6, 0.883), (4.05, 0.864)]
+     b_lo          26.9   0.11   0.11   1.03    inf    74.7   1.03  True  [(2.84, 0.948)]
+     F_hi           3.1   0.30   0.23   1.06    inf    42.3   1.07  True  [(3.94, 0.775)]
+     F_hi           8.0   0.30   0.23   1.06    inf    43.3   1.07  True  [(0.43, 0.851), (4.02, 0.768)]
+     F_hi          12.0   0.16   0.15   1.04    inf    58.7   1.04  True  [(3.91, 0.861)]
+     F_hi          17.0   0.07   0.08   1.02    inf    95.9   1.02  True  []
+     F_hi          26.9   0.06   0.06   1.01    inf   116.9   1.02  True  []
+     J_lo           3.1   0.33   0.31   1.08    inf    28.9   1.09  True  [(5.44, 0.77)]
+     J_lo           8.0   0.31   0.31   1.08    inf    29.5   1.08  True  [(0.39, 0.886), (5.56, 0.766)]
+     J_lo          12.0   0.14   0.14   1.03    inf    53.0   1.04  True  []
+     J_lo          17.0   0.07   0.08   1.02    inf    87.4   1.02  True  []
+     J_lo          26.9   0.05   0.06   1.01    inf   121.9   1.01  True  []
+     J_hi           3.1   0.20   0.11   1.04    inf    86.5   1.04  True  [(2.2, 0.873)]
+     J_hi           8.0   0.22   0.11   1.04    inf    86.3   1.04  True  [(0.51, 0.77), (2.2, 0.87)]
+     J_hi          12.0   0.18   0.11   1.03    inf    91.4   1.04  True  [(0.36, 0.884), (2.33, 0.867)]
+     J_hi          17.0   0.09   0.08   1.02    inf   124.2   1.02  True  [(2.77, 0.889)]
+     J_hi          26.9   0.06   0.06   1.01    inf   156.6   1.01  True  [(1.99, 0.962)]
+     light_b        3.1   0.68   0.29   1.12    inf    33.2   1.12  True  [(0.48, 0.545), (3.33, 0.744)]
+     light_b        8.0   0.77   0.30   1.14    inf    33.1   1.13  True  [(0.74, 0.466), (3.33, 0.736)]
+     light_b       12.0   0.80   0.32   1.13    177    33.0   1.13  True  [(0.98, 0.452), (3.34, 0.725)]
+     light_b       17.0   0.79   0.33   1.13    170    32.9   1.13  True  [(1.06, 0.454), (3.34, 0.721)]
+     light_b       26.9   0.75   0.36   1.12    158    32.8   1.12  True  [(1.23, 0.468), (3.35, 0.709)]
+     tau6           3.1   0.30   0.23   1.08    inf    21.8   1.10  True  [(4.15, 0.745)]
+     tau6           8.0   0.30   0.23   1.08    inf    22.2   1.10  True  [(0.43, 0.85), (4.24, 0.738)]
+     tau6          12.0   0.16   0.15   1.05    inf    30.7   1.06  True  [(4.24, 0.834)]
+     tau6          17.0   0.07   0.08   1.03    inf    51.1   1.03  True  []
+     tau6          26.9   0.06   0.06   1.02    inf    63.2   1.03  True  []
+     nominal_kappa  3.1   0.30   0.23   1.06    inf    42.3   1.07  True  [(3.94, 0.775)]
+     nominal_kappa  8.0   0.30   0.23   1.06    inf    43.3   1.07  True  [(0.43, 0.851), (4.02, 0.768)]
+     nominal_kappa 12.0   0.16   0.15   1.04    inf    58.7   1.04  True  [(3.91, 0.861)]
+     nominal_kappa 17.0   0.07   0.08   1.02    inf    95.9   1.02  True  []
+     nominal_kappa 26.9   0.06   0.06   1.01    inf   116.9   1.02  True  []
+     mode13         3.1   0.30   0.22   1.05    inf    38.4   1.06  True  [(4.08, 0.757), (12.88, 0.144)]
+     mode13         8.0   0.30   0.22   1.05    inf    39.4   1.06  True  [(0.43, 0.851), (4.18, 0.749), (12.87, 0.147)]
+     mode13        12.0   0.16   0.15   1.03    inf    55.5   1.04  True  [(4.22, 0.85), (12.39, 0.171)]
+     mode13        17.0   0.07   0.08   1.02    inf    93.7   1.02  True  [(11.73, 0.157)]
+     mode13        26.9   0.06   0.06   1.01    inf   115.2   1.02  True  [(11.65, 0.144)]
+     mode20         3.1   0.30   0.22   1.06    inf    37.2   1.07  True  [(3.99, 0.767), (20.03, 0.076)]
+     mode20         8.0   0.30   0.23   1.06    inf    38.1   1.06  True  [(0.43, 0.851), (4.08, 0.76), (20.02, 0.078)]
+     mode20        12.0   0.16   0.15   1.04    inf    54.3   1.04  True  [(4.05, 0.855), (19.72, 0.099)]
+     mode20        17.0   0.07   0.08   1.02    inf    92.6   1.02  True  [(18.82, 0.119)]
+     mode20        26.9   0.06   0.06   1.01    inf   115.2   1.02  True  [(18.49, 0.114)]
+     mode20_lo      3.1   0.30   0.22   1.07    inf    26.4   1.08  True  [(4.16, 0.746), (19.93, 0.123)]
+     mode20_lo      8.0   0.30   0.22   1.06    inf    27.5   1.07  True  [(0.43, 0.851), (4.25, 0.737), (19.92, 0.13)]
+     mode20_lo     12.0   0.16   0.15   1.03    inf    45.5   1.04  True  [(4.55, 0.835), (18.39, 0.226)]
+     mode20_lo     17.0   0.08   0.08   1.02    inf    87.3   1.02  True  [(14.79, 0.23)]
+     mode20_lo     26.9   0.06   0.06   1.01    inf   110.8   1.01  True  [(14.46, 0.183)]
+     tau9           3.1   0.30   0.23   1.10    inf    16.3   1.12  True  [(4.3, 0.721)]
+     tau9           8.0   0.30   0.23   1.10    inf    16.5   1.12  True  [(0.43, 0.849), (4.39, 0.713)]
+     tau9          12.0   0.16   0.15   1.06    inf    23.1   1.08  True  [(4.48, 0.812)]
+     tau9          17.0   0.07   0.08   1.03    inf    39.1   1.04  True  []
+     tau9          26.9   0.06   0.06   1.03    inf    48.4   1.03  True  []
+     J_hi2          3.1   0.14   0.07   1.02    inf   132.8   1.03  True  [(1.48, 0.932)]
+     J_hi2          8.0   0.16   0.07   1.02    inf   131.5   1.03  True  [(0.55, 0.721), (1.41, 0.935)]
+     J_hi2         12.0   0.17   0.07   1.03    inf   127.4   1.03  True  [(0.54, 0.674), (1.32, 0.941)]
+     J_hi2         17.0   0.09   0.06   1.02    inf   160.2   1.02  True  [(0.44, 0.91), (2.0, 0.905)]
+     J_hi2         26.9   0.05   0.05   1.01    inf   201.4   1.01  True  [(2.15, 0.932)]
+  M_HF |T/x| 5..30 Hz [0.221, 0.16, 0.12, 0.095, 0.082, 0.071, 0.055]  (x V294 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+       |P/x| 20 Hz: cand 2.079  V294 2.079  V282 44.900
+       mode13     v  5.0: f 12.9 Hz zeta 0.145 (V294 0.145, open 0.139)
+       mode13     v 12.0: f 12.4 Hz zeta 0.171 (V294 0.171, open 0.162)
+       mode13     v 25.0: f 11.7 Hz zeta 0.146 (V294 0.146, open 0.145)
+       mode20     v  5.0: f 20.0 Hz zeta 0.076 (V294 0.076, open 0.076)
+       mode20     v 12.0: f 19.7 Hz zeta 0.099 (V294 0.099, open 0.097)
+       mode20     v 25.0: f 18.5 Hz zeta 0.115 (V294 0.115, open 0.113)
+       mode20_lo  v  5.0: f 19.9 Hz zeta 0.126 (V294 0.126, open 0.123)
+       mode20_lo  v 12.0: f 18.4 Hz zeta 0.226 (V294 0.226, open 0.213)
+       mode20_lo  v 25.0: f 14.5 Hz zeta 0.191 (V294 0.191, open 0.186)
+       staircase HF cand {'5-9': 21.27, '9-13': 7.5, '13-17': 2.73, '17-23': 1.49, '23-30': 0.84} | V294 {'5-9': 21.27, '9-13': 7.5, '13-17': 2.73, '17-23': 1.49, '23-30': 0.84}
+  M_TRACK closed-form nominal    v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.107, 0.266, 0.654, 1.067, 1.364, 1.727, 1.636] (V294 [0.107, 0.266, 0.654, 1.067, 1.364, 1.727, 1.636])
+  M_TRACK closed-form nominal    v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.075, 0.164, 0.365, 0.644, 0.859, 1.154, 1.25] (V294 [0.075, 0.164, 0.365, 0.644, 0.859, 1.154, 1.25])
+  M_TRACK closed-form nominal    v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.026, 0.063, 0.166, 0.334, 0.461, 0.639, 0.753] (V294 [0.026, 0.063, 0.166, 0.334, 0.461, 0.639, 0.753])
+  M_TRACK closed-form nominal    v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.031, 0.064, 0.142, 0.267, 0.367, 0.507, 0.603] (V294 [0.031, 0.064, 0.142, 0.267, 0.367, 0.507, 0.603])
+  M_TRACK closed-form b_lo       v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.114, 0.309, 0.876, 1.361, 1.684, 2.028, 1.776] (V294 [0.114, 0.309, 0.876, 1.361, 1.684, 2.028, 1.776])
+  M_TRACK closed-form b_lo       v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.087, 0.225, 0.606, 1.034, 1.33, 1.695, 1.621] (V294 [0.087, 0.225, 0.606, 1.034, 1.33, 1.695, 1.621])
+  M_TRACK closed-form b_lo       v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.028, 0.075, 0.246, 0.557, 0.777, 1.074, 1.195] (V294 [0.028, 0.075, 0.246, 0.557, 0.777, 1.074, 1.195])
+  M_TRACK closed-form b_lo       v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.037, 0.09, 0.236, 0.459, 0.627, 0.861, 0.985] (V294 [0.037, 0.09, 0.236, 0.459, 0.627, 0.861, 0.985])
+  M_TRACK closed-form F_hi       v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.107, 0.266, 0.654, 1.067, 1.364, 1.727, 1.636] (V294 [0.107, 0.266, 0.654, 1.067, 1.364, 1.727, 1.636])
+  M_TRACK closed-form F_hi       v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.075, 0.164, 0.365, 0.644, 0.859, 1.154, 1.25] (V294 [0.075, 0.164, 0.365, 0.644, 0.859, 1.154, 1.25])
+  M_TRACK closed-form F_hi       v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.026, 0.063, 0.166, 0.334, 0.461, 0.639, 0.753] (V294 [0.026, 0.063, 0.166, 0.334, 0.461, 0.639, 0.753])
+  M_TRACK closed-form F_hi       v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.031, 0.064, 0.142, 0.267, 0.367, 0.507, 0.603] (V294 [0.031, 0.064, 0.142, 0.267, 0.367, 0.507, 0.603])
+  M_TRACK closed-form J_lo       v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.109, 0.267, 0.661, 1.123, 1.487, 2.109, 2.508] (V294 [0.109, 0.267, 0.661, 1.123, 1.487, 2.109, 2.508])
+  M_TRACK closed-form J_lo       v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.067, 0.142, 0.311, 0.563, 0.764, 1.074, 1.319] (V294 [0.067, 0.142, 0.311, 0.563, 0.764, 1.074, 1.319])
+  M_TRACK closed-form J_lo       v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.026, 0.062, 0.163, 0.327, 0.454, 0.638, 0.783] (V294 [0.026, 0.062, 0.163, 0.327, 0.454, 0.638, 0.783])
+  M_TRACK closed-form J_lo       v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.029, 0.059, 0.128, 0.242, 0.333, 0.464, 0.565] (V294 [0.029, 0.059, 0.128, 0.242, 0.333, 0.464, 0.565])
+  M_TRACK closed-form J_hi       v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.092, 0.235, 0.565, 0.803, 0.903, 0.889, 0.695] (V294 [0.092, 0.235, 0.565, 0.803, 0.903, 0.889, 0.695])
+  M_TRACK closed-form J_hi       v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.086, 0.207, 0.468, 0.708, 0.826, 0.849, 0.683] (V294 [0.086, 0.207, 0.468, 0.708, 0.826, 0.849, 0.683])
+  M_TRACK closed-form J_hi       v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.028, 0.07, 0.193, 0.38, 0.502, 0.616, 0.582] (V294 [0.028, 0.07, 0.193, 0.38, 0.502, 0.616, 0.582])
+  M_TRACK closed-form J_hi       v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.03, 0.062, 0.137, 0.255, 0.343, 0.447, 0.467] (V294 [0.03, 0.062, 0.137, 0.255, 0.343, 0.447, 0.467])
+  M_TRACK closed-form light_b    v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.181, 0.563, 1.721, 1.937, 2.199, 2.332, 1.806] (V294 [0.181, 0.563, 1.721, 1.937, 2.199, 2.332, 1.806])
+  M_TRACK closed-form light_b    v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.104, 0.316, 1.456, 2.139, 2.36, 2.434, 1.842] (V294 [0.104, 0.316, 1.456, 2.139, 2.36, 2.434, 1.842])
+  M_TRACK closed-form light_b    v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.09, 0.27, 1.296, 2.205, 2.422, 2.474, 1.855] (V294 [0.09, 0.27, 1.296, 2.205, 2.422, 2.474, 1.855])
+  M_TRACK closed-form light_b    v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.067, 0.199, 0.972, 2.317, 2.57, 2.574, 1.889] (V294 [0.067, 0.199, 0.972, 2.317, 2.57, 2.574, 1.889])
+  M_TRACK closed-form tau6       v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.107, 0.266, 0.651, 1.065, 1.374, 1.771, 1.676] (V294 [0.107, 0.266, 0.651, 1.065, 1.374, 1.771, 1.676])
+  M_TRACK closed-form tau6       v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.075, 0.164, 0.364, 0.643, 0.861, 1.171, 1.275] (V294 [0.075, 0.164, 0.364, 0.643, 0.861, 1.171, 1.275])
+  M_TRACK closed-form tau6       v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.026, 0.063, 0.166, 0.333, 0.461, 0.643, 0.763] (V294 [0.026, 0.063, 0.166, 0.333, 0.461, 0.643, 0.763])
+  M_TRACK closed-form tau6       v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.031, 0.064, 0.142, 0.267, 0.367, 0.51, 0.609] (V294 [0.031, 0.064, 0.142, 0.267, 0.367, 0.51, 0.609])
+  M_TRACK closed-form nominal_kappa v  8.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.107, 0.266, 0.654, 1.067, 1.364, 1.727, 1.636] (V294 [0.107, 0.266, 0.654, 1.067, 1.364, 1.727, 1.636])
+  M_TRACK closed-form nominal_kappa v 12.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.075, 0.164, 0.365, 0.644, 0.859, 1.154, 1.25] (V294 [0.075, 0.164, 0.365, 0.644, 0.859, 1.154, 1.25])
+  M_TRACK closed-form nominal_kappa v 17.0 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.026, 0.063, 0.166, 0.334, 0.461, 0.639, 0.753] (V294 [0.026, 0.063, 0.166, 0.334, 0.461, 0.639, 0.753])
+  M_TRACK closed-form nominal_kappa v 26.9 |alpha/cmd| @ [0.3, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] Hz: [0.031, 0.064, 0.142, 0.267, 0.367, 0.507, 0.603] (V294 [0.031, 0.064, 0.142, 0.267, 0.367, 0.507, 0.603])
+  M_DRIVE outer nominal  v  5.0 relay True  Ms 1.20@1.45 PM 113 GM 11.2 |T(0.2Hz)| 0.598
+  M_DRIVE outer nominal  v  5.0 relay False Ms 1.13@1.32 PM 133 GM 17.3 |T(0.2Hz)| 0.492
+  M_DRIVE outer nominal  v  8.0 relay True  Ms 1.18@1.73 PM 145 GM 10.4 |T(0.2Hz)| 0.489
+  M_DRIVE outer nominal  v  8.0 relay False Ms 1.12@1.62 PM 120 GM 16.3 |T(0.2Hz)| 0.384
+  M_DRIVE outer nominal  v 12.0 relay True  Ms 1.12@1.82 PM 142 GM 15.5 |T(0.2Hz)| 0.482
+  M_DRIVE outer nominal  v 12.0 relay False Ms 1.07@1.70 PM 118 GM 24.0 |T(0.2Hz)| 0.376
+  M_DRIVE outer nominal  v 17.0 relay True  Ms 1.06@2.40 PM 111 GM 26.2 |T(0.2Hz)| 0.278
+  M_DRIVE outer nominal  v 17.0 relay False Ms 1.04@2.31 PM 102 GM 40.5 |T(0.2Hz)| 0.200
+  M_DRIVE outer nominal  v 26.9 relay True  Ms 1.09@2.10 PM 139 GM 19.7 |T(0.2Hz)| 0.473
+  M_DRIVE outer nominal  v 26.9 relay False Ms 1.06@1.98 PM 117 GM 31.0 |T(0.2Hz)| 0.366
+  M_DRIVE outer b_lo     v  5.0 relay True  Ms 1.29@1.45 PM 98 GM 8.3 |T(0.2Hz)| 0.601
+  M_DRIVE outer b_lo     v  5.0 relay False Ms 1.19@1.32 PM 137 GM 12.8 |T(0.2Hz)| 0.496
+  M_DRIVE outer b_lo     v  8.0 relay True  Ms 1.26@1.75 PM 147 GM 7.7 |T(0.2Hz)| 0.490
+  M_DRIVE outer b_lo     v  8.0 relay False Ms 1.16@1.64 PM 121 GM 12.0 |T(0.2Hz)| 0.386
+  M_DRIVE outer b_lo     v 12.0 relay True  Ms 1.21@1.93 PM 146 GM 8.9 |T(0.2Hz)| 0.488
+  M_DRIVE outer b_lo     v 12.0 relay False Ms 1.13@1.80 PM 121 GM 13.9 |T(0.2Hz)| 0.383
+  M_DRIVE outer b_lo     v 17.0 relay True  Ms 1.10@2.71 PM 111 GM 14.7 |T(0.2Hz)| 0.282
+  M_DRIVE outer b_lo     v 17.0 relay False Ms 1.06@2.66 PM 103 GM 23.1 |T(0.2Hz)| 0.203
+  M_DRIVE outer b_lo     v 26.9 relay True  Ms 1.15@2.40 PM 144 GM 11.0 |T(0.2Hz)| 0.481
+  M_DRIVE outer b_lo     v 26.9 relay False Ms 1.09@2.26 PM 120 GM 17.2 |T(0.2Hz)| 0.377
+  M_DRIVE outer F_hi     v  5.0 relay True  Ms 1.20@1.45 PM 113 GM 11.2 |T(0.2Hz)| 0.598
+  M_DRIVE outer F_hi     v  5.0 relay False Ms 1.13@1.32 PM 133 GM 17.3 |T(0.2Hz)| 0.492
+  M_DRIVE outer F_hi     v  8.0 relay True  Ms 1.18@1.73 PM 145 GM 10.4 |T(0.2Hz)| 0.489
+  M_DRIVE outer F_hi     v  8.0 relay False Ms 1.12@1.62 PM 120 GM 16.3 |T(0.2Hz)| 0.384
+  M_DRIVE outer F_hi     v 12.0 relay True  Ms 1.12@1.82 PM 142 GM 15.5 |T(0.2Hz)| 0.482
+  M_DRIVE outer F_hi     v 12.0 relay False Ms 1.07@1.70 PM 118 GM 24.0 |T(0.2Hz)| 0.376
+  M_DRIVE outer F_hi     v 17.0 relay True  Ms 1.06@2.40 PM 111 GM 26.2 |T(0.2Hz)| 0.278
+  M_DRIVE outer F_hi     v 17.0 relay False Ms 1.04@2.31 PM 102 GM 40.5 |T(0.2Hz)| 0.200
+  M_DRIVE outer F_hi     v 26.9 relay True  Ms 1.09@2.10 PM 139 GM 19.7 |T(0.2Hz)| 0.473
+  M_DRIVE outer F_hi     v 26.9 relay False Ms 1.06@1.98 PM 117 GM 31.0 |T(0.2Hz)| 0.366
+  M_DRIVE outer J_lo     v  5.0 relay True  Ms 1.16@1.59 PM 113 GM 13.1 |T(0.2Hz)| 0.604
+  M_DRIVE outer J_lo     v  5.0 relay False Ms 1.11@1.45 PM 134 GM 20.5 |T(0.2Hz)| 0.499
+  M_DRIVE outer J_lo     v  8.0 relay True  Ms 1.15@1.94 PM 147 GM 12.2 |T(0.2Hz)| 0.494
+  M_DRIVE outer J_lo     v  8.0 relay False Ms 1.10@1.80 PM 121 GM 19.2 |T(0.2Hz)| 0.389
+  M_DRIVE outer J_lo     v 12.0 relay True  Ms 1.09@1.94 PM 137 GM 21.1 |T(0.2Hz)| 0.461
+  M_DRIVE outer J_lo     v 12.0 relay False Ms 1.06@1.82 PM 116 GM 32.7 |T(0.2Hz)| 0.356
+  M_DRIVE outer J_lo     v 17.0 relay True  Ms 1.05@2.49 PM 111 GM 29.3 |T(0.2Hz)| 0.277
+  M_DRIVE outer J_lo     v 17.0 relay False Ms 1.03@2.40 PM 102 GM 46.0 |T(0.2Hz)| 0.199
+  M_DRIVE outer J_lo     v 26.9 relay True  Ms 1.07@2.12 PM 137 GM 24.1 |T(0.2Hz)| 0.464
+  M_DRIVE outer J_lo     v 26.9 relay False Ms 1.05@2.00 PM 116 GM 37.3 |T(0.2Hz)| 0.358
+  M_DRIVE outer J_hi     v  5.0 relay True  Ms 1.22@1.19 PM 132 GM 10.7 |T(0.2Hz)| 0.547
+  M_DRIVE outer J_hi     v  5.0 relay False Ms 1.14@1.11 PM 125 GM 16.5 |T(0.2Hz)| 0.439
+  M_DRIVE outer J_hi     v  8.0 relay True  Ms 1.22@1.41 PM 134 GM 9.6 |T(0.2Hz)| 0.446
+  M_DRIVE outer J_hi     v  8.0 relay False Ms 1.14@1.33 PM 115 GM 14.9 |T(0.2Hz)| 0.344
+  M_DRIVE outer J_hi     v 12.0 relay True  Ms 1.22@1.46 PM 146 GM 9.4 |T(0.2Hz)| 0.501
+  M_DRIVE outer J_hi     v 12.0 relay False Ms 1.14@1.38 PM 121 GM 14.5 |T(0.2Hz)| 0.395
+  M_DRIVE outer J_hi     v 17.0 relay True  Ms 1.08@2.12 PM 112 GM 18.3 |T(0.2Hz)| 0.287
+  M_DRIVE outer J_hi     v 17.0 relay False Ms 1.05@2.06 PM 103 GM 28.3 |T(0.2Hz)| 0.208
+  M_DRIVE outer J_hi     v 26.9 relay True  Ms 1.10@1.91 PM 137 GM 17.4 |T(0.2Hz)| 0.465
+  M_DRIVE outer J_hi     v 26.9 relay False Ms 1.06@1.80 PM 116 GM 27.3 |T(0.2Hz)| 0.359
+  M_DRIVE outer light_b  v  5.0 relay True  Ms 1.77@1.32 PM 48 GM 4.4 |T(0.2Hz)| 0.662
+  M_DRIVE outer light_b  v  5.0 relay False Ms 1.48@1.19 PM 72 GM 6.8 |T(0.2Hz)| 0.563
+  M_DRIVE outer light_b  v  8.0 relay True  Ms 1.74@1.52 PM 53 GM 4.0 |T(0.2Hz)| 0.593
+  M_DRIVE outer light_b  v  8.0 relay False Ms 1.45@1.38 PM 89 GM 6.2 |T(0.2Hz)| 0.489
+  M_DRIVE outer light_b  v 12.0 relay True  Ms 1.72@1.89 PM 64 GM 3.4 |T(0.2Hz)| 0.511
+  M_DRIVE outer light_b  v 12.0 relay False Ms 1.41@1.75 PM 127 GM 5.4 |T(0.2Hz)| 0.407
+  M_DRIVE outer light_b  v 17.0 relay True  Ms 2.00@2.10 PM 50 GM 2.6 |T(0.2Hz)| 0.548
+  M_DRIVE outer light_b  v 17.0 relay False Ms 1.54@1.93 PM 134 GM 4.1 |T(0.2Hz)| 0.443
+  M_DRIVE outer light_b  v 26.9 relay True  Ms 3.07@2.54 PM 31 GM 1.7 |T(0.2Hz)| 0.598
+  M_DRIVE outer light_b  v 26.9 relay False Ms 1.89@2.33 PM 65 GM 2.6 |T(0.2Hz)| 0.494
+  M_DRIVE outer tau6     v  5.0 relay True  Ms 1.21@1.42 PM 113 GM 10.4 |T(0.2Hz)| 0.599
+  M_DRIVE outer tau6     v  5.0 relay False Ms 1.13@1.30 PM 133 GM 16.1 |T(0.2Hz)| 0.493
+  M_DRIVE outer tau6     v  8.0 relay True  Ms 1.19@1.70 PM 145 GM 9.8 |T(0.2Hz)| 0.489
+  M_DRIVE outer tau6     v  8.0 relay False Ms 1.12@1.59 PM 120 GM 15.1 |T(0.2Hz)| 0.385
+  M_DRIVE outer tau6     v 12.0 relay True  Ms 1.12@1.79 PM 141 GM 14.3 |T(0.2Hz)| 0.483
+  M_DRIVE outer tau6     v 12.0 relay False Ms 1.08@1.67 PM 118 GM 22.4 |T(0.2Hz)| 0.377
+  M_DRIVE outer tau6     v 17.0 relay True  Ms 1.06@2.33 PM 111 GM 23.8 |T(0.2Hz)| 0.278
+  M_DRIVE outer tau6     v 17.0 relay False Ms 1.04@2.26 PM 102 GM 37.3 |T(0.2Hz)| 0.200
+  M_DRIVE outer tau6     v 26.9 relay True  Ms 1.09@2.04 PM 139 GM 18.2 |T(0.2Hz)| 0.473
+  M_DRIVE outer tau6     v 26.9 relay False Ms 1.06@1.93 PM 117 GM 28.2 |T(0.2Hz)| 0.367
+  M_DRIVE outer nominal_kappa v  5.0 relay True  Ms 1.20@1.45 PM 113 GM 11.2 |T(0.2Hz)| 0.598
+  M_DRIVE outer nominal_kappa v  5.0 relay False Ms 1.13@1.32 PM 133 GM 17.3 |T(0.2Hz)| 0.492
+  M_DRIVE outer nominal_kappa v  8.0 relay True  Ms 1.18@1.73 PM 145 GM 10.4 |T(0.2Hz)| 0.489
+  M_DRIVE outer nominal_kappa v  8.0 relay False Ms 1.12@1.62 PM 120 GM 16.3 |T(0.2Hz)| 0.384
+  M_DRIVE outer nominal_kappa v 12.0 relay True  Ms 1.12@1.82 PM 142 GM 15.5 |T(0.2Hz)| 0.482
+  M_DRIVE outer nominal_kappa v 12.0 relay False Ms 1.07@1.70 PM 118 GM 24.0 |T(0.2Hz)| 0.376
+  M_DRIVE outer nominal_kappa v 17.0 relay True  Ms 1.06@2.40 PM 111 GM 26.2 |T(0.2Hz)| 0.278
+  M_DRIVE outer nominal_kappa v 17.0 relay False Ms 1.04@2.31 PM 102 GM 40.5 |T(0.2Hz)| 0.200
+  M_DRIVE outer nominal_kappa v 26.9 relay True  Ms 1.09@2.10 PM 139 GM 19.7 |T(0.2Hz)| 0.473
+  M_DRIVE outer nominal_kappa v 26.9 relay False Ms 1.06@1.98 PM 117 GM 31.0 |T(0.2Hz)| 0.366
+  runtime 4.7 s   hash -

@@ -1,0 +1,12 @@
+A   50 x-counts (6 deg/s) f   2.5 Hz: |P/x| b567 1.620 b964 2.767 ratio 1.708 | |T/x| b567 0.2339 b964 0.3977 ratio 1.700
+A   50 x-counts (6 deg/s) f  10.0 Hz: |P/x| b567 2.048 b964 3.497 ratio 1.707 | |T/x| b567 0.1470 b964 0.2530 ratio 1.721
+A   50 x-counts (6 deg/s) f  20.0 Hz: |P/x| b567 2.084 b964 3.547 ratio 1.702 | |T/x| b567 0.0821 b964 0.1417 ratio 1.725
+A   50 x-counts (6 deg/s) f  25.0 Hz: |P/x| b567 2.081 b964 3.555 ratio 1.708 | |T/x| b567 0.0640 b964 0.1135 ratio 1.773
+A  200 x-counts (25 deg/s) f   2.5 Hz: |P/x| b567 1.621 b964 2.756 ratio 1.700 | |T/x| b567 0.2326 b964 0.3960 ratio 1.702
+A  200 x-counts (25 deg/s) f  10.0 Hz: |P/x| b567 2.047 b964 3.482 ratio 1.701 | |T/x| b567 0.1479 b964 0.2511 ratio 1.698
+A  200 x-counts (25 deg/s) f  20.0 Hz: |P/x| b567 2.079 b964 3.536 ratio 1.701 | |T/x| b567 0.0814 b964 0.1389 ratio 1.706
+A  200 x-counts (25 deg/s) f  25.0 Hz: |P/x| b567 2.084 b964 3.540 ratio 1.698 | |T/x| b567 0.0659 b964 0.1125 ratio 1.706
+A 1000 x-counts (125 deg/s) f   2.5 Hz: |P/x| b567 1.621 b964 2.756 ratio 1.700 | |T/x| b567 0.2329 b964 0.3960 ratio 1.700
+A 1000 x-counts (125 deg/s) f  10.0 Hz: |P/x| b567 2.047 b964 3.481 ratio 1.700 | |T/x| b567 0.1480 b964 0.2515 ratio 1.700
+A 1000 x-counts (125 deg/s) f  20.0 Hz: |P/x| b567 2.079 b964 3.534 ratio 1.700 | |T/x| b567 0.0815 b964 0.1386 ratio 1.700
+A 1000 x-counts (125 deg/s) f  25.0 Hz: |P/x| b567 2.083 b964 3.541 ratio 1.700 | |T/x| b567 0.0660 b964 0.1122 ratio 1.699

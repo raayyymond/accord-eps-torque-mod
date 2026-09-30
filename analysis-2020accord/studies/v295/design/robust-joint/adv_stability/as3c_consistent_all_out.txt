@@ -1,0 +1,17 @@
+two-mass: 3768 plants; V282 unstable or zeta < 0.010 on 1925 (excluded by the record); consistent 1702
+  tau  2: n  703 | worst flex zeta A/open 0.446 (A 0.3267 open 0.7323 V294 0.4273; b_lo f2 13 z2 0.05 r2 0.8 v11.9) | worst A/V294 0.678 | weakest A mode anywhere 5-45 Hz 30.0 Hz zeta 0.0303 (V294 weakest there 0.0309)
+  tau  6: n  469 | worst flex zeta A/open 0.695 (A 0.1742 open 0.2505 V294 0.2044; nominal f2 10 z2 0.02 r2 0.8 v11.9) | worst A/V294 0.806 | weakest A mode anywhere 5-45 Hz 39.9 Hz zeta 0.0305 (V294 weakest there 0.0313)
+  tau  9: n  340 | worst flex zeta A/open 0.700 (A 0.4825 open 0.6894 V294 0.5563; nominal f2 30 z2 0.10 r2 0.8 v11.9) | worst A/V294 0.835 | weakest A mode anywhere 5-45 Hz 7.1 Hz zeta 0.0327 (V294 weakest there 0.0330)
+  tau 18: n  190 | worst flex zeta A/open 0.590 (A 0.4068 open 0.6894 V294 0.4815; nominal f2 30 z2 0.10 r2 0.8 v11.9) | worst A/V294 0.784 | weakest A mode anywhere 5-45 Hz 7.1 Hz zeta 0.0333 (V294 weakest there 0.0333)
+F-IN-3 on the record-consistent two-mass set: 0
+overall consistent: min A/open 0.446, min A/V294 0.678, min zeta_A (flex) 0.0218
+rigid family proper, tau  0: A Ms max 1.256 (light_b v8.0 tau0 Jx1.00 bx1.00; V294 1.138) | A GM min 29.19 (J_lo v3.1 tau0 Jx1.00 bx1.00; V294 56.94)
+rigid family proper, tau  2: A Ms max 1.252 (light_b v8.0 tau2 Jx1.00 bx1.00; V294 1.136) | A GM min 14.81 (J_lo v3.1 tau2 Jx1.00 bx1.00; V294 28.88)
+rigid family proper, tau  3: A Ms max 1.250 (light_b v8.0 tau3 Jx1.00 bx1.00; V294 1.135) | A GM min 11.97 (J_lo v3.1 tau3 Jx1.00 bx1.00; V294 23.34)
+rigid family proper, tau  4: A Ms max 1.249 (light_b v8.0 tau4 Jx1.00 bx1.00; V294 1.134) | A GM min 10.08 (J_lo v3.1 tau4 Jx1.00 bx1.00; V294 19.67)
+rigid family proper, tau  6: A Ms max 1.281 (light_b v26.9 tau6 Jx1.00 bx1.00; V294 1.138) | A GM min 7.73 (J_lo v3.1 tau6 Jx1.00 bx1.00; V294 15.09)
+rigid family proper, tau  9: A Ms max 1.341 (light_b v26.9 tau9 Jx1.00 bx1.00; V294 1.163) | A GM min 5.82 (J_lo v3.1 tau9 Jx1.00 bx1.00; V294 11.35)
+rigid family proper, tau 12: A Ms max 1.406 (light_b v26.9 tau12 Jx1.00 bx1.00; V294 1.189) | A GM min 4.73 (J_lo v3.1 tau12 Jx1.00 bx1.00; V294 9.23)
+rigid family proper, tau 18: A Ms max 1.555 (light_b v26.9 tau18 Jx1.00 bx1.00; V294 1.242) | A GM min 3.54 (J_lo v3.1 tau18 Jx1.00 bx1.00; V294 6.91)
+rigid incl. J x0.5-2.5 / b corners, RECORD-CONSISTENT (1010 of 1360): A Ms max 1.430 (light_b v8.0 tau0 Jx2.50 bx0.56, V294 1.239) ; GM min 9.18 (light_b v8.0 tau9 Jx1.50 bx1.00, V294 17.90) ; PM min 58.5 (light_b v8.0 tau0 Jx1.50 bx0.56)
+rigid record-consistent: 1321 modes less damped with A than V294; worst light_b v26.9 tau4 Jx1.00 bx0.56 4.79 Hz zeta A 0.5315 V294 0.6880 (x0.772); min zeta_A among them 0.2398

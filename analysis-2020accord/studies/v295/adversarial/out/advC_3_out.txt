@@ -1,0 +1,18 @@
+   M1: map Y knot 5 at 0xE504C 275 -> 276, attributed (script will re-CRC its block)
+
+CAUGHT  M1 CRC-consistent stray map knot (another block, re-CRC'd by the script): 5 fire  (S 2 C 1 V 2 T 0 X 0)  image sha f6b0bbef4d04ffd38ca22930ae1fa05004fa552b5768992150a8d8d4b5478600
+     [C] the edit's owning block(s) [('0xc6000', '0xc6ffc'), ('0xe5000', '0xe5ffc')] == [0xC6000, 0xC6FFC)
+     [S] every differing byte is 0xC63EA/0xC63EB or a trailer byte 0xC6FFC-FF (5 stray: ['0xe504c', '0xe5ffc', '0xe5ffd', '0xe5ffe', '0xe5fff'])
+     [S] the diff is EXACTLY the 2 payload bytes the decision requires + 4 trailer bytes = 6 (got 11)
+     [V] V295 == V294 at r26 = 0 on T, T_lo, T_hi, P, S at all 482 idx x sign (64 differ)  [entailed: b is not read at r26 = 0 and no other byte moved]
+     [V] sub-rail slope 0.6408 T per wire count (V294 0.6410)  [entailed]
+
+CAUGHT  M2 rwd payload byte corrupted, container checksum valid: 1 fire  (S 1 C 0 V 0 T 0 X 0)  image sha 5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed
+     [S] the .rwd decoded back is BYTE-IDENTICAL to the built image
+
+CAUGHT  M3 base = V294 with one filler byte flipped below 0x13000: 1 fire  (S 1 C 0 V 0 T 0 X 0)  image sha 9e7e54ce543f602baeee3b21d06946633f70a17a8ed17edebe83bc62b1a39809
+     [S] V294 base sha256 == 3143616d5b79bdb7...
+
+MISSED  M4 decision constant itself wrong: B_NEW = 1051 (the build follows it): 0 fire  (S 0 C 0 V 0 T 0 X 0)  image sha 1490c1120eab8083b0b1d8765fb9d427d1b1fdbc0d16053bc022a29fd94f8ae7
+
+SUMMARY: {'M1': 5, 'M2': 1, 'M3': 1, 'M4': 0}

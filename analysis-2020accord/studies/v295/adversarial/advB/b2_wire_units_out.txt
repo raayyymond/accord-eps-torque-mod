@@ -1,0 +1,56 @@
+frames: 0x14A 101870, 0x18F 101868
+
+[1] integer identity f14 == f(f18) over pairings (0x14A frame vs the 0x18F frame at offset k in the sorted stream)
+   k=-2  median dt -20.12 ms  f18>>3        identical on 0.3686 of frames
+   k=-2  median dt -20.12 ms  (-f18)>>3     identical on 0.2815 of frames
+   k=-2  median dt -20.12 ms  -(f18>>3)     identical on 0.1705 of frames
+   k=-2  median dt -20.12 ms  round(f18/8)  identical on 0.3488 of frames
+   k=-1  median dt  -9.93 ms  f18>>3        identical on 0.4013 of frames
+   k=-1  median dt  -9.93 ms  (-f18)>>3     identical on 0.2920 of frames
+   k=-1  median dt  -9.93 ms  -(f18>>3)     identical on 0.1699 of frames
+   k=-1  median dt  -9.93 ms  round(f18/8)  identical on 0.3817 of frames
+   k=+0  median dt  +0.00 ms  f18>>3        identical on 0.9396 of frames
+   k=+0  median dt  +0.00 ms  (-f18)>>3     identical on 0.1845 of frames
+   k=+0  median dt  +0.00 ms  -(f18>>3)     identical on 0.3121 of frames
+   k=+0  median dt  +0.00 ms  round(f18/8)  identical on 0.5387 of frames
+   k=+1  median dt  +9.87 ms  f18>>3        identical on 0.4653 of frames
+   k=+1  median dt  +9.87 ms  (-f18)>>3     identical on 0.2807 of frames
+   k=+1  median dt  +9.87 ms  -(f18>>3)     identical on 0.1854 of frames
+   k=+1  median dt  +9.87 ms  round(f18/8)  identical on 0.4026 of frames
+   moving frames (|f18|>80, n=15574) k=-1: f14 == f18>>3 on 0.1338
+   moving frames (|f18|>80, n=15574) k=+0: f14 == f18>>3 on 0.9111
+
+[2] slopes
+   x_fw (= -0x18F raw) vs carState.steeringRateDeg: slope 7.9933 counts per deg/s (offset -3.065)
+   (x_fw/8) vs 0x14A deg/s (DBC -1): slope 0.99949 (offset -0.385 deg/s; floor bias expected +0.44)
+   DBC for the Accord (honda_civic_hatchback_ex_2017_can_generated): 0x14A STEER_ANGLE_RATE (-1) deg/s; 0x18F STEER_ANGLE_RATE (-0.1) deg/s.
+   => the 0x18F DBC factor would give x = 10.00 counts per deg/s, the wire says 7.993: the 0x18F DBC factor is WRONG for this car by x1.251
+
+[3] kappa = d(0x14A angle)/dt vs x/8 (0.5 s spans, all frames with |x/8| span-mean > 5 deg/s, and engaged-only)
+   all: 426 spans
+      |angle|   0-  5 deg: n   78  kappa median 1.167  weighted 1.163
+      |angle|   5- 10 deg: n   51  kappa median 1.161  weighted 1.162
+      |angle|  10- 20 deg: n   57  kappa median 1.162  weighted 1.158
+      |angle|  20- 40 deg: n   60  kappa median 1.141  weighted 1.136
+      |angle|  40- 80 deg: n   52  kappa median 1.054  weighted 1.053
+      |angle|  80-160 deg: n   56  kappa median 0.978  weighted 0.979
+      |angle| 160-999 deg: n   72  kappa median 0.964  weighted 0.966
+   engaged: 352 spans
+      |angle|   0-  5 deg: n   68  kappa median 1.169  weighted 1.157
+      |angle|   5- 10 deg: n   48  kappa median 1.161  weighted 1.171
+      |angle|  10- 20 deg: n   52  kappa median 1.162  weighted 1.165
+      |angle|  20- 40 deg: n   53  kappa median 1.145  weighted 1.136
+      |angle|  40- 80 deg: n   39  kappa median 1.051  weighted 1.050
+      |angle|  80-160 deg: n   47  kappa median 0.973  weighted 0.977
+      |angle| 160-999 deg: n   45  kappa median 0.959  weighted 0.965
+   spectral 0.5-3 Hz, engaged |angle|<20 deg runs (18 runs): kappa = 1.156
+
+[4] 0xE4 wire counts per openpilot torque unit
+   e4 wire vs carOutput.actuatorsOutput.torque: slope -4094.1 counts per unit (offset 0.02), n 58288
+   e4 wire vs carControl.actuators.torque: slope -4087.4 counts per unit (offset 0.32), n 58327
+   frac(e4 == round(-4096*torque)) = 0.3220 ; frac(|e4 - -4096*torque| <= 1) = 0.5854
+   frac(e4 == round(-4095*torque)) = 0.3400 ; frac(|e4 - -4095*torque| <= 1) = 0.5999
+   frac(e4 == round(-4093*torque)) = 0.3702 ; frac(|e4 - -4093*torque| <= 1) = 0.6145
+   frac(e4 == round(-4091*torque)) = 0.3858 ; frac(|e4 - -4091*torque| <= 1) = 0.6189
+   frac(e4 == round(-4064*torque)) = 0.1650 ; frac(|e4 - -4064*torque| <= 1) = 0.3156
+   frac(e4 == round(-3840*torque)) = 0.0012 ; frac(|e4 - -3840*torque| <= 1) = 0.0021

@@ -1,0 +1,9 @@
+0.5-1 Hz max|S| ratio A/V294 over 432 cases (9 members x 3.1-11.9 m/s x relay x pipe x sR gain): min 0.927 median 1.029 max 1.977 ; share > 1: 0.90
+   x0.927  ms_free  v11.9 relay 1 pipe 62 srg 1.4  |S| 2.67 -> 2.48
+   x0.942  ms_free  v11.9 relay 1 pipe 40 srg 1.4  |S| 2.28 -> 2.15
+   x0.953  ms_free  v11.9 relay 1 pipe 22 srg 1.4  |S| 2.03 -> 1.94
+   x1.701  light_b  v 8.0 relay 1 pipe 40 srg 1.4  |S| 0.68 -> 1.16
+   x1.739  light_b  v 5.0 relay 1 pipe 40 srg 1.4  |S| 1.05 -> 1.82
+   x1.835  light_b  v 8.0 relay 1 pipe 62 srg 1.4  |S| 0.76 -> 1.39
+   x1.846  light_b  v 3.1 relay 1 pipe 62 srg 1.4  |S| 1.79 -> 3.30
+   x1.977  light_b  v 5.0 relay 1 pipe 62 srg 1.4  |S| 1.22 -> 2.41

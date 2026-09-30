@@ -1,0 +1,16 @@
+noiseless TI expectation: {'V294': np.float64(0.9965), 'CAND': np.float64(0.9216), 'MB_flat1248': np.float64(0.9853), 'MB_Yonly': np.float64(0.9853), 'G12': np.float64(0.99)}
+whole-drive TI read (with r71b's residual): {'V294': np.float64(1.0), 'CAND': np.float64(0.924), 'MB_flat1248': np.float64(0.9879), 'MB_Yonly': np.float64(0.9879), 'G12': np.float64(0.9929)}
+decision midpoint CAND vs flat: 0.9534
+E  20 s: 21/40 chunks read TI | CAND med 0.907 [0.825, 0.958] -> correct 20/21 | flat med 0.988 [0.944, 1.025] -> correct 20/21 | Y-only med 0.988 -> correct 20/21
+E  30 s: 19/26 chunks read TI | CAND med 0.912 [0.831, 0.956] -> correct 18/19 | flat med 0.985 [0.969, 1.020] -> correct 19/19 | Y-only med 0.985 -> correct 19/19
+E  60 s: 13/13 chunks read TI | CAND med 0.929 [0.905, 0.949] -> correct 13/13 | flat med 0.987 [0.978, 1.000] -> correct 13/13 | Y-only med 0.987 -> correct 13/13
+E 120 s:  6/ 6 chunks read TI | CAND med 0.926 [0.910, 0.938] -> correct 6/6 | flat med 0.988 [0.981, 0.994] -> correct 6/6 | Y-only med 0.988 -> correct 6/6
+E 300 s:  2/ 2 chunks read TI | CAND med 0.920 [0.920, 0.921] -> correct 2/2 | flat med 0.987 [0.985, 0.988] -> correct 2/2 | Y-only med 0.987 -> correct 2/2
+
+whole-drive per-bin ratio, 95% block-bootstrap over 40 20 s engaged blocks:
+  idx   0-  9:  V294 1.000 [0.997, 1.003]  CAND 1.319 [1.316, 1.321]  MB_flat1248 1.319 [1.317, 1.322]  MB_Yonly 1.319 [1.316, 1.322]
+  idx   9- 18:  V294 1.000 [0.999, 1.001]  CAND 1.290 [1.289, 1.291]  MB_flat1248 1.310 [1.308, 1.311]  MB_Yonly 1.310 [1.308, 1.311]
+  idx  18- 30:  V294 1.000 [0.999, 1.001]  CAND 1.253 [1.251, 1.254]  MB_flat1248 1.304 [1.303, 1.305]  MB_Yonly 1.304 [1.303, 1.305]
+  idx  30- 50:  V294 1.000 [1.000, 1.001]  CAND 1.202 [1.199, 1.206]  MB_flat1248 1.303 [1.302, 1.304]  MB_Yonly 1.303 [1.302, 1.303]
+  idx  50- 80:  V294 1.000 [1.000, 1.000]  CAND 1.111 [1.105, 1.118]  MB_flat1248 1.302 [1.301, 1.302]  MB_Yonly 1.290 [1.288, 1.293]
+  idx  80-100:  V294 1.000 [1.000, 1.004]  CAND 1.040 [0.997, 1.044]  MB_flat1248 1.301 [1.300, 1.305]  MB_Yonly 1.233 [1.207, 1.237]

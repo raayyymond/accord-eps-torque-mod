@@ -1,0 +1,4 @@
+score(): A1017  101.2 s  hash 070dde7bb22bf083
+scored A1017 101.26353406906128
+score(): L8  127.3 s  hash cee7cfef9de54ee6
+scored L8 127.44210386276245

@@ -1,0 +1,28 @@
+(1) a=1011: my mirror vs harness Lane on 20000 random ticks: 0 mismatches (T and r26); my int32 wraps: 0
+(1) a=1017: my mirror vs harness Lane on 20000 random ticks: 0 mismatches (T and r26); my int32 wraps: 0
+    a=1011: my fb former vs golden lkas_fb_lag on 20000 ticks: 0 mismatches
+    a=1017: my fb former vs golden lkas_fb_lag on 20000 ticks: 0 mismatches
+(2) a=1011 b=567: fixed point s(+12000) 523265 (tick 735), s(-12000) -523422 ; max|a*s| 5.2918e+08 -> margin 2^31/|a*s| = 4.058 ; closed form b_max(a) = 2301
+(2) a=1017 b=567: fixed point s(+12000) 971777 (tick 1368), s(-12000) -972069 ; max|a*s| 9.8859e+08 -> margin 2^31/|a*s| = 2.172 ; closed form b_max(a) = 1232
+(2) a=1018 b=567: fixed point s(+12000) 1133739 (tick 1596), s(-12000) -1134080 ; max|a*s| 1.1545e+09 -> margin 2^31/|a*s| = 1.860 ; closed form b_max(a) = 1055
+(2) a=1020 b=567: fixed point s(+12000) 1700609 (tick 2397), s(-12000) -1701120 ; max|a*s| 1.7351e+09 -> margin 2^31/|a*s| = 1.238 ; closed form b_max(a) = 702
+    invariant: f_x(s) = floor(a s/1024) + floor(567 x/1024) is non-decreasing in s and in x, so the interval [s*(-12000), s*(+12000)] is invariant from s = 0 (boot, restart) -- |s| can never exceed the fixed point.
+    brute slam test a=1017: 2e6 ticks alternating +-12000 holds: max|a*s| 5.4313e+08 (margin 3.954)
+(3) a=1011: every x in [-12000,12000], 3 starts: r26 reaches exactly 0 and stays (x not settling / re-dithering: 0); worst ticks to exact 0: 789
+(3) a=1017: every x in [-12000,12000], 3 starts: r26 reaches exactly 0 and stays (x not settling / re-dithering: 0); worst ticks to exact 0: 1469
+(4) a=1011: mine: 10 deg/s: peak 14 T, 0 ms > 50 T | 30 deg/s: peak 43 T, 0 ms > 50 T | 100 deg/s: peak 144 T, 159 ms > 50 T | 300 deg/s: peak 419 T, 252 ms > 50 T
+    harness restart_pulse: 10: peak 14, 0 ms | 30: peak 43, 0 ms | 100: peak 144, 159 ms | 300: peak 419, 252 ms
+(4) a=1017: mine: 10 deg/s: peak 17 T, 0 ms > 50 T | 30 deg/s: peak 52 T, 31 ms > 50 T | 100 deg/s: peak 174 T, 269 ms > 50 T | 300 deg/s: peak 503 T, 433 ms > 50 T
+    harness restart_pulse: 10: peak 17, 0 ms | 30: peak 52, 31 ms | 100: peak 174, 269 ms | 300: peak 503, 433 ms
+(5) constant x = 0: T(idx) for 241 idx x 2 signs, a 1011 vs 1017: 0 differ ; rail +2461/-2463 ; monotone in idx (+ side): True
+(5) constant x = 800: T(idx) for 241 idx x 2 signs, a 1011 vs 1017: 0 differ ; rail +2461/-2463 ; monotone in idx (+ side): True
+(5) constant x = -2400: T(idx) for 241 idx x 2 signs, a 1011 vs 1017: 0 differ ; rail +2461/-2463 ; monotone in idx (+ side): True
+(6) f  2 Hz: |r26/x| A1017/V294 = 1.2481, phase -16.8 deg
+(6) f  3 Hz: |r26/x| A1017/V294 = 1.1319, phase -14.1 deg
+(6) f  5 Hz: |r26/x| A1017/V294 = 1.0516, phase -9.8 deg
+(6) f  9 Hz: |r26/x| A1017/V294 = 1.0147, phase -5.8 deg
+(6) f 13 Hz: |r26/x| A1017/V294 = 1.0056, phase -4.1 deg
+(6) f 17 Hz: |r26/x| A1017/V294 = 1.0021, phase -3.1 deg
+(6) f 20 Hz: |r26/x| A1017/V294 = 1.0007, phase -2.7 deg
+(6) f 25 Hz: |r26/x| A1017/V294 = 0.9994, phase -2.1 deg
+(6) f 30 Hz: |r26/x| A1017/V294 = 0.9987, phase -1.8 deg

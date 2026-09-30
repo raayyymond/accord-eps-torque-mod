@@ -1,0 +1,2 @@
+V294 harness Lane vs adversary lane, first 200000 ticks: mismatches 0, max |diff| 0
+CAND harness Lane vs adversary lane, first 200000 ticks: mismatches 0, max |diff| 0

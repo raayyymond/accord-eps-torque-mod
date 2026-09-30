@@ -1,0 +1,16 @@
+297 distinct 1 MB images (by sha256) under C:/Users/dudei/Desktop/Projects/accord-firmwares
+
+(op @0x28FA4, shl @0x29D76, a, b, C) -> count : examples
+  ('add', 5, 923, 1560, 7680)               273 : ['DO-NOT-FLASH-UNDRIVEABLE-SAR-_v255_V255-V112BASE-RATELANE.2X.V62.RESTO', 'DO-NOT-FLASH-UNDRIVEABLE-SAR-_v256_V256-V112BASE-RATELANE.2X.CLAMP4096', 'DO-NOT-FLASH-UNDRIVEABLE-SAR-_v257_V257-V112BASE-RATELANE.2X.CLAMP4096']
+  ('add', 5, 923, 1560, 46080)               15 : ['SUPERSEDED-DO-NOT-FLASH_v287_rev1_DCLAMP.2560_plain_image.bin', 'SUPERSEDED-DO-NOT-FLASH_v288_rev1_V288-V282BASE-SPFILT.K4_plain_image.', 'SUPERSEDED_v280_rev1_KNEE96_plain_image.bin']
+  ('add', 5, 923, 1560, 0)                    3 : ['SUPERSEDED_v279_rev1_SIGNE.TAP_plain_image.bin', '_v279_V279-V268BASE-PURE.FEEDFORWARD.FB0.KD0.LINEAR.TORQUE.TAP_plain_i', '_v293_V293-V282BASE-TORQUEMODE.FB0-KD0.BANK.ALL+DCLAMP0-KP.FLAT.120.AL']
+  ('add', 5, 962, 958, 46080)                 2 : ['SUPERSEDED-DO-NOT-FLASH-_v291c10_V291-V282BASE-FBPOLE.10HZ.962.958-R24', '_v292_V292-V282BASE-EFCAVE.C4C00.6D74-FBPOLE.10HZ.962.958-R24.4725-B3.']
+  ('add', 5, 923, 1560, 15360)                2 : ['SUPERSEDED_v278_rev2_SIGNE.TAP_plain_image.bin', '_v278_V278R3-V268BASE-REFERENCE2X.MAP.FEEDBACK.TORQUE.TAP_plain_image.']
+  ('add', 5, 875, 2301, 46080)                1 : ['_v289_V289-V282BASE-SUMNOTCH.20.05HZ.Q3-FBPOLE.25HZ-KP.FLAT.Y0-CAVE.R2']
+  ('subr', 2, 1011, 567, 1024)                1 : ['_v294_V294-V293BASE-ACCELTRIM.SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.']
+
+images with the DIFFERENCE operand (subr at 0x28FA4):
+    {'f': '_v294_V294-V293BASE-ACCELTRIM.SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.567-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP_plain_image.bin', 'op': 'subr', 'shl': 2, 'a': 1011, 'b': 567, 'C': 1024, 'code_ok': True}
+
+every b value by operand: {'add': [958, 1560, 2301], 'subr': [567]}
+b = 964 on any image: False

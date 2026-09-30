@@ -1,0 +1,56 @@
+score(): R1.3_8_100  153.8 s  hash 2e52e30f4758914e
+score R1.3_8_100 154 s  hash 2e52e30f4758914e
+score(): R1.35_4_100  142.5 s  hash 8e64009ede6bb604
+score R1.35_4_100 143 s  hash 8e64009ede6bb604
+score(): R-offset  112.5 s  hash e36534f399f17ac5
+score R-offset 113 s  hash e36534f399f17ac5
+score(): g1.2  97.7 s  hash 283003531254e066
+score g1.2 98 s  hash 283003531254e066
+== on-centre nominal d0 15: breakaways/min at 3/6/12/20/27 m/s ; max line dB ; r1-3 max
+   V294         bk [0, 0, 2, 8, 9]  line max +7 dB  r1-3 max 0.05
+   R1.3_8_100   bk [0, 0, 1, 8, 21]  line max +7 dB  r1-3 max 0.05
+   R1.35_4_100  bk [0, 0, 4, 8, 18]  line max +7 dB  r1-3 max 0.05
+   R-offset     bk [0, 0, 1, 8, 21]  line max +6 dB  r1-3 max 0.05
+   g1.2         bk [0, 0, 2, 8, 12]  line max +5 dB  r1-3 max 0.05
+== on-centre nominal d0 60: breakaways/min at 3/6/12/20/27 m/s ; max line dB ; r1-3 max
+   V294         bk [0, 0, 7, 8, 27]  line max +6 dB  r1-3 max 0.06
+   R1.3_8_100   bk [0, 0, 1, 8, 26]  line max +6 dB  r1-3 max 0.05
+   R1.35_4_100  bk [0, 0, 1, 6, 25]  line max +6 dB  r1-3 max 0.05
+   R-offset     bk [0, 0, 1, 8, 27]  line max +5 dB  r1-3 max 0.05
+   g1.2         bk [0, 0, 3, 6, 41]  line max +6 dB  r1-3 max 0.05
+== on-centre F_hi d0 15: breakaways/min at 3/6/12/20/27 m/s ; max line dB ; r1-3 max
+   V294         bk [0, 0, 0, 3, 7]  line max +7 dB  r1-3 max 0.05
+   R1.3_8_100   bk [0, 0, 0, 1, 10]  line max +6 dB  r1-3 max 0.05
+   R1.35_4_100  bk [0, 0, 0, 1, 6]  line max +6 dB  r1-3 max 0.05
+   R-offset     bk [0, 0, 0, 1, 10]  line max +6 dB  r1-3 max 0.05
+   g1.2         bk [0, 0, 0, 1, 8]  line max +10 dB  r1-3 max 0.05
+== on-centre F_hi d0 60: breakaways/min at 3/6/12/20/27 m/s ; max line dB ; r1-3 max
+   V294         bk [0, 0, 0, 3, 3]  line max +6 dB  r1-3 max 0.05
+   R1.3_8_100   bk [0, 0, 0, 1, 7]  line max +6 dB  r1-3 max 0.05
+   R1.35_4_100  bk [0, 0, 1, 1, 5]  line max +6 dB  r1-3 max 0.05
+   R-offset     bk [0, 0, 0, 1, 7]  line max +5 dB  r1-3 max 0.05
+   g1.2         bk [0, 0, 0, 2, 4]  line max +7 dB  r1-3 max 0.05
+== on-centre light_b d0 15: breakaways/min at 3/6/12/20/27 m/s ; max line dB ; r1-3 max
+   V294         bk [0, 0, 0, 0, 0]  line max +7 dB  r1-3 max 0.05
+   R1.3_8_100   bk [0, 0, 0, 0, 0]  line max +5 dB  r1-3 max 0.05
+   R1.35_4_100  bk [0, 0, 0, 0, 0]  line max +5 dB  r1-3 max 0.04
+   R-offset     bk [0, 0, 0, 0, 0]  line max +6 dB  r1-3 max 0.05
+   g1.2         bk [0, 0, 0, 0, 0]  line max +5 dB  r1-3 max 0.05
+== on-centre light_b d0 60: breakaways/min at 3/6/12/20/27 m/s ; max line dB ; r1-3 max
+   V294         bk [2, 1, 1, 2, 3]  line max +4 dB  r1-3 max 0.28
+   R1.3_8_100   bk [0, 0, 2, 2, 4]  line max +5 dB  r1-3 max 0.21
+   R1.35_4_100  bk [0, 0, 2, 2, 3]  line max +6 dB  r1-3 max 0.17
+   R-offset     bk [0, 0, 2, 2, 4]  line max +6 dB  r1-3 max 0.20
+   g1.2         bk [2, 1, 2, 2, 3]  line max +1 dB  r1-3 max 0.25
+== on-centre b_lo d0 15: breakaways/min at 3/6/12/20/27 m/s ; max line dB ; r1-3 max
+   V294         bk [0, 0, 2, 8, 9]  line max +6 dB  r1-3 max 0.05
+   R1.3_8_100   bk [0, 0, 2, 8, 26]  line max +6 dB  r1-3 max 0.05
+   R1.35_4_100  bk [0, 0, 1, 8, 29]  line max +6 dB  r1-3 max 0.05
+   R-offset     bk [0, 0, 1, 8, 26]  line max +7 dB  r1-3 max 0.05
+   g1.2         bk [0, 0, 1, 8, 22]  line max +6 dB  r1-3 max 0.05
+== on-centre b_lo d0 60: breakaways/min at 3/6/12/20/27 m/s ; max line dB ; r1-3 max
+   V294         bk [0, 0, 4, 8, 33]  line max +6 dB  r1-3 max 0.05
+   R1.3_8_100   bk [0, 0, 3, 10, 32]  line max +9 dB  r1-3 max 0.05
+   R1.35_4_100  bk [0, 0, 2, 6, 34]  line max +5 dB  r1-3 max 0.05
+   R-offset     bk [0, 0, 3, 11, 35]  line max +6 dB  r1-3 max 0.05
+   g1.2         bk [0, 0, 5, 5, 49]  line max +6 dB  r1-3 max 0.07

@@ -1,0 +1,18 @@
+(1) trim-footprint prediction: |K| ratio and phase shift vs V294 per band; predicted |K| = V294 measured x ratio
+   V294   0.3-1: x1.00 (+0 deg) -> |K| 0.193  1-3: x1.00 (+0 deg) -> |K| 0.128  3-8: x1.00 (+0 deg) -> |K| 0.060
+   A1017  0.3-1: x1.70 (-12 deg) -> |K| 0.329  1-3: x1.33 (-17 deg) -> |K| 0.170  3-8: x1.07 (-10 deg) -> |K| 0.064
+   A1014  0.3-1: x1.27 (-4 deg) -> |K| 0.244  1-3: x1.15 (-7 deg) -> |K| 0.147  3-8: x1.04 (-5 deg) -> |K| 0.062
+   L8     0.3-1: x1.00 (+2 deg) -> |K| 0.194  1-3: x1.03 (+7 deg) -> |K| 0.132  3-8: x1.17 (+12 deg) -> |K| 0.070
+   L10    0.3-1: x1.01 (+3 deg) -> |K| 0.194  1-3: x1.04 (+9 deg) -> |K| 0.134  3-8: x1.23 (+17 deg) -> |K| 0.074
+
+(3) physical constants
+   V294   fb pole 2.03 Hz  out-lag 5.05 Hz (DC 0.99023)  K_alpha 0.2097 T/(deg/s^2)  HF damping 8b/1024 x chain 2.663  b/b_max 0.246
+          T/omega @ [1.0, 2.0, 2.5, 3.0, 5.0] Hz: ['1.16@+52', '1.75@+23', '1.86@+11', '1.91@+2', '1.76@-25'] ; damping part [0.71, 1.61, 1.83, 1.91, 1.59]
+   A1017  fb pole 1.09 Hz  out-lag 5.05 Hz (DC 0.99023)  K_alpha 0.3895 T/(deg/s^2)  HF damping 8b/1024 x chain 2.663  b/b_max 0.460
+          T/omega @ [1.0, 2.0, 2.5, 3.0, 5.0] Hz: ['1.77@+36', '2.18@+6', '2.19@-4', '2.16@-12', '1.85@-35'] ; damping part [1.44, 2.17, 2.19, 2.11, 1.52]
+   A1014  fb pole 1.56 Hz  out-lag 5.05 Hz (DC 0.99023)  K_alpha 0.2727 T/(deg/s^2)  HF damping 8b/1024 x chain 2.663  b/b_max 0.321
+          T/omega @ [1.0, 2.0, 2.5, 3.0, 5.0] Hz: ['1.42@+46', '1.96@+15', '2.03@+4', '2.04@-5', '1.81@-30'] ; damping part [0.99, 1.89, 2.03, 2.03, 1.57]
+   L8     fb pole 2.03 Hz  out-lag 7.97 Hz (DC 0.99000)  K_alpha 0.2097 T/(deg/s^2)  HF damping 8b/1024 x chain 2.662  b/b_max 0.246
+          T/omega @ [1.0, 2.0, 2.5, 3.0, 5.0] Hz: ['1.17@+56', '1.82@+30', '1.98@+20', '2.08@+12', '2.10@-13'] ; damping part [0.65, 1.57, 1.86, 2.03, 2.05]
+   L10    fb pole 2.03 Hz  out-lag 9.94 Hz (DC 0.98992)  K_alpha 0.2097 T/(deg/s^2)  HF damping 8b/1024 x chain 2.662  b/b_max 0.246
+          T/omega @ [1.0, 2.0, 2.5, 3.0, 5.0] Hz: ['1.18@+58', '1.84@+33', '2.02@+24', '2.12@+16', '2.22@-7'] ; damping part [0.63, 1.54, 1.85, 2.04, 2.2]

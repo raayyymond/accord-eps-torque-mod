@@ -1,0 +1,20 @@
+V294 sha 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+  lane vs golden  V294               8000 ticks  mismatches 0   |T|max 1577
+  lane vs golden  Kp x1.5 flat       8000 ticks  mismatches 0   |T|max 1637
+  lane vs golden  Kp sched X moved   8000 ticks  mismatches 0   |T|max 1472
+  lane vs golden  map reshaped       8000 ticks  mismatches 0   |T|max 1261
+(1) lane == golden on this lens's knobs: PASS
+  surface V294               golden [0, 9, 18, 49, 102, 206, 413, 826, 1237, 1653, 2067, 2459, 2461]
+                              mine   [0, 9, 18, 49, 102, 206, 413, 826, 1237, 1653, 2067, 2459, 2461]  EQUAL
+  surface Kp x1.5 flat       golden [0, 14, 28, 75, 154, 309, 619, 1240, 1856, 2461, 2461, 2461, 2461]
+                              mine   [0, 14, 28, 75, 154, 309, 619, 1240, 1856, 2461, 2461, 2461, 2461]  EQUAL
+  surface Kp sched X moved   golden [0, 17, 36, 90, 169, 279, 516, 931, 1345, 1732, 2084, 2459, 2461]
+                              mine   [0, 17, 36, 90, 169, 279, 516, 931, 1345, 1732, 2084, 2459, 2461]  EQUAL
+  surface map reshaped       golden [0, 14, 30, 78, 158, 263, 436, 831, 1237, 1653, 2067, 2459, 2461]
+                              mine   [0, 14, 30, 78, 158, 263, 436, 831, 1237, 1653, 2067, 2459, 2461]  EQUAL
+(2) V294 lp nominal (17 s):
+   0-5    track 0.840 (report 0.840)  hold nan (report None)  ish 0.513  cmd 603
+   5-10   track 0.865 (report 0.865)  hold 0.780 (report 0.78)  ish 0.388  cmd 524
+   10-15  track 0.586 (report 0.586)  hold 0.592 (report 0.592)  ish 0.395  cmd 242
+   15-22  track 0.764 (report 0.764)  hold 0.636 (report 0.636)  ish 0.436  cmd 350
+   22+    track 0.917 (report 0.917)  hold 0.939 (report 0.94)  ish 0.284  cmd 283

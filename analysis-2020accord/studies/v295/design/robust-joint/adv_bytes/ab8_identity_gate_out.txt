@@ -1,0 +1,2 @@
+V294 real tap                identity_block V293/bar: R2 0.9868 resid 22.4 counts lag -30 ms (V294 flight-read F1 line: FAIL if R2 < 0.90)
+candidate A synthetic tap    identity_block V293/bar: R2 0.9620 resid 37.9 counts lag -20 ms (V294 flight-read F1 line: FAIL if R2 < 0.90)

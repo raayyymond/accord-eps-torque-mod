@@ -1,0 +1,38 @@
+null march == plib T1k_null: True
+tap frames 50935 ; engaged 40036 (801 s) ; hands-off 35441 (709 s) ; residual rms hands-off 3.64, all engaged 4.58 counts
+E3 regressor pole 2.033 Hz (from a = 1011)
+
+=== E3 per window, V294 (real tap) vs b964 (fake tap); k = residual scale ===
+  W20ho designer             n    6  k 1.0 | V294 med +0.183 [5-95 +0.152,+0.222] | b964 med +0.326 [+0.282,+0.345] | d' 5.0 | b964<0.28 0.000  b964 in V294-band 0.000  b964 in gap 0.000 | V294>=0.28 0.000  V294 in band 0.833 | best thr 0.226 err 0.000
+  W20ho designer             n    6  k 1.5 | V294 med +0.184 [5-95 +0.142,+0.231] | b964 med +0.328 [+0.272,+0.352] | d' 4.1 | b964<0.28 0.167  b964 in V294-band 0.000  b964 in gap 0.167 | V294>=0.28 0.000  V294 in band 0.833 | best thr 0.236 err 0.000
+  W20ho designer             n    6  k 2.0 | V294 med +0.185 [5-95 +0.132,+0.240] | b964 med +0.329 [+0.262,+0.361] | d' 3.4 | b964<0.28 0.333  b964 in V294-band 0.000  b964 in gap 0.333 | V294>=0.28 0.000  V294 in band 0.667 | best thr 0.247 err 0.000
+  S15ho sliding (>=50% ho)   n  292  k 1.0 | V294 med +0.206 [5-95 +0.175,+0.221] | b964 med +0.349 [+0.311,+0.365] | d' 10.4 | b964<0.28 0.017  b964 in V294-band 0.003  b964 in gap 0.014 | V294>=0.28 0.000  V294 in band 0.983 | best thr 0.260 err 0.002
+  S15ho sliding (>=50% ho)   n  292  k 1.5 | V294 med +0.206 [5-95 +0.171,+0.227] | b964 med +0.350 [+0.308,+0.367] | d' 9.4 | b964<0.28 0.017  b964 in V294-band 0.003  b964 in gap 0.014 | V294>=0.28 0.000  V294 in band 0.966 | best thr 0.244 err 0.009
+  S15ho sliding (>=50% ho)   n  292  k 2.0 | V294 med +0.206 [5-95 +0.166,+0.236] | b964 med +0.351 [+0.305,+0.373] | d' 8.2 | b964<0.28 0.031  b964 in V294-band 0.014  b964 in gap 0.017 | V294>=0.28 0.007  V294 in band 0.952 | best thr 0.262 err 0.014
+  S20ho sliding (>=50% ho)   n  288  k 1.0 | V294 med +0.207 [5-95 +0.183,+0.218] | b964 med +0.350 [+0.317,+0.365] | d' 11.9 | b964<0.28 0.003  b964 in V294-band 0.000  b964 in gap 0.003 | V294>=0.28 0.000  V294 in band 0.997 | best thr 0.237 err 0.000
+  S20ho sliding (>=50% ho)   n  288  k 1.5 | V294 med +0.207 [5-95 +0.179,+0.222] | b964 med +0.350 [+0.315,+0.365] | d' 11.1 | b964<0.28 0.007  b964 in V294-band 0.000  b964 in gap 0.007 | V294>=0.28 0.000  V294 in band 0.990 | best thr 0.250 err 0.000
+  S20ho sliding (>=50% ho)   n  288  k 2.0 | V294 med +0.207 [5-95 +0.173,+0.229] | b964 med +0.351 [+0.311,+0.369] | d' 9.6 | b964<0.28 0.017  b964 in V294-band 0.007  b964 in gap 0.010 | V294>=0.28 0.000  V294 in band 0.965 | best thr 0.263 err 0.003
+  S30ho sliding (>=50% ho)   n  283  k 1.0 | V294 med +0.207 [5-95 +0.190,+0.215] | b964 med +0.351 [+0.324,+0.364] | d' 13.7 | b964<0.28 0.000  b964 in V294-band 0.000  b964 in gap 0.000 | V294>=0.28 0.000  V294 in band 1.000 | best thr 0.230 err 0.000
+  S30ho sliding (>=50% ho)   n  283  k 1.5 | V294 med +0.208 [5-95 +0.187,+0.218] | b964 med +0.350 [+0.317,+0.365] | d' 13.3 | b964<0.28 0.000  b964 in V294-band 0.000  b964 in gap 0.000 | V294>=0.28 0.000  V294 in band 1.000 | best thr 0.240 err 0.000
+  S30ho sliding (>=50% ho)   n  283  k 2.0 | V294 med +0.207 [5-95 +0.182,+0.225] | b964 med +0.352 [+0.313,+0.366] | d' 12.3 | b964<0.28 0.007  b964 in V294-band 0.000  b964 in gap 0.007 | V294>=0.28 0.000  V294 in band 0.989 | best thr 0.249 err 0.000
+  S15all plain Rm            n  298  k 1.0 | V294 med +0.187 [5-95 +0.115,+0.213] | b964 med +0.317 [+0.211,+0.351] | d' 3.5 | b964<0.28 0.275  b964 in V294-band 0.128  b964 in gap 0.138 | V294>=0.28 0.000  V294 in band 0.802 | best thr 0.231 err 0.040
+  S15all taper Rm            n  298  k 1.0 | V294 med +0.201 [5-95 +0.165,+0.214] | b964 med +0.340 [+0.289,+0.357] | d' 9.4 | b964<0.28 0.023  b964 in V294-band 0.003  b964 in gap 0.020 | V294>=0.28 0.000  V294 in band 0.977 | best thr 0.235 err 0.000
+  S15all taper Rm            n  298  k 2.0 | V294 med +0.200 [5-95 +0.145,+0.227] | b964 med +0.342 [+0.272,+0.367] | d' 7.3 | b964<0.28 0.067  b964 in V294-band 0.013  b964 in gap 0.054 | V294>=0.28 0.007  V294 in band 0.926 | best thr 0.240 err 0.013
+  S20all plain Rm            n  293  k 1.0 | V294 med +0.186 [5-95 +0.124,+0.209] | b964 med +0.314 [+0.217,+0.349] | d' 3.6 | b964<0.28 0.290  b964 in V294-band 0.116  b964 in gap 0.164 | V294>=0.28 0.000  V294 in band 0.819 | best thr 0.218 err 0.034
+  S20all taper Rm            n  293  k 1.0 | V294 med +0.201 [5-95 +0.172,+0.211] | b964 med +0.341 [+0.297,+0.357] | d' 10.4 | b964<0.28 0.003  b964 in V294-band 0.000  b964 in gap 0.003 | V294>=0.28 0.000  V294 in band 0.993 | best thr 0.225 err 0.000
+  S20all taper Rm            n  293  k 2.0 | V294 med +0.201 [5-95 +0.153,+0.222] | b964 med +0.343 [+0.278,+0.361] | d' 8.7 | b964<0.28 0.055  b964 in V294-band 0.003  b964 in gap 0.051 | V294>=0.28 0.000  V294 in band 0.939 | best thr 0.252 err 0.005
+  hard-turn events (5-15 m/s, |angle| >= 45 deg): 11 windows; hands-off fraction in them median 0.82
+  HARD15 all, plain Rm       n   11  k 1.0 | V294 med +0.198 [5-95 +0.148,+0.205] | b964 med +0.337 [+0.253,+0.348] | d' 3.8 | b964<0.28 0.273  b964 in V294-band 0.000  b964 in gap 0.273 | V294>=0.28 0.000  V294 in band 0.818 | best thr 0.205 err 0.000
+  HARD15 all, taper Rm       n   11  k 1.0 | V294 med +0.205 [5-95 +0.202,+0.211] | b964 med +0.348 [+0.342,+0.356] | d' 31.3 | b964<0.28 0.000  b964 in V294-band 0.000  b964 in gap 0.000 | V294>=0.28 0.000  V294 in band 1.000 | best thr 0.211 err 0.000
+  HARD15 all, taper Rm       n   11  k 2.0 | V294 med +0.203 [5-95 +0.199,+0.213] | b964 med +0.346 [+0.342,+0.359] | d' 25.7 | b964<0.28 0.000  b964 in V294-band 0.000  b964 in gap 0.000 | V294>=0.28 0.000  V294 in band 1.000 | best thr 0.214 err 0.000
+  HARD15 ho-only (>=5 s ho)  n   11  k 1.0 | V294 med +0.211 [5-95 +0.207,+0.214] | b964 med +0.357 [+0.352,+0.364] | d' 41.7 | b964<0.28 0.000  b964 in V294-band 0.000  b964 in gap 0.000 | V294>=0.28 0.000  V294 in band 1.000 | best thr 0.215 err 0.000
+
+=== pooled over contiguous drive chunks (hands-off frames) ===
+  DRIVE2min pooled ho        n   16  k 1.0 | V294 med +0.210 [5-95 +0.201,+0.215] | b964 med +0.357 [+0.341,+0.364] | d' 20.7 | b964<0.28 0.000  b964 in V294-band 0.000  b964 in gap 0.000 | V294>=0.28 0.000  V294 in band 1.000 | best thr 0.216 err 0.000
+  DRIVE2min pooled ho        n   16  k 2.0 | V294 med +0.210 [5-95 +0.204,+0.219] | b964 med +0.356 [+0.346,+0.365] | d' 24.8 | b964<0.28 0.000  b964 in V294-band 0.000  b964 in gap 0.000 | V294>=0.28 0.000  V294 in band 1.000 | best thr 0.225 err 0.000
+  DRIVE5min pooled ho        n    5  k 1.0 | V294 med +0.212 [5-95 +0.210,+0.213] | b964 med +0.360 [+0.356,+0.362] | d' 76.1 | b964<0.28 0.000  b964 in V294-band 0.000  b964 in gap 0.000 | V294>=0.28 0.000  V294 in band 1.000 | best thr 0.214 err 0.000
+  DRIVE5min pooled ho        n    5  k 2.0 | V294 med +0.212 [5-95 +0.210,+0.214] | b964 med +0.360 [+0.356,+0.363] | d' 71.6 | b964<0.28 0.000  b964 in V294-band 0.000  b964 in gap 0.000 | V294>=0.28 0.000  V294 in band 1.000 | best thr 0.215 err 0.000
+
+pooled whole route hands-off: V294 +0.212  b964 +0.361 (designer +0.213 / +0.361)
+SEL circularity: rms(fake964 - q964) = 3.6414 ; rms(real tap - q567) = 3.6414 (identical by construction)
+residual^2 = 12.75 + 0.00242 * trim^2 (hands-off): trim-proportional share of residual variance 3.8 % ; binned rms by |trim| quartile [3.33, 4.4, 3.62, 5.08]

@@ -1,0 +1,39 @@
+tap frames usable (hands-off engaged, off-rail): 35441 (709 s)
+(1) r71b whole drive: a 0.9906  b 0.9881  c +0.96  resid 4.13  R2 0.99971   (V294 flown: expect a = b = 1)
+    20 s windows (38): a median 0.9864  [p2.5 0.9495, p97.5 0.9985]   b median 0.986  [p2.5 0.868, p97.5 1.110]
+    candidate march 117 s
+(2) g1.2       whole: a 1.1905 b 1.1912 resid 5.04 R2 0.99970 | 20 s windows: a 1.1870 [1.1508, 1.1982]  b 1.190 [0.956, 1.298]
+       idx   0-  6 n 11193: a 1.103 (surface ratio 1.215)  b 1.149 (Kp/960 1.200)
+       idx   6- 14 n 10683: a 1.162 (surface ratio 1.202)  b 1.185 (Kp/960 1.200)
+       idx  14- 25 n  6465: a 1.183 (surface ratio 1.202)  b 1.195 (Kp/960 1.200)
+       idx  25- 40 n  3953: a 1.189 (surface ratio 1.201)  b 1.192 (Kp/960 1.200)
+       idx  40- 70 n  2140: a 1.193 (surface ratio 1.200)  b 1.213 (Kp/960 1.200)
+       idx  70-241 n  1007: a 1.197 (surface ratio 1.200)  b 1.203 (Kp/960 1.200)
+(2) g1.3       whole: a 1.2907 b 1.2892 resid 4.99 R2 0.99975 | 20 s windows: a 1.2874 [1.2539, 1.2986]  b 1.291 [1.100, 1.408]
+       idx   0-  6 n 11193: a 1.206 (surface ratio 1.323)  b 1.235 (Kp/960 1.300)
+       idx   6- 14 n 10683: a 1.263 (surface ratio 1.305)  b 1.277 (Kp/960 1.300)
+       idx  14- 25 n  6465: a 1.282 (surface ratio 1.302)  b 1.293 (Kp/960 1.300)
+       idx  25- 40 n  3953: a 1.289 (surface ratio 1.301)  b 1.292 (Kp/960 1.300)
+       idx  40- 70 n  2140: a 1.293 (surface ratio 1.300)  b 1.310 (Kp/960 1.300)
+       idx  70-241 n  1007: a 1.297 (surface ratio 1.300)  b 1.304 (Kp/960 1.300)
+(2) K-regress  whole: a 1.1195 b 1.2565 resid 15.81 R2 0.99671 | 20 s windows: a 1.1665 [1.0811, 1.2563]  b 1.240 [0.992, 1.491]
+       idx   0-  6 n 11193: a 1.205 (surface ratio 1.323)  b 1.229 (Kp/960 1.300)
+       idx   6- 14 n 10683: a 1.260 (surface ratio 1.304)  b 1.263 (Kp/960 1.299)
+       idx  14- 25 n  6465: a 1.228 (surface ratio 1.256)  b 1.254 (Kp/960 1.254)
+       idx  25- 40 n  3953: a 1.146 (surface ratio 1.163)  b 1.157 (Kp/960 1.163)
+       idx  40- 70 n  2140: a 1.109 (surface ratio 1.121)  b 1.128 (Kp/960 1.121)
+       idx  70-241 n  1007: a 1.063 (surface ratio 1.069)  b 1.166 (Kp/960 1.069)
+(2) M-regress  whole: a 1.1745 b 1.1567 resid 31.50 R2 0.98826 | 20 s windows: a 1.2610 [1.0941, 1.5468]  b 1.059 [0.699, 1.667]
+       idx   0-  6 n 11193: a 1.496 (surface ratio 1.602)  b 0.953 (Kp/960 1.000)
+       idx   6- 14 n 10683: a 1.552 (surface ratio 1.605)  b 0.986 (Kp/960 1.000)
+       idx  14- 25 n  6465: a 1.369 (surface ratio 1.412)  b 1.006 (Kp/960 1.000)
+       idx  25- 40 n  3953: a 1.213 (surface ratio 1.234)  b 0.960 (Kp/960 1.000)
+       idx  40- 70 n  2140: a 1.131 (surface ratio 1.146)  b 1.014 (Kp/960 1.000)
+       idx  70-241 n  1007: a 1.081 (surface ratio 1.086)  b 1.078 (Kp/960 1.000)
+(1b) r71b (V294) by idx bin:
+       idx   0-  6 n 11193: a 0.911  b 0.935
+       idx   6- 14 n 10683: a 0.962  b 0.979
+       idx  14- 25 n  6465: a 0.982  b 0.999
+       idx  25- 40 n  3953: a 0.989  b 0.989
+       idx  40- 70 n  2140: a 0.993  b 1.008
+       idx  70-241 n  1007: a 0.997  b 1.003

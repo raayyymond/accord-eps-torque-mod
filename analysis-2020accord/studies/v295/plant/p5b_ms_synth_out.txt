@@ -1,0 +1,26 @@
+MULTIPLE-SHOOTING OUTPUT-ERROR FIT (1 s windows from the measured state + the march's lane state; command -> byte-exact V294 lane -> plant -> x -> lane; tau 2 ms, rate former 3 ms, sat = prior) -- mode: synthetic
+
+BAND 0-5 m/s: 33 fit windows (v 3.1), 19 held; cost 0.0190 (223 evals); om sd 25.12 deg/s, dth sd 12.187 deg; 90 s wall
+  J 0.1933 +-nan T/(deg/s^2) | b 2.004 +-nan T/(deg/s) | k 5.02 +-nan T/deg | Fc 31.4 +-nan T | Fs 38.1 +-nan T
+  G3a TRUTH   J 0.2000 b 2.000 k 5.00 Fc 30.0 Fs 39.0  -> recovered/true J 0.97 b 1.00 k 1.00 Fc 1.05 Fs 0.98
+  -> open-plant mode f_n 0.81 Hz, zeta 1.018 (linear, sliding); x units: J_x 0.02417, b_x 0.2505 T per count(/s)
+
+BAND 5-10 m/s: 72 fit windows (v 8.0), 85 held; cost 0.0086 (156 evals); om sd 31.37 deg/s, dth sd 10.210 deg; 101 s wall
+  J 0.2223 +-nan T/(deg/s^2) | b 2.158 +-nan T/(deg/s) | k 11.80 +-nan T/deg | Fc 22.9 +-nan T | Fs 30.5 +-nan T
+  G3a TRUTH   J 0.2000 b 2.000 k 11.00 Fc 30.0 Fs 39.0  -> recovered/true J 1.11 b 1.08 k 1.07 Fc 0.76 Fs 0.78
+  -> open-plant mode f_n 1.16 Hz, zeta 0.666 (linear, sliding); x units: J_x 0.02779, b_x 0.2697 T per count(/s)
+
+BAND 10-15 m/s: 83 fit windows (v 11.9), 82 held; cost 0.1120 (228 evals); om sd 5.98 deg/s, dth sd 1.282 deg; 106 s wall
+  J 0.2460 +-nan T/(deg/s^2) | b 3.341 +-nan T/(deg/s) | k 32.84 +-nan T/deg | Fc 14.2 +-nan T | Fs 17.5 +-nan T
+  G3a TRUTH   J 0.2000 b 2.000 k 28.00 Fc 30.0 Fs 39.0  -> recovered/true J 1.23 b 1.67 k 1.17 Fc 0.47 Fs 0.45
+  -> open-plant mode f_n 1.84 Hz, zeta 0.588 (linear, sliding); x units: J_x 0.03075, b_x 0.4177 T per count(/s)
+
+BAND 15-22 m/s: 84 fit windows (v 17.0), 58 held; cost 0.1647 (199 evals); om sd 5.12 deg/s, dth sd 0.952 deg; 107 s wall
+  J 0.2443 +-nan T/(deg/s^2) | b 3.726 +-nan T/(deg/s) | k 47.49 +-nan T/deg | Fc 13.9 +-nan T | Fs 17.0 +-nan T
+  G3a TRUTH   J 0.2000 b 2.000 k 39.00 Fc 30.0 Fs 39.0  -> recovered/true J 1.22 b 1.86 k 1.22 Fc 0.46 Fs 0.44
+  -> open-plant mode f_n 2.22 Hz, zeta 0.547 (linear, sliding); x units: J_x 0.03053, b_x 0.4658 T per count(/s)
+
+BAND 22+ m/s: 42 fit windows (v 26.9), 25 held; cost 0.1943 (229 evals); om sd 3.96 deg/s, dth sd 0.696 deg; 111 s wall
+  J 0.2740 +-nan T/(deg/s^2) | b 3.565 +-nan T/(deg/s) | k 63.01 +-nan T/deg | Fc 17.4 +-nan T | Fs 21.8 +-nan T
+  G3a TRUTH   J 0.2000 b 2.000 k 53.00 Fc 30.0 Fs 39.0  -> recovered/true J 1.37 b 1.78 k 1.19 Fc 0.58 Fs 0.56
+  -> open-plant mode f_n 2.41 Hz, zeta 0.429 (linear, sliding); x units: J_x 0.03425, b_x 0.4456 T per count(/s)

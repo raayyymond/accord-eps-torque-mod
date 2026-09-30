@@ -1,0 +1,78 @@
+V294 sha256 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85 len 0x100000
+  idx clamp + 0xC64F0 (u8)     240
+  idx clamp - 0xC64F1 (u8)     240
+  P clamp 0xC61BC              15360
+  sum clamp 0xC61BE            15360
+  D clamp 0xC61B6              0
+  I clamp 0xC61BA              10240
+  Ki 0xC63E6                   0
+  deadband 0xC62E4             4
+  C 0xC62E6                    1024
+  a 0xC63E8                    1011
+  b 0xC63EA                    567
+  lagA 0xC63EC                 992
+  lagB 0xC63EE                 507
+  gate en 0xC64A3 (u8)         1
+  gate 0xC61B8                 102
+  fwd gain 0xC6CD0             5346
+  lane clamp 0xC61B4           3072
+  fwd clamp 0xC61B2            3072
+Kp pointer table: ['0xe4360', '0xe4378', '0xe4390', '0xe43a8', '0xe43c0', '0xe43d8', '0xe5360', '0xe5378', '0xe5390', '0xe53a8', '0xe53c0', '0xe53d8', '0xe6360', '0xe6378', '0xe6390', '0xe63a8', '0xe63c0', '0xe63d8', '0xe7360', '0xe7378', '0xe7390', '0xe73a8', '0xe73c0', '0xe73d8', '0xe8240', '0xe8258', '0xe8270', '0xe8288']
+distinct: 28  sorted strides: [24, 3688, 3976]
+  slot  0 rec 0xe4360 n=5 X=[0, 68, 112, 136, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot  1 rec 0xe4378 n=5 X=[0, 68, 112, 136, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot  2 rec 0xe4390 n=5 X=[0, 48, 128, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot  3 rec 0xe43a8 n=5 X=[0, 68, 112, 136, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot  4 rec 0xe43c0 n=5 X=[0, 68, 112, 136, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot  5 rec 0xe43d8 n=5 X=[0, 48, 128, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=04004600
+  slot  6 rec 0xe5360 n=5 X=[0, 68, 112, 136, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot  7 rec 0xe5378 n=5 X=[0, 68, 112, 136, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot  8 rec 0xe5390 n=5 X=[0, 64, 112, 136, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot  9 rec 0xe53a8 n=5 X=[0, 64, 112, 136, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 10 rec 0xe53c0 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 11 rec 0xe53d8 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=04004600
+  slot 12 rec 0xe6360 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 13 rec 0xe6378 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 14 rec 0xe6390 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 15 rec 0xe63a8 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 16 rec 0xe63c0 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 17 rec 0xe63d8 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=04002000
+  slot 18 rec 0xe7360 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 19 rec 0xe7378 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 20 rec 0xe7390 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 21 rec 0xe73a8 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 22 rec 0xe73c0 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 23 rec 0xe73d8 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=04002000
+  slot 24 rec 0xe8240 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 25 rec 0xe8258 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 26 rec 0xe8270 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=05000000
+  slot 27 rec 0xe8288 n=5 X=[0, 48, 112, 160, 208] Y=[960, 960, 960, 960, 960] pad=0000 next=04002000
+records disagreeing with spec bytes_v294: []
+live slot 7: 0xe5378
+page 0xe4000: Kp records 0xe4360..0xe43f0; 24 B before: 0000000004002000260036006000ff00ff00df0000000000 ; 24 B after: 0400460048004e005000fe00ea000c000000000004004600
+page 0xe5000: Kp records 0xe5360..0xe53f0; 24 B before: 0000000004002000300040007000ff00cd009a0000000000 ; 24 B after: 0400460048004e005000fe00ea000c000000000004004600
+page 0xe6000: Kp records 0xe6360..0xe63f0; 24 B before: 0000000004002000300040007000ff00cd009a0000000000 ; 24 B after: 04002000300040007000ff00cd009a000000000004002000
+page 0xe7000: Kp records 0xe7360..0xe73f0; 24 B before: 0000000004002000300040007000ff00cd009a0000000000 ; 24 B after: 04002000300040007000ff00cd009a000000000004002000
+page 0xe8000: Kp records 0xe8240..0xe82a0; 24 B before: 0000000004002000300040007000ff00cd009a0000000000 ; 24 B after: 04002000300040007000ff00cd009a000000000004002000
+LE32 (any alignment) pointing INTO a Kp record, outside the 0xCB994 table: {}
+  (control) table entries found by this scan: 28
+aligned LE32 pointing within one stride of a Kp record but not at a record start (overlap risk): [('0xcb938', '0xe434c'), ('0xcb950', '0xe534c'), ('0xcb968', '0xe634c'), ('0xcb980', '0xe734c'), ('0xcb990', '0xe822c'), ('0xcba08', '0xe4404'), ('0xcba20', '0xe5404'), ('0xcba38', '0xe6404'), ('0xcba50', '0xe7404'), ('0xcba68', '0xe82b4')] 10
+mov imm32 of 0xCB994: [('0x29dc6', 'r10', '0xcb994'), ('0x2acb8', 'r10', '0xcb994')]
+mov imm32 into the Kp table (0xCB994..+0x70): [('0x29dc6', 'r10', '0xcb994'), ('0x2acb8', 'r10', '0xcb994')]
+CONTROL mov imm32 0xCB7D4 (Kd bank): [('0x29e76', 'r7', '0xcb7d4'), ('0x2ad64', 'r16', '0xcb7d4')]  0xC9A88 (map): [('0x29cfc', 'r16', '0xc9a88'), ('0x2abf2', 'r12', '0xc9a88')]
+mov imm32 into the Kp record pages 0xE4000..0xE9000: [('0x2f5c0', 'r8', '0xe4c39')]
+movhi 0xC/0xD/0xE sites: [('movhi 0xc', '0x1c4d4', 'r12'), ('movhi 0xd', '0x1c4f2', 'r10'), ('movhi 0xd', '0x50b3c', 'r18'), ('movhi 0xc', '0x5d6ea', 'r12'), ('movhi 0xc', '0x84692', 'r13'), ('movhi 0xc', '0x8496c', 'r10'), ('movhi 0xc', '0x849f0', 'r10')] 7
+addi/movea imm16 0xB994: [('addi/movea 0xB994', '0x29dc6'), ('addi/movea 0xB994', '0x2acb8')]
+disp16 loads with disp 0xB994..0xB9FF (movhi 0xD base): [('0x16a72', 57, 'r20'), ('0x16aa8', 57, 'r20'), ('0x1d02a', 58, 'r8'), ('0x2297a', 63, 'r2'), ('0x2797c', 60, 'r0'), ('0x4af40', 60, 'r24'), ('0x56b7c', 58, 'r26'), ('0x5b83a', 63, 'r0'), ('0x85b36', 63, 'r17'), ('0xbcd16', 58, 'r11'), ('0xbd326', 58, 'r25'), ('0xbe056', 58, 'r11'), ('0xbe666', 58, 'r25')]
+CONTROL calls into FUN_00028ea6 (expect 0x22522): [('0x22522', 'jarl', '0x28ea6')]
+calls/jumps into the twin island from OUTSIDE it: []
+LE32 (aligned) values inside the twin island: [('0x1e4c8', '0x2ae0b'), ('0x5a368', '0x2b000'), ('0x75b78', '0x2a61e')]
+mov imm32 values inside the twin island: [('0x5a366', 'r8', '0x2b000')]
+payload bytes changed: 252  pages: ['0xe4000', '0xe5000', '0xe6000', '0xe7000', '0xe8000']
+CRC blocks (FF.crc_block_map) covering the payload: [('0xe4000', '0xe4ffc'), ('0xe5000', '0xe5ffc'), ('0xe6000', '0xe6ffc'), ('0xe7000', '0xe7ffc'), ('0xe8000', '0xe8ffc')]
+after CRC: total diff 272  trailer bytes 20  trailer addrs ['0xe4ffc', '0xe5ffc', '0xe6ffc', '0xe7ffc', '0xe8ffc']
+walk_all_blocks / walk on the edited image (0 = all good): 0 0
+V293->V294 CRC blocks touched: [('0x13000', '0xc4ffc'), ('0xc6000', '0xc6ffc'), ('0xe4000', '0xe4ffc'), ('0xe5000', '0xe5ffc'), ('0xe6000', '0xe6ffc'), ('0xe7000', '0xe7ffc'), ('0xe8000', '0xe8ffc')]
+candidate blocks subset of V294's exercised blocks: True
+V293->V294 bytes inside the Kp records: 280
+code region [0x13000,0xC0000) bytes changed by the edit: 0

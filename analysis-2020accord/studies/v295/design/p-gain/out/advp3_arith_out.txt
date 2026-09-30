@@ -1,0 +1,25 @@
+Kp LERP own-listing vs golden, 241 idx: mismatches []
+Kp range over idx 0..255: 960 1248  monotone non-increasing: True
+Kp at idx 0,3,6,8,9,18,34,50,54,55,75,92,99,100,101,208,240: [1248, 1248, 1248, 1248, 1245, 1217, 1167, 1117, 1104, 1101, 1039, 986, 964, 960, 960, 960, 960]
+V294 fb    +0: own vs golden surface mismatches 0 []; T(0) 0 T(240) 2461 max 2461 min 0
+V294 fb +1024: own vs golden surface mismatches 0 []; T(0) -616 T(240) 1865 max 1865 min -616
+V294 fb -1024: own vs golden surface mismatches 0 []; T(0) 615 T(240) 2461 max 2461 min 615
+CAND fb    +0: own vs golden surface mismatches 0 []; T(0) 0 T(240) 2461 max 2461 min 0
+CAND fb +1024: own vs golden surface mismatches 0 []; T(0) -801 T(240) 1865 max 1865 min -801
+CAND fb -1024: own vs golden surface mismatches 0 []; T(0) 799 T(240) 2461 max 2461 min 799
+CAND fb0 non-monotone steps: []
+V294 fb0 non-monotone steps: []
+rail: V294 2461 first at idx 239 ; CAND 2461 first at idx 239
+largest static increase +85 T at idx 51 ; any change at idx >= 100: []
+negative-side rail (sgn -1): own surface with sp negative:
+   V294 idx 240 sgn -1: T -2463
+   CAND idx 240 sgn -1: T -2463
+local slope ratio idx 2..150: min 0.636 at idx 99, max 1.333
+static ratio at idx 3,6,18,34,50,75,92:  [1.333, 1.311, 1.266, 1.217, 1.163, 1.083, 1.026]
+  V294 zero-command (idx 0) with r26 = -1024 / +1024: T 615 / -616
+  CAND zero-command (idx 0) with r26 = -1024 / +1024: T 799 / -801
+max |E*Kp| over idx (|E| <= 4*sp+1024): 4945920  margin 434.2 ; V294 4945920
+max |LERP numerator| 6624
+output lag state bound |L| <= 243360 ; |la*L| <= 2.41e+08 ; |S*lb| <= 7.79e+06 ; y <= 15210 (sxh 32767) ; y*gain <= 8.13e+07
+  restart pulse V294 idx 0:  [(14, 0), (43, 0), (145, 160), (419, 253)]  (peak |dT|, ms > 50 T)
+  restart pulse CAND idx 0:  [(18, 0), (56, 46), (188, 184), (545, 275)]  (peak |dT|, ms > 50 T)

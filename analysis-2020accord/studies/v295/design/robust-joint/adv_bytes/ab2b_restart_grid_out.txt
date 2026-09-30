@@ -1,0 +1,29 @@
+x  +800 idx   0 sgn +1: V294  145 T (160 ms>50)  A  283 T (219 ms>50)  ratio 1.95
+x  +800 idx   0 sgn -1: V294  145 T (160 ms>50)  A  283 T (219 ms>50)  ratio 1.95
+x  +800 idx  30 sgn +1: V294  147 T (161 ms>50)  A  285 T (219 ms>50)  ratio 1.94
+x  +800 idx  30 sgn -1: V294  143 T (160 ms>50)  A  281 T (218 ms>50)  ratio 1.97
+x  +800 idx  60 sgn +1: V294  149 T (164 ms>50)  A  287 T (220 ms>50)  ratio 1.93
+x  +800 idx  60 sgn -1: V294  141 T (158 ms>50)  A  279 T (218 ms>50)  ratio 1.98
+x  +800 idx 120 sgn +1: V294  154 T (165 ms>50)  A  292 T (221 ms>50)  ratio 1.90
+x  +800 idx 120 sgn -1: V294  137 T (156 ms>50)  A  275 T (217 ms>50)  ratio 2.01
+x  +800 idx 180 sgn +1: V294  159 T (168 ms>50)  A  296 T (222 ms>50)  ratio 1.86
+x  +800 idx 180 sgn -1: V294  133 T (154 ms>50)  A  271 T (215 ms>50)  ratio 2.04
+x  +800 idx 238 sgn +1: V294  165 T (168 ms>50)  A  301 T (223 ms>50)  ratio 1.82
+x  +800 idx 238 sgn -1: V294   76 T ( 13 ms>50)  A   76 T ( 13 ms>50)  ratio 1.00
+x  +800 idx 240 sgn +1: V294  151 T (141 ms>50)  A  287 T (196 ms>50)  ratio 1.90
+x  +800 idx 240 sgn -1: V294   76 T ( 13 ms>50)  A   76 T ( 13 ms>50)  ratio 1.00
+x  -800 idx   0 sgn +1: V294  144 T (159 ms>50)  A  283 T (218 ms>50)  ratio 1.97
+x  -800 idx   0 sgn -1: V294  144 T (159 ms>50)  A  283 T (218 ms>50)  ratio 1.97
+x  -800 idx  30 sgn +1: V294  143 T (160 ms>50)  A  282 T (218 ms>50)  ratio 1.97
+x  -800 idx  30 sgn -1: V294  147 T (161 ms>50)  A  286 T (219 ms>50)  ratio 1.95
+x  -800 idx  60 sgn +1: V294  141 T (158 ms>50)  A  279 T (218 ms>50)  ratio 1.98
+x  -800 idx  60 sgn -1: V294  150 T (164 ms>50)  A  288 T (220 ms>50)  ratio 1.92
+x  -800 idx 120 sgn +1: V294  138 T (156 ms>50)  A  276 T (217 ms>50)  ratio 2.00
+x  -800 idx 120 sgn -1: V294  154 T (165 ms>50)  A  292 T (221 ms>50)  ratio 1.90
+x  -800 idx 180 sgn +1: V294  134 T (154 ms>50)  A  272 T (215 ms>50)  ratio 2.03
+x  -800 idx 180 sgn -1: V294  160 T (168 ms>50)  A  297 T (222 ms>50)  ratio 1.86
+x  -800 idx 238 sgn +1: V294   76 T ( 13 ms>50)  A   76 T ( 13 ms>50)  ratio 1.00
+x  -800 idx 238 sgn -1: V294  164 T (167 ms>50)  A  301 T (221 ms>50)  ratio 1.84
+x  -800 idx 240 sgn +1: V294   76 T ( 13 ms>50)  A   76 T ( 13 ms>50)  ratio 1.00
+x  -800 idx 240 sgn -1: V294  152 T (141 ms>50)  A  287 T (196 ms>50)  ratio 1.89
+max over grid: V294 165  A 301 ; A cells above the absolute 288 cap: 6 of 28

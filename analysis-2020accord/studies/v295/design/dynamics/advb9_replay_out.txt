@@ -1,0 +1,2 @@
+a=1011: max|r26| 637 (fb-clamp binds 0) ; P-clamp binds 461 ticks ; trim (engaged) rms 18.7 p99 95 max 309 T ; |trim|>300 T: 42 ticks, longest 42 ms ; max|a*s| on the drive (frame starts) 1.207e+08 margin 17.8 ; max|T| 1467
+a=1017: max|r26| 790 (fb-clamp binds 0) ; P-clamp binds 345 ticks ; trim (engaged) rms 28.0 p99 140 max 429 T ; |trim|>300 T: 776 ticks, longest 212 ms ; max|a*s| on the drive (frame starts) 2.074e+08 margin 10.4 ; max|T| 1358

@@ -1,0 +1,9 @@
+redo model: outer-loop PM at the FIRST gain crossover and min |1+L| (Ms), tau 25 ms, fric on
+  V294 (shipped)                   light: 3:PM+40/Ms1.92/GM4.22  5:PM+46/Ms1.82/GM4.17  8:PM+50/Ms1.79/GM3.80  12.5:PM+61/Ms1.78/GM3.19  19:PM+44/Ms2.25/GM2.25  26:PM+34/Ms2.99/GM1.70
+  V294 (shipped)                   ident: 3:PM+85/Ms1.25/GM10.09  5:PM+96/Ms1.24/GM9.80  8:PM+114/Ms1.19/GM10.74  12.5:PM+145/Ms1.13/GM13.61  19:PM+129/Ms1.17/GM10.53  26:PM+126/Ms1.17/GM9.94
+  A1017 b held (K x1.857)          light: 3:PM+50/Ms1.57/GM5.17  5:PM+58/Ms1.50/GM5.03  8:PM+65/Ms1.49/GM4.50  12.5:PM+82/Ms1.53/GM3.64  19:PM+64/Ms1.86/GM2.54  26:PM+54/Ms2.40/GM1.88
+  A1017 b held (K x1.857)          ident: 3:PM+83/Ms1.21/GM10.82  5:PM+93/Ms1.20/GM10.48  8:PM+111/Ms1.16/GM11.30  12.5:PM+145/Ms1.12/GM14.03  19:PM+127/Ms1.15/GM10.81  26:PM+125/Ms1.16/GM10.14
+  a 1017, K held (redo class)      light: 3:PM+47/Ms1.79/GM3.54  5:PM+54/Ms1.73/GM3.46  8:PM+59/Ms1.77/GM3.10  12.5:PM+70/Ms1.90/GM2.53  19:PM+43/Ms2.72/GM1.77  26:PM+23/Ms4.94/GM1.32
+  a 1017, K held (redo class)      ident: 3:PM+86/Ms1.23/GM8.90  5:PM+97/Ms1.22/GM8.63  8:PM+115/Ms1.18/GM9.59  12.5:PM+145/Ms1.13/GM12.56  19:PM+129/Ms1.17/GM9.78  26:PM+126/Ms1.18/GM9.37
+  a 1018, K held (redo rp8c row)   light: 3:PM+48/Ms1.80/GM3.34  5:PM+55/Ms1.76/GM3.26  8:PM+60/Ms1.81/GM2.92  12.5:PM+70/Ms1.99/GM2.38  19:PM+40/Ms2.98/GM1.66  26:PM+18/Ms6.29/GM1.24
+  a 1018, K held (redo rp8c row)   ident: 3:PM+87/Ms1.23/GM8.62  5:PM+98/Ms1.22/GM8.36  8:PM+115/Ms1.19/GM9.34  12.5:PM+145/Ms1.13/GM12.34  19:PM+129/Ms1.17/GM9.63  26:PM+126/Ms1.18/GM9.25

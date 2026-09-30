@@ -1,0 +1,7 @@
+low-speed chunks: 1 total 13 s
+  lp    nominal  V295 peak 0.20 Hz (P 2483.89) rms0.2-1 14.37 rms1-3 1.40 | V294 peak 0.20 Hz (P 2449.37) rms0.2-1 13.66 rms1-3 1.68 | ratio 0.2-1 x1.052, 1-3 x0.838
+  lp    light_b  V295 peak 0.20 Hz (P 2761.51) rms0.2-1 23.01 rms1-3 4.22 | V294 peak 0.20 Hz (P 2828.64) rms0.2-1 19.50 rms1-3 5.13 | ratio 0.2-1 x1.180, 1-3 x0.822
+  lp    b_lo     V295 peak 0.20 Hz (P 2450.50) rms0.2-1 16.87 rms1-3 2.05 | V294 peak 0.20 Hz (P 2422.65) rms0.2-1 15.47 rms1-3 2.59 | ratio 0.2-1 x1.090, 1-3 x0.792
+  full  nominal  V295 peak 0.20 Hz (P 1741.55) rms0.2-1 15.72 rms1-3 7.25 | V294 peak 0.20 Hz (P 1727.16) rms0.2-1 15.07 rms1-3 8.75 | ratio 0.2-1 x1.043, 1-3 x0.828
+  full  light_b  V295 peak 0.20 Hz (P 1816.52) rms0.2-1 16.89 rms1-3 5.92 | V294 peak 0.20 Hz (P 1834.00) rms0.2-1 15.22 rms1-3 8.76 | ratio 0.2-1 x1.110, 1-3 x0.676
+  full  b_lo     V295 peak 0.20 Hz (P 1774.79) rms0.2-1 16.08 rms1-3 6.81 | V294 peak 0.20 Hz (P 1777.62) rms0.2-1 15.11 rms1-3 8.74 | ratio 0.2-1 x1.064, 1-3 x0.779

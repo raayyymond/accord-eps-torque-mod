@@ -1,0 +1,20 @@
+V294 cells: {'a': 1011, 'b': 567, 'C': 1024, 'op': 'diff', 'sh': 2, 'kpY': [960, 960, 960, 960, 960], 'kdY': [0, 0, 0, 0], 'dcl': 0, 'ki': 0, 'pcl': 15360, 'scl': 15360, 'tcl': 3072, 'la': 992, 'lb': 507, 'gain': 5346}
+V294 map Y: [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032] X: [0, 12, 20, 24, 32, 64, 96, 128, 160, 240]
+V282 cells: {'a': 923, 'b': 1560, 'C': 46080, 'op': 'sum', 'sh': 5, 'kpY': [248, 248, 248, 248, 248], 'kdY': [128, 128, 128, 128], 'dcl': 10240, 'ki': 0, 'la': 992, 'lb': 507, 'gain': 5346}
+R1 V294  my lane vs golden: 0 mismatches (T and r26) over 24000 ticks  PASS
+R1 A     my lane vs golden: 0 mismatches (T and r26) over 24000 ticks  PASS
+R1 harness Lane vs my lane (V294, A), 3000 ticks, random x & wire: 0 mismatches  PASS
+R2 V294  opposing T/omega: 0.5 Hz 0.64 @+70  1 Hz 1.16 @+52  2 Hz 1.75 @+23  2.5 Hz 1.86 @+11  3 Hz 1.91 @+2  5 Hz 1.76 @-25  10 Hz 1.18 @-57  13 Hz 0.96 @-67  15 Hz 0.84 @-72  20 Hz 0.65 @-81  25 Hz 0.52 @-87  28 Hz 0.47 @-91  30 Hz 0.44 @-93
+R2 A     opposing T/omega: 0.5 Hz 1.24 @+70  1 Hz 2.26 @+52  2 Hz 3.41 @+23  2.5 Hz 3.63 @+11  3 Hz 3.72 @+2  5 Hz 3.44 @-25  10 Hz 2.31 @-57  13 Hz 1.87 @-67  15 Hz 1.65 @-72  20 Hz 1.26 @-81  25 Hz 1.02 @-87  28 Hz 0.91 @-91  30 Hz 0.85 @-93
+R2 K_alpha (closed form, T per deg/s^2): V294 0.2097  A 0.4091  ratio 1.9506
+R2 V294  K_alpha numeric at 0.02 Hz: 0.2097 T/(deg/s^2)
+R2 A     K_alpha numeric at 0.02 Hz: 0.4091 T/(deg/s^2)
+R3 V294  |P/x| (P+D per x count) at 13/16/20/25 Hz: [2.065 2.073 2.079 2.083]
+R3 A     |P/x| (P+D per x count) at 13/16/20/25 Hz: [4.027 4.044 4.055 4.063]
+R3 V282  |P/x| (P+D per x count) at 13/16/20/25 Hz: [40.233 42.541 44.9   46.94 ]
+R4 V294  restart pulse peak |T| at 10/30/100/300 deg/s: [15, 44, 146, 420] ; ms > 50 T: [0, 0, 162, 255]
+R4 A     restart pulse peak |T| at 10/30/100/300 deg/s: [29, 86, 284, 563] ; ms > 50 T: [0, 109, 221, 307]
+R4 b1134 restart pulse peak |T| at 10/30/100/300 deg/s: [30, 88, 291, 565] ; ms > 50 T: [0, 111, 223, 309]
+R4 V294  int32: s at |x|=12000 steady 523385 ; a*s 5.291e+08 ; margin 2^31/(a*s) 4.058 ; b*x 6.804e+06 margin 315.6 ; b_max 2301.1
+R4 A     int32: s at |x|=12000 steady 1020923 ; a*s 1.032e+09 ; margin 2^31/(a*s) 2.081 ; b*x 1.327e+07 margin 161.8 ; b_max 2301.1
+R4 A integer march at x=12000: max |a*s| 1031999481 margin 2.081 ; max |b*x| 13272000

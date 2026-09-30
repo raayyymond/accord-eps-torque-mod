@@ -1,0 +1,4 @@
+NULL  pooled HO rms vs V294 march 2.25 | vs V295 march 12.97 | vs inverted-V295 42.58 ; 15 s windows choosing V295: 0/46 (gated: 0/25)
+PA    pooled HO rms vs V294 march 13.25 | vs V295 march 2.25 | vs inverted-V295 55.25 ; 15 s windows choosing V295: 46/46 (gated: 25/25)
+PB2   pooled HO rms vs V294 march 13.45 | vs V295 march 4.92 | vs inverted-V295 55.39 ; 15 s windows choosing V295: 32/46 (gated: 25/25)
+INV5  pooled HO rms vs V294 march 42.59 | vs V295 march 55.19 | vs inverted-V295 2.25 ; 15 s windows choosing V295: 0/46 (gated: 0/25)

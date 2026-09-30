@@ -1,0 +1,4 @@
+LERP mirror vs golden over 241 idx x 3 tables: mismatches = 0
+ticks 140000, field/state comparisons 1400000, mismatches 0
+coverage: {'unbound_live': 30307, 'bail': 6577, 'restart': 4004, 'r26_bind': 102397, 'P_bind': 16860, 'S_bind': 0, 'T_bind': 0, 'ramp_partial': 136, 'taper_non254': 42560}
+max |32-bit product| seen (low word): {'bx': 12600000, 'as_': 976745298, 'pp': 4945920, 'mS': 3916800, 'S_lb': 7757100, 'la_o': 237928224, 'y_ramp': 488996864, 'y_gain': 79778358}

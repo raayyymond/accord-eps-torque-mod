@@ -1,0 +1,9 @@
+outer cases 1836: V294 linearly stable 1781, unstable 55
+V294 stable -> A unstable: 0
+V294 unstable -> A stable: 44 of 55
+min A_GM/V294_GM over ALL cases: 1.037
+V294-stable cases: max Ms ratio A/V294 1.020 (light_b Jx0.5 bx1.00 v1.5 relay 0 pipe 22 srg 1.0: 1.375 -> 1.403)
+V294-stable cases: largest PM loss -52.4 deg (light_b Jx0.5 bx1.00 v22.0 relay 0 pipe 62 srg 1.0: 140.6 -> 88.2)
+F-OUT-1 Ms clause on V294-STABLE cases: 0
+identified family (excl light_b): min GM V294 2.10 A 2.32 ; max Ms V294 2.670 A 2.477
+light_b proper: min GM V294 0.63 A 0.93 ; worst case {'case': 'light_b Jx1.0 bx1.00', 'v': 30.0, 'relay': 1.0, 'pipe': 62.0, 'srg': 1.4, 'V': {'GM': 0.6327769324001471, 'PM': 35.62341678927612, 'Ms': 2.349088599017634, 'fMs': 2.3785355890060362}, 'A': {'GM': 0.9253746453525714, 'PM': 4.505666880733543, 'Ms': 17.78247779991893, 'fMs': 2.148506607148514}}

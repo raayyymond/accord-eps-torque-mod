@@ -1,0 +1,25 @@
+V294 sha 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+V294 {'fb_a': 1011, 'fb_b': 567, 'fb_clamp': 1024, 'fb_op': 'diff', 'e_shift': 2, 'kp_y': (960, 960, 960, 960, 960), 'kd_y': (0, 0, 0, 0), 'd_clamp': 0, 'ki': 0, 'p_clamp': 15360, 'sum_clamp': 15360, 'lag_a': 992, 'lag_b': 507, 'gain': 5346, 't_clamp': 3072}
+V282 {'fb_a': 923, 'fb_b': 1560, 'fb_clamp': 46080, 'fb_op': 'sum', 'e_shift': 5, 'kp_y': (248, 248, 248, 248, 248), 'kd_y': (128, 128, 128, 128), 'd_clamp': 10240, 'ki': 0, 'p_clamp': 15360, 'sum_clamp': 15360, 'lag_a': 992, 'lag_b': 507, 'gain': 5346, 't_clamp': 3072}
+V293 {'fb_a': 923, 'fb_b': 1560, 'fb_clamp': 0, 'fb_op': 'sum', 'e_shift': 5, 'kp_y': (120, 120, 120, 120, 120), 'kd_y': (0, 0, 0, 0), 'd_clamp': 0, 'ki': 0, 'p_clamp': 15360, 'sum_clamp': 15360, 'lag_a': 992, 'lag_b': 507, 'gain': 5346, 't_clamp': 3072}
+golden vs IntLane V294 ticks 20000 mismatches 0 maxabs {'b*x': 6794928, 'E*Kp': 4945920, 'y': 6284, 'a*s': 410671233}
+golden vs IntLane b964 ticks 20000 mismatches 0 maxabs {'b*x': 11563180, 'E*Kp': 4945920, 'y': 6900, 'a*s': 536816736}
+golden vs IntLane V282 ticks 20000 mismatches 0 maxabs {'b*x': 18673200, 'E*Kp': 19617792, 'y': 12802, 'a*s': 117685269}
+golden vs IntLane b2301 ticks 20000 mismatches 0 maxabs {'b*x': 27494649, 'E*Kp': 4945920, 'y': 5814, 'a*s': 1353021300}
+|P/x| @20 Hz V294 2.0790 phase(P/x_in) 5.8 | T/x @20: 0.0815  phase(T re -x_in) -70.0
+|P/x| @20 Hz b964 3.5347 phase(P/x_in) 5.8 | T/x @20: 0.1386  phase(T re -x_in) -70.0
+|P/x| @20 Hz V282 44.9000 phase(P/x_in) 10.9 | T/x @20: 1.7606  phase(T re -x_in) -65.0
+K_alpha V294 0.2097 T per deg/s^2 |T/x| 10/15/20/25 Hz [0.14799 0.10589 0.08152 0.06601]
+K_alpha b964 0.3566 T per deg/s^2 |T/x| 10/15/20/25 Hz [0.2516  0.18002 0.1386  0.11222]
+HF ratio b964/V294 at 1/2/5/10/20 Hz [1.7002 1.7002 1.7002 1.7002 1.7002]
+time-domain |P/x| @20 Hz V294 2.0787
+time-domain |P/x| @20 Hz b964 3.5319
+ramp march K_alpha V294 0.2050 (T per deg/s^2, sign + = opposes?)
+ramp march K_alpha b964 0.3500 (T per deg/s^2, sign + = opposes?)
+int32 a*s margin V294 4.058 b_max 2301.1
+restart pulse (x const from s=0) peaks 10/30/100/300 V294 [15, 44, 146, 420]
+int32 a*s margin b964 2.387 b_max 2301.1
+restart pulse (x const from s=0) peaks 10/30/100/300 b964 [25, 75, 248, 544]
+harness Lane vs my IntLane (V294, b964), 20000 ticks, mismatches 0
+lane FRF mine vs harness V294 [0.14501 0.21839 0.22054 0.11983 0.08152 0.06601] [0.14501 0.21839 0.22054 0.11983 0.08152 0.06601] phase diff deg [-0.  0. -0.  0.  0.  0.]
+lane FRF mine vs harness b964 [0.24654 0.37131 0.37495 0.20373 0.1386  0.11222] [0.24654 0.37131 0.37495 0.20373 0.1386  0.11222] phase diff deg [-0. -0. -0.  0.  0.  0.]

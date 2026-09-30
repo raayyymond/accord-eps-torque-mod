@@ -1,0 +1,14 @@
+my FF and live marches == plib T1k_null / T1k_live bit-for-bit (1,020,390 ticks)
+tap frames 50935, engaged 40036 (801 s), hands-off engaged 35441 (709 s) ; tap residual vs V294 march (hands-off) 3.64 counts rms
+trim-reconstruction error proxies on hands-off engaged frames: ZOH-x 0.86, linear-x 0.25 counts rms (TRIM itself 14.31)
+W1 hands-off  5 s                                          n=141 | V294: right 0.65 wrong 0.00 gap 0.35 | A: right 0.37 wrong 0.04 gap 0.59 | A-stress gap 0.60
+W1 hands-off 10 s                                          n= 70 | V294: right 0.80 wrong 0.00 gap 0.20 | A: right 0.56 wrong 0.01 gap 0.43 | A-stress gap 0.46
+W1 hands-off 15 s                                          n= 47 | V294: right 0.83 wrong 0.00 gap 0.17 | A: right 0.62 wrong 0.00 gap 0.38 | A-stress gap 0.36
+W1 hands-off 20 s                                          n= 35 | V294: right 0.86 wrong 0.00 gap 0.14 | A: right 0.71 wrong 0.00 gap 0.29 | A-stress gap 0.26
+W1 hands-off 30 s                                          n= 23 | V294: right 0.96 wrong 0.00 gap 0.04 | A: right 0.83 wrong 0.00 gap 0.17 | A-stress gap 0.17
+W2 contiguous 15 s, all engaged (>=80%)                    n= 49 | V294: right 0.78 wrong 0.00 gap 0.22 | A: right 0.65 wrong 0.00 gap 0.35 | A-stress gap 0.37
+W2 contiguous 30 s, all engaged (>=80%)                    n= 23 | V294: right 0.91 wrong 0.00 gap 0.09 | A: right 0.78 wrong 0.00 gap 0.22 | A-stress gap 0.26
+FF-only identity (no trim term), all engaged        V294 real : slope 0.9820  R^2 0.9946  resid rms 18.88
+FF-only identity (no trim term), all engaged        A synth   : slope 0.9737  R^2 0.9800  resid rms 36.11
+FF-only identity (no trim term), hands-off engaged  V294 real : slope 0.9856  R^2 0.9964  resid rms 14.67
+FF-only identity (no trim term), hands-off engaged  A synth   : slope 0.9809  R^2 0.9868  resid rms 27.98

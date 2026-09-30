@@ -1,0 +1,10 @@
+light_b  17.0 relay False V294: crossovers [0.056] PMs [134.2] | GM 4.11 | Ms 1.541 @ 1.93 Hz | max|L| between xovers -
+light_b  17.0 relay False V295: crossovers [0.056, 0.708, 0.931] PMs [134.3, 127.6, 97.9] | GM 6.56 | Ms 1.391 @ 1.65 Hz | max|L| between xovers 1.030
+light_b  17.0 relay True  V294: crossovers [1.581] PMs [50.0] | GM 2.63 | Ms 2.000 @ 2.10 Hz | max|L| between xovers -
+light_b  17.0 relay True  V295: crossovers [1.313] PMs [57.0] | GM 4.22 | Ms 1.631 @ 1.83 Hz | max|L| between xovers -
+light_b  26.9 relay True  V294: crossovers [2.143] PMs [30.8] | GM 1.70 | Ms 3.066 @ 2.54 Hz | max|L| between xovers -
+light_b  26.9 relay True  V295: crossovers [1.729] PMs [45.4] | GM 2.69 | Ms 1.960 @ 2.31 Hz | max|L| between xovers -
+b_lo      5.0 relay True  V294: crossovers [0.596] PMs [97.8] | GM 8.25 | Ms 1.288 @ 1.45 Hz | max|L| between xovers -
+b_lo      5.0 relay True  V295: crossovers [0.59] PMs [90.1] | GM 11.51 | Ms 1.275 @ 1.21 Hz | max|L| between xovers -
+nominal   5.0 relay True  V294: crossovers [0.393] PMs [112.7] | GM 11.20 | Ms 1.197 @ 1.44 Hz | max|L| between xovers -
+nominal   5.0 relay True  V295: crossovers [0.407] PMs [107.1] | GM 14.65 | Ms 1.195 @ 1.21 Hz | max|L| between xovers -

@@ -1,0 +1,36 @@
+stock -> V295 differing bytes in [0x13000,0x100000): 2182
+  <=V282      2  R1 version marker
+  <=V282      2  R10 fwd clamps 0xC61B2/B4
+  <=V282      1  R13 biquad enable
+  <=V282      2  R14 lockout 0xC62EA
+  <=V282      4  R15 EME quad
+  <=V282      3  R16 EME ramp
+  <=V282     13  R17 EME float mirrors
+  <=V282      5  R18 Coulomb relay
+  <=V282      6  R19 STEER_STATUS debounce C0-C4
+  <=V282      2  R2 fwd-gain load repoint
+  <=V282      4  R20 STEER_STATUS debounce B4/B6
+  <=V282      1  R21 DTC-0x49 gate
+  <=V282      1  R22 square-wave hold
+  <=V282    992  R23 damper rate/boost bank flatten
+  <=V282    464  R24/25/26 LERP data (map / Kp / ceiling)
+  <=V282     46  R28/+ page-CRC trailers
+  <=V282      4  R3 biquad arm
+  <=V282      1  R4 rate-lane gate
+  <=V282      1  R5 gp-0x67fa byte
+  <=V282      4  R6 0x14A hook
+  <=V282    164  R7 0x14A cave body
+  <=V282     31  R8 CAN-427 tap window
+  <=V282      2  R9 private fwd gain 0xC6CD0
+  V293        1  V293 D clamp 0xC61B6
+  V293      112  V293 Kd bank Y (all 28)
+  V293        1  V293 r24 arm 0xC6446 (V67/V88/V293)
+  V294       23  R28/+ page-CRC trailers
+  V294      280  V293/V294 Kp bank Y (all 28)
+  V294        1  V294 0x28FA4 add->subr
+  V294        1  V294 0x29D76 shl5->shl2
+  V294        1  V294 fb clamp C 0xC62E6 (V276/V280/V293/V294)
+  V294        1  V294 pole a 0xC63E8
+  V295        4  R28/+ page-CRC trailers
+  V295        2  V295/V294/V282-orig gain b 0xC63EA
+UNATTRIBUTED: 0 []

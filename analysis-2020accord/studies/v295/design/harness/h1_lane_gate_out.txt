@@ -1,0 +1,28 @@
+H1 LANE GATE    V294 image sha256 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+  cross-check Cells.from_image vs the kit reader (r71b_cache.v294_cells): IDENTICAL
+  V294 cells: {'name': 'V294', 'fb_a': 1011, 'fb_b': 567, 'fb_clamp': 1024, 'fb_op': 'diff', 'e_shift': 2, 'kp_x': (0, 68, 112, 136, 208), 'kp_y': (960, 960, 960, 960, 960), 'kd_x': (0, 11, 22, 32), 'kd_y': (0, 0, 0, 0), 'd_clamp': 0, 'ki': 0, 'deadband': 4, 'i_clamp': 10240, 'p_clamp': 15360, 'sum_clamp': 15360, 'lag_a': 992, 'lag_b': 507, 'gain': 5346, 't_clamp': 3072, 'map_x': (0, 12, 20, 24, 32, 64, 96, 128, 160, 240), 'map_y': (0, 52, 86, 103, 138, 275, 413, 550, 688, 1032), 'idx_clamp': 240, 'G_same': ((32, 42, 80, 112), (255, 255, 255, 0)), 'G_opp': ((32, 38, 80, 112), (255, 255, 255, 0)), 'taperB': ((0, 3, 6, 8, 10, 20), (255, 255, 255, 255, 255, 205)), 'taperD': ((16, 26, 38, 48, 64, 96), (255, 243, 218, 179, 77, 77))}
+  V294 dead band 4, I clamp 10240 (census: 4, 10240)
+  H1a V294                             6000 ticks: mismatches (T,E,I,P,D,S,y) = 0   |T| max 1277  |I| max 0  |D| max 0
+  H1a V294+Ki8                         6000 ticks: mismatches (T,E,I,P,D,S,y) = 0   |T| max 1124  |I| max 13649  |D| max 0
+  H1a V294+Ki64                        6000 ticks: mismatches (T,E,I,P,D,S,y) = 0   |T| max 1337  |I| max 86496  |D| max 0
+  H1a V294+Kd128/Dcl10240              6000 ticks: mismatches (T,E,I,P,D,S,y) = 0   |T| max 1398  |I| max 0  |D| max 10240
+  H1a V294+Ki8+Kd64 sched              6000 ticks: mismatches (T,E,I,P,D,S,y) = 0   |T| max 1188  |I| max 30376  |D| max 10240
+  H1a V282 (sum, shl5, C46080, Kd128)  6000 ticks: mismatches (T,E,I,P,D,S,y) = 0   |T| max 2288  |I| max 0  |D| max 10240
+  H1a V293 (C=0)                       6000 ticks: mismatches (T,E,I,P,D,S,y) = 0   |T| max 1520  |I| max 0  |D| max 0
+  H1a random banks e_shift3            6000 ticks: mismatches (T,E,I,P,D,S,y) = 0   |T| max 2213  |I| max 9029  |D| max 3000
+  H1a e_shift0 sum op                  6000 ticks: mismatches (T,E,I,P,D,S,y) = 0   |T| max 2197  |I| max 0  |D| max 0
+  H1a e_shift5 diff Kd                 6000 ticks: mismatches (T,E,I,P,D,S,y) = 0   |T| max 1801  |I| max 0  |D| max 10240
+  H1a batched (10 different cell sets in one Lane): 0 mismatching T ticks
+H1a PASS  (90000 ticks compared, 0 mismatches)
+  H1b positive controls (each must RAISE):
+     b above b_max at |x| 12000   raised: int32 overflow at a*s (0x28F92 mul): 2147650113 (lane 0, V294*)
+     Kp*E past 2^31               raised: int32 overflow at E*Kp (0x29E36 mul): -3019852800 (lane 0, V294*)
+     y past the 16-bit sxh        raised: y leaves the 16-bit sxh at 0x2A1EA: 32805
+     static problems() on the b-overflow control: ['fb_b 2361 > b_max 2301: the fb state overflows int32 at |x| = 12000']
+     static problems() on V294: []
+  H1c harness Lane on r71b (1020390 ticks, guard ON, 88.8 s): mismatches vs plib.march live 0, null 0
+  H1c tap vs harness live lane, hands-off engaged: 3.64 counts rms over 35441 tap frames (plib G1: 3.64)
+  H1c demand chain vs plib on engaged frames: idx equal 0.99253, sp equal 0.99253, taper m equal 0.95458
+H1b PASS
+H1c PASS
+H1 PASS

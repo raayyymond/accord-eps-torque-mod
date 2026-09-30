@@ -1,0 +1,14 @@
+v 3.1 m/s, 8 seeds x 60 s: dwell-then-jump counts per seed V294 | b964 ; mean jump peak ; stick events ; median |dT| in 60 ms after stick
+  nominal      V294 [30, 33, 31, 22, 29, 29, 26, 30] | b964 [27, 27, 27, 17, 25, 26, 27, 25]  mean 28.8 -> 25.1 (paired diff mean -3.62, sd 2.13, n+ 1 / n- 7)  jump pk 15.7 -> 14.6  sticks 56 -> 56  dT60 39.3 -> 41.9
+  light_b      V294 [11, 13, 16, 8, 9, 11, 12, 16] | b964 [8, 11, 12, 8, 8, 7, 11, 15]  mean 12.0 -> 10.0 (paired diff mean -2.00, sd 1.51, n+ 0 / n- 7)  jump pk 26.9 -> 21.9  sticks 69 -> 68  dT60 30.9 -> 34.9
+  lb_mode20_lo V294 [8, 11, 14, 10, 6, 8, 12, 9] | b964 [5, 10, 9, 10, 6, 5, 9, 11]  mean 9.8 -> 8.1 (paired diff mean -1.62, sd 2.26, n+ 1 / n- 5)  jump pk 26.3 -> 24.7  sticks 89 -> 82  dT60 29.1 -> 32.1
+  J_hi2        V294 [8, 9, 8, 5, 7, 9, 5, 9] | b964 [6, 9, 8, 8, 7, 7, 7, 9]  mean 7.5 -> 7.6 (paired diff mean +0.12, sd 1.73, n+ 2 / n- 2)  jump pk 8.5 -> 8.0  sticks 52 -> 52  dT60 32.0 -> 34.6
+  F_hi         V294 [36, 30, 36, 33, 28, 29, 32, 34] | b964 [35, 30, 37, 32, 28, 28, 29, 34]  mean 32.2 -> 31.6 (paired diff mean -0.62, sd 1.19, n+ 1 / n- 4)  jump pk 16.6 -> 16.0  sticks 35 -> 34  dT60 33.2 -> 36.2
+  F_lo         V294 [9, 10, 11, 5, 6, 7, 9, 9] | b964 [5, 10, 11, 4, 6, 8, 6, 7]  mean 8.2 -> 7.1 (paired diff mean -1.12, sd 1.73, n+ 1 / n- 4)  jump pk 13.1 -> 11.1  sticks 68 -> 66  dT60 37.5 -> 38.4
+v 5.0 m/s, 8 seeds x 60 s: dwell-then-jump counts per seed V294 | b964 ; mean jump peak ; stick events ; median |dT| in 60 ms after stick
+  nominal      V294 [36, 40, 43, 40, 36, 41, 42, 34] | b964 [36, 36, 40, 38, 32, 39, 38, 31]  mean 39.0 -> 36.2 (paired diff mean -2.75, sd 1.39, n+ 0 / n- 7)  jump pk 9.2 -> 8.8  sticks 72 -> 71  dT60 12.9 -> 13.4
+  light_b      V294 [38, 30, 34, 32, 30, 36, 34, 37] | b964 [34, 29, 31, 31, 28, 29, 32, 33]  mean 33.9 -> 30.9 (paired diff mean -3.00, sd 2.00, n+ 0 / n- 8)  jump pk 14.1 -> 13.1  sticks 77 -> 72  dT60 13.1 -> 14.5
+  lb_mode20_lo V294 [26, 25, 33, 29, 25, 29, 26, 30] | b964 [26, 27, 28, 29, 21, 19, 25, 24]  mean 27.9 -> 24.9 (paired diff mean -3.00, sd 3.96, n+ 1 / n- 5)  jump pk 13.6 -> 12.8  sticks 94 -> 91  dT60 12.7 -> 13.9
+  J_hi2        V294 [15, 12, 15, 12, 14, 15, 18, 11] | b964 [14, 11, 17, 13, 14, 14, 15, 10]  mean 14.0 -> 13.5 (paired diff mean -0.50, sd 1.51, n+ 2 / n- 5)  jump pk 5.7 -> 5.6  sticks 74 -> 70  dT60 13.3 -> 14.1
+  F_hi         V294 [31, 24, 25, 29, 23, 23, 28, 27] | b964 [30, 24, 25, 28, 24, 23, 28, 26]  mean 26.2 -> 26.0 (paired diff mean -0.25, sd 0.71, n+ 1 / n- 3)  jump pk 7.5 -> 7.3  sticks 33 -> 32  dT60 14.2 -> 14.3
+  F_lo         V294 [17, 14, 18, 16, 14, 20, 20, 15] | b964 [18, 14, 18, 17, 16, 17, 16, 13]  mean 16.8 -> 16.1 (paired diff mean -0.62, sd 2.13, n+ 3 / n- 3)  jump pk 7.2 -> 6.8  sticks 103 -> 101  dT60 11.2 -> 12.0

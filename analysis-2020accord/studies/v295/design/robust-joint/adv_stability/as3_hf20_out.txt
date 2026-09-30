@@ -1,0 +1,59 @@
+1-2. harness stress members: (f, zeta) of the flexible mode, MINE (exact ZOH) vs HARNESS (semi-implicit Euler)
+  mode13    v 5.0  open mine 12.74/0.1371 harn 12.81/0.1388 | V294 mine 12.81/0.1431 harn 12.88/0.1452 | A mine 12.90/0.1496 harn 12.96/0.1522 | V282 mine 10.66/0.1428 harn 10.72/0.1453
+  mode13    v12.0  open mine 12.34/0.1588 harn 12.39/0.1623 | V294 mine 12.34/0.1669 harn 12.39/0.1709 | A mine 12.34/0.1760 harn 12.37/0.1804 | V282 mine 10.90/0.1435 harn 10.95/0.1441
+  mode13    v25.0  open mine 11.67/0.1435 harn 11.69/0.1454 | V294 mine 11.64/0.1447 harn 11.66/0.1464 | A mine 11.61/0.1457 harn 11.63/0.1472 | V282 mine 11.28/0.1289 harn 11.32/0.1283
+  mode20    v 5.0  open mine 19.85/0.0746 harn 19.96/0.0756 | V294 mine 19.92/0.0753 harn 20.03/0.0764 | A mine 19.99/0.0758 harn 20.10/0.0773 | V282 mine 22.60/0.0733 harn 22.84/0.0857
+  mode20    v12.0  open mine 19.56/0.0945 harn 19.67/0.0972 | V294 mine 19.61/0.0964 harn 19.72/0.0994 | A mine 19.67/0.0983 harn 19.78/0.1016 | V282 mine 22.43/0.1427 harn 22.70/0.1618
+  mode20    v25.0  open mine 18.53/0.1086 harn 18.55/0.1128 | V294 mine 18.52/0.1106 harn 18.54/0.1149 | A mine 18.51/0.1126 harn 18.52/0.1170 | V282 mine 17.51/0.1471 harn 17.49/0.1412
+  mode20_lo v 5.0  open mine 19.49/0.1193 harn 19.63/0.1228 | V294 mine 19.78/0.1214 harn 19.93/0.1258 | A mine 20.08/0.1227 harn 20.23/0.1280 | V282 mine nan/nan harn nan/nan
+  mode20_lo v12.0  open mine 18.07/0.2011 harn 18.16/0.2134 | V294 mine 18.31/0.2119 harn 18.39/0.2260 | A mine 18.58/0.2216 harn 18.67/0.2376 | V282 mine nan/nan harn nan/nan
+  mode20_lo v25.0  open mine 14.72/0.1815 harn 14.61/0.1863 | V294 mine 14.62/0.1867 harn 14.50/0.1906 | A mine 14.52/0.1915 harn 14.39/0.1943 | V282 mine 13.12/0.1444 harn 13.17/0.1396
+
+3. opposing torque per deg/s, damping component Re{T/om * e^{-j w tau}} (T per deg/s), by transport delay
+  V294  tau  0 ms: 8 Hz +0.93(-48)  10 Hz +0.64(-57)  13 Hz +0.38(-67)  16 Hz +0.22(-74)  20 Hz +0.10(-81)  25 Hz +0.02(-87)  30 Hz -0.02(-93)
+  V294  tau  2 ms: 8 Hz +0.82(-54)  10 Hz +0.51(-64)  13 Hz +0.23(-76)  16 Hz +0.06(-85)  20 Hz -0.06(-95)  25 Hz -0.14(-105)  30 Hz -0.18(-114)
+  V294  tau  4 ms: 8 Hz +0.71(-59)  10 Hz +0.37(-72)  13 Hz +0.07(-86)  16 Hz -0.10(-97)  20 Hz -0.22(-110)  25 Hz -0.29(-123)  30 Hz -0.31(-136)
+  V294  tau  6 ms: 8 Hz +0.58(-65)  10 Hz +0.23(-79)  13 Hz -0.08(-95)  16 Hz -0.25(-108)  20 Hz -0.36(-124)  25 Hz -0.41(-141)  30 Hz -0.40(-158)
+  V294  tau  9 ms: 8 Hz +0.39(-74)  10 Hz +0.01(-90)  13 Hz -0.31(-109)  16 Hz -0.47(-126)  20 Hz -0.54(-146)  25 Hz -0.51(-168)  30 Hz -0.43(+170)
+  V294  tau 12 ms: 8 Hz +0.18(-82)  10 Hz -0.21(-100)  13 Hz -0.52(-123)  16 Hz -0.64(-143)  20 Hz -0.63(-167)  25 Hz -0.50(+165)  30 Hz -0.32(+138)
+  V294  tau 18 ms: 8 Hz -0.23(-100)  10 Hz -0.62(-122)  13 Hz -0.84(-151)  16 Hz -0.80(-178)  20 Hz -0.56(+150)  25 Hz -0.18(+111)  30 Hz +0.13(+73)
+  A     tau  0 ms: 8 Hz +1.82(-48)  10 Hz +1.25(-57)  13 Hz +0.73(-67)  16 Hz +0.43(-74)  20 Hz +0.20(-81)  25 Hz +0.05(-87)  30 Hz -0.04(-93)
+  A     tau  2 ms: 8 Hz +1.61(-54)  10 Hz +1.00(-64)  13 Hz +0.44(-76)  16 Hz +0.12(-85)  20 Hz -0.12(-95)  25 Hz -0.27(-105)  30 Hz -0.35(-114)
+  A     tau  4 ms: 8 Hz +1.38(-59)  10 Hz +0.73(-72)  13 Hz +0.14(-86)  16 Hz -0.19(-97)  20 Hz -0.43(-110)  25 Hz -0.56(-123)  30 Hz -0.61(-136)
+  A     tau  6 ms: 8 Hz +1.14(-65)  10 Hz +0.45(-79)  13 Hz -0.16(-95)  16 Hz -0.49(-108)  20 Hz -0.71(-124)  25 Hz -0.80(-141)  30 Hz -0.79(-158)
+  A     tau  9 ms: 8 Hz +0.76(-74)  10 Hz +0.02(-90)  13 Hz -0.61(-109)  16 Hz -0.91(-126)  20 Hz -1.04(-146)  25 Hz -1.00(-168)  30 Hz -0.84(+170)
+  A     tau 12 ms: 8 Hz +0.36(-82)  10 Hz -0.41(-100)  13 Hz -1.02(-123)  16 Hz -1.24(-143)  20 Hz -1.23(-167)  25 Hz -0.98(+165)  30 Hz -0.63(+138)
+  A     tau 18 ms: 8 Hz -0.45(-100)  10 Hz -1.22(-122)  13 Hz -1.63(-151)  16 Hz -1.55(-178)  20 Hz -1.09(+150)  25 Hz -0.36(+111)  30 Hz +0.25(+73)
+  V282  tau  0 ms: 8 Hz +15.96(-49)  10 Hz +12.50(-55)  13 Hz +8.73(-62)  16 Hz +6.01(-68)  20 Hz +3.44(-76)  25 Hz +1.30(-84)  30 Hz -0.10(-91)
+  V282  tau  2 ms: 8 Hz +14.05(-55)  10 Hz +10.19(-62)  13 Hz +5.93(-71)  16 Hz +2.86(-80)  20 Hz -0.04(-90)  25 Hz -2.39(-102)  30 Hz -3.82(-112)
+  V282  tau  4 ms: 8 Hz +12.00(-60)  10 Hz +7.72(-69)  13 Hz +2.98(-81)  16 Hz -0.42(-91)  20 Hz -3.52(-105)  25 Hz -5.84(-120)  30 Hz -7.00(-134)
+  V282  tau  6 ms: 8 Hz +9.83(-66)  10 Hz +5.13(-76)  13 Hz -0.05(-90)  16 Hz -3.67(-103)  20 Hz -6.78(-119)  25 Hz -8.72(-138)  30 Hz -9.20(-155)
+  V282  tau  9 ms: 8 Hz +6.39(-75)  10 Hz +1.10(-87)  13 Hz -4.57(-104)  16 Hz -8.24(-120)  20 Hz -10.81(-141)  25 Hz -11.37(-165)  30 Hz -10.02(+172)
+  V282  tau 12 ms: 8 Hz +2.80(-83)  10 Hz -2.97(-98)  13 Hz -8.82(-118)  16 Hz -12.06(-138)  20 Hz -13.33(-162)  25 Hz -11.55(+168)  30 Hz -7.73(+140)
+  V282  tau 18 ms: 8 Hz -4.47(-101)  10 Hz -10.64(-119)  13 Hz -15.51(-146)  16 Hz -16.20(-172)  20 Hz -12.65(+155)  25 Hz -4.86(+114)  30 Hz +2.62(+75)
+  A: damping flips negative at 27.3 Hz with tau 0 ms (w/ 3 ms rate former + output lag in T/om)
+  A: damping flips negative at 17.8 Hz with tau 2 ms (w/ 3 ms rate former + output lag in T/om)
+  A: damping flips negative at 14.1 Hz with tau 4 ms (w/ 3 ms rate former + output lag in T/om)
+  A: damping flips negative at 12.0 Hz with tau 6 ms (w/ 3 ms rate former + output lag in T/om)
+  A: damping flips negative at 10.1 Hz with tau 9 ms (w/ 3 ms rate former + output lag in T/om)
+  A: damping flips negative at 8.8 Hz with tau 12 ms (w/ 3 ms rate former + output lag in T/om)
+  A: damping flips negative at 7.2 Hz with tau 18 ms (w/ 3 ms rate former + output lag in T/om)
+
+4. calibration scan
+  scanned 30240 plants in 16 s; CONSISTENT with V282's on-car 20 Hz (zeta_open >= 0.05, V282 zeta 0.010-0.035 at 19-21.5 Hz): 147
+  by delay: n, zeta_open range, V282, and A/open (worst), A de-damping as a fraction of V282's (worst), V294 same
+   tau  0: none
+   tau  1: none
+   tau  2: none
+   tau  3: n   12  zeta_open 0.053-0.089 | worst A/open 0.982 (V294/open 0.992; zo 0.058 zA 0.0573; light_b f2 18 z2 0.05 r2 0.20 v11.9) | worst A frac 0.032 (V294 0.015) | worst V294 frac 0.015
+   tau  4: n   24  zeta_open 0.052-0.101 | worst A/open 0.969 (V294/open 0.985; zo 0.065 zA 0.0628; J_hi f2 18 z2 0.01 r2 0.50 v3.1) | worst A frac 0.067 (V294 0.033) | worst V294 frac 0.033
+   tau  6: n   32  zeta_open 0.051-0.196 | worst A/open 0.935 (V294/open 0.969; zo 0.196 zA 0.1831; J_hi f2 16 z2 0.08 r2 0.65 v3.1) | worst A frac 0.074 (V294 0.037) | worst V294 frac 0.037
+   tau  9: n   29  zeta_open 0.057-0.192 | worst A/open 0.918 (V294/open 0.959; zo 0.135 zA 0.1241; J_hi f2 18 z2 0.08 r2 0.50 v3.1) | worst A frac 0.097 (V294 0.050) | worst V294 frac 0.050
+   tau 12: n   23  zeta_open 0.055-0.242 | worst A/open 0.901 (V294/open 0.949; zo 0.130 zA 0.1169; J_hi f2 20 z2 0.08 r2 0.50 v3.1) | worst A frac 0.111 (V294 0.057) | worst V294 frac 0.057
+   tau 18: n   27  zeta_open 0.054-0.663 | worst A/open 0.596 (V294/open 0.706; zo 0.663 zA 0.3951; nominal f2 30 z2 0.08 r2 0.80 v11.9) | worst A frac 0.422 (V294 0.307) | worst V294 frac 0.307
+  F-HF-1 hits (A zeta < 0.8 zeta_open OR A de-damping > 25 % of V282's):
+   2 of 147 consistent plants
+     nominal v11.9 f2 30 z2 0.08 r2 0.80 tau 18 | open 17.82/0.6626 V282 21.07/0.0281 V294 0.4681 A 0.3951 | A/open 0.596 frac 0.422
+     nominal v11.9 f2 30 z2 0.05 r2 0.80 tau 18 | open 18.81/0.6232 V282 21.22/0.0163 V294 0.4476 A 0.3773 | A/open 0.605 frac 0.405
+  weakest 5-40 Hz mode over the consistent set: A 20.02 Hz zeta 0.0495 (J_hi tau 6) ; V294 19.97 Hz zeta 0.0508
+  overall: A/open min 0.596 median 0.975 ; V294/open min 0.706 median 0.988 ; A/V294 min 0.843

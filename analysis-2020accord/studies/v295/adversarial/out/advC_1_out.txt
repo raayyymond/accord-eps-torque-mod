@@ -1,0 +1,101 @@
+==============================================================================================================
+ [A] ARTIFACTS ON DISK
+  V295 image files: ['_v295_V295-V294BASE-ACCELTRIM.B1050-SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.1050-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP_plain_image.bin']
+  V295 rwd files  : ['39990-TVA,A160-V295-V294BASE-ACCELTRIM.B1050-SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.1050-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP-0x13000-0x100000.rwd']
+  V294 rwd files  : ['39990-TVA,A160-V294-V293BASE-ACCELTRIM.SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.567-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP-0x13000-0x100000.rwd']
+  [ok]   exactly one V295 plain image and one V295 rwd on disk (any prefix)
+  [ok]   exactly one V294 rwd on disk
+  [ok]   stock    sha256 3f1d55a98aac6e73631d94d583065c57d83dd3a86df0e7d06e56a3feb58fd822  (1,048,576 B)
+  [ok]   v293     sha256 f75e77cf0ba9d93b5302196877e59c6a41deae4983afc09ade99c5b766e1db17  (1,048,576 B)
+  [ok]   v294     sha256 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85  (1,048,576 B)
+  [ok]   v295     sha256 5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed  (1,048,576 B)
+  [ok]   v294rwd  sha256 a2b418f061160f66ffaa8ac541a478d43771fcbd004a92dc3d7a071cfd9f706a  (986,042 B)
+  [ok]   v295rwd  sha256 f42a06bda5a737eb9f678d617603745ec21fb93c4bd229344f33259cfbeaae87  (986,042 B)
+
+ [B] CRC SCHEME, FROM THE BOOTLOADER (stock code.bin, below 0x13000)
+  raw halfwords 0xB06C..0xB088: 15e2 0622 6000 000c e9e2 0d8a 063d 3000 0001 063c 1ffc 000b dd95 17fd
+    0x0B06E mov 0xC6000, r2   (6-byte form)
+    0x0B078 mov 0x13000, r29   (6-byte form)
+    0x0B07E mov 0xB1FFC, r28   (6-byte form)
+  constants formed: {'0xb06e': '0xc6000', '0xb078': '0x13000', '0xb07e': '0xb1ffc'}
+  [ok]   bootloader forms 0xC6000 (bridge compare), 0x13000 (main start), 0xB1FFC (main len) -- read from the bytes
+  [ok]   my CRC-32 check value crc32('123456789') == 0xCBF43926 (CRC-32/ISO-HDLC)
+  [ok]   stock  full chain 50/50   bootloader walk 49/49
+  [ok]   stock: 50 blocks tile [0x13000,0x100000) with no gap/overlap (trailers included)
+    main block by the stored links: [0x13000,0xC4FFC);  bootloader bridge gives [0x13000,0xC4FFC)
+    blocks only in the full chain: [('0xc5000', '0xc5ffc')]; only in the bootloader walk: []
+  [ok]   v293   full chain 50/50   bootloader walk 49/49
+  [ok]   v294   full chain 50/50   bootloader walk 49/49
+  [ok]   v295   full chain 50/50   bootloader walk 49/49
+    V295 owning block [0xC6000,0xC6FFC) crc 0x8D982BD9 stored 0x8D982BD9
+  [ok]   the block table (full chain) is identical on stock, V293, V294, V295 (no build moved a descriptor)
+
+ [C] MY OWN REBUILD: V294 + (u16 LE 1050 at the address the reader instruction resolves) + my CRC
+   boot: ori 0x8000,r0,r1 ; movhi 0xfedf,r0,r4 ; movea 0x0,r4,r4 ; add r1,r4 ; movhi 0xb,r0,r5 ; movea 0x7000,r5,r5 ; add r1,r5 -> tp 0xBF000 gp 0xFEDF8000
+  [ok]   tp = 0xBF000, gp = 0xFEDF8000 from the image's own boot code
+   0x28F86: hw1 87e5 hw2 73eb op6 0x3f reg1 r5 reg2 r16 hw2[0]=1 -> ld.hu 0x73EA[r5] = 0xC63EA
+  [ok]   the reader is ld.hu tp+0x73EA -> 0xC63EA
+  [ok]   V294 value at the cell = 567 (567 expected)
+  [ok]   owning block of the cell by MY walker: [('0xc6000', '0xc6ffc')]
+   trailers that changed on recompute: [('0xc6000', '0xc6ffc', '0xf3441165', '0x8d982bd9')]
+  [ok]   exactly ONE trailer moved: the owning block's
+  [ok]   MY REBUILD sha256 5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed == on-disk V295
+  [ok]   my rebuild is byte-equal to the on-disk V295 image over the WHOLE file
+
+ [D] FULL DIFFS
+   V295 vs V294, WHOLE FILE: [('0xc63ea', '0xc63eb', '37 02', '1a 04'), ('0xc6ffc', '0xc6fff', '65 11 44 f3', 'd9 2b 98 8d')]
+  [ok]   V295 vs V294 = exactly 0xC63EA-EB + 0xC6FFC-FF
+  [ok]   0 bytes differ in [0, 0xC0000) (code region untouched)
+  [ok]   neighbours 0xC63E8 (a) and 0xC63EC (output-lag a) unchanged
+   0xC63E0..0xC63F0 V295: 00 04 1f 00 7a 02 00 00 f3 03 1a 04 e0 03 fb 01
+  [ok]   V295 0xC63EA LE = 1050 (bytes 1a 04)
+  [ok]   below 0x13000 (filler) V295 == V294
+   V295 vs V293 over [0x13000,0x100000): 314 bytes
+     CRC trailer                          28  ['0xc4ffc', '0xc4ffd', '0xc4ffe', '0xc4fff', '0xc6ffc', '0xc6ffd', '0xc6ffe', '0xc6fff', '0xe4ffc', '0xe4ffd'] ...
+     Kp bank Y                           280  ['0xe436c', '0xe436d', '0xe436e', '0xe436f', '0xe4370', '0xe4371', '0xe4372', '0xe4373', '0xe4374', '0xe4375'] ...
+     V294 C 0->1024                        1  ['0xc62e7']
+     V294 a                                1  ['0xc63e8']
+     V294 add->subr                        1  ['0x28fa4']
+     V294 shl5->shl2                       1  ['0x29d76']
+     b (V294 1560->567, V295 ->1050)       2  ['0xc63ea', '0xc63eb']
+  [ok]   every V293->V295 differing byte is attributed (V294's six edits, b, Kp Y, CRC trailers)
+     trailer blocks touched: ['0xc4ffc', '0xc6ffc', '0xe4ffc', '0xe5ffc', '0xe6ffc', '0xe7ffc', '0xe8ffc']
+     V295 Kp Y values over all 28 records: [960]  V293: [120]
+   V282 image _v282_V282-V281R3BASE-KP.FLAT.Y0-CAVE.R2... sha 0ea98d06b292ca1a
+  [ok]   V282 image sha == the V282 delta doc's
+   |stock^V282| 1984  |V282^V293| 378  |V293^V294| 314  |V294^V295| 6  |stock^V295| 2182
+  [ok]   stock vs V282 = 1,984 bytes (the V282 doc's fully attributed census)
+  [ok]   every stock^V295 byte lies in a documented delta
+     V282->V293 CRC trailer            22  ['0xc6ffc', '0xc6ffd', '0xc6ffe', '0xc6fff', '0xe4ffc', '0xe4ffd', '0xe4ffe', '0xe4fff'] ...
+     V282->V293 D clamp                 1  ['0xc61b7']
+     V282->V293 Kd bank Y             112  ['0xe4112', '0xe4114', '0xe4116', '0xe4118', '0xe4126', '0xe4128', '0xe412a', '0xe412c'] ...
+     V282->V293 Kp bank Y             240  ['0xe436c', '0xe436e', '0xe4370', '0xe4372', '0xe4374', '0xe4384', '0xe4385', '0xe4386'] ...
+     V282->V293 fb clamp C              1  ['0xc62e7']
+     V282->V293 r24 arm                 2  ['0xc6446', '0xc6447']
+  [ok]   every V282->V293 byte is one of V293's five (C, Kd Y, D clamp, Kp Y, r24) or a trailer
+   bytes non-stock on V282 but STOCK again on V295: 2 ['0xc6446', '0xe8ffe']
+   bytes non-stock on V295 but stock on V282: 200
+
+ [E] .rwd -- my own decoder
+   v294rwd: header 118 B, fields [('#', ['\x00']), ('?', ['A1']), ('/', ['39990-TVA-A110', '39990-TVA,A160']), ('!', ['001100121020', '001100121020']), ('&', ['BF109E']), ('%', ['30'])]
+          7584 chunks [0x13000,0x100000) contiguous=True; additive checksum 0x04D4BB0B vs trailer 0x04D4BB0B
+  [ok]   v294rwd: payload covers exactly [0x13000,0x100000) in 128-B contiguous chunks
+  [ok]   v294rwd: 32-bit additive checksum of every preceding byte == trailer
+   v295rwd: header 118 B, fields [('#', ['\x00']), ('?', ['A1']), ('/', ['39990-TVA-A110', '39990-TVA,A160']), ('!', ['001100121020', '001100121020']), ('&', ['BF109E']), ('%', ['30'])]
+          7584 chunks [0x13000,0x100000) contiguous=True; additive checksum 0x04D4BBCA vs trailer 0x04D4BBCA
+  [ok]   v295rwd: payload covers exactly [0x13000,0x100000) in 128-B contiguous chunks
+  [ok]   v295rwd: 32-bit additive checksum of every preceding byte == trailer
+  [ok]   substitution learned from the FLOWN V294 rwd/image pair: 256 codes, bijective, 0 conflicts
+   header '&' keys BF109E -> [191, 16, 158]; op triples reproducing the learned table: [('xor', 'xor', 'sub')]
+  [ok]   the learned table is a keyed (op,op,op) cipher over the header's own keys (structure, not just a lookup)
+  [ok]   V294 and V295 rwd headers byte-identical (part numbers, keys)
+  [ok]   MY decode of the V295 rwd == the V295 image over [0x13000,0x100000)
+  [ok]   V294 and V295 rwd have equal length
+   rwd V294 vs V295: 7 differing bytes at ['0xb6130', '0xb6131', '0xb6d72', '0xb6d73', '0xb6d74', '0xb6d75', '0xf0bb6']
+   mapped: [('image', '0xc63ea'), ('image', '0xc63eb'), ('image', '0xc6ffc'), ('image', '0xc6ffd'), ('image', '0xc6ffe'), ('image', '0xc6fff'), ('checksum', '0xf0bb6')]
+  [ok]   the rwd delta is EXACTLY the 6 image bytes + the 4-byte container checksum
+   part numbers in the header: ['39990-TVA-A110', '39990-TVA,A160']
+  [ok]   the precedent redo's formula == my learned table
+
+==============================================================================================================
+ RESULT: 0 FAIL(s)

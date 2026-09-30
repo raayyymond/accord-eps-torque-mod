@@ -1,0 +1,64 @@
+(a) FF identity (golden surface at fb 0, 241 idx x 3 tapers; Lane march at x = 0 on random commands)
+   a1011_G1.50  surface mismatches 0 / 723 ; Lane march x=0: 0 / 30000 ticks differ ; max|T| 2463
+   a1011_G2.00  surface mismatches 0 / 723 ; Lane march x=0: 0 / 30000 ticks differ ; max|T| 2463
+   a1011_G2.50  surface mismatches 0 / 723 ; Lane march x=0: 0 / 30000 ticks differ ; max|T| 2463
+   a1011_G3.00  surface mismatches 0 / 723 ; Lane march x=0: 0 / 30000 ticks differ ; max|T| 2463
+   a1017_G1.00  surface mismatches 0 / 723 ; Lane march x=0: 0 / 30000 ticks differ ; max|T| 2463
+   a1014_G2.00  surface mismatches 0 / 723 ; Lane march x=0: 0 / 30000 ticks differ ; max|T| 2463
+   a1017_G2.00  surface mismatches 0 / 723 ; Lane march x=0: 0 / 30000 ticks differ ; max|T| 2463
+(b) |T/x| by time-domain sinusoid (amplitude 400 counts = 50 deg/s, 2 s) vs analytic lane_ctf
+   V294           10Hz td 0.1481 an 0.1480    13Hz td 0.1199 an 0.1198    17Hz td 0.0947 an 0.0947    20Hz td 0.0815 an 0.0815    25Hz td 0.0658 an 0.0660
+   a1011_G1.50    10Hz td 0.2219 an 0.2218    13Hz td 0.1797 an 0.1796    17Hz td 0.1420 an 0.1419    20Hz td 0.1223 an 0.1222    25Hz td 0.0989 an 0.0990
+   a1011_G2.00    10Hz td 0.2957 an 0.2960    13Hz td 0.2396 an 0.2397    17Hz td 0.1894 an 0.1893    20Hz td 0.1629 an 0.1630    25Hz td 0.1323 an 0.1320
+   a1011_G2.50    10Hz td 0.3702 an 0.3701    13Hz td 0.2997 an 0.2997    17Hz td 0.2367 an 0.2368    20Hz td 0.2040 an 0.2039    25Hz td 0.1651 an 0.1651
+   a1011_G3.00    10Hz td 0.4437 an 0.4437    13Hz td 0.3593 an 0.3593    17Hz td 0.2839 an 0.2838    20Hz td 0.2443 an 0.2444    25Hz td 0.1978 an 0.1979
+   a1017_G1.00    10Hz td 0.1499 an 0.1497    13Hz td 0.1205 an 0.1205    17Hz td 0.0949 an 0.0949    20Hz td 0.0815 an 0.0816    25Hz td 0.0659 an 0.0660
+   a1014_G2.00    10Hz td 0.2978 an 0.2980    13Hz td 0.2405 an 0.2405    17Hz td 0.1896 an 0.1896    20Hz td 0.1630 an 0.1631    25Hz td 0.1321 an 0.1320
+   a1017_G2.00    10Hz td 0.2994 an 0.2994    13Hz td 0.2409 an 0.2410    17Hz td 0.1898 an 0.1897    20Hz td 0.1630 an 0.1632    25Hz td 0.1321 an 0.1319
+(c) K_alpha by constant-acceleration ramp (alpha = 200 deg/s^2, x = 8*alpha*t) vs closed form
+   V294         ramp |T|/alpha 0.2150  closed form 0.2095  (ratio 1.026)
+   a1011_G1.50  ramp |T|/alpha 0.3200  closed form 0.3141  (ratio 1.019)
+   a1011_G2.00  ramp |T|/alpha 0.4250  closed form 0.4191  (ratio 1.014)
+   a1011_G2.50  ramp |T|/alpha 0.5300  closed form 0.5240  (ratio 1.011)
+   a1011_G3.00  ramp |T|/alpha 0.6350  closed form 0.6282  (ratio 1.011)
+   a1017_G1.00  ramp |T|/alpha 0.3950  closed form 0.3885  (ratio 1.017)
+   a1014_G2.00  ramp |T|/alpha 0.5500  closed form 0.5445  (ratio 1.010)
+   a1017_G2.00  ramp |T|/alpha 0.7850  closed form 0.7769  (ratio 1.010)
+(d) inner closed-loop poles: harness closed_loop_modes vs v294_plant.linear_poles (0.3-40 Hz pairs)
+   V294         nominal    v 12.0  harness [(3.91, 0.861)] | v294_plant [(3.91, 0.861)]  AGREE
+   V294         light_b    v 12.0  harness [(0.98, 0.452), (3.34, 0.725)] | v294_plant [(0.98, 0.452), (3.34, 0.725)]  AGREE
+   V294         mode13     v 12.0  harness [(4.22, 0.85), (12.39, 0.171)] | v294_plant [(4.22, 0.85), (12.39, 0.171)]  AGREE
+   V294         mode20     v 12.0  harness [(4.05, 0.855), (19.72, 0.099)] | v294_plant [(4.05, 0.855), (19.72, 0.099)]  AGREE
+   V294         mode20_lo  v  5.0  harness [(4.19, 0.742), (19.93, 0.126)] | v294_plant [(4.19, 0.742), (19.93, 0.126)]  AGREE
+   V294         mode20_lo  v 12.0  harness [(4.55, 0.835), (18.39, 0.226)] | v294_plant [(4.55, 0.835), (18.39, 0.226)]  AGREE
+   V294         mode20_lo  v 25.0  harness [(14.5, 0.191)] | v294_plant [(14.5, 0.191)]  AGREE
+   a1011_G2.00  nominal    v 12.0  harness [(5.49, 0.771)] | v294_plant [(5.49, 0.771)]  AGREE
+   a1011_G2.00  light_b    v 12.0  harness [(0.81, 0.411), (4.85, 0.588)] | v294_plant [(0.81, 0.411), (4.85, 0.588)]  AGREE
+   a1011_G2.00  mode13     v 12.0  harness [(6.01, 0.743), (12.37, 0.181)] | v294_plant [(6.01, 0.743), (12.37, 0.181)]  AGREE
+   a1011_G2.00  mode20     v 12.0  harness [(5.69, 0.758), (19.78, 0.102)] | v294_plant [(5.69, 0.758), (19.78, 0.102)]  AGREE
+   a1011_G2.00  mode20_lo  v  5.0  harness [(5.61, 0.62), (20.25, 0.128)] | v294_plant [(5.61, 0.62), (20.25, 0.128)]  AGREE
+   a1011_G2.00  mode20_lo  v 12.0  harness [(6.4, 0.709), (18.68, 0.238)] | v294_plant [(6.4, 0.709), (18.68, 0.238)]  AGREE
+   a1011_G2.00  mode20_lo  v 25.0  harness [(14.38, 0.195)] | v294_plant [(14.38, 0.195)]  AGREE
+   a1011_G3.00  nominal    v 12.0  harness [(6.65, 0.705)] | v294_plant [(6.65, 0.705)]  AGREE
+   a1011_G3.00  light_b    v 12.0  harness [(0.72, 0.377), (5.93, 0.506)] | v294_plant [(0.72, 0.377), (5.93, 0.506)]  AGREE
+   a1011_G3.00  mode13     v 12.0  harness [(7.33, 0.66), (12.33, 0.193)] | v294_plant [(7.33, 0.66), (12.33, 0.193)]  AGREE
+   a1011_G3.00  mode20     v 12.0  harness [(6.88, 0.686), (19.84, 0.104)] | v294_plant [(6.88, 0.686), (19.84, 0.104)]  AGREE
+   a1011_G3.00  mode20_lo  v  5.0  harness [(0.3, 0.786), (6.6, 0.534), (20.58, 0.129)] | v294_plant [(0.3, 0.786), (6.6, 0.534), (20.58, 0.129)]  AGREE
+   a1011_G3.00  mode20_lo  v 12.0  harness [(7.61, 0.613), (19.03, 0.249)] | v294_plant [(7.61, 0.613), (19.03, 0.249)]  AGREE
+   a1011_G3.00  mode20_lo  v 25.0  harness [(14.26, 0.198)] | v294_plant [(14.26, 0.198)]  AGREE
+   a1017_G2.00  nominal    v 12.0  harness [(5.25, 0.774)] | v294_plant [(5.25, 0.774)]  AGREE
+   a1017_G2.00  light_b    v 12.0  harness [(0.62, 0.47), (4.67, 0.553)] | v294_plant [(0.62, 0.47), (4.67, 0.553)]  AGREE
+   a1017_G2.00  mode13     v 12.0  harness [(5.72, 0.747), (12.39, 0.181)] | v294_plant [(5.72, 0.747), (12.39, 0.181)]  AGREE
+   a1017_G2.00  mode20     v 12.0  harness [(5.43, 0.762), (19.78, 0.101)] | v294_plant [(5.43, 0.762), (19.78, 0.101)]  AGREE
+   a1017_G2.00  mode20_lo  v  5.0  harness [(5.38, 0.611), (20.25, 0.127)] | v294_plant [(5.38, 0.611), (20.25, 0.127)]  AGREE
+   a1017_G2.00  mode20_lo  v 12.0  harness [(6.08, 0.716), (18.71, 0.236)] | v294_plant [(6.08, 0.716), (18.71, 0.236)]  AGREE
+   a1017_G2.00  mode20_lo  v 25.0  harness [(14.39, 0.195)] | v294_plant [(14.39, 0.195)]  AGREE
+(e) trim cap (T at zero command, fb held at +-C) and restart pulse, by harness m_safe pieces
+   V294         cap +-616/615 T ; restart peak {10.0: 14, 30.0: 43, 100.0: 144, 300.0: 419} ; int32 min margin 4.06 (a*s)
+   a1011_G1.50  cap +-616/615 T ; restart peak {10.0: 21, 30.0: 65, 100.0: 217, 300.0: 521} ; int32 min margin 2.71 (a*s)
+   a1011_G2.00  cap +-616/615 T ; restart peak {10.0: 28, 30.0: 86, 100.0: 290, 300.0: 564} ; int32 min margin 2.03 (a*s)
+   a1011_G2.50  cap +-616/615 T ; restart peak {10.0: 36, 30.0: 109, 100.0: 361, 300.0: 584} ; int32 min margin 3.25 (a*s)
+   a1011_G3.00  cap +-616/615 T ; restart peak {10.0: 43, 30.0: 131, 100.0: 419, 300.0: 595} ; int32 min margin 2.71 (a*s)
+   a1017_G1.00  cap +-616/615 T ; restart peak {10.0: 17, 30.0: 52, 100.0: 174, 300.0: 503} ; int32 min margin 2.17 (a*s)
+   a1014_G2.00  cap +-616/615 T ; restart peak {10.0: 32, 30.0: 94, 100.0: 316, 300.0: 589} ; int32 min margin 3.11 (a*s)
+   a1017_G2.00  cap +-616/615 T ; restart peak {10.0: 35, 30.0: 105, 100.0: 350, 300.0: 608} ; int32 min margin 2.17 (a*s)

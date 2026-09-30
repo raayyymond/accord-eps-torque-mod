@@ -1,0 +1,12 @@
+ticks 1020390 int32 max |products| (all three lanes): {'b*x': 5067279, 'E*Kp': 4367040, 'a*s': 362058309, 'y': 8995}  2^31 = 2147483648
+R3: V294 march (MY lane) vs 427 tap, hands-off engaged: rms 3.64 counts on 35441 tap frames (harness/plib: 3.64)
+    bit-exact vs plib's march T1k_live: 0 mismatching ticks of 1020390
+V294   engaged ticks: C (fb clamp 1024) binds 0.0000 % ; P clamp binds 0.0572 % ; |T| at rail (>= 2400) 0.0000 % ; max |T| 1467 ; max |r26| 637
+b964   engaged ticks: C (fb clamp 1024) binds 0.0029 % ; P clamp binds 0.0513 % ; |T| at rail (>= 2400) 0.0000 % ; max |T| 1311 ; max |r26| 1024
+b1701  engaged ticks: C (fb clamp 1024) binds 0.1366 % ; P clamp binds 0.0503 % ; |T| at rail (>= 2400) 0.0000 % ; max |T| 1260 ; max |r26| 1024
+b964 - V294 delivered torque on the SAME inputs (hands-off engaged): rms 9.9 T, p99 |.| 50, max |.| 142
+  band 0-5    trim-diff rms 17.2 T ; V294 |T| rms 310 ; b964 C-bind 0.0000 %
+  band 5-10   trim-diff rms 13.4 T ; V294 |T| rms 310 ; b964 C-bind 0.0000 %
+  band 10-15  trim-diff rms 6.4 T ; V294 |T| rms 198 ; b964 C-bind 0.0000 %
+  band 15-22  trim-diff rms 3.8 T ; V294 |T| rms 204 ; b964 C-bind 0.0000 %
+  band 22+    trim-diff rms 2.1 T ; V294 |T| rms 185 ; b964 C-bind 0.0000 %

@@ -1,0 +1,9 @@
+kit tap frames 50936 == my tap frames 50936 ; kit (dejittered) minus raw time: median -4.42 ms, p1 -10.52 p99 +0.09 ; equal tap values by index: 1.00000
+NULL  all engaged              identity V293/bar R2 0.9868 resid 22.4 lag -30 ms n 40037 | V282 cells R2 -1.024
+NULL  |V294 trim| < 8 counts   identity V293/bar R2 0.9974 resid 7.1 lag -30 ms n 32964 | V282 cells R2 -1.117
+PA    all engaged              identity V293/bar R2 0.9652 resid 36.3 lag -20 ms n 40036 | V282 cells R2 -1.078
+PA    |V294 trim| < 8 counts   identity V293/bar R2 0.9966 resid 8.1 lag -30 ms n 32964 | V282 cells R2 -1.119
+PB2   all engaged              identity V293/bar R2 0.9650 resid 36.4 lag -20 ms n 40036 | V282 cells R2 -1.066
+PB2   |V294 trim| < 8 counts   identity V293/bar R2 0.9960 resid 8.8 lag -20 ms n 32963 | V282 cells R2 -1.099
+INV5  all engaged              identity V293/bar R2 0.9736 resid 33.0 lag -30 ms n 40037 | V282 cells R2 -0.793
+INV5  |V294 trim| < 8 counts   identity V293/bar R2 0.9968 resid 7.9 lag -30 ms n 32964 | V282 cells R2 -1.114

@@ -1,0 +1,17 @@
+V295 image 1048576 5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed
+V294 image 1048576 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+V295 rwd   986042 f42a06bda5a737eb9f678d617603745ec21fb93c4bd229344f33259cfbeaae87
+diff offsets (whole file): ['0xc63ea', '0xc63eb', '0xc6ffc', '0xc6ffd', '0xc6ffe', '0xc6fff']
+  0xC63EA  V294 37  V295 1a
+  0xC63EB  V294 02  V295 04
+  0xC6FFC  V294 65  V295 d9
+  0xC6FFD  V294 11  V295 2b
+  0xC6FFE  V294 44  V295 98
+  0xC6FFF  V294 f3  V295 8d
+0xC63EA b: V294 567  V295 1050
+0xC63E8 a: 1011/1011  0xC62E6 C: 1024/1024  0xC63EC lag_a 992  0xC63EE lag_b 507
+crc32 [0xC6000,0xC6FFC) = 0x8D982BD9 ; trailer LE = 0x8D982BD9 ; BE = 0xD92B988D
+V294 crc32 same block = 0xF3441165 ; trailer LE 0xF3441165
+identical code [0x13000,0xC0000)                   True
+identical caves 0xC4000-0xC5000                    True
+identical FUN_00028ea6 region 0x28EA6-0x2A300      True

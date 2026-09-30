@@ -1,0 +1,64 @@
+sha256 v295    5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed
+sha256 v294    3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+sha256 rwd295  f42a06bda5a737eb9f678d617603745ec21fb93c4bd229344f33259cfbeaae87
+sha256 rwd294  a2b418f061160f66ffaa8ac541a478d43771fcbd004a92dc3d7a071cfd9f706a
+sha256 stock   3f1d55a98aac6e73631d94d583065c57d83dd3a86df0e7d06e56a3feb58fd822
+sizes 1048576 1048576
+whole-file diff V295 vs V294: 6 bytes at ['0xc63ea', '0xc63eb', '0xc6ffc', '0xc6ffd', '0xc6ffe', '0xc6fff']
+   0xc63ea  37 -> 1a
+   0xc63eb  02 -> 04
+   0xc6ffc  65 -> d9
+   0xc6ffd  11 -> 2b
+   0xc6ffe  44 -> 98
+   0xc6fff  f3 -> 8d
+code region [0x13000,0xC0000) differing bytes: 0
+b @0xC63EA: V294 u16 567 (bytes 3702) ; V295 u16 1050 (bytes 1a04) ; as s16 1050 ; BE would be 6660
+V294 block [0xC6000,0xC6FFC) zlib.crc32 = 0xf3441165 ; trailer LE 0xf3441165 BE 0x651144f3 -> MATCH(LE)
+V295 block [0xC6000,0xC6FFC) zlib.crc32 = 0x8d982bd9 ; trailer LE 0x8d982bd9 BE 0xd92b988d -> MATCH(LE)
+  control stock block [0xc5000,+0xFFC) crc 0x09c1200b trailer 0x09c1200b MATCH
+  control stock block [0xc7000,+0xFFC) crc 0x943e054b trailer 0x000d3360 no
+  control V294 block [0xc5000,+0xFFC) crc 0x09c1200b trailer 0x09c1200b MATCH
+  control V294 block [0xc7000,+0xFFC) crc 0x943e054b trailer 0x000d3360 no
+  control V295 block [0xc5000,+0xFFC) crc 0x09c1200b trailer 0x09c1200b MATCH
+  control V295 block [0xc7000,+0xFFC) crc 0x943e054b trailer 0x000d3360 no
+Ghidra-listed instruction bytes vs V295 FILE: 64 sites, 0 mismatch []
+0x28FA4 halfword d189 -> opcode field 0x0c (subr=0x0C, add=0x0E); 0x29D76 82c2 -> field 0x16 imm 2 (shl imm5=0x16)
+  fb_a           V294 1011                                     V295 1011                                     
+  fb_b           V294 567                                      V295 1050                                     <-- DIFFERS
+  fb_clamp       V294 1024                                     V295 1024                                     
+  deadband       V294 4                                        V295 4                                        
+  ki             V294 0                                        V295 0                                        
+  i_clamp        V294 10240                                    V295 10240                                    
+  p_clamp        V294 15360                                    V295 15360                                    
+  d_clamp        V294 0                                        V295 0                                        
+  sum_clamp_u    V294 15360                                    V295 15360                                    
+  sum_clamp_s    V294 15360                                    V295 15360                                    
+  lag_a          V294 992                                      V295 992                                      
+  lag_b          V294 507                                      V295 507                                      
+  gate_arm       V294 1                                        V295 1                                        
+  gate_thr       V294 102                                      V295 102                                      
+  gain           V294 5346                                     V295 5346                                     
+  t_clamp_u      V294 3072                                     V295 3072                                     
+  t_clamp_s      V294 3072                                     V295 3072                                     
+  idx_cl_pos     V294 240                                      V295 240                                      
+  idx_cl_neg     V294 240                                      V295 240                                      
+  flag_74e2      V294 5                                        V295 5                                        
+  ovr_cut        V294 255                                      V295 255                                      
+  e_shift        V294 2                                        V295 2                                        
+  fb_op          V294 diff                                     V295 diff                                     
+  pid_e_prev_lo  V294 -768000                                  V295 -768000                                  
+  pid_e_prev_hi  V294 1536001                                  V295 1536001                                  
+  map_rec        V294 0xe502c                                  V295 0xe502c                                  
+  map_x          V294 [0, 12, 20, 24, 32, 64, 96, 128, 160, 240] V295 [0, 12, 20, 24, 32, 64, 96, 128, 160, 240] 
+  map_y          V294 [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032] V295 [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032] 
+  kp_rec         V294 0xe5378                                  V295 0xe5378                                  
+  kp_x           V294 [0, 68, 112, 136, 208]                   V295 [0, 68, 112, 136, 208]                   
+  kp_y           V294 [960, 960, 960, 960, 960]                V295 [960, 960, 960, 960, 960]                
+  kd_rec         V294 0xe511c                                  V295 0xe511c                                  
+  kd_x           V294 [0, 11, 22, 32]                          V295 [0, 11, 22, 32]                          
+  kd_y           V294 [0, 0, 0, 0]                             V295 [0, 0, 0, 0]                             
+  kp Y over 28 selectors V295: [(960, 960, 960, 960, 960)]
+  kd Y over 28 selectors V295: [(0, 0, 0, 0)]
+  map Y distinct over 28 selectors V295: 3
+  anchor stock fb_a 0xC63E8 = 923 (expect 923), fb_b = 1560 (expect 1560), lag 0xC63EC/EE = 992/507 (expect 992/507)
+wrote a1_cells.json

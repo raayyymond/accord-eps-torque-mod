@@ -1,0 +1,46 @@
+MULTIPLE-SHOOTING OUTPUT-ERROR FIT (1 s windows from the measured state + the march's lane state; command -> byte-exact V294 lane -> plant -> x -> lane; tau 2 ms, rate former 3 ms, sat = prior) -- mode: relaxed
+
+BAND 0-5 m/s: 33 fit windows (v 3.1), 19 held; cost 0.1691 (194 evals); om sd 12.89 deg/s, dth sd 7.737 deg; 151 s wall
+  J 0.2651 +-0.2767 T/(deg/s^2) | b 5.123 +-0.183 T/(deg/s) | k 6.76 +-12.20 T/deg | Fc 73.6 +-129.3 T | Fs 92.2 +-171.3 T
+  -> open-plant mode f_n 0.80 Hz, zeta 1.913 (linear, sliding); x units: J_x 0.03314, b_x 0.6404 T per count(/s)
+  tau scan (fit-window cost): 0 ms 0.1685  2 ms 0.1691  5 ms 0.1707  10 ms 0.1752  15 ms 0.1809
+  fit_nominal   om R2 +0.893 fit  67.3% rms  4.21 (0-.25s 4.03 .25-.5s 3.27 .5-1s 4.69) skill-vs-hold +0.98 | dth R2 +0.938 rms 1.932 deg | tap R2 +0.9870 rms  6.4
+  held_nominal  om R2 +0.738 fit  48.8% rms  4.63 (0-.25s 3.93 .25-.5s 3.31 .5-1s 5.44) skill-vs-hold +0.93 | dth R2 +0.898 rms 2.015 deg | tap R2 +0.9885 rms  7.5
+  held_light_b  om R2 -1.120 fit -45.6% rms 13.18 (0-.25s 11.97 .25-.5s 14.54 .5-1s 13.02) skill-vs-hold +0.43 | dth R2 +0.483 rms 4.540 deg | tap R2 +0.9813 rms  9.6
+  held_trim_off om R2 +0.694 fit  44.7% rms  5.01 (0-.25s 4.50 .25-.5s 3.76 .5-1s 5.74) skill-vs-hold +0.92 | dth R2 +0.918 rms 1.808 deg | tap R2 +0.9766 rms 10.7
+
+BAND 5-10 m/s: 72 fit windows (v 8.0), 85 held; cost 0.1234 (185 evals); om sd 19.50 deg/s, dth sd 6.062 deg; 140 s wall
+  J 0.4846 +-0.2510 T/(deg/s^2) | b 6.247 +-1.410 T/(deg/s) | k 24.18 +-5.81 T/deg | Fc 14.4 +-5.9 T | Fs 18.5 +-7.4 T
+  -> open-plant mode f_n 1.12 Hz, zeta 0.912 (linear, sliding); x units: J_x 0.06058, b_x 0.7808 T per count(/s)
+  tau scan (fit-window cost): 0 ms 0.1216  2 ms 0.1234  5 ms 0.1265  10 ms 0.1331  15 ms 0.1410
+  fit_nominal   om R2 +0.912 fit  70.4% rms  5.77 (0-.25s 7.61 .25-.5s 5.83 .5-1s 4.61) skill-vs-hold +0.98 | dth R2 +0.964 rms 1.145 deg | tap R2 +0.9702 rms  8.6
+  held_nominal  om R2 +0.333 fit  18.3% rms 11.33 (0-.25s 12.43 .25-.5s 11.33 .5-1s 10.77) skill-vs-hold +0.79 | dth R2 +0.300 rms 3.515 deg | tap R2 +0.9411 rms 11.9
+  held_light_b  om R2 +0.498 fit  29.1% rms  9.83 (0-.25s 9.21 .25-.5s 9.58 .5-1s 10.23) skill-vs-hold +0.84 | dth R2 +0.510 rms 2.941 deg | tap R2 +0.9530 rms 10.6
+  held_trim_off om R2 +0.281 fit  15.2% rms 11.76 (0-.25s 13.16 .25-.5s 11.61 .5-1s 11.10) skill-vs-hold +0.77 | dth R2 +0.223 rms 3.704 deg | tap R2 +0.9139 rms 14.4
+
+BAND 10-15 m/s: 83 fit windows (v 11.9), 82 held; cost 1.0482 (300 evals); om sd 2.42 deg/s, dth sd 1.051 deg; 174 s wall
+  J 2.0827 +-2.3265 T/(deg/s^2) | b 5.652 +-27.633 T/(deg/s) | k 34.67 +-44.64 T/deg | Fc 19.8 +-27.9 T | Fs 23.0 +-32.4 T
+  -> open-plant mode f_n 0.65 Hz, zeta 0.333 (linear, sliding); x units: J_x 0.26034, b_x 0.7065 T per count(/s)
+  tau scan (fit-window cost): 0 ms 1.0496  2 ms 1.0482  5 ms 1.0487  10 ms 1.0501  15 ms 1.0525
+  fit_nominal   om R2 +0.180 fit   9.5% rms  2.19 (0-.25s 2.04 .25-.5s 1.92 .5-1s 2.39) skill-vs-hold +0.71 | dth R2 +0.771 rms 0.502 deg | tap R2 +0.9615 rms  4.3
+  held_nominal  om R2 -0.277 fit -13.0% rms  2.39 (0-.25s 2.67 .25-.5s 2.47 .5-1s 2.20) skill-vs-hold +0.76 | dth R2 +0.619 rms 0.455 deg | tap R2 +0.9700 rms  4.6
+  held_light_b  om R2 -1.045 fit -43.0% rms  3.02 (0-.25s 2.73 .25-.5s 2.53 .5-1s 3.36) skill-vs-hold +0.62 | dth R2 +0.340 rms 0.599 deg | tap R2 +0.9673 rms  4.8
+  held_trim_off om R2 -0.331 fit -15.4% rms  2.44 (0-.25s 2.74 .25-.5s 2.49 .5-1s 2.25) skill-vs-hold +0.75 | dth R2 +0.608 rms 0.462 deg | tap R2 +0.9720 rms  4.5
+
+BAND 15-22 m/s: 84 fit windows (v 17.0), 58 held; cost 1.3339 (261 evals); om sd 1.62 deg/s, dth sd 0.327 deg; 178 s wall
+  J 1.6596 +-0.2713 T/(deg/s^2) | b 16.543 +-13.754 T/(deg/s) | k 84.47 +-53.99 T/deg | Fc 11.6 +-4.1 T | Fs 14.8 +-5.6 T
+  -> open-plant mode f_n 1.14 Hz, zeta 0.699 (linear, sliding); x units: J_x 0.20744, b_x 2.0679 T per count(/s)
+  tau scan (fit-window cost): 0 ms 1.3363  2 ms 1.3339  5 ms 1.3359  10 ms 1.3542  15 ms 1.3881
+  fit_nominal   om R2 +0.177 fit   9.3% rms  1.47 (0-.25s 1.45 .25-.5s 1.75 .5-1s 1.31) skill-vs-hold +0.73 | dth R2 +0.489 rms 0.234 deg | tap R2 +0.9648 rms  3.6
+  held_nominal  om R2 -0.076 fit  -3.8% rms  2.82 (0-.25s 3.21 .25-.5s 3.01 .5-1s 2.50) skill-vs-hold +0.81 | dth R2 +0.683 rms 0.472 deg | tap R2 +0.9745 rms  5.1
+  held_light_b  om R2 -0.793 fit -33.9% rms  3.64 (0-.25s 4.04 .25-.5s 3.28 .5-1s 3.60) skill-vs-hold +0.69 | dth R2 +0.341 rms 0.681 deg | tap R2 +0.9692 rms  5.6
+  held_trim_off om R2 -0.092 fit  -4.5% rms  2.84 (0-.25s 3.26 .25-.5s 3.03 .5-1s 2.50) skill-vs-hold +0.81 | dth R2 +0.678 rms 0.475 deg | tap R2 +0.9745 rms  5.1
+
+BAND 22+ m/s: 42 fit windows (v 26.9), 25 held; cost 1.1395 (178 evals); om sd 1.75 deg/s, dth sd 0.528 deg; 99 s wall
+  J 0.4773 +-0.3820 T/(deg/s^2) | b 28.073 +-10.159 T/(deg/s) | k 56.72 +-26.14 T/deg | Fc 3.3 +-0.9 T | Fs 4.1 +-1.1 T
+  -> open-plant mode f_n 1.73 Hz, zeta 2.698 (linear, sliding); x units: J_x 0.05966, b_x 3.5091 T per count(/s)
+  tau scan (fit-window cost): 0 ms 1.1442  2 ms 1.1395  5 ms 1.1350  10 ms 1.1365  15 ms 1.1351
+  fit_nominal   om R2 +0.061 fit   3.1% rms  1.69 (0-.25s 1.76 .25-.5s 1.56 .5-1s 1.73) skill-vs-hold +0.85 | dth R2 +0.800 rms 0.236 deg | tap R2 +0.9761 rms  4.1
+  held_nominal  om R2 +0.088 fit   4.5% rms  1.89 (0-.25s 2.23 .25-.5s 1.88 .5-1s 1.71) skill-vs-hold +0.78 | dth R2 +0.408 rms 0.294 deg | tap R2 +0.9632 rms  4.1
+  held_light_b  om R2 -0.564 fit -25.0% rms  2.48 (0-.25s 2.85 .25-.5s 2.33 .5-1s 2.36) skill-vs-hold +0.62 | dth R2 -0.558 rms 0.478 deg | tap R2 +0.9539 rms  4.6
+  held_trim_off om R2 +0.086 fit   4.4% rms  1.89 (0-.25s 2.24 .25-.5s 1.88 .5-1s 1.71) skill-vs-hold +0.78 | dth R2 +0.408 rms 0.294 deg | tap R2 +0.9611 rms  4.3

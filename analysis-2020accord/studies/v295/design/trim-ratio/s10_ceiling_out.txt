@@ -1,0 +1,32 @@
+(1) V294 inner |L| and the HF-gain multiple G_req for |L| = 3 (2.03 Hz pole | 4.9 Hz pole, same HF gain as V294)
+   nominal  v  3.1  |L| 0.07 0.12 0.23 0.33 0.32   G_req  44.6  24.2  12.8   9.1   9.5   | 4.9 Hz pole: G_req 105.3  56.3  27.9  16.8  14.8
+   nominal  v  8.0  |L| 0.03 0.08 0.21 0.33 0.32   G_req  89.2  36.9  14.5   9.1   9.3   | 4.9 Hz pole: G_req 210.8  85.8  31.6  16.8  14.6
+   nominal  v 12.0  |L| 0.02 0.05 0.11 0.17 0.19   G_req 126.3  58.6  26.8  17.1  16.1   | 4.9 Hz pole: G_req 298.6 136.5  58.5  31.5  25.3
+   nominal  v 17.0  |L| 0.01 0.02 0.05 0.08 0.09   G_req 359.1 151.9  61.0  36.1  32.5   | 4.9 Hz pole: G_req 848.8 353.5 133.3  66.2  51.0
+   nominal  v 26.9  |L| 0.01 0.02 0.04 0.07 0.07   G_req 302.6 148.3  71.1  45.5  41.6   | 4.9 Hz pole: G_req 715.1 345.2 155.3  83.5  65.2
+   b_lo     v  3.1  |L| 0.08 0.17 0.34 0.44 0.39   G_req  35.4  17.6   9.0   6.9   7.7   | 4.9 Hz pole: G_req  83.6  41.0  19.6  12.6  12.0
+   b_lo     v  8.0  |L| 0.04 0.09 0.28 0.46 0.42   G_req  84.4  32.4  10.8   6.5   7.2   | 4.9 Hz pole: G_req 199.5  75.4  23.5  11.9  11.2
+   b_lo     v 12.0  |L| 0.03 0.07 0.19 0.31 0.32   G_req 109.1  43.7  16.0   9.6   9.5   | 4.9 Hz pole: G_req 257.9 101.7  35.0  17.5  14.9
+   b_lo     v 17.0  |L| 0.01 0.02 0.07 0.14 0.17   G_req 334.0 128.5  41.9  20.8  18.1   | 4.9 Hz pole: G_req 789.4 299.2  91.5  38.2  28.3
+   b_lo     v 26.9  |L| 0.01 0.03 0.07 0.12 0.13   G_req 251.1 106.2  42.8  25.4  23.1   | 4.9 Hz pole: G_req 593.6 247.3  93.4  46.7  36.3
+   J_hi     v  3.1  |L| 0.05 0.10 0.18 0.21 0.17   G_req  55.2  29.8  16.7  14.4  17.2   | 4.9 Hz pole: G_req 130.4  69.3  36.5  26.4  26.9
+   J_hi     v  8.0  |L| 0.03 0.07 0.18 0.23 0.19   G_req 103.4  41.4  16.3  13.1  16.2   | 4.9 Hz pole: G_req 244.5  96.3  35.7  24.1  25.4
+   J_hi     v 12.0  |L| 0.03 0.06 0.15 0.20 0.17   G_req 109.7  46.7  20.1  15.2  17.7   | 4.9 Hz pole: G_req 259.3 108.7  43.9  28.0  27.7
+   J_hi     v 17.0  |L| 0.01 0.02 0.06 0.10 0.10   G_req 337.1 137.8  52.5  31.1  29.7   | 4.9 Hz pole: G_req 796.6 320.8 114.6  57.1  46.6
+   J_hi     v 26.9  |L| 0.01 0.02 0.04 0.06 0.07   G_req 311.9 152.7  73.4  47.7  44.8   | 4.9 Hz pole: G_req 737.1 355.4 160.3  87.6  70.2
+   light_b  v  3.1  |L| 0.11 0.30 0.72 0.66 0.48   G_req  26.5  10.0   4.1   4.5   6.2   | 4.9 Hz pole: G_req  62.6  23.2   9.0   8.3   9.7
+   light_b  v  8.0  |L| 0.06 0.16 0.65 0.79 0.53   G_req  54.0  18.9   4.6   3.8   5.7   | 4.9 Hz pole: G_req 127.6  44.0  10.1   7.0   8.9
+   light_b  v 12.0  |L| 0.03 0.09 0.41 0.99 0.60   G_req  91.9  32.4   7.3   3.0   5.0   | 4.9 Hz pole: G_req 217.2  75.4  16.0   5.6   7.8
+   light_b  v 17.0  |L| 0.03 0.08 0.35 1.05 0.64   G_req 106.2  37.6   8.6   2.8   4.7   | 4.9 Hz pole: G_req 250.9  87.4  18.7   5.2   7.4
+   light_b  v 26.9  |L| 0.02 0.06 0.25 1.10 0.73   G_req 140.7  50.1  11.8   2.7   4.1   | 4.9 Hz pole: G_req 332.4 116.7  25.7   5.0   6.5
+
+(2) spring corner f_s = sqrt(k/K_alpha)/2pi (Hz) per speed knot, nominal k [6.5, 20.2, 24.3, 79.7, 55.8] T/deg
+   V294               b  567  K_alpha 0.210 T/(deg/s^2)  f_s 0.88 1.56 1.71 3.10 2.60 Hz  (the trim is an ACCELERATION term only between f_s and the 2.03 Hz pole)
+   V295tr_b964        b  964  K_alpha 0.356 T/(deg/s^2)  f_s 0.68 1.20 1.31 2.38 1.99 Hz  (the trim is an ACCELERATION term only between f_s and the 2.03 Hz pole)
+   b_max (margin 1)   b 2301  K_alpha 0.850 T/(deg/s^2)  f_s 0.44 0.78 0.85 1.54 1.29 Hz  (the trim is an ACCELERATION term only between f_s and the 2.03 Hz pole)
+
+(3) delivered surface T(idx) identical V293 / V294 / pick: True ; curves -> s10_curves.json
+   trim at 1.0 Hz: V294 damping 0.70 inertia 0.147 | pick damping 1.19 inertia 0.249
+   trim at 2.0 Hz: V294 damping 1.63 inertia 0.052 | pick damping 2.77 inertia 0.088
+   trim at 2.5 Hz: V294 damping 1.82 inertia 0.025 | pick damping 3.09 inertia 0.042
+   trim at 3.0 Hz: V294 damping 1.91 inertia 0.002 | pick damping 3.24 inertia 0.004

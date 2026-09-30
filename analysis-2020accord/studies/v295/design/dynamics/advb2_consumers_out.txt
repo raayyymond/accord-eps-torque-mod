@@ -1,0 +1,20 @@
+CONTROL gp-0x3d30 @0x28F7C: PASS
+CONTROL gp-0x3d30 @0x28FA8: PASS
+CONTROL gp-0x3d2c @0x28F66: PASS
+CONTROL gp-0x6a56 @0x28F4C: PASS
+CONTROL gp-0x6752 @0x48E56: PASS
+gp-0x6a34 |r26>>5|            : 0x290ca st.h [PID], 0x2a0ca ld.hu [PID], 0x2afae ld.hu [twin]
+gp-0x3d30 fb state s          : 0x28f7c ld.w [PID], 0x28fa8 st.w [PID]
+gp-0x3d2c fb sentinel         : 0x28f66 ld.bu [PID], 0x290d4 st.b [PID]
+gp-0x6b2e S published         : 0x2a17c st.h [PID], 0x2a896 ld.h [twin], 0x2b064 st.h [twin]
+gp-0x6b32 P published         : 0x2a188 st.h [PID], 0x2b054 st.h [twin]
+gp-0x6b34 raw sum published   : 0x2a1a2 st.h [PID], 0x2b068 st.h [twin]
+gp-0x6b36 D published         : 0x2a19c st.h [PID], 0x2b060 st.h [twin]
+gp-0x6b30 yr                  : 0x2a1d4 ld.h [PID], 0x2a206 st.h [PID], 0x2a8de ld.h [twin], 0x2a900 st.h [twin]
+gp-0x3d3c out-lag state       : 0x2a178 ld.w [PID], 0x2a1b0 st.w [PID], 0x2a89a ld.w [twin], 0x2a8ba st.w [twin]
+gp-0x6b38 T lane              : 0x2a23c st.h [PID], 0x2a934 st.h [twin], 0x2b418 ld.h [twin], 0x4e8d2 ld.h [ELSEWHERE], 0x4e8e2 ld.h [ELSEWHERE], 0x55df0 ld.h [ELSEWHERE], 0xc4b40 ld.h [ELSEWHERE]
+gp-0x6b3c gated fwd           : 0x2a2ea st.h [PID], 0x2b41c st.h [twin], 0x2b42e ld.h [ELSEWHERE]
+gp-0x6b3a fwd clamped         : 0x2b45c st.h [ELSEWHERE], 0x2b5b2 ld.h [ELSEWHERE]
+gp-0x680a damper-mode flag    : 0x29a68 ld.bu [PID], 0x2a96a ld.bu [twin]
+gp-0x6cf8 E_prev              : 0x29e5e ld.w [PID], 0x2a18c st.w [PID], 0x2ad4a ld.w [twin], 0x2b058 st.w [twin]
+gp-0x6dd0 I state             : 0x29da4 ld.w [PID], 0x2a190 st.w [PID], 0x2ac96 ld.w [twin], 0x2b05c st.w [twin]

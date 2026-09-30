@@ -1,0 +1,8 @@
+  contiguous 30 s windows, as written                  A1017 synthetic: AMBIGUOUS 4, LIVE 19, STOP-ARITH 5 || V294 real (null): AMBIGUOUS 2, NOT-A1017 22, STOP-ARITH 4
+  contiguous 30 s windows, footprint-gated             A1017 synthetic: AMBIGUOUS 2, GATED-OUT 11, LIVE 14, STOP-ARITH 1 || V294 real (null): GATED-OUT 11, NOT-A1017 17
+  contiguous 15 s windows, as written                  A1017 synthetic: AMBIGUOUS 12, LIVE 29, STOP-ARITH 10 || V294 real (null): AMBIGUOUS 2, NOT-A1017 41, STOP-ARITH 8
+  contiguous 15 s windows, footprint-gated             A1017 synthetic: AMBIGUOUS 5, GATED-OUT 33, LIVE 12, STOP-ARITH 1 || V294 real (null): GATED-OUT 33, NOT-A1017 18
+  symptomatic 30 s x12, as written                     A1017 synthetic: AMBIGUOUS 1, LIVE 11 || V294 real (null): NOT-A1017 12
+  symptomatic 15 s x12, as written                     A1017 synthetic: AMBIGUOUS 3, LIVE 8, STOP-ARITH 1 || V294 real (null): NOT-A1017 12
+  pooled whole drive (709 s hands-off engaged): A1017 synthetic    beta 1.006 |K| 0.316 phase +141 -> LIVE
+  pooled whole drive (709 s hands-off engaged): V294 real (null)   beta 0.011 |K| 0.193 phase +157 -> NOT-A1017

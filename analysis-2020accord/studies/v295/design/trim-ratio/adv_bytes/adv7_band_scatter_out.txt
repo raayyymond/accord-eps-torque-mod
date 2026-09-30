@@ -1,0 +1,6 @@
+r71b: engaged 801 s ; hard frames 97 s
+  0-5    hard  28.0 s in  10 episodes (median 2.7 s) | whole-drive hard16 16.26 deg/s | per-episode CV 0.44 | 15s: 5-95% [0.82, 1.18] | 30s: n/a | 60s: n/a
+  5-10   hard  34.6 s in  12 episodes (median 2.5 s) | whole-drive hard16 13.16 deg/s | per-episode CV 0.43 | 15s: 5-95% [0.73, 1.29] | 30s: 5-95% [0.80, 1.21] | 60s: n/a
+  10-15  hard   7.6 s in   3 episodes (median 1.5 s) | whole-drive hard16 11.63 deg/s | per-episode CV 0.16 | 15s: n/a | 30s: n/a | 60s: n/a
+  15-22  hard  13.6 s in   2 episodes (median 6.8 s) | whole-drive hard16 7.62 deg/s | per-episode CV 0.59 | 15s: n/a | 30s: n/a | 60s: n/a
+  22+    hard  12.9 s in   1 episodes (median 12.9 s) | whole-drive hard16 2.10 deg/s | per-episode CV 0.00 | 15s: n/a | 30s: n/a | 60s: n/a

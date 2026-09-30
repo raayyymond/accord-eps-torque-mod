@@ -1,0 +1,4 @@
+pol +1 v294: worst 165 (idx 231 ds -1 rs -1) ; zero-cmd 146 ; lanes > 288: 0
+pol +1 v295: worst 288 (idx 238 ds -1 rs -1) ; zero-cmd 270 ; lanes > 288: 0
+pol -1 v294: worst 165 (idx 231 ds -1 rs -1) ; zero-cmd 145 ; lanes > 288: 0
+pol -1 v295: worst 288 (idx 238 ds -1 rs -1) ; zero-cmd 269 ; lanes > 288: 0

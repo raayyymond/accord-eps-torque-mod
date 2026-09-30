@@ -1,0 +1,18 @@
+image sha256 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+CONTROL/TARGET 0xC63E8 (tp+0x73E8): tp-based hits [('0x28f8a', '4f25 73e8', 'ld.h/ld.w')] ; expected 0x28f8a -> FOUND
+      non-tp halfword matches (not tp-relative, listed for adjudication): 0
+CONTROL/TARGET 0xC63EA (tp+0x73EA): tp-based hits [('0x28f86', '87e5 73eb', 'ld.hu/mul-coll')] ; expected 0x28f86 -> FOUND
+      non-tp halfword matches (not tp-relative, listed for adjudication): 0
+CONTROL/TARGET 0xC63EC (tp+0x73EC): tp-based hits [('0x2a184', '3f25 73ec', 'ld.h/ld.w'), ('0x2a8a2', '5725 73ec', 'ld.h/ld.w')] ; expected 0x2a184 -> FOUND
+      non-tp halfword matches (not tp-relative, listed for adjudication): 1
+CONTROL/TARGET 0xC63EE (tp+0x73EE): tp-based hits [('0x2a174', '3fe5 73ef', 'ld.hu/mul-coll'), ('0x2a892', '57e5 73ef', 'ld.hu/mul-coll')] ; expected 0x2a174 -> FOUND
+      non-tp halfword matches (not tp-relative, listed for adjudication): 0
+D clamp 0xC61B6: tp-based [('0x29ee8', '57e5 71b7', 'ld.hu/mul-coll', 'r10'), ('0x29ef2', '47e5 71b7', 'ld.hu/mul-coll', 'r8'), ('0x29ef8', '3fe5 71b7', 'ld.hu/mul-coll', 'r7'), ('0x29f02', '47e5 71b7', 'ld.hu/mul-coll', 'r8'), ('0x2add4', '5fe5 71b7', 'ld.hu/mul-coll', 'r11'), ('0x2addc', '87e5 71b7', 'ld.hu/mul-coll', 'r16'), ('0x2adec', '7fe5 71b7', 'ld.hu/mul-coll', 'r15')] ; abs LE32 []
+sum clamp 0xC61BE: tp-based [('0x2a13e', '4fe5 71bf', 'ld.hu/mul-coll', 'r9'), ('0x2a146', '6725 71be', 'ld.h/ld.w', 'r12'), ('0x2a14c', '37e5 71bf', 'ld.hu/mul-coll', 'r6'), ('0x2a156', '67e5 71bf', 'ld.hu/mul-coll', 'r12'), ('0x2b024', '47e5 71bf', 'ld.hu/mul-coll', 'r8'), ('0x2b02c', '3f25 71be', 'ld.h/ld.w', 'r7'), ('0x2b032', '5fe5 71bf', 'ld.hu/mul-coll', 'r11'), ('0x2b03c', '3fe5 71bf', 'ld.hu/mul-coll', 'r7')] ; abs LE32 []
+Kd bank 0xCB7D4: absolute LE32 refs (mov imm32 operand at a-2) ['0x29e76', '0x2ad64']
+   record (selector 7) at 0xE511C: n 4 X [0, 11, 22, 32] Y [0, 0, 0, 0]
+   28 distinct record pointers over the 28 variants
+Kp bank 0xCB994: absolute LE32 refs (mov imm32 operand at a-2) ['0x29dc6', '0x2acb8']
+   record (selector 7) at 0xE5378: n 5 X [0, 68, 112, 136, 208] Y [960, 960, 960, 960, 960]
+   28 distinct record pointers over the 28 variants
+values: lag a 992  lag b 507  fb_a 1011  fb_b 567  Dclamp 0  sumclamp 15360

@@ -76,6 +76,7 @@ from eps_chain_control import (
     _self_check_v289,
     _self_check_v293,
     _self_check_v294,
+    _self_check_v295,
     a160_governor_rate_cap,
     computed_runtime_governor,
     engage_decider,
@@ -521,6 +522,9 @@ def _self_check():
     # V294 / the acceleration trim (fb_op "diff", e_shift 2). Asserts only, prints nothing; reproduces
     # build_v294_tva.py's FF identity, operand orbit, clamp bound and 25 % trim cap by marching the tick.
     _self_check_v294()
+    # V295 / the trim gain b x1.852 (2026-09-30). Asserts only, prints nothing; reproduces build_v295_tva.py's
+    # FF identity (both signs), the operand orbit, the unchanged 616 T cap, the int32 margin and the x1.852 gain.
+    _self_check_v295()
 
 
 def _demo():

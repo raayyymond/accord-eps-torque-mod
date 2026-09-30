@@ -1,0 +1,10 @@
+H3b PORT GATE  (101157 frames, real + port 25.5 s); real = LatControlTorque's float64 internals
+  replay   p       max |port - real| 0   bit-identical frames 1.000000
+  replay   i       max |port - real| 0   bit-identical frames 1.000000
+  replay   f       max |port - real| 5.55e-17   bit-identical frames 0.999960
+  replay   torque  max |port - real| 3.47e-18   bit-identical frames 0.999990
+  replay   la_des  max |port - real| 0   bit-identical frames 1.000000
+  replay   la_act  max |port - real| 0   bit-identical frames 1.000000
+  (this re-run of the real code vs h3's saved run: max |d torque| 0)
+  closed loop: 8 lanes x 12 s, real fork driving (5.0 s): max |port - real| per lane 0, 0, 0, 0, 0, 0, 0, 0
+H3b PASS (worst 5.55e-17)

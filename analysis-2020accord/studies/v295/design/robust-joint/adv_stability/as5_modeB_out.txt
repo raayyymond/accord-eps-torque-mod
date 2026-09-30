@@ -1,0 +1,44 @@
+chunks: 21
+  simulated lp V294 in 21 s (bails 0)
+  simulated lp A in 41 s (bails 0)
+  simulated full V294 in 60 s (bails 0)
+  simulated full A in 80 s (bails 0)
+R5 V294 nominal lp 5-10 tracking gain 0.865 (harness report 0.865; designer 0.865)  PASS
+CRN check: identical seeds -> same noise realisation per row (PlantBatch rng.normal(0, s, B), B identical)
+
+per member x dist: A - V294 (tracking/turn-hold/straight) and A / V294 (r_mid, hard16, J_err, cmd_rms), bands 0-5/5-10/10-15/15-22/22+
+  lp   nominal   track_[-0.000 +0.001 +0.000 +0.000 +0.000]  turn_h[  -   -0.001 +0.001 +0.000 +0.001]  straig[+0.000 +0.000 +0.000 +0.000 +0.002]  r_mid[x0.87 x0.87 x0.93 x0.97 x0.97]  hard16[  -   x0.83   -   x0.95 x0.96]  J_err[x1.05 x1.03 x1.01 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  lp   light_b   track_[+0.000 +0.001 -0.001 -0.000 +0.004]  turn_h[  -   +0.003 -0.000 -0.005 +0.013]  straig[-0.007 -0.003 -0.010 -0.002 -0.000]  r_mid[x0.69 x0.77 x0.81 x0.81 x0.78]  hard16[  -   x0.68   -   x0.70 x0.92]  J_err[x1.17 x1.11 x1.01 x1.02 x0.99]  cmd_rm[x1.01 x1.00 x1.00 x1.00 x0.99]
+  lp   F_hi      track_[-0.001 +0.001 -0.000 +0.000 +0.000]  turn_h[  -   +0.000 +0.002 +0.006 +0.000]  straig[+0.006 +0.000 -0.000 +0.000 +0.003]  r_mid[x0.88 x0.87 x0.94 x0.98 x0.97]  hard16[  -   x0.86   -   x0.96 x0.95]  J_err[x1.04 x1.03 x1.00 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  lp   F_lo      track_[-0.000 +0.001 +0.000 +0.000 +0.000]  turn_h[  -   -0.004 +0.002 +0.000 +0.001]  straig[+0.002 +0.000 -0.001 -0.000 +0.002]  r_mid[x0.87 x0.86 x0.94 x0.97 x0.96]  hard16[  -   x0.80   -   x0.95 x0.94]  J_err[x1.06 x1.03 x1.00 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  lp   b_lo      track_[+0.001 +0.001 -0.000 +0.000 +0.000]  turn_h[  -   -0.001 +0.004 -0.000 +0.000]  straig[+0.008 -0.002 -0.001 +0.000 +0.003]  r_mid[x0.81 x0.84 x0.92 x0.97 x0.95]  hard16[  -   x0.75   -   x0.92 x0.93]  J_err[x1.09 x1.05 x1.01 x1.00 x1.01]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  lp   J_hi      track_[-0.001 +0.001 +0.000 +0.000 +0.000]  turn_h[  -   -0.000 +0.003 +0.000 +0.000]  straig[-0.001 -0.000 +0.000 +0.001 +0.003]  r_mid[x0.89 x0.88 x0.92 x0.97 x0.97]  hard16[  -   x0.89   -   x0.92 x0.97]  J_err[x1.04 x1.03 x1.01 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  lp   J_hi2     track_[-0.001 +0.001 +0.000 +0.000 +0.000]  turn_h[  -   -0.000 +0.007 +0.000 +0.000]  straig[-0.001 +0.000 -0.001 +0.000 +0.004]  r_mid[x0.92 x0.90 x0.92 x0.97 x0.98]  hard16[  -   x0.94   -   x0.96 x0.94]  J_err[x1.02 x1.02 x1.01 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  lp   tau6      track_[-0.000 +0.001 +0.000 +0.000 +0.000]  turn_h[  -   -0.002 +0.001 +0.000 +0.001]  straig[-0.000 +0.001 +0.000 +0.000 +0.003]  r_mid[x0.85 x0.87 x0.93 x0.97 x0.96]  hard16[  -   x0.82   -   x0.95 x0.94]  J_err[x1.05 x1.03 x1.01 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  lp   mode20_lo track_[-0.000 +0.001 +0.000 +0.000 +0.000]  turn_h[  -   -0.001 +0.001 +0.000 +0.003]  straig[+0.001 -0.000 -0.000 +0.000 +0.002]  r_mid[x0.86 x0.87 x0.93 x0.98 x0.98]  hard16[  -   x0.83   -   x0.95 x0.97]  J_err[x1.05 x1.03 x1.01 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  full nominal   track_[+0.003 +0.002 +0.000 +0.000 +0.000]  turn_h[  -   +0.011 -0.001 +0.000 +0.001]  straig[+0.002 +0.001 -0.002 +0.000 +0.004]  r_mid[x0.87 x0.85 x0.90 x0.95 x0.96]  hard16[  -   x0.83   -   x0.94 x0.95]  J_err[x0.99 x1.01 x1.00 x1.00 x1.01]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  full light_b   track_[+0.004 +0.000 +0.001 +0.000 +0.001]  turn_h[  -   -0.009 -0.009 +0.004 -0.000]  straig[+0.010 -0.000 -0.007 -0.001 +0.014]  r_mid[x0.74 x0.67 x0.77 x0.75 x0.82]  hard16[  -   x0.70   -   x0.67 x0.70]  J_err[x1.13 x1.08 x0.99 x1.02 x1.01]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  full F_hi      track_[+0.004 +0.002 +0.000 +0.000 +0.000]  turn_h[  -   +0.005 +0.000 +0.000 -0.000]  straig[+0.002 +0.001 -0.002 +0.000 +0.005]  r_mid[x0.88 x0.85 x0.91 x0.95 x0.96]  hard16[  -   x0.83   -   x0.94 x0.95]  J_err[x0.99 x1.00 x1.00 x1.00 x1.01]  cmd_rm[x0.99 x1.00 x1.00 x1.00 x1.00]
+  full F_lo      track_[+0.003 +0.001 +0.001 +0.000 +0.000]  turn_h[  -   +0.011 -0.000 -0.000 +0.000]  straig[+0.002 +0.002 -0.001 +0.000 +0.004]  r_mid[x0.86 x0.84 x0.90 x0.94 x0.96]  hard16[  -   x0.82   -   x0.93 x0.95]  J_err[x1.00 x1.01 x1.00 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  full b_lo      track_[+0.004 +0.001 +0.001 +0.000 +0.000]  turn_h[  -   +0.008 -0.007 -0.000 +0.000]  straig[+0.004 +0.003 -0.001 +0.000 +0.003]  r_mid[x0.84 x0.79 x0.86 x0.91 x0.93]  hard16[  -   x0.78   -   x0.89 x0.91]  J_err[x1.02 x1.02 x1.00 x1.00 x1.01]  cmd_rm[x0.99 x1.00 x1.00 x1.00 x1.00]
+  full J_hi      track_[+0.003 +0.002 +0.000 +0.000 +0.000]  turn_h[  -   +0.014 +0.001 +0.000 -0.000]  straig[+0.002 +0.001 -0.002 +0.000 +0.004]  r_mid[x0.89 x0.86 x0.89 x0.94 x0.95]  hard16[  -   x0.86   -   x0.93 x0.95]  J_err[x0.97 x0.99 x0.99 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  full J_hi2     track_[+0.002 +0.002 +0.000 +0.000 +0.000]  turn_h[  -   +0.011 -0.004 +0.002 +0.000]  straig[+0.002 +0.002 -0.003 -0.000 +0.004]  r_mid[x0.90 x0.89 x0.89 x0.94 x0.96]  hard16[  -   x0.90   -   x0.93 x0.95]  J_err[x0.97 x0.98 x0.99 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  full tau6      track_[+0.003 +0.002 +0.000 +0.000 +0.000]  turn_h[  -   +0.011 +0.000 +0.000 -0.000]  straig[+0.002 +0.001 -0.002 +0.000 +0.004]  r_mid[x0.87 x0.85 x0.90 x0.94 x0.95]  hard16[  -   x0.83   -   x0.93 x0.95]  J_err[x0.99 x1.00 x1.00 x1.00 x1.01]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+  full mode20_lo track_[+0.003 +0.002 +0.001 +0.000 +0.000]  turn_h[  -   +0.010 -0.000 +0.001 +0.000]  straig[+0.002 +0.001 -0.002 -0.000 +0.004]  r_mid[x0.87 x0.85 x0.90 x0.95 x0.95]  hard16[  -   x0.83   -   x0.94 x0.94]  J_err[x0.99 x1.01 x1.00 x1.00 x1.00]  cmd_rm[x1.00 x1.00 x1.00 x1.00 x1.00]
+
+extremes over every member x dist x band:
+  track_gain         min -0.001 (lp light_b 10-15)  max 0.004 (full b_lo 0-5)
+  turn_hold          min -0.009 (full light_b 10-15)  max 0.014 (full J_hi 5-10)
+  straight_delivery  min -0.010 (lp light_b 10-15)  max 0.014 (full light_b 22+)
+  r_mid              min 0.668 (full light_b 5-10)  max 0.980 (lp mode20_lo 22+)
+  hard16             min 0.669 (full light_b 15-22)  max 0.970 (lp mode20_lo 22+)
+  J_err              min 0.967 (full J_hi2 0-5)  max 1.169 (lp light_b 0-5)
+  cmd_rms            min 0.990 (lp light_b 22+)  max 1.006 (lp light_b 0-5)
+
+limit-cycle read (0.5-5 Hz Welch peak per chunk, wheel rate and command): A / V294 in dB
+  rate18: 378 chunk-rows; A peak > +3 dB over V294 on 1; median -0.04 dB; max 3.14 dB (lp light_b chunk 0 v 8.0 f 0.59 Hz)
+     lp light_b   chunk  0 v   8.0  f V294 0.59 A 0.59  +3.14 dB  prominence V294 540.7 A 2081.9
+     8-20 m/s chunks: median -0.09 dB, max 3.14 dB, n 270
+  cmd   : 378 chunk-rows; A peak > +3 dB over V294 on 1; median 0.07 dB; max 3.85 dB (lp light_b chunk 1 v 5.9 f 0.59 Hz)
+     lp light_b   chunk  1 v   5.9  f V294 0.59 A 0.59  +3.85 dB  prominence V294 160.0 A 403.7
+     8-20 m/s chunks: median 0.06 dB, max 2.68 dB, n 270

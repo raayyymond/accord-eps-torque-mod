@@ -1,0 +1,12 @@
+V294 cells from image sha 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+  V294                           8000 ticks  mismatches(T,S) 0   |T|max 560  problems []
+  b1500 a1005 C2048              8000 ticks  mismatches(T,S) 0   |T|max 951  problems []
+  b1134 Kp sched 1100..960       8000 ticks  mismatches(T,S) 0   |T|max 268  problems []
+  lag 980/697 b1700              8000 ticks  mismatches(T,S) 0   |T|max 347  problems []
+  e_shift1 Kp1920 b567           8000 ticks  mismatches(T,S) 0   |T|max 1326  problems []
+  e_shift0 Kp3840 b300 a1015     8000 ticks  mismatches(T,S) 0   |T|max 541  problems []
+  Kd64 Dcl2048 b900              8000 ticks  mismatches(T,S) 0   |T|max 283  problems []
+SPOT (1): 56000 ticks, 0 mismatches -> PASS
+SPOT (2a) sweep_drive 16.6 s: V294 nominal lp 5-10 m/s tracking gain 0.865 (report 0.865), measured 0.871 (report 0.871)
+SPOT (2b) simulate() + own polyfit: 0.865
+SPOT (2): PASS

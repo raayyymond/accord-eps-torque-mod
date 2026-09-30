@@ -1,0 +1,22 @@
+rate-former window 0 ms
+    1.0 Hz: V294 |T/w| 1.16 angle +52.6 damping 0.70 | A1017 |T/w| 1.77 angle +36.3 damping 1.43
+    2.0 Hz: V294 |T/w| 1.75 angle +23.9 damping 1.60 | A1017 |T/w| 2.18 angle  +7.0 damping 2.16
+    2.5 Hz: V294 |T/w| 1.86 angle +12.8 damping 1.82 | A1017 |T/w| 2.19 angle  -2.7 damping 2.19
+    3.0 Hz: V294 |T/w| 1.91 angle  +3.4 damping 1.90 | A1017 |T/w| 2.16 angle -10.7 damping 2.12
+    5.0 Hz: V294 |T/w| 1.76 angle -22.6 damping 1.63 | A1017 |T/w| 1.86 angle -32.4 damping 1.57
+   20.0 Hz: V294 |T/w| 0.65 angle -70.0 damping 0.22 | A1017 |T/w| 0.65 angle -72.7 damping 0.19
+  a=1011 damping peak 1.91 T/(deg/s) at 3.21 Hz
+  a=1017 damping peak 2.20 T/(deg/s) at 2.35 Hz
+  a=1011 K_alpha (T per deg/s^2 at 0.02 Hz) 0.2097
+  a=1017 K_alpha (T per deg/s^2 at 0.02 Hz) 0.3894
+rate-former window 3 ms
+    1.0 Hz: V294 |T/w| 1.16 angle +52.3 damping 0.71 | A1017 |T/w| 1.77 angle +36.0 damping 1.43
+    2.0 Hz: V294 |T/w| 1.75 angle +23.2 damping 1.61 | A1017 |T/w| 2.18 angle  +6.3 damping 2.17
+    2.5 Hz: V294 |T/w| 1.86 angle +11.9 damping 1.82 | A1017 |T/w| 2.19 angle  -3.6 damping 2.19
+    3.0 Hz: V294 |T/w| 1.91 angle  +2.3 damping 1.91 | A1017 |T/w| 2.16 angle -11.8 damping 2.11
+    5.0 Hz: V294 |T/w| 1.76 angle -24.4 damping 1.61 | A1017 |T/w| 1.85 angle -34.2 damping 1.53
+   20.0 Hz: V294 |T/w| 0.65 angle -77.2 damping 0.14 | A1017 |T/w| 0.65 angle -79.9 damping 0.11
+  a=1011 damping peak 1.91 T/(deg/s) at 3.17 Hz
+  a=1017 damping peak 2.20 T/(deg/s) at 2.33 Hz
+  a=1011 K_alpha (T per deg/s^2 at 0.02 Hz) 0.2097
+  a=1017 K_alpha (T per deg/s^2 at 0.02 Hz) 0.3894

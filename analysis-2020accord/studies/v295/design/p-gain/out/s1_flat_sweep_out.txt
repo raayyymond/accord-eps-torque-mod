@@ -1,0 +1,353 @@
+sweep 68 s
+
+=== dist lp  plant nominal ===
+ 0-5    g1.15:tg0.875 thnan sd0.81 J0.031 ish0.49 h16 nan | g1.30:tg0.902 thnan sd0.84 J0.029 ish0.48 h16 nan | g1.50:tg0.932 thnan sd0.88 J0.029 ish0.45 h16 nan | g1.75:tg0.960 thnan sd0.92 J0.029 ish0.42 h16 nan | g2.00:tg0.981 thnan sd0.94 J0.029 ish0.39 h16 nan | FFonly1.5:tg0.932 thnan sd0.88 J0.028 ish0.45 h16 nan | TRIMonly1.5:tg0.840 thnan sd0.77 J0.034 ish0.51 h16 nan | V294:tg0.840 thnan sd0.77 J0.033 ish0.51 h16 nan
+ 5-10   g1.15:tg0.905 th0.819 sd0.70 J0.081 ish0.38 h16 1.44 | g1.30:tg0.937 th0.853 sd0.74 J0.080 ish0.36 h16 1.63 | g1.50:tg0.970 th0.886 sd0.79 J0.078 ish0.35 h16 1.97 | g1.75:tg1.000 th0.930 sd0.84 J0.076 ish0.33 h16 2.22 | g2.00:tg1.022 th0.959 sd0.89 J0.076 ish0.33 h16 2.59 | FFonly1.5:tg0.970 th0.887 sd0.79 J0.076 ish0.35 h16 2.25 | TRIMonly1.5:tg0.865 th0.780 sd0.66 J0.085 ish0.39 h16 1.12 | V294:tg0.865 th0.780 sd0.66 J0.083 ish0.39 h16 1.26
+ 10-15  g1.15:tg0.649 th0.644 sd0.58 J0.044 ish0.38 h16 nan | g1.30:tg0.706 th0.694 sd0.61 J0.042 ish0.37 h16 nan | g1.50:tg0.772 th0.758 sd0.66 J0.040 ish0.36 h16 nan | g1.75:tg0.839 th0.830 sd0.71 J0.037 ish0.35 h16 nan | g2.00:tg0.892 th0.884 sd0.76 J0.036 ish0.35 h16 nan | FFonly1.5:tg0.771 th0.755 sd0.66 J0.039 ish0.36 h16 nan | TRIMonly1.5:tg0.586 th0.593 sd0.54 J0.047 ish0.39 h16 nan | V294:tg0.586 th0.592 sd0.54 J0.047 ish0.40 h16 nan
+ 15-22  g1.15:tg0.807 th0.685 sd0.97 J0.069 ish0.42 h16 0.19 | g1.30:tg0.845 th0.741 sd0.98 J0.065 ish0.40 h16 0.22 | g1.50:tg0.889 th0.806 sd0.99 J0.061 ish0.39 h16 0.28 | g1.75:tg0.932 th0.844 sd1.00 J0.057 ish0.37 h16 0.32 | g2.00:tg0.968 th0.899 sd1.00 J0.055 ish0.35 h16 0.35 | FFonly1.5:tg0.888 th0.806 sd0.99 J0.061 ish0.39 h16 0.27 | TRIMonly1.5:tg0.764 th0.636 sd0.96 J0.073 ish0.44 h16 0.16 | V294:tg0.764 th0.636 sd0.96 J0.073 ish0.44 h16 0.17
+ 22+    g1.15:tg0.953 th0.976 sd0.91 J0.057 ish0.28 h16 0.21 | g1.30:tg0.983 th1.010 sd0.97 J0.055 ish0.28 h16 0.22 | g1.50:tg1.016 th1.041 sd1.03 J0.053 ish0.28 h16 0.29 | g1.75:tg1.049 th1.062 sd1.10 J0.054 ish0.29 h16 0.31 | g2.00:tg1.075 th1.085 sd1.16 J0.055 ish0.30 h16 0.35 | FFonly1.5:tg1.016 th1.041 sd1.03 J0.053 ish0.28 h16 0.28 | TRIMonly1.5:tg0.917 th0.941 sd0.86 J0.060 ish0.28 h16 0.16 | V294:tg0.917 th0.940 sd0.86 J0.060 ish0.28 h16 0.17
+  limit cycle: {'g1.15': (1.07, -4.5), 'g1.30': (1.07, -4.6), 'g1.50': (1.07, -4.9), 'g1.75': (1.07, -4.7), 'g2.00': (1.07, -4.6), 'FFonly1.5': (1.07, -4.5), 'TRIMonly1.5': (1.07, -5.1), 'V294': (1.07, -4.7)}
+
+=== dist lp  plant light_b ===
+ 0-5    g1.15:tg0.903 thnan sd0.81 J0.035 ish0.50 h16 nan | g1.30:tg0.928 thnan sd0.85 J0.036 ish0.48 h16 nan | g1.50:tg0.954 thnan sd0.87 J0.036 ish0.46 h16 nan | g1.75:tg0.979 thnan sd0.89 J0.036 ish0.44 h16 nan | g2.00:tg0.995 thnan sd0.91 J0.035 ish0.43 h16 nan | FFonly1.5:tg0.954 thnan sd0.86 J0.033 ish0.46 h16 nan | TRIMonly1.5:tg0.871 thnan sd0.77 J0.038 ish0.51 h16 nan | V294:tg0.871 thnan sd0.77 J0.035 ish0.51 h16 nan
+ 5-10   g1.15:tg0.926 th0.853 sd0.72 J0.077 ish0.39 h16 3.48 | g1.30:tg0.955 th0.887 sd0.76 J0.075 ish0.38 h16 3.81 | g1.50:tg0.984 th0.935 sd0.81 J0.073 ish0.36 h16 4.30 | g1.75:tg1.010 th0.950 sd0.86 J0.072 ish0.35 h16 5.07 | g2.00:tg1.029 th0.966 sd0.89 J0.072 ish0.34 h16 5.64 | FFonly1.5:tg0.983 th0.936 sd0.81 J0.068 ish0.36 h16 5.86 | TRIMonly1.5:tg0.889 th0.828 sd0.67 J0.084 ish0.40 h16 2.49 | V294:tg0.889 th0.828 sd0.68 J0.079 ish0.40 h16 3.27
+ 10-15  g1.15:tg0.696 th0.680 sd0.58 J0.040 ish0.38 h16 nan | g1.30:tg0.761 th0.735 sd0.63 J0.037 ish0.37 h16 nan | g1.50:tg0.829 th0.790 sd0.69 J0.035 ish0.37 h16 nan | g1.75:tg0.897 th0.870 sd0.74 J0.033 ish0.36 h16 nan | g2.00:tg0.947 th0.930 sd0.79 J0.032 ish0.35 h16 nan | FFonly1.5:tg0.830 th0.793 sd0.68 J0.035 ish0.37 h16 nan | TRIMonly1.5:tg0.621 th0.613 sd0.54 J0.044 ish0.39 h16 nan | V294:tg0.621 th0.613 sd0.55 J0.044 ish0.39 h16 nan
+ 15-22  g1.15:tg0.901 th0.810 sd0.98 J0.060 ish0.41 h16 2.50 | g1.30:tg0.940 th0.873 sd0.98 J0.058 ish0.39 h16 2.86 | g1.50:tg0.977 th0.929 sd0.98 J0.058 ish0.35 h16 2.73 | g1.75:tg1.015 th0.980 sd1.00 J0.058 ish0.34 h16 2.90 | g2.00:tg1.043 th1.030 sd1.02 J0.060 ish0.34 h16 3.00 | FFonly1.5:tg0.977 th0.930 sd0.98 J0.056 ish0.35 h16 3.12 | TRIMonly1.5:tg0.850 th0.728 sd0.98 J0.063 ish0.43 h16 1.72 | V294:tg0.850 th0.731 sd0.99 J0.062 ish0.43 h16 2.06
+ 22+    g1.15:tg0.977 th0.987 sd0.93 J0.055 ish0.27 h16 1.52 | g1.30:tg1.009 th1.014 sd0.99 J0.055 ish0.27 h16 1.96 | g1.50:tg1.041 th1.038 sd1.08 J0.057 ish0.28 h16 2.25 | g1.75:tg1.074 th1.075 sd1.16 J0.060 ish0.28 h16 2.24 | g2.00:tg1.099 th1.101 sd1.22 J0.065 ish0.30 h16 2.28 | FFonly1.5:tg1.043 th1.035 sd1.08 J0.057 ish0.28 h16 1.93 | TRIMonly1.5:tg0.941 th0.969 sd0.84 J0.057 ish0.27 h16 1.26 | V294:tg0.938 th0.961 sd0.85 J0.057 ish0.28 h16 1.26
+  limit cycle: {'g1.15': (1.07, 1.2), 'g1.30': (1.07, 1.6), 'g1.50': (1.07, 2.0), 'g1.75': (1.07, 1.9), 'g2.00': (1.07, 1.6), 'FFonly1.5': (1.07, 2.8), 'TRIMonly1.5': (1.07, -0.8), 'V294': (1.07, 0.8)}
+
+=== dist lp  plant b_lo ===
+ 0-5    g1.15:tg0.882 thnan sd0.80 J0.030 ish0.50 h16 nan | g1.30:tg0.909 thnan sd0.82 J0.030 ish0.48 h16 nan | g1.50:tg0.939 thnan sd0.86 J0.030 ish0.45 h16 nan | g1.75:tg0.966 thnan sd0.91 J0.030 ish0.42 h16 nan | g2.00:tg0.986 thnan sd0.93 J0.031 ish0.39 h16 nan | FFonly1.5:tg0.938 thnan sd0.86 J0.028 ish0.45 h16 nan | TRIMonly1.5:tg0.847 thnan sd0.76 J0.034 ish0.51 h16 nan | V294:tg0.847 thnan sd0.76 J0.032 ish0.51 h16 nan
+ 5-10   g1.15:tg0.905 th0.823 sd0.69 J0.076 ish0.38 h16 1.81 | g1.30:tg0.936 th0.845 sd0.73 J0.075 ish0.37 h16 2.02 | g1.50:tg0.968 th0.889 sd0.78 J0.073 ish0.35 h16 2.39 | g1.75:tg0.997 th0.934 sd0.83 J0.072 ish0.34 h16 2.86 | g2.00:tg1.018 th0.957 sd0.87 J0.072 ish0.33 h16 3.38 | FFonly1.5:tg0.967 th0.892 sd0.77 J0.071 ish0.35 h16 2.94 | TRIMonly1.5:tg0.866 th0.801 sd0.65 J0.080 ish0.39 h16 1.48 | V294:tg0.866 th0.799 sd0.65 J0.078 ish0.40 h16 1.72
+ 10-15  g1.15:tg0.659 th0.655 sd0.58 J0.041 ish0.38 h16 nan | g1.30:tg0.716 th0.713 sd0.61 J0.038 ish0.37 h16 nan | g1.50:tg0.781 th0.782 sd0.65 J0.036 ish0.36 h16 nan | g1.75:tg0.848 th0.847 sd0.71 J0.034 ish0.35 h16 nan | g2.00:tg0.900 th0.893 sd0.75 J0.032 ish0.35 h16 nan | FFonly1.5:tg0.781 th0.776 sd0.65 J0.036 ish0.36 h16 nan | TRIMonly1.5:tg0.595 th0.596 sd0.54 J0.044 ish0.39 h16 nan | V294:tg0.595 th0.594 sd0.54 J0.044 ish0.39 h16 nan
+ 15-22  g1.15:tg0.809 th0.693 sd0.97 J0.063 ish0.42 h16 0.32 | g1.30:tg0.847 th0.738 sd0.98 J0.059 ish0.40 h16 0.40 | g1.50:tg0.889 th0.811 sd0.99 J0.055 ish0.38 h16 0.47 | g1.75:tg0.932 th0.864 sd0.99 J0.051 ish0.37 h16 0.53 | g2.00:tg0.966 th0.902 sd1.00 J0.049 ish0.35 h16 0.62 | FFonly1.5:tg0.889 th0.811 sd0.99 J0.054 ish0.38 h16 0.49 | TRIMonly1.5:tg0.766 th0.636 sd0.96 J0.068 ish0.43 h16 0.26 | V294:tg0.766 th0.636 sd0.96 J0.068 ish0.43 h16 0.27
+ 22+    g1.15:tg0.954 th0.963 sd0.87 J0.048 ish0.28 h16 0.36 | g1.30:tg0.984 th0.998 sd0.93 J0.046 ish0.28 h16 0.42 | g1.50:tg1.017 th1.033 sd0.99 J0.045 ish0.28 h16 0.50 | g1.75:tg1.050 th1.053 sd1.07 J0.047 ish0.29 h16 0.55 | g2.00:tg1.076 th1.074 sd1.13 J0.049 ish0.30 h16 0.66 | FFonly1.5:tg1.017 th1.031 sd0.99 J0.045 ish0.28 h16 0.50 | TRIMonly1.5:tg0.919 th0.932 sd0.82 J0.051 ish0.28 h16 0.31 | V294:tg0.919 th0.932 sd0.82 J0.051 ish0.28 h16 0.31
+  limit cycle: {'g1.15': (1.07, -2.5), 'g1.30': (1.07, -2.5), 'g1.50': (1.07, -2.8), 'g1.75': (1.07, -2.7), 'g2.00': (1.07, -2.5), 'FFonly1.5': (1.07, -1.9), 'TRIMonly1.5': (1.07, -3.2), 'V294': (1.07, -2.6)}
+
+=== dist lp  plant F_hi ===
+ 0-5    g1.15:tg0.864 thnan sd0.76 J0.033 ish0.49 h16 nan | g1.30:tg0.892 thnan sd0.79 J0.030 ish0.48 h16 nan | g1.50:tg0.923 thnan sd0.83 J0.029 ish0.46 h16 nan | g1.75:tg0.952 thnan sd0.89 J0.029 ish0.43 h16 nan | g2.00:tg0.974 thnan sd0.92 J0.029 ish0.39 h16 nan | FFonly1.5:tg0.923 thnan sd0.83 J0.028 ish0.46 h16 nan | TRIMonly1.5:tg0.830 thnan sd0.70 J0.037 ish0.52 h16 nan | V294:tg0.830 thnan sd0.70 J0.036 ish0.52 h16 nan
+ 5-10   g1.15:tg0.905 th0.820 sd0.71 J0.083 ish0.36 h16 1.54 | g1.30:tg0.937 th0.858 sd0.75 J0.081 ish0.35 h16 1.74 | g1.50:tg0.971 th0.891 sd0.79 J0.079 ish0.35 h16 2.01 | g1.75:tg1.001 th0.928 sd0.85 J0.078 ish0.35 h16 2.21 | g2.00:tg1.023 th0.958 sd0.89 J0.077 ish0.34 h16 2.40 | FFonly1.5:tg0.970 th0.892 sd0.79 J0.078 ish0.35 h16 2.23 | TRIMonly1.5:tg0.864 th0.771 sd0.67 J0.086 ish0.38 h16 1.24 | V294:tg0.863 th0.773 sd0.67 J0.085 ish0.38 h16 1.38
+ 10-15  g1.15:tg0.644 th0.633 sd0.57 J0.046 ish0.39 h16 nan | g1.30:tg0.701 th0.684 sd0.61 J0.044 ish0.38 h16 nan | g1.50:tg0.768 th0.748 sd0.66 J0.041 ish0.37 h16 nan | g1.75:tg0.836 th0.823 sd0.71 J0.039 ish0.36 h16 nan | g2.00:tg0.890 th0.879 sd0.76 J0.037 ish0.36 h16 nan | FFonly1.5:tg0.768 th0.746 sd0.66 J0.041 ish0.37 h16 nan | TRIMonly1.5:tg0.579 th0.580 sd0.52 J0.049 ish0.40 h16 nan | V294:tg0.579 th0.580 sd0.52 J0.049 ish0.40 h16 nan
+ 15-22  g1.15:tg0.807 th0.676 sd0.98 J0.070 ish0.42 h16 0.21 | g1.30:tg0.845 th0.734 sd0.98 J0.067 ish0.40 h16 0.23 | g1.50:tg0.888 th0.797 sd0.99 J0.063 ish0.39 h16 0.26 | g1.75:tg0.932 th0.843 sd1.00 J0.059 ish0.37 h16 0.30 | g2.00:tg0.968 th0.896 sd1.01 J0.056 ish0.35 h16 0.34 | FFonly1.5:tg0.888 th0.798 sd0.99 J0.063 ish0.39 h16 0.27 | TRIMonly1.5:tg0.763 th0.623 sd0.97 J0.075 ish0.44 h16 0.18 | V294:tg0.763 th0.622 sd0.97 J0.075 ish0.44 h16 0.18
+ 22+    g1.15:tg0.952 th0.978 sd0.91 J0.059 ish0.28 h16 0.19 | g1.30:tg0.982 th1.008 sd0.97 J0.056 ish0.28 h16 0.22 | g1.50:tg1.015 th1.038 sd1.03 J0.054 ish0.28 h16 0.26 | g1.75:tg1.048 th1.062 sd1.10 J0.055 ish0.29 h16 0.31 | g2.00:tg1.075 th1.083 sd1.17 J0.056 ish0.30 h16 0.37 | FFonly1.5:tg1.015 th1.039 sd1.03 J0.054 ish0.28 h16 0.27 | TRIMonly1.5:tg0.916 th0.942 sd0.86 J0.062 ish0.29 h16 0.16 | V294:tg0.916 th0.942 sd0.86 J0.062 ish0.29 h16 0.17
+  limit cycle: {'g1.15': (1.07, -4.8), 'g1.30': (1.07, -5.2), 'g1.50': (1.07, -4.9), 'g1.75': (1.07, -4.8), 'g2.00': (1.07, -4.7), 'FFonly1.5': (1.07, -4.7), 'TRIMonly1.5': (1.07, -5.1), 'V294': (1.07, -4.7)}
+
+=== dist lp  plant J_hi ===
+ 0-5    g1.15:tg0.861 thnan sd0.82 J0.034 ish0.50 h16 nan | g1.30:tg0.890 thnan sd0.86 J0.032 ish0.47 h16 nan | g1.50:tg0.920 thnan sd0.90 J0.031 ish0.45 h16 nan | g1.75:tg0.949 thnan sd0.93 J0.031 ish0.42 h16 nan | g2.00:tg0.971 thnan sd0.95 J0.032 ish0.40 h16 nan | FFonly1.5:tg0.920 thnan sd0.90 J0.030 ish0.45 h16 nan | TRIMonly1.5:tg0.826 thnan sd0.77 J0.037 ish0.51 h16 nan | V294:tg0.826 thnan sd0.77 J0.036 ish0.51 h16 nan
+ 5-10   g1.15:tg0.897 th0.814 sd0.70 J0.085 ish0.38 h16 1.10 | g1.30:tg0.929 th0.844 sd0.73 J0.084 ish0.35 h16 1.25 | g1.50:tg0.963 th0.874 sd0.78 J0.083 ish0.34 h16 1.47 | g1.75:tg0.993 th0.916 sd0.83 J0.082 ish0.33 h16 1.72 | g2.00:tg1.016 th0.943 sd0.87 J0.081 ish0.33 h16 1.96 | FFonly1.5:tg0.962 th0.877 sd0.78 J0.081 ish0.35 h16 1.60 | TRIMonly1.5:tg0.857 th0.785 sd0.66 J0.088 ish0.39 h16 0.88 | V294:tg0.856 th0.785 sd0.66 J0.086 ish0.39 h16 0.94
+ 10-15  g1.15:tg0.656 th0.666 sd0.58 J0.042 ish0.38 h16 nan | g1.30:tg0.712 th0.717 sd0.62 J0.040 ish0.36 h16 nan | g1.50:tg0.778 th0.787 sd0.66 J0.038 ish0.36 h16 nan | g1.75:tg0.845 th0.850 sd0.71 J0.036 ish0.35 h16 nan | g2.00:tg0.899 th0.895 sd0.76 J0.035 ish0.35 h16 nan | FFonly1.5:tg0.778 th0.786 sd0.66 J0.038 ish0.36 h16 nan | TRIMonly1.5:tg0.593 th0.606 sd0.54 J0.045 ish0.39 h16 nan | V294:tg0.593 th0.606 sd0.54 J0.045 ish0.39 h16 nan
+ 15-22  g1.15:tg0.811 th0.689 sd0.97 J0.068 ish0.42 h16 0.21 | g1.30:tg0.849 th0.741 sd0.98 J0.064 ish0.40 h16 0.26 | g1.50:tg0.892 th0.810 sd0.99 J0.060 ish0.39 h16 0.29 | g1.75:tg0.936 th0.850 sd0.99 J0.057 ish0.37 h16 0.33 | g2.00:tg0.971 th0.905 sd1.00 J0.055 ish0.35 h16 0.39 | FFonly1.5:tg0.892 th0.810 sd0.99 J0.060 ish0.39 h16 0.30 | TRIMonly1.5:tg0.767 th0.637 sd0.96 J0.072 ish0.44 h16 0.17 | V294:tg0.766 th0.637 sd0.96 J0.072 ish0.44 h16 0.19
+ 22+    g1.15:tg0.953 th0.995 sd0.91 J0.058 ish0.27 h16 0.19 | g1.30:tg0.983 th1.021 sd0.96 J0.056 ish0.27 h16 0.23 | g1.50:tg1.016 th1.052 sd1.03 J0.055 ish0.27 h16 0.24 | g1.75:tg1.049 th1.072 sd1.10 J0.055 ish0.28 h16 0.30 | g2.00:tg1.075 th1.089 sd1.16 J0.056 ish0.29 h16 0.33 | FFonly1.5:tg1.016 th1.052 sd1.02 J0.054 ish0.27 h16 0.26 | TRIMonly1.5:tg0.918 th0.957 sd0.85 J0.062 ish0.27 h16 0.16 | V294:tg0.918 th0.957 sd0.85 J0.061 ish0.27 h16 0.17
+  limit cycle: {'g1.15': (1.07, -4.3), 'g1.30': (1.07, -4.3), 'g1.50': (1.07, -4.5), 'g1.75': (1.07, -4.6), 'g2.00': (1.07, -4.6), 'FFonly1.5': (1.07, -4.1), 'TRIMonly1.5': (1.07, -4.6), 'V294': (1.07, -4.4)}
+
+=== dist full  plant nominal ===
+ 0-5    g1.15:tg0.903 thnan sd0.78 J0.040 ish0.49 h16 nan | g1.30:tg0.925 thnan sd0.82 J0.041 ish0.47 h16 nan | g1.50:tg0.949 thnan sd0.85 J0.041 ish0.45 h16 nan | g1.75:tg0.972 thnan sd0.89 J0.041 ish0.42 h16 nan | g2.00:tg0.990 thnan sd0.92 J0.041 ish0.40 h16 nan | FFonly1.5:tg0.948 thnan sd0.85 J0.040 ish0.45 h16 nan | TRIMonly1.5:tg0.876 thnan sd0.74 J0.039 ish0.51 h16 nan | V294:tg0.874 thnan sd0.74 J0.039 ish0.51 h16 nan
+ 5-10   g1.15:tg0.912 th0.825 sd0.63 J0.087 ish0.37 h16 14.83 | g1.30:tg0.943 th0.857 sd0.68 J0.088 ish0.35 h16 14.78 | g1.50:tg0.975 th0.889 sd0.72 J0.088 ish0.34 h16 14.49 | g1.75:tg1.005 th0.932 sd0.78 J0.088 ish0.32 h16 14.28 | g2.00:tg1.027 th0.966 sd0.83 J0.088 ish0.32 h16 14.18 | FFonly1.5:tg0.975 th0.891 sd0.72 J0.087 ish0.34 h16 16.29 | TRIMonly1.5:tg0.874 th0.794 sd0.59 J0.087 ish0.38 h16 13.43 | V294:tg0.872 th0.788 sd0.59 J0.087 ish0.38 h16 14.89
+ 10-15  g1.15:tg0.640 th0.551 sd0.52 J0.055 ish0.37 h16 nan | g1.30:tg0.698 th0.605 sd0.56 J0.052 ish0.36 h16 nan | g1.50:tg0.764 th0.676 sd0.61 J0.049 ish0.35 h16 nan | g1.75:tg0.832 th0.751 sd0.67 J0.046 ish0.34 h16 nan | g2.00:tg0.886 th0.818 sd0.72 J0.044 ish0.34 h16 nan | FFonly1.5:tg0.764 th0.673 sd0.61 J0.049 ish0.35 h16 nan | TRIMonly1.5:tg0.576 th0.491 sd0.48 J0.058 ish0.38 h16 nan | V294:tg0.575 th0.491 sd0.49 J0.058 ish0.38 h16 nan
+ 15-22  g1.15:tg0.871 th0.720 sd0.97 J0.073 ish0.41 h16 7.54 | g1.30:tg0.905 th0.769 sd0.98 J0.071 ish0.39 h16 7.55 | g1.50:tg0.944 th0.826 sd0.98 J0.069 ish0.37 h16 7.54 | g1.75:tg0.983 th0.883 sd0.99 J0.067 ish0.34 h16 7.49 | g2.00:tg1.014 th0.929 sd0.99 J0.066 ish0.33 h16 7.41 | FFonly1.5:tg0.944 th0.827 sd0.98 J0.069 ish0.37 h16 7.84 | TRIMonly1.5:tg0.830 th0.670 sd0.96 J0.075 ish0.42 h16 7.28 | V294:tg0.830 th0.670 sd0.96 J0.075 ish0.42 h16 7.52
+ 22+    g1.15:tg0.958 th0.975 sd0.87 J0.058 ish0.27 h16 1.74 | g1.30:tg0.988 th1.005 sd0.93 J0.056 ish0.27 h16 1.74 | g1.50:tg1.020 th1.038 sd1.00 J0.055 ish0.28 h16 1.73 | g1.75:tg1.052 th1.076 sd1.07 J0.055 ish0.29 h16 1.72 | g2.00:tg1.078 th1.095 sd1.14 J0.056 ish0.30 h16 1.76 | FFonly1.5:tg1.020 th1.040 sd1.00 J0.055 ish0.28 h16 1.79 | TRIMonly1.5:tg0.922 th0.935 sd0.82 J0.062 ish0.28 h16 1.69 | V294:tg0.922 th0.935 sd0.82 J0.061 ish0.27 h16 1.74
+  limit cycle: {'g1.15': (1.27, 3.0), 'g1.30': (1.27, 2.8), 'g1.50': (1.27, 2.4), 'g1.75': (1.27, 2.0), 'g2.00': (1.37, 2.6), 'FFonly1.5': (1.27, 3.0), 'TRIMonly1.5': (1.27, 2.6), 'V294': (1.27, 3.0)}
+
+=== dist full  plant light_b ===
+ 0-5    g1.15:tg0.904 thnan sd0.77 J0.038 ish0.49 h16 nan | g1.30:tg0.929 thnan sd0.81 J0.037 ish0.47 h16 nan | g1.50:tg0.954 thnan sd0.85 J0.036 ish0.45 h16 nan | g1.75:tg0.978 thnan sd0.88 J0.035 ish0.43 h16 nan | g2.00:tg0.995 thnan sd0.90 J0.035 ish0.42 h16 nan | FFonly1.5:tg0.954 thnan sd0.84 J0.034 ish0.46 h16 nan | TRIMonly1.5:tg0.877 thnan sd0.73 J0.041 ish0.51 h16 nan | V294:tg0.873 thnan sd0.73 J0.039 ish0.51 h16 nan
+ 5-10   g1.15:tg0.912 th0.843 sd0.63 J0.086 ish0.37 h16 15.04 | g1.30:tg0.942 th0.876 sd0.68 J0.083 ish0.35 h16 15.05 | g1.50:tg0.973 th0.913 sd0.73 J0.080 ish0.34 h16 15.12 | g1.75:tg1.001 th0.947 sd0.79 J0.077 ish0.33 h16 15.18 | g2.00:tg1.021 th0.971 sd0.84 J0.074 ish0.33 h16 15.22 | FFonly1.5:tg0.972 th0.914 sd0.73 J0.077 ish0.34 h16 19.37 | TRIMonly1.5:tg0.874 th0.804 sd0.58 J0.090 ish0.38 h16 12.12 | V294:tg0.873 th0.810 sd0.58 J0.087 ish0.38 h16 14.89
+ 10-15  g1.15:tg0.659 th0.581 sd0.53 J0.054 ish0.36 h16 nan | g1.30:tg0.723 th0.677 sd0.57 J0.050 ish0.36 h16 nan | g1.50:tg0.794 th0.783 sd0.62 J0.045 ish0.35 h16 nan | g1.75:tg0.864 th0.854 sd0.68 J0.041 ish0.34 h16 nan | g2.00:tg0.918 th0.900 sd0.74 J0.038 ish0.34 h16 nan | FFonly1.5:tg0.794 th0.782 sd0.63 J0.046 ish0.35 h16 nan | TRIMonly1.5:tg0.583 th0.500 sd0.48 J0.058 ish0.37 h16 nan | V294:tg0.583 th0.501 sd0.48 J0.058 ish0.37 h16 nan
+ 15-22  g1.15:tg0.885 th0.751 sd0.96 J0.071 ish0.40 h16 7.60 | g1.30:tg0.925 th0.821 sd0.95 J0.066 ish0.37 h16 8.03 | g1.50:tg0.966 th0.884 sd0.96 J0.060 ish0.34 h16 7.93 | g1.75:tg1.004 th0.949 sd0.97 J0.056 ish0.33 h16 7.31 | g2.00:tg1.033 th1.006 sd0.99 J0.055 ish0.33 h16 6.44 | FFonly1.5:tg0.965 th0.884 sd0.96 J0.059 ish0.34 h16 10.23 | TRIMonly1.5:tg0.833 th0.672 sd0.96 J0.078 ish0.42 h16 5.72 | V294:tg0.833 th0.667 sd0.96 J0.077 ish0.42 h16 7.18
+ 22+    g1.15:tg0.964 th0.982 sd0.87 J0.059 ish0.26 h16 1.90 | g1.30:tg0.996 th1.011 sd0.94 J0.056 ish0.26 h16 2.04 | g1.50:tg1.030 th1.047 sd1.02 J0.054 ish0.27 h16 1.89 | g1.75:tg1.063 th1.068 sd1.10 J0.055 ish0.28 h16 1.94 | g2.00:tg1.089 th1.087 sd1.16 J0.057 ish0.29 h16 1.71 | FFonly1.5:tg1.030 th1.046 sd1.02 J0.053 ish0.27 h16 2.38 | TRIMonly1.5:tg0.924 th0.943 sd0.83 J0.066 ish0.26 h16 1.57 | V294:tg0.923 th0.943 sd0.82 J0.065 ish0.26 h16 1.93
+  limit cycle: {'g1.15': (1.27, 3.5), 'g1.30': (1.27, 3.8), 'g1.50': (1.17, 3.4), 'g1.75': (1.17, 3.5), 'g2.00': (1.17, 3.3), 'FFonly1.5': (1.37, 7.3), 'TRIMonly1.5': (1.07, -1.3), 'V294': (1.27, 3.0)}
+
+=== dist full  plant b_lo ===
+ 0-5    g1.15:tg0.903 thnan sd0.78 J0.040 ish0.49 h16 nan | g1.30:tg0.925 thnan sd0.81 J0.040 ish0.47 h16 nan | g1.50:tg0.949 thnan sd0.85 J0.040 ish0.45 h16 nan | g1.75:tg0.972 thnan sd0.88 J0.039 ish0.42 h16 nan | g2.00:tg0.990 thnan sd0.91 J0.038 ish0.40 h16 nan | FFonly1.5:tg0.949 thnan sd0.85 J0.038 ish0.45 h16 nan | TRIMonly1.5:tg0.876 thnan sd0.74 J0.040 ish0.51 h16 nan | V294:tg0.874 thnan sd0.74 J0.039 ish0.51 h16 nan
+ 5-10   g1.15:tg0.912 th0.834 sd0.63 J0.087 ish0.37 h16 14.84 | g1.30:tg0.942 th0.858 sd0.67 J0.087 ish0.35 h16 14.79 | g1.50:tg0.973 th0.887 sd0.72 J0.086 ish0.34 h16 14.50 | g1.75:tg1.002 th0.935 sd0.77 J0.085 ish0.32 h16 14.29 | g2.00:tg1.023 th0.964 sd0.82 J0.084 ish0.32 h16 14.25 | FFonly1.5:tg0.973 th0.895 sd0.72 J0.084 ish0.34 h16 16.97 | TRIMonly1.5:tg0.874 th0.802 sd0.58 J0.088 ish0.38 h16 12.95 | V294:tg0.873 th0.796 sd0.58 J0.087 ish0.38 h16 14.89
+ 10-15  g1.15:tg0.645 th0.560 sd0.52 J0.054 ish0.37 h16 nan | g1.30:tg0.703 th0.618 sd0.56 J0.051 ish0.36 h16 nan | g1.50:tg0.769 th0.691 sd0.61 J0.048 ish0.35 h16 nan | g1.75:tg0.835 th0.773 sd0.66 J0.044 ish0.34 h16 nan | g2.00:tg0.889 th0.851 sd0.71 J0.041 ish0.34 h16 nan | FFonly1.5:tg0.768 th0.691 sd0.61 J0.048 ish0.35 h16 nan | TRIMonly1.5:tg0.580 th0.494 sd0.48 J0.058 ish0.38 h16 nan | V294:tg0.579 th0.498 sd0.48 J0.058 ish0.38 h16 nan
+ 15-22  g1.15:tg0.871 th0.722 sd0.97 J0.072 ish0.41 h16 7.51 | g1.30:tg0.905 th0.775 sd0.97 J0.070 ish0.39 h16 7.54 | g1.50:tg0.943 th0.831 sd0.98 J0.067 ish0.37 h16 7.53 | g1.75:tg0.981 th0.887 sd0.98 J0.065 ish0.34 h16 7.46 | g2.00:tg1.011 th0.931 sd0.99 J0.063 ish0.33 h16 7.30 | FFonly1.5:tg0.943 th0.832 sd0.98 J0.067 ish0.37 h16 8.05 | TRIMonly1.5:tg0.831 th0.672 sd0.96 J0.075 ish0.42 h16 7.05 | V294:tg0.831 th0.672 sd0.96 J0.075 ish0.42 h16 7.50
+ 22+    g1.15:tg0.959 th0.978 sd0.87 J0.057 ish0.27 h16 1.75 | g1.30:tg0.989 th1.004 sd0.92 J0.054 ish0.27 h16 1.73 | g1.50:tg1.021 th1.039 sd0.99 J0.052 ish0.27 h16 1.74 | g1.75:tg1.053 th1.073 sd1.06 J0.052 ish0.29 h16 1.72 | g2.00:tg1.078 th1.084 sd1.12 J0.054 ish0.30 h16 1.74 | FFonly1.5:tg1.021 th1.039 sd0.99 J0.052 ish0.27 h16 1.83 | TRIMonly1.5:tg0.923 th0.936 sd0.82 J0.062 ish0.27 h16 1.66 | V294:tg0.923 th0.936 sd0.82 J0.061 ish0.27 h16 1.75
+  limit cycle: {'g1.15': (1.27, 3.1), 'g1.30': (1.27, 2.9), 'g1.50': (1.27, 2.7), 'g1.75': (1.17, 1.4), 'g2.00': (1.37, 3.0), 'FFonly1.5': (1.37, 4.6), 'TRIMonly1.5': (1.27, 2.2), 'V294': (1.27, 3.1)}
+
+=== dist full  plant F_hi ===
+ 0-5    g1.15:tg0.903 thnan sd0.78 J0.040 ish0.49 h16 nan | g1.30:tg0.925 thnan sd0.82 J0.041 ish0.47 h16 nan | g1.50:tg0.948 thnan sd0.85 J0.041 ish0.44 h16 nan | g1.75:tg0.970 thnan sd0.89 J0.041 ish0.42 h16 nan | g2.00:tg0.988 thnan sd0.92 J0.041 ish0.40 h16 nan | FFonly1.5:tg0.947 thnan sd0.85 J0.041 ish0.45 h16 nan | TRIMonly1.5:tg0.877 thnan sd0.74 J0.039 ish0.51 h16 nan | V294:tg0.875 thnan sd0.73 J0.040 ish0.51 h16 nan
+ 5-10   g1.15:tg0.912 th0.825 sd0.63 J0.088 ish0.37 h16 14.84 | g1.30:tg0.943 th0.854 sd0.68 J0.088 ish0.35 h16 14.81 | g1.50:tg0.976 th0.890 sd0.73 J0.088 ish0.34 h16 14.54 | g1.75:tg1.005 th0.938 sd0.78 J0.088 ish0.32 h16 14.35 | g2.00:tg1.027 th0.969 sd0.83 J0.089 ish0.32 h16 14.26 | FFonly1.5:tg0.975 th0.892 sd0.73 J0.087 ish0.34 h16 16.33 | TRIMonly1.5:tg0.874 th0.794 sd0.59 J0.087 ish0.38 h16 13.44 | V294:tg0.872 th0.788 sd0.59 J0.087 ish0.38 h16 14.89
+ 10-15  g1.15:tg0.639 th0.547 sd0.52 J0.055 ish0.37 h16 nan | g1.30:tg0.697 th0.601 sd0.56 J0.053 ish0.36 h16 nan | g1.50:tg0.764 th0.670 sd0.62 J0.050 ish0.35 h16 nan | g1.75:tg0.831 th0.749 sd0.67 J0.047 ish0.34 h16 nan | g2.00:tg0.886 th0.812 sd0.72 J0.044 ish0.35 h16 nan | FFonly1.5:tg0.763 th0.669 sd0.62 J0.050 ish0.35 h16 nan | TRIMonly1.5:tg0.574 th0.490 sd0.48 J0.058 ish0.38 h16 nan | V294:tg0.575 th0.490 sd0.48 J0.058 ish0.38 h16 nan
+ 15-22  g1.15:tg0.871 th0.719 sd0.97 J0.073 ish0.41 h16 7.54 | g1.30:tg0.906 th0.768 sd0.98 J0.071 ish0.39 h16 7.56 | g1.50:tg0.944 th0.825 sd0.98 J0.069 ish0.37 h16 7.57 | g1.75:tg0.983 th0.883 sd0.99 J0.067 ish0.35 h16 7.52 | g2.00:tg1.014 th0.925 sd1.00 J0.066 ish0.33 h16 7.45 | FFonly1.5:tg0.944 th0.827 sd0.98 J0.069 ish0.37 h16 7.86 | TRIMonly1.5:tg0.830 th0.670 sd0.96 J0.075 ish0.43 h16 7.28 | V294:tg0.830 th0.670 sd0.96 J0.075 ish0.43 h16 7.53
+ 22+    g1.15:tg0.957 th0.972 sd0.87 J0.058 ish0.28 h16 1.77 | g1.30:tg0.988 th1.006 sd0.93 J0.056 ish0.28 h16 1.75 | g1.50:tg1.020 th1.035 sd1.00 J0.055 ish0.28 h16 1.75 | g1.75:tg1.052 th1.077 sd1.07 J0.056 ish0.30 h16 1.74 | g2.00:tg1.078 th1.095 sd1.14 J0.057 ish0.30 h16 1.76 | FFonly1.5:tg1.020 th1.036 sd1.00 J0.055 ish0.28 h16 1.80 | TRIMonly1.5:tg0.922 th0.936 sd0.82 J0.062 ish0.28 h16 1.71 | V294:tg0.922 th0.936 sd0.82 J0.062 ish0.28 h16 1.75
+  limit cycle: {'g1.15': (1.27, 3.0), 'g1.30': (1.27, 2.8), 'g1.50': (1.27, 2.4), 'g1.75': (1.27, 1.9), 'g2.00': (1.17, 0.7), 'FFonly1.5': (1.27, 3.0), 'TRIMonly1.5': (1.27, 2.6), 'V294': (1.27, 3.0)}
+
+=== dist full  plant J_hi ===
+ 0-5    g1.15:tg0.903 thnan sd0.79 J0.041 ish0.49 h16 nan | g1.30:tg0.925 thnan sd0.82 J0.042 ish0.47 h16 nan | g1.50:tg0.948 thnan sd0.86 J0.043 ish0.44 h16 nan | g1.75:tg0.971 thnan sd0.89 J0.044 ish0.42 h16 nan | g2.00:tg0.989 thnan sd0.92 J0.045 ish0.40 h16 nan | FFonly1.5:tg0.947 thnan sd0.85 J0.043 ish0.45 h16 nan | TRIMonly1.5:tg0.876 thnan sd0.74 J0.039 ish0.51 h16 nan | V294:tg0.875 thnan sd0.74 J0.040 ish0.51 h16 nan
+ 5-10   g1.15:tg0.912 th0.828 sd0.63 J0.088 ish0.37 h16 14.87 | g1.30:tg0.943 th0.853 sd0.67 J0.089 ish0.35 h16 14.89 | g1.50:tg0.975 th0.885 sd0.72 J0.090 ish0.34 h16 14.75 | g1.75:tg1.004 th0.928 sd0.77 J0.091 ish0.32 h16 14.57 | g2.00:tg1.026 th0.959 sd0.81 J0.092 ish0.32 h16 14.51 | FFonly1.5:tg0.974 th0.887 sd0.71 J0.090 ish0.34 h16 16.06 | TRIMonly1.5:tg0.874 th0.796 sd0.59 J0.087 ish0.38 h16 13.74 | V294:tg0.872 th0.790 sd0.59 J0.087 ish0.38 h16 14.86
+ 10-15  g1.15:tg0.642 th0.553 sd0.52 J0.055 ish0.37 h16 nan | g1.30:tg0.700 th0.613 sd0.56 J0.052 ish0.36 h16 nan | g1.50:tg0.766 th0.686 sd0.61 J0.049 ish0.35 h16 nan | g1.75:tg0.833 th0.773 sd0.67 J0.046 ish0.34 h16 nan | g2.00:tg0.887 th0.851 sd0.72 J0.044 ish0.35 h16 nan | FFonly1.5:tg0.765 th0.685 sd0.61 J0.049 ish0.35 h16 nan | TRIMonly1.5:tg0.576 th0.490 sd0.48 J0.058 ish0.38 h16 nan | V294:tg0.576 th0.490 sd0.48 J0.058 ish0.38 h16 nan
+ 15-22  g1.15:tg0.871 th0.720 sd0.97 J0.073 ish0.41 h16 7.50 | g1.30:tg0.906 th0.770 sd0.98 J0.071 ish0.39 h16 7.51 | g1.50:tg0.945 th0.827 sd0.98 J0.069 ish0.37 h16 7.54 | g1.75:tg0.984 th0.888 sd0.99 J0.067 ish0.34 h16 7.49 | g2.00:tg1.015 th0.931 sd0.99 J0.066 ish0.33 h16 7.40 | FFonly1.5:tg0.945 th0.832 sd0.98 J0.068 ish0.37 h16 7.85 | TRIMonly1.5:tg0.830 th0.667 sd0.96 J0.075 ish0.42 h16 7.22 | V294:tg0.830 th0.667 sd0.96 J0.075 ish0.42 h16 7.50
+ 22+    g1.15:tg0.957 th0.973 sd0.87 J0.058 ish0.27 h16 1.74 | g1.30:tg0.987 th1.005 sd0.93 J0.056 ish0.28 h16 1.73 | g1.50:tg1.019 th1.039 sd1.00 J0.055 ish0.28 h16 1.76 | g1.75:tg1.052 th1.076 sd1.07 J0.056 ish0.29 h16 1.74 | g2.00:tg1.077 th1.096 sd1.14 J0.057 ish0.30 h16 1.76 | FFonly1.5:tg1.019 th1.039 sd1.00 J0.055 ish0.28 h16 1.81 | TRIMonly1.5:tg0.922 th0.936 sd0.82 J0.062 ish0.28 h16 1.69 | V294:tg0.922 th0.936 sd0.82 J0.062 ish0.28 h16 1.74
+  limit cycle: {'g1.15': (1.27, 3.0), 'g1.30': (1.27, 2.9), 'g1.50': (1.27, 2.6), 'g1.75': (1.27, 2.1), 'g2.00': (1.27, 1.9), 'FFonly1.5': (1.27, 3.2), 'TRIMonly1.5': (1.27, 2.6), 'V294': (1.27, 3.1)}
+
+g1.15  rail +2461/-2463  subrail 0.7371 T/wire  trimcap 709 T (28.8%)  int32 min 4.06  restart {10.0: 16, 30.0: 49, 100.0: 166, 300.0: 482}
+   |P/x|20Hz 2.391  stress zeta {'mode13@5': 0.146, 'mode13@12': 0.172, 'mode13@25': 0.147, 'mode20@5': 0.077, 'mode20@12': 0.1, 'mode20@25': 0.115, 'mode20_lo@5': 0.126, 'mode20_lo@12': 0.228, 'mode20_lo@25': 0.191}
+   inner Ms max / GM min / |L|1-3 max: {'nominal': (1.07, 36.8, 0.35, True), 'light_b': (1.15, 28.5, 0.92, True), 'b_lo': (1.09, 32.7, 0.47, True), 'F_hi': (1.07, 36.8, 0.35, True), 'J_hi': (1.04, 75.0, 0.25, True), 'tau6': (1.1, 18.9, 0.35, True), 'mode13': (1.06, 33.4, 0.35, True), 'mode20': (1.07, 32.3, 0.35, True), 'mode20_lo': (1.08, 23.0, 0.35, True), 'tau9': (1.12, 14.1, 0.35, True), 'J_hi2': (1.03, 110.8, 0.2, True), 'nominal_kappa': (1.07, 36.8, 0.35, True)}
+   outer nominal  v  5.0  Ms 1.23@1.43  PM 101  GM 10.19   |T02| 0.635
+   outer nominal  v  8.0  Ms 1.21@1.72  PM 143  GM 9.46   |T02| 0.526
+   outer nominal  v 12.0  Ms 1.13@1.82  PM 144  GM 13.95   |T02| 0.520
+   outer nominal  v 17.0  Ms 1.07@2.37  PM 114  GM 23.02   |T02| 0.308
+   outer nominal  v 26.9  Ms 1.10@2.12  PM 142  GM 17.54   |T02| 0.511
+   outer light_b  v  5.0  Ms 1.86@1.33  PM 43  GM 4.24   |T02| 0.694
+   outer light_b  v  8.0  Ms 1.82@1.52  PM 47  GM 3.87   |T02| 0.628
+   outer light_b  v 12.0  Ms 1.79@1.89  PM 55  GM 3.31   |T02| 0.547
+   outer light_b  v 17.0  Ms 2.10@2.12  PM 44  GM 2.49   |T02| 0.584
+   outer light_b  v 26.9  Ms 3.34@2.59  PM 27  GM 1.62   |T02| 0.632
+   outer b_lo     v  5.0  Ms 1.33@1.43  PM 85  GM 7.57   |T02| 0.636
+   outer b_lo     v  8.0  Ms 1.29@1.73  PM 121  GM 7.13   |T02| 0.527
+   outer b_lo     v 12.0  Ms 1.23@1.91  PM 143  GM 8.06   |T02| 0.524
+   outer b_lo     v 17.0  Ms 1.11@2.71  PM 115  GM 13.22   |T02| 0.311
+   outer b_lo     v 26.9  Ms 1.17@2.40  PM 149  GM 9.83   |T02| 0.518
+   outer F_hi     v  5.0  Ms 1.23@1.43  PM 101  GM 10.19   |T02| 0.635
+   outer F_hi     v  8.0  Ms 1.21@1.72  PM 143  GM 9.46   |T02| 0.526
+   outer F_hi     v 12.0  Ms 1.13@1.82  PM 144  GM 13.95   |T02| 0.520
+   outer F_hi     v 17.0  Ms 1.07@2.37  PM 114  GM 23.02   |T02| 0.308
+   outer F_hi     v 26.9  Ms 1.10@2.12  PM 142  GM 17.54   |T02| 0.511
+   outer J_hi     v  5.0  Ms 1.25@1.20  PM 113  GM 9.63   |T02| 0.585
+   outer J_hi     v  8.0  Ms 1.25@1.41  PM 142  GM 8.70   |T02| 0.483
+   outer J_hi     v 12.0  Ms 1.25@1.46  PM 135  GM 8.48   |T02| 0.538
+   outer J_hi     v 17.0  Ms 1.10@2.12  PM 115  GM 16.10   |T02| 0.318
+   outer J_hi     v 26.9  Ms 1.11@1.93  PM 142  GM 15.26   |T02| 0.503
+   outer tau6     v  5.0  Ms 1.23@1.42  PM 100  GM 9.45   |T02| 0.636
+   outer tau6     v  8.0  Ms 1.22@1.70  PM 143  GM 8.88   |T02| 0.527
+   outer tau6     v 12.0  Ms 1.14@1.79  PM 143  GM 12.82   |T02| 0.521
+   outer tau6     v 17.0  Ms 1.07@2.31  PM 114  GM 21.20   |T02| 0.308
+   outer tau6     v 26.9  Ms 1.11@2.06  PM 142  GM 15.95   |T02| 0.511
+
+g1.30  rail +2461/-2463  subrail 0.8083 T/wire  trimcap 801 T (32.5%)  int32 min 4.06  restart {10.0: 18, 30.0: 56, 100.0: 188, 300.0: 545}
+   |P/x|20Hz 2.703  stress zeta {'mode13@5': 0.147, 'mode13@12': 0.174, 'mode13@25': 0.147, 'mode20@5': 0.077, 'mode20@12': 0.1, 'mode20@25': 0.116, 'mode20_lo@5': 0.127, 'mode20_lo@12': 0.23, 'mode20_lo@25': 0.192}
+   inner Ms max / GM min / |L|1-3 max: {'nominal': (1.08, 32.6, 0.39, True), 'light_b': (1.17, 25.2, 1.04, True), 'b_lo': (1.1, 28.9, 0.53, True), 'F_hi': (1.08, 32.6, 0.39, True), 'J_hi': (1.05, 66.4, 0.28, True), 'tau6': (1.11, 16.7, 0.39, True), 'mode13': (1.07, 29.5, 0.39, True), 'mode20': (1.08, 28.6, 0.39, True), 'mode20_lo': (1.09, 20.3, 0.39, True), 'tau9': (1.13, 12.5, 0.39, True), 'J_hi2': (1.04, 98.0, 0.22, True), 'nominal_kappa': (1.08, 32.6, 0.39, True)}
+   outer nominal  v  5.0  Ms 1.25@1.43  PM 91  GM 9.43   |T02| 0.666
+   outer nominal  v  8.0  Ms 1.23@1.70  PM 118  GM 8.86   |T02| 0.559
+   outer nominal  v 12.0  Ms 1.15@1.80  PM 131  GM 12.59   |T02| 0.553
+   outer nominal  v 17.0  Ms 1.08@2.37  PM 117  GM 20.59   |T02| 0.336
+   outer nominal  v 26.9  Ms 1.11@2.12  PM 134  GM 15.65   |T02| 0.544
+   outer light_b  v  5.0  Ms 1.94@1.34  PM 39  GM 4.13   |T02| 0.721
+   outer light_b  v  8.0  Ms 1.89@1.53  PM 43  GM 3.72   |T02| 0.658
+   outer light_b  v 12.0  Ms 1.85@1.89  PM 50  GM 3.19   |T02| 0.578
+   outer light_b  v 17.0  Ms 2.19@2.14  PM 40  GM 2.44   |T02| 0.614
+   outer light_b  v 26.9  Ms 3.58@2.64  PM 24  GM 1.57   |T02| 0.661
+   outer b_lo     v  5.0  Ms 1.36@1.43  PM 76  GM 7.15   |T02| 0.667
+   outer b_lo     v  8.0  Ms 1.33@1.73  PM 98  GM 6.74   |T02| 0.559
+   outer b_lo     v 12.0  Ms 1.26@1.91  PM 116  GM 7.55   |T02| 0.556
+   outer b_lo     v 17.0  Ms 1.13@2.71  PM 118  GM 11.91   |T02| 0.339
+   outer b_lo     v 26.9  Ms 1.19@2.42  PM 132  GM 8.83   |T02| 0.550
+   outer F_hi     v  5.0  Ms 1.25@1.43  PM 91  GM 9.43   |T02| 0.666
+   outer F_hi     v  8.0  Ms 1.23@1.70  PM 118  GM 8.86   |T02| 0.559
+   outer F_hi     v 12.0  Ms 1.15@1.80  PM 131  GM 12.59   |T02| 0.553
+   outer F_hi     v 17.0  Ms 1.08@2.37  PM 117  GM 20.59   |T02| 0.336
+   outer F_hi     v 26.9  Ms 1.11@2.12  PM 134  GM 15.65   |T02| 0.544
+   outer J_hi     v  5.0  Ms 1.28@1.20  PM 100  GM 8.85   |T02| 0.618
+   outer J_hi     v  8.0  Ms 1.28@1.41  PM 150  GM 8.00   |T02| 0.516
+   outer J_hi     v 12.0  Ms 1.28@1.46  PM 114  GM 7.78   |T02| 0.571
+   outer J_hi     v 17.0  Ms 1.11@2.12  PM 119  GM 14.41   |T02| 0.346
+   outer J_hi     v 26.9  Ms 1.13@1.93  PM 136  GM 13.80   |T02| 0.537
+   outer tau6     v  5.0  Ms 1.26@1.41  PM 91  GM 8.86   |T02| 0.667
+   outer tau6     v  8.0  Ms 1.24@1.69  PM 117  GM 8.21   |T02| 0.559
+   outer tau6     v 12.0  Ms 1.16@1.77  PM 131  GM 11.72   |T02| 0.554
+   outer tau6     v 17.0  Ms 1.08@2.31  PM 117  GM 18.96   |T02| 0.336
+   outer tau6     v 26.9  Ms 1.12@2.06  PM 134  GM 14.24   |T02| 0.545
+
+g1.50  rail +2461/-2463  subrail 0.8428 T/wire  trimcap 924 T (37.5%)  int32 min 4.06  restart {10.0: 21, 30.0: 65, 100.0: 217, 300.0: 629}
+   |P/x|20Hz 3.118  stress zeta {'mode13@5': 0.149, 'mode13@12': 0.176, 'mode13@25': 0.147, 'mode20@5': 0.077, 'mode20@12': 0.101, 'mode20@25': 0.116, 'mode20_lo@5': 0.127, 'mode20_lo@12': 0.232, 'mode20_lo@25': 0.193}
+   inner Ms max / GM min / |L|1-3 max: {'nominal': (1.1, 28.2, 0.45, True), 'light_b': (1.2, 21.9, 1.2, True), 'b_lo': (1.12, 25.0, 0.62, True), 'F_hi': (1.1, 28.2, 0.45, True), 'J_hi': (1.05, 57.5, 0.32, True), 'tau6': (1.13, 14.5, 0.45, True), 'mode13': (1.08, 25.6, 0.45, True), 'mode20': (1.09, 24.8, 0.45, True), 'mode20_lo': (1.1, 17.6, 0.45, True), 'tau9': (1.15, 10.8, 0.45, True), 'J_hi2': (1.04, 84.9, 0.26, True), 'nominal_kappa': (1.1, 28.2, 0.45, True)}
+   outer nominal  v  5.0  Ms 1.29@1.42  PM 82  GM 8.73   |T02| 0.701
+   outer nominal  v  8.0  Ms 1.27@1.69  PM 100  GM 8.10   |T02| 0.596
+   outer nominal  v 12.0  Ms 1.17@1.80  PM 118  GM 11.34   |T02| 0.592
+   outer nominal  v 17.0  Ms 1.09@2.37  PM 122  GM 18.35   |T02| 0.370
+   outer nominal  v 26.9  Ms 1.13@2.14  PM 124  GM 13.72   |T02| 0.583
+   outer light_b  v  5.0  Ms 2.04@1.34  PM 36  GM 3.98   |T02| 0.751
+   outer light_b  v  8.0  Ms 1.98@1.53  PM 39  GM 3.65   |T02| 0.691
+   outer light_b  v 12.0  Ms 1.92@1.91  PM 44  GM 3.10   |T02| 0.614
+   outer light_b  v 17.0  Ms 2.28@2.16  PM 37  GM 2.33   |T02| 0.648
+   outer light_b  v 26.9  Ms 3.86@2.71  PM 22  GM 1.50   |T02| 0.693
+   outer b_lo     v  5.0  Ms 1.41@1.43  PM 68  GM 6.68   |T02| 0.701
+   outer b_lo     v  8.0  Ms 1.37@1.72  PM 83  GM 6.30   |T02| 0.595
+   outer b_lo     v 12.0  Ms 1.30@1.89  PM 98  GM 6.89   |T02| 0.593
+   outer b_lo     v 17.0  Ms 1.14@2.69  PM 123  GM 10.71   |T02| 0.373
+   outer b_lo     v 26.9  Ms 1.22@2.42  PM 117  GM 7.90   |T02| 0.587
+   outer F_hi     v  5.0  Ms 1.29@1.42  PM 82  GM 8.73   |T02| 0.701
+   outer F_hi     v  8.0  Ms 1.27@1.69  PM 100  GM 8.10   |T02| 0.596
+   outer F_hi     v 12.0  Ms 1.17@1.80  PM 118  GM 11.34   |T02| 0.592
+   outer F_hi     v 17.0  Ms 1.09@2.37  PM 122  GM 18.35   |T02| 0.370
+   outer F_hi     v 26.9  Ms 1.13@2.14  PM 124  GM 13.72   |T02| 0.583
+   outer J_hi     v  5.0  Ms 1.33@1.20  PM 87  GM 8.02   |T02| 0.655
+   outer J_hi     v  8.0  Ms 1.32@1.41  PM 111  GM 7.26   |T02| 0.553
+   outer J_hi     v 12.0  Ms 1.32@1.48  PM 97  GM 7.03   |T02| 0.608
+   outer J_hi     v 17.0  Ms 1.13@2.12  PM 123  GM 12.87   |T02| 0.381
+   outer J_hi     v 26.9  Ms 1.15@1.94  PM 125  GM 12.09   |T02| 0.576
+   outer tau6     v  5.0  Ms 1.30@1.41  PM 81  GM 8.10   |T02| 0.702
+   outer tau6     v  8.0  Ms 1.28@1.67  PM 100  GM 7.60   |T02| 0.596
+   outer tau6     v 12.0  Ms 1.18@1.75  PM 117  GM 10.56   |T02| 0.592
+   outer tau6     v 17.0  Ms 1.09@2.31  PM 122  GM 16.67   |T02| 0.370
+   outer tau6     v 26.9  Ms 1.14@2.08  PM 123  GM 12.64   |T02| 0.584
+
+g1.75  rail +2461/-2463  subrail 0.8389 T/wire  trimcap 1078 T (43.8%)  int32 min 4.06  restart {10.0: 25, 30.0: 76, 100.0: 253, 300.0: 734}
+   |P/x|20Hz 3.638  stress zeta {'mode13@5': 0.151, 'mode13@12': 0.178, 'mode13@25': 0.147, 'mode20@5': 0.077, 'mode20@12': 0.101, 'mode20@25': 0.117, 'mode20_lo@5': 0.128, 'mode20_lo@12': 0.235, 'mode20_lo@25': 0.194}
+   inner Ms max / GM min / |L|1-3 max: {'nominal': (1.11, 24.2, 0.53, True), 'light_b': (1.23, 18.8, 1.4, True), 'b_lo': (1.14, 21.5, 0.72, True), 'F_hi': (1.11, 24.2, 0.53, True), 'J_hi': (1.06, 49.3, 0.38, True), 'tau6': (1.15, 12.4, 0.53, True), 'mode13': (1.09, 21.9, 0.53, True), 'mode20': (1.11, 21.2, 0.53, True), 'mode20_lo': (1.12, 15.1, 0.53, True), 'tau9': (1.18, 9.3, 0.53, True), 'J_hi2': (1.05, 72.8, 0.3, True), 'nominal_kappa': (1.11, 24.2, 0.53, True)}
+   outer nominal  v  5.0  Ms 1.33@1.41  PM 73  GM 8.06   |T02| 0.736
+   outer nominal  v  8.0  Ms 1.31@1.67  PM 86  GM 7.47   |T02| 0.635
+   outer nominal  v 12.0  Ms 1.20@1.79  PM 105  GM 10.29   |T02| 0.632
+   outer nominal  v 17.0  Ms 1.10@2.35  PM 128  GM 16.01   |T02| 0.408
+   outer nominal  v 26.9  Ms 1.15@2.16  PM 114  GM 12.09   |T02| 0.624
+   outer light_b  v  5.0  Ms 2.14@1.35  PM 32  GM 3.94   |T02| 0.782
+   outer light_b  v  8.0  Ms 2.07@1.55  PM 36  GM 3.57   |T02| 0.725
+   outer light_b  v 12.0  Ms 2.00@1.91  PM 40  GM 3.00   |T02| 0.651
+   outer light_b  v 17.0  Ms 2.38@2.20  PM 33  GM 2.29   |T02| 0.684
+   outer light_b  v 26.9  Ms 4.14@2.79  PM 20  GM 1.46   |T02| 0.725
+   outer b_lo     v  5.0  Ms 1.47@1.42  PM 60  GM 6.30   |T02| 0.735
+   outer b_lo     v  8.0  Ms 1.42@1.70  PM 72  GM 5.87   |T02| 0.634
+   outer b_lo     v 12.0  Ms 1.34@1.87  PM 84  GM 6.35   |T02| 0.632
+   outer b_lo     v 17.0  Ms 1.16@2.66  PM 129  GM 9.57   |T02| 0.410
+   outer b_lo     v 26.9  Ms 1.26@2.44  PM 103  GM 7.03   |T02| 0.626
+   outer F_hi     v  5.0  Ms 1.33@1.41  PM 73  GM 8.06   |T02| 0.736
+   outer F_hi     v  8.0  Ms 1.31@1.67  PM 86  GM 7.47   |T02| 0.635
+   outer F_hi     v 12.0  Ms 1.20@1.79  PM 105  GM 10.29   |T02| 0.632
+   outer F_hi     v 17.0  Ms 1.10@2.35  PM 128  GM 16.01   |T02| 0.408
+   outer F_hi     v 26.9  Ms 1.15@2.16  PM 114  GM 12.09   |T02| 0.624
+   outer J_hi     v  5.0  Ms 1.38@1.21  PM 76  GM 7.33   |T02| 0.693
+   outer J_hi     v  8.0  Ms 1.37@1.41  PM 90  GM 6.55   |T02| 0.594
+   outer J_hi     v 12.0  Ms 1.37@1.48  PM 84  GM 6.31   |T02| 0.647
+   outer J_hi     v 17.0  Ms 1.15@2.10  PM 130  GM 11.40   |T02| 0.419
+   outer J_hi     v 26.9  Ms 1.17@1.96  PM 114  GM 10.50   |T02| 0.617
+   outer tau6     v  5.0  Ms 1.35@1.39  PM 72  GM 7.56   |T02| 0.737
+   outer tau6     v  8.0  Ms 1.32@1.65  PM 85  GM 7.01   |T02| 0.635
+   outer tau6     v 12.0  Ms 1.21@1.75  PM 105  GM 9.46   |T02| 0.632
+   outer tau6     v 17.0  Ms 1.11@2.29  PM 128  GM 14.73   |T02| 0.409
+   outer tau6     v 26.9  Ms 1.16@2.10  PM 113  GM 10.99   |T02| 0.624
+
+g2.00  rail +2461/-2463  subrail 0.8144 T/wire  trimcap 1232 T (50.0%)  int32 min 4.06  restart {10.0: 29, 30.0: 86, 100.0: 290, 300.0: 839}
+   |P/x|20Hz 4.158  stress zeta {'mode13@5': 0.153, 'mode13@12': 0.181, 'mode13@25': 0.147, 'mode20@5': 0.077, 'mode20@12': 0.102, 'mode20@25': 0.117, 'mode20_lo@5': 0.128, 'mode20_lo@12': 0.238, 'mode20_lo@25': 0.195}
+   inner Ms max / GM min / |L|1-3 max: {'nominal': (1.13, 21.2, 0.61, True), 'light_b': (1.26, 16.4, 1.6, True), 'b_lo': (1.16, 18.8, 0.82, True), 'F_hi': (1.13, 21.2, 0.61, True), 'J_hi': (1.07, 43.2, 0.43, True), 'tau6': (1.18, 10.9, 0.61, True), 'mode13': (1.1, 19.2, 0.61, True), 'mode20': (1.12, 18.6, 0.61, True), 'mode20_lo': (1.14, 13.2, 0.6, True), 'tau9': (1.21, 8.1, 0.61, True), 'J_hi2': (1.06, 63.7, 0.34, True), 'nominal_kappa': (1.13, 21.2, 0.61, True)}
+   outer nominal  v  5.0  Ms 1.37@1.41  PM 67  GM 7.57   |T02| 0.765
+   outer nominal  v  8.0  Ms 1.34@1.65  PM 76  GM 7.02   |T02| 0.668
+   outer nominal  v 12.0  Ms 1.22@1.77  PM 95  GM 9.40   |T02| 0.665
+   outer nominal  v 17.0  Ms 1.12@2.35  PM 135  GM 14.44   |T02| 0.443
+   outer nominal  v 26.9  Ms 1.17@2.16  PM 106  GM 10.73   |T02| 0.657
+   outer light_b  v  5.0  Ms 2.23@1.37  PM 30  GM 3.90   |T02| 0.806
+   outer light_b  v  8.0  Ms 2.14@1.55  PM 33  GM 3.53   |T02| 0.752
+   outer light_b  v 12.0  Ms 2.06@1.93  PM 37  GM 2.98   |T02| 0.682
+   outer light_b  v 17.0  Ms 2.45@2.22  PM 31  GM 2.25   |T02| 0.713
+   outer light_b  v 26.9  Ms 4.34@2.87  PM 19  GM 1.43   |T02| 0.752
+   outer b_lo     v  5.0  Ms 1.53@1.42  PM 55  GM 6.05   |T02| 0.763
+   outer b_lo     v  8.0  Ms 1.46@1.69  PM 64  GM 5.56   |T02| 0.666
+   outer b_lo     v 12.0  Ms 1.38@1.87  PM 74  GM 5.96   |T02| 0.664
+   outer b_lo     v 17.0  Ms 1.19@2.66  PM 136  GM 8.73   |T02| 0.444
+   outer b_lo     v 26.9  Ms 1.29@2.44  PM 93  GM 6.29   |T02| 0.658
+   outer F_hi     v  5.0  Ms 1.37@1.41  PM 67  GM 7.57   |T02| 0.765
+   outer F_hi     v  8.0  Ms 1.34@1.65  PM 76  GM 7.02   |T02| 0.668
+   outer F_hi     v 12.0  Ms 1.22@1.77  PM 95  GM 9.40   |T02| 0.665
+   outer F_hi     v 17.0  Ms 1.12@2.35  PM 135  GM 14.44   |T02| 0.443
+   outer F_hi     v 26.9  Ms 1.17@2.16  PM 106  GM 10.73   |T02| 0.657
+   outer J_hi     v  5.0  Ms 1.43@1.21  PM 69  GM 6.74   |T02| 0.724
+   outer J_hi     v  8.0  Ms 1.42@1.41  PM 78  GM 6.12   |T02| 0.628
+   outer J_hi     v 12.0  Ms 1.42@1.49  PM 74  GM 5.78   |T02| 0.679
+   outer J_hi     v 17.0  Ms 1.17@2.10  PM 137  GM 10.16   |T02| 0.453
+   outer J_hi     v 26.9  Ms 1.19@1.98  PM 106  GM 9.43   |T02| 0.651
+   outer tau6     v  5.0  Ms 1.39@1.39  PM 66  GM 7.10   |T02| 0.765
+   outer tau6     v  8.0  Ms 1.36@1.64  PM 76  GM 6.58   |T02| 0.668
+   outer tau6     v 12.0  Ms 1.24@1.73  PM 95  GM 8.64   |T02| 0.666
+   outer tau6     v 17.0  Ms 1.12@2.29  PM 135  GM 13.29   |T02| 0.443
+   outer tau6     v 26.9  Ms 1.18@2.10  PM 105  GM 9.88   |T02| 0.658
+
+FFonly1.5  rail +2461/-2463  subrail 0.8428 T/wire  trimcap 924 T (37.5%)  int32 min 6.09  restart {10.0: 14, 30.0: 43, 100.0: 145, 300.0: 435}
+   |P/x|20Hz 2.079  stress zeta {'mode13@5': 0.145, 'mode13@12': 0.171, 'mode13@25': 0.146, 'mode20@5': 0.076, 'mode20@12': 0.099, 'mode20@25': 0.115, 'mode20_lo@5': 0.126, 'mode20_lo@12': 0.226, 'mode20_lo@25': 0.191}
+   inner Ms max / GM min / |L|1-3 max: {'nominal': (1.06, 42.3, 0.3, True), 'light_b': (1.14, 32.8, 0.8, True), 'b_lo': (1.08, 37.6, 0.41, True), 'F_hi': (1.06, 42.3, 0.3, True), 'J_hi': (1.04, 86.3, 0.22, True), 'tau6': (1.08, 21.8, 0.3, True), 'mode13': (1.05, 38.4, 0.3, True), 'mode20': (1.06, 37.2, 0.3, True), 'mode20_lo': (1.07, 26.4, 0.3, True), 'tau9': (1.1, 16.3, 0.3, True), 'J_hi2': (1.03, 127.4, 0.17, True), 'nominal_kappa': (1.06, 42.3, 0.3, True)}
+   outer nominal  v  5.0  Ms 1.30@1.58  PM 85  GM 7.46   |T02| 0.698
+   outer nominal  v  8.0  Ms 1.29@1.85  PM 104  GM 6.93   |T02| 0.594
+   outer nominal  v 12.0  Ms 1.18@1.94  PM 119  GM 10.34   |T02| 0.590
+   outer nominal  v 17.0  Ms 1.09@2.47  PM 122  GM 17.46   |T02| 0.370
+   outer nominal  v 26.9  Ms 1.13@2.22  PM 124  GM 13.15   |T02| 0.582
+   outer light_b  v  5.0  Ms 2.26@1.49  PM 33  GM 2.94   |T02| 0.748
+   outer light_b  v  8.0  Ms 2.25@1.69  PM 35  GM 2.68   |T02| 0.688
+   outer light_b  v 12.0  Ms 2.31@2.06  PM 39  GM 2.28   |T02| 0.612
+   outer light_b  v 17.0  Ms 3.10@2.31  PM 28  GM 1.74   |T02| 0.647
+   outer light_b  v 26.9  Ms 11.55@2.82  PM 8  GM 1.13   |T02| 0.692
+   outer b_lo     v  5.0  Ms 1.44@1.59  PM 70  GM 5.50   |T02| 0.697
+   outer b_lo     v  8.0  Ms 1.41@1.89  PM 86  GM 5.11   |T02| 0.593
+   outer b_lo     v 12.0  Ms 1.32@2.06  PM 101  GM 5.91   |T02| 0.591
+   outer b_lo     v 17.0  Ms 1.15@2.79  PM 123  GM 9.82   |T02| 0.372
+   outer b_lo     v 26.9  Ms 1.23@2.54  PM 118  GM 7.33   |T02| 0.586
+   outer F_hi     v  5.0  Ms 1.30@1.58  PM 85  GM 7.46   |T02| 0.698
+   outer F_hi     v  8.0  Ms 1.29@1.85  PM 104  GM 6.93   |T02| 0.594
+   outer F_hi     v 12.0  Ms 1.18@1.94  PM 119  GM 10.34   |T02| 0.590
+   outer F_hi     v 17.0  Ms 1.09@2.47  PM 122  GM 17.46   |T02| 0.370
+   outer F_hi     v 26.9  Ms 1.13@2.22  PM 124  GM 13.15   |T02| 0.582
+   outer J_hi     v  5.0  Ms 1.34@1.28  PM 89  GM 7.10   |T02| 0.652
+   outer J_hi     v  8.0  Ms 1.34@1.48  PM 115  GM 6.41   |T02| 0.552
+   outer J_hi     v 12.0  Ms 1.34@1.55  PM 100  GM 6.27   |T02| 0.607
+   outer J_hi     v 17.0  Ms 1.13@2.18  PM 123  GM 12.20   |T02| 0.380
+   outer J_hi     v 26.9  Ms 1.15@2.02  PM 125  GM 11.60   |T02| 0.575
+   outer tau6     v  5.0  Ms 1.31@1.55  PM 84  GM 6.92   |T02| 0.698
+   outer tau6     v  8.0  Ms 1.30@1.82  PM 103  GM 6.50   |T02| 0.594
+   outer tau6     v 12.0  Ms 1.19@1.89  PM 119  GM 9.50   |T02| 0.591
+   outer tau6     v 17.0  Ms 1.10@2.40  PM 122  GM 15.87   |T02| 0.370
+   outer tau6     v 26.9  Ms 1.14@2.16  PM 124  GM 12.12   |T02| 0.583
+
+TRIMonly1.5  rail +2461/-2463  subrail 0.6409 T/wire  trimcap 616 T (25.0%)  int32 min 2.71  restart {10.0: 21, 30.0: 65, 100.0: 217, 300.0: 521}
+   |P/x|20Hz 3.117  stress zeta {'mode13@5': 0.149, 'mode13@12': 0.176, 'mode13@25': 0.147, 'mode20@5': 0.077, 'mode20@12': 0.101, 'mode20@25': 0.116, 'mode20_lo@5': 0.127, 'mode20_lo@12': 0.232, 'mode20_lo@25': 0.193}
+   inner Ms max / GM min / |L|1-3 max: {'nominal': (1.1, 28.2, 0.45, True), 'light_b': (1.2, 21.9, 1.2, True), 'b_lo': (1.12, 25.1, 0.62, True), 'F_hi': (1.1, 28.2, 0.45, True), 'J_hi': (1.05, 57.6, 0.32, True), 'tau6': (1.13, 14.5, 0.45, True), 'mode13': (1.08, 25.6, 0.45, True), 'mode20': (1.09, 24.8, 0.45, True), 'mode20_lo': (1.1, 17.6, 0.45, True), 'tau9': (1.15, 10.8, 0.45, True), 'J_hi2': (1.04, 85.0, 0.26, True), 'nominal_kappa': (1.1, 28.2, 0.45, True)}
+   outer nominal  v  5.0  Ms 1.19@1.29  PM 110  GM 13.09   |T02| 0.602
+   outer nominal  v  8.0  Ms 1.18@1.56  PM 145  GM 12.15   |T02| 0.491
+   outer nominal  v 12.0  Ms 1.11@1.69  PM 142  GM 17.01   |T02| 0.484
+   outer nominal  v 17.0  Ms 1.06@2.31  PM 111  GM 27.52   |T02| 0.279
+   outer nominal  v 26.9  Ms 1.09@2.02  PM 139  GM 20.58   |T02| 0.473
+   outer light_b  v  5.0  Ms 1.69@1.19  PM 48  GM 5.97   |T02| 0.666
+   outer light_b  v  8.0  Ms 1.63@1.37  PM 54  GM 5.48   |T02| 0.596
+   outer light_b  v 12.0  Ms 1.56@1.72  PM 67  GM 4.65   |T02| 0.513
+   outer light_b  v 17.0  Ms 1.73@1.94  PM 56  GM 3.50   |T02| 0.550
+   outer light_b  v 26.9  Ms 2.21@2.42  PM 42  GM 2.25   |T02| 0.599
+   outer b_lo     v  5.0  Ms 1.28@1.29  PM 93  GM 10.02   |T02| 0.604
+   outer b_lo     v  8.0  Ms 1.24@1.58  PM 147  GM 9.44   |T02| 0.492
+   outer b_lo     v 12.0  Ms 1.19@1.75  PM 146  GM 10.34   |T02| 0.489
+   outer b_lo     v 17.0  Ms 1.09@2.61  PM 111  GM 16.06   |T02| 0.282
+   outer b_lo     v 26.9  Ms 1.14@2.29  PM 144  GM 11.85   |T02| 0.482
+   outer F_hi     v  5.0  Ms 1.19@1.29  PM 110  GM 13.09   |T02| 0.602
+   outer F_hi     v  8.0  Ms 1.18@1.56  PM 145  GM 12.15   |T02| 0.491
+   outer F_hi     v 12.0  Ms 1.11@1.69  PM 142  GM 17.01   |T02| 0.484
+   outer F_hi     v 17.0  Ms 1.06@2.31  PM 111  GM 27.52   |T02| 0.279
+   outer F_hi     v 26.9  Ms 1.09@2.02  PM 139  GM 20.58   |T02| 0.473
+   outer J_hi     v  5.0  Ms 1.21@1.11  PM 130  GM 12.02   |T02| 0.550
+   outer J_hi     v  8.0  Ms 1.21@1.33  PM 134  GM 10.89   |T02| 0.448
+   outer J_hi     v 12.0  Ms 1.21@1.38  PM 146  GM 10.54   |T02| 0.503
+   outer J_hi     v 17.0  Ms 1.08@2.06  PM 112  GM 19.30   |T02| 0.288
+   outer J_hi     v 26.9  Ms 1.10@1.85  PM 137  GM 18.13   |T02| 0.466
+   outer tau6     v  5.0  Ms 1.20@1.28  PM 109  GM 12.14   |T02| 0.602
+   outer tau6     v  8.0  Ms 1.18@1.55  PM 145  GM 11.40   |T02| 0.492
+   outer tau6     v 12.0  Ms 1.12@1.65  PM 142  GM 15.83   |T02| 0.484
+   outer tau6     v 17.0  Ms 1.06@2.24  PM 111  GM 25.01   |T02| 0.279
+   outer tau6     v 26.9  Ms 1.09@1.96  PM 139  GM 18.96   |T02| 0.474
+
+V294  rail +2461/-2463  subrail 0.6409 T/wire  trimcap 616 T (25.0%)  int32 min 4.06  restart {10.0: 14, 30.0: 43, 100.0: 144, 300.0: 419}
+   |P/x|20Hz 2.079  stress zeta {'mode13@5': 0.145, 'mode13@12': 0.171, 'mode13@25': 0.146, 'mode20@5': 0.076, 'mode20@12': 0.099, 'mode20@25': 0.115, 'mode20_lo@5': 0.126, 'mode20_lo@12': 0.226, 'mode20_lo@25': 0.191}
+   inner Ms max / GM min / |L|1-3 max: {'nominal': (1.06, 42.3, 0.3, True), 'light_b': (1.14, 32.8, 0.8, True), 'b_lo': (1.08, 37.6, 0.41, True), 'F_hi': (1.06, 42.3, 0.3, True), 'J_hi': (1.04, 86.3, 0.22, True), 'tau6': (1.08, 21.8, 0.3, True), 'mode13': (1.05, 38.4, 0.3, True), 'mode20': (1.06, 37.2, 0.3, True), 'mode20_lo': (1.07, 26.4, 0.3, True), 'tau9': (1.1, 16.3, 0.3, True), 'J_hi2': (1.03, 127.4, 0.17, True), 'nominal_kappa': (1.06, 42.3, 0.3, True)}
+   outer nominal  v  5.0  Ms 1.20@1.45  PM 113  GM 11.20   |T02| 0.598
+   outer nominal  v  8.0  Ms 1.18@1.73  PM 145  GM 10.39   |T02| 0.489
+   outer nominal  v 12.0  Ms 1.12@1.82  PM 142  GM 15.51   |T02| 0.482
+   outer nominal  v 17.0  Ms 1.06@2.40  PM 111  GM 26.18   |T02| 0.278
+   outer nominal  v 26.9  Ms 1.09@2.10  PM 139  GM 19.73   |T02| 0.473
+   outer light_b  v  5.0  Ms 1.77@1.32  PM 48  GM 4.41   |T02| 0.662
+   outer light_b  v  8.0  Ms 1.74@1.52  PM 53  GM 4.02   |T02| 0.593
+   outer light_b  v 12.0  Ms 1.72@1.89  PM 64  GM 3.43   |T02| 0.511
+   outer light_b  v 17.0  Ms 2.00@2.10  PM 50  GM 2.61   |T02| 0.548
+   outer light_b  v 26.9  Ms 3.07@2.54  PM 31  GM 1.70   |T02| 0.598
+   outer b_lo     v  5.0  Ms 1.29@1.45  PM 98  GM 8.25   |T02| 0.601
+   outer b_lo     v  8.0  Ms 1.26@1.75  PM 147  GM 7.66   |T02| 0.490
+   outer b_lo     v 12.0  Ms 1.21@1.93  PM 146  GM 8.86   |T02| 0.488
+   outer b_lo     v 17.0  Ms 1.10@2.71  PM 111  GM 14.72   |T02| 0.282
+   outer b_lo     v 26.9  Ms 1.15@2.40  PM 144  GM 10.99   |T02| 0.481
+   outer F_hi     v  5.0  Ms 1.20@1.45  PM 113  GM 11.20   |T02| 0.598
+   outer F_hi     v  8.0  Ms 1.18@1.73  PM 145  GM 10.39   |T02| 0.489
+   outer F_hi     v 12.0  Ms 1.12@1.82  PM 142  GM 15.51   |T02| 0.482
+   outer F_hi     v 17.0  Ms 1.06@2.40  PM 111  GM 26.18   |T02| 0.278
+   outer F_hi     v 26.9  Ms 1.09@2.10  PM 139  GM 19.73   |T02| 0.473
+   outer J_hi     v  5.0  Ms 1.22@1.19  PM 132  GM 10.65   |T02| 0.547
+   outer J_hi     v  8.0  Ms 1.22@1.41  PM 134  GM 9.62   |T02| 0.446
+   outer J_hi     v 12.0  Ms 1.22@1.46  PM 146  GM 9.41   |T02| 0.501
+   outer J_hi     v 17.0  Ms 1.08@2.12  PM 112  GM 18.30   |T02| 0.287
+   outer J_hi     v 26.9  Ms 1.10@1.91  PM 137  GM 17.41   |T02| 0.465
+   outer tau6     v  5.0  Ms 1.21@1.42  PM 113  GM 10.38   |T02| 0.599
+   outer tau6     v  8.0  Ms 1.19@1.70  PM 145  GM 9.75   |T02| 0.489
+   outer tau6     v 12.0  Ms 1.12@1.79  PM 141  GM 14.26   |T02| 0.483
+   outer tau6     v 17.0  Ms 1.06@2.33  PM 111  GM 23.80   |T02| 0.278
+   outer tau6     v 26.9  Ms 1.09@2.04  PM 139  GM 18.18   |T02| 0.473

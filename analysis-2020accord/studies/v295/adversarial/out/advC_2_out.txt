@@ -1,0 +1,112 @@
+==============================================================================================================
+ V294: b@0xC63EA=567 a@0xC63E8=1011 C=1024 Ki=0 PC=15360 DC=0 SC=15360 OC=3072 LA=992 LB=507 G@0xC6CD0=5346 subr=True shl=2
+       map Y [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032]  X [0, 12, 20, 24, 32, 64, 96, 128, 160, 240];  Kp Y [960, 960, 960, 960, 960];  Kd Y [0, 0, 0, 0];  fade {('cbb54', 'cbae4'): 254, ('cbb54', 'cbbc4'): 254, ('cbc34', 'cbae4'): 254, ('cbc34', 'cbbc4'): 254}
+ V295: b@0xC63EA=1050 a@0xC63E8=1011 C=1024 Ki=0 PC=15360 DC=0 SC=15360 OC=3072 LA=992 LB=507 G@0xC6CD0=5346 subr=True shl=2
+       map Y [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032]  X [0, 12, 20, 24, 32, 64, 96, 128, 160, 240];  Kp Y [960, 960, 960, 960, 960];  Kd Y [0, 0, 0, 0];  fade {('cbb54', 'cbae4'): 254, ('cbb54', 'cbbc4'): 254, ('cbc34', 'cbae4'): 254, ('cbc34', 'cbbc4'): 254}
+  [ok]     FADE at rest is 254 for every (A,B) table pairing: {('cbb54', 'cbae4'): 254, ('cbb54', 'cbbc4'): 254, ('cbc34', 'cbae4'): 254, ('cbc34', 'cbbc4'): 254}
+
+ [1] STATIC SURFACE at r26 = 0 (docstring: rail +2461/-2463, V295 == V294)
+   settled (constant over the last 50 ticks on every lane): True; lanes with a 1-count limit cycle: 0
+   idx   T(+)   T(-): [(0, 0, 0), (12, 124, -126), (32, 331, -332), (60, 617, -619), (120, 1237, -1239), (180, 1860, -1862), (238, 2459, -2460), (240, 2461, -2463)]
+  [ok]     rail +2461 / -2463
+  [ok]     V295 surface == V294 surface at r26 = 0 on all 482 lanes
+  [ok]     the build's printed T(+)/T(-) table reproduced at all 8 idx
+   sub-rail slope (OLS, idx 1..238, x = idx*16.125736): 0.64100 T per wire count
+  [ok]     sub-rail slope 0.6410 (report 0.6410; the orchestrator's brief says 0.6409)
+   zero-command trim cap at r26 = +C / -C: -616 / 615;  V294 at +C -616
+  [ok]     trim cap -616 / +615 (the docstring's '616 T trim cap')
+
+ [2] CLOSED-FORM TRIM NUMBERS (docstring 0b / report sec.3)
+   T per P-count = FADE/256 * LB/(1024-LA)/16 * G/32768 = 0.16029   (docstring: 0.1600)
+  [ok]     forward factor 0.1603 ~ 0.1600
+   V294: pole 2.033 Hz; K_alpha 0.2097 T/(deg/s^2); |P/x| 20 Hz 2.0790; 2.4 Hz 1.5944; HF limit 2.0897
+   V295: pole 2.033 Hz; K_alpha 0.3884 T/(deg/s^2); |P/x| 20 Hz 3.8500; 2.4 Hz 2.9525; HF limit 3.8698
+  [ok]     K_alpha 0.210 -> 0.388
+  [ok]     |P/x| 20 Hz 2.079 -> 3.850
+  [ok]     |P/x| 2.4 Hz 1.594 -> 2.953
+  [ok]     HF ratio 1.8519 < x3 (H-HF-1)
+   V282 (image: a 923 b 1560 Kp 248 Kd 128 add=True shl 5): |(P+D)/x| 20 Hz = 44.90
+  [ok]     V282's 44.90 reproduced from the V282 image (44.90); V295 is -21.3 dB below
+   trim reaches C: below the pole at 1585 deg/s^2 (docstring '~1500'); HF limit at 124 deg/s; at 2 Hz 177 deg/s, 3 Hz 150 deg/s (docstring '~118 deg/s of 2 Hz-band rate')
+
+ [3] int32 at the |x| = 12000 bail edge (docstring (c'): 4.058 -> 2.191, b_max 1150)
+   V294: s* -523,422 / 523,265; max|a*s| 529,179,642; margin 4.0581
+   V295: s* -969,256 / 969,098; max|a*s| 979,917,816; margin 2.1915
+   largest b with margin >= 2.0 at a = 1011: 1150
+  [ok]     int32 margins and b_max reproduced
+   guard (decompile l.70): (0x2ee0 + x) < 0x5dc1  ->  x in [-12000, +12000]; |x| = 12000 is INSIDE the guard
+
+ [4] FULL LANE, constant x from cold boot (report: 2892 lanes, r26 -> 0, settled T == V294)
+  [ok]     r26 == 0 and T constant over the last 500 ticks on all 2892 lanes
+  [ok]     settled T == V294's on every lane
+  [ok]     int32 audit over the march: max |product| 979,917,816 (report 979,917,816)
+  [ok]     max product equals the report's 979,917,816 exactly
+
+ [5] RESTART PULSE after one bail tick, x = +-800 (100 deg/s at 8 counts per deg/s), 964 lanes
+   settled before the bail: V295 True  V294 True
+   V295 worst 287 at idx 227 demand -1 rate -1 (all argmax lanes: [(227, -1, -1), (230, -1, -1), (232, -1, -1), (233, 1, 1), (233, -1, -1), (234, 1, 1), (234, -1, -1), (235, -1, -1), (236, 1, 1), (236, -1, -1), (237, 1, 1), (237, -1, -1), (238, 1, 1), (238, -1, -1)]); excluding the bail tick 287
+   V294 worst 165;  zero command V295 [268, 269] V294 [144, 145];  worst per-point ratio 1.932 at idx 166;  lanes over 288: 0;  lanes at 287: 14
+     idx   0: V295  269  V294  145
+     idx  60: V295  274  V294  150
+     idx 120: V295  278  V294  154
+     idx 180: V295  283  V294  160
+     idx 238: V295  287  V294  165
+     idx 240: V295  273  V294  152
+  [ok]     restart pulse 165 -> 287 worst, 145 -> 269 at zero command
+  [ok]     restart pulse <= 288 (H-SAFE-3)
+  [ok]     worst per-point ratio 1.932 (1.9323)
+   peak at tick +42 after the bail tick on the worst lane
+   sensitivity of the worst pulse to b (a, C, Kp fixed):
+     b 1040: worst 285
+     b 1045: worst 286
+     b 1049: worst 287
+     b 1050: worst 287
+     b 1051: worst 288
+     b 1055: worst 289
+     b 1060: worst 290
+   sensitivity of the worst pulse to the x-per-deg/s scale at 100 deg/s:
+     x = 760 (95.0 deg/s at 8.00): worst 274
+     x = 800 (100.0 deg/s at 8.00): worst 287
+     x = 808 (101.0 deg/s at 8.00): worst 290
+     x = 816 (102.0 deg/s at 8.00): worst 293
+     x = 840 (105.0 deg/s at 8.00): worst 301
+
+ [6] THE CUMULATIVE NON-STOCK DELTA -- docstring sec.1 + [15], read from the stock dump and the V295 image
+  [ok]     fb clamp C       0xC62E6: stock   7680 (claimed 7680)  V295   1024 (claimed 1024)
+  [ok]     pole a           0xC63E8: stock    923 (claimed 923)  V295   1011 (claimed 1011)
+  [ok]     gain b           0xC63EA: stock   1560 (claimed 1560)  V295   1050 (claimed 1050)
+  [ok]     D clamp          0xC61B6: stock  10240 (claimed 10240)  V295      0 (claimed 0)
+  [ok]     r24 engaged arm  0xC6446: stock    512 (claimed 512)  V295   2048 (claimed 2048)
+  [ok]     Ki               0xC63E6: stock      0 (claimed 0)  V295      0 (claimed 0)
+  [ok]     fwd clamp        0xC61B2: stock    512 (claimed 512)  V295   3072 (claimed 3072)
+  [ok]     OUT cap          0xC61B4: stock    512 (claimed 512)  V295   3072 (claimed 3072)
+  [ok]     lockout          0xC62EA: stock    320 (claimed 320)  V295      0 (claimed 0)
+  [ok]     biquad enable    0xC649B: stock      0 (claimed 0)  V295      1 (claimed 1)
+  [ok]     DTC-0x49 gate    0xC64B8: stock    112 (claimed 112)  V295    255 (claimed 255)
+  [ok]     sq-wave hold     0xC64DE: stock     17 (claimed 17)  V295     27 (claimed 27)
+  [ok]     P clamp          0xC61BC: stock  15360 (claimed 15360)  V295  15360 (claimed 15360)
+  [ok]     SUM clamp        0xC61BE: stock  15360 (claimed 15360)  V295  15360 (claimed 15360)
+  [ok]     out-lag a        0xC63EC: stock    992 (claimed 992)  V295    992 (claimed 992)
+  [ok]     out-lag b        0xC63EE: stock    507 (claimed 507)  V295    507 (claimed 507)
+  [ok]     shared scale     0xC646C: stock    891 (claimed 891)  V295    891 (claimed 891)
+   ld.h @0x2A1EE in STOCK loads 0xC646C = 891;  in V295 loads 0xC6CD0 = 5346;  stock dump raw 0xC6CD0 = 0xFFFF (-1 signed)
+  [ok]     forward gain: stock 891 via 0xC646C (0xC6CD0 is blank 0xFFFF in stock -- the trap), V295 5346 via 0xC6CD0
+  [ok]     the shared scale 0xC646C is still stock 891 on V295
+  [ok]     0x28FA4 stock add r9,r26 (d1c9) -> V295 subr r9,r26 (d189)
+  [ok]     0x29D76 stock shl 0x5,r16 (82c5) -> V295 shl 0x2,r16 (82c2)
+  [ok]     Kp: stock slot 7 [248, 512, 645, 696, 696] -> V295 all 28 records flat 960
+  [ok]     Kd: stock slot 7 [128, 128, 128, 128] -> V295 all 28 records 0
+  [ok]     map slot 7: stock Y [0, 24, 42, 50, 62, 100, 126, 154, 166, 172] -> V295 Y [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032] (X [0, 12, 20, 24, 32, 64, 96, 128, 160, 240] unchanged)
+  [ok]     27 V282-row cells/windows byte-identical V282 -> V295 (docstring: 'unchanged by V293/V294/V295'): bad []
+   0x14A cave [0xC4B34,0xC4BD8) sha256[:8] on V295: e9596ad9;  hook 0x55C0E 86ff26ef;  427 tap window 2437c8940648bfff643c0a30a3329f4ac94a09312046ff03003a0000000000000000
+   setpoint ceiling slot 7: stock [15360, 15360, 15360, 15360, 15360, 15360, 15360, 15360, 15360] -> V295 [16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384]
+  [ok]     V293: fb clamp 46080 -> 0
+  [ok]     V293: D clamp 10240 -> 0
+  [ok]     V293: r24 arm 5244 -> 2048
+  [ok]     V293: Kp all 28 -> 120 flat, Kd all 28 -> 0
+  [ok]     V294: C 0 -> 1024, a 923 -> 1011, b 1560 -> 567, Kp 120 -> 960 all 28
+  [ok]     V294: 0x28FA4 add -> subr, 0x29D76 shl 5 -> 2
+
+==============================================================================================================
+ RESULT: 0 FAIL(s), 1 DEFECT(s)
+   DEFECT brief/decision text quotes the sub-rail slope as 0.6409; the image gives 0.64100 (rounds to 0.6410)

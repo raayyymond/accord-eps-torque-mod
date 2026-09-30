@@ -1,0 +1,12 @@
+   fwd 0xC61B2      bytes 00 0c -> 3072
+   gain 0xC6CD0     bytes e2 14 -> 5346
+   deadband 0xC62E4 bytes 04 00 -> 4
+   1106 LE = 52 04 (design says 52 04)
+control: jarl 0x22522 -> FUN_00028ea6 found: True
+control: callers of FUN_0003aa2c: ['0x2291E']
+branches from OUTSIDE into the twin island [0x2A30E,0x2B421]: 3  [('0xD96C6', 'jarl', '0x2A6FC'), ('0xD96F2', 'jarl', '0x2A728'), ('0xD971E', 'jarl', '0x2A754')]
+LE32 even constants pointing into the island (anywhere, incl. data): 13  ['0x5A368', '0x66DAA', '0x75B78', '0x75C6E', '0xC53AF', '0xC53D7', '0xC53E3', '0xF9FAF', '0xF9FD7', '0xF9FE3', '0xFABAF', '0xFABD7', '0xFABE3']
+branches to 0x2A93A: []
+gp-0x680a (damper-mode gate): loads/stores [('0x29A68', 'ld.bu'), ('0x2A96A', 'ld.bu')] ; bit-ops []
+gp-0x6809 (dither enable): loads/stores [('0x2975A', 'ld.bu'), ('0x29808', 'ld.bu'), ('0x29964', 'ld.bu'), ('0x29A2C', 'ld.bu'), ('0x2B09E', 'ld.bu'), ('0x2B13E', 'ld.bu'), ('0x2B288', 'ld.bu'), ('0x2B3DE', 'ld.bu')] ; bit-ops []
+bit-op decoder control: gp-relative bit ops found image-wide: 20 (first 0x1BAF4)

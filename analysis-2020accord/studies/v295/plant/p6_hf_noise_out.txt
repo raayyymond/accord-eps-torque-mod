@@ -1,0 +1,97 @@
+(a) T -> om above 5 Hz, relaxed hands-off engaged, 418 windows of 2.56 s (u = -T, + LEFT)
+    f Hz |  |Hdir|     ph |  |-1/C|     ph |  c_dir   c_IV |    |HIV|     ph
+    3.12 |   0.249   -148 |   0.524    179 |   0.31   0.24 |    0.325    -57
+    5.08 |   0.104   -136 |   0.570   -157 |   0.15   0.02 |    0.040    -15
+    5.86 |   0.296   -132 |   0.605   -150 |   0.43   0.03 |    0.119    -15
+    7.81 |   0.337   -117 |   0.710   -137 |   0.38   0.05 |    0.179     17
+   10.16 |   0.169    -94 |   0.855   -128 |   0.15   0.03 |    0.090     19
+   12.11 |   0.554   -106 |   0.983   -122 |   0.49   0.02 |    0.169    111
+   14.06 |   0.729    -98 |   1.116   -118 |   0.57   0.02 |    0.227    115
+   16.02 |   0.557    -89 |   1.251   -115 |   0.42   0.00 |    0.033     71
+   17.97 |   0.489    -86 |   1.389   -112 |   0.38   0.01 |    0.100   -109
+   19.92 |   0.105    -82 |   1.528   -110 |   0.11   0.02 |    0.045    -88
+   21.88 |   0.343    -75 |   1.668   -108 |   0.20   0.00 |    0.019   -121
+   25.00 |   0.607    -69 |   1.894   -106 |   0.28   0.00 |    0.020   -167
+   30.08 |   0.892    -52 |   2.264   -103 |   0.38   0.01 |    0.232    -20
+   35.16 |   0.717    -46 |   2.638   -101 |   0.24   0.00 |    0.149    -97
+   39.84 |   0.342    -40 |   2.986   -100 |   0.09   0.00 |    0.033   -100
+   44.92 |   0.956    -20 |   3.364    -99 |   0.18   0.00 |    0.153    -72
+  8-30 Hz: |Hdir|/|-1/C| median 0.37 (IQR 0.31-0.45), phase diff median +31 deg; IV coherence max 0.06 -> the DIRECT HF estimate tracks the INVERSE CONTROLLER, not the plant; the IV has no HF coherence: T -> om above ~8 Hz is NOT identifiable from this drive
+
+(b) om_m -> bar (hands-off: the bar is a pure output of the motor-side rate), direct FRF, fit 1-40 Hz coh-weighted
+  relaxed hands-off engaged              418 windows: A -0.38 bar/(deg/s) at low f, f_t 60.00 Hz, zeta_t 0.005 ; coherent bins 79 ; |H| peak at 13.3 Hz
+        2.0 Hz |H|     9.22 ph    58 coh 0.42   model |H|     4.66 ph    90
+        3.9 Hz |H|    15.74 ph    72 coh 0.58   model |H|     9.36 ph    90
+        5.9 Hz |H|    27.36 ph    78 coh 0.61   model |H|    14.11 ph    90
+        7.8 Hz |H|    43.17 ph    75 coh 0.67   model |H|    18.96 ph    90
+       10.2 Hz |H|    42.89 ph    70 coh 0.46   model |H|    24.94 ph    90
+       12.1 Hz |H|    51.62 ph    63 coh 0.41   model |H|    30.11 ph    90
+       14.1 Hz |H|    51.62 ph    47 coh 0.51   model |H|    35.50 ph    90
+       16.0 Hz |H|    27.73 ph    46 coh 0.32   model |H|    41.14 ph    90
+       18.0 Hz |H|    27.67 ph    65 coh 0.39   model |H|    47.09 ph    90
+       19.9 Hz |H|    22.97 ph    69 coh 0.30   model |H|    53.41 ph    90
+       25.0 Hz |H|    34.08 ph   102 coh 0.44   model |H|    72.17 ph    90
+       30.1 Hz |H|    35.08 ph   118 coh 0.49   model |H|    95.83 ph    90
+       39.8 Hz |H|    15.68 ph   145 coh 0.16   model |H|   170.01 ph    89
+  strict hands-off (|bar|<400) engaged   287 windows: A -0.39 bar/(deg/s) at low f, f_t 60.00 Hz, zeta_t 0.005 ; coherent bins 65 ; |H| peak at 12.9 Hz
+        2.0 Hz |H|    11.27 ph    36 coh 0.33   model |H|     4.85 ph    90
+        3.9 Hz |H|    16.45 ph    57 coh 0.50   model |H|     9.73 ph    90
+        5.9 Hz |H|    27.83 ph    74 coh 0.56   model |H|    14.68 ph    90
+        7.8 Hz |H|    42.61 ph    73 coh 0.66   model |H|    19.72 ph    90
+       10.2 Hz |H|    41.87 ph    78 coh 0.46   model |H|    25.94 ph    90
+       12.1 Hz |H|    39.74 ph    64 coh 0.31   model |H|    31.32 ph    90
+       14.1 Hz |H|    57.21 ph    49 coh 0.44   model |H|    36.92 ph    90
+       16.0 Hz |H|    25.01 ph    48 coh 0.22   model |H|    42.78 ph    90
+       18.0 Hz |H|    24.17 ph    66 coh 0.29   model |H|    48.97 ph    90
+       19.9 Hz |H|    20.71 ph    75 coh 0.23   model |H|    55.55 ph    90
+       25.0 Hz |H|    30.23 ph   105 coh 0.42   model |H|    75.05 ph    90
+       30.1 Hz |H|    26.72 ph   114 coh 0.32   model |H|    99.67 ph    90
+       39.8 Hz |H|    12.21 ph   140 coh 0.13   model |H|   176.82 ph    89
+
+(c) RATE SENSOR NOISE FLOOR (x counts; 8 counts per deg/s; 0x18F carries x at full resolution, 100 Hz)
+  standstill, not engaged, |bar|<150: 106 s in 5 runs ; x std 1.927 counts (0.2409 deg/s) ; lag-1 (10 ms) autocorr 0.04 ; values {0: 3777, 2: 3470, 4: 1428, -1: 1316, 6: 278, -3: 256, 7: 37}
+  engaged quiet cruise (|LPF1Hz om| < 1 deg/s, v > 3): 95 windows ; x PSD 15-50 Hz mean 0.103 counts^2/Hz -> white-equivalent std at 100 Hz sampling 2.266 counts
+      x PSD at  5.1 Hz: 0.278 counts^2/Hz
+      x PSD at 10.2 Hz: 0.317 counts^2/Hz
+      x PSD at 14.8 Hz: 0.190 counts^2/Hz
+      x PSD at 19.9 Hz: 0.119 counts^2/Hz
+      x PSD at 25.0 Hz: 0.119 counts^2/Hz
+      x PSD at 30.1 Hz: 0.097 counts^2/Hz
+      x PSD at 39.8 Hz: 0.086 counts^2/Hz
+      x PSD at 48.8 Hz: 0.075 counts^2/Hz
+
+(d) OPERAND / TORQUE NOISE: Lane294 at sp = 0 driven by x = round(N(0, sigma)) white at 1 kHz, 60 s per case
+  sigma_x = 1.93 counts
+    case                              a      b |  r26 rms |   T rms    5-10   10-15   15-20 |   20-30
+    shipped 2.03 Hz                1011    567 |    1.283 |   0.000   0.000   0.000   0.000   0.000
+    pole 4 Hz, K_alpha kept         999   1090 |    2.401 |   0.012   0.002   0.002   0.002   0.002
+    pole 8 Hz, K_alpha kept         974   2181 |    4.348 |   0.132   0.034   0.034   0.030   0.039
+    pole 16.5 Hz, K_alpha kept      923   4405 |    8.536 |   0.347   0.100   0.098   0.095   0.111
+    pole 4 Hz, b 567 kept           999    567 |    1.283 |   0.000   0.000   0.000   0.000   0.000
+    pole 8 Hz, b 567 kept           974    567 |    1.283 |   0.000   0.000   0.000   0.000   0.000
+    pole 16.5 Hz, b 567 kept        923    567 |    1.283 |   0.000   0.000   0.000   0.000   0.000
+  sigma_x = 1.00 counts
+    case                              a      b |  r26 rms |   T rms    5-10   10-15   15-20 |   20-30
+    shipped 2.03 Hz                1011    567 |    0.833 |   0.000   0.000   0.000   0.000   0.000
+    pole 4 Hz, K_alpha kept         999   1090 |    1.506 |   0.000   0.000   0.000   0.000   0.000
+    pole 8 Hz, K_alpha kept         974   2181 |    2.512 |   0.020   0.004   0.004   0.004   0.005
+    pole 16.5 Hz, K_alpha kept      923   4405 |    4.656 |   0.087   0.018   0.018   0.017   0.024
+    pole 4 Hz, b 567 kept           999    567 |    0.833 |   0.000   0.000   0.000   0.000   0.000
+    pole 8 Hz, b 567 kept           974    567 |    0.833 |   0.000   0.000   0.000   0.000   0.000
+    pole 16.5 Hz, b 567 kept        923    567 |    0.833 |   0.000   0.000   0.000   0.000   0.000
+  sigma_x = 2.00 counts
+    case                              a      b |  r26 rms |   T rms    5-10   10-15   15-20 |   20-30
+    shipped 2.03 Hz                1011    567 |    1.319 |   0.000   0.000   0.000   0.000   0.000
+    pole 4 Hz, K_alpha kept         999   1090 |    2.475 |   0.016   0.002   0.002   0.002   0.003
+    pole 8 Hz, K_alpha kept         974   2181 |    4.501 |   0.145   0.038   0.038   0.034   0.043
+    pole 16.5 Hz, K_alpha kept      923   4405 |    8.867 |   0.366   0.108   0.105   0.103   0.120
+    pole 4 Hz, b 567 kept           999    567 |    1.319 |   0.000   0.000   0.000   0.000   0.000
+    pole 8 Hz, b 567 kept           974    567 |    1.319 |   0.000   0.000   0.000   0.000   0.000
+    pole 16.5 Hz, b 567 kept        923    567 |    1.319 |   0.000   0.000   0.000   0.000   0.000
+  T noise is LINEAR in Kp (P = (E*Kp)>>8 before the lag): x2 Kp doubles every column above (floors aside).
+
+(e) 427 tap vs the live march in engaged quiet cruise (98 windows of 2.56 s at 50 Hz): band rms, T counts
+     5-10 Hz: tap 1.02  march 1.02  residual 0.87   (the 8-count quantiser's white floor in this band: 1.46)
+    10-15 Hz: tap 0.71  march 0.68  residual 0.74   (the 8-count quantiser's white floor in this band: 1.46)
+    15-20 Hz: tap 0.59  march 0.59  residual 0.72   (the 8-count quantiser's white floor in this band: 1.46)
+    20-25 Hz: tap 0.52  march 0.52  residual 0.66   (the 8-count quantiser's white floor in this band: 1.46)

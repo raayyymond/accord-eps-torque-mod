@@ -1,0 +1,6 @@
+V294 image sha OK.  cells by address: {'fb_a': 1011, 'fb_b': 567, 'fb_C': 1024, 'lag_a': 992, 'lag_b': 507, 'p_cl': 15360, 's_cl': 15360, 't_cl': 3072, 'ki': 0, 'd_cl': 0, 'fb_a_bytes': 'f303', 'gain_disp': 31952, 'gain': 5346, 'e_shift': 2, 'op_28FA4': 53641}
+  Kp X/Y [0, 68, 112, 136, 208] [960, 960, 960, 960, 960]  Kd X/Y [0, 11, 22, 32] [0, 0, 0, 0]  map Y [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032]
+  A1017: 0xC63E8 bytes F3 03 -> F9 03 = 1017
+  fb_a 1011: my lane vs golden: 0 mismatches (T and r26) over 48000 ticks; harness Lane vs golden: 0; max |r26| 2197 (C binds 2979), max |a*s| 5.292e+08
+  fb_a 1017: my lane vs golden: 0 mismatches (T and r26) over 96000 ticks; harness Lane vs golden: 0; max |r26| 2901 (C binds 7738), max |a*s| 9.886e+08
+RESULT PASS

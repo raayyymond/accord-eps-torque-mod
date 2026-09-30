@@ -1,0 +1,84 @@
+V295 image sha256 5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed len 1048576
+V294 image sha256 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+V295 rwd   sha256 f42a06bda5a737eb9f678d617603745ec21fb93c4bd229344f33259cfbeaae87 len 986042 MATCH
+
+[1] whole-file diff V295 vs V294: 6 bytes
+   0xC63EA  37 -> 1a
+   0xC63EB  02 -> 04
+   0xC6FFC  65 -> d9
+   0xC6FFD  11 -> 2b
+   0xC6FFE  44 -> 98
+   0xC6FFF  f3 -> 8d
+   code region [0x13000,0xC0000) differing bytes: 0
+   zlib.crc32([0xC6000,0xC6FFC)) = 0x8D982BD9 ; stored LE32 @0xC6FFC = 0x8D982BD9
+   (V294: crc 0xF3441165 stored 0xF3441165)
+
+[2] LKAS chain cells, V294 -> V295 (LE reads from each image)
+   a (0xC63E8, ld.h)                        V294 1011                                     V295 1011                                     same
+   b (0xC63EA, ld.hu)                       V294 567                                      V295 1050                                     CHANGED
+   C (0xC62E6)                              V294 1024                                     V295 1024                                     same
+   Ki (0xC63E6)                             V294 0                                        V295 0                                        same
+   deadband (0xC62E4)                       V294 4                                        V295 4                                        same
+   I clamp (0xC61BA)                        V294 10240                                    V295 10240                                    same
+   P clamp (0xC61BC)                        V294 15360                                    V295 15360                                    same
+   sum clamp (0xC61BE)                      V294 15360                                    V295 15360                                    same
+   D clamp (0xC61B6)                        V294 0                                        V295 0                                        same
+   lane clamp (0xC61B4)                     V294 3072                                     V295 3072                                     same
+   out-lag a (0xC63EC, ld.h)                V294 992                                      V295 992                                      same
+   out-lag b (0xC63EE)                      V294 507                                      V295 507                                      same
+   fwd gain (0xC6CD0, s16)                  V294 5346                                     V295 5346                                     same
+   idx clamp +/- (0xC64F0/1)                V294 (240, 240)                               V295 (240, 240)                               same
+   Kp rec7 @0xE5378 X/Y                     V294 ([5, 0, 68, 112, 136], [208, 960, 960, 9 V295 ([5, 0, 68, 112, 136], [208, 960, 960, 9 same
+   Kp Y over 28 records                     V294 [(208, 960, 960, 960, 960)]              V295 [(208, 960, 960, 960, 960)]              same
+   Kd rec7 @0xE511C X/Y                     V294 ([4, 0, 11, 22], [32, 0, 0, 0])          V295 ([4, 0, 11, 22], [32, 0, 0, 0])          same
+   map rec7 @0xE502C X/Y                    V294 ([10, 0, 12, 20, 24, 32, 64, 96, 128, 16 V295 ([10, 0, 12, 20, 24, 32, 64, 96, 128, 16 same
+   taper B rec7 X/Y                         V294 ([6, 0, 3, 6, 8, 10], [20, 255, 255, 255 V295 ([6, 0, 3, 6, 8, 10], [20, 255, 255, 255 same
+   taper D rec7 X/Y                         V294 ([6, 16, 26, 38, 48, 64], [96, 255, 243, V295 ([6, 16, 26, 38, 48, 64], [96, 255, 243, same
+   0x29D76 hw / op / imm                    V294 ('82c2', 22, 2)                          V295 ('82c2', 22, 2)                          same
+   0x28FA4 hw / op                          V294 ('d189', 'subr')                         V295 ('d189', 'subr')                         same
+   0x2A1F0 (fwd gain displacement) bytes    V294 e900253fd07c046f                         V295 e900253fd07c046f                         same
+
+[3] x-operand chain: raw scan of gp accesses (positive-controlled)
+   ld.h gp-0x69ea @0x55B48: 4 hits
+      0x40ACE st.h      r9  disp -0x69ea
+      0x40B4E st.h      r9  disp -0x69ea
+      0x40C50 st.h      r26 disp -0x69ea
+      0x55B48 ld.h      r6  disp -0x69ea
+   x read gp-0x6a56 in the PID filter: 29 hits
+      0x28F4C ld.h      r7  disp -0x6a56
+      0x2BBAA ld.h      r21 disp -0x6a56
+      0x2D9BE ld.h      r6  disp -0x6a56
+      0x2F07A ld.h      r13 disp -0x6a56
+      0x34AB8 ld.h      r13 disp -0x6a56
+      0x34E8E ld.h      r6  disp -0x6a56
+      0x3B49A ld.h      r9  disp -0x6a56
+      0x3EC2A ld.h      r11 disp -0x6a56
+      0x3F782 ld.h      r12 disp -0x6a56
+      0x3F7B8 st.h      r6  disp -0x6a56
+      0x3F7D0 st.h      r6  disp -0x6a56
+      0x3F7E0 st.h      r6  disp -0x6a56
+      0x3F7F2 ld.h      r6  disp -0x6a56
+      0x3F81E st.h      r0  disp -0x6a56
+      0x40B48 ld.h      r9  disp -0x6a56
+      0x40C42 ld.h      r26 disp -0x6a56
+      0x4D946 ld.h      r14 disp -0x6a56
+      0x4D956 ld.h      r16 disp -0x6a56
+      0x4DE62 ld.h      r14 disp -0x6a56
+      0x4DE72 ld.h      r16 disp -0x6a56
+      0x4E8BC ld.h      r7  disp -0x6a56
+      0x4E8CC ld.h      r6  disp -0x6a56
+      0x4F942 ld.h      r13 disp -0x6a56
+      0x4F964 ld.h      r13 disp -0x6a56
+      0x4FE3E ld.h      r6  disp -0x6a56
+      0x5150E ld.h      r15 disp -0x6a56
+      0x51850 ld.h      r15 disp -0x6a56
+      0x557D6 ld.h      r6  disp -0x6a56
+      0x55C62 ld.h      r6  disp -0x6a56
+   tp+0x73EA accesses: [('0x28F86', 'ld.hu')]
+   POSITIVE CONTROLS PASS (0x55B48 ld.h gp-0x69ea; 0x28F86 ld.hu tp+0x73EA)
+   gp-0x69ec: [('0x40A84', 'ld.h'), ('0x40A96', 'st.h'), ('0x40B0A', 'ld.h'), ('0x40B18', 'st.h'), ('0x40B94', 'ld.h'), ('0x40BA2', 'st.h'), ('0x40BDC', 'st.h'), ('0x40C0E', 'st.h'), ('0x55B0E', 'ld.hu'), ('0x55F78', 'ld.hu')]
+   gp-0x69ee: [('0x40AA8', 'ld.h'), ('0x40AB8', 'st.h'), ('0x40B2A', 'ld.h'), ('0x40B36', 'st.h'), ('0x40BB4', 'ld.h'), ('0x40BC4', 'st.h'), ('0x40BEE', 'ld.h'), ('0x40BFE', 'st.h'), ('0x40C20', 'ld.h'), ('0x40C2E', 'st.h'), ('0x55B16', 'ld.hu')]
+   gp-0x69e8: [('0x40C46', 'st.h')]
+
+[4] V282 images on disk:
+    0ea98d06b292ca1a analysis-2020accord\_v282_V282-V281R3BASE-KP.FLAT.Y0-CAVE.R24CMP.BITS5.6-MAP.LINEAR.TO6X.FEEDBACK46080.TORQUE.

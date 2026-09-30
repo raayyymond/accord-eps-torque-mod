@@ -1,0 +1,81 @@
+per-jump medians (open loop, zero noise, slow +-700-count ramp): n jumps | peak rate deg/s | peak accel deg/s^2 | angle step deg | slip duration ms ; ratios vs V294
+  nominal  v  5.0  V294: n   3 rate   5.50 accel   274.6 step 34.731 dur 7476
+            V293     n   3  rate x0.99  accel x0.93  step x1.00  dur x0.99
+            b1134    n   3  rate x1.01  accel x0.98  step x1.00  dur x1.02
+            g3sh1    n   3  rate x1.02  accel x1.00  step x1.00  dur x1.05
+            a1017g2  n   3  rate x1.04  accel x1.00  step x1.00  dur x1.08
+  nominal  v  8.0  V294: n   3 rate   3.44 accel   107.8 step 22.853 dur 9806
+            V293     n   3  rate x1.01  accel x0.80  step x1.00  dur x0.97
+            b1134    n   3  rate x0.98  accel x1.04  step x1.00  dur x1.06
+            g3sh1    n   3  rate x0.98  accel x1.03  step x1.04  dur x1.06
+            a1017g2  n   3  rate x1.01  accel x0.94  step x1.05  dur x1.06
+  nominal  v 12.0  V294: n   3 rate   3.00 accel   232.0 step 19.524 dur 8972
+            V293     n   3  rate x1.00  accel x0.89  step x1.00  dur x1.00
+            b1134    n   3  rate x0.99  accel x0.98  step x1.00  dur x1.02
+            g3sh1    n   3  rate x1.00  accel x0.99  step x1.00  dur x1.03
+            a1017g2  n   3  rate x1.00  accel x0.96  step x1.00  dur x1.03
+  nominal  v 17.0  V294: n   3 rate   0.90 accel    19.0 step 5.707 dur 9825
+            V293     n   3  rate x1.00  accel x1.00  step x1.00  dur x1.00
+            b1134    n   3  rate x0.98  accel x1.32  step x1.00  dur x1.00
+            g3sh1    n   3  rate x1.00  accel x1.31  step x1.00  dur x1.03
+            a1017g2  n   3  rate x1.00  accel x0.97  step x1.00  dur x1.03
+  F_hi     v  5.0  V294: n   3 rate   5.77 accel   274.6 step 30.033 dur 5492
+            V293     n   3  rate x1.04  accel x0.88  step x1.00  dur x0.97
+            b1134    n   3  rate x1.00  accel x0.98  step x1.00  dur x1.03
+            g3sh1    n   3  rate x1.02  accel x1.00  step x1.00  dur x1.06
+            a1017g2  n   3  rate x1.06  accel x1.00  step x1.00  dur x1.07
+  F_hi     v  8.0  V294: n   3 rate   3.47 accel   104.5 step 22.081 dur 8925
+            V293     n   3  rate x1.01  accel x0.80  step x1.00  dur x0.98
+            b1134    n   3  rate x0.98  accel x1.05  step x1.00  dur x1.06
+            g3sh1    n   3  rate x0.98  accel x1.02  step x1.01  dur x1.10
+            a1017g2  n   3  rate x0.99  accel x0.93  step x1.01  dur x1.11
+  F_hi     v 12.0  V294: n   3 rate   3.02 accel   214.4 step 18.631 dur 8284
+            V293     n   3  rate x1.00  accel x0.89  step x1.00  dur x1.00
+            b1134    n   3  rate x1.00  accel x0.98  step x1.00  dur x1.00
+            g3sh1    n   3  rate x1.00  accel x0.99  step x1.00  dur x1.02
+            a1017g2  n   3  rate x1.01  accel x0.98  step x1.00  dur x1.03
+  F_hi     v 17.0  V294: n   3 rate   0.90 accel    21.7 step 5.601 dur 9467
+            V293     n   3  rate x1.00  accel x1.03  step x1.00  dur x1.00
+            b1134    n   3  rate x0.98  accel x1.14  step x1.00  dur x1.00
+            g3sh1    n   3  rate x1.00  accel x1.14  step x1.00  dur x1.00
+            a1017g2  n   3  rate x1.00  accel x1.04  step x1.00  dur x1.00
+  light_b  v  5.0  V294: n   4 rate  15.26 accel   119.6 step 47.346 dur 4992
+            V293     n   3  rate x0.71  accel x0.88  step x1.13  dur x1.86
+            b1134    n   4  rate x1.27  accel x1.44  step x0.98  dur x0.96
+            g3sh1    n   4  rate x1.45  accel x1.62  step x0.95  dur x0.93
+            a1017g2  n   4  rate x1.17  accel x1.54  step x0.95  dur x0.96
+  light_b  v  8.0  V294: n   4 rate  15.57 accel   124.6 step 34.672 dur 4814
+            V293     n   4  rate x0.82  accel x1.17  step x1.00  dur x0.96
+            b1134    n   4  rate x1.15  accel x1.08  step x0.97  dur x0.97
+            g3sh1    n   4  rate x1.25  accel x1.16  step x0.95  dur x0.96
+            a1017g2  n   4  rate x0.99  accel x1.01  step x0.95  dur x0.99
+  light_b  v 12.0  V294: n   4 rate  14.08 accel   117.0 step 21.165 dur 4498
+            V293     n   5  rate x0.59  accel x0.90  step x0.90  dur x0.13
+            b1134    n   4  rate x1.09  accel x1.13  step x0.98  dur x0.96
+            g3sh1    n   4  rate x1.14  accel x1.12  step x0.97  dur x0.99
+            a1017g2  n   4  rate x0.85  accel x0.96  step x0.98  dur x1.03
+  light_b  v 17.0  V294: n   4 rate  11.78 accel   114.3 step 20.637 dur 4636
+            V293     n   6  rate x0.78  accel x0.92  step x0.60  dur x0.14
+            b1134    n   4  rate x1.13  accel x0.98  step x0.98  dur x0.97
+            g3sh1    n   4  rate x1.25  accel x0.99  step x0.96  dur x1.00
+            a1017g2  n   4  rate x0.98  accel x0.91  step x0.95  dur x1.03
+  J_hi     v  5.0  V294: n   3 rate   4.29 accel   163.2 step 28.471 dur 8037
+            V293     n   3  rate x1.00  accel x0.99  step x1.00  dur x0.98
+            b1134    n   3  rate x1.00  accel x0.99  step x1.00  dur x1.03
+            g3sh1    n   3  rate x1.00  accel x0.99  step x1.00  dur x1.06
+            a1017g2  n   3  rate x1.01  accel x1.08  step x1.00  dur x1.08
+  J_hi     v  8.0  V294: n   3 rate   2.71 accel    71.1 step 18.730 dur 10348
+            V293     n   3  rate x1.00  accel x0.70  step x1.00  dur x0.93
+            b1134    n   3  rate x1.00  accel x0.88  step x1.03  dur x1.00
+            g3sh1    n   3  rate x1.13  accel x1.10  step x1.07  dur x1.00
+            a1017g2  n   3  rate x1.11  accel x0.89  step x1.07  dur x1.00
+  J_hi     v 12.0  V294: n   3 rate   3.14 accel   162.4 step 20.505 dur 9214
+            V293     n   3  rate x1.00  accel x0.97  step x1.00  dur x0.99
+            b1134    n   3  rate x0.99  accel x1.00  step x1.00  dur x1.03
+            g3sh1    n   3  rate x1.00  accel x0.99  step x1.00  dur x1.06
+            a1017g2  n   3  rate x1.00  accel x1.00  step x1.00  dur x1.07
+  J_hi     v 17.0  V294: n   3 rate   0.91 accel    14.5 step 5.887 dur 9815
+            V293     n   3  rate x1.00  accel x1.00  step x1.00  dur x1.00
+            b1134    n   3  rate x0.99  accel x1.44  step x1.00  dur x1.00
+            g3sh1    n   3  rate x1.00  accel x1.44  step x1.00  dur x1.03
+            a1017g2  n   3  rate x1.00  accel x0.97  step x1.00  dur x1.04

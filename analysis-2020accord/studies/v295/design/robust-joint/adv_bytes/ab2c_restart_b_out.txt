@@ -1,0 +1,6 @@
+b 1000: worst 274 T (abs cap 288 PASS) ; worst per-point ratio 1.835 (cap 2.0 PASS) ; worst/worst 1.661
+b 1040: worst 284 T (abs cap 288 PASS) ; worst per-point ratio 1.910 (cap 2.0 PASS) ; worst/worst 1.721
+b 1050: worst 287 T (abs cap 288 PASS) ; worst per-point ratio 1.932 (cap 2.0 PASS) ; worst/worst 1.739
+b 1060: worst 290 T (abs cap 288 FAIL) ; worst per-point ratio 1.947 (cap 2.0 PASS) ; worst/worst 1.758
+b 1080: worst 295 T (abs cap 288 FAIL) ; worst per-point ratio 1.985 (cap 2.0 PASS) ; worst/worst 1.788
+b 1106: worst 301 T (abs cap 288 FAIL) ; worst per-point ratio 2.038 (cap 2.0 FAIL) ; worst/worst 1.824

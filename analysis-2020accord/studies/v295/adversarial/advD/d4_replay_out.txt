@@ -1,0 +1,37 @@
+from V295 image: b 1050 a 1011 C 1024
+marched 2 x 1020390 ticks in 2 s
+POSITIVE CONTROL: V294 re-march vs cached T1k_live: 0 mismatching ticks (must be 0)
+engaged ticks 800750 (801 s)
+
+== V294 ==
+  engaged |T| max 1467 (|T_null| max 1690); engaged |trim| max 309, p99.9 185, rms 18.7
+  |trim| > 300 T engaged: 42 ticks, 1 runs, longest 42 ms
+     run   42 ms at t=411.55 s  v 3.9 m/s  |bar| max 897  pressed 0.00  |T| max 503  trim max 309
+  speed  0- 5 m/s: ticks 42, runs 1, longest 42 ms, runs >= 75 ms: 0
+  speed  5-10 m/s: ticks 0, runs 0, longest 0 ms, runs >= 75 ms: 0
+  speed 10-99 m/s: ticks 0, runs 0, longest 0 ms, runs >= 75 ms: 0
+  fb clamp |r26| == C on engaged ticks: 0.0000 %;  P clamp |P| == 15360: 0.0576 %
+  hands-on engaged ticks 91850: |trim| p50 8 p95 90 p99 166 max 309; sign(trim)==sign(bar) on |trim|>50: 0.82
+
+== V295 ==
+  engaged |T| max 1277 (|T_null| max 1690); engaged |trim| max 554, p99.9 343, rms 34.6
+  |trim| > 300 T engaged: 1362 ticks, 13 runs, longest 308 ms
+     run  308 ms at t=412.41 s  v 4.4 m/s  |bar| max 1242  pressed 0.10  |T| max 946  trim max 413
+     run  240 ms at t=411.47 s  v 3.9 m/s  |bar| max 1308  pressed 0.23  |T| max 750  trim max 554
+     run  222 ms at t=412.01 s  v 4.1 m/s  |bar| max 1147  pressed 0.00  |T| max 1277  trim max 420
+     run  122 ms at t=49.46 s  v 2.0 m/s  |bar| max 579  pressed 0.00  |T| max 479  trim max 349
+     run  111 ms at t=56.91 s  v 2.5 m/s  |bar| max 942  pressed 0.00  |T| max 345  trim max 373
+     run   92 ms at t=677.26 s  v 4.6 m/s  |bar| max 615  pressed 0.00  |T| max 469  trim max 331
+     run   80 ms at t=49.21 s  v 2.0 m/s  |bar| max 1044  pressed 0.12  |T| max 204  trim max 366
+     run   74 ms at t=50.44 s  v 1.9 m/s  |bar| max 467  pressed 0.00  |T| max 143  trim max 319
+     run   60 ms at t=330.43 s  v 3.4 m/s  |bar| max 869  pressed 0.00  |T| max 840  trim max 339
+     run   49 ms at t=137.19 s  v 9.5 m/s  |bar| max 561  pressed 0.00  |T| max 1000  trim max 306
+  speed  0- 5 m/s: ticks 1313, runs 12, longest 308 ms, runs >= 75 ms: 7
+  speed  5-10 m/s: ticks 49, runs 1, longest 49 ms, runs >= 75 ms: 0
+  speed 10-99 m/s: ticks 0, runs 0, longest 0 ms, runs >= 75 ms: 0
+  fb clamp |r26| == C on engaged ticks: 0.0084 %;  P clamp |P| == 15360: 0.0523 %
+  hands-on engaged ticks 91850: |trim| p50 16 p95 168 p99 307 max 554; sign(trim)==sign(bar) on |trim|>50: 0.71
+
+V295 - V294 torque on engaged ticks: rms 15.9, p99 81, max 247
+ratio of |trim| rms V295/V294 (engaged): 1.849
+max |x| on the route 2979 (bail 12000); max |bar| 3696 (bar bail |gp-0x4f60| > 25600 raw = 26214 wire)

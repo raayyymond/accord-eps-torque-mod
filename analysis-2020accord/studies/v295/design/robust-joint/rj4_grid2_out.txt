@@ -1,0 +1,56 @@
+grid: 9408 candidates
+evaluated in 378 s
+constructible 9344 (b <= 0.95 b_max), feasible 889
+infeasibility reasons: [(('H_SAFE3',), 1739), (('H_HF1', 'H_LOOP2', 'H_SAFE3'), 1502), (('H_LOOP2', 'H_SAFE3'), 1336), (('H_HF1', 'H_SAFE3'), 1183), (('H_LOOP2',), 948), (('H_HF1', 'H_SAFE2', 'H_SAFE3'), 768), (('H_SAFE2', 'H_SAFE3'), 696), (('H_HF1', 'H_LOOP2', 'H_SAFE2', 'H_SAFE3'), 192), (('H_SAFE2',), 52), (('H_LOOP2', 'H_SAFE2', 'H_SAFE3'), 36), (('H_HF1', 'H_LOOP2'), 2), (('H_HF1',), 1)]
+outer-constraint binding keys among infeasible H_LOOP2: [("('light_b', 3.1, 10, True)", 1364), ("('light_b', 3.1, 10, False)", 1188), ("('ms_free', 12.0, 10, True)", 420), ("('light_b', 3.1, 40, True)", 412), ("('light_b', 26.9, 10, True)", 248), ("('light_b', 3.1, 40, False)", 228), ("('light_b', 26.9, 40, True)", 96), ("('ms_free', 12.0, 40, True)", 36)]
+feasible Pareto front (J, HF, outer GM rel): 280 points; best 30 by J:
+  g1.25_t2.00_fb2.03_lag5.05_kd0_flat_C640                       J -0.160 HF 2.00 oGM 1.38 lbH 2.30 jerk 0.930/0.877/0.653 lo -0.0630 hw -0.0123 tr +0.0120 inMs 1.26 i32 2.54 rp 288 cap 480 ob 0.99
+  g1.20_t2.00_fb2.03_lag5.05_kd0_flat_C640                       J -0.155 HF 2.00 oGM 1.44 lbH 2.40 jerk 0.926/0.873/0.643 lo -0.0536 hw -0.0125 tr +0.0120 inMs 1.26 i32 2.44 rp 286 cap 461 ob 0.96
+  g1.05_t2.50_fb2.80_lag5.05_kd0_flat_C640                       J -0.153 HF 2.50 oGM 1.70 lbH 2.82 jerk 0.899/0.861/0.595 lo -0.0185 hw -0.0132 tr +0.0151 inMs 1.29 i32 2.37 rp 284 cap 403 ob 0.98
+  g1.05_t2.25_fb2.40_lag5.05_kd0_flat_C640                       J -0.150 HF 2.25 oGM 1.72 lbH 2.87 jerk 0.902/0.855/0.591 lo -0.0191 hw -0.0133 tr +0.0141 inMs 1.27 i32 2.19 rp 286 cap 403 ob 0.95
+  g1.15_t2.00_fb2.03_lag5.05_kd0_flat_C640                       J -0.150 HF 2.00 oGM 1.50 lbH 2.50 jerk 0.922/0.870/0.633 lo -0.0435 hw -0.0127 tr +0.0120 inMs 1.26 i32 2.33 rp 284 cap 442 ob 0.95
+  g1.30_t1.75_fb1.40_lag5.05_kd0_flat_C640                       J -0.148 HF 1.76 oGM 1.28 lbH 2.14 jerk 0.947/0.872/0.660 lo -0.0762 hw -0.0124 tr +0.0044 inMs 1.25 i32 2.08 rp 285 cap 500 ob 0.96
+  g1.30_t1.75_fb1.40_lag5.05_kd0_flat_C768                       J -0.148 HF 1.76 oGM 1.28 lbH 2.14 jerk 0.947/0.872/0.660 lo -0.0762 hw -0.0124 tr +0.0044 inMs 1.25 i32 2.08 rp 285 cap 600 ob 0.96
+  g1.30_t1.75_fb1.40_lag5.05_kd0_flat_C896                       J -0.148 HF 1.76 oGM 1.28 lbH 2.14 jerk 0.947/0.872/0.660 lo -0.0762 hw -0.0124 tr +0.0044 inMs 1.25 i32 2.08 rp 285 cap 700 ob 0.96
+  g1.30_t1.75_fb1.40_lag5.05_kd0_flat_C1024                      J -0.148 HF 1.76 oGM 1.28 lbH 2.14 jerk 0.947/0.872/0.660 lo -0.0762 hw -0.0124 tr +0.0044 inMs 1.25 i32 2.08 rp 285 cap 800 ob 0.96
+  g2.50_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C640_kmap2         J -0.147 HF 1.74 oGM 1.20 lbH 2.01 jerk 0.957/0.898/0.717 lo -0.0879 hw -0.0126 tr +0.0034 inMs 1.25 i32 4.67 rp 282 cap 1106 ob 0.99
+  g1.20_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C640               J -0.146 HF 1.74 oGM 1.24 lbH 2.06 jerk 0.953/0.894/0.706 lo -0.0822 hw -0.0127 tr +0.0034 inMs 1.25 i32 2.24 rp 281 cap 530 ob 0.98
+  g1.20_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C768               J -0.146 HF 1.74 oGM 1.24 lbH 2.06 jerk 0.953/0.894/0.706 lo -0.0822 hw -0.0127 tr +0.0034 inMs 1.25 i32 2.24 rp 281 cap 637 ob 0.98
+  g1.20_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C896               J -0.146 HF 1.74 oGM 1.24 lbH 2.06 jerk 0.953/0.894/0.706 lo -0.0822 hw -0.0127 tr +0.0034 inMs 1.25 i32 2.24 rp 281 cap 743 ob 0.98
+  g1.20_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C1024              J -0.146 HF 1.74 oGM 1.24 lbH 2.06 jerk 0.953/0.894/0.706 lo -0.0822 hw -0.0127 tr +0.0034 inMs 1.25 i32 2.24 rp 281 cap 849 ob 0.98
+  g2.60_t1.75_fb1.40_lag5.05_kd0_flat_C640_kmap2                 J -0.145 HF 1.77 oGM 1.28 lbH 2.17 jerk 0.946/0.871/0.659 lo -0.0730 hw -0.0125 tr +0.0044 inMs 1.25 i32 4.15 rp 286 cap 1000 ob 0.96
+  g2.60_t1.75_fb1.40_lag5.05_kd0_flat_C768_kmap2                 J -0.145 HF 1.77 oGM 1.28 lbH 2.17 jerk 0.946/0.871/0.659 lo -0.0730 hw -0.0125 tr +0.0044 inMs 1.25 i32 4.15 rp 286 cap 1200 ob 0.96
+  g1.10_t2.00_fb2.03_lag5.05_kd0_flat_C640                       J -0.143 HF 2.00 oGM 1.57 lbH 2.61 jerk 0.918/0.866/0.623 lo -0.0329 hw -0.0130 tr +0.0120 inMs 1.26 i32 2.23 rp 282 cap 423 ob 0.93
+  g2.40_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C640_kmap2         J -0.143 HF 1.74 oGM 1.25 lbH 2.09 jerk 0.954/0.894/0.707 lo -0.0790 hw -0.0127 tr +0.0034 inMs 1.25 i32 4.48 rp 282 cap 1061 ob 0.97
+  g1.15_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C640               J -0.141 HF 1.74 oGM 1.29 lbH 2.15 jerk 0.950/0.890/0.696 lo -0.0729 hw -0.0129 tr +0.0035 inMs 1.25 i32 2.14 rp 282 cap 508 ob 0.96
+  g1.15_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C768               J -0.141 HF 1.74 oGM 1.29 lbH 2.15 jerk 0.950/0.890/0.696 lo -0.0729 hw -0.0129 tr +0.0035 inMs 1.25 i32 2.14 rp 282 cap 610 ob 0.96
+  g1.15_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C896               J -0.141 HF 1.74 oGM 1.29 lbH 2.15 jerk 0.950/0.890/0.696 lo -0.0729 hw -0.0129 tr +0.0035 inMs 1.25 i32 2.14 rp 282 cap 712 ob 0.96
+  g1.15_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C1024              J -0.141 HF 1.74 oGM 1.29 lbH 2.15 jerk 0.950/0.890/0.696 lo -0.0729 hw -0.0129 tr +0.0035 inMs 1.25 i32 2.14 rp 282 cap 814 ob 0.96
+  g2.40_t2.00_fb2.40_lag5.05_kd0_flat_C640_kmap2                 J -0.140 HF 2.00 oGM 1.35 lbH 2.28 jerk 0.933/0.896/0.687 lo -0.0478 hw -0.0124 tr +0.0114 inMs 1.25 i32 5.64 rp 275 cap 923 ob 0.99
+  g2.40_t2.00_fb2.40_lag5.05_kd0_flat_C768_kmap2                 J -0.140 HF 2.00 oGM 1.35 lbH 2.28 jerk 0.933/0.896/0.687 lo -0.0478 hw -0.0124 tr +0.0114 inMs 1.25 i32 5.64 rp 275 cap 1107 ob 0.99
+  g2.50_t1.75_fb1.40_lag5.05_kd0_flat_C640_kmap2                 J -0.140 HF 1.77 oGM 1.33 lbH 2.25 jerk 0.943/0.868/0.650 lo -0.0641 hw -0.0126 tr +0.0044 inMs 1.25 i32 4.00 rp 286 cap 961 ob 0.94
+  g2.50_t1.75_fb1.40_lag5.05_kd0_flat_C768_kmap2                 J -0.140 HF 1.77 oGM 1.33 lbH 2.25 jerk 0.943/0.868/0.650 lo -0.0641 hw -0.0126 tr +0.0044 inMs 1.25 i32 4.00 rp 286 cap 1154 ob 0.94
+  g1.15_t2.00_fb2.40_lag5.05_kd0_flat_C640                       J -0.139 HF 2.00 oGM 1.41 lbH 2.35 jerk 0.929/0.891/0.675 lo -0.0412 hw -0.0126 tr +0.0114 inMs 1.25 i32 2.70 rp 270 cap 442 ob 0.97
+  g1.15_t2.00_fb2.40_lag5.05_kd0_flat_C768                       J -0.139 HF 2.00 oGM 1.41 lbH 2.35 jerk 0.929/0.891/0.675 lo -0.0412 hw -0.0126 tr +0.0114 inMs 1.25 i32 2.70 rp 275 cap 530 ob 0.97
+  g1.15_t2.00_fb2.40_lag5.05_kd0_flat_C896                       J -0.139 HF 2.00 oGM 1.41 lbH 2.35 jerk 0.929/0.891/0.675 lo -0.0412 hw -0.0126 tr +0.0114 inMs 1.25 i32 2.70 rp 275 cap 619 ob 0.97
+  g1.15_t2.00_fb2.40_lag5.05_kd0_flat_C1024                      J -0.139 HF 2.00 oGM 1.41 lbH 2.35 jerk 0.929/0.891/0.675 lo -0.0412 hw -0.0126 tr +0.0114 inMs 1.25 i32 2.70 rp 275 cap 707 ob 0.97
+
+best feasible by (sched, kmap, lag):
+  flat      kmap 1 lag 5.05: g1.25_t2.00_fb2.03_lag5.05_kd0_flat_C640                       J -0.160 HF 2.00 oGM 1.38 jerk 0.930 lo -0.0630 hw -0.0123 tr +0.0120 rp 288
+  flat      kmap 1 lag 7.00: g1.30_t1.75_fb2.03_lag7.00_kd0_flat_C640                       J -0.139 HF 2.38 oGM 1.29 jerk 0.945 lo -0.0690 hw -0.0121 tr +0.0019 rp 282
+  flat      kmap 2 lag 5.05: g2.60_t1.75_fb1.40_lag5.05_kd0_flat_C640_kmap2                 J -0.145 HF 1.77 oGM 1.28 jerk 0.946 lo -0.0730 hw -0.0125 tr +0.0044 rp 286
+  flat      kmap 2 lag 7.00: g2.60_t1.75_fb2.03_lag7.00_kd0_flat_C640_kmap2                 J -0.136 HF 2.38 oGM 1.29 jerk 0.945 lo -0.0657 hw -0.0121 tr +0.0019 rp 283
+  lowboost  kmap 1 lag 5.05: g1.20_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C640               J -0.146 HF 1.74 oGM 1.24 jerk 0.953 lo -0.0822 hw -0.0127 tr +0.0034 rp 281
+  lowboost  kmap 1 lag 7.00: g1.15_t1.50_fb2.03_lag7.00_kd0_lowboost1.15_C640               J -0.132 HF 2.35 oGM 1.30 jerk 0.948 lo -0.0657 hw -0.0126 tr -0.0003 rp 278
+  lowboost  kmap 2 lag 5.05: g2.50_t1.50_fb1.40_lag5.05_kd0_lowboost1.15_C640_kmap2         J -0.147 HF 1.74 oGM 1.20 jerk 0.957 lo -0.0879 hw -0.0126 tr +0.0034 rp 282
+  lowboost  kmap 2 lag 7.00: g2.40_t1.50_fb2.03_lag7.00_kd0_lowboost1.15_C640_kmap2         J -0.133 HF 2.34 oGM 1.26 jerk 0.952 lo -0.0719 hw -0.0124 tr -0.0003 rp 278
+
+slice flat, kmap 1, lag 5.05, C 1024: best J over fb per (g, t)  [x = infeasible at every fb; reason of the fb 2.03 row]
+        t1.50    t1.75    t2.00    t2.25    t2.50    t2.75    t2.95   
+  g1.00 -0.064@1.7   -0.085@2.0   -0.102@2.4   -0.071@3.4   xSAFE2,SAFE3 xSAFE2,SAFE3 xSAFE2,SAFE3
+  g1.05 -0.086@1.7   -0.115@1.7   -0.125@2.4   xSAFE2,SAFE3 xSAFE2,SAFE3 xSAFE2,SAFE3 xSAFE2,SAFE3
+  g1.10 -0.097@1.4   -0.124@1.7   -0.132@2.4   xSAFE2,SAFE3 xSAFE2,SAFE3 xSAFE2,SAFE3 xSAFE2,SAFE3
+  g1.15 -0.103@1.4   -0.130@1.7   -0.139@2.4   xSAFE3       xSAFE2,SAFE3 xSAFE2,SAFE3 xSAFE2,SAFE3
+  g1.20 -0.109@1.4   -0.136@1.7   -0.144@2.4   xSAFE3       xSAFE2,SAFE3 xSAFE2,SAFE3 xSAFE2,SAFE3
+  g1.25 -0.114@1.4   -0.141@1.7   xSAFE3       xSAFE3       xSAFE3       xSAFE2,SAFE3 xSAFE2,SAFE3
+  g1.30 -0.118@1.4   -0.148@1.4   xLOOP2,SAFE3 xSAFE3       xSAFE3       xLOOP2,SAFE2,SAFE3 xLOOP2,SAFE2,SAFE3

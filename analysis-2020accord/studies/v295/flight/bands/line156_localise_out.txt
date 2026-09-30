@@ -1,0 +1,51 @@
+
+r71b_v294 -- engaged 0-5 m/s, the line near 15.6 Hz by stratum
+    engaged 0-5 (all)                   109.7 s | rate: peak 15.6 Hz  +4.7 dB, amp 1.18 deg/s (58 seg)   tap: peak 15.6 Hz  +6.1 dB, amp 7.06 cnt (58 seg)   
+      hands-off |bar|<400                81.3 s | rate: peak 14.8 Hz  +0.0 dB, amp 0.20 deg/s (25 seg)   tap: peak 14.8 Hz  +1.1 dB, amp 1.08 cnt (25 seg)   
+      hands-on |bar|>=400                28.4 s | rate: n/a (4 seg)   tap: n/a (4 seg)   
+      |cmd| < 2000                      104.0 s | rate: peak 16.4 Hz  +1.7 dB, amp 0.43 deg/s (50 seg)   tap: peak 15.2 Hz  +1.3 dB, amp 1.80 cnt (50 seg)   
+      |cmd| >= 2000                       5.7 s | rate: n/a (1 seg)   tap: n/a (1 seg)   
+      v < 1 m/s                           9.8 s | rate: n/a (1 seg)   tap: n/a (1 seg)   
+      1-5 m/s                            99.9 s | rate: peak 14.8 Hz  +0.0 dB, amp 0.72 deg/s (50 seg)   tap: peak 15.2 Hz  -0.2 dB, amp 3.08 cnt (50 seg)   
+    sliding 2.56 s windows on engaged 0-5 m/s: n 99, 14.5-16.8 Hz tap amp p50 1.03 p90 6.81 max 36.02 counts
+    share of the 14.5-16.8 Hz tap energy in the top 5 / 10 windows (overlapping x4): 88 % / 93 %
+      amp    t_route   v     |bar|   |cmd|   angle  |rate|p90  |T|med
+     36.02      43.3   0.9    3100    3891   250.9    258.6     212
+     35.90      43.9   1.4    3016    4096   335.9    250.4     392
+     35.36      42.7   0.8    3072    1097   100.2    258.6      68
+     30.36      44.6   1.6    2586    4096   355.9    142.8     588
+     16.79      42.0   0.7    1349      85     3.2    258.6      40
+      8.08     228.9   4.4    1942    2784   -12.5    219.1     588
+      7.42      61.2   2.5    2022    1355  -296.1    166.2     336
+      7.13      61.9   2.7     865    1306  -249.6    171.8     384
+      7.03     228.3   4.4    1942    2746  -110.5    219.1     692
+      6.87      60.6   2.4    2737     916  -296.1    207.7     136
+      6.80      62.5   3.1     323     693  -221.1    185.6     352
+      6.03      47.1   2.0    2011     956   280.6    198.3     288
+
+r72_v293r3 -- engaged 0-5 m/s, the line near 19.5 Hz by stratum
+    engaged 0-5 (all)                    97.4 s | rate: peak 19.5 Hz  +8.8 dB, amp 3.17 deg/s (52 seg)   tap: peak 19.5 Hz  +6.9 dB, amp 11.56 cnt (52 seg)   
+      hands-off |bar|<400                74.5 s | rate: peak 19.1 Hz  +1.2 dB, amp 0.12 deg/s (23 seg)   tap: peak 19.9 Hz  +0.3 dB, amp 0.86 cnt (23 seg)   
+      hands-on |bar|>=400                22.9 s | rate: n/a (3 seg)   tap: n/a (3 seg)   
+      |cmd| < 2000                       93.2 s | rate: peak 18.8 Hz  +0.8 dB, amp 0.23 deg/s (45 seg)   tap: peak 19.5 Hz  +0.6 dB, amp 1.06 cnt (45 seg)   
+      |cmd| >= 2000                       4.2 s | rate: n/a (0 seg)   tap: n/a (0 seg)   
+      v < 1 m/s                          10.5 s | rate: n/a (0 seg)   tap: n/a (0 seg)   
+      1-5 m/s                            86.9 s | rate: peak 19.5 Hz  +5.9 dB, amp 2.11 deg/s (40 seg)   tap: peak 19.5 Hz  +4.5 dB, amp 11.10 cnt (40 seg)   
+
+r73_v293r3 -- engaged 0-5 m/s, the line near 22.7 Hz by stratum
+    engaged 0-5 (all)                    70.3 s | rate: peak 22.7 Hz  +5.7 dB, amp 2.22 deg/s (41 seg)   tap: peak 22.7 Hz  +5.6 dB, amp 13.52 cnt (41 seg)   
+      hands-off |bar|<400                20.9 s | rate: n/a (1 seg)   tap: n/a (1 seg)   
+      hands-on |bar|>=400                49.4 s | rate: peak 22.3 Hz  +6.9 dB, amp 7.69 deg/s (7 seg)   tap: peak 22.3 Hz  +7.1 dB, amp 46.06 cnt (7 seg)   
+      |cmd| < 2000                       56.6 s | rate: peak 23.0 Hz  +0.3 dB, amp 0.29 deg/s (26 seg)   tap: peak 22.7 Hz  +2.8 dB, amp 2.37 cnt (26 seg)   
+      |cmd| >= 2000                      13.6 s | rate: n/a (1 seg)   tap: n/a (1 seg)   
+      v < 1 m/s                           4.5 s | rate: n/a (1 seg)   tap: n/a (1 seg)   
+      1-5 m/s                            65.8 s | rate: peak 22.3 Hz  +3.7 dB, amp 2.90 deg/s (38 seg)   tap: peak 22.3 Hz  +5.2 dB, amp 17.26 cnt (38 seg)   
+
+r75_v293r4 -- engaged 0-5 m/s, the line near 20.7 Hz by stratum
+    engaged 0-5 (all)                   110.9 s | rate: peak 20.7 Hz  +2.1 dB, amp 0.53 deg/s (53 seg)   tap: peak 20.7 Hz  +4.4 dB, amp 5.87 cnt (53 seg)   
+      hands-off |bar|<400                83.6 s | rate: peak 21.5 Hz  +2.1 dB, amp 0.15 deg/s (20 seg)   tap: peak 21.1 Hz  +0.5 dB, amp 0.99 cnt (20 seg)   
+      hands-on |bar|>=400                27.3 s | rate: n/a (3 seg)   tap: n/a (3 seg)   
+      |cmd| < 2000                      105.6 s | rate: peak 19.9 Hz  +0.9 dB, amp 0.29 deg/s (44 seg)   tap: peak 21.1 Hz  +0.4 dB, amp 1.08 cnt (44 seg)   
+      |cmd| >= 2000                       5.4 s | rate: n/a (0 seg)   tap: n/a (0 seg)   
+      v < 1 m/s                           9.0 s | rate: n/a (0 seg)   tap: n/a (0 seg)   
+      1-5 m/s                           101.9 s | rate: peak 20.7 Hz  +2.1 dB, amp 0.56 deg/s (49 seg)   tap: peak 20.7 Hz  +4.4 dB, amp 6.10 cnt (49 seg)   

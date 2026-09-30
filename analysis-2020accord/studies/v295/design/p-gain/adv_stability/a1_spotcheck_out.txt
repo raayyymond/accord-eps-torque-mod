@@ -1,0 +1,21 @@
+V294 sha OK 3143616d5b79
+candidate vs V294: 252 bytes differ, pages ['0xe4000', '0xe5000', '0xe6000', '0xe7000', '0xe8000'], range 0xE4364..0xE8299
+spec byte blocks vs my write: 0 of 28 records disagree
+V294 Kp X by slot: {(0, 68, 112, 136, 208): [0, 1, 3, 4, 6, 7], (0, 48, 128, 160, 208): [2, 5], (0, 64, 112, 136, 208): [8, 9], (0, 48, 112, 160, 208): [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]}
+V294 cells: {'fb_a': 1011, 'fb_b': 567, 'fb_clamp': 1024, 'fb_op': 'diff', 'e_shift': 2, 'kp_x': [0, 68, 112, 136, 208], 'kp_y': [960, 960, 960, 960, 960], 'kd_y': [0, 0, 0, 0], 'd_clamp': 0, 'ki': 0, 'p_clamp': 15360, 'sum_clamp': 15360, 'lag_a': 992, 'lag_b': 507, 'gain': 5346, 't_clamp': 3072, 'idx_clamp': 240}
+map X [0, 12, 20, 24, 32, 64, 96, 128, 160, 240] Y [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032]
+cand Kp slot7: [0, 8, 54, 100, 208] [1248, 1248, 1104, 960, 960]
+V282 cells: {'fb_a': 923, 'fb_b': 1560, 'fb_clamp': 46080, 'fb_op': 'sum', 'e_shift': 5, 'kp_x': [0, 68, 112, 136, 208], 'kp_y': [248, 248, 248, 248, 248], 'kd_x': [0, 11, 22, 32], 'kd_y': [128, 128, 128, 128], 'd_clamp': 10240, 'ki': 0, 'p_clamp': 15360, 'lag_a': 992, 'lag_b': 507, 'gain': 5346, 't_clamp': 3072}
+R1 Kp(idx) mine vs designer: [(3, 1248, 1248), (6, 1248, 1248), (18, 1217, 1217), (34, 1167, 1167), (50, 1117, 1117), (75, 1039, 1039), (92, 986, 986), (100, 960, 960)] PASS
+  my LERP == golden lkas_rate_lerp on 0..255: 0 mismatches
+R3 rail V294 2461 first idx 239 ; cand 2461 first idx 239
+  static T mine (V294 -> cand) vs designer: [(3, 30, 40, (30, 40)), (6, 61, 80, (61, 80)), (18, 184, 233, (184, 233)), (34, 350, 426, (350, 426)), (50, 516, 600, (516, 600)), (75, 773, 837, (773, 837)), (92, 949, 974, (949, 974))]
+  max static increase +85 at idx 51 ; monotone cand: True (min step 0) ; monotone V294 True
+  negative rail V294 -2463 cand -2463
+  per-idx slope ratio cand/V294 (5-idx means):  [(0, 1.306), (5, 1.302), (10, 1.235), (20, 1.18), (40, 1.04), (60, 0.906), (80, 0.784), (90, 0.706), (95, 0.698), (100, 1.0), (120, 1.0)]
+R2 |P/x| V294 at [13. 16. 20. 25.] Hz: [2.065 2.073 2.079 2.083]
+R2 |P/x| cand at [13. 16. 20. 25.] Hz: [2.684 2.695 2.703 2.708]
+R2 |P/x| V282 at [13. 16. 20. 25.] Hz: [40.233 42.541 44.9   46.94 ]
+lane vs golden V294: 0 mismatching T of 20000 ticks
+lane vs golden cand: 0 mismatching T of 20000 ticks
+lane vs golden V282: 0 mismatching T of 20000 ticks

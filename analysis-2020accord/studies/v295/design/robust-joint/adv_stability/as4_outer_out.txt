@@ -1,0 +1,53 @@
+VM consts (read from the fork's CarParams via fork_real): {'sf': -0.0006999872680281922, 'chi': 0.0, 'l': 2.8299999237060547}
+incremental sR gain d(theta/sR)/dtheta x 16.84 at 0/50/100/150/200/250/300/350 deg: [1.    1.089 1.243 1.266 1.303 1.616 1.86  1.668]  max 1.875
+cross-check vs harness outer_frf (nominal, 12 m/s): mine [ 0.7516-0.5229j  0.1902-0.5505j -0.0773-0.3145j -0.1084-0.0931j
+ -0.0355+0.0205j] 
+                                                   harness [ 0.7539-0.5241j  0.1916-0.5518j -0.0765-0.3156j -0.1081-0.0941j
+ -0.0359+0.02j  ]
+outer cases: 1836
+F-OUT-1 hits (A GM < 0.95 min(GM_V294, 2) or A Ms > max(1.1 Ms_V294, 1.5)): 27
+   light_b Jx2.5 bx1.00     v30.0 relay 1 pipe 62 srg 1.4 | V294 GM 0.43 PM 39 Ms 1.63 | A GM 0.61 PM 21 Ms 3.16 @1.72 Hz
+   light_b Jx2.5 bx1.00     v26.9 relay 1 pipe 62 srg 1.4 | V294 GM 0.48 PM 33 Ms 1.91 | A GM 0.69 PM 16 Ms 4.20 @1.65 Hz
+   light_b Jx1.0 bx0.56     v30.0 relay 1 pipe 62 srg 1.4 | V294 GM 0.48 PM 54 Ms 1.40 | A GM 0.77 PM 15 Ms 5.10 @2.23 Hz
+   light_b Jx2.5 bx1.00     v22.0 relay 1 pipe 62 srg 1.4 | V294 GM 0.58 PM 24 Ms 2.67 | A GM 0.81 PM 8 Ms 8.22 @1.50 Hz
+   light_b Jx2.5 bx1.00     v30.0 relay 1 pipe 40 srg 1.4 | V294 GM 0.56 PM 23 Ms 2.81 | A GM 0.84 PM 6 Ms 10.38 @1.79 Hz
+   light_b Jx2.5 bx1.00     v30.0 relay 1 pipe 62 srg 1.0 | V294 GM 0.60 PM 24 Ms 2.77 | A GM 0.85 PM 7 Ms 10.31 @1.54 Hz
+   light_b Jx1.0 bx0.56     v26.9 relay 1 pipe 62 srg 1.4 | V294 GM 0.54 PM 45 Ms 1.72 | A GM 0.86 PM 8 Ms 9.52 @2.14 Hz
+   light_b Jx1.0 bx1.00     v30.0 relay 1 pipe 62 srg 1.4 | V294 GM 0.63 PM 36 Ms 2.35 | A GM 0.93 PM 5 Ms 17.78 @2.15 Hz
+   light_b Jx2.5 bx1.00     v30.0 relay 0 pipe 62 srg 1.4 | V294 GM 0.67 PM 19 Ms 3.47 | A GM 0.94 PM 2 Ms 27.12 @1.49 Hz
+   light_b Jx2.5 bx1.00     v26.9 relay 1 pipe 40 srg 1.4 | V294 GM 0.63 PM 18 Ms 3.54 | A GM 0.94 PM 2 Ms 31.15 @1.73 Hz
+   light_b Jx2.5 bx1.00     v26.9 relay 1 pipe 62 srg 1.0 | V294 GM 0.68 PM 19 Ms 3.63 | A GM 0.96 PM 2 Ms 40.96 @1.50 Hz
+   light_b Jx2.5 bx1.00     v17.0 relay 1 pipe 62 srg 1.4 | V294 GM 0.72 PM 14 Ms 4.84 | A GM 1.01 PM 0 Ms 195.93 @1.35 Hz
+   light_b Jx1.0 bx0.56     v22.0 relay 1 pipe 62 srg 1.4 | V294 GM 0.64 PM 30 Ms 2.57 | A GM 1.01 PM 1 Ms 108.16 @1.96 Hz
+   light_b Jx1.0 bx1.00     v26.9 relay 1 pipe 62 srg 1.4 | V294 GM 0.71 PM 26 Ms 3.27 | A GM 1.04 PM 2 Ms 35.89 @2.07 Hz
+   light_b Jx2.5 bx1.00     v26.9 relay 0 pipe 62 srg 1.4 | V294 GM 0.75 PM 14 Ms 4.92 | A GM 1.06 PM 3 Ms 29.32 @1.45 Hz
+   light_b Jx1.0 bx0.56     v30.0 relay 1 pipe 40 srg 1.4 | V294 GM 0.62 PM 30 Ms 2.50 | A GM 1.08 PM 4 Ms 20.76 @2.44 Hz
+   light_b Jx1.0 bx0.56     v30.0 relay 1 pipe 62 srg 1.0 | V294 GM 0.68 PM 29 Ms 2.85 | A GM 1.08 PM 4 Ms 19.94 @2.01 Hz
+   light_b Jx1.0 bx1.50     v30.0 relay 1 pipe 62 srg 1.4 | V294 GM 0.80 PM 17 Ms 5.21 | A GM 1.10 PM 6 Ms 14.76 @2.08 Hz
+   light_b Jx2.5 bx1.00     v22.0 relay 1 pipe 40 srg 1.4 | V294 GM 0.76 PM 10 Ms 6.20 | A GM 1.13 PM 4 Ms 16.64 @1.57 Hz
+   light_b Jx2.5 bx1.00     v22.0 relay 1 pipe 62 srg 1.0 | V294 GM 0.81 PM 10 Ms 7.11 | A GM 1.14 PM 6 Ms 13.44 @1.37 Hz
+cases where A's outer margin is WORSE than V294's at all: 290 of 1836
+   J_hi2 Jx1.0 bx1.00       v 1.5 relay 0 pipe 62 srg 1.0 | V294 GM 11.09 PM 123 Ms 1.177 | A GM 12.43 PM 123 Ms 1.179
+   J_hi2 Jx1.0 bx1.00       v 3.1 relay 0 pipe 62 srg 1.0 | V294 GM 11.07 PM 123 Ms 1.177 | A GM 12.41 PM 123 Ms 1.179
+   J_hi2 Jx1.0 bx1.00       v 1.5 relay 0 pipe 40 srg 1.0 | V294 GM 14.52 PM 124 Ms 1.152 | A GM 16.80 PM 124 Ms 1.154
+   J_hi2 Jx1.0 bx1.00       v 3.1 relay 0 pipe 40 srg 1.0 | V294 GM 14.49 PM 124 Ms 1.152 | A GM 16.77 PM 124 Ms 1.154
+   b_hi Jx1.0 bx1.00        v 5.0 relay 0 pipe 62 srg 1.0 | V294 GM 13.42 PM 125 Ms 1.130 | A GM 15.57 PM 125 Ms 1.134
+   b_hi Jx1.0 bx1.00        v 5.0 relay 0 pipe 62 srg 1.4 | V294 GM 9.59 PM 118 Ms 1.186 | A GM 11.12 PM 116 Ms 1.190
+   J_hi Jx1.0 bx1.00        v 1.5 relay 0 pipe 62 srg 1.0 | V294 GM 9.30 PM 116 Ms 1.218 | A GM 10.80 PM 115 Ms 1.222
+   J_hi Jx1.0 bx1.00        v 1.5 relay 0 pipe 62 srg 1.4 | V294 GM 6.65 PM 94 Ms 1.316 | A GM 7.71 PM 91 Ms 1.318
+   J_hi Jx1.0 bx1.00        v 3.1 relay 0 pipe 62 srg 1.0 | V294 GM 9.28 PM 116 Ms 1.218 | A GM 10.78 PM 114 Ms 1.223
+   J_hi Jx1.0 bx1.00        v 3.1 relay 0 pipe 62 srg 1.4 | V294 GM 6.63 PM 94 Ms 1.316 | A GM 7.70 PM 90 Ms 1.319
+   b_hi Jx1.0 bx1.00        v 1.5 relay 0 pipe 62 srg 1.4 | V294 GM 9.50 PM 92 Ms 1.205 | A GM 11.04 PM 89 Ms 1.215
+   b_hi Jx1.0 bx1.00        v 3.1 relay 0 pipe 62 srg 1.0 | V294 GM 13.28 PM 103 Ms 1.145 | A GM 15.42 PM 101 Ms 1.154
+   b_hi Jx1.0 bx1.00        v 1.5 relay 0 pipe 62 srg 1.0 | V294 GM 13.30 PM 103 Ms 1.145 | A GM 15.45 PM 101 Ms 1.154
+   b_hi Jx1.0 bx1.00        v 3.1 relay 0 pipe 62 srg 1.4 | V294 GM 9.48 PM 92 Ms 1.206 | A GM 11.01 PM 89 Ms 1.215
+   b_hi Jx1.0 bx1.00        v 5.0 relay 1 pipe 62 srg 1.0 | V294 GM 8.63 PM 116 Ms 1.206 | A GM 10.02 PM 114 Ms 1.208
+
+per speed (relay on, pipe 22 ms, srg 1.0): V294 -> A   GM / PM / Ms
+  nominal                2: 11.14/88/1.22->15.07/83/1.23 | 3: 11.12/88/1.23->15.04/83/1.23 | 5: 11.13/113/1.20->14.97/107/1.20 | 8: 10.41/145/1.19->13.86/145/1.17 | 12: 15.17/143/1.12->18.26/143/1.12 | 17: 25.98/inf/1.06->28.61/inf/1.06 | 22: 22.27/122/1.07->24.29/122/1.07 | 27: 19.79/139/1.09->21.43/139/1.09 | 30: 17.60/142/1.10->19.06/142/1.10
+  b_lo                   2: 8.18/75/1.34->11.89/69/1.34 | 3: 8.17/75/1.34->11.86/69/1.34 | 5: 8.21/98/1.29->11.83/89/1.28 | 8: 7.70/147/1.26->10.97/147/1.23 | 12: 8.74/149/1.21->11.56/149/1.19 | 17: 14.78/inf/1.10->17.27/inf/1.09 | 22: 12.51/124/1.12->14.42/124/1.11 | 27: 11.00/144/1.15->12.54/144/1.14 | 30: 9.78/150/1.17->11.15/150/1.16
+  F_hi                   2: 11.14/88/1.22->15.07/83/1.23 | 3: 11.12/88/1.23->15.04/83/1.23 | 5: 11.13/113/1.20->14.97/107/1.20 | 8: 10.41/145/1.19->13.86/145/1.17 | 12: 15.17/143/1.12->18.26/143/1.12 | 17: 25.98/inf/1.06->28.61/inf/1.06 | 22: 22.27/122/1.07->24.29/122/1.07 | 27: 19.79/139/1.09->21.43/139/1.09 | 30: 17.60/142/1.10->19.06/142/1.10
+  J_hi2                  2: 12.61/113/1.20->15.05/111/1.20 | 3: 12.58/113/1.20->15.02/111/1.20 | 5: 12.03/138/1.19->14.42/138/1.19 | 8: 10.49/124/1.20->12.63/124/1.19 | 12: 6.80/149/1.36->8.38/149/1.33 | 17: 15.11/inf/1.11->16.84/inf/1.10 | 22: 16.15/122/1.10->17.58/122/1.10 | 27: 16.77/135/1.10->17.98/135/1.10 | 30: 14.92/140/1.12->15.99/140/1.11
+  light_b                2: 4.49/42/1.87->7.74/41/1.77 | 3: 4.48/42/1.87->7.72/41/1.78 | 5: 4.42/48/1.78->7.57/47/1.67 | 8: 4.02/53/1.74->6.85/54/1.59 | 12: 3.46/64/1.72->5.81/67/1.50 | 17: 2.62/50/2.01->4.38/57/1.62 | 22: 2.05/39/2.44->3.42/51/1.76 | 27: 1.69/31/3.09->2.80/46/1.92 | 30: 1.50/24/3.85->2.49/41/2.09
+worst GM overall: V294 0.43 (light_b Jx2.5 bx1.00 v30.0 relay 1 pipe 62 srg 1.4) ; A 0.61 (light_b Jx2.5 bx1.00 v30.0 relay 1 pipe 62 srg 1.4)
+worst Ms overall: V294 355.05 (light_b Jx1.0 bx0.56 v11.9 relay 1 pipe 62 srg 1.4) ; A 195.93 (light_b Jx2.5 bx1.00 v17.0 relay 1 pipe 62 srg 1.4)

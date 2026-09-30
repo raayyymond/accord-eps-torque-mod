@@ -1,0 +1,3 @@
+V295 cells diff vs V294 (from the IMAGES): {'fb_b': (567, 1050)}  edit class: cal-only  problems: []
+score(): V295  98.7 s  hash 1f6452189f906043
+done 99 s

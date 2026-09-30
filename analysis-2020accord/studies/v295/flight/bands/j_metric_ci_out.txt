@@ -1,0 +1,8 @@
+V282     00000064--ce6b0b0ebb  n  44  J 0.4653  95% block-bootstrap [0.3077, 0.8781]  leave-one-block-out [0.4310, 0.6400]  worst single window carries 12.7 % of the error
+          sub-bands (value [CI]): 0.15-0.30 0.119 [0.107, 0.155]  0.30-0.60 0.069 [0.038, 0.135]  0.60-1.20 0.123 [0.063, 0.315]  1.20-2.40 0.154 [0.096, 0.278]
+T4 rev4  00000075--6c8687d5bd  n  25  J 1.0151  95% block-bootstrap [0.8776, 1.3122]  leave-one-block-out [0.9881, 1.1087]  worst single window carries 14.0 % of the error
+          sub-bands (value [CI]): 0.15-0.30 0.731 [0.652, 0.859]  0.30-0.60 0.152 [0.117, 0.222]  0.60-1.20 0.038 [0.031, 0.056]  1.20-2.40 0.094 [0.045, 0.206]
+T5 rev5  00000076--d0b7ea7e4d  n  27  J 1.1780  95% block-bootstrap [1.0081, 1.4757]  leave-one-block-out [1.1192, 1.2845]  worst single window carries 10.8 % of the error
+          sub-bands (value [CI]): 0.15-0.30 0.980 [0.847, 1.220]  0.30-0.60 0.104 [0.072, 0.159]  0.60-1.20 0.036 [0.025, 0.057]  1.20-2.40 0.058 [0.037, 0.091]
+V294     00000071--a7b8ba5d9d  n  18  J 0.4168  95% block-bootstrap [0.3139, 0.7584]  leave-one-block-out [0.3709, 0.4889]  worst single window carries 18.0 % of the error
+          sub-bands (value [CI]): 0.15-0.30 0.170 [0.133, 0.269]  0.30-0.60 0.058 [0.034, 0.127]  0.60-1.20 0.075 [0.039, 0.109]  1.20-2.40 0.115 [0.052, 0.314]

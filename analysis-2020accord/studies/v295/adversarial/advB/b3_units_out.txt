@@ -1,0 +1,51 @@
+images: V295 5c044d6576314052 | V294 3143616d5b79bdb7 | V282 0ea98d06b292ca1a
+  V282 a 923 b 1560 C 46080 sh 5 op sum Kp [248, 248, 248, 248, 248] Kd [128, 128, 128, 128] Dcl 10240 P/S/T clamps 15360/15360/3072 lag 992/507 gain 5346 (disp 0x7CD0) map [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032]
+       G opp X[32, 38, 80, 112] Y[255, 255, 255, 0] same X[32, 42, 80, 112] Y[255, 255, 255, 0] | act X[4, 6, 8, 10] Y[255, 255, 255, 255] | taperB X[0, 3, 6, 8, 10, 20] Y[255, 255, 255, 255, 255, 205] | taperD X[16, 26, 38, 48, 64, 96] Y[255, 243, 218, 179, 77, 77] | barfilt 31/634
+  V294 a 1011 b 567 C 1024 sh 2 op diff Kp [960, 960, 960, 960, 960] Kd [0, 0, 0, 0] Dcl 0 P/S/T clamps 15360/15360/3072 lag 992/507 gain 5346 (disp 0x7CD0) map [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032]
+       G opp X[32, 38, 80, 112] Y[255, 255, 255, 0] same X[32, 42, 80, 112] Y[255, 255, 255, 0] | act X[4, 6, 8, 10] Y[255, 255, 255, 255] | taperB X[0, 3, 6, 8, 10, 20] Y[255, 255, 255, 255, 255, 205] | taperD X[16, 26, 38, 48, 64, 96] Y[255, 243, 218, 179, 77, 77] | barfilt 31/634
+  V295 a 1011 b 1050 C 1024 sh 2 op diff Kp [960, 960, 960, 960, 960] Kd [0, 0, 0, 0] Dcl 0 P/S/T clamps 15360/15360/3072 lag 992/507 gain 5346 (disp 0x7CD0) map [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032]
+       G opp X[32, 38, 80, 112] Y[255, 255, 255, 0] same X[32, 42, 80, 112] Y[255, 255, 255, 0] | act X[4, 6, 8, 10] Y[255, 255, 255, 255] | taperB X[0, 3, 6, 8, 10, 20] Y[255, 255, 255, 255, 255, 205] | taperD X[16, 26, 38, 48, 64, 96] Y[255, 243, 218, 179, 77, 77] | barfilt 31/634
+
+[0] my lane vs the golden model, tick for tick (random wire / x sequences, bar 0, request on, ramp full)
+   V294: 60000 ticks, 0 mismatches (T, r26, S)
+   V295: 60000 ticks, 0 mismatches (T, r26, S)
+
+[1] static surface (settled T at constant wire, x = 0), pol -1 so + wire -> + T as on the tap
+   V294: -3870:-2462 -2000:-1279 -1000:-639 -500:-320 500:331 1000:649 2000:1291 3000:1933 3870:2462 4096:2462
+   V295: -3870:-2462 -2000:-1279 -1000:-639 -500:-320 500:331 1000:649 2000:1291 3000:1933 3870:2462 4096:2462
+   V295 sub-rail slope (wire 0..3686, LS): 0.6396 T per wire count ; V294 identical: True
+   closed form T per sp count = (Kp/256)*2^sh*(254/256)*DC_lag*gain/32768 = 2.4044 ; map slope 4.30 sp/idx -> 10.339 T/idx ; / 16.125736 wire per idx -> 0.6411 T/wire
+   rail: +2462 / -2462 (wire +-4096)
+   T per openpilot torque unit at 4094.1 wire/unit (b2 [4]) = 2618.6
+   T per openpilot torque unit at 4091.0 wire/unit (b2 [4]) = 2616.6
+   T per openpilot torque unit at 4096.0 wire/unit (b2 [4]) = 2619.8
+
+[2] K_alpha: constant x acceleration (alpha deg/s^2 of x/8), sp = 0, settled trim T
+   V294: numeric at 100 deg/s^2: r26 34.89 (closed 0.349/deg/s^2 -> 34.89), T 21.00 -> K_alpha 0.2100 T per deg/s^2 of x/8 (closed 0.2097) ; per deg/s^2 of STEERING WHEEL on centre (kappa 1.16): 0.1810 ; beyond 160 deg (0.965): 0.2176
+        T per r26 count = 0.60109 ; r26 counts per deg/s^2 = 0.34892
+   V295: numeric at 100 deg/s^2: r26 64.61 (closed 0.646/deg/s^2 -> 64.62), T 39.00 -> K_alpha 0.3900 T per deg/s^2 of x/8 (closed 0.3884) ; per deg/s^2 of STEERING WHEEL on centre (kappa 1.16): 0.3362 ; beyond 160 deg (0.965): 0.4041
+        T per r26 count = 0.60109 ; r26 counts per deg/s^2 = 0.64615
+
+[3] controller T / omega (omega = x/8 in deg/s), exact 1 kHz z-domain, pol applied so a POSITIVE damping number means the torque OPPOSES the rate
+   f Hz  | V294 |T/w| ph  damp  inert | V295 |T/w| ph  damp  inert | ratio
+     0.3 |  0.390  +78.2  0.080 +0.2028 |  0.723  +78.2  0.148 +0.3755 | 1.8519
+     0.5 |  0.637  +70.5  0.212 +0.1911 |  1.179  +70.5  0.393 +0.3539 | 1.8519
+     1.0 |  1.160  +52.6  0.704 +0.1467 |  2.148  +52.6  1.304 +0.2717 | 1.8519
+     2.0 |  1.747  +23.9  1.598 +0.0563 |  3.235  +23.9  2.959 +0.1042 | 1.8519
+     2.5 |  1.863  +12.8  1.817 +0.0263 |  3.450  +12.8  3.365 +0.0487 | 1.8519
+     3.0 |  1.907   +3.4  1.904 +0.0061 |  3.532   +3.4  3.526 +0.0112 | 1.8519
+     5.0 |  1.764  -22.6  1.629 -0.0216 |  3.267  -22.6  3.017 -0.0399 | 1.8519
+    10.0 |  1.184  -51.7  0.734 -0.0148 |  2.192  -51.7  1.358 -0.0274 | 1.8519
+    20.0 |  0.652  -70.0  0.223 -0.0049 |  1.208  -70.0  0.412 -0.0090 | 1.8519
+   numeric lock-in on my lane (x = 500 sin; 2000 put V295 into the C clamp at 2.5 Hz -- see report), T per x count, vs closed form:
+     V294  2.5 Hz: numeric |0.23280| +12.8 deg ; closed |0.23290| +12.8 deg
+     V295  2.5 Hz: numeric |0.43133| +12.8 deg ; closed |0.43130| +12.8 deg
+     V294 20.0 Hz: numeric |0.08147| -70.2 deg ; closed |0.08152| -70.0 deg
+     V295 20.0 Hz: numeric |0.15097| -70.0 deg ; closed |0.15097| -70.0 deg
+   per deg/s of STEERING WHEEL on centre, divide the damping by kappa 1.16: V294 1.566 -> V295 2.901 at 2.5 Hz
+
+[4] |P/x| and |PID/x| at 20 Hz (P or P+D counts per x count), each from its own image
+   V282: |P/x| 19.038  |(P+D)/x| 44.900   (Kp 248, Kd 128, op sum, a 923, b 1560)
+   V294: |P/x| 2.079  |(P+D)/x| 2.079   (Kp 960, Kd 0, op diff, a 1011, b 567)
+   V295: |P/x| 3.850  |(P+D)/x| 3.850   (Kp 960, Kd 0, op diff, a 1011, b 1050)
+   V295/V294 = 1.8519 ; V295 vs V282 -21.34 dB ; V282 |PID/x| 44.90

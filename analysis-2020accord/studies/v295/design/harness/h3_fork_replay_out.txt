@@ -1,0 +1,36 @@
+  alignment probe cs_shift -1: max|la_act sim - log| over 2351 active frames = 0.0107
+  alignment probe cs_shift +0: max|la_act sim - log| over 2351 active frames = 0.000111
+  alignment probe cs_shift +1: max|la_act sim - log| over 2351 active frames = 0.0107
+REPLAY r71b, real LatControlTorque @20d24ab79 -- (1) PRE-REGISTERED input alignment: previous-value carState, cs_shift +0, 11.3 s
+   101157 frames, 79744 active in both
+   output  R2 0.9999989  rms 0.000129  max|d| 0.00382  exact(1e-6) 0.2119
+   p       R2 0.9999999  rms 0.000397  max|d| 0.015  exact(1e-6) 0.9588
+   i       R2 1.0000000  rms 9.14e-05  max|d| 0.000385  exact(1e-6) 0.0427
+   f       R2 0.9999958  rms 0.00149  max|d| 0.0472  exact(1e-6) 0.9511
+   la_des  R2 1.0000000  rms 6.15e-08  max|d| 1.59e-05  exact(1e-6) 1.0000
+   la_act  R2 0.9999997  rms 0.000356  max|d| 0.0161  exact(1e-6) 0.9593
+   jerk    R2 1.0000000  rms 1.34e-08  max|d| 2.91e-07  exact(1e-6) 1.0000
+   error   R2 0.9999999  rms 0.000441  max|d| 0.0166  exact(1e-6) 0.9588
+   active flag mismatches: 0
+   actuators.torque vs carControl: R2 0.9999989 rms 0.000129
+   carOutput torque (rate-limited): R2 0.9999954 rms 0.000264
+   0xE4 counts: exact 0.9497, within +-1 0.9824, max |d| 102
+   H3a clauses: output R2>=0.999 yes, rms<=0.003 yes, p/i/f R2>=0.995 yes, carOutput R2>=0.999 yes, 0xE4 +-1 >= 99% NO
+H3a FAIL
+
+(2) POST-HOC alignment: the (carState, liveParameters) samples identified from the logged actualLateralAccel on 1.0000 of active frames; carState differs from previous-value on 0.0000, liveParameters (one message older) on 0.0409 of active frames
+   101157 frames, 79744 active in both
+   output  R2 1.0000000  rms 1.78e-07  max|d| 4.42e-06  exact(1e-6) 0.9891
+   p       R2 1.0000000  rms 5.75e-08  max|d| 1.24e-06  exact(1e-6) 1.0000
+   i       R2 1.0000000  rms 1.53e-08  max|d| 1.35e-07  exact(1e-6) 1.0000
+   f       R2 1.0000000  rms 2.49e-06  max|d| 6.19e-05  exact(1e-6) 0.9843
+   la_des  R2 1.0000000  rms 2.47e-08  max|d| 3.16e-07  exact(1e-6) 1.0000
+   la_act  R2 1.0000000  rms 1.85e-08  max|d| 2.27e-07  exact(1e-6) 1.0000
+   jerk    R2 1.0000000  rms 1.31e-08  max|d| 2.38e-07  exact(1e-6) 1.0000
+   error   R2 1.0000000  rms 5.22e-08  max|d| 1.07e-06  exact(1e-6) 1.0000
+   active flag mismatches: 0
+   actuators.torque vs carControl: R2 1.0000000 rms 1.78e-07
+   carOutput torque (rate-limited): R2 0.9999965 rms 0.00023
+   0xE4 counts: exact 0.9994, within +-1 0.9996, max |d| 102
+   H3a clauses: output R2>=0.999 yes, rms<=0.003 yes, p/i/f R2>=0.995 yes, carOutput R2>=0.999 yes, 0xE4 +-1 >= 99% yes
+H3a PASS

@@ -1,0 +1,245 @@
+H4 RETRODICTION  r71b, 21 hands-off engaged chunks, 608 s; V294 cells from the image; fork port (== real)
+
+  MEASURED on the chunks, S2 band edges, S2's own form (all-frame slope) -- vs the bands report (S2 row):
+     1-8     110 s  track(all) 0.831 [report 0.836]  track(|plan|>0.3) 0.838  hold 0.838 [report 0.81]  i-share 0.428 [report 0.353]
+     8-15    267 s  track(all) 0.796 [report 0.800]  track(|plan|>0.3) 0.808  hold 0.691 [report 0.69]  i-share 0.375 [report 0.343]
+     15-22   158 s  track(all) 0.831 [report 0.831]  track(|plan|>0.3) 0.830  hold 0.673 [report 0.67]  i-share 0.415 [report 0.411]
+     >22      71 s  track(all) 0.934 [report 0.934]  track(|plan|>0.3) 0.924  hold 0.943 [report 0.94]  i-share 0.256 [report 0.251]
+
+  mode B dist=c0: 231 lanes, 19.9 s
+
+  mode B dist=lp: 231 lanes, 19.2 s
+
+  mode B dist=full: 231 lanes, 19.2 s
+
+  ===== nominal, dist=c0   (per-chunk median angle R2 0.934, rate R2 0.231)
+     band   metric                   meas      sim     grade
+     0-5    track_gain                0.873    0.806   DIR
+     0-5    turn_hold                   nan      nan   n/t
+     0-5    i_share                   0.509    0.511   FIT
+     0-5    cmd_rms                 549.932  632.836   DIR
+     0-5    trim_ff                   0.057    0.025   NOT
+     0-5    r_lo                     13.750    9.110   DIR
+     0-5    r_mid                     4.840    1.272   NOT
+     0-5    r_hi                      1.432    0.458   NOT
+     0-5    hard16                      nan      nan   n/t
+     0-5    dwell_per_min            25.730   59.517   FIT
+     0-5    VERDICT: NOT FIT
+     5-10   track_gain                0.871    0.837   FIT
+     5-10   turn_hold                 0.796    0.733   DIR
+     5-10   i_share                   0.379    0.437   FIT
+     5-10   cmd_rms                 514.447  578.037   FIT
+     5-10   trim_ff                   0.063    0.023   NOT
+     5-10   r_lo                     13.650    7.099   DIR
+     5-10   r_mid                     8.834    1.139   NOT
+     5-10   r_hi                      2.582    0.349   NOT
+     5-10   hard16                   14.876    1.123   NOT
+     5-10   dwell_per_min            11.233   28.079   FIT
+     5-10   VERDICT: NOT FIT
+     10-15  track_gain                0.583    0.564   FIT
+     10-15  turn_hold                 0.505    0.529   FIT
+     10-15  i_share                   0.373    0.384   FIT
+     10-15  cmd_rms                 247.017  239.193   FIT
+     10-15  trim_ff                   0.034    0.010   NOT
+     10-15  r_lo                      2.125    1.287   DIR
+     10-15  r_mid                     2.680    0.278   NOT
+     10-15  r_hi                      1.147    0.148   NOT
+     10-15  hard16                      nan      nan   n/t
+     10-15  dwell_per_min            10.827   27.748   FIT
+     10-15  VERDICT: NOT FIT
+     15-22  track_gain                0.830    0.475   NOT
+     15-22  turn_hold                 0.673    0.381   NOT
+     15-22  i_share                   0.415    0.478   FIT
+     15-22  cmd_rms                 325.536  473.224   DIR
+     15-22  trim_ff                   0.031    0.002   NOT
+     15-22  r_lo                      1.496    0.567   NOT
+     15-22  r_mid                     3.140    0.182   NOT
+     15-22  r_hi                      1.407    0.096   NOT
+     15-22  hard16                    7.624    0.203   NOT
+     15-22  dwell_per_min             7.231   28.921   DIR
+     15-22  VERDICT: NOT FIT
+     22+    track_gain                0.924    0.830   DIR
+     22+    turn_hold                 0.943    0.870   DIR
+     22+    i_share                   0.256    0.350   DIR
+     22+    cmd_rms                 280.785  339.571   DIR
+     22+    trim_ff                   0.015    0.003   NOT
+     22+    r_lo                      0.549    0.421   DIR
+     22+    r_mid                     1.059    0.168   NOT
+     22+    r_hi                      0.678    0.097   NOT
+     22+    hard16                    1.767    0.164   NOT
+     22+    dwell_per_min             4.226   13.523   DIR
+     22+    VERDICT: NOT FIT
+
+  ===== nominal, dist=lp   (per-chunk median angle R2 0.981, rate R2 0.288)
+     band   metric                   meas      sim     grade
+     0-5    track_gain                0.873    0.840   FIT
+     0-5    turn_hold                   nan      nan   n/t
+     0-5    i_share                   0.509    0.513   FIT
+     0-5    cmd_rms                 549.932  603.412   FIT
+     0-5    trim_ff                   0.057    0.028   NOT
+     0-5    r_lo                     13.750    9.206   DIR
+     0-5    r_mid                     4.840    1.148   NOT
+     0-5    r_hi                      1.432    0.437   NOT
+     0-5    hard16                      nan      nan   n/t
+     0-5    dwell_per_min            25.730   64.343   FIT
+     0-5    VERDICT: NOT FIT
+     5-10   track_gain                0.871    0.865   FIT
+     5-10   turn_hold                 0.796    0.780   FIT
+     5-10   i_share                   0.379    0.387   FIT
+     5-10   cmd_rms                 514.447  523.570   FIT
+     5-10   trim_ff                   0.063    0.025   NOT
+     5-10   r_lo                     13.650    7.277   DIR
+     5-10   r_mid                     8.834    1.095   NOT
+     5-10   r_hi                      2.582    0.340   NOT
+     5-10   hard16                   14.876    1.243   NOT
+     5-10   dwell_per_min            11.233   32.090   FIT
+     5-10   VERDICT: NOT FIT
+     10-15  track_gain                0.583    0.586   FIT
+     10-15  turn_hold                 0.505    0.592   DIR
+     10-15  i_share                   0.373    0.395   FIT
+     10-15  cmd_rms                 247.017  242.417   FIT
+     10-15  trim_ff                   0.034    0.010   NOT
+     10-15  r_lo                      2.125    1.290   DIR
+     10-15  r_mid                     2.680    0.262   NOT
+     10-15  r_hi                      1.147    0.143   NOT
+     10-15  hard16                      nan      nan   n/t
+     10-15  dwell_per_min            10.827   31.809   FIT
+     10-15  VERDICT: NOT FIT
+     15-22  track_gain                0.830    0.764   DIR
+     15-22  turn_hold                 0.673    0.636   FIT
+     15-22  i_share                   0.415    0.436   FIT
+     15-22  cmd_rms                 325.536  349.509   FIT
+     15-22  trim_ff                   0.031    0.004   NOT
+     15-22  r_lo                      1.496    0.617   NOT
+     15-22  r_mid                     3.140    0.186   NOT
+     15-22  r_hi                      1.407    0.096   NOT
+     15-22  hard16                    7.624    0.175   NOT
+     15-22  dwell_per_min             7.231   27.780   DIR
+     15-22  VERDICT: NOT FIT
+     22+    track_gain                0.924    0.917   FIT
+     22+    turn_hold                 0.943    0.941   FIT
+     22+    i_share                   0.256    0.284   FIT
+     22+    cmd_rms                 280.785  282.839   FIT
+     22+    trim_ff                   0.015    0.004   NOT
+     22+    r_lo                      0.549    0.433   FIT
+     22+    r_mid                     1.059    0.173   NOT
+     22+    r_hi                      0.678    0.097   NOT
+     22+    hard16                    1.767    0.159   NOT
+     22+    dwell_per_min             4.226   10.987   FIT
+     22+    VERDICT: NOT FIT
+
+  ===== nominal, dist=full   (per-chunk median angle R2 0.999, rate R2 0.967)
+     band   metric                   meas      sim     grade
+     0-5    track_gain                0.873    0.874   FIT
+     0-5    turn_hold                   nan      nan   n/t
+     0-5    i_share                   0.509    0.508   FIT
+     0-5    cmd_rms                 549.932  550.751   FIT
+     0-5    trim_ff                   0.057    0.058   FIT
+     0-5    r_lo                     13.750   13.882   FIT
+     0-5    r_mid                     4.840    4.942   FIT
+     0-5    r_hi                      1.432    1.443   FIT
+     0-5    hard16                      nan      nan   n/t
+     0-5    dwell_per_min            25.730   57.909   FIT
+     0-5    VERDICT: FIT
+     5-10   track_gain                0.871    0.872   FIT
+     5-10   turn_hold                 0.796    0.788   FIT
+     5-10   i_share                   0.379    0.380   FIT
+     5-10   cmd_rms                 514.447  517.299   FIT
+     5-10   trim_ff                   0.063    0.063   FIT
+     5-10   r_lo                     13.650   13.795   FIT
+     5-10   r_mid                     8.834    8.828   FIT
+     5-10   r_hi                      2.582    2.584   FIT
+     5-10   hard16                   14.876   14.881   FIT
+     5-10   dwell_per_min            11.233   14.440   FIT
+     5-10   VERDICT: FIT
+     10-15  track_gain                0.583    0.575   FIT
+     10-15  turn_hold                 0.505    0.491   FIT
+     10-15  i_share                   0.373    0.381   FIT
+     10-15  cmd_rms                 247.017  250.723   FIT
+     10-15  trim_ff                   0.034    0.035   FIT
+     10-15  r_lo                      2.125    2.222   FIT
+     10-15  r_mid                     2.680    2.744   FIT
+     10-15  r_hi                      1.147    1.158   FIT
+     10-15  hard16                      nan      nan   n/t
+     10-15  dwell_per_min            10.827   10.490   FIT
+     10-15  VERDICT: FIT
+     15-22  track_gain                0.830    0.830   FIT
+     15-22  turn_hold                 0.673    0.670   FIT
+     15-22  i_share                   0.415    0.424   FIT
+     15-22  cmd_rms                 325.536  327.870   FIT
+     15-22  trim_ff                   0.031    0.031   FIT
+     15-22  r_lo                      1.496    1.571   FIT
+     15-22  r_mid                     3.140    3.133   FIT
+     15-22  r_hi                      1.407    1.395   FIT
+     15-22  hard16                    7.624    7.524   FIT
+     15-22  dwell_per_min             7.231    5.708   FIT
+     15-22  VERDICT: FIT
+     22+    track_gain                0.924    0.922   FIT
+     22+    turn_hold                 0.943    0.935   FIT
+     22+    i_share                   0.256    0.274   FIT
+     22+    cmd_rms                 280.785  281.109   FIT
+     22+    trim_ff                   0.015    0.015   FIT
+     22+    r_lo                      0.549    0.598   FIT
+     22+    r_mid                     1.059    1.063   FIT
+     22+    r_hi                      0.678    0.670   FIT
+     22+    hard16                    1.767    1.755   FIT
+     22+    dwell_per_min             4.226    0.845   DIR
+     22+    VERDICT: FIT
+
+  VERDICT MATRIX (band verdict per member x disturbance model):
+     member         dist  0-5               5-10              10-15             15-22             22+                angleR2 rateR2
+     nominal        c0    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.934  0.231
+     b_lo           c0    DIRECTIONAL ONLY  NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.955  0.180
+     b_hi           c0    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.905  0.252
+     F_hi           c0    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.932  0.231
+     F_lo           c0    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.935  0.238
+     J_lo           c0    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.926  0.241
+     J_hi           c0    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.927  0.237
+     ms_free        c0    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.929  0.208
+     tau6           c0    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.934  0.227
+     light_b        c0    FIT               NOT FIT           DIRECTIONAL ONLY  NOT FIT           DIRECTIONAL ONLY    0.928 -0.233
+     nominal_kappa  c0    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.954  0.248
+     nominal        lp    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.981  0.288
+     b_lo           lp    DIRECTIONAL ONLY  NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.980  0.251
+     b_hi           lp    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.976  0.285
+     F_hi           lp    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.978  0.285
+     F_lo           lp    DIRECTIONAL ONLY  NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.982  0.277
+     J_lo           lp    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.979  0.297
+     J_hi           lp    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.979  0.284
+     ms_free        lp    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.978  0.246
+     tau6           lp    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.981  0.287
+     light_b        lp    FIT               NOT FIT           DIRECTIONAL ONLY  NOT FIT           DIRECTIONAL ONLY    0.984 -0.053
+     nominal_kappa  lp    NOT FIT           NOT FIT           NOT FIT           NOT FIT           NOT FIT             0.981  0.304
+     nominal        full  FIT               FIT               FIT               FIT               FIT                 0.999  0.967
+     b_lo           full  FIT               FIT               FIT               FIT               FIT                 0.999  0.963
+     b_hi           full  FIT               FIT               FIT               FIT               FIT                 0.999  0.971
+     F_hi           full  FIT               FIT               FIT               FIT               FIT                 0.999  0.966
+     F_lo           full  FIT               FIT               FIT               FIT               FIT                 0.999  0.967
+     J_lo           full  FIT               FIT               FIT               FIT               DIRECTIONAL ONLY    0.999  0.969
+     J_hi           full  FIT               FIT               FIT               FIT               FIT                 0.999  0.965
+     ms_free        full  FIT               FIT               FIT               FIT               FIT                 0.999  0.964
+     tau6           full  FIT               FIT               FIT               FIT               FIT                 0.999  0.967
+     light_b        full  FIT               FIT               FIT               FIT               FIT                 0.999  0.933
+     nominal_kappa  full  FIT               FIT               FIT               DIRECTIONAL ONLY  FIT                 0.994  0.969
+
+  TRACKING GAIN (|plan| > 0.3) by member, dist=c0 / lp:   measured 0.873 0.871 0.583 0.830 0.924
+     nominal        c0 0.806 0.837 0.564 0.475 0.830   lp 0.840 0.865 0.586 0.764 0.917
+     b_lo           c0 0.812 0.837 0.580 0.478 0.837   lp 0.847 0.866 0.595 0.766 0.919
+     b_hi           c0 0.797 0.833 0.544 0.470 0.821   lp 0.829 0.862 0.576 0.761 0.914
+     F_hi           c0 0.799 0.835 0.553 0.473 0.829   lp 0.830 0.863 0.579 0.763 0.916
+     F_lo           c0 0.810 0.837 0.568 0.476 0.831   lp 0.845 0.865 0.589 0.764 0.917
+     J_lo           c0 0.815 0.835 0.548 0.473 0.823   lp 0.842 0.864 0.579 0.763 0.914
+     J_hi           c0 0.749 0.803 0.559 0.484 0.820   lp 0.826 0.856 0.593 0.766 0.918
+     ms_free        c0 0.778 0.772 0.482 0.454 0.825   lp 0.834 0.845 0.557 0.760 0.919
+     tau6           c0 0.806 0.837 0.563 0.475 0.830   lp 0.840 0.865 0.586 0.764 0.917
+     light_b        c0 0.868 0.909 0.697 0.880 0.968   lp 0.871 0.889 0.621 0.849 0.937
+     nominal_kappa  c0 0.808 0.852 0.613 0.521 0.871   lp 0.842 0.879 0.638 0.826 0.959
+
+  PRE-REGISTERED HARNESS-FAIL SENTENCE fires: NO
+
+  MODE A (recorded command, dist=full) literal cmd->alpha gain-phase fit, per-chunk medians (+ right frame):
+     0.3-1  drive R2 0.21 |G| 0.13 ph +83   |  sim R2 0.25 |G| 0.12 ph +83   (metric agent, all speeds, pooled: 0.3-1 0.37/0.44/+51, 1-3 0.55/1.88/+25, 3-8 0.16/2.48/+18)
+     1-3    drive R2 0.32 |G| 1.42 ph +20   |  sim R2 0.33 |G| 1.44 ph +30   (metric agent, all speeds, pooled: 0.3-1 0.37/0.44/+51, 1-3 0.55/1.88/+25, 3-8 0.16/2.48/+18)
+     3-8    drive R2 0.21 |G| 3.77 ph +39   |  sim R2 0.18 |G| 3.31 ph +66   (metric agent, all speeds, pooled: 0.3-1 0.37/0.44/+51, 1-3 0.55/1.88/+25, 3-8 0.16/2.48/+18)
+
+  runtime 77 s

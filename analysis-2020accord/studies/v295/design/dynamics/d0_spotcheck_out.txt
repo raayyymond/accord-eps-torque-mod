@@ -1,0 +1,16 @@
+V294 image sha256 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+  (1) V294                       8000 ticks: mismatches (T,E,P,D,S,y) 0   |T| max 1800 |D| max 0
+  (1) lag 962/982                8000 ticks: mismatches (T,E,P,D,S,y) 0   |T| max 655 |D| max 0
+  (1) Kd512 Dcl10240 Scl15240    8000 ticks: mismatches (T,E,P,D,S,y) 0   |T| max 2231 |D| max 10240
+  (1) fb_a 1017 b567             8000 ticks: mismatches (T,E,P,D,S,y) 0   |T| max 1254 |D| max 0
+(1) lane == golden model: PASS (32000 ticks, 0 mismatches)
+(3) |P/x| at 20 Hz V294 2.079 (census/harness 2.079)
+    output-lag DC 0.990234 (507/512 = 0.990234), pole 5.053 Hz
+    K_alpha (census formula) 0.2097 T per deg/s^2 (census 0.210)
+(2) retrodiction V294 nominal lp (17 s):
+    0-5    track 0.840 (harness report 0.840)  turn-hold nan  cmd rms 603  i-share 0.513
+    5-10   track 0.865 (harness report 0.865)  turn-hold 0.780  cmd rms 524  i-share 0.388
+    10-15  track 0.586 (harness report 0.586)  turn-hold 0.592  cmd rms 242  i-share 0.395
+    15-22  track 0.764 (harness report 0.764)  turn-hold 0.636  cmd rms 350  i-share 0.436
+    22+    track 0.917 (harness report 0.917)  turn-hold 0.939  cmd rms 283  i-share 0.284
+(2) retrodiction row reproduces the harness report: PASS

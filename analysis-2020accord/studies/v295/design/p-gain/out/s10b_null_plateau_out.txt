@@ -1,0 +1,1 @@
+NULL plateau ratio (real V294 tap), per 20 s window: median 1.002 [p2.5 0.976, p97.5 1.035] min 0.970 max 1.081 n 33 (baseline 0.938)

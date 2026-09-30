@@ -1,0 +1,36 @@
+cells from the V294 image: a 1011 b 567 C 1024 shl 2 op subr Kp [960, 960, 960, 960, 960] map [0, 12, 20, 24, 32, 64, 96, 128, 160, 240]/[0, 52, 86, 103, 138, 275, 413, 550, 688, 1032] Pcl 15360 Scl 15360 la 992 lb 507 gain 5346 Tcl 3072
+taper B [0, 3, 6, 8, 10, 20]/[255, 255, 255, 255, 255, 205]  taper D [16, 26, 38, 48, 64, 96]/[255, 243, 218, 179, 77, 77]
+
+(1a) mirror vs harness Lane: 6000 random ticks (b 567 and 964, all 241 idx, tapers 254/178/76/203): 0 mismatches
+(1b) mirror b567 march of r71b (1020390 ticks) == plib T1k_live bit for bit: True ; max |a*s| seen b567 120739686 b964 205221879 ; max |x*b| b964 2871756
+     r71b engaged ticks: |r26| == C (1024) for b964 on 0.00300 % ; max |T| b567 1467 b964 1311 ; p99.99 |T-T567| 194 max 215
+
+(2) fb state at the bail edge and adversarial sequences
+   b  567 x +12000 : fixed point s* +523265 after 735 ticks ; |a*s*| 529020915 ; int32 margin 2^31/|a*s| = 4.059
+   b  567 x -12000 : fixed point s* -523422 after 734 ticks ; |a*s*| 529179642 ; int32 margin 2^31/|a*s| = 4.058
+   b  964 x +12000 : fixed point s* +889699 after 776 ticks ; |a*s*| 899485689 ; int32 margin 2^31/|a*s| = 2.387
+   b  964 x -12000 : fixed point s* -889856 after 775 ticks ; |a*s*| 899644416 ; int32 margin 2^31/|a*s| = 2.387
+   b 1134 x +12000 : fixed point s* +1046686 after 789 ticks ; |a*s*| 1058199546 ; int32 margin 2^31/|a*s| = 2.029
+   b 1134 x -12000 : fixed point s* -1046844 after 789 ticks ; |a*s*| 1058359284 ; int32 margin 2^31/|a*s| = 2.029
+   b 2301 x +12000 : fixed point s* +2123855 after 844 ticks ; |a*s*| 2147217405 ; int32 margin 2^31/|a*s| = 1.000
+   b 2301 x -12000 : fixed point s* -2124013 after 844 ticks ; |a*s*| 2147377143 ; int32 margin 2^31/|a*s| = 1.000
+   b 964 adversarial square waves (half-periods 1..400) + 200k random full-swing ticks: max |a*s_old| 893812968 -> margin 2.403 (no Ovf raised)
+
+(3) delivered surface T(idx) at x = 0, steady (4000 ticks), 241 idx x tapers x both signs
+   taper states [61, 76, 143, 174, 178, 194, 204, 217, 242, 254] ; points 4820 ; b964 != b567 at 0 points ; non-monotone steps b567 0 b964 0 ; rail {(567, 1): 2461, (964, 1): 2461, (567, -1): -2463, (964, -1): -2463}
+
+(4) b964 constant x (49 values -12000..12000): steady r26 != 0 in 0 cases (0 = the trim has no DC)
+
+(5) zero command (idx 0, sp 0), r26 pinned at +-C:
+   r26 +1024 -> steady T -616
+   r26 -1024 -> steady T +615
+   b 567: max |T| at zero command over a 300 deg/s-amplitude chirp 0.2-20 Hz: 563
+   b 964: max |T| at zero command over a 300 deg/s-amplitude chirp 0.2-20 Hz: 615
+
+(6) restart pulse: steady rotation at w deg/s (x = 8w), idx 60 held, then ONE bail tick (|x| > 12000 or a guard)
+   b 567: 10 deg/s: peak 21 T, >50 T for 0 ms | 30 deg/s: peak 48 T, >50 T for 0 ms | 100 deg/s: peak 149 T, >50 T for 164 ms | 300 deg/s: peak 424 T, >50 T for 254 ms
+   b 964: 10 deg/s: peak 30 T, >50 T for 0 ms | 30 deg/s: peak 78 T, >50 T for 97 ms | 100 deg/s: peak 251 T, >50 T for 209 ms | 300 deg/s: peak 545 T, >50 T for 296 ms
+
+(7) linear gains by time-domain march
+   b 567: |P/x| at 20 Hz = 2.027 ; K_alpha (ramp 200 deg/s^2, 3 s) = 0.2100 T per deg/s^2
+   b 964: |P/x| at 20 Hz = 2.318 ; K_alpha (ramp 200 deg/s^2, 3 s) = 0.3600 T per deg/s^2

@@ -1,0 +1,2 @@
+Kp LERP, listing-style vs golden lkas_rate_lerp over idx 0..240: mismatches 0
+surface, hand march vs golden march over idx 0..240: mismatches 0 []

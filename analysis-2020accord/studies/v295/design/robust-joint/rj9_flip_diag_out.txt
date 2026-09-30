@@ -1,0 +1,40 @@
+  lp   nominal  g1.00  5-10 hard16 x0.819  5-10 r_mid x0.868  15-22 hard16 x0.983  15-22 r_mid x0.991  22+ hard16 x0.983  22+ r_mid x0.975  tg 0-5 -0.000  tg 5-10 +0.001  tg 15-22 +0.000  tg 22+ +0.000
+  lp   nominal  g1.03  5-10 hard16 x0.860  5-10 r_mid x0.898  15-22 hard16 x1.121  15-22 r_mid x1.017  22+ hard16 x1.081  22+ r_mid x1.014  tg 0-5 +0.008  tg 5-10 +0.010  tg 15-22 +0.009  tg 22+ +0.008
+  lp   nominal  g1.05  5-10 hard16 x0.885  5-10 r_mid x0.919  15-22 hard16 x1.009  15-22 r_mid x1.027  22+ hard16 x0.968  22+ r_mid x1.034  tg 0-5 +0.012  tg 5-10 +0.016  tg 15-22 +0.015  tg 22+ +0.013
+  lp   nominal  g1.08  5-10 hard16 x0.906  5-10 r_mid x0.953  15-22 hard16 x1.121  15-22 r_mid x1.051  22+ hard16 x1.042  22+ r_mid x1.059  tg 0-5 +0.020  tg 5-10 +0.024  tg 15-22 +0.024  tg 22+ +0.020
+  full nominal  g1.00  5-10 hard16 x0.827  5-10 r_mid x0.849  15-22 hard16 x0.936  15-22 r_mid x0.944  22+ hard16 x0.934  22+ r_mid x0.951  tg 0-5 +0.003  tg 5-10 +0.002  tg 15-22 +0.000  tg 22+ +0.000
+  full nominal  g1.03  5-10 hard16 x0.832  5-10 r_mid x0.855  15-22 hard16 x0.938  15-22 r_mid x0.946  22+ hard16 x0.942  22+ r_mid x0.957  tg 0-5 +0.010  tg 5-10 +0.010  tg 15-22 +0.009  tg 22+ +0.008
+  full nominal  g1.05  5-10 hard16 x0.834  5-10 r_mid x0.858  15-22 hard16 x0.939  15-22 r_mid x0.947  22+ hard16 x0.953  22+ r_mid x0.965  tg 0-5 +0.014  tg 5-10 +0.016  tg 15-22 +0.014  tg 22+ +0.013
+  full nominal  g1.08  5-10 hard16 x0.839  5-10 r_mid x0.864  15-22 hard16 x0.940  15-22 r_mid x0.948  22+ hard16 x0.952  22+ r_mid x0.965  tg 0-5 +0.020  tg 5-10 +0.024  tg 15-22 +0.023  tg 22+ +0.020
+  lp   light_b  g1.00  5-10 hard16 x0.678  5-10 r_mid x0.775  15-22 hard16 x0.699  15-22 r_mid x0.806  22+ hard16 x0.920  22+ r_mid x0.768  tg 0-5 -0.000  tg 5-10 +0.001  tg 15-22 +0.000  tg 22+ +0.001
+  lp   light_b  g1.03  5-10 hard16 x0.696  5-10 r_mid x0.802  15-22 hard16 x0.708  15-22 r_mid x0.837  22+ hard16 x0.976  22+ r_mid x0.809  tg 0-5 +0.007  tg 5-10 +0.009  tg 15-22 +0.011  tg 22+ +0.011
+  lp   light_b  g1.05  5-10 hard16 x0.703  5-10 r_mid x0.818  15-22 hard16 x0.719  15-22 r_mid x0.845  22+ hard16 x0.902  22+ r_mid x0.807  tg 0-5 +0.012  tg 5-10 +0.014  tg 15-22 +0.019  tg 22+ +0.016
+  lp   light_b  g1.08  5-10 hard16 x0.720  5-10 r_mid x0.847  15-22 hard16 x0.767  15-22 r_mid x0.873  22+ hard16 x0.940  22+ r_mid x0.792  tg 0-5 +0.018  tg 5-10 +0.022  tg 15-22 +0.029  tg 22+ +0.024
+  full light_b  g1.00  5-10 hard16 x0.697  5-10 r_mid x0.668  15-22 hard16 x0.668  15-22 r_mid x0.747  22+ hard16 x0.693  22+ r_mid x0.824  tg 0-5 +0.004  tg 5-10 +0.000  tg 15-22 +0.000  tg 22+ +0.000
+  full light_b  g1.03  5-10 hard16 x0.707  5-10 r_mid x0.681  15-22 hard16 x0.672  15-22 r_mid x0.752  22+ hard16 x0.703  22+ r_mid x0.834  tg 0-5 +0.011  tg 5-10 +0.009  tg 15-22 +0.012  tg 22+ +0.010
+  full light_b  g1.05  5-10 hard16 x0.711  5-10 r_mid x0.690  15-22 hard16 x0.680  15-22 r_mid x0.760  22+ hard16 x0.730  22+ r_mid x0.847  tg 0-5 +0.015  tg 5-10 +0.015  tg 15-22 +0.019  tg 22+ +0.015
+  full light_b  g1.08  5-10 hard16 x0.719  5-10 r_mid x0.704  15-22 hard16 x0.689  15-22 r_mid x0.766  22+ hard16 x0.737  22+ r_mid x0.867  tg 0-5 +0.021  tg 5-10 +0.023  tg 15-22 +0.030  tg 22+ +0.024
+  lp   J_hi     g1.00  5-10 hard16 x0.877  5-10 r_mid x0.884  15-22 hard16 x0.945  15-22 r_mid x0.982  22+ hard16 x0.987  22+ r_mid x0.980  tg 0-5 -0.001  tg 5-10 +0.001  tg 15-22 +0.000  tg 22+ +0.000
+  lp   J_hi     g1.03  5-10 hard16 x0.935  5-10 r_mid x0.914  15-22 hard16 x1.019  15-22 r_mid x1.014  22+ hard16 x1.089  22+ r_mid x1.023  tg 0-5 +0.007  tg 5-10 +0.010  tg 15-22 +0.010  tg 22+ +0.008
+  lp   J_hi     g1.05  5-10 hard16 x0.955  5-10 r_mid x0.936  15-22 hard16 x0.983  15-22 r_mid x1.035  22+ hard16 x1.005  22+ r_mid x1.040  tg 0-5 +0.012  tg 5-10 +0.016  tg 15-22 +0.016  tg 22+ +0.013
+  lp   J_hi     g1.08  5-10 hard16 x0.984  5-10 r_mid x0.967  15-22 hard16 x1.071  15-22 r_mid x1.051  22+ hard16 x1.017  22+ r_mid x1.064  tg 0-5 +0.019  tg 5-10 +0.024  tg 15-22 +0.025  tg 22+ +0.020
+  full J_hi     g1.00  5-10 hard16 x0.862  5-10 r_mid x0.859  15-22 hard16 x0.929  15-22 r_mid x0.936  22+ hard16 x0.936  22+ r_mid x0.951  tg 0-5 +0.003  tg 5-10 +0.002  tg 15-22 +0.000  tg 22+ +0.000
+  full J_hi     g1.03  5-10 hard16 x0.867  5-10 r_mid x0.865  15-22 hard16 x0.931  15-22 r_mid x0.938  22+ hard16 x0.945  22+ r_mid x0.956  tg 0-5 +0.009  tg 5-10 +0.010  tg 15-22 +0.009  tg 22+ +0.008
+  full J_hi     g1.05  5-10 hard16 x0.869  5-10 r_mid x0.868  15-22 hard16 x0.933  15-22 r_mid x0.940  22+ hard16 x0.956  22+ r_mid x0.966  tg 0-5 +0.013  tg 5-10 +0.016  tg 15-22 +0.015  tg 22+ +0.013
+  full J_hi     g1.08  5-10 hard16 x0.873  5-10 r_mid x0.874  15-22 hard16 x0.934  15-22 r_mid x0.941  22+ hard16 x0.954  22+ r_mid x0.965  tg 0-5 +0.019  tg 5-10 +0.024  tg 15-22 +0.023  tg 22+ +0.020
+  lp   b_lo     g1.00  5-10 hard16 x0.747  5-10 r_mid x0.840  15-22 hard16 x0.920  15-22 r_mid x0.973  22+ hard16 x0.930  22+ r_mid x0.963  tg 0-5 +0.001  tg 5-10 +0.001  tg 15-22 +0.000  tg 22+ +0.000
+  lp   b_lo     g1.03  5-10 hard16 x0.784  5-10 r_mid x0.870  15-22 hard16 x1.054  15-22 r_mid x0.990  22+ hard16 x1.007  22+ r_mid x1.017  tg 0-5 +0.008  tg 5-10 +0.010  tg 15-22 +0.009  tg 22+ +0.008
+  lp   b_lo     g1.05  5-10 hard16 x0.785  5-10 r_mid x0.891  15-22 hard16 x0.977  15-22 r_mid x1.006  22+ hard16 x0.896  22+ r_mid x1.003  tg 0-5 +0.013  tg 5-10 +0.015  tg 15-22 +0.015  tg 22+ +0.013
+  lp   b_lo     g1.08  5-10 hard16 x0.814  5-10 r_mid x0.923  15-22 hard16 x1.080  15-22 r_mid x1.041  22+ hard16 x0.975  22+ r_mid x1.071  tg 0-5 +0.020  tg 5-10 +0.023  tg 15-22 +0.024  tg 22+ +0.020
+  full b_lo     g1.00  5-10 hard16 x0.778  5-10 r_mid x0.794  15-22 hard16 x0.892  15-22 r_mid x0.913  22+ hard16 x0.896  22+ r_mid x0.926  tg 0-5 +0.004  tg 5-10 +0.001  tg 15-22 +0.000  tg 22+ +0.000
+  full b_lo     g1.03  5-10 hard16 x0.783  5-10 r_mid x0.802  15-22 hard16 x0.895  15-22 r_mid x0.916  22+ hard16 x0.901  22+ r_mid x0.933  tg 0-5 +0.011  tg 5-10 +0.010  tg 15-22 +0.009  tg 22+ +0.008
+  full b_lo     g1.05  5-10 hard16 x0.787  5-10 r_mid x0.806  15-22 hard16 x0.899  15-22 r_mid x0.919  22+ hard16 x0.904  22+ r_mid x0.938  tg 0-5 +0.015  tg 5-10 +0.015  tg 15-22 +0.014  tg 22+ +0.013
+  full b_lo     g1.08  5-10 hard16 x0.794  5-10 r_mid x0.816  15-22 hard16 x0.898  15-22 r_mid x0.919  22+ hard16 x0.911  22+ r_mid x0.941  tg 0-5 +0.021  tg 5-10 +0.023  tg 15-22 +0.022  tg 22+ +0.020
+
+PLANNER LOW-PASSED (0.8 Hz) -- dist lp
+  nominal  F3  5-10 hard16 x1.261  5-10 r_mid x1.018  15-22 hard16 x1.209  15-22 r_mid x1.094  22+ hard16 x0.937  22+ r_mid x1.105   (V294 r_mid 15-22 = 0.121 deg/s)
+  nominal  F1  5-10 hard16 x0.906  5-10 r_mid x0.906  15-22 hard16 x0.895  15-22 r_mid x0.958  22+ hard16 x0.845  22+ r_mid x0.928   (V294 r_mid 15-22 = 0.121 deg/s)
+  b_lo     F3  5-10 hard16 x1.209  5-10 r_mid x1.006  15-22 hard16 x0.995  15-22 r_mid x1.080  22+ hard16 x0.946  22+ r_mid x1.063   (V294 r_mid 15-22 = 0.173 deg/s)
+  b_lo     F1  5-10 hard16 x0.895  5-10 r_mid x0.886  15-22 hard16 x0.817  15-22 r_mid x0.952  22+ hard16 x0.886  22+ r_mid x0.937   (V294 r_mid 15-22 = 0.173 deg/s)
+  light_b  F3  5-10 hard16 x0.919  5-10 r_mid x0.853  15-22 hard16 x0.865  15-22 r_mid x0.864  22+ hard16 x0.800  22+ r_mid x0.857   (V294 r_mid 15-22 = 1.219 deg/s)
+  light_b  F1  5-10 hard16 x0.903  5-10 r_mid x0.767  15-22 hard16 x0.679  15-22 r_mid x0.795  22+ hard16 x0.701  22+ r_mid x0.772   (V294 r_mid 15-22 = 1.219 deg/s)

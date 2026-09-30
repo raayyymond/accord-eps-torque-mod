@@ -1,0 +1,12 @@
+replay 1020390 ticks in 62 s
+bit-exactness vs plib march: V294 live 0 mismatching ticks of 1020390 ; null 0
+V294   max|r26| 637 (engaged 637) ; fb clamp binds: all 0 engaged 0 ; P binds engaged 458 (hands-off 0) ; max|a*s| 1.207e+08 (margin 17.79)
+A1017  max|r26| 790 (engaged 790) ; fb clamp binds: all 0 engaged 0 ; P binds engaged 344 (hands-off 0) ; max|a*s| 2.074e+08 (margin 10.35)
+trim |T_live - T_null| on hands-off engaged ticks (708 s): V294 rms 14.1 p99 72 max 202 | A1017 rms 21.8 p99 111 max 355
+trim |T_live - T_null| on hands-on engaged (driver torque) ticks (91 s): V294 rms 38.9 p99 166 max 309 | A1017 rms 56.0 p99 244 max 429
+hands-on ticks with |alpha| > 300 deg/s^2: 27010 ; trim opposing the driver's acceleration (sign(T) == sign(alpha) in this frame convention? mean T*alpha sign): V294 0.84 A1017 0.80 ; |trim| p95 V294 147 A1017 207 T
+
+synthetic driver steer (lane only, sp 0): angle 0 -> 90 deg in 0.30 s (peak 471 deg/s, peak ~4900 deg/s^2), hold 0.7 s, back
+  taper m 254: peak |T| V294 528 A1017 607 ; impulse integral(|T|) dt V294 304.8 A1017 428.5 T*s ; fb clamp binds V294 10 A1017 223
+  taper m 178: peak |T| V294 371 A1017 425 ; impulse integral(|T|) dt V294 213.6 A1017 300.2 T*s ; fb clamp binds V294 10 A1017 223
+  taper m  76: peak |T| V294 159 A1017 182 ; impulse integral(|T|) dt V294 91.3 A1017 128.1 T*s ; fb clamp binds V294 10 A1017 223

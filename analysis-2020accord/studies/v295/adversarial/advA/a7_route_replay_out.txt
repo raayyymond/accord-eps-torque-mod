@@ -1,0 +1,25 @@
+route frames 102039, ticks 1020390 ; |x1k| > 12000 before rounding: 0 ticks (no bails on this route)
+control 1: inlined march vs advA_lane.Lane, 30,000 ticks: differing ticks = 0
+control 2: my V294 march vs plib T1k_live: differing ticks 0 ; my FF-only vs plib T1k_null: 0
+control 3: tap - quant(V294 march) on 35441 hands-off engaged tap frames: rms 3.64 T, p99 |.| 8
+
+engaged ticks 800750 (800.8 s) ; hands-on engaged 91.8 s ; hands-off engaged 708.9 s
+V294 (engaged): r26 clamp binds 0 ticks (0.0000 %) ; P at clamp 461 ticks (0.0576 %) ; max|T| 1467 ; max|r26 raw| 637 ; p99.9|r26| 368 ; max|a*s| 120739686 (margin 17.79)
+   whole route (incl. disengaged, the fb filter runs regardless): r26 clamp binds 0 ticks ; max|r26 raw| 637
+V295 (engaged): r26 clamp binds 66 ticks (0.0082 %) ; P at clamp 419 ticks (0.0523 %) ; max|T| 1277 ; max|r26 raw| 1179 ; p99.9|r26| 682 ; max|a*s| 223523001 (margin 9.61)
+   whole route (incl. disengaged, the fb filter runs regardless): r26 clamp binds 66 ticks ; max|r26 raw| 1179
+
+trim = T_live - T_FFonly (T counts), ENGAGED, by speed band [m/s]:
+  0-5     109.7 s | V294 rms   36.5 p99   172 max  309 | V295 rms   67.4 p99   318 max  554 | ratio rms x1.847 | mean(T295-T294) +0.45 T, rms 30.9
+  5-10    228.5 s | V294 rms   21.1 p99   100 max  165 | V295 rms   39.0 p99   185 max  306 | ratio rms x1.852 | mean(T295-T294) -0.02 T, rms 17.9
+  10-15   225.4 s | V294 rms   10.5 p99    53 max  141 | V295 rms   19.4 p99    99 max  261 | ratio rms x1.851 | mean(T295-T294) -0.03 T, rms 8.9
+  15-22   162.8 s | V294 rms    6.6 p99    30 max  102 | V295 rms   12.3 p99    55 max  189 | ratio rms x1.850 | mean(T295-T294) -0.03 T, rms 5.7
+  22+      74.3 s | V294 rms    3.6 p99    14 max   55 | V295 rms    6.6 p99    26 max  102 | ratio rms x1.846 | mean(T295-T294) +0.02 T, rms 3.1
+
+driver-override resistance, HANDS-ON engaged ticks (91.8 s): trim opposing the driver = -sign(bar)*trim
+  V294 |trim| p50 8 p99 166 max 309 | opposing part: p99 68 max 163, mean -9.5 ; frac of ticks opposing 0.363
+  V295 |trim| p50 16 p99 307 max 554 | opposing part: p99 125 max 301, mean -17.6 ; frac of ticks opposing 0.375
+
+|trim| > 300 T dwell (engaged): V294 0.042 s, V295 1.362 s ; > 450: V294 0.000 s V295 0.126 s ; hands-off only > 300: V294 0.000 V295 0.399
+V295 - V294 delivered T on engaged ticks: rms 15.9, p99 81, max 247 ; mean +0.044
+r26 ratio V295/V294 on 122453 unclamped engaged ticks with |r26_294| > 20: median 1.8519 (b ratio 1.8519)

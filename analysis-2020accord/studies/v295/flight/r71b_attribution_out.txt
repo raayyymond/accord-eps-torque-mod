@@ -1,0 +1,190 @@
+==============================================================================================================
+A. EXPOSURE (wire) -- route 75604b0a432fdc89_00000071--a7b8ba5d9d, tag r71b_v294
+==============================================================================================================
+  wall clock (GPS anchor, seg 0 +12.5 s): 2026-09-30 03:10:06 UTC -> 2026-09-30 03:27:07 UTC   (2026-09-29 20:10:06 PDT -> 2026-09-29 20:27:07 PDT; PDT = UTC-7 is BELIEF)
+  initData.wallTimeNanos reads 2026-07-28 15:05:10 UTC -- the device clock was NOT synced at boot; ignore it
+  duration 1020.4 s (first..last 0x18F frame), 17 segments [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], contiguous (gaps [3, 4, 5, 6, 8] ms)
+  LATERALLY ENGAGED (0xE4 STEER_REQUEST & 0x18F SCA): 800.7 s = 78.6 % of the route; carControl.latActive 800.8 s; both 800.7 s
+  selfdriveState.enabled (longitudinal+lateral openpilot) 14.4 s ; always-on lateral means lateral runs without it
+  engaged: steeringPressed share 0.066 ; hands-off (not pressed) 747.7 s ; hands-off by |bar| < 400 709.0 s
+  band m/s  engaged s    pressed  hands-off  |bar|<400 s
+  0-5           109.7      0.187       89.1         81.2
+  5-10          228.5      0.088      208.4        191.2
+  10-15         225.4      0.041      216.0        207.4
+  15-22         162.9      0.012      160.8        157.4
+  22+            74.3      0.013       73.3         71.8
+  engaged episodes: 6, longest 306.1 s, median 109.5 s; max speed 30.6 m/s; engaged speed p50/p90 10.9 / 20.4 m/s
+
+==============================================================================================================
+B. FORK -- what flew (initData, runtime toggles, and the control path's own arithmetic)
+==============================================================================================================
+  initData: gitCommit 20d24ab7906883a9cdccfd945a4f54b6e109288b  branch Dom  dirty False  remote https://github.com/raayyymond/StarPilot.git  commitDate '1790728635 2026-09-29 17:37:15 -0700'  version 0.11.2  device mici
+  (every one of the 17 segments' initData carries the same commit: True)
+  initData.params: 706 keys.  Accord* / Steer* / lateral keys present:
+    AccordDither                 = 0.0
+    AccordDitherGate             = 1
+    AccordDobHz                  = 0.0
+    AccordEpsGainScale           = 1.0
+    AccordEpsSpringScale         = 1.0
+    AccordErrorNotchQ            = 0.0
+    AccordFFRateGain             = 0.5
+    AccordFrictionHyst           = 0.0
+    AccordFrictionHystBand       = 0
+    AccordHoldLevel              = 0
+    AccordHoldMap                = 0
+    AccordJerkLpHz               = 1.2
+    AccordRateLoopGain           = 0.0
+    AccordRatePlantFF            = 0
+    AccordRefFilter              = 0.0
+    AccordTorqueKi               = 0.3
+    AccordTorqueKiHigh           = 0.0
+    AccordTurnFFTaper            = 0
+    AccordVariableSteerRatio     = 1
+    AdvancedLateralTune          = 1
+    AlwaysOnLateral              = 1
+    ForceAutoTune                = 0
+    ForceAutoTuneOff             = 1
+    ForceTorqueController        = 1
+    KeepLearnedLatAccelOffset    = 1
+    LaneCentering                = 1
+    LaneChangeSmoothing          = 4
+    LaneChangeTurnGate           = 1
+    LateralTune                  = 1
+    LiveDelay                    = <binary 72 bytes>
+    NNFF                         = 0
+    NNFFLite                     = 0
+    SteerDelay                   = 0.2
+    SteerDelayModeMigrated       = 1
+    SteerDelayStock              = 0.30000000149011613
+    SteerFriction                = 0.011
+    SteerFrictionStock           = 0.2120497077703476
+    SteerKP                      = 0.9
+    SteerKPStock                 = 0.6
+    SteerLatAccel                = 14.0
+    SteerLatAccelStock           = 1.689333438873291
+    SteerOffset                  = 0.0
+    SteerOffsetStock             = 0.0
+    SteerRatio                   = 16.84
+    SteerRatioStock              = 16.329999923706055
+    UseAutoSteerDelay            = 1
+  starpilotPlan.starpilotToggles (the RUNTIME toggle object controlsd reads): 537 keys, 0 changes during the route
+  vs toggle-config_V294_accel-trim_r1.decoded.json (26 keys):
+    key                        r1 file    initData.params        runtime toggle         verdict
+    AccordRatePlantFF          False      0                      False                  MATCH
+    SteerKP                    0.9        0.9                    0.9                    MATCH
+    AccordTorqueKi             0.3        0.3                    0.3                    MATCH
+    SteerFriction              0.011      0.011                  0.011                  MATCH
+    SteerLatAccel              14.0       14.0                   14.0                   MATCH
+    ForceAutoTuneOff           True       1                      True                   MATCH
+    ForceAutoTune              False      0                      False                  MATCH
+    AdvancedLateralTune        True       1                      None                   MATCH
+    KeepLearnedLatAccelOffset  True       1                      True                   MATCH
+    AccordTurnFFTaper          False      0                      False                  MATCH
+    AccordHoldMap              False      0                      False                  MATCH
+    AccordFrictionHyst         0.0        0.0                    0.0                    MATCH
+    AccordRateLoopGain         0.0        0.0                    0.0                    MATCH
+    AccordErrorNotchQ          0.0        0.0                    0.0                    MATCH
+    AccordRefFilter            0.0        0.0                    0.0                    MATCH
+    AccordTorqueKiHigh         0.0        0.0                    0.0                    MATCH
+    AccordDobHz                0.0        0.0                    0.0                    MATCH
+    AccordHoldLevel            False      0                      False                  MATCH
+    AccordFrictionHystBand     False      0                      False                  MATCH
+    AccordDither               0.0        0.0                    0.0                    MATCH
+    AccordDitherGate           True       1                      True                   MATCH
+    AccordJerkLpHz             1.2        1.2                    1.2                    MATCH
+    AccordFFRateGain           0.5        0.5                    0.5                    MATCH
+    AccordEpsGainScale         1.0        1.0                    1.0                    MATCH
+    AccordEpsSpringScale       1.0        1.0                    1.0                    MATCH
+    LaneCentering              True       1                      True                   MATCH
+  -> 0 difference(s) from the r1 file: NONE
+  context keys NOT in the r1 file (runtime values): {'SteerRatio': 16.84, 'SteerDelay': 0.2, 'UseAutoSteerDelay': True, 'AccordVariableSteerRatio': True, 'ForceTorqueController': True, 'LaneChangeTurnGate': True, 'LaneChangeSmoothing': 4, 'NNFF': False, 'NNFFLite': False}
+  runtime: use_custom_latAccelFactor True, use_custom_friction True, use_custom_steerRatio True (steerRatio 16.84), use_auto_steer_delay True (steerActuatorDelay 0.2), nnff False, force_torque_controller True
+  carParams: HONDA_ACCORD steerRatio 16.330 steerActuatorDelay 0.100 lateralTuning {'which': 'torque', 'friction': 0.2120497077703476, 'latAccelFactor': 1.689333438873291, 'latAccelOffset': 0.0, 'steeringAngleDeadzoneDeg': 0.0, 'torqueBP': [0, 4096], 'torqueV': [0, 4096]}
+  controlsState.lateralControlState on ACTIVE frames: {'torque': 79744}  (spl.active frames 79744)
+  Kp read (torqueState.p / error, 77312 active frames |error|>0.01): median 0.90000  p1 0.90000  p99 0.90000
+  Ki read (di / (0.01*error), 67668 unfrozen frames): median 0.3000  IQR [0.3000, 0.3000]
+  LAF read ((p+i+d+f) / -output, 58321 unsaturated frames |out|>0.02): median 14.0000  p1 14.0000  p99 14.0000
+  d term: max |d| on active frames 0.00e+00 (Kd 0)
+  f minus (desiredCurvature*v^2 - roll*g*fade): median +0.1394, p1 -0.0433, p99 +0.3270 m/s^2; regressed on latAccelOffsetFiltered*fade: slope -1.003 intercept -0.0052; useParams frac 1.00
+  friction term (offset restored when useParams): |.| p50 0.1056 p90 0.1552 p95 0.1570 p99 0.1630 m/s^2 -- a RELAY of plateau ~p95; opendbc get_friction scales it by LAF: SteerFriction 0.011 x LAF 14.0 = 0.1540 m/s^2 = 0.0110 torque = 45 CAN counts
+  friction plateau / LAF = 0.0112 torque (the flown SteerFriction read back from the relay's plateau)
+  starpilotLateralState: ff == torqueState.f on 1.0000 of active frames; lowSpeedFactor p50 0.888; unwind frac 0.015; frictionThreshold p50 0.300; dob max |.| 0.00e+00
+  liveDelay.lateralDelay: p50 0.326 min 0.326 max 0.326 s; status {1: 4055}; estimate p50 0.331; blocks max 50
+  liveTorqueParameters: LAF filt p50 2.221, offset filt p50 -0.151 (last -0.177), friction filt p50 0.154, liveValid 1.00, useParams 1.00  (LAF/friction NOT used: custom toggles; offset used only if useParams)
+  liveParameters.steerRatio p50 16.840 (IGNORED for the Accord: the variable-ratio map runs); angleOffset p50 -0.556 deg; roll p50 +0.0309 rad
+  STEER RATIO SHAPE TEST: q = (-controlsState.curvature)/rad(angle-offset) at 3-10 m/s; q*SR_map(angle) should be FLAT across angle bins if the variable map ran (level 0.9976 = 16.84/16.88); q*const flat if a constant ratio ran
+    |angle|  15- 30 deg  n= 2652   q*SR_map 0.33736   q*16.84 0.33736   (SR_map 16.84)
+    |angle|  30- 60 deg  n= 1859   q*SR_map 0.33804   q*16.84 0.34353   (SR_map 16.65)
+    |angle|  60- 90 deg  n= 1726   q*SR_map 0.34399   q*16.84 0.36411   (SR_map 15.94)
+    |angle|  90-130 deg  n= 1099   q*SR_map 0.34549   q*16.84 0.38403   (SR_map 15.22)
+    |angle| 130-200 deg  n= 1591   q*SR_map 0.34743   q*16.84 0.40242   (SR_map 14.53)
+    |angle| 200-400 deg  n=  494   q*SR_map 0.34722   q*16.84 0.41518   (SR_map 14.17)
+    spread (max/min - 1): variable map 2.98 %  vs constant ratio 23.07 %  -> the VARIABLE map ran
+
+==============================================================================================================
+C. FIRMWARE -- is this route V294, from the wire?
+==============================================================================================================
+  V294 image 3143616d5b79bdb7...: e_shift 2, fb_op diff, fb pole a 1011 (2.033 Hz), b 567, fb clamp 1024, Kp [960], Kd [0, 0, 0, 0], Ki 0, out lag 992/507, gain 5346, P/sum/T clamps 15360/15360/3072
+  V294 vs V293 image: map / fade / setpoint-taper cells identical: True ; V293 Kp [120], fb clamp 0
+  C1. FF IDENTITY (v293_flight_read.identity_block, |427 tap| vs surface(idx) x fade, zero free parameters, all laterally engaged tap frames, n=50936):
+    V293/bar       best lag  -30 ms  R2 +0.9868  resid   22.4 counts  pearson 0.9936  sign(T)==sign(pred) 0.9765  n 40037
+    V293/speed     best lag  -30 ms  R2 +0.5042  resid  137.2 counts  pearson 0.8117  sign(T)==sign(pred) 0.9563  n 40037
+    V293/const     best lag  -30 ms  R2 +0.6419  resid  116.6 counts  pearson 0.8832  sign(T)==sign(pred) 0.9766  n 40037
+    V282/bar       best lag  -30 ms  R2 -1.0241  resid  277.2 counts  pearson 0.9888  sign(T)==sign(pred) 0.9763  n 40037
+    V282/speed     best lag  -20 ms  R2 -1.2469  resid  292.1 counts  pearson 0.8744  sign(T)==sign(pred) 0.9705  n 40036
+    V282/const     best lag  -20 ms  R2 -2.0482  resid  340.2 counts  pearson 0.9424  sign(T)==sign(pred) 0.9758  n 40036
+    by wheel acceleration (|d/dt LPF_2.03(rate)| deg/s^2, lag -30 ms):
+      all engaged  n  40037  R2 0.9868  resid  22.4 counts  sign(T)==+sign(cmd) 0.9477
+      |acc|<50     n  33256  R2 0.9977  resid   6.9 counts  sign(T)==+sign(cmd) 0.9463
+      |acc|<20     n  27954  R2 0.9981  resid   5.8 counts  sign(T)==+sign(cmd) 0.9450
+      |acc|<10     n  23247  R2 0.9982  resid   5.4 counts  sign(T)==+sign(cmd) 0.9429
+    golden-model V294 surface (taper 254) vs v293_lib V293 surface: identical at 1/241 indices; max |diff| 4; rail T(240) = 2461 / -2463
+    golden V294 (image cells) vs golden V293 (image cells, e_shift 5 / Kp 120 / fb clamp 0): identical at 241/241 indices (the FF identity, two images, one implementation); golden vs v293_lib closed form differ by <= 4 counts = the closed-form lag vs the integer march, below the tap's 8-count LSB
+    golden-model predictor on taper-254, |acc|<20 frames: n 27135  R2 0.9984  resid 5.3
+
+  C2. THE PRE-REGISTERED TRIM-LIVE INSTRUMENT (HANDOFF-2026-09-23 item 2; port of rp7b_dynamic_pred.py with every constant read from the V294 image)
+      estimator E3: residual(tap - dynamic null predictor) ~ 1 + Rm + pred + dFF/dt ; Rm = lp1(-d/dt lp1(wire/8, 2.03 Hz), 5.05 Hz) [deg/s^2]; beta in T counts per deg/s^2; 20 s hands-off windows (|bar|<400)
+      PORT CONTROLS on the V293 null routes (must reproduce rp7b_out.txt: null E3 ~ +0.005, synthetic live ~ +0.20):
+        r75_v293r4  tap delta -4 ms sign +1  x_tapconv +1*wire (HP corr +0.37)  3 windows  null E3 median +0.003 [-0.006,+0.005]  synthetic-live E3 median +0.207 [+0.196,+0.221]
+        r70_v293    tap delta -4 ms sign +1  x_tapconv +1*wire (HP corr +0.33)  4 windows  null E3 median +0.000 [-0.025,+0.016]  synthetic-live E3 median +0.191 [+0.176,+0.227]
+      r71b_v294: tap delta +0 ms, tap sign +1, POLARITY x_tapconv = +1 * wire (HP corr +0.18 at 0 ms); 6 windows
+      ** E3 (the pre-registered estimator) on the REAL tap: median +0.197  5-95% [+0.138, +0.211]  mean +0.187  frac > +0.10: 1.00  frac < +0.04: 0.00
+         E3 on the MODELLED trim alone (what a live V294 would read on THIS route's excitation): median +0.191 [+0.160, +0.211]
+         E3 on real tap + a SECOND synthetic trim (live + live): median +0.387
+         E1 (no nuisance, unfiltered R) real: median +0.103
+      per-window (t route s, mean v, E3 real, E3 model):
+        t   150.6  v   7.7  E3 +0.196   model +0.210
+        t   296.7  v  10.5  E3 +0.187   model +0.158
+        t   372.9  v  12.4  E3 +0.198   model +0.168
+        t   491.1  v  21.0  E3 +0.201   model +0.212
+        t   722.6  v  15.3  E3 +0.122   model +0.174
+        t   821.8  v  13.3  E3 +0.215   model +0.208
+      POOLED E3 over all hands-off engaged tap frames, 10 s block bootstrap (1000): beta +0.210  95% CI [+0.208, +0.212]  (709 s, 86 blocks)
+      POOLED E3 on the MODELLED trim (expected if live at design gain): beta +0.211 [+0.210, +0.212]
+        band 0-5    : beta +0.212 [+0.206, +0.216]  (81 s)   model +0.212
+        band 5-10   : beta +0.211 [+0.209, +0.213]  (191 s)   model +0.211
+        band 10-15  : beta +0.206 [+0.201, +0.210]  (208 s)   model +0.210
+        band 15-22  : beta +0.201 [+0.191, +0.204]  (157 s)   model +0.213
+        band 22+    : beta +0.197 [+0.183, +0.221]  (72 s)   model +0.203
+      SCALE: residual regressed on the MODELLED trim (+ FF nuisance): gain +0.964  95% CI [+0.943, +0.975]  (1 = live at the design gain, 0 = not live, <0 = inverted)
+      SIGN CONTROL: the same march with the operand INVERTED (x = -x): rms(tap - inverted march) 125.6 counts on those frames (null 63.3, correct sign 7.5)
+      MODEL SELECTION on frames where the modelled trim is >= 24 counts (n 1639, 33 s): rms(tap - null march) 63.3 vs rms(tap - live march) 7.5 counts -> LIVE fits better
+      whole hands-off engaged: rms null 15.0, live 5.4 counts
+
+==============================================================================================================
+D. FAULTS, EVENTS, LIMITS
+==============================================================================================================
+  0x18F STEER_STATUS nibble: values {0: 101868} over 101868 frames (0 = normal); CONFIG_INDEX [0]
+  carState steerFaultTemporary frames 0, steerFaultPermanent frames 0
+  0x1AB OUTPUT_DISABLED (byte 2 bit 6): set on 0 of 50936 tap frames (0 while engaged)
+  onroadEvents message counts: {'selfdriveInitializing': 6, 'wrongGear': 101, 'commIssue': 1, 'selfdrivedLagging': 7, 'steerOverride': 230, 'pedalPressed': 302, 'preEnableStandstill': 147, 'gasPressedOverride': 710, 'preLaneChangeRight': 3, 'laneChange': 79, 'preLaneChangeLeft': 6, 'brakeHold': 150, 'buttonEnable': 1, 'cruiseMismatch': 14, 'buttonCancel': 2, 'reverseGear': 34, 'seatbeltNotLatched': 6, 'wrongCarMode': 1}
+  starpilotOnroadEvents counts: {'lkasEnable': 1, 'turningRight': 2, 'turningLeft': 32, 'leadDeparting': 2, 'lkasDisable': 1}
+  steer/EPS/fault/CAN-class event names: ['steerOverride', 'buttonCancel']
+  alerts (selfdriveState.alertType changes): [(222.6, 'preLaneChangeRight/warning'), (223.1, 'laneChange/warning'), (336.5, 'preLaneChangeLeft/warning'), (337.0, 'laneChange/warning'), (349.8, 'brakeHold/warning'), (563.8, 'preLaneChangeLeft/warning'), (564.3, 'laneChange/warning'), (574.5, 'brakeHold/warning'), (695.3, 'buttonEnable/enable'), (706.5, 'gasPressedOverride/overrideLongitudinal'), (709.0, 'gasPressedOverride/overrideLongitudinal'), (709.6, 'buttonCancel/userDisable'), (754.7, 'brakeHold/warning'), (862.8, 'preLaneChangeLeft/warning'), (863.3, 'laneChange/warning'), (877.8, 'brakeHold/warning'), (945.2, 'preLaneChangeLeft/warning'), (945.7, 'laneChange/warning'), (952.0, 'preLaneChangeLeft/warning'), (952.4, 'laneChange/warning'), (958.0, 'brakeHold/warning'), (1001.0, 'reverseGear/permanent')]
+  pandaStates: controlsAllowed frac 0.014, safetyRxInvalid max 0.0, safetyTxBlocked max 19.0, faults max 0.0, rxChecksInvalid frames 0
+  0xE4 STEER_TORQUE: max +4096  min -2130  max |cmd| engaged 4096 ; share of engaged frames |cmd| >= 4096 (the Bosch STEER_MAX, CarParams torqueV[-1] = 4096): 0.0023 (181 frames = 1.81 s); >= 3840: 0.0024
+  slew: engaged 0xE4 frames with |d cmd| >= 120 counts/frame: 0.0042 ; latActive frames where the controller asked for |d torque| > 0.03/frame (the Honda STEER_DELTA cap, 123 counts) 0.0025 ; carOutput |d torque| max 0.030000/frame (= the cap)
+  at |cmd| >= 4000 while engaged (183 frames): |tap| p50 504 max 744 ; |bar| p50 2838 ; v p50 1.6 m/s ; pressed 1.00 (the tap is tapered by the driver-torque fade and the setpoint taper, so |cmd| at the limit does not reach the 2461 rail)
+  wheel rate: max |steeringRateDeg| 373 deg/s (engaged 373); p99 engaged 177; max |angle| 394 deg (engaged 374)
+  427 tap: max |T| 1464 counts (engaged 1464; rail 2461 -> 2456 quantised); share of engaged tap frames at |T| >= 2456: 0.0000 ; tap nonzero while NOT engaged: 20 frames (max |T| 160)
+  driver torque: max |steeringTorque| 3610 ; steeringPressed frames 8013

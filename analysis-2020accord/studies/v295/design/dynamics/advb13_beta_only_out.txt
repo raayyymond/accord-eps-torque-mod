@@ -1,0 +1,12 @@
+  contiguous 30 s, ALL engaged frames              ungated  A1017: LIVE 29 || V294 null: AMB 2, LIVE 1, NOT 26
+  contiguous 30 s, ALL engaged frames              gated    A1017: LIVE 20, gated 9 || V294 null: NOT 20, gated 9
+  contiguous 30 s, hands-off frames                ungated  A1017: LIVE 28 || V294 null: AMB 2, LIVE 1, NOT 25
+  contiguous 30 s, hands-off frames                gated    A1017: LIVE 17, gated 11 || V294 null: NOT 17, gated 11
+  contiguous 15 s, ALL engaged frames              ungated  A1017: AMB 1, LIVE 54 || V294 null: AMB 5, LIVE 2, NOT 48
+  contiguous 15 s, ALL engaged frames              gated    A1017: LIVE 25, gated 30 || V294 null: NOT 25, gated 30
+  contiguous 15 s, hands-off frames                ungated  A1017: AMB 1, LIVE 50 || V294 null: AMB 3, LIVE 1, NOT 47
+  contiguous 15 s, hands-off frames                gated    A1017: LIVE 18, gated 33 || V294 null: NOT 18, gated 33
+  symptomatic 30 s x12, ALL engaged                ungated  A1017: LIVE 12 || V294 null: NOT 12
+  symptomatic 30 s x12, ALL engaged                gated    A1017: LIVE 12 || V294 null: NOT 12
+  symptomatic 15 s x12, ALL engaged                ungated  A1017: LIVE 12 || V294 null: NOT 12
+  symptomatic 15 s x12, ALL engaged                gated    A1017: LIVE 12 || V294 null: NOT 12

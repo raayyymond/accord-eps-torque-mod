@@ -1,0 +1,375 @@
+d2_time -- 10 candidates + V294, 21 chunks
+(a) sweep_drive 58 s
+
+  mode B dist full plant nominal -- V294 absolute | candidate MINUS V294 (ratio for r_mid/hard16/r_hi/cmd_rms/J_err)
+   0-5    V294 track 0.874 hold nan strt 0.739 ishare 0.508 cmd 551 rmid 4.94 hard16 nan rhi 1.44 Jerr 0.039 LC 1.27Hz +3.0dB
+        L7.0         dtrack +0.0002 dhold +nan dstrt -0.0016 dish +0.0006  cmd x0.999 rmid x0.987 hard16 xnan rhi x0.972 Jerr x0.988
+        L8.0         dtrack +0.0001 dhold +nan dstrt -0.0020 dish +0.0011  cmd x0.999 rmid x0.984 hard16 xnan rhi x0.968 Jerr x0.984
+        L10.0        dtrack +0.0002 dhold +nan dstrt -0.0029 dish +0.0008  cmd x0.998 rmid x0.979 hard16 xnan rhi x0.954 Jerr x0.978
+        L12.0        dtrack +0.0002 dhold +nan dstrt -0.0029 dish +0.0006  cmd x0.998 rmid x0.975 hard16 xnan rhi x0.951 Jerr x0.974
+        D256         dtrack +0.0002 dhold +nan dstrt -0.0013 dish +0.0003  cmd x0.999 rmid x0.987 hard16 xnan rhi x0.959 Jerr x0.988
+        D512         dtrack +0.0003 dhold +nan dstrt -0.0028 dish +0.0011  cmd x0.998 rmid x0.976 hard16 xnan rhi x0.947 Jerr x0.975
+        A1014_bheld  dtrack +0.0011 dhold +nan dstrt +0.0005 dish -0.0005  cmd x0.998 rmid x0.964 hard16 xnan rhi x1.006 Jerr x0.984
+        A1017_bheld  dtrack +0.0019 dhold +nan dstrt +0.0019 dish -0.0008  cmd x0.997 rmid x0.913 hard16 xnan rhi x1.019 Jerr x0.947
+        L8+A1014     dtrack +0.0011 dhold +nan dstrt -0.0016 dish +0.0007  cmd x0.997 rmid x0.946 hard16 xnan rhi x0.972 Jerr x0.969
+        L10+A1014    dtrack +0.0011 dhold +nan dstrt -0.0023 dish +0.0007  cmd x0.997 rmid x0.941 hard16 xnan rhi x0.964 Jerr x0.964
+   5-10   V294 track 0.872 hold 0.788 strt 0.588 ishare 0.380 cmd 517 rmid 8.83 hard16 14.88 rhi 2.59 Jerr 0.087 LC 1.27Hz +3.0dB
+        L7.0         dtrack -0.0005 dhold +0.0021 dstrt -0.0022 dish +0.0002  cmd x1.000 rmid x0.992 hard16 x0.988 rhi x0.971 Jerr x0.993
+        L8.0         dtrack -0.0006 dhold +0.0021 dstrt -0.0031 dish +0.0003  cmd x1.000 rmid x0.990 hard16 x0.985 rhi x0.963 Jerr x0.991
+        L10.0        dtrack -0.0008 dhold +0.0021 dstrt -0.0039 dish +0.0004  cmd x1.000 rmid x0.986 hard16 x0.980 rhi x0.951 Jerr x0.988
+        L12.0        dtrack -0.0008 dhold +0.0041 dstrt -0.0044 dish +0.0006  cmd x0.999 rmid x0.984 hard16 x0.977 rhi x0.942 Jerr x0.986
+        D256         dtrack -0.0004 dhold +0.0021 dstrt -0.0021 dish +0.0004  cmd x1.000 rmid x0.993 hard16 x0.991 rhi x0.970 Jerr x0.994
+        D512         dtrack -0.0007 dhold +0.0021 dstrt -0.0040 dish +0.0007  cmd x0.999 rmid x0.985 hard16 x0.980 rhi x0.948 Jerr x0.987
+        A1014_bheld  dtrack +0.0007 dhold +0.0042 dstrt -0.0000 dish -0.0001  cmd x0.999 rmid x0.966 hard16 x0.976 rhi x1.002 Jerr x0.993
+        A1017_bheld  dtrack +0.0015 dhold +0.0135 dstrt +0.0001 dish +0.0000  cmd x0.997 rmid x0.925 hard16 x0.952 rhi x1.014 Jerr x0.980
+        L8+A1014     dtrack +0.0001 dhold +0.0050 dstrt -0.0027 dish +0.0002  cmd x0.998 rmid x0.953 hard16 x0.957 rhi x0.963 Jerr x0.985
+        L10+A1014    dtrack -0.0000 dhold +0.0050 dstrt -0.0040 dish +0.0003  cmd x0.998 rmid x0.949 hard16 x0.950 rhi x0.948 Jerr x0.982
+   10-15  V294 track 0.575 hold 0.491 strt 0.486 ishare 0.381 cmd 251 rmid 2.75 hard16 nan rhi 1.16 Jerr 0.058 LC 1.27Hz +3.0dB
+        L7.0         dtrack +0.0004 dhold +0.0000 dstrt -0.0012 dish -0.0004  cmd x0.999 rmid x0.990 hard16 xnan rhi x0.979 Jerr x0.994
+        L8.0         dtrack +0.0005 dhold +0.0000 dstrt -0.0014 dish -0.0003  cmd x0.998 rmid x0.990 hard16 xnan rhi x0.972 Jerr x0.993
+        L10.0        dtrack +0.0008 dhold +0.0020 dstrt -0.0018 dish -0.0004  cmd x0.998 rmid x0.986 hard16 xnan rhi x0.962 Jerr x0.990
+        L12.0        dtrack +0.0010 dhold +0.0020 dstrt -0.0022 dish -0.0004  cmd x0.997 rmid x0.985 hard16 xnan rhi x0.958 Jerr x0.988
+        D256         dtrack +0.0004 dhold +0.0000 dstrt -0.0013 dish -0.0001  cmd x0.999 rmid x0.992 hard16 xnan rhi x0.975 Jerr x0.994
+        D512         dtrack +0.0011 dhold +0.0020 dstrt -0.0022 dish -0.0000  cmd x0.998 rmid x0.988 hard16 xnan rhi x0.959 Jerr x0.989
+        A1014_bheld  dtrack +0.0001 dhold +0.0000 dstrt -0.0006 dish -0.0001  cmd x1.000 rmid x0.971 hard16 xnan rhi x1.001 Jerr x0.999
+        A1017_bheld  dtrack +0.0001 dhold +0.0005 dstrt -0.0017 dish -0.0003  cmd x0.999 rmid x0.935 hard16 xnan rhi x1.007 Jerr x0.997
+        L8+A1014     dtrack +0.0006 dhold +0.0000 dstrt -0.0022 dish -0.0005  cmd x0.998 rmid x0.962 hard16 xnan rhi x0.968 Jerr x0.991
+        L10+A1014    dtrack +0.0009 dhold +0.0000 dstrt -0.0027 dish -0.0005  cmd x0.998 rmid x0.958 hard16 xnan rhi x0.960 Jerr x0.989
+   15-22  V294 track 0.830 hold 0.669 strt 0.962 ishare 0.424 cmd 328 rmid 3.14 hard16 7.53 rhi 1.40 Jerr 0.075 LC 1.27Hz +3.0dB
+        L7.0         dtrack -0.0002 dhold +0.0000 dstrt -0.0011 dish -0.0000  cmd x0.999 rmid x0.997 hard16 x0.997 rhi x0.990 Jerr x0.994
+        L8.0         dtrack -0.0002 dhold +0.0019 dstrt -0.0013 dish -0.0001  cmd x0.999 rmid x0.995 hard16 x0.995 rhi x0.987 Jerr x0.992
+        L10.0        dtrack -0.0003 dhold +0.0014 dstrt -0.0014 dish -0.0002  cmd x0.999 rmid x0.993 hard16 x0.994 rhi x0.981 Jerr x0.990
+        L12.0        dtrack -0.0003 dhold +0.0014 dstrt -0.0018 dish -0.0003  cmd x0.999 rmid x0.992 hard16 x0.993 rhi x0.978 Jerr x0.989
+        D256         dtrack -0.0001 dhold +0.0019 dstrt -0.0009 dish +0.0001  cmd x0.999 rmid x0.997 hard16 x0.998 rhi x0.992 Jerr x0.994
+        D512         dtrack -0.0002 dhold +0.0014 dstrt -0.0016 dish +0.0000  cmd x0.999 rmid x0.994 hard16 x0.996 rhi x0.983 Jerr x0.989
+        A1014_bheld  dtrack +0.0001 dhold +0.0011 dstrt -0.0000 dish +0.0001  cmd x1.000 rmid x0.988 hard16 x0.990 rhi x0.998 Jerr x1.000
+        A1017_bheld  dtrack +0.0002 dhold +0.0011 dstrt +0.0004 dish +0.0003  cmd x1.000 rmid x0.973 hard16 x0.979 rhi x0.998 Jerr x0.999
+        L8+A1014     dtrack -0.0001 dhold +0.0019 dstrt -0.0012 dish +0.0000  cmd x0.999 rmid x0.981 hard16 x0.982 rhi x0.986 Jerr x0.992
+        L10+A1014    dtrack -0.0002 dhold +0.0014 dstrt -0.0016 dish -0.0000  cmd x0.999 rmid x0.979 hard16 x0.979 rhi x0.980 Jerr x0.989
+   22+    V294 track 0.922 hold 0.935 strt 0.817 ishare 0.274 cmd 281 rmid 1.06 hard16 1.74 rhi 0.67 Jerr 0.061 LC 1.27Hz +3.0dB
+        L7.0         dtrack -0.0000 dhold -0.0007 dstrt -0.0029 dish +0.0001  cmd x1.000 rmid x0.999 hard16 x1.000 rhi x0.991 Jerr x0.990
+        L8.0         dtrack -0.0000 dhold +0.0004 dstrt -0.0040 dish +0.0001  cmd x1.000 rmid x0.996 hard16 x1.002 rhi x0.992 Jerr x0.987
+        L10.0        dtrack -0.0000 dhold -0.0031 dstrt -0.0057 dish +0.0001  cmd x0.999 rmid x0.993 hard16 x0.995 rhi x0.993 Jerr x0.983
+        L12.0        dtrack -0.0000 dhold -0.0002 dstrt -0.0062 dish +0.0002  cmd x0.999 rmid x0.996 hard16 x1.000 rhi x0.992 Jerr x0.980
+        D256         dtrack +0.0001 dhold +0.0004 dstrt -0.0028 dish +0.0004  cmd x0.999 rmid x0.997 hard16 x0.999 rhi x0.994 Jerr x0.989
+        D512         dtrack +0.0001 dhold -0.0007 dstrt -0.0057 dish +0.0007  cmd x0.999 rmid x0.988 hard16 x0.988 rhi x0.985 Jerr x0.981
+        A1014_bheld  dtrack +0.0001 dhold +0.0000 dstrt +0.0013 dish +0.0006  cmd x1.000 rmid x0.994 hard16 x0.996 rhi x0.998 Jerr x1.001
+        A1017_bheld  dtrack +0.0002 dhold +0.0000 dstrt +0.0041 dish +0.0022  cmd x1.000 rmid x0.983 hard16 x0.982 rhi x1.006 Jerr x1.003
+        L8+A1014     dtrack +0.0001 dhold +0.0000 dstrt -0.0019 dish +0.0009  cmd x0.999 rmid x0.988 hard16 x0.986 rhi x0.992 Jerr x0.988
+        L10+A1014    dtrack +0.0000 dhold -0.0006 dstrt -0.0036 dish +0.0009  cmd x0.999 rmid x0.983 hard16 x0.982 rhi x0.989 Jerr x0.984
+   limit-cycle 1-5 Hz line: V294 1.27 Hz +3.0 dB | L7.0 1.27Hz +3.1dB  L8.0 1.27Hz +3.1dB  L10.0 1.27Hz +3.1dB  L12.0 1.27Hz +3.1dB  D256 1.27Hz +3.1dB  D512 1.27Hz +3.1dB  A1014_bheld 1.27Hz +2.8dB  A1017_bheld 1.27Hz +2.5dB  L8+A1014 1.27Hz +2.8dB  L10+A1014 1.27Hz +2.8dB
+
+  mode B dist full plant light_b -- V294 absolute | candidate MINUS V294 (ratio for r_mid/hard16/r_hi/cmd_rms/J_err)
+   0-5    V294 track 0.873 hold nan strt 0.732 ishare 0.509 cmd 551 rmid 5.01 hard16 nan rhi 1.40 Jerr 0.039 LC 1.27Hz +2.9dB
+        L7.0         dtrack +0.0007 dhold +nan dstrt -0.0009 dish +0.0006  cmd x0.997 rmid x0.971 hard16 xnan rhi x0.988 Jerr x0.967
+        L8.0         dtrack +0.0007 dhold +nan dstrt -0.0008 dish +0.0011  cmd x0.997 rmid x0.968 hard16 xnan rhi x0.986 Jerr x0.960
+        L10.0        dtrack +0.0010 dhold +nan dstrt -0.0013 dish +0.0014  cmd x0.996 rmid x0.953 hard16 xnan rhi x0.969 Jerr x0.949
+        L12.0        dtrack +0.0011 dhold +nan dstrt -0.0010 dish +0.0014  cmd x0.995 rmid x0.945 hard16 xnan rhi x0.956 Jerr x0.939
+        D256         dtrack +0.0006 dhold +nan dstrt -0.0003 dish +0.0008  cmd x0.998 rmid x0.965 hard16 xnan rhi x0.969 Jerr x0.969
+        D512         dtrack +0.0011 dhold +nan dstrt -0.0012 dish +0.0007  cmd x0.996 rmid x0.944 hard16 xnan rhi x0.949 Jerr x0.943
+        A1014_bheld  dtrack +0.0021 dhold +nan dstrt +0.0037 dish +0.0002  cmd x0.997 rmid x0.921 hard16 xnan rhi x1.037 Jerr x1.005
+        A1017_bheld  dtrack +0.0040 dhold +nan dstrt +0.0080 dish -0.0006  cmd x0.996 rmid x0.838 hard16 xnan rhi x1.112 Jerr x1.006
+        L8+A1014     dtrack +0.0026 dhold +nan dstrt +0.0012 dish +0.0005  cmd x0.995 rmid x0.893 hard16 xnan rhi x1.000 Jerr x0.969
+        L10+A1014    dtrack +0.0027 dhold +nan dstrt +0.0005 dish +0.0002  cmd x0.994 rmid x0.874 hard16 xnan rhi x0.994 Jerr x0.957
+   5-10   V294 track 0.873 hold 0.810 strt 0.580 ishare 0.379 cmd 514 rmid 8.85 hard16 14.89 rhi 2.59 Jerr 0.087 LC 1.27Hz +2.9dB
+        L7.0         dtrack -0.0004 dhold +0.0007 dstrt -0.0025 dish +0.0001  cmd x0.999 rmid x0.981 hard16 x0.978 rhi x0.960 Jerr x0.985
+        L8.0         dtrack -0.0005 dhold +0.0007 dstrt -0.0035 dish +0.0000  cmd x0.999 rmid x0.973 hard16 x0.970 rhi x0.946 Jerr x0.980
+        L10.0        dtrack -0.0007 dhold +0.0007 dstrt -0.0051 dish +0.0003  cmd x0.999 rmid x0.966 hard16 x0.962 rhi x0.928 Jerr x0.973
+        L12.0        dtrack -0.0007 dhold +0.0017 dstrt -0.0045 dish +0.0002  cmd x0.998 rmid x0.960 hard16 x0.955 rhi x0.911 Jerr x0.969
+        D256         dtrack -0.0003 dhold +0.0007 dstrt -0.0030 dish +0.0001  cmd x0.999 rmid x0.981 hard16 x0.979 rhi x0.951 Jerr x0.986
+        D512         dtrack -0.0007 dhold +0.0007 dstrt -0.0054 dish +0.0003  cmd x0.998 rmid x0.961 hard16 x0.957 rhi x0.912 Jerr x0.970
+        A1014_bheld  dtrack +0.0010 dhold -0.0033 dstrt -0.0004 dish -0.0001  cmd x0.999 rmid x0.920 hard16 x0.966 rhi x1.015 Jerr x0.992
+        A1017_bheld  dtrack +0.0014 dhold -0.0074 dstrt +0.0037 dish +0.0003  cmd x0.998 rmid x0.838 hard16 x0.941 rhi x1.048 Jerr x0.988
+        L8+A1014     dtrack +0.0002 dhold -0.0020 dstrt -0.0028 dish -0.0004  cmd x0.998 rmid x0.891 hard16 x0.930 rhi x0.959 Jerr x0.975
+        L10+A1014    dtrack -0.0001 dhold -0.0011 dstrt -0.0040 dish -0.0001  cmd x0.998 rmid x0.881 hard16 x0.918 rhi x0.934 Jerr x0.969
+   10-15  V294 track 0.583 hold 0.500 strt 0.480 ishare 0.373 cmd 249 rmid 2.97 hard16 nan rhi 1.18 Jerr 0.058 LC 1.27Hz +2.9dB
+        L7.0         dtrack +0.0000 dhold +0.0011 dstrt -0.0022 dish -0.0003  cmd x0.999 rmid x0.984 hard16 xnan rhi x0.969 Jerr x0.991
+        L8.0         dtrack +0.0001 dhold +0.0011 dstrt -0.0041 dish -0.0009  cmd x0.999 rmid x0.978 hard16 xnan rhi x0.954 Jerr x0.989
+        L10.0        dtrack +0.0001 dhold +0.0011 dstrt -0.0046 dish -0.0012  cmd x0.998 rmid x0.971 hard16 xnan rhi x0.936 Jerr x0.986
+        L12.0        dtrack +0.0004 dhold +0.0006 dstrt -0.0056 dish -0.0014  cmd x0.998 rmid x0.967 hard16 xnan rhi x0.924 Jerr x0.982
+        D256         dtrack -0.0000 dhold +0.0006 dstrt -0.0028 dish -0.0001  cmd x0.999 rmid x0.985 hard16 xnan rhi x0.957 Jerr x0.993
+        D512         dtrack +0.0003 dhold +0.0006 dstrt -0.0034 dish -0.0002  cmd x0.998 rmid x0.970 hard16 xnan rhi x0.918 Jerr x0.984
+        A1014_bheld  dtrack -0.0006 dhold -0.0003 dstrt -0.0034 dish -0.0010  cmd x1.001 rmid x0.937 hard16 xnan rhi x1.009 Jerr x0.995
+        A1017_bheld  dtrack -0.0007 dhold -0.0053 dstrt -0.0045 dish -0.0003  cmd x1.000 rmid x0.848 hard16 xnan rhi x1.028 Jerr x0.991
+        L8+A1014     dtrack +0.0002 dhold +0.0011 dstrt -0.0061 dish -0.0012  cmd x0.999 rmid x0.904 hard16 xnan rhi x0.961 Jerr x0.985
+        L10+A1014    dtrack +0.0002 dhold +0.0011 dstrt -0.0051 dish -0.0007  cmd x0.999 rmid x0.904 hard16 xnan rhi x0.944 Jerr x0.982
+   15-22  V294 track 0.833 hold 0.667 strt 0.958 ishare 0.417 cmd 325 rmid 3.15 hard16 7.16 rhi 1.37 Jerr 0.077 LC 1.27Hz +2.9dB
+        L7.0         dtrack -0.0004 dhold +0.0050 dstrt -0.0027 dish +0.0016  cmd x1.000 rmid x0.967 hard16 x0.963 rhi x0.970 Jerr x0.988
+        L8.0         dtrack -0.0003 dhold +0.0038 dstrt -0.0038 dish +0.0012  cmd x1.000 rmid x0.962 hard16 x0.953 rhi x0.955 Jerr x0.986
+        L10.0        dtrack -0.0005 dhold -0.0014 dstrt -0.0036 dish +0.0023  cmd x0.999 rmid x0.948 hard16 x0.934 rhi x0.937 Jerr x0.980
+        L12.0        dtrack -0.0007 dhold -0.0010 dstrt -0.0030 dish +0.0011  cmd x1.000 rmid x0.944 hard16 x0.928 rhi x0.921 Jerr x0.977
+        D256         dtrack -0.0005 dhold -0.0012 dstrt -0.0025 dish +0.0022  cmd x1.000 rmid x0.973 hard16 x0.970 rhi x0.956 Jerr x0.989
+        D512         dtrack -0.0005 dhold -0.0010 dstrt -0.0048 dish +0.0024  cmd x0.999 rmid x0.948 hard16 x0.937 rhi x0.918 Jerr x0.980
+        A1014_bheld  dtrack +0.0000 dhold +0.0048 dstrt -0.0011 dish -0.0005  cmd x1.000 rmid x0.938 hard16 x0.944 rhi x0.993 Jerr x1.000
+        A1017_bheld  dtrack +0.0004 dhold +0.0050 dstrt +0.0004 dish -0.0003  cmd x1.000 rmid x0.882 hard16 x0.892 rhi x0.989 Jerr x0.990
+        L8+A1014     dtrack -0.0007 dhold -0.0013 dstrt -0.0015 dish +0.0004  cmd x1.000 rmid x0.902 hard16 x0.893 rhi x0.937 Jerr x0.986
+        L10+A1014    dtrack -0.0007 dhold -0.0013 dstrt -0.0020 dish +0.0028  cmd x1.000 rmid x0.890 hard16 x0.878 rhi x0.923 Jerr x0.982
+   22+    V294 track 0.923 hold 0.943 strt 0.819 ishare 0.262 cmd 281 rmid 1.27 hard16 1.91 rhi 0.74 Jerr 0.065 LC 1.27Hz +2.9dB
+        L7.0         dtrack +0.0000 dhold +0.0013 dstrt -0.0035 dish +0.0004  cmd x1.000 rmid x0.970 hard16 x0.973 rhi x0.982 Jerr x0.979
+        L8.0         dtrack -0.0002 dhold +0.0013 dstrt -0.0072 dish +0.0016  cmd x1.000 rmid x0.966 hard16 x0.966 rhi x0.971 Jerr x0.979
+        L10.0        dtrack -0.0002 dhold +0.0013 dstrt -0.0042 dish +0.0009  cmd x1.000 rmid x0.945 hard16 x0.964 rhi x0.964 Jerr x0.973
+        L12.0        dtrack -0.0005 dhold +0.0013 dstrt -0.0008 dish +0.0005  cmd x1.000 rmid x0.936 hard16 x0.958 rhi x0.962 Jerr x0.979
+        D256         dtrack +0.0000 dhold +0.0013 dstrt -0.0003 dish -0.0000  cmd x1.000 rmid x0.975 hard16 x0.974 rhi x0.983 Jerr x0.988
+        D512         dtrack -0.0004 dhold +0.0013 dstrt -0.0055 dish +0.0010  cmd x1.000 rmid x0.930 hard16 x0.959 rhi x0.945 Jerr x0.977
+        A1014_bheld  dtrack +0.0000 dhold -0.0118 dstrt -0.0014 dish -0.0004  cmd x1.001 rmid x0.952 hard16 x0.927 rhi x0.998 Jerr x1.004
+        A1017_bheld  dtrack +0.0006 dhold -0.0002 dstrt +0.0032 dish +0.0010  cmd x1.000 rmid x0.904 hard16 x0.894 rhi x1.016 Jerr x0.999
+        L8+A1014     dtrack +0.0004 dhold +0.0000 dstrt -0.0026 dish -0.0002  cmd x1.000 rmid x0.913 hard16 x0.899 rhi x0.978 Jerr x0.985
+        L10+A1014    dtrack +0.0001 dhold +0.0030 dstrt -0.0038 dish +0.0002  cmd x1.000 rmid x0.911 hard16 x0.893 rhi x0.969 Jerr x0.977
+   limit-cycle 1-5 Hz line: V294 1.27 Hz +2.9 dB | L7.0 1.27Hz +3.0dB  L8.0 1.27Hz +3.0dB  L10.0 1.27Hz +3.0dB  L12.0 1.27Hz +3.1dB  D256 1.27Hz +3.1dB  D512 1.27Hz +3.1dB  A1014_bheld 1.27Hz +1.8dB  A1017_bheld 1.27Hz +0.6dB  L8+A1014 1.27Hz +1.8dB  L10+A1014 1.27Hz +1.8dB
+
+  mode B dist lp plant nominal -- V294 absolute | candidate MINUS V294 (ratio for r_mid/hard16/r_hi/cmd_rms/J_err)
+   0-5    V294 track 0.840 hold nan strt 0.768 ishare 0.513 cmd 603 rmid 1.14 hard16 nan rhi 0.44 Jerr 0.033 LC 1.07Hz -4.7dB
+        L7.0         dtrack -0.0001 dhold +nan dstrt -0.0024 dish +0.0003  cmd x0.999 rmid x1.001 hard16 xnan rhi x1.054 Jerr x0.985
+        L8.0         dtrack -0.0001 dhold +nan dstrt -0.0035 dish +0.0005  cmd x0.999 rmid x0.994 hard16 xnan rhi x1.065 Jerr x0.981
+        L10.0        dtrack -0.0001 dhold +nan dstrt -0.0043 dish +0.0007  cmd x0.999 rmid x0.997 hard16 xnan rhi x1.076 Jerr x0.976
+        L12.0        dtrack -0.0002 dhold +nan dstrt -0.0030 dish +0.0002  cmd x0.999 rmid x1.000 hard16 xnan rhi x1.101 Jerr x0.971
+        D256         dtrack -0.0001 dhold +nan dstrt -0.0035 dish +0.0003  cmd x1.000 rmid x0.985 hard16 xnan rhi x0.977 Jerr x0.986
+        D512         dtrack -0.0001 dhold +nan dstrt -0.0054 dish +0.0008  cmd x0.999 rmid x0.992 hard16 xnan rhi x1.019 Jerr x0.972
+        A1014_bheld  dtrack -0.0001 dhold +nan dstrt +0.0016 dish -0.0006  cmd x1.001 rmid x0.948 hard16 xnan rhi x1.009 Jerr x1.011
+        A1017_bheld  dtrack -0.0006 dhold +nan dstrt +0.0044 dish -0.0014  cmd x1.002 rmid x0.854 hard16 xnan rhi x1.045 Jerr x1.028
+        L8+A1014     dtrack -0.0002 dhold +nan dstrt -0.0015 dish -0.0004  cmd x1.000 rmid x0.943 hard16 xnan rhi x1.089 Jerr x0.992
+        L10+A1014    dtrack -0.0002 dhold +nan dstrt -0.0021 dish -0.0000  cmd x1.000 rmid x0.941 hard16 xnan rhi x1.100 Jerr x0.985
+   5-10   V294 track 0.865 hold 0.780 strt 0.663 ishare 0.388 cmd 524 rmid 1.10 hard16 1.26 rhi 0.34 Jerr 0.083 LC 1.07Hz -4.7dB
+        L7.0         dtrack -0.0005 dhold +0.0009 dstrt -0.0023 dish -0.0004  cmd x1.000 rmid x1.005 hard16 x1.039 rhi x1.075 Jerr x0.987
+        L8.0         dtrack -0.0006 dhold +0.0021 dstrt -0.0026 dish -0.0003  cmd x0.999 rmid x1.007 hard16 x1.054 rhi x1.093 Jerr x0.983
+        L10.0        dtrack -0.0009 dhold +0.0021 dstrt -0.0036 dish -0.0001  cmd x0.999 rmid x1.012 hard16 x1.047 rhi x1.120 Jerr x0.977
+        L12.0        dtrack -0.0010 dhold +0.0023 dstrt -0.0042 dish -0.0003  cmd x0.999 rmid x1.008 hard16 x1.041 rhi x1.130 Jerr x0.973
+        D256         dtrack -0.0004 dhold +0.0007 dstrt -0.0016 dish +0.0004  cmd x0.999 rmid x0.993 hard16 x1.004 rhi x0.994 Jerr x0.987
+        D512         dtrack -0.0008 dhold +0.0021 dstrt -0.0031 dish +0.0009  cmd x0.999 rmid x0.992 hard16 x1.006 rhi x1.022 Jerr x0.974
+        A1014_bheld  dtrack +0.0003 dhold -0.0000 dstrt -0.0001 dish -0.0014  cmd x1.000 rmid x0.964 hard16 x1.000 rhi x0.983 Jerr x1.008
+        A1017_bheld  dtrack +0.0009 dhold +0.0000 dstrt -0.0001 dish -0.0017  cmd x0.999 rmid x0.908 hard16 x0.985 rhi x1.027 Jerr x1.022
+        L8+A1014     dtrack -0.0003 dhold +0.0010 dstrt -0.0028 dish -0.0011  cmd x0.999 rmid x0.967 hard16 x1.024 rhi x1.093 Jerr x0.991
+        L10+A1014    dtrack -0.0005 dhold +0.0021 dstrt -0.0035 dish -0.0009  cmd x0.999 rmid x0.964 hard16 x1.019 rhi x1.112 Jerr x0.986
+   10-15  V294 track 0.586 hold 0.592 strt 0.540 ishare 0.395 cmd 242 rmid 0.26 hard16 nan rhi 0.14 Jerr 0.047 LC 1.07Hz -4.7dB
+        L7.0         dtrack +0.0006 dhold -0.0002 dstrt -0.0012 dish +0.0001  cmd x0.999 rmid x0.994 hard16 xnan rhi x1.060 Jerr x0.994
+        L8.0         dtrack +0.0008 dhold +0.0018 dstrt -0.0016 dish -0.0002  cmd x0.998 rmid x1.004 hard16 xnan rhi x1.053 Jerr x0.992
+        L10.0        dtrack +0.0010 dhold +0.0018 dstrt -0.0018 dish -0.0002  cmd x0.998 rmid x0.992 hard16 xnan rhi x1.070 Jerr x0.989
+        L12.0        dtrack +0.0013 dhold +0.0018 dstrt -0.0022 dish -0.0002  cmd x0.997 rmid x0.986 hard16 xnan rhi x1.099 Jerr x0.987
+        D256         dtrack +0.0007 dhold +0.0000 dstrt -0.0012 dish +0.0002  cmd x0.999 rmid x0.981 hard16 xnan rhi x0.993 Jerr x0.993
+        D512         dtrack +0.0014 dhold +0.0018 dstrt -0.0020 dish +0.0001  cmd x0.997 rmid x0.980 hard16 xnan rhi x1.026 Jerr x0.988
+        A1014_bheld  dtrack -0.0000 dhold +0.0006 dstrt -0.0001 dish -0.0001  cmd x1.000 rmid x0.968 hard16 xnan rhi x0.999 Jerr x1.002
+        A1017_bheld  dtrack -0.0000 dhold +0.0025 dstrt -0.0001 dish -0.0001  cmd x0.999 rmid x0.954 hard16 xnan rhi x0.974 Jerr x1.004
+        L8+A1014     dtrack +0.0008 dhold +0.0002 dstrt -0.0018 dish -0.0000  cmd x0.998 rmid x0.988 hard16 xnan rhi x1.056 Jerr x0.992
+        L10+A1014    dtrack +0.0011 dhold +0.0018 dstrt -0.0020 dish -0.0002  cmd x0.997 rmid x0.979 hard16 xnan rhi x1.071 Jerr x0.990
+   15-22  V294 track 0.764 hold 0.636 strt 0.963 ishare 0.436 cmd 350 rmid 0.19 hard16 0.16 rhi 0.10 Jerr 0.073 LC 1.07Hz -4.7dB
+        L7.0         dtrack -0.0002 dhold +0.0003 dstrt -0.0009 dish -0.0001  cmd x1.000 rmid x1.000 hard16 x1.038 rhi x1.050 Jerr x0.993
+        L8.0         dtrack -0.0003 dhold +0.0005 dstrt -0.0019 dish -0.0004  cmd x1.000 rmid x1.005 hard16 x1.082 rhi x1.064 Jerr x0.991
+        L10.0        dtrack -0.0003 dhold +0.0005 dstrt -0.0023 dish -0.0004  cmd x0.999 rmid x1.003 hard16 x1.085 rhi x1.050 Jerr x0.989
+        L12.0        dtrack -0.0003 dhold +0.0005 dstrt -0.0027 dish -0.0004  cmd x0.999 rmid x1.025 hard16 x1.137 rhi x1.082 Jerr x0.988
+        D256         dtrack -0.0002 dhold +0.0003 dstrt -0.0005 dish -0.0001  cmd x1.000 rmid x0.987 hard16 x0.960 rhi x0.987 Jerr x0.994
+        D512         dtrack -0.0002 dhold +0.0005 dstrt -0.0022 dish -0.0003  cmd x0.999 rmid x0.988 hard16 x1.018 rhi x1.036 Jerr x0.988
+        A1014_bheld  dtrack +0.0001 dhold +0.0000 dstrt +0.0001 dish +0.0001  cmd x1.000 rmid x0.973 hard16 x1.012 rhi x0.995 Jerr x1.000
+        A1017_bheld  dtrack +0.0002 dhold +0.0000 dstrt +0.0003 dish +0.0002  cmd x1.000 rmid x0.977 hard16 x0.967 rhi x0.994 Jerr x1.001
+        L8+A1014     dtrack -0.0001 dhold +0.0005 dstrt -0.0012 dish -0.0000  cmd x1.000 rmid x1.000 hard16 x1.102 rhi x1.045 Jerr x0.992
+        L10+A1014    dtrack -0.0002 dhold +0.0005 dstrt -0.0023 dish -0.0003  cmd x0.999 rmid x1.008 hard16 x1.118 rhi x1.059 Jerr x0.989
+   22+    V294 track 0.917 hold 0.940 strt 0.859 ishare 0.284 cmd 283 rmid 0.17 hard16 0.16 rhi 0.10 Jerr 0.060 LC 1.07Hz -4.7dB
+        L7.0         dtrack -0.0000 dhold -0.0019 dstrt -0.0023 dish +0.0001  cmd x1.000 rmid x1.039 hard16 x1.089 rhi x1.093 Jerr x0.988
+        L8.0         dtrack -0.0001 dhold -0.0023 dstrt -0.0035 dish +0.0003  cmd x1.000 rmid x1.049 hard16 x1.070 rhi x1.120 Jerr x0.983
+        L10.0        dtrack -0.0001 dhold -0.0024 dstrt -0.0046 dish +0.0002  cmd x0.999 rmid x1.057 hard16 x1.116 rhi x1.112 Jerr x0.979
+        L12.0        dtrack -0.0001 dhold -0.0025 dstrt -0.0050 dish +0.0004  cmd x0.999 rmid x1.045 hard16 x1.062 rhi x1.094 Jerr x0.975
+        D256         dtrack +0.0001 dhold -0.0019 dstrt -0.0028 dish +0.0005  cmd x0.999 rmid x1.029 hard16 x1.014 rhi x1.059 Jerr x0.988
+        D512         dtrack +0.0000 dhold -0.0024 dstrt -0.0055 dish +0.0009  cmd x0.999 rmid x1.049 hard16 x1.099 rhi x1.051 Jerr x0.976
+        A1014_bheld  dtrack +0.0000 dhold +0.0009 dstrt -0.0000 dish +0.0006  cmd x1.000 rmid x1.007 hard16 x1.027 rhi x1.045 Jerr x1.001
+        A1017_bheld  dtrack +0.0001 dhold +0.0025 dstrt +0.0025 dish +0.0021  cmd x1.000 rmid x1.007 hard16 x1.016 rhi x0.995 Jerr x1.003
+        L8+A1014     dtrack +0.0000 dhold -0.0023 dstrt -0.0034 dish +0.0007  cmd x1.000 rmid x1.013 hard16 x1.076 rhi x1.108 Jerr x0.985
+        L10+A1014    dtrack -0.0000 dhold -0.0024 dstrt -0.0045 dish +0.0007  cmd x0.999 rmid x1.046 hard16 x1.103 rhi x1.077 Jerr x0.980
+   limit-cycle 1-5 Hz line: V294 1.07 Hz -4.7 dB | L7.0 1.07Hz -4.8dB  L8.0 1.07Hz -4.9dB  L10.0 1.07Hz -4.9dB  L12.0 1.07Hz -4.9dB  D256 1.07Hz -4.7dB  D512 1.07Hz -4.6dB  A1014_bheld 1.07Hz -5.1dB  A1017_bheld 1.07Hz -5.6dB  L8+A1014 1.07Hz -5.2dB  L10+A1014 1.07Hz -5.2dB
+
+  mode B dist lp plant light_b -- V294 absolute | candidate MINUS V294 (ratio for r_mid/hard16/r_hi/cmd_rms/J_err)
+   0-5    V294 track 0.871 hold nan strt 0.775 ishare 0.513 cmd 556 rmid 5.08 hard16 nan rhi 0.75 Jerr 0.035 LC 1.07Hz +0.7dB
+        L7.0         dtrack -0.0002 dhold +nan dstrt -0.0103 dish +0.0003  cmd x1.000 rmid x0.978 hard16 xnan rhi x0.975 Jerr x0.975
+        L8.0         dtrack -0.0002 dhold +nan dstrt -0.0050 dish +0.0011  cmd x0.999 rmid x0.969 hard16 xnan rhi x0.957 Jerr x0.969
+        L10.0        dtrack -0.0004 dhold +nan dstrt -0.0151 dish +0.0014  cmd x1.000 rmid x0.959 hard16 xnan rhi x0.948 Jerr x0.957
+        L12.0        dtrack -0.0004 dhold +nan dstrt -0.0078 dish +0.0023  cmd x0.999 rmid x0.949 hard16 xnan rhi x0.918 Jerr x0.949
+        D256         dtrack -0.0002 dhold +nan dstrt -0.0073 dish +0.0008  cmd x1.000 rmid x0.971 hard16 xnan rhi x0.909 Jerr x0.974
+        D512         dtrack -0.0003 dhold +nan dstrt -0.0105 dish +0.0002  cmd x0.999 rmid x0.951 hard16 xnan rhi x0.866 Jerr x0.952
+        A1014_bheld  dtrack +0.0005 dhold +nan dstrt -0.0186 dish -0.0027  cmd x1.001 rmid x0.848 hard16 xnan rhi x0.992 Jerr x1.012
+        A1017_bheld  dtrack -0.0000 dhold +nan dstrt +0.0045 dish +0.0008  cmd x1.001 rmid x0.691 hard16 xnan rhi x0.882 Jerr x1.019
+        L8+A1014     dtrack -0.0001 dhold +nan dstrt -0.0149 dish +0.0010  cmd x1.000 rmid x0.829 hard16 xnan rhi x0.978 Jerr x0.978
+        L10+A1014    dtrack -0.0003 dhold +nan dstrt -0.0095 dish +0.0006  cmd x1.000 rmid x0.820 hard16 xnan rhi x0.957 Jerr x0.969
+   5-10   V294 track 0.889 hold 0.827 strt 0.675 ishare 0.401 cmd 498 rmid 3.52 hard16 3.27 rhi 0.61 Jerr 0.079 LC 1.07Hz +0.7dB
+        L7.0         dtrack -0.0006 dhold +0.0001 dstrt +0.0005 dish -0.0005  cmd x1.000 rmid x0.982 hard16 x0.991 rhi x1.004 Jerr x0.981
+        L8.0         dtrack -0.0008 dhold +0.0024 dstrt +0.0009 dish +0.0004  cmd x1.000 rmid x0.976 hard16 x0.985 rhi x1.010 Jerr x0.974
+        L10.0        dtrack -0.0010 dhold +0.0024 dstrt -0.0021 dish +0.0008  cmd x1.000 rmid x0.958 hard16 x0.958 rhi x0.992 Jerr x0.965
+        L12.0        dtrack -0.0011 dhold +0.0008 dstrt -0.0013 dish +0.0005  cmd x1.000 rmid x0.956 hard16 x0.956 rhi x0.987 Jerr x0.960
+        D256         dtrack -0.0006 dhold +0.0001 dstrt +0.0007 dish +0.0012  cmd x1.000 rmid x0.977 hard16 x0.973 rhi x0.954 Jerr x0.981
+        D512         dtrack -0.0010 dhold +0.0006 dstrt -0.0009 dish +0.0014  cmd x1.000 rmid x0.953 hard16 x0.942 rhi x0.922 Jerr x0.961
+        A1014_bheld  dtrack +0.0003 dhold +0.0005 dstrt +0.0018 dish +0.0009  cmd x1.000 rmid x0.921 hard16 x0.884 rhi x1.022 Jerr x1.020
+        A1017_bheld  dtrack +0.0007 dhold +0.0008 dstrt -0.0095 dish -0.0017  cmd x1.001 rmid x0.816 hard16 x0.892 rhi x1.042 Jerr x1.040
+        L8+A1014     dtrack -0.0005 dhold +0.0006 dstrt -0.0056 dish -0.0002  cmd x1.000 rmid x0.895 hard16 x0.870 rhi x1.042 Jerr x0.993
+        L10+A1014    dtrack -0.0008 dhold +0.0031 dstrt -0.0068 dish -0.0009  cmd x1.000 rmid x0.882 hard16 x0.861 rhi x1.018 Jerr x0.986
+   10-15  V294 track 0.621 hold 0.613 strt 0.543 ishare 0.393 cmd 242 rmid 1.10 hard16 nan rhi 0.35 Jerr 0.044 LC 1.07Hz +0.7dB
+        L7.0         dtrack -0.0002 dhold +0.0033 dstrt -0.0106 dish +0.0057  cmd x0.999 rmid x0.973 hard16 xnan rhi x0.963 Jerr x0.992
+        L8.0         dtrack -0.0003 dhold +0.0021 dstrt -0.0081 dish +0.0046  cmd x0.998 rmid x0.979 hard16 xnan rhi x0.962 Jerr x0.990
+        L10.0        dtrack -0.0002 dhold +0.0029 dstrt -0.0009 dish +0.0016  cmd x0.998 rmid x0.973 hard16 xnan rhi x0.984 Jerr x0.986
+        L12.0        dtrack -0.0004 dhold +0.0029 dstrt -0.0093 dish +0.0039  cmd x0.999 rmid x0.960 hard16 xnan rhi x0.981 Jerr x0.988
+        D256         dtrack -0.0002 dhold +0.0000 dstrt +0.0023 dish +0.0013  cmd x0.998 rmid x0.979 hard16 xnan rhi x0.945 Jerr x0.992
+        D512         dtrack +0.0002 dhold +0.0033 dstrt -0.0102 dish +0.0062  cmd x1.000 rmid x0.959 hard16 xnan rhi x0.884 Jerr x0.985
+        A1014_bheld  dtrack -0.0009 dhold +0.0000 dstrt -0.0121 dish +0.0081  cmd x1.000 rmid x0.920 hard16 xnan rhi x0.986 Jerr x1.004
+        A1017_bheld  dtrack -0.0007 dhold +0.0008 dstrt -0.0256 dish +0.0029  cmd x0.999 rmid x0.867 hard16 xnan rhi x1.008 Jerr x1.013
+        L8+A1014     dtrack -0.0007 dhold +0.0010 dstrt -0.0201 dish +0.0022  cmd x0.998 rmid x0.900 hard16 xnan rhi x0.952 Jerr x0.992
+        L10+A1014    dtrack -0.0009 dhold +0.0018 dstrt -0.0207 dish +0.0018  cmd x0.998 rmid x0.887 hard16 xnan rhi x0.959 Jerr x0.990
+   15-22  V294 track 0.850 hold 0.728 strt 0.982 ishare 0.426 cmd 319 rmid 1.59 hard16 2.08 rhi 0.44 Jerr 0.062 LC 1.07Hz +0.7dB
+        L7.0         dtrack -0.0003 dhold +0.0073 dstrt -0.0103 dish -0.0007  cmd x1.002 rmid x0.958 hard16 x0.975 rhi x0.987 Jerr x0.995
+        L8.0         dtrack +0.0001 dhold -0.0004 dstrt -0.0063 dish -0.0010  cmd x0.999 rmid x0.957 hard16 x0.968 rhi x0.990 Jerr x0.988
+        L10.0        dtrack -0.0003 dhold +0.0021 dstrt -0.0098 dish -0.0009  cmd x0.999 rmid x0.942 hard16 x0.929 rhi x0.991 Jerr x0.985
+        L12.0        dtrack -0.0002 dhold +0.0004 dstrt -0.0195 dish +0.0013  cmd x0.999 rmid x0.925 hard16 x0.938 rhi x0.968 Jerr x0.978
+        D256         dtrack +0.0003 dhold +0.0047 dstrt -0.0045 dish -0.0007  cmd x1.000 rmid x0.955 hard16 x0.940 rhi x0.973 Jerr x0.989
+        D512         dtrack -0.0004 dhold +0.0097 dstrt -0.0068 dish +0.0034  cmd x1.000 rmid x0.925 hard16 x0.919 rhi x0.946 Jerr x0.980
+        A1014_bheld  dtrack +0.0003 dhold +0.0021 dstrt +0.0074 dish +0.0025  cmd x1.000 rmid x0.928 hard16 x0.932 rhi x1.005 Jerr x1.004
+        A1017_bheld  dtrack +0.0006 dhold +0.0027 dstrt -0.0057 dish +0.0028  cmd x0.999 rmid x0.846 hard16 x0.864 rhi x1.002 Jerr x1.018
+        L8+A1014     dtrack -0.0004 dhold +0.0011 dstrt -0.0043 dish -0.0008  cmd x0.999 rmid x0.890 hard16 x0.872 rhi x0.979 Jerr x0.993
+        L10+A1014    dtrack -0.0002 dhold +0.0004 dstrt -0.0049 dish +0.0028  cmd x1.000 rmid x0.865 hard16 x0.851 rhi x0.958 Jerr x0.988
+   22+    V294 track 0.938 hold 0.959 strt 0.835 ishare 0.269 cmd 277 rmid 1.30 hard16 1.26 rhi 0.66 Jerr 0.058 LC 1.07Hz +0.7dB
+        L7.0         dtrack +0.0009 dhold +0.0019 dstrt -0.0110 dish -0.0005  cmd x0.997 rmid x0.967 hard16 x1.077 rhi x0.995 Jerr x1.001
+        L8.0         dtrack +0.0003 dhold -0.0001 dstrt +0.0124 dish +0.0091  cmd x0.994 rmid x0.941 hard16 x1.044 rhi x0.962 Jerr x0.975
+        L10.0        dtrack +0.0012 dhold +0.0008 dstrt -0.0289 dish -0.0089  cmd x0.996 rmid x0.920 hard16 x1.069 rhi x0.949 Jerr x0.986
+        L12.0        dtrack +0.0010 dhold +0.0131 dstrt -0.0146 dish -0.0008  cmd x0.995 rmid x0.887 hard16 x1.079 rhi x0.964 Jerr x0.940
+        D256         dtrack -0.0007 dhold +0.0024 dstrt +0.0145 dish +0.0092  cmd x0.997 rmid x0.946 hard16 x0.962 rhi x0.932 Jerr x0.958
+        D512         dtrack +0.0014 dhold +0.0131 dstrt -0.0119 dish +0.0019  cmd x0.995 rmid x0.860 hard16 x1.048 rhi x0.917 Jerr x0.945
+        A1014_bheld  dtrack +0.0008 dhold +0.0100 dstrt +0.0132 dish +0.0074  cmd x0.997 rmid x0.967 hard16 x0.973 rhi x1.009 Jerr x0.976
+        A1017_bheld  dtrack +0.0001 dhold +0.0083 dstrt +0.0013 dish -0.0012  cmd x0.999 rmid x0.885 hard16 x0.960 rhi x0.965 Jerr x0.971
+        L8+A1014     dtrack +0.0009 dhold +0.0030 dstrt +0.0045 dish +0.0127  cmd x0.992 rmid x0.899 hard16 x1.056 rhi x0.955 Jerr x0.969
+        L10+A1014    dtrack +0.0011 dhold +0.0063 dstrt -0.0012 dish +0.0038  cmd x0.994 rmid x0.888 hard16 x1.113 rhi x0.976 Jerr x0.959
+   limit-cycle 1-5 Hz line: V294 1.07 Hz +0.7 dB | L7.0 1.07Hz +0.5dB  L8.0 1.07Hz +0.5dB  L10.0 1.07Hz +0.4dB  L12.0 1.07Hz +0.3dB  D256 1.07Hz +0.7dB  D512 1.07Hz +0.5dB  A1014_bheld 1.07Hz -0.5dB  A1017_bheld 1.07Hz -1.1dB  L8+A1014 1.07Hz -0.6dB  L10+A1014 1.07Hz -0.8dB
+
+(b) delivered HF torque rms (T counts), mode A dist full  [39 s]
+   nominal   V294 {'5-9': 1.74, '9-13': 1.109, '13-17': 0.652, '17-23': 0.529, '23-30': 0.233, '30-120': 0.26}
+        L7.0         x V294 {'5-9': 1.15, '9-13': 1.28, '13-17': 1.32, '17-23': 1.35, '23-30': 1.35, '30-120': 1.27}
+        L8.0         x V294 {'5-9': 1.2, '9-13': 1.39, '13-17': 1.47, '17-23': 1.52, '23-30': 1.53, '30-120': 1.41}
+        L10.0        x V294 {'5-9': 1.27, '9-13': 1.56, '13-17': 1.73, '17-23': 1.83, '23-30': 1.86, '30-120': 1.7}
+        L12.0        x V294 {'5-9': 1.31, '9-13': 1.69, '13-17': 1.94, '17-23': 2.11, '23-30': 2.17, '30-120': 1.99}
+        D256         x V294 {'5-9': 1.02, '9-13': 1.13, '13-17': 1.28, '17-23': 1.48, '23-30': 1.74, '30-120': 2.35}
+        D512         x V294 {'5-9': 1.13, '9-13': 1.44, '13-17': 1.84, '17-23': 2.35, '23-30': 2.96, '30-120': 4.29}
+        A1014_bheld  x V294 {'5-9': 1.02, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.0, '30-120': 1.0}
+        A1017_bheld  x V294 {'5-9': 1.04, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.0, '30-120': 1.0}
+        L8+A1014     x V294 {'5-9': 1.22, '9-13': 1.39, '13-17': 1.47, '17-23': 1.52, '23-30': 1.52, '30-120': 1.41}
+        L10+A1014    x V294 {'5-9': 1.29, '9-13': 1.57, '13-17': 1.73, '17-23': 1.83, '23-30': 1.86, '30-120': 1.7}
+   light_b   V294 {'5-9': 1.796, '9-13': 1.083, '13-17': 0.616, '17-23': 0.518, '23-30': 0.225, '30-120': 0.257}
+        L7.0         x V294 {'5-9': 1.15, '9-13': 1.29, '13-17': 1.33, '17-23': 1.35, '23-30': 1.35, '30-120': 1.27}
+        L8.0         x V294 {'5-9': 1.2, '9-13': 1.4, '13-17': 1.48, '17-23': 1.52, '23-30': 1.52, '30-120': 1.4}
+        L10.0        x V294 {'5-9': 1.26, '9-13': 1.59, '13-17': 1.75, '17-23': 1.84, '23-30': 1.86, '30-120': 1.69}
+        L12.0        x V294 {'5-9': 1.3, '9-13': 1.73, '13-17': 1.97, '17-23': 2.12, '23-30': 2.17, '30-120': 1.98}
+        D256         x V294 {'5-9': 1.01, '9-13': 1.13, '13-17': 1.29, '17-23': 1.5, '23-30': 1.75, '30-120': 2.37}
+        D512         x V294 {'5-9': 1.1, '9-13': 1.45, '13-17': 1.87, '17-23': 2.39, '23-30': 2.99, '30-120': 4.31}
+        A1014_bheld  x V294 {'5-9': 1.02, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.0, '30-120': 1.0}
+        A1017_bheld  x V294 {'5-9': 1.03, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.0, '30-120': 1.0}
+        L8+A1014     x V294 {'5-9': 1.22, '9-13': 1.41, '13-17': 1.48, '17-23': 1.52, '23-30': 1.52, '30-120': 1.41}
+        L10+A1014    x V294 {'5-9': 1.28, '9-13': 1.6, '13-17': 1.75, '17-23': 1.84, '23-30': 1.85, '30-120': 1.69}
+   mode13    V294 {'5-9': 1.711, '9-13': 1.011, '13-17': 0.698, '17-23': 0.553, '23-30': 0.246, '30-120': 0.264}
+        L7.0         x V294 {'5-9': 1.15, '9-13': 1.27, '13-17': 1.32, '17-23': 1.35, '23-30': 1.35, '30-120': 1.27}
+        L8.0         x V294 {'5-9': 1.2, '9-13': 1.38, '13-17': 1.46, '17-23': 1.52, '23-30': 1.53, '30-120': 1.41}
+        L10.0        x V294 {'5-9': 1.27, '9-13': 1.56, '13-17': 1.71, '17-23': 1.83, '23-30': 1.86, '30-120': 1.7}
+        L12.0        x V294 {'5-9': 1.31, '9-13': 1.69, '13-17': 1.92, '17-23': 2.11, '23-30': 2.18, '30-120': 1.99}
+        D256         x V294 {'5-9': 1.02, '9-13': 1.13, '13-17': 1.27, '17-23': 1.47, '23-30': 1.74, '30-120': 2.35}
+        D512         x V294 {'5-9': 1.13, '9-13': 1.45, '13-17': 1.81, '17-23': 2.31, '23-30': 2.95, '30-120': 4.28}
+        A1014_bheld  x V294 {'5-9': 1.02, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.0, '30-120': 1.0}
+        A1017_bheld  x V294 {'5-9': 1.03, '9-13': 1.0, '13-17': 1.01, '17-23': 1.0, '23-30': 1.0, '30-120': 1.0}
+        L8+A1014     x V294 {'5-9': 1.22, '9-13': 1.38, '13-17': 1.47, '17-23': 1.52, '23-30': 1.53, '30-120': 1.41}
+        L10+A1014    x V294 {'5-9': 1.29, '9-13': 1.57, '13-17': 1.72, '17-23': 1.83, '23-30': 1.86, '30-120': 1.7}
+   mode20    V294 {'5-9': 1.735, '9-13': 1.081, '13-17': 0.575, '17-23': 0.527, '23-30': 0.255, '30-120': 0.265}
+        L7.0         x V294 {'5-9': 1.15, '9-13': 1.27, '13-17': 1.32, '17-23': 1.34, '23-30': 1.36, '30-120': 1.27}
+        L8.0         x V294 {'5-9': 1.2, '9-13': 1.39, '13-17': 1.47, '17-23': 1.5, '23-30': 1.54, '30-120': 1.41}
+        L10.0        x V294 {'5-9': 1.27, '9-13': 1.56, '13-17': 1.72, '17-23': 1.8, '23-30': 1.87, '30-120': 1.7}
+        L12.0        x V294 {'5-9': 1.31, '9-13': 1.69, '13-17': 1.93, '17-23': 2.06, '23-30': 2.19, '30-120': 1.99}
+        D256         x V294 {'5-9': 1.02, '9-13': 1.13, '13-17': 1.28, '17-23': 1.46, '23-30': 1.74, '30-120': 2.35}
+        D512         x V294 {'5-9': 1.13, '9-13': 1.44, '13-17': 1.85, '17-23': 2.26, '23-30': 2.94, '30-120': 4.28}
+        A1014_bheld  x V294 {'5-9': 1.02, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.01, '30-120': 1.0}
+        A1017_bheld  x V294 {'5-9': 1.03, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.01, '30-120': 1.0}
+        L8+A1014     x V294 {'5-9': 1.22, '9-13': 1.39, '13-17': 1.47, '17-23': 1.5, '23-30': 1.54, '30-120': 1.42}
+        L10+A1014    x V294 {'5-9': 1.29, '9-13': 1.57, '13-17': 1.72, '17-23': 1.8, '23-30': 1.87, '30-120': 1.7}
+   mode20_lo V294 {'5-9': 1.715, '9-13': 0.99, '13-17': 0.442, '17-23': 0.634, '23-30': 0.322, '30-120': 0.283}
+        L7.0         x V294 {'5-9': 1.15, '9-13': 1.27, '13-17': 1.31, '17-23': 1.33, '23-30': 1.36, '30-120': 1.28}
+        L8.0         x V294 {'5-9': 1.2, '9-13': 1.39, '13-17': 1.46, '17-23': 1.48, '23-30': 1.54, '30-120': 1.43}
+        L10.0        x V294 {'5-9': 1.27, '9-13': 1.57, '13-17': 1.7, '17-23': 1.75, '23-30': 1.88, '30-120': 1.72}
+        L12.0        x V294 {'5-9': 1.31, '9-13': 1.7, '13-17': 1.91, '17-23': 1.99, '23-30': 2.21, '30-120': 2.01}
+        D256         x V294 {'5-9': 1.02, '9-13': 1.13, '13-17': 1.3, '17-23': 1.4, '23-30': 1.72, '30-120': 2.31}
+        D512         x V294 {'5-9': 1.13, '9-13': 1.45, '13-17': 1.9, '17-23': 2.11, '23-30': 2.85, '30-120': 4.21}
+        A1014_bheld  x V294 {'5-9': 1.02, '9-13': 1.0, '13-17': 1.01, '17-23': 1.0, '23-30': 1.0, '30-120': 1.0}
+        A1017_bheld  x V294 {'5-9': 1.03, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.0, '30-120': 1.0}
+        L8+A1014     x V294 {'5-9': 1.22, '9-13': 1.39, '13-17': 1.46, '17-23': 1.48, '23-30': 1.54, '30-120': 1.43}
+        L10+A1014    x V294 {'5-9': 1.29, '9-13': 1.57, '13-17': 1.71, '17-23': 1.75, '23-30': 1.88, '30-120': 1.72}
+
+(b) delivered HF torque rms (T counts), mode B dist lp  [39 s]
+   nominal   V294 {'5-9': 1.358, '9-13': 0.813, '13-17': 0.401, '17-23': 0.515, '23-30': 0.195, '30-120': 0.258}
+        L7.0         x V294 {'5-9': 1.13, '9-13': 1.27, '13-17': 1.3, '17-23': 1.36, '23-30': 1.37, '30-120': 1.26}
+        L8.0         x V294 {'5-9': 1.18, '9-13': 1.4, '13-17': 1.45, '17-23': 1.53, '23-30': 1.55, '30-120': 1.4}
+        L10.0        x V294 {'5-9': 1.24, '9-13': 1.59, '13-17': 1.71, '17-23': 1.86, '23-30': 1.87, '30-120': 1.69}
+        L12.0        x V294 {'5-9': 1.29, '9-13': 1.71, '13-17': 1.96, '17-23': 2.14, '23-30': 2.2, '30-120': 2.0}
+        D256         x V294 {'5-9': 1.01, '9-13': 1.13, '13-17': 1.26, '17-23': 1.5, '23-30': 1.77, '30-120': 2.37}
+        D512         x V294 {'5-9': 1.11, '9-13': 1.45, '13-17': 1.84, '17-23': 2.39, '23-30': 2.99, '30-120': 4.38}
+        A1014_bheld  x V294 {'5-9': 1.0, '9-13': 1.0, '13-17': 0.99, '17-23': 1.0, '23-30': 1.0, '30-120': 1.0}
+        A1017_bheld  x V294 {'5-9': 1.02, '9-13': 1.03, '13-17': 1.0, '17-23': 0.99, '23-30': 1.01, '30-120': 1.0}
+        L8+A1014     x V294 {'5-9': 1.2, '9-13': 1.41, '13-17': 1.43, '17-23': 1.52, '23-30': 1.54, '30-120': 1.4}
+        L10+A1014    x V294 {'5-9': 1.26, '9-13': 1.6, '13-17': 1.71, '17-23': 1.84, '23-30': 1.87, '30-120': 1.68}
+   light_b   V294 {'5-9': 1.435, '9-13': 0.833, '13-17': 0.395, '17-23': 0.514, '23-30': 0.195, '30-120': 0.261}
+        L7.0         x V294 {'5-9': 1.16, '9-13': 1.3, '13-17': 1.31, '17-23': 1.35, '23-30': 1.35, '30-120': 1.26}
+        L8.0         x V294 {'5-9': 1.2, '9-13': 1.41, '13-17': 1.46, '17-23': 1.52, '23-30': 1.5, '30-120': 1.4}
+        L10.0        x V294 {'5-9': 1.27, '9-13': 1.62, '13-17': 1.74, '17-23': 1.85, '23-30': 1.84, '30-120': 1.68}
+        L12.0        x V294 {'5-9': 1.31, '9-13': 1.76, '13-17': 1.97, '17-23': 2.14, '23-30': 2.16, '30-120': 1.98}
+        D256         x V294 {'5-9': 1.02, '9-13': 1.14, '13-17': 1.29, '17-23': 1.5, '23-30': 1.74, '30-120': 2.37}
+        D512         x V294 {'5-9': 1.11, '9-13': 1.46, '13-17': 1.89, '17-23': 2.42, '23-30': 2.95, '30-120': 4.34}
+        A1014_bheld  x V294 {'5-9': 1.01, '9-13': 1.02, '13-17': 0.98, '17-23': 1.0, '23-30': 0.99, '30-120': 0.99}
+        A1017_bheld  x V294 {'5-9': 1.02, '9-13': 1.02, '13-17': 1.01, '17-23': 1.0, '23-30': 1.0, '30-120': 1.0}
+        L8+A1014     x V294 {'5-9': 1.2, '9-13': 1.43, '13-17': 1.46, '17-23': 1.53, '23-30': 1.51, '30-120': 1.41}
+        L10+A1014    x V294 {'5-9': 1.27, '9-13': 1.63, '13-17': 1.72, '17-23': 1.85, '23-30': 1.86, '30-120': 1.69}
+   mode13    V294 {'5-9': 1.366, '9-13': 0.787, '13-17': 0.403, '17-23': 0.525, '23-30': 0.196, '30-120': 0.259}
+        L7.0         x V294 {'5-9': 1.14, '9-13': 1.28, '13-17': 1.3, '17-23': 1.35, '23-30': 1.36, '30-120': 1.27}
+        L8.0         x V294 {'5-9': 1.18, '9-13': 1.4, '13-17': 1.45, '17-23': 1.51, '23-30': 1.54, '30-120': 1.4}
+        L10.0        x V294 {'5-9': 1.25, '9-13': 1.59, '13-17': 1.69, '17-23': 1.84, '23-30': 1.89, '30-120': 1.7}
+        L12.0        x V294 {'5-9': 1.29, '9-13': 1.73, '13-17': 1.92, '17-23': 2.13, '23-30': 2.22, '30-120': 2.0}
+        D256         x V294 {'5-9': 1.01, '9-13': 1.14, '13-17': 1.24, '17-23': 1.47, '23-30': 1.75, '30-120': 2.37}
+        D512         x V294 {'5-9': 1.11, '9-13': 1.47, '13-17': 1.78, '17-23': 2.34, '23-30': 2.96, '30-120': 4.37}
+        A1014_bheld  x V294 {'5-9': 1.0, '9-13': 1.01, '13-17': 0.98, '17-23': 0.98, '23-30': 0.99, '30-120': 0.99}
+        A1017_bheld  x V294 {'5-9': 1.01, '9-13': 1.03, '13-17': 0.98, '17-23': 0.98, '23-30': 1.01, '30-120': 1.0}
+        L8+A1014     x V294 {'5-9': 1.2, '9-13': 1.42, '13-17': 1.43, '17-23': 1.51, '23-30': 1.54, '30-120': 1.4}
+        L10+A1014    x V294 {'5-9': 1.26, '9-13': 1.6, '13-17': 1.68, '17-23': 1.82, '23-30': 1.85, '30-120': 1.68}
+   mode20    V294 {'5-9': 1.365, '9-13': 0.809, '13-17': 0.398, '17-23': 0.514, '23-30': 0.196, '30-120': 0.258}
+        L7.0         x V294 {'5-9': 1.13, '9-13': 1.27, '13-17': 1.3, '17-23': 1.35, '23-30': 1.38, '30-120': 1.27}
+        L8.0         x V294 {'5-9': 1.18, '9-13': 1.4, '13-17': 1.43, '17-23': 1.5, '23-30': 1.54, '30-120': 1.41}
+        L10.0        x V294 {'5-9': 1.25, '9-13': 1.6, '13-17': 1.7, '17-23': 1.82, '23-30': 1.9, '30-120': 1.71}
+        L12.0        x V294 {'5-9': 1.29, '9-13': 1.72, '13-17': 1.94, '17-23': 2.07, '23-30': 2.22, '30-120': 2.01}
+        D256         x V294 {'5-9': 1.01, '9-13': 1.13, '13-17': 1.26, '17-23': 1.44, '23-30': 1.77, '30-120': 2.38}
+        D512         x V294 {'5-9': 1.11, '9-13': 1.46, '13-17': 1.83, '17-23': 2.25, '23-30': 2.96, '30-120': 4.38}
+        A1014_bheld  x V294 {'5-9': 1.0, '9-13': 1.0, '13-17': 0.98, '17-23': 0.99, '23-30': 0.99, '30-120': 1.0}
+        A1017_bheld  x V294 {'5-9': 1.01, '9-13': 1.03, '13-17': 0.98, '17-23': 0.98, '23-30': 1.01, '30-120': 1.0}
+        L8+A1014     x V294 {'5-9': 1.2, '9-13': 1.42, '13-17': 1.42, '17-23': 1.49, '23-30': 1.54, '30-120': 1.4}
+        L10+A1014    x V294 {'5-9': 1.26, '9-13': 1.61, '13-17': 1.69, '17-23': 1.8, '23-30': 1.87, '30-120': 1.69}
+   mode20_lo V294 {'5-9': 1.368, '9-13': 0.799, '13-17': 0.386, '17-23': 0.507, '23-30': 0.197, '30-120': 0.258}
+        L7.0         x V294 {'5-9': 1.14, '9-13': 1.28, '13-17': 1.31, '17-23': 1.32, '23-30': 1.39, '30-120': 1.27}
+        L8.0         x V294 {'5-9': 1.18, '9-13': 1.4, '13-17': 1.45, '17-23': 1.47, '23-30': 1.56, '30-120': 1.41}
+        L10.0        x V294 {'5-9': 1.25, '9-13': 1.61, '13-17': 1.69, '17-23': 1.76, '23-30': 1.92, '30-120': 1.71}
+        L12.0        x V294 {'5-9': 1.3, '9-13': 1.75, '13-17': 1.91, '17-23': 1.98, '23-30': 2.25, '30-120': 2.03}
+        D256         x V294 {'5-9': 1.01, '9-13': 1.15, '13-17': 1.26, '17-23': 1.38, '23-30': 1.74, '30-120': 2.41}
+        D512         x V294 {'5-9': 1.11, '9-13': 1.49, '13-17': 1.86, '17-23': 2.07, '23-30': 2.88, '30-120': 4.43}
+        A1014_bheld  x V294 {'5-9': 1.0, '9-13': 1.0, '13-17': 0.99, '17-23': 0.99, '23-30': 1.0, '30-120': 1.0}
+        A1017_bheld  x V294 {'5-9': 1.01, '9-13': 1.03, '13-17': 0.99, '17-23': 0.99, '23-30': 1.01, '30-120': 1.01}
+        L8+A1014     x V294 {'5-9': 1.2, '9-13': 1.42, '13-17': 1.41, '17-23': 1.47, '23-30': 1.58, '30-120': 1.41}
+        L10+A1014    x V294 {'5-9': 1.26, '9-13': 1.61, '13-17': 1.69, '17-23': 1.73, '23-30': 1.9, '30-120': 1.7}
+
+(c) staircase triangle (+-2000 at the 123/frame slew cap), delivered HF rms, and x V294
+   V294         {'5-9': 21.27, '9-13': 7.5, '13-17': 2.73, '17-23': 1.49, '23-30': 0.84}  x {'5-9': 1.0, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.0}
+   L7.0         {'5-9': 25.26, '9-13': 9.57, '13-17': 3.64, '17-23': 1.96, '23-30': 1.1}  x {'5-9': 1.19, '9-13': 1.28, '13-17': 1.33, '17-23': 1.32, '23-30': 1.32}
+   L8.0         {'5-9': 26.69, '9-13': 10.43, '13-17': 4.01, '17-23': 2.2, '23-30': 1.26}  x {'5-9': 1.25, '9-13': 1.39, '13-17': 1.47, '17-23': 1.47, '23-30': 1.5}
+   L10.0        {'5-9': 28.84, '9-13': 11.86, '13-17': 4.69, '17-23': 2.64, '23-30': 1.52}  x {'5-9': 1.36, '9-13': 1.58, '13-17': 1.72, '17-23': 1.77, '23-30': 1.81}
+   L12.0        {'5-9': 30.31, '9-13': 12.95, '13-17': 5.27, '17-23': 3.05, '23-30': 1.77}  x {'5-9': 1.42, '9-13': 1.73, '13-17': 1.93, '17-23': 2.05, '23-30': 2.11}
+   D256         {'5-9': 22.68, '9-13': 8.7, '13-17': 3.54, '17-23': 2.23, '23-30': 1.45}  x {'5-9': 1.07, '9-13': 1.16, '13-17': 1.3, '17-23': 1.49, '23-30': 1.73}
+   D512         {'5-9': 25.25, '9-13': 10.68, '13-17': 4.7, '17-23': 3.28, '23-30': 2.39}  x {'5-9': 1.19, '9-13': 1.42, '13-17': 1.72, '17-23': 2.2, '23-30': 2.86}
+   A1014_bheld  {'5-9': 21.27, '9-13': 7.5, '13-17': 2.73, '17-23': 1.49, '23-30': 0.84}  x {'5-9': 1.0, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.0}
+   A1017_bheld  {'5-9': 21.27, '9-13': 7.5, '13-17': 2.73, '17-23': 1.49, '23-30': 0.84}  x {'5-9': 1.0, '9-13': 1.0, '13-17': 1.0, '17-23': 1.0, '23-30': 1.0}
+   L8+A1014     {'5-9': 26.69, '9-13': 10.43, '13-17': 4.01, '17-23': 2.2, '23-30': 1.26}  x {'5-9': 1.25, '9-13': 1.39, '13-17': 1.47, '17-23': 1.47, '23-30': 1.5}
+   L10+A1014    {'5-9': 28.84, '9-13': 11.86, '13-17': 4.69, '17-23': 2.64, '23-30': 1.52}  x {'5-9': 1.36, '9-13': 1.58, '13-17': 1.72, '17-23': 1.77, '23-30': 1.81}
+   staircase 30-120 Hz ripple rms: {'V294': 0.89, 'L7.0': 1.23, 'L8.0': 1.4, 'L10.0': 1.72, 'L12.0': 2.06, 'D256': 4.23, 'D512': 8.02, 'A1014_bheld': 0.89, 'A1017_bheld': 0.89, 'L8+A1014': 1.4, 'L10+A1014': 1.72}
+
+(c) sensor-noise torque (x white 1.93 counts rms, sp 0, 60 s): T rms and HF bands
+   V294         T rms 0.036  {'5-9': 0.0, '9-13': 0.0, '13-17': 0.0, '17-23': 0.0, '23-30': 0.0, '30-120': 0.0}
+   L7.0         T rms 0.044  {'5-9': 0.0, '9-13': 0.0, '13-17': 0.0, '17-23': 0.0, '23-30': 0.0, '30-120': 0.0}
+   L8.0         T rms 0.039  {'5-9': 0.0, '9-13': 0.0, '13-17': 0.0, '17-23': 0.0, '23-30': 0.0, '30-120': 0.0}
+   L10.0        T rms 0.046  {'5-9': 0.001, '9-13': 0.001, '13-17': 0.001, '17-23': 0.001, '23-30': 0.001, '30-120': 0.003}
+   L12.0        T rms 0.066  {'5-9': 0.006, '9-13': 0.006, '13-17': 0.007, '17-23': 0.008, '23-30': 0.008, '30-120': 0.024}
+   D256         T rms 0.079  {'5-9': 0.006, '9-13': 0.006, '13-17': 0.006, '17-23': 0.007, '23-30': 0.008, '30-120': 0.03}
+   D512         T rms 0.395  {'5-9': 0.025, '9-13': 0.028, '13-17': 0.031, '17-23': 0.043, '23-30': 0.047, '30-120': 0.184}
+   A1014_bheld  T rms 0.037  {'5-9': 0.0, '9-13': 0.0, '13-17': 0.0, '17-23': 0.0, '23-30': 0.0, '30-120': 0.0}
+   A1017_bheld  T rms 0.045  {'5-9': 0.0, '9-13': 0.001, '13-17': 0.0, '17-23': 0.0, '23-30': 0.0, '30-120': 0.0}
+   L8+A1014     T rms 0.042  {'5-9': 0.0, '9-13': 0.0, '13-17': 0.0, '17-23': 0.0, '23-30': 0.0, '30-120': 0.0}
+   L10+A1014    T rms 0.052  {'5-9': 0.001, '9-13': 0.001, '13-17': 0.001, '17-23': 0.001, '23-30': 0.001, '30-120': 0.003}

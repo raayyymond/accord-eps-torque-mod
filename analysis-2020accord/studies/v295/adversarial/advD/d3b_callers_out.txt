@@ -1,0 +1,9 @@
+CONTROL 0x22522 -> 0x28EA6 found: True
+CONTROL 0x22530 -> 0x2B422 found: True
+CONTROL 0x22514 -> 0x1CBA6 found: True
+[0x2B070,0x2B422): transfers in from outside: []
+   even LE32 constants pointing inside: []
+[0x2A892,0x2A93A): transfers in from outside: []
+   even LE32 constants pointing inside: []
+[0x2A93A,0x2B070): transfers in from outside: [('0x2b094', 'bcond', '0x2afb4'), ('0x2b0b8', 'bcond', '0x2afdc'), ('0x2b0d2', 'bcond', '0x2aff2')]
+   even LE32 constants pointing inside: [('0x5a368', '0x2b000')]

@@ -1,0 +1,32 @@
+SUPERSEDED (2026-09-30): the 20 s-free-run G3a, run before the rate-former start fix; its synthetic world had zero offset so it could not see the c0 sign bug. The G3a of record is p5b_ms_synth_out.txt (with per-window offsets).
+OUTPUT-ERROR FIT, closed inner-loop replay through the byte-exact V294 lane (tau 2 ms, rate window 3 ms, sat = prior) -- mode: synthetic
+
+BAND 0-5 m/s: 3 fit segs (20 s, v 3.3), 3 held (23 s); NM cost 0.0323 (190 evals); 369 s wall
+  J 0.2172 +-nan T/(deg/s^2) | b 1.870 +-nan T/(deg/s) | k 5.00 +-nan T/deg | Fc 29.2 +-nan T | Fs 36.9 +-nan T
+  G3a TRUTH   J 0.2000 b 2.000 k 5.00 Fc 30.0 Fs 39.0  -> recovered/true J 1.09 b 0.94 k 1.00 Fc 0.97
+  -> open-plant mode f_n 0.76 Hz, zeta 0.897 (linear, sliding); in x units J_x 0.02715, b_x 0.2338 T per count(/s)
+  fit_scores     th R2 +0.993 fit  91.8% rms  1.31 deg | om R2 +0.973 fit  83.4% rms  3.80 deg/s | tap R2 +0.9956 rms   5.9
+
+BAND 5-10 m/s: 8 fit segs (87 s, v 7.6), 7 held (76 s); NM cost 0.0110 (171 evals); 790 s wall
+  J 0.2008 +-nan T/(deg/s^2) | b 2.015 +-nan T/(deg/s) | k 11.03 +-nan T/deg | Fc 28.0 +-nan T | Fs 34.9 +-nan T
+  G3a TRUTH   J 0.2000 b 2.000 k 11.00 Fc 30.0 Fs 39.0  -> recovered/true J 1.00 b 1.01 k 1.00 Fc 0.93
+  -> open-plant mode f_n 1.18 Hz, zeta 0.677 (linear, sliding); in x units J_x 0.02510, b_x 0.2518 T per count(/s)
+  fit_scores     th R2 +0.999 fit  96.2% rms  1.14 deg | om R2 +0.990 fit  90.1% rms  2.93 deg/s | tap R2 +0.9988 rms   5.3
+
+BAND 10-15 m/s: 8 fit segs (98 s, v 11.9), 8 held (108 s); NM cost 0.0398 (122 evals); 761 s wall
+  J 0.1983 +-nan T/(deg/s^2) | b 2.043 +-nan T/(deg/s) | k 27.92 +-nan T/deg | Fc 25.8 +-nan T | Fs 32.7 +-nan T
+  G3a TRUTH   J 0.2000 b 2.000 k 28.00 Fc 30.0 Fs 39.0  -> recovered/true J 0.99 b 1.02 k 1.00 Fc 0.86
+  -> open-plant mode f_n 1.89 Hz, zeta 0.434 (linear, sliding); in x units J_x 0.02479, b_x 0.2554 T per count(/s)
+  fit_scores     th R2 +0.992 fit  91.2% rms  0.36 deg | om R2 +0.967 fit  81.9% rms  1.75 deg/s | tap R2 +0.9981 rms   4.8
+
+BAND 15-22 m/s: 6 fit segs (75 s, v 17.4), 6 held (48 s); NM cost 0.4726 (114 evals); 619 s wall
+  J 0.2103 +-nan T/(deg/s^2) | b 3.161 +-nan T/(deg/s) | k 40.08 +-nan T/deg | Fc 21.8 +-nan T | Fs 28.0 +-nan T
+  G3a TRUTH   J 0.2000 b 2.000 k 39.00 Fc 30.0 Fs 39.0  -> recovered/true J 1.05 b 1.58 k 1.03 Fc 0.73
+  -> open-plant mode f_n 2.20 Hz, zeta 0.544 (linear, sliding); in x units J_x 0.02629, b_x 0.3951 T per count(/s)
+  fit_scores     th R2 +0.958 fit  79.6% rms  0.34 deg | om R2 +0.565 fit  34.0% rms  1.56 deg/s | tap R2 +0.9946 rms   4.6
+
+BAND 22+ m/s: 3 fit segs (45 s, v 27.0), 2 held (26 s); NM cost 0.4138 (143 evals); 643 s wall
+  J 0.2010 +-nan T/(deg/s^2) | b 4.175 +-nan T/(deg/s) | k 52.60 +-nan T/deg | Fc 26.4 +-nan T | Fs 34.8 +-nan T
+  G3a TRUTH   J 0.2000 b 2.000 k 53.00 Fc 30.0 Fs 39.0  -> recovered/true J 1.00 b 2.09 k 0.99 Fc 0.88
+  -> open-plant mode f_n 2.57 Hz, zeta 0.642 (linear, sliding); in x units J_x 0.02512, b_x 0.5218 T per count(/s)
+  fit_scores     th R2 +0.980 fit  85.8% rms  0.27 deg | om R2 +0.590 fit  35.9% rms  1.53 deg/s | tap R2 +0.9978 rms   4.7

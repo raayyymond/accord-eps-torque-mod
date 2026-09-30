@@ -1,0 +1,8 @@
+V294: P clamp reachable (|E| <= 4*map + C) only at idx >= 179 ; at r26 = 0 from idx 239
+cand: P clamp reachable (|E| <= 4*map + C) only at idx >= 179 ; at r26 = 0 from idx 239
+D3 static torque change over one max-slew frame (123 wire counts): V294 max 85 T (at wire 71) ; cand max 109 T (at wire 7) ; ratio of maxima 1.28 ; across the idx-100 kink (wire 1500-1700): V294 84 cand 84
+   exact per-idx surface increments near idx 100 (V294 / cand): [(94, 10, 7), (95, 12, 9), (96, 10, 7), (97, 9, 7), (98, 10, 6), (99, 12, 8), (100, 9, 9), (101, 10, 10), (102, 10, 10), (103, 12, 12), (104, 9, 9), (105, 10, 10)]
+restart pulse V294 (idx 0, the strongest Kp):  10 deg/s: peak 15 T, >50 T for 0 ms ;  30 deg/s: peak 44 T, >50 T for 0 ms ; 100 deg/s: peak 146 T, >50 T for 162 ms ; 300 deg/s: peak 420 T, >50 T for 255 ms
+restart pulse cand (idx 0, the strongest Kp):  10 deg/s: peak 19 T, >50 T for 0 ms ;  30 deg/s: peak 57 T, >50 T for 51 ms ; 100 deg/s: peak 189 T, >50 T for 186 ms ; 300 deg/s: peak 546 T, >50 T for 277 ms
+r71b open-loop march V294 (hands-off engaged frames 70890): P clamp on 0 frames (0.0000 %), fb clamp on 0, max |T| 1319 ; all engaged: P clamp 114, max |T| 2461
+r71b open-loop march cand (hands-off engaged frames 70890): P clamp on 0 frames (0.0000 %), fb clamp on 0, max |T| 1319 ; all engaged: P clamp 114, max |T| 2461

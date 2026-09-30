@@ -1,0 +1,84 @@
+beta (b x) gamma (J x) | (A) r71-old min GM @f over 16-29 deg | (B) V294 curves GM | (C) V294 straight22+ Ms | pass
+  beta 0.75 gamma 0.50 | A GM 0.63@2.23 ok | B min GM 1.78 ok | C Ms 2.36 ok | A+B+C
+  beta 0.75 gamma 0.75 | A GM 0.59@1.87 ok | B min GM 1.54 ok | C Ms 3.10 -- | A+B
+  beta 0.75 gamma 1.00 | A GM 0.56@1.64 -- | B min GM 1.38 ok | C Ms 4.10 -- | 
+  beta 0.75 gamma 1.50 | A GM 0.53@1.35 -- | B min GM 1.16 ok | C Ms 7.74 -- | 
+  beta 0.75 gamma 2.00 | A GM 0.51@1.17 -- | B min GM 1.02 ok | C Ms 19.26 -- | 
+  beta 0.75 gamma 3.00 | A GM 0.48@0.95 -- | B min GM 0.84 -- | C Ms 24.96 -- | 
+  beta 1.00 gamma 0.50 | A GM 0.88@2.43 ok | B min GM 2.05 ok | C Ms 2.06 ok | A+B+C
+  beta 1.00 gamma 0.75 | A GM 0.81@2.05 ok | B min GM 1.77 ok | C Ms 2.52 -- | A+B
+  beta 1.00 gamma 1.00 | A GM 0.78@1.81 ok | B min GM 1.60 ok | C Ms 3.08 -- | A+B
+  beta 1.00 gamma 1.50 | A GM 0.73@1.50 -- | B min GM 1.37 ok | C Ms 4.60 -- | 
+  beta 1.00 gamma 2.00 | A GM 0.70@1.31 -- | B min GM 1.22 ok | C Ms 7.08 -- | 
+  beta 1.00 gamma 3.00 | A GM 0.67@1.07 -- | B min GM 1.02 ok | C Ms 22.28 -- | 
+  beta 1.25 gamma 0.50 | A GM 1.15@2.59 -- | B min GM 2.31 ok | C Ms 1.88 ok | 
+  beta 1.25 gamma 0.75 | A GM 1.05@2.21 -- | B min GM 2.01 ok | C Ms 2.20 ok | 
+  beta 1.25 gamma 1.00 | A GM 1.00@1.96 ok | B min GM 1.82 ok | C Ms 2.56 -- | A+B
+  beta 1.25 gamma 1.50 | A GM 0.94@1.63 -- | B min GM 1.58 ok | C Ms 3.43 -- | 
+  beta 1.25 gamma 2.00 | A GM 0.90@1.43 -- | B min GM 1.41 ok | C Ms 4.57 -- | 
+  beta 1.25 gamma 3.00 | A GM 0.85@1.17 -- | B min GM 1.21 ok | C Ms 8.27 -- | 
+  beta 1.50 gamma 0.50 | A GM 1.42@2.73 -- | B min GM 2.58 ok | C Ms 1.75 ok | 
+  beta 1.50 gamma 0.75 | A GM 1.30@2.35 -- | B min GM 2.26 ok | C Ms 1.99 ok | 
+  beta 1.50 gamma 1.00 | A GM 1.23@2.09 -- | B min GM 2.05 ok | C Ms 2.24 ok | 
+  beta 1.50 gamma 1.50 | A GM 1.15@1.75 -- | B min GM 1.79 ok | C Ms 2.82 -- | 
+  beta 1.50 gamma 2.00 | A GM 1.10@1.53 -- | B min GM 1.61 ok | C Ms 3.50 -- | 
+  beta 1.50 gamma 3.00 | A GM 1.04@1.26 -- | B min GM 1.39 ok | C Ms 5.28 -- | 
+  beta 2.00 gamma 0.50 | A GM 2.01@2.96 -- | B min GM 3.13 ok | C Ms 1.58 ok | 
+  beta 2.00 gamma 0.75 | A GM 1.83@2.58 -- | B min GM 2.76 ok | C Ms 1.73 ok | 
+  beta 2.00 gamma 1.00 | A GM 1.72@2.31 -- | B min GM 2.52 ok | C Ms 1.88 ok | 
+  beta 2.00 gamma 1.50 | A GM 1.60@1.95 -- | B min GM 2.21 ok | C Ms 2.20 ok | 
+  beta 2.00 gamma 2.00 | A GM 1.52@1.72 -- | B min GM 2.02 ok | C Ms 2.53 -- | 
+  beta 2.00 gamma 3.00 | A GM 1.44@1.42 -- | B min GM 1.77 ok | C Ms 3.27 -- | 
+  beta 2.50 gamma 0.50 | A GM 2.63@3.14 -- | B min GM 3.69 ok | C Ms 1.48 ok | 
+  beta 2.50 gamma 0.75 | A GM 2.39@2.76 -- | B min GM 3.27 ok | C Ms 1.58 ok | 
+  beta 2.50 gamma 1.00 | A GM 2.24@2.49 -- | B min GM 3.00 ok | C Ms 1.68 ok | 
+  beta 2.50 gamma 1.50 | A GM 2.07@2.12 -- | B min GM 2.65 ok | C Ms 1.88 ok | 
+  beta 2.50 gamma 2.00 | A GM 1.96@1.88 -- | B min GM 2.42 ok | C Ms 2.09 ok | 
+  beta 2.50 gamma 3.00 | A GM 1.85@1.56 -- | B min GM 2.14 ok | C Ms 2.52 -- | 
+  beta 3.00 gamma 0.50 | A GM 3.27@3.27 -- | B min GM 4.26 ok | C Ms 1.41 ok | 
+  beta 3.00 gamma 0.75 | A GM 2.98@2.91 -- | B min GM 3.80 ok | C Ms 1.48 ok | 
+  beta 3.00 gamma 1.00 | A GM 2.79@2.64 -- | B min GM 3.49 ok | C Ms 1.55 ok | 
+  beta 3.00 gamma 1.50 | A GM 2.56@2.27 -- | B min GM 3.09 ok | C Ms 1.70 ok | 
+  beta 3.00 gamma 2.00 | A GM 2.43@2.02 -- | B min GM 2.84 ok | C Ms 1.84 ok | 
+  beta 3.00 gamma 3.00 | A GM 2.27@1.69 -- | B min GM 2.53 ok | C Ms 2.12 ok | 
+  beta 4.00 gamma 0.50 | A GM 4.62@3.48 -- | B min GM 5.41 ok | C Ms 1.32 ok | 
+  beta 4.00 gamma 0.75 | A GM 4.21@3.14 -- | B min GM 4.87 ok | C Ms 1.36 ok | 
+  beta 4.00 gamma 1.00 | A GM 3.94@2.88 -- | B min GM 4.50 ok | C Ms 1.40 ok | 
+  beta 4.00 gamma 1.50 | A GM 3.60@2.51 -- | B min GM 4.01 ok | C Ms 1.49 ok | 
+  beta 4.00 gamma 2.00 | A GM 3.40@2.25 -- | B min GM 3.70 ok | C Ms 1.57 ok | 
+  beta 4.00 gamma 3.00 | A GM 3.16@1.90 -- | B min GM 3.31 ok | C Ms 1.73 ok | 
+  beta 6.00 gamma 0.50 | A GM 7.46@3.74 -- | B min GM 7.76 ok | C Ms 1.22 ok | 
+  beta 6.00 gamma 0.75 | A GM 6.87@3.45 -- | B min GM 7.10 ok | C Ms 1.24 ok | 
+  beta 6.00 gamma 1.00 | A GM 6.44@3.22 -- | B min GM 6.61 ok | C Ms 1.26 ok | 
+  beta 6.00 gamma 1.50 | A GM 5.87@2.86 -- | B min GM 5.94 ok | C Ms 1.30 ok | 
+  beta 6.00 gamma 2.00 | A GM 5.51@2.60 -- | B min GM 5.50 ok | C Ms 1.34 ok | 
+  beta 6.00 gamma 3.00 | A GM 5.07@2.23 -- | B min GM 4.95 ok | C Ms 1.42 ok | 
+
+worlds consistent with A and B: 6 (2 also meet the soft C)
+candidate vs V294 in every such world (same hold torque -> each build's own idx), relay on, pipe 22:
+  beta 0.75 gamma 0.50 (C ok) | straight 22+ 2.36/1.90->2.55/1.80 ; hold 22+ (idx18) 2.41/1.89->2.48/1.86 ; curve 22+ 2.71/1.78->2.63/1.83 ; straight 15-22 1.71/2.93->1.80/2.79 ; curve 15-19 2.06/2.68->2.06/2.78 ; curve 19-22 2.03/2.38->2.01/2.46
+        straight 10-15 1.53/3.85->1.60/3.66 ; hold 10-15 1.57/3.76->1.57/3.91 ; straight 5-10 1.57/4.48->1.66/4.30 ; hard 5-10 2.26/3.44->2.09/4.22 ; straight 0-5 1.72/4.97->1.85/4.81 ; low-speed turn 2.11/3.80->1.94/4.78 | worst GM ratio 0.946 at straight 22+
+  beta 0.75 gamma 0.75 (C no) | straight 22+ 3.10/1.64->3.46/1.55 ; hold 22+ (idx18) 3.18/1.63->3.31/1.60 ; curve 22+ 3.75/1.54->3.59/1.58 ; straight 15-22 1.99/2.53->2.12/2.40 ; curve 15-19 2.53/2.30->2.52/2.39 ; curve 19-22 2.49/2.05->2.45/2.12
+        straight 10-15 1.71/3.31->1.81/3.16 ; hold 10-15 1.77/3.24->1.78/3.37 ; straight 5-10 1.76/3.85->1.89/3.69 ; hard 5-10 2.73/2.92->2.46/3.58 ; straight 0-5 1.95/4.24->2.13/4.09 ; low-speed turn 2.50/3.23->2.24/4.06 | worst GM ratio 0.946 at straight 22+
+  beta 1.00 gamma 0.50 (C ok) | straight 22+ 2.06/2.17->2.25/2.02 ; hold 22+ (idx18) 2.10/2.16->2.19/2.08 ; curve 22+ 2.30/2.05->2.30/2.07 ; straight 15-22 1.59/3.37->1.68/3.13 ; curve 15-19 1.84/3.10->1.87/3.16 ; curve 19-22 1.83/2.73->1.84/2.78
+        straight 10-15 1.44/4.42->1.51/4.12 ; hold 10-15 1.47/4.32->1.49/4.42 ; straight 5-10 1.46/5.18->1.55/4.86 ; hard 5-10 1.94/4.03->1.83/4.90 ; straight 0-5 1.56/5.80->1.68/5.47 ; low-speed turn 1.83/4.45->1.71/5.56 | worst GM ratio 0.928 at straight 22+
+  beta 1.00 gamma 0.75 (C no) | straight 22+ 2.52/1.88->2.83/1.74 ; hold 22+ (idx18) 2.58/1.87->2.73/1.80 ; curve 22+ 2.90/1.77->2.90/1.79 ; straight 15-22 1.79/2.92->1.92/2.71 ; curve 15-19 2.14/2.69->2.17/2.74 ; curve 19-22 2.14/2.37->2.15/2.41
+        straight 10-15 1.58/3.83->1.67/3.57 ; hold 10-15 1.62/3.75->1.64/3.83 ; straight 5-10 1.60/4.49->1.71/4.21 ; hard 5-10 2.22/3.49->2.05/4.23 ; straight 0-5 1.71/5.02->1.86/4.72 ; low-speed turn 2.08/3.85->1.90/4.80 | worst GM ratio 0.928 at straight 22+
+  beta 1.00 gamma 1.00 (C no) | straight 22+ 3.08/1.69->3.57/1.57 ; hold 22+ (idx18) 3.15/1.68->3.41/1.62 ; curve 22+ 3.66/1.60->3.66/1.61 ; straight 15-22 2.00/2.63->2.18/2.44 ; curve 15-19 2.48/2.42->2.52/2.45 ; curve 19-22 2.49/2.14->2.50/2.16
+        straight 10-15 1.72/3.45->1.85/3.21 ; hold 10-15 1.77/3.38->1.80/3.44 ; straight 5-10 1.74/4.04->1.89/3.76 ; hard 5-10 2.53/3.11->2.29/3.77 ; straight 0-5 1.86/4.49->2.05/4.21 ; low-speed turn 2.33/3.44->2.09/4.28 | worst GM ratio 0.926 at straight 22+
+  beta 1.25 gamma 1.00 (C no) | straight 22+ 2.56/1.92->2.94/1.75 ; hold 22+ (idx18) 2.60/1.91->2.84/1.81 ; curve 22+ 2.91/1.82->2.98/1.81 ; straight 15-22 1.81/3.00->1.97/2.74 ; curve 15-19 2.13/2.79->2.19/2.79 ; curve 19-22 2.15/2.44->2.20/2.44
+        straight 10-15 1.59/3.95->1.71/3.61 ; hold 10-15 1.63/3.87->1.66/3.89 ; straight 5-10 1.59/4.66->1.72/4.27 ; hard 5-10 2.13/3.65->1.98/4.39 ; straight 0-5 1.67/5.24->1.83/4.81 ; low-speed turn 2.00/4.03->1.83/4.99 | worst GM ratio 0.911 at straight 22+
+
+across all A+B worlds: min cand GM 1.55 (V294 1.64) at straight 22+ beta 0.75 gamma 0.75 ; cand GM < 1.2: 0 ; cand GM < V294 GM: 38 of 72 ; max Ms ratio 1.161
+   straight 22+       GM ratio cand/V294 min 0.911 max 0.946 ; Ms ratio min 1.081 max 1.161 ; min cand GM 1.55
+   hold 22+ (idx18)   GM ratio cand/V294 min 0.948 max 0.983 ; Ms ratio min 1.030 max 1.089 ; min cand GM 1.60
+   curve 22+          GM ratio cand/V294 min 0.994 max 1.027 ; Ms ratio min 0.959 max 1.024 ; min cand GM 1.58
+   straight 15-22     GM ratio cand/V294 min 0.913 max 0.951 ; Ms ratio min 1.051 max 1.090 ; min cand GM 2.40
+   curve 15-19        GM ratio cand/V294 min 1.001 max 1.038 ; Ms ratio min 0.995 max 1.027 ; min cand GM 2.39
+   curve 19-22        GM ratio cand/V294 min 0.999 max 1.032 ; Ms ratio min 0.984 max 1.019 ; min cand GM 2.12
+   straight 10-15     GM ratio cand/V294 min 0.914 max 0.953 ; Ms ratio min 1.047 max 1.076 ; min cand GM 3.16
+   hold 10-15         GM ratio cand/V294 min 1.005 max 1.040 ; Ms ratio min 1.003 max 1.020 ; min cand GM 3.37
+   straight 5-10      GM ratio cand/V294 min 0.916 max 0.960 ; Ms ratio min 1.061 max 1.086 ; min cand GM 3.69
+   hard 5-10          GM ratio cand/V294 min 1.202 max 1.228 ; Ms ratio min 0.901 max 0.942 ; min cand GM 3.58
+   straight 0-5       GM ratio cand/V294 min 0.918 max 0.967 ; Ms ratio min 1.077 max 1.102 ; min cand GM 4.09
+   low-speed turn     GM ratio cand/V294 min 1.239 max 1.260 ; Ms ratio min 0.893 max 0.933 ; min cand GM 4.06

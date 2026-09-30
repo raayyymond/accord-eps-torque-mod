@@ -1,0 +1,13 @@
+F1_t1.95_g1.00   Kp 960 b 1106 a 1011 C 1024 e 2 lag 992/507  problems []  diff {'fb_b': 1106}
+F2_t1.95_g1.10   Kp 1056 b 1005 a 1011 C 1024 e 2 lag 992/507  problems []  diff {'fb_b': 1005, 'kp_y': (1056, 1056, 1056, 1056, 1056)}
+F3_t1.95_g1.20   Kp 1152 b 921 a 1011 C 1024 e 2 lag 992/507  problems []  diff {'fb_b': 921, 'kp_y': (1152, 1152, 1152, 1152, 1152)}
+F4_t1.95_g1.30   Kp 1248 b 850 a 1011 C 1024 e 2 lag 992/507  problems []  diff {'fb_b': 850, 'kp_y': (1248, 1248, 1248, 1248, 1248)}
+F5_t1.00_g1.20   Kp 1152 b 472 a 1011 C 1024 e 2 lag 992/507  problems []  diff {'fb_b': 472, 'kp_y': (1152, 1152, 1152, 1152, 1152)}
+F6_t2.50_g1.20   Kp 1152 b 1181 a 1011 C 1024 e 2 lag 992/507  problems []  diff {'fb_b': 1181, 'kp_y': (1152, 1152, 1152, 1152, 1152)}
+  plant nominal  done  39 s
+  plant light_b  done  77 s
+  plant b_lo     done  115 s
+  plant F_hi     done  153 s
+  plant J_hi     done  191 s
+  plant tau6     done  228 s
+saved rj6_sweep.json  228 s
