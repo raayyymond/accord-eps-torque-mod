@@ -1,0 +1,5 @@
+chunks (mean v): [((np.int64(23975), np.int64(25835)), 6.9), ((np.int64(61521), np.int64(62540)), 11.5), ((np.int64(41531), np.int64(43732)), 22.2), ((np.int64(43932), np.int64(47064)), 29.3)]
+KiHigh 0.8: port-vs-real max |dev| per lane over (torque,p,i,f,la_des,la_act,output): [2.776e-17 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+ 0.000e+00]
+KiHigh 0.0: port-vs-real max |dev| per lane over (torque,p,i,f,la_des,la_act,output): [2.776e-17 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00
+ 0.000e+00]

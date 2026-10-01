@@ -1,0 +1,4 @@
+seed 0 nominal         hard16 V294r1 0.156  V295r1 0.151  r2alt 0.173  (r2alt/V295r1 x1.14, r2alt/V294r1 x1.11) | stick->slip events/s 0.73 0.73 0.59 | stuck frac 0.08 0.09 0.05 | planner 1.6-3 Hz rms 0.017 | 14 s
+seed 0 nominal_nofric  hard16 V294r1 0.176  V295r1 0.165  r2alt 0.179  (r2alt/V295r1 x1.09, r2alt/V294r1 x1.02) | stick->slip events/s 0.15 0.00 0.00 | stuck frac 0.00 0.00 0.00 | planner 1.6-3 Hz rms 0.017 | 14 s
+seed 5 nominal         hard16 V294r1 0.161  V295r1 0.156  r2alt 0.179  (r2alt/V295r1 x1.15, r2alt/V294r1 x1.11) | stick->slip events/s 0.73 0.73 0.66 | stuck frac 0.08 0.09 0.05 | planner 1.6-3 Hz rms 0.017 | 14 s
+seed 5 nominal_nofric  hard16 V294r1 0.173  V295r1 0.162  r2alt 0.175  (r2alt/V295r1 x1.09, r2alt/V294r1 x1.02) | stick->slip events/s 0.07 0.00 0.07 | stuck frac 0.00 0.00 0.00 | planner 1.6-3 Hz rms 0.017 | 14 s

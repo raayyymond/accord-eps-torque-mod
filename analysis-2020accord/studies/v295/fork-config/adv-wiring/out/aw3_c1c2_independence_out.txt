@@ -1,0 +1,17 @@
+cells: V294 b 567, V295 b 1050 ; hands-off tap frames 34753 (695 s)
+
+DRIVE (1) = V295 + r1 command (r71b's own wire)
+   S1 V295 on r1 command                        pooled c1 0.991 [0.989, 0.992]  c2 1.837 [1.829, 1.844] ; gated 15 s windows 25: c2 min 1.74 med 1.84 max 1.86, > 1.45: 25 ; model selection rms V295-march 2.25 vs V294-march 13.25
+   NULL real r71b tap (V294, calibration step)  pooled c1 0.991 [0.989, 0.992]  c2 0.989 [0.980, 0.998] ; gated 15 s windows 25: c2 min 0.94 med 0.99 max 1.01, > 1.45: 0 ; model selection rms V295-march 12.97 vs V294-march 2.25
+
+DRIVE (2) stand-in, k = 0.3: |wire' - wire| on req frames rms 57 max 220 counts ; max|L5'| 1300 (rail 2461) ; 11 s
+   TRIM regressor rms on HO frames: drive(1) 14.93, drive(2) 14.93 counts ; corr(FF, TRIM) drive(1) -0.065 drive(2) -0.062
+   S2 V295 on r2alt-like command                pooled c1 0.991 [0.989, 0.992]  c2 1.840 [1.832, 1.846] ; gated 15 s windows 25: c2 min 1.76 med 1.84 max 1.87, > 1.45: 25 ; model selection rms V295-march 2.25 vs V294-march 13.17
+   S0 V294 on r2alt-like command (control)      pooled c1 0.991 [0.989, 0.992]  c2 0.991 [0.981, 0.999] ; gated 15 s windows 25: c2 min 0.94 med 1.00 max 1.03, > 1.45: 0 ; model selection rms V295-march 13.09 vs V294-march 2.25
+   [misuse] S2 regressed on drive (1)'s regressors instead of its own: c1 1.026 c2 1.880
+
+DRIVE (2) stand-in, k = 1.0: |wire' - wire| on req frames rms 190 max 734 counts ; max|L5'| 1357 (rail 2461) ; 10 s
+   TRIM regressor rms on HO frames: drive(1) 14.93, drive(2) 14.93 counts ; corr(FF, TRIM) drive(1) -0.065 drive(2) -0.053
+   S2 V295 on r2alt-like command                pooled c1 0.992 [0.991, 0.993]  c2 1.841 [1.833, 1.847] ; gated 15 s windows 25: c2 min 1.75 med 1.84 max 1.88, > 1.45: 25 ; model selection rms V295-march 2.25 vs V294-march 13.16
+   S0 V294 on r2alt-like command (control)      pooled c1 0.992 [0.991, 0.993]  c2 0.993 [0.983, 1.002] ; gated 15 s windows 25: c2 min 0.95 med 0.99 max 1.02, > 1.45: 0 ; model selection rms V295-march 13.09 vs V294-march 2.25
+   [misuse] S2 regressed on drive (1)'s regressors instead of its own: c1 1.107 c2 1.968

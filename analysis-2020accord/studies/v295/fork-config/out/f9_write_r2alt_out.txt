@@ -1,0 +1,4 @@
+codec: kit positive control OK; fork utilities.py @20d24ab79 sha 5143618cafa898c2: decode == kit on both files, from disk
+r2 vs r1 (the whole delta): {'AccordTorqueKiHigh': (0.0, 0.8)}
+wrote toggle-config_V295_r2alt_KiHigh0.8_GATE-FAIL-G4-G8.json  sha256 c428be3238315b87639f9581241d08bb6fad2109d5beec206b8985c47f21b50b  (26 keys); .decoded.json sha256 149a64738a0a4e27e7324d09b4d27a871aa43bad5edfe14a0031cd1e432abe13
+wrote toggle-config_V295_r2alt_KiHigh0.8_GATE-FAIL-G4-G8_REVERT_to_V294_r1.json  sha256 38ba295023e231eea49c294d846ef1f73ba99e2b4945e98a2ebb1edf37b3aa76  (26 keys); .decoded.json sha256 50eac1ad36be6f9b53d7c25003c247cbbd184e529f0befa603e7ed502674c722

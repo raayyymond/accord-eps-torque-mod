@@ -1,0 +1,4 @@
+lp   nominal  | hard16 harness filter: V294r1 0.156 V295r1 0.151 r2alt 0.173 (x1.14 vs V295r1, x1.11 vs V294r1) | SHARP 1.6-3 Hz: 0.164 0.160 0.180 (x1.13, x1.09) | 0.2-1.2 Hz turning rate: 1.70 1.71 2.03 (x1.19)
+lp   light_b  | hard16 harness filter: V294r1 2.105 V295r1 1.496 r2alt 1.562 (x1.04 vs V295r1, x0.74 vs V294r1) | SHARP 1.6-3 Hz: 2.167 1.523 1.581 (x1.04, x0.73) | 0.2-1.2 Hz turning rate: 5.36 5.48 6.45 (x1.18)
+full nominal  | hard16 harness filter: V294r1 7.534 V295r1 7.102 r2alt 7.172 (x1.01 vs V295r1, x0.95 vs V294r1) | SHARP 1.6-3 Hz: 7.971 7.511 7.586 (x1.01, x0.95) | 0.2-1.2 Hz turning rate: 5.39 5.34 5.57 (x1.04)
+full light_b  | hard16 harness filter: V294r1 7.152 V295r1 4.945 r2alt 5.305 (x1.07 vs V295r1, x0.74 vs V294r1) | SHARP 1.6-3 Hz: 7.577 5.267 5.666 (x1.08, x0.75) | 0.2-1.2 Hz turning rate: 6.03 6.15 7.04 (x1.15)

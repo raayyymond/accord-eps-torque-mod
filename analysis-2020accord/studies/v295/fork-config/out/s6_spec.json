@@ -1,0 +1,25 @@
+{
+ "forks": [
+  {
+   "name": "r1_dly-0.126",
+   "delay_add": -0.126
+  },
+  {
+   "name": "r1_dly+0.10",
+   "delay_add": 0.1
+  },
+  {
+   "name": "C_dly-0.126",
+   "kp": 0.9,
+   "ki": 0.3,
+   "ki_high": 0.8,
+   "delay_add": -0.126
+  }
+ ],
+ "members": [
+  "nominal",
+  "b_lo",
+  "F_hi",
+  "light_b"
+ ]
+}

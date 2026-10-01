@@ -1,0 +1,44 @@
+replay r1 and r2alt through the real LatControlTorque @20d24ab79 (post-hoc aligned), 29 s
+   control r1 replay vs logged p      max|d| 9.69e-07 (active frames)
+   control r1 replay vs logged i      max|d| 2.38e-07 (active frames)
+   control r1 replay vs logged f      max|d| 6.19e-05 (active frames)
+   control r1 replay vs logged output max|d| 4.42e-06 (active frames)
+   control r1 replay vs logged error  max|d| 1.07e-06 (active frames)
+   fork HONDA_ACCORD_KI_SCHEDULE_V_BP = [8.0, 18.0]
+
+[r71b LOGGED (drive 1 reference)] Kp = median p/error 0.90000 ; LAF = median (p+i+d+f)/-output 14.0000 ; friction plateau p95 0.1570 m/s^2 = 0.0112 torque = 46 CAN counts ; integrator share >= 15 m/s: mean-ratio 0.308, median 0.333 ; Ki-read frames 67668
+   Ki bin 1-8       n  16789 (168 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.2981 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9996
+   Ki bin 8-9       n   4121 (41 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3130 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9993
+   Ki bin ~10       n   5905 (59 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3085 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9992
+   Ki bin ~12       n   5161 (52 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3000 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9998
+   Ki bin ~15       n   2725 (27 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3000 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 1.0000
+   Ki bin >=18      n  10382 (104 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3040 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0000, share within 0.005: 0.9999
+   Ki bin 8-18 all  n  40497 (405 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3034 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9997
+
+[r1 replay] Kp = median p/error 0.90000 ; LAF = median (p+i+d+f)/-output 14.0000 ; friction plateau p95 0.1570 m/s^2 = 0.0112 torque = 46 CAN counts ; integrator share >= 15 m/s: mean-ratio 0.308, median 0.333 ; Ki-read frames 67668
+   Ki bin 1-8       n  16789 (168 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.2981 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9996
+   Ki bin 8-9       n   4121 (41 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3130 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9993
+   Ki bin ~10       n   5905 (59 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3085 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9992
+   Ki bin ~12       n   5161 (52 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3000 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9998
+   Ki bin ~15       n   2725 (27 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3000 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 1.0000
+   Ki bin >=18      n  10382 (104 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3040 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0000, share within 0.005: 0.9999
+   Ki bin 8-18 all  n  40497 (405 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.3034 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9997
+
+[r2alt replay (open loop)] Kp = median p/error 0.90000 ; LAF = median (p+i+d+f)/-output 14.0000 ; friction plateau p95 0.1570 m/s^2 = 0.0112 torque = 46 CAN counts ; integrator share >= 15 m/s: mean-ratio 0.579, median 0.541 ; Ki-read frames 67668
+   Ki bin 1-8       n  16789 (168 s) : M1 median 0.3000 IQR [0.3000, 0.3000] | M2 OLS slope 0.2981 ; fork closed form median 0.3000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9996
+   Ki bin 8-9       n   4121 (41 s) : M1 median 0.3281 IQR [0.3145, 0.3390] | M2 OLS slope 0.3271 ; fork closed form median 0.3281 ; |read - closed form| p99 0.0001, share within 0.005: 0.9993
+   Ki bin ~10       n   5905 (59 s) : M1 median 0.3978 IQR [0.3871, 0.4095] | M2 OLS slope 0.4082 ; fork closed form median 0.3978 ; |read - closed form| p99 0.0001, share within 0.005: 0.9992
+   Ki bin ~12       n   5161 (52 s) : M1 median 0.4962 IQR [0.4851, 0.5078] | M2 OLS slope 0.4963 ; fork closed form median 0.4962 ; |read - closed form| p99 0.0001, share within 0.005: 0.9998
+   Ki bin ~15       n   2725 (27 s) : M1 median 0.6588 IQR [0.6460, 0.6679] | M2 OLS slope 0.6569 ; fork closed form median 0.6588 ; |read - closed form| p99 0.0004, share within 0.005: 1.0000
+   Ki bin >=18      n  10382 (104 s) : M1 median 0.8000 IQR [0.8000, 0.8000] | M2 OLS slope 0.8037 ; fork closed form median 0.8000 ; |read - closed form| p99 0.0001, share within 0.005: 0.9999
+   Ki bin 8-18 all  n  40497 (405 s) : M1 median 0.4811 IQR [0.3959, 0.6515] | M2 OLS slope 0.4575 ; fork closed form median 0.4810 ; |read - closed form| p99 0.0002, share within 0.005: 0.9997
+   open-loop |torque r2alt - r1| by band  0- 8 m/s: rms 0.0283 (116 CAN counts), p99 0.1349, max 0.1349 ; r1 torque rms 0.1882
+   open-loop |torque r2alt - r1| by band  8-15 m/s: rms 0.0308 (126 CAN counts), p99 0.1424, max 0.1473 ; r1 torque rms 0.0924
+   open-loop |torque r2alt - r1| by band 15-22 m/s: rms 0.0824 (337 CAN counts), p99 0.1782, max 0.1792 ; r1 torque rms 0.0793
+   open-loop |torque r2alt - r1| by band 22-40 m/s: rms 0.0395 (162 CAN counts), p99 0.0821, max 0.0826 ; r1 torque rms 0.0737
+   0-8 m/s, <2 s after leaving 8 m/s          :   3759 frames, |i_r2alt - i_r1| p50 0.1288 p95 1.8880 m/s^2 (/LAF 14 = 0.1349 torque p95)
+   0-8 m/s, 2-10 s after                      :   8535 frames, |i_r2alt - i_r1| p50 0.1288 p95 1.8880 m/s^2 (/LAF 14 = 0.1349 torque p95)
+   0-8 m/s, >10 s after                       :   2902 frames, |i_r2alt - i_r1| p50 0.1177 p95 0.2640 m/s^2 (/LAF 14 = 0.0189 torque p95)
+   0-8 m/s, never above 8 in this engagement  :   6696 frames, |i_r2alt - i_r1| p50 0.0000 p95 0.0000 m/s^2 (/LAF 14 = 0.0000 torque p95)
+
+Ki-read yield at 8-22 m/s on r71b: 505 s engaged, 44527 usable frames (0.88 of engaged) -> ~10590 usable frames per 120 s

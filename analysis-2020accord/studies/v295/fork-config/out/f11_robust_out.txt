@@ -1,0 +1,59 @@
+  seed 0 lp 2/8  35 s
+  seed 0 lp 4/8  86 s
+  seed 0 lp 6/8  131 s
+  seed 0 lp 8/8  172 s
+  seed 0 full 2/8  216 s
+  seed 0 full 4/8  251 s
+  seed 0 full 6/8  283 s
+  seed 0 full 8/8  322 s
+
+== s4seed0
+  A_Kp0.75_Ki0.40_0.8      WIN  FAIL G8 lp/nominal 15-22 hard16 x1.14 nominal:+0.080/+0.078/+0.070 light_b:+0.078/+0.121/+0.071
+  B_Kp0.75_Ki0.40_0.6      WIN  PASS                           nominal:+0.057/+0.056/+0.066 light_b:+0.060/+0.094/+0.063
+  C_Kp0.90_Ki0.30_0.8      WIN  FAIL G8 lp/nominal 15-22 hard16 x1.22 nominal:+0.065/+0.058/+0.007 light_b:+0.062/+0.096/+0.006
+  D_Kp0.70_Ki0.40_0.8      WIN  PASS                           nominal:+0.083/+0.079/+0.081 light_b:+0.080/+0.123/+0.079
+  E_Kp0.90_Ki0.50_flat     -    FAIL G8 lp/nominal 15-22 hard16 x1.16 nominal:+0.048/+0.055/+0.074 light_b:+0.051/+0.077/+0.078
+  V294_r1                  -    FAIL G8 full/nominal 5-10 hard16 x1.19; G8 full/light_b 5-10 hard16 x1.39; G8 full/light_b 15-22 hard16 x1.45; G8 lp/nominal 5-10 hard16 x1.19; G8 lp/light_b 5-10 hard16 x1.43 nominal:-0.000/-0.001/-0.001 light_b:-0.001/+0.001/+0.004
+  r1dup                    -    PASS                           nominal:-0.000/-0.000/-0.001 light_b:-0.000/+0.001/-0.001
+
+== s4seed0_skip3
+  A_Kp0.75_Ki0.40_0.8      WIN  FAIL G9 nominal 0-5 s03 x1.36; G8 lp/nominal 15-22 hard16 x1.14; G9 J_lo 0-5 s03 x1.32; G9 b_lo 0-5 s03 x1.33; G9 tau0 0-5 s03 x1.34 nominal:+0.082/+0.080/+0.074 light_b:+0.079/+0.131/+0.077
+  B_Kp0.75_Ki0.40_0.6      WIN  FAIL G9 nominal 0-5 s03 x1.32; G9 J_lo 0-5 s03 x1.33; G9 b_lo 0-5 s03 x1.36; G9 tau0 0-5 s03 x1.34; G9 tau6 0-5 s03 x1.32 nominal:+0.058/+0.058/+0.069 light_b:+0.061/+0.103/+0.069
+  C_Kp0.90_Ki0.30_0.8      WIN  FAIL G8 lp/nominal 15-22 hard16 x1.22 nominal:+0.067/+0.053/+0.007 light_b:+0.064/+0.112/+0.007
+  D_Kp0.70_Ki0.40_0.8      WIN  FAIL G9 nominal 0-5 s03 x1.41; G9 J_hi 0-5 s03 x1.30; G9 J_lo 0-5 s03 x1.38; G9 b_hi 0-5 s03 x1.34; G9 b_lo 0-5 s03 x1.44 nominal:+0.085/+0.085/+0.085 light_b:+0.082/+0.131/+0.087
+  E_Kp0.90_Ki0.50_flat     -    FAIL G9 nominal 0-5 s03 x1.38; G8 lp/nominal 15-22 hard16 x1.16; G9 J_lo 0-5 s03 x1.37; G9 b_hi 0-5 s03 x1.35; G9 b_lo 0-5 s03 x1.44 nominal:+0.049/+0.053/+0.079 light_b:+0.052/+0.086/+0.088
+  V294_r1                  -    FAIL G8 full/nominal 5-10 hard16 x1.19; G8 full/light_b 5-10 hard16 x1.40; G8 full/light_b 15-22 hard16 x1.45; G8 lp/nominal 5-10 hard16 x1.14; G8 lp/light_b 5-10 hard16 x1.30 nominal:-0.000/-0.001/+0.001 light_b:-0.000/+0.000/+0.004
+  r1dup                    -    PASS                           nominal:-0.000/+0.000/-0.001 light_b:-0.000/+0.001/-0.001
+  seed 5 lp 2/8  367 s
+  seed 5 lp 4/8  416 s
+  seed 5 lp 6/8  460 s
+  seed 5 lp 8/8  500 s
+  seed 5 full 2/8  537 s
+  seed 5 full 4/8  572 s
+  seed 5 full 6/8  603 s
+  seed 5 full 8/8  631 s
+
+== s4seed5
+  A_Kp0.75_Ki0.40_0.8      WIN  PASS                           nominal:+0.080/+0.078/+0.070 light_b:+0.078/+0.119/+0.071
+  B_Kp0.75_Ki0.40_0.6      WIN  PASS                           nominal:+0.057/+0.056/+0.066 light_b:+0.060/+0.092/+0.062
+  C_Kp0.90_Ki0.30_0.8      WIN  FAIL G8 lp/nominal 15-22 hard16 x1.13 nominal:+0.065/+0.058/+0.007 light_b:+0.062/+0.094/+0.006
+  D_Kp0.70_Ki0.40_0.8      WIN  PASS                           nominal:+0.083/+0.079/+0.081 light_b:+0.080/+0.121/+0.080
+  E_Kp0.90_Ki0.50_flat     -    PASS                           nominal:+0.048/+0.055/+0.075 light_b:+0.051/+0.074/+0.078
+  V294_r1                  -    FAIL G8 full/nominal 5-10 hard16 x1.19; G8 full/light_b 5-10 hard16 x1.39; G8 full/light_b 15-22 hard16 x1.45; G8 lp/nominal 5-10 hard16 x1.19; G8 lp/light_b 5-10 hard16 x1.43 nominal:-0.000/-0.000/+0.000 light_b:+0.000/-0.000/+0.004
+  r1dup                    -    PASS                           nominal:-0.000/-0.000/-0.000 light_b:+0.000/-0.001/-0.002
+
+== s4seed5_skip3
+  A_Kp0.75_Ki0.40_0.8      WIN  FAIL G9 nominal 0-5 s03 x1.34; G9 J_lo 0-5 s03 x1.33; G9 b_lo 0-5 s03 x1.34; G9 tau0 0-5 s03 x1.37; G9 tau6 0-5 s03 x1.34 nominal:+0.082/+0.080/+0.075 light_b:+0.080/+0.129/+0.078
+  B_Kp0.75_Ki0.40_0.6      WIN  FAIL G9 nominal 0-5 s03 x1.32; G9 J_lo 0-5 s03 x1.33; G9 b_lo 0-5 s03 x1.36; G9 tau0 0-5 s03 x1.34; G9 tau6 0-5 s03 x1.32 nominal:+0.058/+0.058/+0.070 light_b:+0.061/+0.100/+0.068
+  C_Kp0.90_Ki0.30_0.8      WIN  FAIL G8 lp/nominal 15-22 hard16 x1.13 nominal:+0.067/+0.053/+0.008 light_b:+0.064/+0.111/+0.007
+  D_Kp0.70_Ki0.40_0.8      WIN  FAIL G9 nominal 0-5 s03 x1.40; G9 J_hi 0-5 s03 x1.31; G9 J_lo 0-5 s03 x1.39; G9 b_hi 0-5 s03 x1.33; G9 b_lo 0-5 s03 x1.44 nominal:+0.085/+0.085/+0.085 light_b:+0.082/+0.130/+0.089
+  E_Kp0.90_Ki0.50_flat     -    FAIL G9 nominal 0-5 s03 x1.38; G9 J_lo 0-5 s03 x1.36; G9 b_hi 0-5 s03 x1.35; G9 b_lo 0-5 s03 x1.45; G9 tau0 0-5 s03 x1.40 nominal:+0.049/+0.053/+0.080 light_b:+0.052/+0.084/+0.088
+  V294_r1                  -    FAIL G8 full/nominal 5-10 hard16 x1.19; G8 full/light_b 5-10 hard16 x1.40; G8 full/light_b 15-22 hard16 x1.45; G8 lp/nominal 5-10 hard16 x1.15; G8 lp/light_b 5-10 hard16 x1.30 nominal:-0.000/-0.000/+0.002 light_b:+0.001/-0.000/+0.005
+  r1dup                    -    PASS                           nominal:-0.000/+0.000/-0.000 light_b:+0.000/-0.000/-0.002
+
+ROBUST (pass + win on all 4 replicates):
+  A_Kp0.75_Ki0.40_0.8      not robust: s4seed0, s4seed0_skip3, s4seed5_skip3
+  B_Kp0.75_Ki0.40_0.6      not robust: s4seed0_skip3, s4seed5_skip3
+  C_Kp0.90_Ki0.30_0.8      not robust: s4seed0, s4seed0_skip3, s4seed5, s4seed5_skip3
+  D_Kp0.70_Ki0.40_0.8      not robust: s4seed0_skip3, s4seed5_skip3
+  E_Kp0.90_Ki0.50_flat     not robust: s4seed0, s4seed0_skip3, s4seed5, s4seed5_skip3

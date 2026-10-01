@@ -1,0 +1,57 @@
+GATES + WIN for stage s1 (every candidate vs V295+r1 in the same run)
+  L14.0_fix_Ki0.5_0.0            -          PASS                       8-22 d(trk/hold/min straight) 
+  L14.0_fix_Ki0.3_1.0            -          FAIL G8                    8-22 d(trk/hold/min straight) 
+        G8 lp/nominal 15-22 hard16 x1.23
+  L14.0_fix_Ki0.3_2.0            -          FAIL G8                    8-22 d(trk/hold/min straight) 
+        G8 full/light_b 15-22 hard16 x1.14; G8 lp/nominal 15-22 hard16 x1.23; G8 lp/light_b 15-22 hard16 x1.12
+  L12.5_fix_Ki0.3_0.0            -          FAIL G6,G8                 8-22 d(trk/hold/min straight) 
+        G6 nominal 0-5 s13 x1.33; G8 lp/nominal 5-10 hard16 x1.13; G8 lp/nominal 15-22 hard16 x1.16; G8 lp/light_b 5-10 hard16 x1.11; G8 lp/light_b 15-22 hard16 x1.15
+  L12.5_fix_Ki0.5_0.0            -          FAIL G6,G8                 8-22 d(trk/hold/min straight) 
+        G6 nominal 0-5 s13 x1.63; G8 lp/nominal 15-22 hard16 x1.30; G6 b_lo 0-5 s13 x1.60; G8 lp/light_b 5-10 hard16 x1.10; G8 lp/light_b 15-22 hard16 x1.20
+  L12.5_fix_Ki0.3_1.0            -          FAIL G6,G8                 8-22 d(trk/hold/min straight) 
+        G8 full/light_b 15-22 hard16 x1.15; G6 nominal 0-5 s13 x1.31; G8 lp/nominal 5-10 hard16 x1.15; G8 lp/nominal 15-22 hard16 x1.26; G6 b_lo 0-5 s13 x1.30; G8 lp/light_b 5-10 hard16 x1.12; G8 lp/light_b 15-22 hard16 x1.21
+  L12.5_fix_Ki0.3_2.0            -          FAIL G6,G8                 8-22 d(trk/hold/min straight) 
+        G8 full/light_b 15-22 hard16 x1.20; G8 lp/nominal 5-10 hard16 x1.19; G8 lp/nominal 15-22 hard16 x1.35; G6 b_lo 0-5 s13 x1.30; G8 lp/light_b 5-10 hard16 x1.14; G8 lp/light_b 15-22 hard16 x1.19
+  L12.5_iso_Ki0.3_0.0            -          FAIL G6,G8                 8-22 d(trk/hold/min straight) 
+        G6 nominal 0-5 s13 x1.35; G8 lp/nominal 15-22 hard16 x1.21
+  L12.5_iso_Ki0.5_0.0            -          FAIL G6,G8                 8-22 d(trk/hold/min straight) 
+        G6 nominal 0-5 s13 x1.55; G8 lp/nominal 15-22 hard16 x1.21; G6 b_lo 0-5 s13 x1.52
+  L12.5_iso_Ki0.3_1.0            -          FAIL G6,G8                 8-22 d(trk/hold/min straight) 
+        G8 full/light_b 15-22 hard16 x1.11; G6 nominal 0-5 s13 x1.36; G8 lp/nominal 5-10 hard16 x1.11; G8 lp/nominal 15-22 hard16 x1.25; G6 b_lo 0-5 s13 x1.31; G8 lp/light_b 5-10 hard16 x1.10; G8 lp/light_b 15-22 hard16 x1.13
+  L12.5_iso_Ki0.3_2.0            -          FAIL G6,G8                 8-22 d(trk/hold/min straight) 
+        G8 full/light_b 15-22 hard16 x1.16; G6 nominal 0-5 s13 x1.35; G8 lp/nominal 5-10 hard16 x1.19; G8 lp/nominal 15-22 hard16 x1.25; G6 b_lo 0-5 s13 x1.30; G8 lp/light_b 5-10 hard16 x1.12; G8 lp/light_b 15-22 hard16 x1.10
+  L11.0_fix_Ki0.3_0.0            -          FAIL G10,G6,G8             8-22 d(trk/hold/min straight) 
+        G10 full/light_b 0-5 slew 0.0061 vs 0.0024; G8 full/light_b 5-10 hard16 x1.10; G8 full/light_b 15-22 hard16 x1.16; G6 nominal 0-5 s13 x1.83; G8 lp/nominal 5-10 hard16 x1.32; G8 lp/nominal 15-22 hard16 x1.43; G6 b_lo 0-5 s13 x1.73; G10 lp/b_lo 0-5 slew 0.0064 vs 0.0022
+  L11.0_fix_Ki0.5_0.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/light_b 0-5 slew 0.0064 vs 0.0024; G8 full/light_b 15-22 hard16 x1.18; G6 nominal 0-5 s13 x1.90; G9 nominal 0-5 s03 x1.33; G10 lp/nominal 0-5 slew 0.0061 vs 0.0024; G8 lp/nominal 5-10 hard16 x1.32; G8 lp/nominal 15-22 hard16 x1.41; G6 b_lo 0-5 s13 x1.80
+  L11.0_fix_Ki0.3_1.0            -          FAIL G10,G6,G8             8-22 d(trk/hold/min straight) 
+        G10 full/light_b 0-5 slew 0.0061 vs 0.0024; G8 full/light_b 15-22 hard16 x1.21; G6 nominal 0-5 s13 x1.81; G8 lp/nominal 5-10 hard16 x1.36; G8 lp/nominal 15-22 hard16 x1.41; G6 b_lo 0-5 s13 x1.72; G10 lp/b_lo 0-5 slew 0.0064 vs 0.0022; G10 lp/light_b 0-5 slew 0.0064 vs 0.0022
+  L11.0_fix_Ki0.3_2.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/light_b 0-5 slew 0.0061 vs 0.0024; G8 full/light_b 15-22 hard16 x1.26; G6 nominal 0-5 s13 x1.80; G8 lp/nominal 5-10 hard16 x1.37; G9 nominal 15-22 s03 x1.34; G8 lp/nominal 15-22 hard16 x1.51; G9 nominal 22+ s03 x1.32; G6 b_lo 0-5 s13 x1.73
+  L11.0_iso_Ki0.3_0.0            -          FAIL G10,G6,G8             8-22 d(trk/hold/min straight) 
+        G6 nominal 0-5 s13 x1.84; G10 lp/nominal 0-5 slew 0.0061 vs 0.0024; G8 lp/nominal 5-10 hard16 x1.27; G8 lp/nominal 15-22 hard16 x1.32; G6 b_lo 0-5 s13 x1.72; G10 lp/b_lo 0-5 slew 0.0059 vs 0.0022; G8 lp/light_b 5-10 hard16 x1.25; G8 lp/light_b 15-22 hard16 x1.19
+  L11.0_iso_Ki0.5_0.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/light_b 0-5 slew 0.0064 vs 0.0024; G6 nominal 0-5 s13 x1.91; G9 nominal 0-5 s03 x1.36; G8 lp/nominal 5-10 hard16 x1.20; G8 lp/nominal 15-22 hard16 x1.33; G6 b_lo 0-5 s13 x1.81; G9 b_lo 0-5 s03 x1.31; G10 lp/light_b 0-5 slew 0.0064 vs 0.0022
+  L11.0_iso_Ki0.3_1.0            -          FAIL G10,G6,G8             8-22 d(trk/hold/min straight) 
+        G8 full/light_b 15-22 hard16 x1.13; G6 nominal 0-5 s13 x1.85; G10 lp/nominal 0-5 slew 0.0061 vs 0.0024; G8 lp/nominal 5-10 hard16 x1.33; G8 lp/nominal 15-22 hard16 x1.41; G6 b_lo 0-5 s13 x1.70; G10 lp/b_lo 0-5 slew 0.0059 vs 0.0022; G10 lp/light_b 0-5 slew 0.0056 vs 0.0022
+  L11.0_iso_Ki0.3_2.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G8 full/light_b 15-22 hard16 x1.17; G6 nominal 0-5 s13 x1.82; G10 lp/nominal 0-5 slew 0.0061 vs 0.0024; G8 lp/nominal 5-10 hard16 x1.30; G9 nominal 15-22 s03 x1.31; G8 lp/nominal 15-22 hard16 x1.43; G6 b_lo 0-5 s13 x1.69; G10 lp/b_lo 0-5 slew 0.0059 vs 0.0022
+  L10.0_fix_Ki0.3_0.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/nominal 0-5 slew 0.0083 vs 0.0029; G10 full/nominal 5-10 slew 0.0013 vs 0.0001; G10 full/b_lo 0-5 slew 0.0081 vs 0.0029; G10 full/light_b 0-5 slew 0.0088 vs 0.0024; G8 full/light_b 5-10 hard16 x1.14; G8 full/light_b 15-22 hard16 x1.22; G6 nominal 0-5 s13 x2.09; G9 nominal 0-5 s03 x1.38
+  L10.0_fix_Ki0.5_0.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/nominal 0-5 slew 0.0086 vs 0.0029; G10 full/nominal 5-10 slew 0.0014 vs 0.0001; G10 full/b_lo 0-5 slew 0.0090 vs 0.0029; G10 full/b_lo 5-10 slew 0.0014 vs 0.0001; G10 full/light_b 0-5 slew 0.0103 vs 0.0024; G8 full/light_b 5-10 hard16 x1.12; G10 full/light_b 5-10 slew 0.0013 vs 0.0001; G8 full/light_b 15-22 hard16 x1.23
+  L10.0_fix_Ki0.3_1.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/nominal 0-5 slew 0.0083 vs 0.0029; G10 full/nominal 5-10 slew 0.0013 vs 0.0001; G10 full/b_lo 0-5 slew 0.0081 vs 0.0029; G10 full/light_b 0-5 slew 0.0090 vs 0.0024; G8 full/light_b 5-10 hard16 x1.14; G8 full/light_b 15-22 hard16 x1.25; G6 nominal 0-5 s13 x2.07; G9 nominal 0-5 s03 x1.37
+  L10.0_fix_Ki0.3_2.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/nominal 0-5 slew 0.0083 vs 0.0029; G10 full/nominal 5-10 slew 0.0013 vs 0.0001; G10 full/b_lo 0-5 slew 0.0081 vs 0.0029; G10 full/light_b 0-5 slew 0.0086 vs 0.0024; G8 full/light_b 5-10 hard16 x1.14; G8 full/light_b 15-22 hard16 x1.31; G6 nominal 0-5 s13 x2.11; G9 nominal 0-5 s03 x1.38
+  L10.0_iso_Ki0.3_0.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/nominal 0-5 slew 0.0073 vs 0.0029; G10 full/b_lo 0-5 slew 0.0071 vs 0.0029; G10 full/light_b 0-5 slew 0.0088 vs 0.0024; G8 full/light_b 15-22 hard16 x1.10; G6 nominal 0-5 s13 x2.02; G9 nominal 0-5 s03 x1.39; G10 lp/nominal 0-5 slew 0.0078 vs 0.0024; G6 nominal 5-10 s13 x1.30
+  L10.0_iso_Ki0.5_0.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/nominal 0-5 slew 0.0086 vs 0.0029; G10 full/b_lo 0-5 slew 0.0086 vs 0.0029; G10 full/light_b 0-5 slew 0.0086 vs 0.0024; G8 full/light_b 15-22 hard16 x1.11; G6 nominal 0-5 s13 x2.22; G9 nominal 0-5 s03 x1.52; G10 lp/nominal 0-5 slew 0.0076 vs 0.0024; G8 lp/nominal 5-10 hard16 x1.32
+  L10.0_iso_Ki0.3_1.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/nominal 0-5 slew 0.0073 vs 0.0029; G10 full/b_lo 0-5 slew 0.0071 vs 0.0029; G10 full/light_b 0-5 slew 0.0088 vs 0.0024; G8 full/light_b 15-22 hard16 x1.13; G6 nominal 0-5 s13 x2.03; G9 nominal 0-5 s03 x1.39; G10 lp/nominal 0-5 slew 0.0081 vs 0.0024; G6 nominal 5-10 s13 x1.30
+  L10.0_iso_Ki0.3_2.0            -          FAIL G10,G6,G8,G9          8-22 d(trk/hold/min straight) 
+        G10 full/nominal 0-5 slew 0.0073 vs 0.0029; G10 full/b_lo 0-5 slew 0.0071 vs 0.0029; G10 full/light_b 0-5 slew 0.0088 vs 0.0024; G8 full/light_b 15-22 hard16 x1.17; G6 nominal 0-5 s13 x2.00; G9 nominal 0-5 s03 x1.39; G10 lp/nominal 0-5 slew 0.0081 vs 0.0024; G6 nominal 5-10 s13 x1.31
+  V294_r1                        -          FAIL G8                    8-22 d(trk/hold/min straight) 
+        G8 full/nominal 5-10 hard16 x1.19; G8 full/light_b 5-10 hard16 x1.39; G8 full/light_b 15-22 hard16 x1.45; G8 lp/nominal 5-10 hard16 x1.20; G8 lp/nominal 15-22 hard16 x1.11; G8 lp/light_b 5-10 hard16 x1.43; G8 lp/light_b 15-22 hard16 x1.40
+  r1dup                          -          PASS                       8-22 d(trk/hold/min straight) 

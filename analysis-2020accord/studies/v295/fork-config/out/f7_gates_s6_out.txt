@@ -1,0 +1,10 @@
+GATES + WIN for stage s6 (every candidate vs V295+r1 in the same run)
+  r1_dly-0.126                   -          FAIL G6                    8-22 d(trk/hold/min straight) nominal:-0.001/-0.000/-0.012 light_b:-0.002/-0.001/-0.005
+        G6 b_lo 22+ s13 x1.34
+  r1_dly+0.10                    -          FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.001/+0.001/+0.001 light_b:+0.001/+0.002/-0.004
+        G8 lp/nominal 5-10 hard16 x1.17; G8 lp/nominal 15-22 hard16 x1.41; G8 lp/light_b 5-10 hard16 x1.17
+  C_dly-0.126                    WIN        FAIL G6,G8                 8-22 d(trk/hold/min straight) nominal:+0.064/+0.058/+0.002 light_b:+0.061/+0.097/+0.005
+        G8 full/light_b 15-22 hard16 x1.13; G6 b_lo 22+ s13 x1.32
+  V294_r1                        -          FAIL G8                    8-22 d(trk/hold/min straight) nominal:-0.000/-0.000/+0.000 light_b:-0.001/+0.002/+0.001
+        G8 full/nominal 5-10 hard16 x1.19; G8 full/light_b 5-10 hard16 x1.40; G8 full/light_b 15-22 hard16 x1.45; G8 lp/nominal 5-10 hard16 x1.18; G8 lp/light_b 5-10 hard16 x1.43; G8 lp/light_b 15-22 hard16 x1.38
+  r1dup                          -          PASS                       8-22 d(trk/hold/min straight) nominal:-0.000/+0.000/-0.000 light_b:-0.000/+0.000/-0.002

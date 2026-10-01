@@ -1,0 +1,74 @@
+GATES + WIN for stage s2 (every candidate vs V295+r1 in the same run)
+  L14_Kp0.90_Ki0.30_0.6_F0.011   -          FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.042/+0.046/+0.003 light_b:+0.044/+0.071/-0.000
+        G8 lp/nominal 15-22 hard16 x1.14
+  L14_Kp0.90_Ki0.30_0.6_F0.005   -          FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.038/+0.036/-0.023 light_b:+0.042/+0.057/-0.013
+        G11 light_b 22+ J x1.12
+  L14_Kp0.90_Ki0.30_1.0_F0.011   WIN        FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.083/+0.068/+0.012 light_b:+0.076/+0.128/+0.007
+        G8 lp/nominal 15-22 hard16 x1.17
+  L14_Kp0.90_Ki0.30_1.0_F0.005   -          FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.081/+0.056/-0.008 light_b:+0.075/+0.119/+0.005
+        G11 nominal 22+ J x1.11; G11 light_b 15-22 J x1.13
+  L14_Kp0.90_Ki0.40_1.0_F0.011   WIN        FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.092/+0.090/+0.051 light_b:+0.084/+0.136/+0.052
+        G8 lp/nominal 15-22 hard16 x1.13
+  L14_Kp0.90_Ki0.40_1.0_F0.005   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.090/+0.078/+0.051 light_b:+0.084/+0.128/+0.048
+        G11 nominal 22+ J x1.11; G11 light_b 15-22 J x1.13
+  L14_Kp0.90_Ki0.30_1.5_F0.011   WIN        FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.116/+0.097/+0.023 light_b:+0.097/+0.168/+0.021
+        G8 full/light_b 15-22 hard16 x1.12; G8 lp/nominal 15-22 hard16 x1.10; G8 lp/light_b 15-22 hard16 x1.11
+  L14_Kp0.90_Ki0.30_1.5_F0.005   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.115/+0.086/+0.008 light_b:+0.097/+0.161/+0.018
+        G11 nominal 15-22 J x1.11; G11 nominal 22+ J x1.14; G11 light_b 15-22 J x1.13
+  L14_Kp0.90_Ki0.45_0.0_F0.011   -          FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.037/+0.045/+0.057 light_b:+0.040/+0.060/+0.053
+        G8 lp/nominal 15-22 hard16 x1.13
+  L14_Kp0.90_Ki0.45_0.0_F0.005   -          PASS                       8-22 d(trk/hold/min straight) nominal:+0.033/+0.034/+0.058 light_b:+0.039/+0.049/+0.063
+  L14_Kp0.75_Ki0.30_0.6_F0.011   -          PASS                       8-22 d(trk/hold/min straight) nominal:+0.046/+0.051/+0.023 light_b:+0.050/+0.074/+0.025
+  L14_Kp0.75_Ki0.30_0.6_F0.005   -          FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.042/+0.032/+0.018 light_b:+0.049/+0.061/+0.024
+        G11 nominal 22+ J x1.12; G11 light_b 15-22 J x1.14; G11 light_b 22+ J x1.10
+  L14_Kp0.75_Ki0.30_1.0_F0.011   WIN        FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.089/+0.075/+0.034 light_b:+0.081/+0.139/+0.035
+        G8 lp/nominal 15-22 hard16 x1.18
+  L14_Kp0.75_Ki0.30_1.0_F0.005   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.087/+0.062/+0.031 light_b:+0.082/+0.127/+0.034
+        G11 nominal 15-22 J x1.10; G11 nominal 22+ J x1.16; G11 light_b 15-22 J x1.18; G11 light_b 22+ J x1.16
+  L14_Kp0.75_Ki0.40_1.0_F0.011   WIN        FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.098/+0.097/+0.075 light_b:+0.090/+0.147/+0.073
+        G8 lp/nominal 15-22 hard16 x1.15
+  L14_Kp0.75_Ki0.40_1.0_F0.005   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.097/+0.086/+0.078 light_b:+0.091/+0.137/+0.084
+        G11 nominal 15-22 J x1.10; G11 nominal 22+ J x1.16; G11 light_b 15-22 J x1.18; G11 light_b 22+ J x1.16
+  L14_Kp0.75_Ki0.30_1.5_F0.011   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.123/+0.106/+0.045 light_b:+0.102/+0.174/+0.049
+        G11 nominal 22+ J x1.10
+  L14_Kp0.75_Ki0.30_1.5_F0.005   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.122/+0.096/+0.045 light_b:+0.104/+0.163/+0.050
+        G11 nominal 15-22 J x1.14; G11 nominal 22+ J x1.18; G11 light_b 15-22 J x1.19; G11 light_b 22+ J x1.16
+  L14_Kp0.75_Ki0.45_0.0_F0.011   -          PASS                       8-22 d(trk/hold/min straight) nominal:+0.041/+0.044/+0.082 light_b:+0.046/+0.070/+0.081
+  L14_Kp0.75_Ki0.45_0.0_F0.005   -          FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.036/+0.027/+0.087 light_b:+0.044/+0.058/+0.087
+        G11 nominal 22+ J x1.11; G11 light_b 15-22 J x1.13
+  L14_Kp0.60_Ki0.30_0.6_F0.011   -          FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.054/+0.048/+0.052 light_b:+0.058/+0.089/+0.051
+        G11 light_b 15-22 J x1.11; G11 light_b 22+ J x1.11
+  L14_Kp0.60_Ki0.30_0.6_F0.005   -          FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.050/+0.032/+0.053 light_b:+0.058/+0.076/+0.066
+        G11 nominal 15-22 J x1.10; G11 nominal 22+ J x1.17; G11 light_b 15-22 J x1.20; G11 light_b 22+ J x1.20
+  L14_Kp0.60_Ki0.30_1.0_F0.011   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.099/+0.085/+0.063 light_b:+0.090/+0.143/+0.062
+        G11 nominal 22+ J x1.13; G11 light_b 15-22 J x1.12
+  L14_Kp0.60_Ki0.30_1.0_F0.005   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.097/+0.073/+0.065 light_b:+0.091/+0.138/+0.081
+        G11 nominal 15-22 J x1.14; G11 nominal 22+ J x1.20; G11 light_b 15-22 J x1.23; G11 light_b 22+ J x1.22
+  L14_Kp0.60_Ki0.40_1.0_F0.011   WIN        FAIL G11,G6                8-22 d(trk/hold/min straight) nominal:+0.109/+0.111/+0.108 light_b:+0.099/+0.157/+0.110
+        G11 nominal 22+ J x1.13; G6 b_lo 0-5 s13 x1.34; G11 light_b 15-22 J x1.12
+  L14_Kp0.60_Ki0.40_1.0_F0.005   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.108/+0.102/+0.118 light_b:+0.100/+0.143/+0.128
+        G11 nominal 15-22 J x1.14; G11 nominal 22+ J x1.20; G11 light_b 15-22 J x1.23; G11 light_b 22+ J x1.23
+  L14_Kp0.60_Ki0.30_1.5_F0.011   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.133/+0.126/+0.077 light_b:+0.111/+0.185/+0.076
+        G11 nominal 15-22 J x1.13; G11 nominal 22+ J x1.14; G11 light_b 15-22 J x1.11; G11 light_b 22+ J x1.11
+  L14_Kp0.60_Ki0.30_1.5_F0.005   WIN        FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.133/+0.117/+0.082 light_b:+0.112/+0.174/+0.094
+        G11 nominal 15-22 J x1.18; G11 nominal 22+ J x1.23; G11 light_b 15-22 J x1.24; G11 light_b 22+ J x1.21
+  L14_Kp0.60_Ki0.45_0.0_F0.011   -          FAIL G11,G6                8-22 d(trk/hold/min straight) nominal:+0.048/+0.045/+0.116 light_b:+0.055/+0.092/+0.118
+        G6 nominal 0-5 s13 x1.34; G6 b_lo 0-5 s13 x1.33; G11 light_b 22+ J x1.11
+  L14_Kp0.60_Ki0.45_0.0_F0.005   -          FAIL G11                   8-22 d(trk/hold/min straight) nominal:+0.044/+0.028/+0.127 light_b:+0.053/+0.082/+0.134
+        G11 nominal 22+ J x1.15; G11 light_b 15-22 J x1.19; G11 light_b 22+ J x1.14
+  L13.5_Kp0.90_Ki0.30_1.0_F0.011 WIN        FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.092/+0.081/+0.021 light_b:+0.083/+0.141/+0.023
+        G8 full/light_b 15-22 hard16 x1.10; G8 lp/nominal 15-22 hard16 x1.19
+  L13.5_Kp0.90_Ki0.40_0.0_F0.011 -          PASS                       8-22 d(trk/hold/min straight) nominal:+0.036/+0.043/+0.048 light_b:+0.039/+0.060/+0.048
+  L13.5_Kp0.80_Ki0.30_1.0_F0.011 WIN        FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.096/+0.084/+0.036 light_b:+0.087/+0.142/+0.034
+        G8 lp/nominal 15-22 hard16 x1.16
+  L13.5_Kp0.80_Ki0.40_0.0_F0.011 -          FAIL G8                    8-22 d(trk/hold/min straight) nominal:+0.038/+0.043/+0.062 light_b:+0.042/+0.061/+0.060
+        G8 lp/nominal 15-22 hard16 x1.10
+  r1_F0.000                      -          FAIL G11                   8-22 d(trk/hold/min straight) nominal:-0.013/-0.027/-0.063 light_b:-0.009/-0.025/-0.009
+        G11 nominal 22+ J x1.12; G11 light_b 15-22 J x1.12; G11 light_b 22+ J x1.16
+  r1_F0.005                      -          PASS                       8-22 d(trk/hold/min straight) nominal:-0.007/-0.015/-0.029 light_b:-0.005/-0.014/-0.014
+  r1_F0.016                      -          FAIL G6,G8                 8-22 d(trk/hold/min straight) nominal:+0.006/+0.015/+0.010 light_b:+0.005/+0.013/+0.001
+        G6 b_lo 0-5 s13 x1.31; G8 lp/light_b 15-22 hard16 x1.10
+  L14_Kp0.90_Ki0.50_0.0_F0.011   -          PASS                       8-22 d(trk/hold/min straight) nominal:+0.048/+0.055/+0.074 light_b:+0.051/+0.076/+0.076
+  V294_r1                        -          FAIL G8                    8-22 d(trk/hold/min straight) nominal:-0.000/-0.000/+0.001 light_b:-0.000/+0.002/+0.001
+        G8 full/nominal 5-10 hard16 x1.19; G8 full/light_b 5-10 hard16 x1.40; G8 full/light_b 15-22 hard16 x1.44; G8 lp/nominal 5-10 hard16 x1.19; G8 lp/light_b 5-10 hard16 x1.44; G8 lp/light_b 15-22 hard16 x1.39
+  r1dup                          -          PASS                       8-22 d(trk/hold/min straight) nominal:-0.000/+0.000/-0.000 light_b:-0.000/+0.000/-0.000

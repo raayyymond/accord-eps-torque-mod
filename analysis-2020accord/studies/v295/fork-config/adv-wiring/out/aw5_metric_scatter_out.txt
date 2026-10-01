@@ -1,0 +1,9 @@
+harness chunks: 21, lengths s p50 25 max 59
+   10-15  E  60 s | r71b 0.583 / 0.505 | track_gain d-v-d 90% [-0.206, +0.281] (n 299) ; predicted +0.042..+0.063 -> power 0.08..0.10 | turn_hold: n/a (1)
+   10-15  E 120 s | r71b 0.583 / 0.505 | track_gain d-v-d 90% [-0.136, +0.124] (n 300) ; predicted +0.042..+0.063 -> power 0.12..0.20 | turn_hold d-v-d 90% [-0.135, +0.139] (n 59) ; predicted +0.000..+0.048 -> power 0.05..0.17
+   15-22  E  60 s | r71b 0.830 / 0.673 | track_gain d-v-d 90% [-0.263, +0.237] (n 292) ; predicted +0.087..+0.103 -> power 0.07..0.07 | turn_hold d-v-d 90% [-0.081, +0.084] (n 199) ; predicted +0.074..+0.157 -> power 0.43..0.93
+   15-22  E 120 s | r71b 0.830 / 0.673 | track_gain d-v-d 90% [-0.032, +0.052] (n 300) ; predicted +0.087..+0.103 -> power 0.95..0.99 | turn_hold d-v-d 90% [-0.071, +0.071] (n 291) ; predicted +0.074..+0.157 -> power 0.58..0.98
+   22+    E  60 s | r71b 0.924 / 0.943 | track_gain d-v-d 90% [-0.044, +0.045] (n 300) ; predicted +0.032..+0.045 -> power 0.29..0.44 | turn_hold d-v-d 90% [-0.010, +0.007] (n 178) ; predicted +0.020..+0.045 -> power 1.00..1.00
+   22+    E 120 s | r71b 0.924 / 0.943 | track_gain d-v-d 90% [-0.042, +0.043] (n 300) ; predicted +0.032..+0.045 -> power 0.14..0.63 | turn_hold d-v-d 90% [-0.010, +0.010] (n 265) ; predicted +0.020..+0.045 -> power 0.97..1.00
+   8-22   E  60 s | r71b 0.826 / 0.683 | track_gain d-v-d 90% [-0.348, +0.324] (n 293) ; predicted +0.057..+0.068 -> power 0.08..0.09 | turn_hold d-v-d 90% [-0.319, +0.179] (n 82) ; predicted +0.047..+0.112 -> power 0.16..0.27
+   8-22   E 120 s | r71b 0.826 / 0.683 | track_gain d-v-d 90% [-0.203, +0.230] (n 300) ; predicted +0.057..+0.068 -> power 0.06..0.07 | turn_hold d-v-d 90% [-0.218, +0.196] (n 213) ; predicted +0.047..+0.112 -> power 0.14..0.25

@@ -1,0 +1,21 @@
+{
+ "diff": {
+  "AccordTorqueKiHigh": [
+   0.0,
+   0.8
+  ]
+ },
+ "files": {
+  "toggle-config_V295_r2alt_KiHigh0.8_GATE-FAIL-G4-G8": {
+   "sha_json": "c428be3238315b87639f9581241d08bb6fad2109d5beec206b8985c47f21b50b",
+   "sha_decoded": "149a64738a0a4e27e7324d09b4d27a871aa43bad5edfe14a0031cd1e432abe13",
+   "keys": 26
+  },
+  "toggle-config_V295_r2alt_KiHigh0.8_GATE-FAIL-G4-G8_REVERT_to_V294_r1": {
+   "sha_json": "38ba295023e231eea49c294d846ef1f73ba99e2b4945e98a2ebb1edf37b3aa76",
+   "sha_decoded": "50eac1ad36be6f9b53d7c25003c247cbbd184e529f0befa603e7ed502674c722",
+   "keys": 26
+  }
+ },
+ "fork_utilities_sha": "5143618cafa898c2a2333d69f0364f73b56f0aa5ed6fd32e5c2f73275c1ac665"
+}

@@ -1,0 +1,78 @@
+accord_dither                            0.0
+accord_dither_gate                       True
+accord_dob_hz                            0.0
+accord_eps_gain_scale                    1.0
+accord_eps_spring_scale                  1.0
+accord_error_notch_q                     0.0
+accord_ff_rate_gain                      0.5
+accord_friction_hyst                     0.0
+accord_friction_hyst_band                False
+accord_hold_level                        False
+accord_hold_map                          False
+accord_jerk_lp_hz                        1.2
+accord_rate_loop_gain                    0.0
+accord_rate_plant_ff                     False
+accord_ref_filter                        0.0
+accord_torque_ki                         0.3
+accord_torque_ki_high                    0.0
+accord_turn_ff_taper                     False
+accord_variable_steer_ratio              True
+adjacent_lead_tracking                   False
+always_on_lateral                        True
+always_on_lateral_lkas                   True
+always_on_lateral_main                   True
+always_on_lateral_pause_speed            0.0
+below_steer_speed_volume                 101.0
+custom_accel_profile                     False
+custom_accel_profile_breakpoints         [0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 40.0]
+custom_accel_profile_values              [3.0, 2.5, 2.0, 1.5, 1.0, 0.8, 0.6]
+custom_personalities                     True
+friction                                 0.011
+hide_steering_wheel                      False
+honda_lateral_pid_ki_scale               1.0
+honda_lateral_pid_kp_scale               1.0
+keep_learned_lat_accel_offset            True
+lane_change_delay                        0.4
+latAccelFactor                           14.0
+longitudinalActuatorDelay                0.3
+pause_lateral_below_signal               False
+pause_lateral_below_speed                0.0
+pause_lateral_signal_delay               0.0
+pause_lateral_via_cancel                 False
+pause_lateral_via_cancel_long            False
+pause_lateral_via_cancel_very_long       False
+pause_lateral_via_distance               False
+pause_lateral_via_distance_long          False
+pause_lateral_via_distance_very_long     False
+pause_lateral_via_lkas                   False
+pause_lateral_via_mode                   False
+pause_lateral_via_mode_long              False
+pause_lateral_via_mode_very_long         False
+pause_lateral_via_star                   False
+pause_lateral_via_star_long              False
+pause_lateral_via_star_very_long         False
+reduce_lateral_acceleration_low_visibility 0.0
+reduce_lateral_acceleration_rain         0.0
+reduce_lateral_acceleration_rain_storm   0.0
+reduce_lateral_acceleration_snow         0.0
+steerActuatorDelay                       0.2
+steerKp                                  [[0], [0.9]]
+steerRatio                               16.84
+steering_metrics                         False
+subaru_sng_manual_parking_brake          False
+tesla_cooperative_steering               False
+turn_steering_limit_mute_speed           0.0
+use_auto_steer_delay                     True
+use_custom_friction                      True
+use_custom_latAccelFactor                True
+use_custom_steerActuatorDelay            False
+use_custom_steerRatio                    True
+V295 sha 5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed
+V294 sha 3143616d5b79bdb7648d8e4d32e48420c7b481b18325178e89d1853589dbdd85
+0xc63e8 V294 1011 V295 1011
+0xc63ea V294 567 V295 1050
+0xc62e6 V294 1024 V295 1024
+n differing bytes V294 vs V295: 6 ['0xc63ea', '0xc63eb', '0xc6ffc', '0xc6ffd', '0xc6ffe', '0xc6fff']
+cells diff: {'fb_b': (567, 1050)}
+map_x [0, 12, 20, 24, 32, 64, 96, 128, 160, 240] map_y [0, 52, 86, 103, 138, 275, 413, 550, 688, 1032] idx_clamp 240
+real controller: 122.5 us/step ki now [[0], [0.8]]

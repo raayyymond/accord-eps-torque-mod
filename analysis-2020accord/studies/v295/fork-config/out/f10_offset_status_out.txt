@@ -1,0 +1,14 @@
+ltp fields: ['ltp_cal', 'ltp_fric', 'ltp_fric_raw', 'ltp_laf', 'ltp_laf_raw', 'ltp_off', 'ltp_off_raw', 'ltp_pts', 'ltp_t', 'ltp_use', 'ltp_valid']
+  ltp_cal        n  4054  first 100.0000  last 100.0000  p5/p50/p95 [100.0, 100.0, 100.0]  unique 1
+  ltp_fric       n  4054  first 0.1717  last 0.1427  p5/p50/p95 [0.1437, 0.1542, 0.1696]  unique 2806
+  ltp_fric_raw   n  4054  first 0.1365  last 0.1317  p5/p50/p95 [0.1074, 0.1202, 0.133]  unique 2254
+  ltp_laf        n  4054  first 2.0605  last 2.3270  p5/p50/p95 [2.0797, 2.221, 2.3183]  unique 4054
+  ltp_laf_raw    n  4054  first 5.1823  last 5.2694  p5/p50/p95 [4.9791, 5.212, 5.4517]  unique 3892
+  ltp_off        n  4054  first -0.1026  last -0.1770  p5/p50/p95 [-0.175, -0.1512, -0.1086]  unique 3949
+  ltp_off_raw    n  4054  first -0.2362  last -0.1979  p5/p50/p95 [-0.2687, -0.237, -0.2047]  unique 3109
+  ltp_pts        n  4054  first 6704.0000  last 6704.0000  p5/p50/p95 [6704.0, 6704.0, 6704.0]  unique 1
+  ltp_use        n  4054  first 1.0000  last 1.0000  p5/p50/p95 [1.0, 1.0, 1.0]  unique 1
+  ltp_valid      n  4054  first 1.0000  last 1.0000  p5/p50/p95 [1.0, 1.0, 1.0]  unique 1
+route span 1015 s; ltp messages 4054
+straights v > 8, |plan| < 0.2 (255 s): integrator p50 +0.149 (m/s^2 equiv), error p50 -0.004, roll comp p50 +0.301, learned offset p50 -0.145
+sign convention: ff -= offset * fade, so the offset ADDS +0.145 m/s^2 to the command; the integrator holds +0.149 on top

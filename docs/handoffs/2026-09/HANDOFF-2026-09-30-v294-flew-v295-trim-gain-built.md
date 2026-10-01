@@ -87,3 +87,19 @@ medium-speed turns; run the c1/c2 read (calibrate on r71b first). If he wants th
 14 → ~10 in a toggle config (a firmware Kp ×1.4 is the same quantity and was rejected here as a fork surrogate). If V295 is not
 felt: the b lever's cal headroom is ×1.1 more at int32 margin 2 (1150) — the class is near exhausted; the next lever is a cave
 (a leaky integrator on this operand, or a second operand), or the fork.
+
+
+## Addendum (same session, later): the fork config for drive (2)
+Operator's plan: (1) V295 + the V294 r1 config, (2) V295 + a new config. The harness (REAL fork controller, V295 cells, both plant
+worlds) swept `SteerLatAccel` × `SteerFriction` × `AccordTorqueKi` (× `SteerKP`) under eleven pre-registered gates; two adversaries
+(dynamics; wiring + observability) returned SURVIVES_WITH_CHANGES. **No existing-param config passes every gate**: every knob that
+changes the loop below 8 m/s raises 0–5 m/s wander / stick-slip ×1.3–2.1 on the identified family, and one LAF cannot fit a
+speed-shaped deficit. **Drive (2) flies `analysis-2020accord/reference/toggle-config_V295_r2alt_KiHigh0.8_GATE-FAIL-G4-G8.json`**
+= r1 + `AccordTorqueKiHigh` 0.8 (sha256 c428be32…; the fork's own Ki schedule, 0.3 below 8 m/s → 0.8 at ≥ 18; the ONLY key that
+differs from r1, verified by the orchestrator); revert file = r1 byte-identical. Predicted: 15–22 m/s tracking 0.83 → 0.92–0.93,
+turn-hold 0.67 → 0.75–0.83; 22+ +0.03–0.045; no oversteer; two gate failures in the least-trusted worlds (light_b weave incidence
+12/24 vs 2/24; plant-alone hard-turn 1.6–3 Hz at 15–22 ×1.09–1.14, ×0.95 under replay); new risk: unflagged light hand
+corrections wind the integrator ~2.5× faster at ≥ 18 m/s. Read: Ki(v) by speed bin is the discriminator (0.30 / 0.40 / 0.50 /
+0.66 / 0.80 at < 8 / 10 / 12 / 15 / ≥ 18 m/s); primary outcome 15–22 m/s tracking at ≥ 120 s; c1/c2 on drive (2)'s own command.
+The low-speed complaint is untouched by any existing param (a fork code change or a firmware lever would be needed). Full ruling
+and the corrected revert signature: `studies/v295/fork-config/V295-FORK-CONFIG-r2.md` (end).

@@ -1,0 +1,2 @@
+r1 (control)  101157 frames (40 s): max |VecPort - real fork| p 0  i 0  f 5.55e-17  torque 3.47e-18  -> PASS
+r2alt         101157 frames (41 s): max |VecPort - real fork| p 0  i 0  f 5.55e-17  torque 3.47e-18  -> PASS

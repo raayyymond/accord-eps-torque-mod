@@ -1,0 +1,4 @@
+codec: kit positive control OK; fork utilities.py @20d24ab79 sha 5143618cafa898c2: decode == kit on both files, from disk
+r2 vs r1 (the whole delta): {}
+wrote toggle-config_V295_r2.json  sha256 38ba295023e231eea49c294d846ef1f73ba99e2b4945e98a2ebb1edf37b3aa76  (26 keys); .decoded.json sha256 50eac1ad36be6f9b53d7c25003c247cbbd184e529f0befa603e7ed502674c722
+wrote toggle-config_V295_r2_REVERT_to_V294_r1.json  sha256 38ba295023e231eea49c294d846ef1f73ba99e2b4945e98a2ebb1edf37b3aa76  (26 keys); .decoded.json sha256 50eac1ad36be6f9b53d7c25003c247cbbd184e529f0befa603e7ed502674c722
