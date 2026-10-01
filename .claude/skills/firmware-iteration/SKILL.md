@@ -77,6 +77,30 @@ message enumerates `Running teammates:` and `Running background agents:`.** That
 **Grep `analysis-2020accord/build_v*_tva.py` for any calibration address before naming it**, and state its
 on-car result. FALSIFIED ≠ untested. See `docs/BUILD-LINEAGE.md`.
 
+## 🛑🛑 The tuning space is whatever a cave can afford — minimise, then verify thoroughly
+Standing operator instruction, **2026-09-30**. Two builds (V294, V295) were named "acceleration tracking" and
+designed inside the cal space of a structure whose loop gain on that quantity cannot exceed 0.63 at any
+value; the operator's ruling: *"V294 was designed to track angular acceleration. If it doesn't do that, it
+failed. Same with V295."* and *"Our tuning space is whatever we can afford in a cave. Caves are ok, but need
+thorough verification and need to be minimized."*
+
+- **Design the LOOP first, then find the smallest edit that gives it.** If the stock structure cannot hold
+  the loop (one operand, one filter, the setpoint sharing the integrator's input), the design report says so
+  and designs the cave. Cal-only is preferred only between two designs that give the SAME loop.
+- **A build is scored against its STATED goal.** Designed to track a quantity with |L| < 1 on that quantity
+  = FAILED, whatever else it did. Record it that way in STATE and the lineage.
+- **Minimise:** in-place operand/branch/displacement edit before a cave; one new state word before two; no
+  telemetry bit the design did not ask for. Every instruction in the cave has a line in the design report
+  naming the loop term it implements.
+- **Verify thoroughly, nothing waived:** GATE 1 RAM ownership (writers + register-indirect; on-car evidence
+  where the record has it) · GATE 2 closed-loop magnitude AND phase in every loop the signal is in · a
+  byte-exact golden-model mirror that the build script's assertions call · the wire instrument for every
+  new state word BEFORE the dose (prefer the inert tap) · the adversarial pass on the built image with a
+  "do not flash" verdict reachable · engage/disengage/bail init of every new state word traced, not assumed.
+- **Known cave failures are design constraints:** V291/V292 (lagged rate feedback opened above 10 Hz → the
+  7 Hz cycle re-armed), V289 (20 Hz notch → a 16 Hz pole took the margin), V283 (Ki on an operand that holds
+  the command → release lurch), V97 (a pole with DC gain 1.000 and no pre-registered observable).
+
 ## Don't ask to build; clear flags autonomously
 Build unflashed RWDs and probes **without asking** — only the flash / CAN / UDS *send* is gated. When a
 review returns a FAIL or a flagged residual, **resolve it** (next probe, open trace, fold in the fix,

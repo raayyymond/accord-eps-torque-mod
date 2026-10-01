@@ -192,8 +192,24 @@ instead of it. Standing operator instruction, 2026-07-28.
 5. **Firmware is car/year/revision specific.** Confirm the part number before building for a car.
 6. `tools/comma4_panda_test.py` is read-only and safe at any time after openpilot is killed.
 
+🛑🛑 **THE TUNING SPACE IS WHATEVER A CAVE CAN AFFORD.** Standing operator instruction, **2026-09-30**:
+*"Our tuning space is whatever we can afford in a cave. Caves are ok, but need thorough verification and
+need to be minimized."* **Cal-only is a preference between two designs that give the SAME loop — never a
+constraint on the design.** When the loop STRUCTURE is what limits the car (one operand, one filter, the
+setpoint sharing the integrator's input), say so and design the cave; do not search the cal space for a
+value that cannot exist. The lesson: V294 and V295 were named "acceleration tracking" and designed inside a
+cal space whose loop gain cannot exceed 0.63 — **both FAILED their stated goal** (operator's ruling,
+2026-09-30; a build is scored against the goal it was designed for). Three binding rules: **(1) MINIMISE** —
+the fewest instructions that give the structure; in-place operand/branch edits before a cave; one new state
+word before two. **(2) VERIFY THOROUGHLY, NOTHING WAIVED** — GATE 1 + GATE 2 below, a byte-exact golden-model
+mirror, the wire instrument for every new state word BEFORE the dose, the adversarial pass on the built image
+with "do not flash" reachable. **(3) THE CAVE RECORD IS THE BRIEF** — V24/V27/V48B bricked (pre-gate);
+V96/V112/V288/V289/V292 flew (post-gate); V291/V292's loop-opening class, V289's notch and V283's Ki each
+failed on-car for a reason that is now known and is designed around, not rediscovered. Detail in the
+`firmware-iteration` skill.
+
 **Code caves are this kit's only bricking class — V24, V27 and V48B all bricked the ECU.** Every success
-since V29 has been cal-only or a single in-place branch/displacement edit. Two mandatory gates for any
+since V29 has been cal-only, a single in-place branch/displacement edit, or a gated cave. Two mandatory gates for any
 cave, filter, or dynamics change — **GATE 1 RAM ownership** (including writers and register-indirect
 access; static clearance is *not* sufficient, `gp-0x1500` passed both static methods and still failed
 on-car) and **GATE 2 closed-loop stability** (magnitude *and* phase, in every loop the signal is in).
