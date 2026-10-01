@@ -1,0 +1,280 @@
+base V295 _v295_V295-V294BASE-ACCELTRIM.B1050-SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.1050-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP_plain_image.bin  sha256 5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed
+V295 cal anchors: Kp Y [960, 960, 960, 960, 960]  Kd Y [0, 0, 0, 0]  a 1011 b 1050 C 1024 DB 4 Ki 0 ICL 10240 DCL 0
+==============================================================================================================
+B0: B0 = C1r2 structure (P+I on angle, D on HELD rate, Kd 20), C1 lib table
+   code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+   code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+   code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+   code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+   code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+   code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+   code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+   code 0x029ede  c7 00        -> 80 39         zxh r7 -> subr r0,r7                                 -Kd
+   code 0x029ee0  10 40 bb 41  -> 24 47 aa 95   mov r16,r8 ; sub r27,r8 -> ld.h -0x6a56[gp],r8       D on the HELD rate
+   cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+   cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+   cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+   cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+   cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+   cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+   cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+   cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+   cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+   cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+   cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+   cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+   cal  0x0e5126  00 00        -> 14 00         Kd record Y[0] 0 -> 20                               
+   cal  0x0e5128  00 00        -> 14 00         Kd record Y[1] 0 -> 20                               
+   cal  0x0e512a  00 00        -> 14 00         Kd record Y[2] 0 -> 20                               
+   cal  0x0e512c  00 00        -> 14 00         Kd record Y[3] 0 -> 20                               
+   cave 0xc4c00..0xc4c90: 144 bytes (96 code + 48 table)  sha256 0551f38fdfa4e515
+   FULL DIFF vs V295 over [0x13000, 0x100000): 189 bytes; changed bytes: in-place code 23, cal 24, cave 144 (its bytes that differ from 0xFF: 142); UNLISTED: none
+   CRC trailers the builder must recompute: 0xC4FFC (cave block), 0xC6FFC (cal page), the E5xxx record block, and the main block holding 0x13100 (V1) -- verify_bootloader_crc.py on the built image (H8)
+==============================================================================================================
+B0r: B0r = the C1r2 structure REFITTED to the brief's credible set (its own envelope, the same knots)
+   code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+   code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+   code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+   code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+   code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+   code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+   code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+   code 0x029ede  c7 00        -> 80 39         zxh r7 -> subr r0,r7                                 -Kd
+   code 0x029ee0  10 40 bb 41  -> 24 47 aa 95   mov r16,r8 ; sub r27,r8 -> ld.h -0x6a56[gp],r8       D on the HELD rate
+   cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+   cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+   cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+   cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+   cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+   cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+   cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+   cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+   cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+   cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+   cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+   cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+   cal  0x0e5126  00 00        -> 14 00         Kd record Y[0] 0 -> 20                               
+   cal  0x0e5128  00 00        -> 14 00         Kd record Y[1] 0 -> 20                               
+   cal  0x0e512a  00 00        -> 14 00         Kd record Y[2] 0 -> 20                               
+   cal  0x0e512c  00 00        -> 14 00         Kd record Y[3] 0 -> 20                               
+   cave 0xc4c00..0xc4c90: 144 bytes (96 code + 48 table)  sha256 6627e4017f2a199c
+   FULL DIFF vs V295 over [0x13000, 0x100000): 189 bytes; changed bytes: in-place code 23, cal 24, cave 144 (its bytes that differ from 0xFF: 142); UNLISTED: none
+   CRC trailers the builder must recompute: 0xC4FFC (cave block), 0xC6FFC (cal page), the E5xxx record block, and the main block holding 0x13100 (V1) -- verify_bootloader_crc.py on the built image (H8)
+==============================================================================================================
+D1a: D1a = stock D on the angle error (cal-only D), Kd_E 256
+   code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+   code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+   code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+   code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+   code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+   code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+   code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+   cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+   cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+   cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+   cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+   cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+   cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+   cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+   cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+   cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+   cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+   cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+   cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+   cal  0x0e5126  00 00        -> 00 01         Kd record Y[0] 0 -> 256                              
+   cal  0x0e5128  00 00        -> 00 01         Kd record Y[1] 0 -> 256                              
+   cal  0x0e512a  00 00        -> 00 01         Kd record Y[2] 0 -> 256                              
+   cal  0x0e512c  00 00        -> 00 01         Kd record Y[3] 0 -> 256                              
+   cave 0xc4c00..0xc4c90: 144 bytes (96 code + 48 table)  sha256 fb8a0db9ff715231
+   FULL DIFF vs V295 over [0x13000, 0x100000): 183 bytes; changed bytes: in-place code 17, cal 24, cave 144 (its bytes that differ from 0xFF: 142); UNLISTED: none
+   CRC trailers the builder must recompute: 0xC4FFC (cave block), 0xC6FFC (cal page), the E5xxx record block, and the main block holding 0x13100 (V1) -- verify_bootloader_crc.py on the built image (H8)
+==============================================================================================================
+D1b: D1b = D on the 1 kHz motor-accumulator difference (gp-0x6cc4), K_D 20
+   code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+   code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+   code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+   code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+   code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+   code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+   code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+   code 0x029ee0  10 40 bb 41  -> 1a 40 00 00   mov r16,r8 ; sub r27,r8 -> mov r26,r8 ; nop          D on the cave's operand in r26 (Kd = zxh, unchanged at 0x29EDE)
+   cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+   cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+   cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+   cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+   cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+   cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+   cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+   cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+   cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+   cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+   cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+   cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+   cal  0x0e5126  00 00        -> 48 00         Kd record Y[0] 0 -> 72                               
+   cal  0x0e5128  00 00        -> 48 00         Kd record Y[1] 0 -> 72                               
+   cal  0x0e512a  00 00        -> 48 00         Kd record Y[2] 0 -> 72                               
+   cal  0x0e512c  00 00        -> 48 00         Kd record Y[3] 0 -> 72                               
+   cave 0xc4c00..0xc4ca0: 160 bytes (112 code + 48 table)  sha256 73426e8938386e96
+   FULL DIFF vs V295 over [0x13000, 0x100000): 202 bytes; changed bytes: in-place code 20, cal 24, cave 160 (its bytes that differ from 0xFF: 158); UNLISTED: none
+   CRC trailers the builder must recompute: 0xC4FFC (cave block), 0xC6FFC (cal page), the E5xxx record block, and the main block holding 0x13100 (V1) -- verify_bootloader_crc.py on the built image (H8)
+==============================================================================================================
+D1c: D1c = D on the held-angle difference through a 21 Hz low-pass, K_D 20
+   code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+   code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+   code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+   code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+   code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+   code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+   code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+   code 0x029ee0  10 40 bb 41  -> 1a 40 00 00   mov r16,r8 ; sub r27,r8 -> mov r26,r8 ; nop          D on the cave's operand in r26 (Kd = zxh, unchanged at 0x29EDE)
+   cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+   cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+   cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+   cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+   cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+   cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+   cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+   cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+   cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+   cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+   cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+   cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+   cal  0x0e5126  00 00        -> fa 00         Kd record Y[0] 0 -> 250                              
+   cal  0x0e5128  00 00        -> fa 00         Kd record Y[1] 0 -> 250                              
+   cal  0x0e512a  00 00        -> fa 00         Kd record Y[2] 0 -> 250                              
+   cal  0x0e512c  00 00        -> fa 00         Kd record Y[3] 0 -> 250                              
+   cave 0xc4c00..0xc4cbc: 188 bytes (140 code + 48 table)  sha256 848b91731677f8c2
+   FULL DIFF vs V295 over [0x13000, 0x100000): 227 bytes; changed bytes: in-place code 20, cal 24, cave 188 (its bytes that differ from 0xFF: 183); UNLISTED: none
+   CRC trailers the builder must recompute: 0xC4FFC (cave block), 0xC6FFC (cal page), the E5xxx record block, and the main block holding 0x13100 (V1) -- verify_bootloader_crc.py on the built image (H8)
+==============================================================================================================
+D2a: D2a = D on the FRESH 1 kHz motor-rate EMA (gp-0x6abe), K_D 20
+   code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+   code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+   code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+   code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+   code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+   code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+   code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+   code 0x029ee0  10 40 bb 41  -> 1a 40 00 00   mov r16,r8 ; sub r27,r8 -> mov r26,r8 ; nop          D on the cave's operand in r26 (Kd = zxh, unchanged at 0x29EDE)
+   cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+   cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+   cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+   cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+   cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+   cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+   cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+   cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+   cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+   cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+   cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+   cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+   cal  0x0e5126  00 00        -> 22 00         Kd record Y[0] 0 -> 34                               
+   cal  0x0e5128  00 00        -> 22 00         Kd record Y[1] 0 -> 34                               
+   cal  0x0e512a  00 00        -> 22 00         Kd record Y[2] 0 -> 34                               
+   cal  0x0e512c  00 00        -> 22 00         Kd record Y[3] 0 -> 34                               
+   cave 0xc4c00..0xc4ca2: 162 bytes (114 code + 48 table)  sha256 caa6f39c2ba57f05
+   FULL DIFF vs V295 over [0x13000, 0x100000): 204 bytes; changed bytes: in-place code 20, cal 24, cave 162 (its bytes that differ from 0xFF: 160); UNLISTED: none
+   CRC trailers the builder must recompute: 0xC4FFC (cave block), 0xC6FFC (cal page), the E5xxx record block, and the main block holding 0x13100 (V1) -- verify_bootloader_crc.py on the built image (H8)
+==============================================================================================================
+D2b: D2b = D2a + FORWARD-path output-lag lead (zero 5.2 Hz, pole 10.3 Hz) on E' for P
+   code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+   code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+   code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+   code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+   code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+   code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+   code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+   code 0x029ee0  10 40 bb 41  -> 1a 40 00 00   mov r16,r8 ; sub r27,r8 -> mov r26,r8 ; nop          D on the cave's operand in r26 (Kd = zxh, unchanged at 0x29EDE)
+   cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+   cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+   cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+   cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+   cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+   cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+   cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+   cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+   cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+   cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+   cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+   cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+   cal  0x0e5126  00 00        -> 22 00         Kd record Y[0] 0 -> 34                               
+   cal  0x0e5128  00 00        -> 22 00         Kd record Y[1] 0 -> 34                               
+   cal  0x0e512a  00 00        -> 22 00         Kd record Y[2] 0 -> 34                               
+   cal  0x0e512c  00 00        -> 22 00         Kd record Y[3] 0 -> 34                               
+   cave 0xc4c00..0xc4cca: 202 bytes (154 code + 48 table)  sha256 f03bf259e9f878ef
+   FULL DIFF vs V295 over [0x13000, 0x100000): 241 bytes; changed bytes: in-place code 20, cal 24, cave 202 (its bytes that differ from 0xFF: 197); UNLISTED: none
+   CRC trailers the builder must recompute: 0xC4FFC (cave block), 0xC6FFC (cal page), the E5xxx record block, and the main block holding 0x13100 (V1) -- verify_bootloader_crc.py on the built image (H8)
+==============================================================================================================
+D2c: D2c = D2a + FEEDBACK-path output-lag lead (same filter) on r26
+   code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+   code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+   code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+   code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+   code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+   code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+   code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+   code 0x029ee0  10 40 bb 41  -> 1a 40 00 00   mov r16,r8 ; sub r27,r8 -> mov r26,r8 ; nop          D on the cave's operand in r26 (Kd = zxh, unchanged at 0x29EDE)
+   cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+   cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+   cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+   cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+   cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+   cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+   cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+   cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+   cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+   cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+   cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+   cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+   cal  0x0e5126  00 00        -> 22 00         Kd record Y[0] 0 -> 34                               
+   cal  0x0e5128  00 00        -> 22 00         Kd record Y[1] 0 -> 34                               
+   cal  0x0e512a  00 00        -> 22 00         Kd record Y[2] 0 -> 34                               
+   cal  0x0e512c  00 00        -> 22 00         Kd record Y[3] 0 -> 34                               
+   cave 0xc4c00..0xc4cc6: 198 bytes (150 code + 48 table)  sha256 01705da4fb9dd20f
+   FULL DIFF vs V295 over [0x13000, 0x100000): 237 bytes; changed bytes: in-place code 20, cal 24, cave 198 (its bytes that differ from 0xFF: 193); UNLISTED: none
+   CRC trailers the builder must recompute: 0xC4FFC (cave block), 0xC6FFC (cal page), the E5xxx record block, and the main block holding 0x13100 (V1) -- verify_bootloader_crc.py on the built image (H8)
+==============================================================================================================
+D3a: D3a = cascade: V282-style HELD rate loop inside (fb 923/1560, Kp 24, Ki 12), angle outside
+   code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+   code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+   code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+   code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+   code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+   code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+   cal  0x0c63e8  f3 03        -> 9b 03         a 1011 -> 923                                        
+   cal  0x0c63ea  1a 04        -> 18 06         b 1050 -> 1560                                       
+   cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+   cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+   cal  0x0c63e6  00 00        -> 0c 00         Ki 0 -> 12                                           
+   cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+   cal  0x0e5384  c0 03        -> 18 00         Kp record Y[0] 960 -> 24                             
+   cal  0x0e5386  c0 03        -> 18 00         Kp record Y[1] 960 -> 24                             
+   cal  0x0e5388  c0 03        -> 18 00         Kp record Y[2] 960 -> 24                             
+   cal  0x0e538a  c0 03        -> 18 00         Kp record Y[3] 960 -> 24                             
+   cal  0x0e538c  c0 03        -> 18 00         Kp record Y[4] 960 -> 24                             
+   cave 0xc4c00..0xc4ca6: 166 bytes (118 code + 48 table)  sha256 81bc5052536a6c58
+   FULL DIFF vs V295 over [0x13000, 0x100000): 197 bytes; changed bytes: in-place code 15, cal 18, cave 166 (its bytes that differ from 0xFF: 164); UNLISTED: none
+   CRC trailers the builder must recompute: 0xC4FFC (cave block), 0xC6FFC (cal page), the E5xxx record block, and the main block holding 0x13100 (V1) -- verify_bootloader_crc.py on the built image (H8)
+==============================================================================================================
+D3b: D3b = cascade: FRESH rate loop inside (gp-0x6abe via E1', fb 923/1560, Kp 46, Ki 12), angle outside
+   code 0x028f4c  24 3f aa 95  -> 24 3f 42 95   ld.h -0x6a56[gp],r7 -> ld.h -0x6abe[gp],r7           operand x := gp-0x6abe (FRESH motor-rate EMA; the +-12000 bail now gates it)
+   code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+   code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+   code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+   code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+   code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+   code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+   cal  0x0c63e8  f3 03        -> 9b 03         a 1011 -> 923                                        
+   cal  0x0c63ea  1a 04        -> 18 06         b 1050 -> 1560                                       
+   cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+   cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+   cal  0x0c63e6  00 00        -> 0c 00         Ki 0 -> 12                                           
+   cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+   cal  0x0e5384  c0 03        -> 2e 00         Kp record Y[0] 960 -> 46                             
+   cal  0x0e5386  c0 03        -> 2e 00         Kp record Y[1] 960 -> 46                             
+   cal  0x0e5388  c0 03        -> 2e 00         Kp record Y[2] 960 -> 46                             
+   cal  0x0e538a  c0 03        -> 2e 00         Kp record Y[3] 960 -> 46                             
+   cal  0x0e538c  c0 03        -> 2e 00         Kp record Y[4] 960 -> 46                             
+   cave 0xc4c00..0xc4ca6: 166 bytes (118 code + 48 table)  sha256 f642cf4ca39a6081
+   FULL DIFF vs V295 over [0x13000, 0x100000): 198 bytes; changed bytes: in-place code 16, cal 18, cave 166 (its bytes that differ from 0xFF: 164); UNLISTED: none
+   CRC trailers the builder must recompute: 0xC4FFC (cave block), 0xC6FFC (cal page), the E5xxx record block, and the main block holding 0x13100 (V1) -- verify_bootloader_crc.py on the built image (H8)

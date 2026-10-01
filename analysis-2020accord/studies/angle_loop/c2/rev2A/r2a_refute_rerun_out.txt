@@ -1,0 +1,201 @@
+REFUTER'S OWN ANCHOR (positive control: the refuter's model in this process reproduces its published numbers):
+  ====================================================================================================
+  VALIDATION: independent model vs design/refuter published anchors
+  ====================================================================================================
+    C0 J_hi@11.9 PM = 40.8 (refuter published 40.7)  Kp_eff_C0=946
+    C1 member anchors (my PM vs design page PM):
+      nominal           @  1.0  mine   62.3   design   62.3   d-0.0
+      J_hi              @  1.0  mine   46.5   design   46.5   d-0.0
+      b_lo              @  1.0  mine   53.5   design   53.5   d+0.0
+      tau6              @  1.0  mine   60.2   design   60.2   d-0.0
+      b_lo*J_hi         @ 10.0  mine   35.2   design   35.2   d-0.0
+      b_lo*J_hi*tau6    @ 10.0  mine   32.7   design   32.7   d-0.0
+      J1.0              @ 11.9  mine   32.0   design   32.0   d-0.0
+      b_q               @ 27.0  mine   32.8   design   32.8   d-0.0
+      J_hi2             @ 11.9  mine   39.8   design   39.8   d-0.0
+      J1.3              @ 11.9  mine   22.7   design   22.7   d+0.0
+      ms_free           @ 11.9  mine    7.6   design    7.6   d+0.0
+====================================================================================================================
+P1: D2a exactly as the panel fitted it (Kd 34, 7 knots)
+  --- ATTACK 1 tier A single corners (bar 45)
+     nominal                min PM   64.9 @ 1.0     GM  25.3 dB  |T| 0.5-30 pk 1.19 @ 0.79 Hz  |S| pk @ 4.83 Hz  sub-bar points 0
+     J_lo                   min PM   65.8 @ 27.0    GM  39.9 dB  |T| 0.5-30 pk 1.03 @ 0.50 Hz  |S| pk @ 1.08 Hz  sub-bar points 0
+     J_hi                   min PM   46.7 @ 1.0     GM  29.7 dB  |T| 0.5-30 pk 1.39 @ 0.91 Hz  |S| pk @ 1.61 Hz  sub-bar points 0
+     b_lo                   min PM   56.8 @ 8.0     GM  22.2 dB  |T| 0.5-30 pk 1.05 @ 2.40 Hz  |S| pk @ 4.02 Hz  sub-bar points 0
+     b_hi                   min PM   57.7 @ 26.9    GM  41.8 dB  |T| 0.5-30 pk 1.06 @ 0.50 Hz  |S| pk @ 0.72 Hz  sub-bar points 0
+     tau0                   min PM   66.0 @ 1.0     GM  30.2 dB  |T| 0.5-30 pk 1.18 @ 0.77 Hz  |S| pk @ 4.97 Hz  sub-bar points 0
+     tau6                   min PM   62.7 @ 1.0     GM  20.1 dB  |T| 0.5-30 pk 1.20 @ 0.81 Hz  |S| pk @ 4.55 Hz  sub-bar points 0
+     F_hi                   min PM   64.9 @ 1.0     GM  25.3 dB  |T| 0.5-30 pk 1.19 @ 0.79 Hz  |S| pk @ 4.83 Hz  sub-bar points 0
+     F_lo                   min PM   64.9 @ 1.0     GM  25.3 dB  |T| 0.5-30 pk 1.19 @ 0.79 Hz  |S| pk @ 4.83 Hz  sub-bar points 0
+     ms_free                min PM   47.6 @ 8.75    GM  31.8 dB  |T| 0.5-30 pk 1.24 @ 1.17 Hz  |S| pk @ 1.58 Hz  sub-bar points 0
+  --- ATTACK 2 tier B combined, age 0 (bar 30)
+     b_lo*J_hi              min PM   37.4 @ 1.0     GM  28.2 dB  |T| 0.5-30 pk 1.62 @ 1.27 Hz  |S| pk @ 1.68 Hz  sub-bar points 0
+     b_lo*J_hi*tau6         min PM   35.2 @ 8.0     GM  20.2 dB  |T| 0.5-30 pk 1.65 @ 1.81 Hz  |S| pk @ 2.12 Hz  sub-bar points 0
+     b_lo*tau6              min PM   53.1 @ 8.0     GM  16.8 dB  |T| 0.5-30 pk 1.12 @ 2.57 Hz  |S| pk @ 3.87 Hz  sub-bar points 0
+     J_hi*tau6              min PM   45.0 @ 1.0     GM  24.4 dB  |T| 0.5-30 pk 1.42 @ 0.94 Hz  |S| pk @ 1.59 Hz  sub-bar points 0
+     b/1.9*J_hi             min PM   37.4 @ 1.0     GM  28.2 dB  |T| 0.5-30 pk 1.62 @ 1.27 Hz  |S| pk @ 1.68 Hz  sub-bar points 0
+     b_lo*J0.3              min PM   44.6 @ 8.0     GM  23.2 dB  |T| 0.5-30 pk 1.32 @ 2.19 Hz  |S| pk @ 2.92 Hz  sub-bar points 0
+     J_hi2                  min PM   40.7 @ 1.0     GM  32.9 dB  |T| 0.5-30 pk 1.52 @ 0.83 Hz  |S| pk @ 1.17 Hz  sub-bar points 0
+     J1.0                   min PM   39.0 @ 1.0     GM  34.5 dB  |T| 0.5-30 pk 1.57 @ 0.77 Hz  |S| pk @ 1.03 Hz  sub-bar points 0
+     b_q                    min PM   64.9 @ 1.0     GM  25.3 dB  |T| 0.5-30 pk 1.19 @ 0.79 Hz  |S| pk @ 4.83 Hz  sub-bar points 0
+     nominal+h10            min PM   59.4 @ 1.0     GM  29.0 dB  |T| 0.5-30 pk 1.23 @ 0.86 Hz  |S| pk @ 3.89 Hz  sub-bar points 0
+     b_lo+h10               min PM   52.6 @ 1.0     GM  27.2 dB  |T| 0.5-30 pk 1.23 @ 1.29 Hz  |S| pk @ 3.22 Hz  sub-bar points 0
+     J_hi+h10               min PM   42.2 @ 1.0     GM  33.6 dB  |T| 0.5-30 pk 1.48 @ 0.96 Hz  |S| pk @ 1.45 Hz  sub-bar points 0
+  --- ATTACK 3 combined + 10-tick hold age (bar 30)
+     b_lo*J_hi+hA           min PM   32.6 @ 1.0     GM  32.2 dB  |T| 0.5-30 pk 1.82 @ 1.29 Hz  |S| pk @ 1.56 Hz  sub-bar points 0
+     b_lo*J_hi*tau6+hA      min PM   30.5 @ 8.0     GM  21.3 dB  |T| 0.5-30 pk 1.91 @ 1.78 Hz  |S| pk @ 1.98 Hz  sub-bar points 0
+     J_hi2+hA               min PM   36.9 @ 1.0     GM  36.8 dB  |T| 0.5-30 pk 1.64 @ 0.86 Hz  |S| pk @ 1.12 Hz  sub-bar points 0
+     J1.0+hA                min PM   35.5 @ 1.0     GM  38.5 dB  |T| 0.5-30 pk 1.69 @ 0.79 Hz  |S| pk @ 1.00 Hz  sub-bar points 0
+     b_q+hA                 min PM   59.4 @ 1.0     GM  29.0 dB  |T| 0.5-30 pk 1.23 @ 0.86 Hz  |S| pk @ 3.89 Hz  sub-bar points 0
+     b/1.9*J_hi+hA          min PM   32.6 @ 1.0     GM  32.2 dB  |T| 0.5-30 pk 1.82 @ 1.29 Hz  |S| pk @ 1.56 Hz  sub-bar points 0
+  --- ATTACK 4 extra combined (bar 30)
+     b_q*J_hi               min PM   46.7 @ 1.0     GM  29.7 dB  |T| 0.5-30 pk 1.39 @ 0.91 Hz  |S| pk @ 1.61 Hz  sub-bar points 0
+     b_q*J1.0               min PM   37.6 @ 15.5    GM  32.1 dB  |T| 0.5-30 pk 1.57 @ 1.60 Hz  |S| pk @ 1.73 Hz  sub-bar points 0
+     b_q*tau6               min PM   62.7 @ 1.0     GM  20.1 dB  |T| 0.5-30 pk 1.20 @ 0.81 Hz  |S| pk @ 4.55 Hz  sub-bar points 0
+     J1.0*tau6              min PM   37.7 @ 1.0     GM  29.2 dB  |T| 0.5-30 pk 1.61 @ 0.78 Hz  |S| pk @ 1.03 Hz  sub-bar points 0
+     b_q0*J_hi              min PM   46.7 @ 1.0     GM  29.7 dB  |T| 0.5-30 pk 1.39 @ 0.91 Hz  |S| pk @ 1.61 Hz  sub-bar points 0
+  --- ATTACK 4 aged (bar 30)
+     b_q*J_hi               min PM   42.2 @ 1.0     GM  33.6 dB  |T| 0.5-30 pk 1.48 @ 0.96 Hz  |S| pk @ 1.45 Hz  sub-bar points 0
+     b_q*J1.0               min PM   34.0 @ 27.0    GM  15.1 dB  |T| 0.5-30 pk 1.80 @ 1.69 Hz  |S| pk @ 1.83 Hz  sub-bar points 0
+     b_q*tau6               min PM   57.3 @ 1.0     GM  22.7 dB  |T| 0.5-30 pk 1.24 @ 0.88 Hz  |S| pk @ 3.67 Hz  sub-bar points 0
+     J1.0*tau6              min PM   34.2 @ 1.0     GM  31.5 dB  |T| 0.5-30 pk 1.74 @ 0.80 Hz  |S| pk @ 1.00 Hz  sub-bar points 0
+     b_q0*J_hi              min PM   42.2 @ 1.0     GM  33.6 dB  |T| 0.5-30 pk 1.48 @ 0.96 Hz  |S| pk @ 1.45 Hz  sub-bar points 0
+  => P1: sub-bar points over every attack 0
+====================================================================================================================
+P2: Kd 34, 6-knot refit under D2a's envelope (no 15.5 m/s knot): -6 B
+  --- ATTACK 1 tier A single corners (bar 45)
+     nominal                min PM   64.9 @ 1.0     GM  25.3 dB  |T| 0.5-30 pk 1.19 @ 0.79 Hz  |S| pk @ 4.83 Hz  sub-bar points 0
+     J_lo                   min PM   65.8 @ 26.9    GM  39.9 dB  |T| 0.5-30 pk 1.03 @ 0.50 Hz  |S| pk @ 1.08 Hz  sub-bar points 0
+     J_hi                   min PM   46.7 @ 1.0     GM  29.7 dB  |T| 0.5-30 pk 1.39 @ 0.91 Hz  |S| pk @ 1.61 Hz  sub-bar points 0
+     b_lo                   min PM   56.8 @ 8.0     GM  22.2 dB  |T| 0.5-30 pk 1.05 @ 2.40 Hz  |S| pk @ 4.02 Hz  sub-bar points 0
+     b_hi                   min PM   57.7 @ 26.9    GM  41.8 dB  |T| 0.5-30 pk 1.06 @ 0.50 Hz  |S| pk @ 0.72 Hz  sub-bar points 0
+     tau0                   min PM   66.0 @ 1.0     GM  30.2 dB  |T| 0.5-30 pk 1.18 @ 0.77 Hz  |S| pk @ 4.97 Hz  sub-bar points 0
+     tau6                   min PM   62.7 @ 1.0     GM  20.1 dB  |T| 0.5-30 pk 1.20 @ 0.81 Hz  |S| pk @ 4.55 Hz  sub-bar points 0
+     F_hi                   min PM   64.9 @ 1.0     GM  25.3 dB  |T| 0.5-30 pk 1.19 @ 0.79 Hz  |S| pk @ 4.83 Hz  sub-bar points 0
+     F_lo                   min PM   64.9 @ 1.0     GM  25.3 dB  |T| 0.5-30 pk 1.19 @ 0.79 Hz  |S| pk @ 4.83 Hz  sub-bar points 0
+     ms_free                min PM   47.6 @ 8.75    GM  31.8 dB  |T| 0.5-30 pk 1.24 @ 1.17 Hz  |S| pk @ 1.58 Hz  sub-bar points 0
+  --- ATTACK 2 tier B combined, age 0 (bar 30)
+     b_lo*J_hi              min PM   37.4 @ 1.0     GM  28.2 dB  |T| 0.5-30 pk 1.62 @ 1.27 Hz  |S| pk @ 1.68 Hz  sub-bar points 0
+     b_lo*J_hi*tau6         min PM   35.2 @ 8.0     GM  20.2 dB  |T| 0.5-30 pk 1.65 @ 1.81 Hz  |S| pk @ 2.12 Hz  sub-bar points 0
+     b_lo*tau6              min PM   53.1 @ 8.0     GM  16.8 dB  |T| 0.5-30 pk 1.12 @ 2.57 Hz  |S| pk @ 3.87 Hz  sub-bar points 0
+     J_hi*tau6              min PM   45.0 @ 1.0     GM  24.4 dB  |T| 0.5-30 pk 1.42 @ 0.94 Hz  |S| pk @ 1.59 Hz  sub-bar points 0
+     b/1.9*J_hi             min PM   37.4 @ 1.0     GM  28.2 dB  |T| 0.5-30 pk 1.62 @ 1.27 Hz  |S| pk @ 1.68 Hz  sub-bar points 0
+     b_lo*J0.3              min PM   44.6 @ 8.0     GM  23.2 dB  |T| 0.5-30 pk 1.32 @ 2.19 Hz  |S| pk @ 2.92 Hz  sub-bar points 0
+     J_hi2                  min PM   40.7 @ 1.0     GM  32.9 dB  |T| 0.5-30 pk 1.52 @ 0.83 Hz  |S| pk @ 1.17 Hz  sub-bar points 0
+     J1.0                   min PM   39.0 @ 1.0     GM  34.5 dB  |T| 0.5-30 pk 1.57 @ 0.77 Hz  |S| pk @ 1.03 Hz  sub-bar points 0
+     b_q                    min PM   64.9 @ 1.0     GM  25.3 dB  |T| 0.5-30 pk 1.19 @ 0.79 Hz  |S| pk @ 4.83 Hz  sub-bar points 0
+     nominal+h10            min PM   59.4 @ 1.0     GM  29.0 dB  |T| 0.5-30 pk 1.23 @ 0.86 Hz  |S| pk @ 3.89 Hz  sub-bar points 0
+     b_lo+h10               min PM   52.6 @ 1.0     GM  27.2 dB  |T| 0.5-30 pk 1.23 @ 1.29 Hz  |S| pk @ 3.22 Hz  sub-bar points 0
+     J_hi+h10               min PM   42.2 @ 1.0     GM  33.6 dB  |T| 0.5-30 pk 1.48 @ 0.96 Hz  |S| pk @ 1.45 Hz  sub-bar points 0
+  --- ATTACK 3 combined + 10-tick hold age (bar 30)
+     b_lo*J_hi+hA           min PM   32.6 @ 1.0     GM  32.2 dB  |T| 0.5-30 pk 1.82 @ 1.29 Hz  |S| pk @ 1.56 Hz  sub-bar points 0
+     b_lo*J_hi*tau6+hA      min PM   30.5 @ 8.0     GM  21.3 dB  |T| 0.5-30 pk 1.91 @ 1.78 Hz  |S| pk @ 1.98 Hz  sub-bar points 0
+     J_hi2+hA               min PM   36.9 @ 1.0     GM  36.8 dB  |T| 0.5-30 pk 1.64 @ 0.86 Hz  |S| pk @ 1.12 Hz  sub-bar points 0
+     J1.0+hA                min PM   35.5 @ 1.0     GM  38.5 dB  |T| 0.5-30 pk 1.69 @ 0.79 Hz  |S| pk @ 1.00 Hz  sub-bar points 0
+     b_q+hA                 min PM   59.4 @ 1.0     GM  29.0 dB  |T| 0.5-30 pk 1.23 @ 0.86 Hz  |S| pk @ 3.89 Hz  sub-bar points 0
+     b/1.9*J_hi+hA          min PM   32.6 @ 1.0     GM  32.2 dB  |T| 0.5-30 pk 1.82 @ 1.29 Hz  |S| pk @ 1.56 Hz  sub-bar points 0
+  --- ATTACK 4 extra combined (bar 30)
+     b_q*J_hi               min PM   46.7 @ 1.0     GM  29.7 dB  |T| 0.5-30 pk 1.39 @ 0.91 Hz  |S| pk @ 1.61 Hz  sub-bar points 0
+     b_q*J1.0               min PM   37.4 @ 15.5    GM  32.0 dB  |T| 0.5-30 pk 1.58 @ 1.60 Hz  |S| pk @ 1.73 Hz  sub-bar points 0
+     b_q*tau6               min PM   62.7 @ 1.0     GM  20.1 dB  |T| 0.5-30 pk 1.20 @ 0.81 Hz  |S| pk @ 4.55 Hz  sub-bar points 0
+     J1.0*tau6              min PM   37.7 @ 1.0     GM  29.2 dB  |T| 0.5-30 pk 1.61 @ 0.78 Hz  |S| pk @ 1.03 Hz  sub-bar points 0
+     b_q0*J_hi              min PM   46.7 @ 1.0     GM  29.7 dB  |T| 0.5-30 pk 1.39 @ 0.91 Hz  |S| pk @ 1.61 Hz  sub-bar points 0
+  --- ATTACK 4 aged (bar 30)
+     b_q*J_hi               min PM   42.2 @ 1.0     GM  33.6 dB  |T| 0.5-30 pk 1.48 @ 0.96 Hz  |S| pk @ 1.45 Hz  sub-bar points 0
+     b_q*J1.0               min PM   34.0 @ 26.9    GM  15.1 dB  |T| 0.5-30 pk 1.81 @ 1.69 Hz  |S| pk @ 1.83 Hz  sub-bar points 0
+     b_q*tau6               min PM   57.3 @ 1.0     GM  22.7 dB  |T| 0.5-30 pk 1.24 @ 0.88 Hz  |S| pk @ 3.67 Hz  sub-bar points 0
+     J1.0*tau6              min PM   34.2 @ 1.0     GM  31.5 dB  |T| 0.5-30 pk 1.74 @ 0.80 Hz  |S| pk @ 1.00 Hz  sub-bar points 0
+     b_q0*J_hi              min PM   42.2 @ 1.0     GM  33.6 dB  |T| 0.5-30 pk 1.48 @ 0.96 Hz  |S| pk @ 1.45 Hz  sub-bar points 0
+  => P2: sub-bar points over every attack 0
+====================================================================================================================
+F1: B0r exactly as the panel fitted it (held-rate D Kd 20, 7 knots)
+  --- ATTACK 1 tier A single corners (bar 45)
+     nominal                min PM   65.0 @ 1.0     GM  20.7 dB  |T| 0.5-30 pk 1.19 @ 0.78 Hz  |S| pk @ 4.82 Hz  sub-bar points 0
+     J_lo                   min PM   65.9 @ 27.0    GM  34.1 dB  |T| 0.5-30 pk 1.02 @ 0.50 Hz  |S| pk @ 1.04 Hz  sub-bar points 0
+     J_hi                   min PM   46.9 @ 1.0     GM  25.1 dB  |T| 0.5-30 pk 1.38 @ 0.91 Hz  |S| pk @ 1.66 Hz  sub-bar points 0
+     b_lo                   min PM   56.5 @ 1.0     GM  18.7 dB  |T| 0.5-30 pk 1.16 @ 1.13 Hz  |S| pk @ 4.05 Hz  sub-bar points 0
+     b_hi                   min PM   57.7 @ 26.9    GM  36.3 dB  |T| 0.5-30 pk 1.04 @ 0.50 Hz  |S| pk @ 0.70 Hz  sub-bar points 0
+     tau0                   min PM   66.1 @ 1.0     GM  23.1 dB  |T| 0.5-30 pk 1.18 @ 0.77 Hz  |S| pk @ 4.97 Hz  sub-bar points 0
+     tau6                   min PM   62.7 @ 1.0     GM  17.4 dB  |T| 0.5-30 pk 1.20 @ 0.80 Hz  |S| pk @ 4.55 Hz  sub-bar points 0
+     F_hi                   min PM   65.0 @ 1.0     GM  20.7 dB  |T| 0.5-30 pk 1.19 @ 0.78 Hz  |S| pk @ 4.82 Hz  sub-bar points 0
+     F_lo                   min PM   65.0 @ 1.0     GM  20.7 dB  |T| 0.5-30 pk 1.19 @ 0.78 Hz  |S| pk @ 4.82 Hz  sub-bar points 0
+     ms_free                min PM   47.8 @ 9.0     GM  28.5 dB  |T| 0.5-30 pk 1.24 @ 1.10 Hz  |S| pk @ 1.45 Hz  sub-bar points 0
+  --- ATTACK 2 tier B combined, age 0 (bar 30)
+     b_lo*J_hi              min PM   37.5 @ 1.0     GM  23.6 dB  |T| 0.5-30 pk 1.61 @ 1.28 Hz  |S| pk @ 1.71 Hz  sub-bar points 0
+     b_lo*J_hi*tau6         min PM   35.4 @ 1.0     GM  20.0 dB  |T| 0.5-30 pk 1.68 @ 1.30 Hz  |S| pk @ 1.69 Hz  sub-bar points 0
+     b_lo*tau6              min PM   53.4 @ 1.0     GM  15.3 dB  |T| 0.5-30 pk 1.19 @ 1.24 Hz  |S| pk @ 3.87 Hz  sub-bar points 0
+     J_hi*tau6              min PM   45.2 @ 1.0     GM  21.6 dB  |T| 0.5-30 pk 1.41 @ 0.93 Hz  |S| pk @ 1.64 Hz  sub-bar points 0
+     b/1.9*J_hi             min PM   37.5 @ 1.0     GM  23.6 dB  |T| 0.5-30 pk 1.61 @ 1.28 Hz  |S| pk @ 1.71 Hz  sub-bar points 0
+     b_lo*J0.3              min PM   44.8 @ 1.0     GM  20.3 dB  |T| 0.5-30 pk 1.37 @ 1.49 Hz  |S| pk @ 2.63 Hz  sub-bar points 0
+     J_hi2                  min PM   40.9 @ 1.0     GM  28.3 dB  |T| 0.5-30 pk 1.52 @ 0.83 Hz  |S| pk @ 1.18 Hz  sub-bar points 0
+     J1.0                   min PM   39.2 @ 1.0     GM  29.9 dB  |T| 0.5-30 pk 1.56 @ 0.77 Hz  |S| pk @ 1.04 Hz  sub-bar points 0
+     b_q                    min PM   65.0 @ 1.0     GM  20.7 dB  |T| 0.5-30 pk 1.19 @ 0.78 Hz  |S| pk @ 4.82 Hz  sub-bar points 0
+     nominal+h10            min PM   59.3 @ 1.0     GM  14.2 dB  |T| 0.5-30 pk 1.22 @ 0.84 Hz  |S| pk @ 4.19 Hz  sub-bar points 0
+     b_lo+h10               min PM   48.9 @ 1.0     GM  12.0 dB  |T| 0.5-30 pk 1.23 @ 1.54 Hz  |S| pk @ 3.61 Hz  sub-bar points 0
+     J_hi+h10               min PM   42.6 @ 1.0     GM  18.2 dB  |T| 0.5-30 pk 1.47 @ 0.97 Hz  |S| pk @ 1.60 Hz  sub-bar points 0
+  --- ATTACK 3 combined + 10-tick hold age (bar 30)
+     b_lo*J_hi+hA           min PM   32.3 @ 1.0     GM  16.3 dB  |T| 0.5-30 pk 1.82 @ 1.35 Hz  |S| pk @ 1.66 Hz  sub-bar points 0
+     b_lo*J_hi*tau6+hA      min PM   30.3 @ 1.0     GM  14.5 dB  |T| 0.5-30 pk 1.93 @ 1.37 Hz  |S| pk @ 1.65 Hz  sub-bar points 0
+     J_hi2+hA               min PM   37.4 @ 1.0     GM  21.2 dB  |T| 0.5-30 pk 1.62 @ 0.86 Hz  |S| pk @ 1.16 Hz  sub-bar points 0
+     J1.0+hA                min PM   36.0 @ 1.0     GM  22.8 dB  |T| 0.5-30 pk 1.67 @ 0.79 Hz  |S| pk @ 1.02 Hz  sub-bar points 0
+     b_q+hA                 min PM   59.3 @ 1.0     GM  14.2 dB  |T| 0.5-30 pk 1.22 @ 0.84 Hz  |S| pk @ 4.19 Hz  sub-bar points 0
+     b/1.9*J_hi+hA          min PM   32.3 @ 1.0     GM  16.3 dB  |T| 0.5-30 pk 1.82 @ 1.35 Hz  |S| pk @ 1.66 Hz  sub-bar points 0
+  --- ATTACK 4 extra combined (bar 30)
+     b_q*J_hi               min PM   46.9 @ 1.0     GM  25.1 dB  |T| 0.5-30 pk 1.38 @ 0.91 Hz  |S| pk @ 1.66 Hz  sub-bar points 0
+     b_q*J1.0               min PM   39.2 @ 1.0     GM  29.9 dB  |T| 0.5-30 pk 1.56 @ 0.77 Hz  |S| pk @ 1.04 Hz  sub-bar points 0
+     b_q*tau6               min PM   62.7 @ 1.0     GM  17.4 dB  |T| 0.5-30 pk 1.20 @ 0.80 Hz  |S| pk @ 4.55 Hz  sub-bar points 0
+     J1.0*tau6              min PM   37.9 @ 1.0     GM  26.4 dB  |T| 0.5-30 pk 1.60 @ 0.78 Hz  |S| pk @ 1.03 Hz  sub-bar points 0
+     b_q0*J_hi              min PM   46.9 @ 1.0     GM  25.1 dB  |T| 0.5-30 pk 1.38 @ 0.91 Hz  |S| pk @ 1.66 Hz  sub-bar points 0
+  --- ATTACK 4 aged (bar 30)
+     b_q*J_hi               min PM   42.6 @ 1.0     GM  18.2 dB  |T| 0.5-30 pk 1.47 @ 0.97 Hz  |S| pk @ 1.60 Hz  sub-bar points 0
+     b_q*J1.0               min PM   34.4 @ 15.5    GM  19.4 dB  |T| 0.5-30 pk 1.74 @ 1.60 Hz  |S| pk @ 1.71 Hz  sub-bar points 0
+     b_q*tau6               min PM   57.0 @ 1.0     GM  12.7 dB  |T| 0.5-30 pk 1.23 @ 0.87 Hz  |S| pk @ 3.96 Hz  sub-bar points 0
+     J1.0*tau6              min PM   34.8 @ 1.0     GM  20.9 dB  |T| 0.5-30 pk 1.72 @ 0.81 Hz  |S| pk @ 1.02 Hz  sub-bar points 0
+     b_q0*J_hi              min PM   42.6 @ 1.0     GM  18.2 dB  |T| 0.5-30 pk 1.47 @ 0.97 Hz  |S| pk @ 1.60 Hz  sub-bar points 0
+  => F1: sub-bar points over every attack 0
+====================================================================================================================
+F2: held-rate D Kd 20, 6-knot refit under B0r's envelope (no 15.5 m/s knot): -6 B
+  --- ATTACK 1 tier A single corners (bar 45)
+     nominal                min PM   65.0 @ 1.0     GM  20.7 dB  |T| 0.5-30 pk 1.19 @ 0.78 Hz  |S| pk @ 4.82 Hz  sub-bar points 0
+     J_lo                   min PM   65.9 @ 27.0    GM  34.1 dB  |T| 0.5-30 pk 1.02 @ 0.50 Hz  |S| pk @ 1.04 Hz  sub-bar points 0
+     J_hi                   min PM   46.9 @ 1.0     GM  25.1 dB  |T| 0.5-30 pk 1.38 @ 0.91 Hz  |S| pk @ 1.66 Hz  sub-bar points 0
+     b_lo                   min PM   56.5 @ 1.0     GM  18.7 dB  |T| 0.5-30 pk 1.16 @ 1.13 Hz  |S| pk @ 4.05 Hz  sub-bar points 0
+     b_hi                   min PM   57.7 @ 26.9    GM  36.3 dB  |T| 0.5-30 pk 1.04 @ 0.50 Hz  |S| pk @ 0.70 Hz  sub-bar points 0
+     tau0                   min PM   66.1 @ 1.0     GM  23.1 dB  |T| 0.5-30 pk 1.18 @ 0.77 Hz  |S| pk @ 4.97 Hz  sub-bar points 0
+     tau6                   min PM   62.7 @ 1.0     GM  17.4 dB  |T| 0.5-30 pk 1.20 @ 0.80 Hz  |S| pk @ 4.55 Hz  sub-bar points 0
+     F_hi                   min PM   65.0 @ 1.0     GM  20.7 dB  |T| 0.5-30 pk 1.19 @ 0.78 Hz  |S| pk @ 4.82 Hz  sub-bar points 0
+     F_lo                   min PM   65.0 @ 1.0     GM  20.7 dB  |T| 0.5-30 pk 1.19 @ 0.78 Hz  |S| pk @ 4.82 Hz  sub-bar points 0
+     ms_free                min PM   47.8 @ 9.0     GM  28.5 dB  |T| 0.5-30 pk 1.24 @ 1.10 Hz  |S| pk @ 1.45 Hz  sub-bar points 0
+  --- ATTACK 2 tier B combined, age 0 (bar 30)
+     b_lo*J_hi              min PM   37.5 @ 1.0     GM  23.6 dB  |T| 0.5-30 pk 1.61 @ 1.28 Hz  |S| pk @ 1.71 Hz  sub-bar points 0
+     b_lo*J_hi*tau6         min PM   35.4 @ 1.0     GM  20.0 dB  |T| 0.5-30 pk 1.68 @ 1.30 Hz  |S| pk @ 1.69 Hz  sub-bar points 0
+     b_lo*tau6              min PM   53.4 @ 1.0     GM  15.3 dB  |T| 0.5-30 pk 1.19 @ 1.24 Hz  |S| pk @ 3.87 Hz  sub-bar points 0
+     J_hi*tau6              min PM   45.2 @ 1.0     GM  21.6 dB  |T| 0.5-30 pk 1.41 @ 0.93 Hz  |S| pk @ 1.64 Hz  sub-bar points 0
+     b/1.9*J_hi             min PM   37.5 @ 1.0     GM  23.6 dB  |T| 0.5-30 pk 1.61 @ 1.28 Hz  |S| pk @ 1.71 Hz  sub-bar points 0
+     b_lo*J0.3              min PM   44.8 @ 1.0     GM  20.3 dB  |T| 0.5-30 pk 1.37 @ 1.49 Hz  |S| pk @ 2.63 Hz  sub-bar points 0
+     J_hi2                  min PM   40.9 @ 1.0     GM  28.3 dB  |T| 0.5-30 pk 1.52 @ 0.83 Hz  |S| pk @ 1.18 Hz  sub-bar points 0
+     J1.0                   min PM   39.2 @ 1.0     GM  29.9 dB  |T| 0.5-30 pk 1.56 @ 0.77 Hz  |S| pk @ 1.04 Hz  sub-bar points 0
+     b_q                    min PM   65.0 @ 1.0     GM  20.7 dB  |T| 0.5-30 pk 1.19 @ 0.78 Hz  |S| pk @ 4.82 Hz  sub-bar points 0
+     nominal+h10            min PM   59.3 @ 1.0     GM  14.2 dB  |T| 0.5-30 pk 1.22 @ 0.84 Hz  |S| pk @ 4.19 Hz  sub-bar points 0
+     b_lo+h10               min PM   48.9 @ 1.0     GM  12.0 dB  |T| 0.5-30 pk 1.23 @ 1.54 Hz  |S| pk @ 3.61 Hz  sub-bar points 0
+     J_hi+h10               min PM   42.6 @ 1.0     GM  18.2 dB  |T| 0.5-30 pk 1.47 @ 0.97 Hz  |S| pk @ 1.60 Hz  sub-bar points 0
+  --- ATTACK 3 combined + 10-tick hold age (bar 30)
+     b_lo*J_hi+hA           min PM   32.3 @ 1.0     GM  16.3 dB  |T| 0.5-30 pk 1.82 @ 1.35 Hz  |S| pk @ 1.66 Hz  sub-bar points 0
+     b_lo*J_hi*tau6+hA      min PM   30.3 @ 1.0     GM  14.5 dB  |T| 0.5-30 pk 1.93 @ 1.37 Hz  |S| pk @ 1.65 Hz  sub-bar points 0
+     J_hi2+hA               min PM   37.4 @ 1.0     GM  21.2 dB  |T| 0.5-30 pk 1.62 @ 0.86 Hz  |S| pk @ 1.16 Hz  sub-bar points 0
+     J1.0+hA                min PM   36.0 @ 1.0     GM  22.8 dB  |T| 0.5-30 pk 1.67 @ 0.79 Hz  |S| pk @ 1.02 Hz  sub-bar points 0
+     b_q+hA                 min PM   59.3 @ 1.0     GM  14.2 dB  |T| 0.5-30 pk 1.22 @ 0.84 Hz  |S| pk @ 4.19 Hz  sub-bar points 0
+     b/1.9*J_hi+hA          min PM   32.3 @ 1.0     GM  16.3 dB  |T| 0.5-30 pk 1.82 @ 1.35 Hz  |S| pk @ 1.66 Hz  sub-bar points 0
+  --- ATTACK 4 extra combined (bar 30)
+     b_q*J_hi               min PM   46.9 @ 1.0     GM  25.1 dB  |T| 0.5-30 pk 1.38 @ 0.91 Hz  |S| pk @ 1.66 Hz  sub-bar points 0
+     b_q*J1.0               min PM   39.2 @ 1.0     GM  29.9 dB  |T| 0.5-30 pk 1.56 @ 0.77 Hz  |S| pk @ 1.04 Hz  sub-bar points 0
+     b_q*tau6               min PM   62.7 @ 1.0     GM  17.4 dB  |T| 0.5-30 pk 1.20 @ 0.80 Hz  |S| pk @ 4.55 Hz  sub-bar points 0
+     J1.0*tau6              min PM   37.9 @ 1.0     GM  26.4 dB  |T| 0.5-30 pk 1.60 @ 0.78 Hz  |S| pk @ 1.03 Hz  sub-bar points 0
+     b_q0*J_hi              min PM   46.9 @ 1.0     GM  25.1 dB  |T| 0.5-30 pk 1.38 @ 0.91 Hz  |S| pk @ 1.66 Hz  sub-bar points 0
+  --- ATTACK 4 aged (bar 30)
+     b_q*J_hi               min PM   42.6 @ 1.0     GM  18.2 dB  |T| 0.5-30 pk 1.47 @ 0.97 Hz  |S| pk @ 1.60 Hz  sub-bar points 0
+     b_q*J1.0               min PM   34.2 @ 15.5    GM  19.3 dB  |T| 0.5-30 pk 1.75 @ 1.60 Hz  |S| pk @ 1.71 Hz  sub-bar points 0
+     b_q*tau6               min PM   57.0 @ 1.0     GM  12.7 dB  |T| 0.5-30 pk 1.23 @ 0.87 Hz  |S| pk @ 3.96 Hz  sub-bar points 0
+     J1.0*tau6              min PM   34.8 @ 1.0     GM  20.9 dB  |T| 0.5-30 pk 1.72 @ 0.81 Hz  |S| pk @ 1.02 Hz  sub-bar points 0
+     b_q0*J_hi              min PM   42.6 @ 1.0     GM  18.2 dB  |T| 0.5-30 pk 1.47 @ 0.97 Hz  |S| pk @ 1.60 Hz  sub-bar points 0
+  => F2: sub-bar points over every attack 0

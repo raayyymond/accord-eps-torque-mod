@@ -1,0 +1,100 @@
+ZERO-CAVE RE-KEY: Kp(v) = ROBUST edge; flat Ki; Kd per speed.  cell: robust-safe? | nominal fc/PM | trk 0.1-0.5 / 0.1-1 | hold
+
+Ki 0: 2/7 safe+perf
+   3: Kd28 SAFE PERF fc2.42 PM76 trk05 0.88-0.91 trk1 0.80-0.91 hold0.91
+   5: Kd28 SAFE PERF fc2.52 PM76 trk05 0.83-0.85 trk1 0.77-0.85 hold0.85
+   8: Kd28 SAFE noperf fc2.63 PM78 trk05 0.77-0.78 trk1 0.73-0.78 hold0.78
+   12.5: Kd28 SAFE noperf fc1.75 PM91 trk05 0.78-0.79 trk1 0.74-0.79 hold0.79
+   19: Kd24 SAFE noperf fc2.08 PM79 trk05 0.80-0.80 trk1 0.80-0.80 hold0.80
+   26: Kd20 SAFE noperf fc2.02 PM73 trk05 0.86-0.86 trk1 0.86-0.86 hold0.86
+   30: Kd20 SAFE noperf fc1.99 PM73 trk05 0.86-0.86 trk1 0.86-0.86 hold0.86
+
+Ki 100: 2/7 safe+perf
+   3: Kd28 SAFE PERF fc2.31 PM75 trk05 1.02-1.05 trk1 0.91-1.05 hold1.00
+   5: Kd28 SAFE PERF fc2.43 PM75 trk05 0.95-1.00 trk1 0.86-1.00 hold1.00
+   8: Kd28 SAFE noperf fc2.54 PM77 trk05 0.86-0.96 trk1 0.80-0.96 hold0.99
+   12.5: Kd28 SAFE noperf fc1.71 PM89 trk05 0.83-0.92 trk1 0.78-0.92 hold0.97
+   19: Kd24 SAFE noperf fc2.08 PM78 trk05 0.82-0.84 trk1 0.82-0.84 hold0.88
+   26: Kd20 SAFE noperf fc2.02 PM72 trk05 0.87-0.88 trk1 0.87-0.88 hold0.91
+   30: Kd20 SAFE noperf fc1.98 PM72 trk05 0.88-0.89 trk1 0.88-0.89 hold0.91
+
+Ki 154: 2/7 safe+perf
+   3: Kd28 SAFE PERF fc2.25 PM74 trk05 1.02-1.11 trk1 0.99-1.11 hold1.00
+   5: Kd28 SAFE PERF fc2.38 PM74 trk05 1.01-1.03 trk1 0.93-1.03 hold1.00
+   8: Kd28 SAFE noperf fc2.49 PM77 trk05 0.92-0.99 trk1 0.85-0.99 hold1.00
+   12.5: Kd28 SAFE noperf fc1.69 PM87 trk05 0.87-0.96 trk1 0.80-0.96 hold0.99
+   19: Kd24 SAFE noperf fc2.08 PM77 trk05 0.83-0.86 trk1 0.82-0.86 hold0.92
+   26: Kd20 SAFE noperf fc2.02 PM72 trk05 0.88-0.90 trk1 0.88-0.90 hold0.94
+   30: Kd20 SAFE noperf fc1.98 PM72 trk05 0.89-0.91 trk1 0.88-0.91 hold0.94
+
+Ki 200: 3/7 safe+perf
+   3: Kd28 SAFE PERF fc2.20 PM73 trk05 1.02-1.17 trk1 1.02-1.17 hold1.00
+   5: Kd28 SAFE PERF fc2.33 PM74 trk05 1.01-1.08 trk1 0.99-1.08 hold1.00
+   8: Kd28 SAFE PERF fc2.45 PM76 trk05 0.97-1.00 trk1 0.89-1.00 hold1.00
+   12.5: Kd28 SAFE noperf fc1.68 PM86 trk05 0.90-0.98 trk1 0.83-0.98 hold0.99
+   19: Kd24 SAFE noperf fc2.07 PM77 trk05 0.83-0.89 trk1 0.83-0.89 hold0.94
+   26: Kd20 SAFE noperf fc2.02 PM71 trk05 0.89-0.92 trk1 0.89-0.92 hold0.96
+   30: Kd20 SAFE noperf fc1.98 PM71 trk05 0.89-0.92 trk1 0.89-0.92 hold0.96
+
+Ki 250: 3/7 safe+perf
+   3: Kd28 SAFE PERF fc2.15 PM72 trk05 1.01-1.21 trk1 1.01-1.24 hold1.00
+   5: Kd28 SAFE PERF fc2.28 PM73 trk05 1.01-1.12 trk1 1.01-1.13 hold1.00
+   8: Kd28 SAFE PERF fc2.41 PM76 trk05 1.00-1.02 trk1 0.95-1.02 hold1.00
+   12.5: Kd28 SAFE noperf fc1.66 PM84 trk05 0.93-0.99 trk1 0.86-0.99 hold1.00
+   19: Kd24 SAFE noperf fc2.07 PM76 trk05 0.84-0.91 trk1 0.84-0.91 hold0.96
+   26: Kd20 SAFE noperf fc2.01 PM71 trk05 0.90-0.93 trk1 0.89-0.93 hold0.97
+   30: Kd20 SAFE noperf fc1.98 PM71 trk05 0.90-0.94 trk1 0.90-0.94 hold0.97
+
+Ki 300: 4/7 safe+perf
+   3: Kd28 SAFE PERF fc2.10 PM70 trk05 1.01-1.23 trk1 1.01-1.31 hold1.00
+   5: Kd28 SAFE PERF fc2.24 PM72 trk05 1.01-1.15 trk1 1.01-1.19 hold1.00
+   8: Kd20 SAFE PERF fc2.13 PM67 trk05 1.00-1.04 trk1 1.00-1.05 hold1.00
+   12.5: Kd28 SAFE PERF fc1.65 PM83 trk05 0.97-1.00 trk1 0.89-1.00 hold1.00
+   19: Kd24 SAFE noperf fc2.07 PM76 trk05 0.85-0.93 trk1 0.84-0.93 hold0.97
+   26: Kd20 SAFE noperf fc2.01 PM70 trk05 0.90-0.95 trk1 0.90-0.95 hold0.98
+   30: Kd20 SAFE noperf fc1.98 PM70 trk05 0.91-0.95 trk1 0.90-0.95 hold0.98
+
+Ki 400: 2/7 safe+perf
+   3: Kd28 unsafe(J_hi) PERF fc2.00 PM66 trk05 1.01-1.23 trk1 1.01-1.46 hold1.00
+   5: Kd28 SAFE PERF fc2.14 PM69 trk05 1.01-1.18 trk1 1.01-1.30 hold1.00
+   8: Kd28 SAFE noperf fc2.28 PM73 trk05 1.01-1.11 trk1 1.01-1.15 hold1.00
+   12.5: Kd28 SAFE PERF fc1.63 PM79 trk05 1.00-1.03 trk1 0.95-1.03 hold1.00
+   19: Kd24 SAFE noperf fc2.07 PM74 trk05 0.87-0.95 trk1 0.86-0.95 hold0.98
+   26: Kd20 SAFE noperf fc2.01 PM69 trk05 0.92-0.97 trk1 0.92-0.97 hold0.99
+   30: Kd20 SAFE noperf fc1.98 PM69 trk05 0.93-0.97 trk1 0.92-0.97 hold0.99
+
+Ki 500: 0/7 safe+perf
+   3: Kd28 unsafe(J_hi) PERF fc1.92 PM61 trk05 1.01-1.21 trk1 1.01-1.62 hold1.00
+   5: Kd28 unsafe(J_hi) PERF fc2.07 PM65 trk05 1.01-1.18 trk1 1.01-1.43 hold1.00
+   8: Kd28 SAFE noperf fc2.20 PM70 trk05 1.01-1.13 trk1 1.01-1.24 hold1.00
+   12.5: Kd28 SAFE noperf fc1.62 PM76 trk05 1.01-1.07 trk1 1.01-1.08 hold1.00
+   19: Kd24 SAFE noperf fc2.06 PM73 trk05 0.89-0.97 trk1 0.88-0.97 hold0.99
+   26: Kd20 SAFE noperf fc2.01 PM68 trk05 0.94-0.98 trk1 0.93-0.98 hold0.99
+   30: Kd20 SAFE noperf fc1.98 PM68 trk05 0.94-0.98 trk1 0.94-0.98 hold0.99
+
+Ki 650: 2/7 safe+perf
+   3: Kd28 unsafe(J_hi) PERF fc1.86 PM52 trk05 1.01-1.18 trk1 1.01-1.74 hold1.00
+   5: Kd28 unsafe(J_hi) PERF fc1.99 PM58 trk05 1.01-1.16 trk1 1.01-1.57 hold1.00
+   8: Kd28 unsafe(J_hi) noperf fc2.11 PM65 trk05 1.01-1.13 trk1 1.01-1.38 hold1.00
+   12.5: Kd28 SAFE noperf fc1.62 PM70 trk05 1.01-1.11 trk1 1.01-1.16 hold1.00
+   19: Kd24 SAFE noperf fc2.06 PM72 trk05 0.92-0.99 trk1 0.90-0.99 hold1.00
+   26: Kd20 SAFE PERF fc2.01 PM67 trk05 0.96-0.99 trk1 0.96-0.99 hold1.00
+   30: Kd20 SAFE PERF fc1.98 PM67 trk05 0.97-0.99 trk1 0.96-0.99 hold1.00
+
+Ki 849: 3/7 safe+perf
+   3: Kd28 unsafe(J_hi,b_hi,b_lo,nominal,tau0,tau6) PERF fc1.85 PM40 trk05 1.01-1.14 trk1 1.01-1.70 hold1.00
+   5: Kd28 unsafe(J_hi,b_hi,b_lo,tau6) PERF fc1.95 PM47 trk05 1.01-1.14 trk1 1.01-1.60 hold1.00
+   8: Kd28 unsafe(J_hi) noperf fc2.06 PM56 trk05 1.00-1.12 trk1 1.00-1.46 hold1.00
+   12.5: Kd28 unsafe(J_hi) noperf fc1.64 PM63 trk05 1.01-1.13 trk1 1.01-1.28 hold1.00
+   19: Kd24 SAFE PERF fc2.06 PM70 trk05 0.95-0.99 trk1 0.94-0.99 hold1.00
+   26: Kd20 SAFE PERF fc2.01 PM65 trk05 0.99-1.00 trk1 0.99-1.00 hold1.00
+   30: Kd20 SAFE PERF fc1.98 PM65 trk05 1.00-1.00 trk1 1.00-1.00 hold1.00
+
+REFERENCE: E-gain ROBUST (Ki = 0.2413 Kp, Kd 16)
+   3: SAFE fc1.90 PM61 trk05 1.01-1.10 trk1 1.01-1.10 hold1.00
+   5: SAFE fc2.02 PM62 trk05 1.00-1.02 trk1 1.00-1.03 hold1.00
+   8: SAFE fc2.12 PM66 trk05 0.94-0.99 trk1 0.92-0.99 hold1.00
+   12.5: SAFE fc1.62 PM74 trk05 0.95-0.99 trk1 0.91-0.99 hold1.00
+   19: SAFE fc2.06 PM68 trk05 0.93-0.99 trk1 0.92-0.99 hold1.00
+   26: SAFE fc2.01 PM63 trk05 0.99-1.00 trk1 0.99-1.00 hold1.00
+   30: SAFE fc1.98 PM63 trk05 1.00-1.00 trk1 1.00-1.00 hold1.00

@@ -1,0 +1,11 @@
+# RE-RUN on C1 of analysis-2020accord\studies\angle_loop\refute_friction\expA2_harness_midspeeds.py nominal  (C1 table [(714, 557, 334), (1843, 649, 0), (2765, 649, 4537), (3917, 1925, 571), (6198, 2243, 0), (65535, 2243, 0)], Kp_base 225, Ki_base 100, Kd 16, freeze |tq|>512 + ramp)
+member  v    | s02 ev | s05 ev | ssm ev  ssm fit stick% | rh slips st slips | max snap | rh hunt p2p
+nominal    5.0 |   0 |   0 |   3   1.24    50 |   3   0 |  1.70 |  1.56  TOTAL 6
+nominal    5.5 |   0 |   0 |   1   1.21    42 |   3   0 |  1.61 |  1.20  TOTAL 4
+nominal    6.0 |   0 |   0 |   0   1.19    38 |   2   0 |  0.00 |  1.25  TOTAL 2
+nominal    6.5 |   0 |   0 |   0   1.16    33 |   0   0 |  0.00 |  0.96  TOTAL 0
+nominal    7.0 |   0 |   0 |   0   1.12    27 |   0   0 |  0.00 |  1.07  TOTAL 0
+nominal    8.0 |   0 |   0 |   0   1.05    17 |   0   0 |  0.00 |  0.62  TOTAL 0
+nominal   10.0 |   0 |   0 |   0   1.09    16 |   0   1 |  0.00 |  0.74  TOTAL 1
+nominal   15.0 |   0 |   0 |   0   0.99     7 |   0   0 |  0.00 |  0.01  TOTAL 0
+nominal   22.0 |   0 |   0 |   0   1.01     1 |   0   0 |  0.00 |  0.02  TOTAL 0

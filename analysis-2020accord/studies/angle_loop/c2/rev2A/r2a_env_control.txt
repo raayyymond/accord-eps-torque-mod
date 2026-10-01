@@ -1,0 +1,1 @@
+CONTROL fresh34 (D2a structure) re-derived vs the D designer's cached envelope: max |dG| = 0.0 over 140 speeds; binding-member disagreements 0  -> REPRODUCED

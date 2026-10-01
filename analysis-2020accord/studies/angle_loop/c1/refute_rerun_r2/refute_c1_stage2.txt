@@ -1,0 +1,80 @@
+# RE-RUN on C1 rev 2 of analysis-2020accord\studies\angle_loop\refute_stability\refute_c1_stage2.py (unpatched; it reads c1_lib: table [(714, 940, 1306), (1843, 1300, -4025), (2304, 847, -1484), (2707, 701, 1636), (3571, 1046, 2728), (4032, 1353, 1292), (6198, 2036, 0), (65535, 2036, 0)], Kp_base 112, Ki_base 56, Kd 20)
+==============================================================================================================
+STAGE 2A: the undeclared sub-30 combined members -- CL ring freq (for R3's 3.5-5.5 Hz band) + exact GM
+  R3 catches a growing/sustained 3.5-5.5 Hz oscillation at >=12.5 m/s.  A ring BELOW 3.5 Hz is NOT in R3's band.
+==============================================================================================================
+
+  b_q*J_hi:
+    v 13.0 J0.50 b 3.46 k 34.9 Kp  357 | PM   70.4 GM  24.8dB | |T_ref|pk 0.87@1.71Hz Ms 1.31 | ok       | ring BELOW/ABOVE R3 band
+    v 15.0 J0.50 b 3.49 k 56.0 Kp  438 | PM   68.7 GM  23.7dB | |T_ref|pk 0.92@2.14Hz Ms 1.40 | ok       | ring BELOW/ABOVE R3 band
+    v 17.0 J0.50 b 4.53 k 77.1 Kp  558 | PM   85.4 GM  22.9dB | |T_ref|pk 0.84@2.42Hz Ms 1.40 | ok       | ring BELOW/ABOVE R3 band
+    v 19.0 J0.50 b 5.01 k 73.2 Kp  640 | PM   76.3 GM  22.2dB | |T_ref|pk 0.89@2.38Hz Ms 1.44 | ok       | ring BELOW/ABOVE R3 band
+    v 22.0 J0.50 b 5.74 k 67.3 Kp  735 | PM   69.5 GM  21.5dB | |T_ref|pk 0.94@2.30Hz Ms 1.48 | ok       | ring BELOW/ABOVE R3 band
+    v 26.0 J0.50 b 6.71 k 59.4 Kp  862 | PM   61.6 GM  20.6dB | |T_ref|pk 1.01@2.19Hz Ms 1.53 | ok       | ring BELOW/ABOVE R3 band
+
+  b_q*J1.0:
+    v 13.0 J1.00 b 3.46 k 36.9 Kp  357 | PM   42.5 GM  29.5dB | |T_ref|pk 1.38@1.25Hz Ms 1.68 | ok       | ring BELOW/ABOVE R3 band
+    v 15.0 J1.00 b 3.46 k 57.7 Kp  438 | PM   41.7 GM  28.2dB | |T_ref|pk 1.42@1.53Hz Ms 1.79 | ok       | ring BELOW/ABOVE R3 band
+    v 17.0 J1.00 b 4.22 k 78.4 Kp  558 | PM   43.9 GM  26.3dB | |T_ref|pk 1.39@1.75Hz Ms 1.82 | ok       | ring BELOW/ABOVE R3 band
+    v 19.0 J1.00 b 4.95 k 75.1 Kp  640 | PM   42.1 GM  25.0dB | |T_ref|pk 1.45@1.75Hz Ms 1.89 | ok       | ring BELOW/ABOVE R3 band
+    v 22.0 J1.00 b 6.05 k 70.1 Kp  735 | PM   42.0 GM  23.5dB | |T_ref|pk 1.45@1.73Hz Ms 1.91 | ok       | ring BELOW/ABOVE R3 band
+    v 26.0 J1.00 b 7.52 k 63.4 Kp  862 | PM   41.2 GM  21.5dB | |T_ref|pk 1.47@1.69Hz Ms 1.92 | ok       | ring BELOW/ABOVE R3 band
+
+  b_q0*J_hi:
+    v 15.0 J0.50 b 3.49 k 56.0 Kp  438 | PM   68.7 GM  23.7dB | |T_ref|pk 0.92@2.14Hz Ms 1.40 | ok       | ring BELOW/ABOVE R3 band
+    v 17.0 J0.50 b 4.53 k 77.1 Kp  558 | PM   85.4 GM  22.9dB | |T_ref|pk 0.84@2.42Hz Ms 1.40 | ok       | ring BELOW/ABOVE R3 band
+    v 19.0 J0.50 b 5.01 k 73.2 Kp  640 | PM   76.3 GM  22.2dB | |T_ref|pk 0.89@2.38Hz Ms 1.44 | ok       | ring BELOW/ABOVE R3 band
+
+  b_lo*J_hi*tau6:
+    v 10.0 J0.50 b 3.85 k 23.8 Kp  370 | PM   61.6 GM  21.5dB | |T_ref|pk 0.98@1.39Hz Ms 1.36 | ok       | ring BELOW/ABOVE R3 band
+    v 11.0 J0.50 b 4.03 k 23.5 Kp  334 | PM   70.6 GM  22.0dB | |T_ref|pk 0.87@0.50Hz Ms 1.28 | ok       | ring BELOW/ABOVE R3 band
+    v 11.9 J0.50 b 4.19 k 23.3 Kp  312 | PM   77.1 GM  22.4dB | |T_ref|pk 0.86@0.50Hz Ms 1.25 | ok       | ring BELOW/ABOVE R3 band
+
+  b_q:
+    v 15.0 J0.20 b 4.10 k 58.0 Kp  438 | PM  117.0 GM  20.1dB | |T_ref|pk 0.62@0.50Hz Ms 1.28 | ok       | ring BELOW/ABOVE R3 band
+    v 17.0 J0.20 b 5.16 k 79.7 Kp  558 | PM  115.0 GM  20.5dB | |T_ref|pk 0.60@0.50Hz Ms 1.25 | ok       | ring BELOW/ABOVE R3 band
+    v 19.0 J0.20 b 5.45 k 74.9 Kp  640 | PM  118.1 GM  20.2dB | |T_ref|pk 0.67@0.50Hz Ms 1.26 | ok       | ring BELOW/ABOVE R3 band
+    v 26.0 J0.20 b 6.47 k 57.9 Kp  862 | PM   92.0 GM  19.8dB | |T_ref|pk 0.83@0.50Hz Ms 1.29 | ok       | ring BELOW/ABOVE R3 band
+    v 27.0 J0.20 b 6.60 k 55.8 Kp  891 | PM   88.2 GM  19.8dB | |T_ref|pk 0.85@0.50Hz Ms 1.30 | ok       | ring BELOW/ABOVE R3 band
+
+  J1.0:
+    v 11.0 J1.00 b 6.76 k 27.6 Kp  334 | PM   65.7 GM  31.1dB | |T_ref|pk 0.94@0.50Hz Ms 1.24 | ok       | ring BELOW/ABOVE R3 band
+    v 11.9 J1.00 b 6.16 k 25.5 Kp  312 | PM   63.4 GM  31.1dB | |T_ref|pk 0.96@0.73Hz Ms 1.25 | ok       | ring BELOW/ABOVE R3 band
+    v 12.0 J1.00 b 6.37 k 26.5 Kp  317 | PM   65.3 GM  31.2dB | |T_ref|pk 0.94@0.70Hz Ms 1.24 | ok       | ring BELOW/ABOVE R3 band
+
+  b_q*J_hi+hA:
+    v 15.0 J0.50 b 3.49 k 56.0 Kp  438 | PM   61.6 GM  16.3dB | |T_ref|pk 1.04@2.20Hz Ms 1.57 | ok       | ring BELOW/ABOVE R3 band
+    v 17.0 J0.50 b 4.53 k 77.1 Kp  558 | PM   78.3 GM  15.4dB | |T_ref|pk 0.96@2.47Hz Ms 1.57 | ok       | ring BELOW/ABOVE R3 band
+
+  b_q+hA:
+    v 26.0 J0.20 b 6.47 k 57.9 Kp  862 | PM   85.3 GM  13.2dB | |T_ref|pk 0.84@0.50Hz Ms 1.46 | ok       | ring BELOW/ABOVE R3 band
+    v 27.0 J0.20 b 6.60 k 55.8 Kp  891 | PM   81.3 GM  13.1dB | |T_ref|pk 0.86@0.50Hz Ms 1.47 | ok       | ring BELOW/ABOVE R3 band
+
+  b_lo*J_hi*tau6+hA:
+    v 10.0 J0.50 b 3.85 k 23.8 Kp  370 | PM   56.5 GM  16.3dB | |T_ref|pk 1.06@1.47Hz Ms 1.49 | ok       | ring BELOW/ABOVE R3 band
+    v 11.0 J0.50 b 4.03 k 23.5 Kp  334 | PM   66.0 GM  16.9dB | |T_ref|pk 0.92@1.35Hz Ms 1.39 | ok       | ring BELOW/ABOVE R3 band
+
+==============================================================================================================
+STAGE 2B: Re(T/omega) 5-25 Hz, C1 worst-over-speed vs V294/V295 (design rule: Re(T/w)20 <= V295 at every speed)
+  also with 10-tick hold aging on C1 (design's torque_per_rate used age 0 only)
+==============================================================================================================
+  freq:               5       7      10      13      15      17      20      25
+  V294 Re    :   +1.420  +0.816  +0.228  -0.081  -0.200  -0.277  -0.342  -0.372
+  V295 Re    :   +2.630  +1.511  +0.422  -0.150  -0.370  -0.513  -0.633  -0.689
+  C1 w age0  :   -0.661  -0.623  -0.634  -0.635  -0.627  -0.614  -0.585  -0.522
+  C1 w age10 :   -1.478  -1.414  -1.313  -1.143  -1.002  -0.862  -0.655  -0.287
+  ratio C1age0/V295 @20Hz: 0.924  (design claims 0.997; >1 would be a REGRESSION vs V295)
+  ratio C1age10/V295@20Hz: 1.035
+  C1 20Hz worst age0: -0.5849 @ 27.0 m/s
+
+==============================================================================================================
+STAGE 2C: fork outer-loop stand-in L_o = T_ref * e^{-0.06s}/(tau_o s); GM on the worst combined members
+==============================================================================================================
+  b_q*J_hi         tau_o 1.0: outer GM by v [13,15,17,19,26] = ['21.3', '22.7', '24.5', '23.6', '21.4']
+  b_q*J_hi         tau_o 0.5: outer GM by v [13,15,17,19,26] = ['15.3', '16.7', '18.4', '17.6', '15.4']
+  b_q*J1.0         tau_o 1.0: outer GM by v [13,15,17,19,26] = ['14.9', '16.5', '18.2', '17.8', '16.9']
+  b_q*J1.0         tau_o 0.5: outer GM by v [13,15,17,19,26] = ['8.9', '10.5', '12.2', '11.8', '10.9']
+  b_lo*J_hi*tau6   tau_o 1.0: outer GM by v [13,15,17,19,26] = ['23.0', '25.3', '25.9', '24.3', '20.5']
+  b_lo*J_hi*tau6   tau_o 0.5: outer GM by v [13,15,17,19,26] = ['16.9', '19.3', '19.9', '18.3', '14.5']
+  b_q              tau_o 1.0: outer GM by v [13,15,17,19,26] = ['27.0', '28.7', '29.6', '28.4', '25.1']
+  b_q              tau_o 0.5: outer GM by v [13,15,17,19,26] = ['20.9', '22.6', '23.6', '22.4', '19.1']

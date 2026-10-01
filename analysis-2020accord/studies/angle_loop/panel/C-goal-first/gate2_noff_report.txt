@@ -1,0 +1,96 @@
+=== CGF GATE 2 (noff) -- Kd_eff 28 fresh-D, schedule Kp_eff 628@15 .. 1079@27 ===
+
+TIER A: 77 points, min PM 55.6, min exact GM 17.2 dB, 0 unstable, 0 below PM 45
+
+TIER B: 550 points, min PM 31.6, min exact GM 15.2 dB, 0 unstable, 0 below PM 30
+
+TIER concession: 132 points, min PM 23.5, min exact GM 19.2 dB, 0 unstable
+   b/1.9*J1.0             v 12.5 PM   36.3 GM  30.3 stable 1 wheel 1.32Hz z0.23 ring zeta 0.23
+   b/1.9*J1.0             v 15.0 PM   63.3 GM  30.4 stable 1 wheel 1.54Hz z0.34 ring zeta 0.34
+   b/1.9*J1.0             v 17.0 PM   87.6 GM  30.4 stable 1 wheel 1.69Hz z0.40 ring zeta 0.40
+   b/1.9*J1.0             v 19.0 PM   79.1 GM  30.0 stable 1 wheel 1.65Hz z0.43 ring zeta 0.43
+   b/1.9*J1.0             v 26.9 PM   66.8 GM  30.3 stable 1 wheel 1.19Hz z0.68 ring zeta 0.68
+   b/1.9*J1.0*tau6        v 12.5 PM   34.4 GM  25.3 stable 1 wheel 1.33Hz z0.22 ring zeta 0.22
+   b/1.9*J1.0*tau6        v 15.0 PM   61.3 GM  25.4 stable 1 wheel 1.55Hz z0.33 ring zeta 0.33
+   b/1.9*J1.0*tau6        v 17.0 PM   85.8 GM  25.3 stable 1 wheel 1.70Hz z0.38 ring zeta 0.38
+   b/1.9*J1.0*tau6        v 19.0 PM   77.3 GM  25.0 stable 1 wheel 1.66Hz z0.42 ring zeta 0.42
+   b/1.9*J1.0*tau6        v 26.9 PM   65.3 GM  25.3 stable 1 wheel 1.22Hz z0.66 ring zeta 0.66
+   b/1.9*J1.0*tau6+h10    v 12.5 PM   31.0 GM  25.3 stable 1 wheel 1.33Hz z0.22 ring zeta 0.22
+   b/1.9*J1.0*tau6+h10    v 15.0 PM   59.5 GM  25.4 stable 1 wheel 1.55Hz z0.33 ring zeta 0.33
+   b/1.9*J1.0*tau6+h10    v 17.0 PM   85.5 GM  25.3 stable 1 wheel 1.70Hz z0.38 ring zeta 0.38
+   b/1.9*J1.0*tau6+h10    v 19.0 PM   74.8 GM  25.0 stable 1 wheel 1.66Hz z0.42 ring zeta 0.42
+   b/1.9*J1.0*tau6+h10    v 26.9 PM   61.6 GM  25.3 stable 1 wheel 1.22Hz z0.66 ring zeta 0.66
+   b/1.9*J1.0+h10         v 12.5 PM   32.9 GM  30.3 stable 1 wheel 1.32Hz z0.23 ring zeta 0.23
+   b/1.9*J1.0+h10         v 15.0 PM   61.4 GM  30.4 stable 1 wheel 1.54Hz z0.34 ring zeta 0.34
+   b/1.9*J1.0+h10         v 17.0 PM   87.1 GM  30.4 stable 1 wheel 1.69Hz z0.40 ring zeta 0.40
+   b/1.9*J1.0+h10         v 19.0 PM   76.5 GM  30.0 stable 1 wheel 1.65Hz z0.43 ring zeta 0.43
+   b/1.9*J1.0+h10         v 26.9 PM   63.1 GM  30.3 stable 1 wheel 1.19Hz z0.68 ring zeta 0.68
+   b_lo*J1.0              v 12.5 PM   38.1 GM  30.4 stable 1 wheel 1.31Hz z0.25 ring zeta 0.25
+   b_lo*J1.0              v 15.0 PM   66.7 GM  30.6 stable 1 wheel 1.52Hz z0.36 ring zeta 0.36
+   b_lo*J1.0              v 17.0 PM   92.0 GM  30.6 stable 1 wheel 1.66Hz z0.42 ring zeta 0.42
+   b_lo*J1.0              v 19.0 PM   81.6 GM  30.3 stable 1 wheel 1.61Hz z0.46 ring zeta 0.46
+   b_lo*J1.0              v 26.9 PM   67.3 GM  30.7 stable 1 wheel 1.05Hz z0.74 ring zeta 0.74
+   b_lo*J1.0*tau6         v 12.5 PM   36.2 GM  25.4 stable 1 wheel 1.32Hz z0.24 ring zeta 0.24
+   b_lo*J1.0*tau6         v 15.0 PM   64.7 GM  25.6 stable 1 wheel 1.53Hz z0.35 ring zeta 0.35
+   b_lo*J1.0*tau6         v 17.0 PM   90.4 GM  25.6 stable 1 wheel 1.68Hz z0.41 ring zeta 0.41
+   b_lo*J1.0*tau6         v 19.0 PM   80.0 GM  25.2 stable 1 wheel 1.63Hz z0.45 ring zeta 0.45
+   b_lo*J1.0*tau6         v 26.9 PM   65.8 GM  25.7 stable 1 wheel 1.08Hz z0.72 ring zeta 0.72
+   b_lo*J1.0*tau6+h10     v 12.5 PM   32.9 GM  25.4 stable 1 wheel 1.32Hz z0.24 ring zeta 0.24
+   b_lo*J1.0*tau6+h10     v 15.0 PM   63.0 GM  25.6 stable 1 wheel 1.53Hz z0.35 ring zeta 0.35
+   b_lo*J1.0*tau6+h10     v 17.0 PM   89.2 GM  25.6 stable 1 wheel 1.68Hz z0.41 ring zeta 0.41
+   b_lo*J1.0*tau6+h10     v 19.0 PM   77.3 GM  25.2 stable 1 wheel 1.63Hz z0.45 ring zeta 0.45
+   b_lo*J1.0*tau6+h10     v 26.9 PM   62.2 GM  25.7 stable 1 wheel 1.08Hz z0.72 ring zeta 0.72
+   b_lo*J1.0+h10          v 12.5 PM   34.8 GM  30.4 stable 1 wheel 1.31Hz z0.25 ring zeta 0.25
+   b_lo*J1.0+h10          v 15.0 PM   64.9 GM  30.6 stable 1 wheel 1.52Hz z0.36 ring zeta 0.36
+   b_lo*J1.0+h10          v 17.0 PM   90.7 GM  30.6 stable 1 wheel 1.66Hz z0.42 ring zeta 0.42
+   b_lo*J1.0+h10          v 19.0 PM   78.8 GM  30.3 stable 1 wheel 1.61Hz z0.46 ring zeta 0.46
+   b_lo*J1.0+h10          v 26.9 PM   63.6 GM  30.7 stable 1 wheel 1.05Hz z0.74 ring zeta 0.74
+   b_q*J1.0               v 12.5 PM   32.5 GM  30.1 stable 1 wheel 1.34Hz z0.21 ring zeta 0.21
+   b_q*J1.0               v 15.0 PM   32.8 GM  28.9 stable 1 wheel 1.67Hz z0.17 ring zeta 0.17
+   b_q*J1.0               v 17.0 PM   37.6 GM  28.0 stable 1 wheel 1.88Hz z0.17 ring zeta 0.17
+   b_q*J1.0               v 19.0 PM   35.5 GM  26.9 stable 1 wheel 1.90Hz z0.18 ring zeta 0.18
+   b_q*J1.0               v 26.9 PM   38.0 GM  24.9 stable 1 wheel 1.85Hz z0.24 ring zeta 0.24
+   b_q*J1.0*tau6          v 12.5 PM   30.5 GM  25.1 stable 1 wheel 1.35Hz z0.19 ring zeta 0.19
+   b_q*J1.0*tau6          v 15.0 PM   30.4 GM  23.7 stable 1 wheel 1.68Hz z0.16 ring zeta 0.16
+   b_q*J1.0*tau6          v 17.0 PM   34.9 GM  22.6 stable 1 wheel 1.89Hz z0.16 ring zeta 0.16
+   b_q*J1.0*tau6          v 19.0 PM   32.9 GM  21.3 stable 1 wheel 1.90Hz z0.16 ring zeta 0.16
+   b_q*J1.0*tau6          v 26.9 PM   35.5 GM  19.2 stable 1 wheel 1.85Hz z0.22 ring zeta 0.22
+   b_q*J1.0*tau6+h10      v 12.5 PM   27.0 GM  25.1 stable 1 wheel 1.35Hz z0.19 ring zeta 0.19
+   b_q*J1.0*tau6+h10      v 15.0 PM   27.1 GM  23.7 stable 1 wheel 1.68Hz z0.16 ring zeta 0.16
+   b_q*J1.0*tau6+h10      v 17.0 PM   31.9 GM  22.6 stable 1 wheel 1.89Hz z0.16 ring zeta 0.16
+   b_q*J1.0*tau6+h10      v 19.0 PM   29.2 GM  21.3 stable 1 wheel 1.90Hz z0.16 ring zeta 0.16
+   b_q*J1.0*tau6+h10      v 26.9 PM   31.0 GM  19.2 stable 1 wheel 1.85Hz z0.22 ring zeta 0.22
+   b_q*J1.0+h10           v 12.5 PM   28.9 GM  30.1 stable 1 wheel 1.34Hz z0.21 ring zeta 0.21
+   b_q*J1.0+h10           v 15.0 PM   29.4 GM  28.9 stable 1 wheel 1.67Hz z0.17 ring zeta 0.17
+   b_q*J1.0+h10           v 17.0 PM   34.4 GM  28.0 stable 1 wheel 1.88Hz z0.17 ring zeta 0.17
+   b_q*J1.0+h10           v 19.0 PM   31.7 GM  26.9 stable 1 wheel 1.90Hz z0.18 ring zeta 0.18
+   b_q*J1.0+h10           v 26.9 PM   33.4 GM  24.9 stable 1 wheel 1.85Hz z0.24 ring zeta 0.24
+
+TIER report: 143 points, min PM 15.4, min exact GM 11.0 dB, 0 unstable
+
+--- 20 Hz budget (nominal) vs V295 ---
+  v  3.1 M20 3.15/3.58 L20 0.0386/0.0439 ReCr20 -0.37/-0.79 OK
+  v  8.0 M20 3.12/3.58 L20 0.0383/0.0440 ReCr20 -0.39/-0.79 OK
+  v 10.0 M20 3.15/3.58 L20 0.0379/0.0431 ReCr20 -0.37/-0.79 OK
+  v 11.9 M20 3.16/3.58 L20 0.0370/0.0419 ReCr20 -0.37/-0.79 OK
+  v 12.5 M20 3.16/3.58 L20 0.0363/0.0413 ReCr20 -0.37/-0.79 OK
+  v 15.0 M20 3.13/3.58 L20 0.0331/0.0379 ReCr20 -0.38/-0.79 OK
+  v 17.0 M20 3.11/3.58 L20 0.0304/0.0351 ReCr20 -0.40/-0.79 OK
+  v 19.0 M20 3.09/3.58 L20 0.0295/0.0342 ReCr20 -0.41/-0.79 OK
+  v 22.0 M20 3.07/3.58 L20 0.0282/0.0330 ReCr20 -0.42/-0.79 OK
+  v 26.9 M20 3.04/3.58 L20 0.0264/0.0311 ReCr20 -0.44/-0.79 OK
+  v 30.0 M20 3.04/3.58 L20 0.0264/0.0311 ReCr20 -0.44/-0.79 OK
+
+--- PM by member at design speeds (deg) ---
+  v   Kpe |   nominal      J_hi      b_lo b_lo*J_hi       b_q  b_q*J_hi b_q*J_hi+  b_q*J1.0 b_q*J1.0+      J1.0 b_lo*J_hi   light_b
+    3.1  555 |      76.4      55.6      65.4      47.2      76.4      55.6      51.0      44.7      41.0      44.7      35.3      38.9
+    8.0  689 |      79.3      60.5      63.4      46.9      79.3      60.5      56.5      53.6      50.0      53.6      37.3      31.6
+   10.0  530 |      88.2      74.9      90.1      55.2      88.2      74.9      71.1      57.3      54.0      57.3      37.3      41.9
+   11.9  496 |      81.4      77.0     100.3      62.0      81.4      77.0      73.1      50.1      46.8      50.1      35.3      44.4
+   12.5  517 |      82.4      81.1     103.6      70.8      77.7      55.1      53.6      32.5      28.9      60.4      43.7      43.1
+   15.0  628 |      85.3      86.9     104.4     101.9      91.3      53.5      53.0      32.8      29.4      83.7      77.2      36.4
+   17.0  729 |      86.7      88.2     103.8     105.2     124.4      64.7      66.2      37.6      34.4      87.6      98.4      30.8
+   19.0  835 |      82.7      82.6     100.5      97.7     116.4      60.3      59.9      35.5      31.7      79.8      85.9      25.6
+   22.0  928 |      77.2      75.6      94.0      88.4      98.9      59.1      57.2      36.9      32.8      71.7      77.1      21.5
+   26.9 1079 |      69.0      66.2      83.2      76.5      83.4      55.7      51.8      38.0      33.4      61.9      66.7      15.4
+   30.0 1080 |      69.0      66.2      83.2      76.5      83.4      55.7      51.8      38.0      33.4      61.9      66.7      15.4

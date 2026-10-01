@@ -1,0 +1,111 @@
+goal tracking factor (the kit scorer's slope through the r71b-weighted inner T_ref) per member; then 0.2 / 0.5 Hz |T_ref|<phase and the 1.6-3 Hz |T_ref| peak, nominal
+--- B0: B0 = C1r2 structure (P+I on angle, D on HELD rate, Kd 20), C1 lib table
+  v   8.0 G  1299: nominal=1.003 b_lo=1.001 b_hi=1.006 J_hi=1.002 J1.0=0.999 b_q=1.003 b_q*J_hi=1.002 b_q*J1.0=0.999 b_lo*J_hi=1.000 ms_free=1.002 | min 0.999 | 0.2Hz 1.02<-7 0.5Hz 1.08<-21 | Tr1.6-3 0.86
+  v  10.0 G   846: nominal=1.004 b_lo=0.998 b_hi=1.011 J_hi=1.001 J1.0=0.996 b_q=1.004 b_q*J_hi=1.001 b_q*J1.0=0.996 b_lo*J_hi=0.996 ms_free=0.994 | min 0.994 | 0.2Hz 1.04<-12 0.5Hz 1.07<-41 | Tr1.6-3 0.43
+  v  11.9 G   714: nominal=1.004 b_lo=0.996 b_hi=1.014 J_hi=1.001 J1.0=0.996 b_q=1.004 b_q*J_hi=1.001 b_q*J1.0=0.996 b_lo*J_hi=0.995 ms_free=0.983 | min 0.983 | 0.2Hz 1.06<-17 0.5Hz 1.00<-56 | Tr1.6-3 0.29
+  v  12.5 G   770: nominal=0.998 b_lo=0.989 b_hi=1.007 J_hi=0.996 J1.0=0.991 b_q=0.985 b_q*J_hi=0.987 b_q*J1.0=0.984 b_lo*J_hi=0.989 ms_free=0.979 | min 0.979 | 0.2Hz 1.03<-19 0.5Hz 0.92<-57 | Tr1.6-3 0.28
+  v  15.0 G  1000: nominal=0.975 b_lo=0.968 b_hi=0.983 J_hi=0.976 J1.0=0.973 b_q=0.963 b_q*J_hi=0.965 b_q*J1.0=0.963 b_lo*J_hi=0.969 ms_free=0.964 | min 0.963 | 0.2Hz 0.97<-25 0.5Hz 0.74<-60 | Tr1.6-3 0.25
+  v  17.0 G  1276: nominal=0.968 b_lo=0.962 b_hi=0.975 J_hi=0.969 J1.0=0.968 b_q=0.957 b_q*J_hi=0.959 b_q*J1.0=0.958 b_lo*J_hi=0.963 ms_free=0.962 | min 0.957 | 0.2Hz 0.94<-26 0.5Hz 0.71<-58 | Tr1.6-3 0.25
+  v  19.0 G  1462: nominal=0.981 b_lo=0.974 b_hi=0.989 J_hi=0.981 J1.0=0.980 b_q=0.969 b_q*J_hi=0.970 b_q*J1.0=0.969 b_lo*J_hi=0.975 ms_free=0.977 | min 0.969 | 0.2Hz 0.98<-22 0.5Hz 0.80<-55 | Tr1.6-3 0.28
+  v  22.0 G  1680: nominal=0.996 b_lo=0.990 b_hi=1.002 J_hi=0.996 J1.0=0.995 b_q=0.986 b_q*J_hi=0.986 b_q*J1.0=0.986 b_lo*J_hi=0.990 ms_free=0.994 | min 0.986 | 0.2Hz 1.01<-18 0.5Hz 0.90<-51 | Tr1.6-3 0.31
+  v  26.0 G  1970: nominal=1.002 b_lo=0.997 b_hi=1.009 J_hi=1.002 J1.0=1.003 b_q=0.993 b_q*J_hi=0.992 b_q*J1.0=0.992 b_lo*J_hi=0.997 ms_free=1.003 | min 0.992 | 0.2Hz 1.05<-14 0.5Hz 1.04<-47 | Tr1.6-3 0.35
+  v  30.0 G  2036: nominal=1.004 b_lo=0.998 b_hi=1.010 J_hi=1.004 J1.0=1.004 b_q=0.994 b_q*J_hi=0.993 b_q*J1.0=0.993 b_lo*J_hi=0.998 ms_free=1.004 | min 0.993 | 0.2Hz 1.05<-13 0.5Hz 1.07<-46 | Tr1.6-3 0.36
+--- B0r: B0r = the C1r2 structure REFITTED to the brief's credible set (its own envelope, the same knots)
+  v   8.0 G  1433: nominal=1.003 b_lo=1.001 b_hi=1.006 J_hi=1.002 J1.0=0.999 b_q=1.003 b_q*J_hi=1.002 b_q*J1.0=0.999 b_lo*J_hi=1.000 ms_free=1.002 | min 0.999 | 0.2Hz 1.02<-6 0.5Hz 1.08<-19 | Tr1.6-3 0.93
+  v  10.0 G   715: nominal=1.003 b_lo=0.997 b_hi=1.010 J_hi=1.000 J1.0=0.992 b_q=1.003 b_q*J_hi=1.000 b_q*J1.0=0.992 b_lo*J_hi=0.993 ms_free=0.990 | min 0.990 | 0.2Hz 1.04<-15 0.5Hz 1.03<-48 | Tr1.6-3 0.36
+  v  11.9 G   561: nominal=1.000 b_lo=0.990 b_hi=1.011 J_hi=0.997 J1.0=0.991 b_q=1.000 b_q*J_hi=0.997 b_q*J1.0=0.991 b_lo*J_hi=0.990 ms_free=0.971 | min 0.971 | 0.2Hz 1.06<-21 0.5Hz 0.87<-68 | Tr1.6-3 0.22
+  v  12.5 G   645: nominal=0.993 b_lo=0.984 b_hi=1.003 J_hi=0.991 J1.0=0.986 b_q=0.979 b_q*J_hi=0.981 b_q*J1.0=0.978 b_lo*J_hi=0.984 ms_free=0.969 | min 0.969 | 0.2Hz 1.03<-22 0.5Hz 0.83<-65 | Tr1.6-3 0.23
+  v  15.0 G   995: nominal=0.975 b_lo=0.967 b_hi=0.982 J_hi=0.975 J1.0=0.973 b_q=0.962 b_q*J_hi=0.964 b_q*J1.0=0.963 b_lo*J_hi=0.969 ms_free=0.964 | min 0.962 | 0.2Hz 0.97<-25 0.5Hz 0.74<-60 | Tr1.6-3 0.25
+  v  17.0 G  1299: nominal=0.969 b_lo=0.963 b_hi=0.977 J_hi=0.970 J1.0=0.969 b_q=0.958 b_q*J_hi=0.960 b_q*J1.0=0.959 b_lo*J_hi=0.964 ms_free=0.963 | min 0.958 | 0.2Hz 0.95<-25 0.5Hz 0.71<-57 | Tr1.6-3 0.26
+  v  19.0 G  1487: nominal=0.982 b_lo=0.975 b_hi=0.990 J_hi=0.982 J1.0=0.981 b_q=0.969 b_q*J_hi=0.971 b_q*J1.0=0.970 b_lo*J_hi=0.975 ms_free=0.977 | min 0.969 | 0.2Hz 0.98<-22 0.5Hz 0.80<-54 | Tr1.6-3 0.29
+  v  22.0 G  1706: nominal=0.996 b_lo=0.990 b_hi=1.002 J_hi=0.996 J1.0=0.995 b_q=0.987 b_q*J_hi=0.987 b_q*J1.0=0.986 b_lo*J_hi=0.990 ms_free=0.994 | min 0.986 | 0.2Hz 1.01<-18 0.5Hz 0.91<-51 | Tr1.6-3 0.32
+  v  26.0 G  1998: nominal=1.002 b_lo=0.997 b_hi=1.009 J_hi=1.003 J1.0=1.003 b_q=0.993 b_q*J_hi=0.993 b_q*J1.0=0.992 b_lo*J_hi=0.997 ms_free=1.003 | min 0.992 | 0.2Hz 1.05<-14 0.5Hz 1.05<-46 | Tr1.6-3 0.35
+  v  30.0 G  2064: nominal=1.004 b_lo=0.998 b_hi=1.010 J_hi=1.004 J1.0=1.004 b_q=0.994 b_q*J_hi=0.994 b_q*J1.0=0.993 b_lo*J_hi=0.998 ms_free=1.004 | min 0.993 | 0.2Hz 1.05<-13 0.5Hz 1.07<-46 | Tr1.6-3 0.36
+--- D1a: D1a = stock D on the angle error (cal-only D), Kd_E 256
+  v   8.0 G  1326: nominal=0.999 b_lo=0.997 b_hi=1.002 J_hi=0.998 J1.0=0.995 b_q=0.999 b_q*J_hi=0.998 b_q*J1.0=0.995 b_lo*J_hi=0.996 ms_free=0.998 | min 0.995 | 0.2Hz 1.00<-6 0.5Hz 0.98<-17 | Tr1.6-3 0.77
+  v  10.0 G   645: nominal=0.994 b_lo=0.988 b_hi=1.002 J_hi=0.991 J1.0=0.982 b_q=0.994 b_q*J_hi=0.991 b_q*J1.0=0.982 b_lo*J_hi=0.984 ms_free=0.980 | min 0.980 | 0.2Hz 1.00<-15 0.5Hz 0.88<-42 | Tr1.6-3 0.36
+  v  11.9 G   432: nominal=0.982 b_lo=0.971 b_hi=0.994 J_hi=0.980 J1.0=0.971 b_q=0.982 b_q*J_hi=0.980 b_q*J1.0=0.971 b_lo*J_hi=0.971 ms_free=0.944 | min 0.944 | 0.2Hz 0.99<-26 0.5Hz 0.68<-66 | Tr1.6-3 0.19
+  v  12.5 G   564: nominal=0.981 b_lo=0.971 b_hi=0.992 J_hi=0.979 J1.0=0.973 b_q=0.965 b_q*J_hi=0.968 b_q*J1.0=0.964 b_lo*J_hi=0.971 ms_free=0.953 | min 0.953 | 0.2Hz 0.98<-24 0.5Hz 0.69<-60 | Tr1.6-3 0.22
+  v  15.0 G  1115: nominal=0.976 b_lo=0.969 b_hi=0.984 J_hi=0.976 J1.0=0.974 b_q=0.964 b_q*J_hi=0.966 b_q*J1.0=0.965 b_lo*J_hi=0.970 ms_free=0.967 | min 0.964 | 0.2Hz 0.95<-22 0.5Hz 0.71<-50 | Tr1.6-3 0.27
+  v  17.0 G  1301: nominal=0.966 b_lo=0.959 b_hi=0.973 J_hi=0.967 J1.0=0.965 b_q=0.954 b_q*J_hi=0.956 b_q*J1.0=0.955 b_lo*J_hi=0.961 ms_free=0.960 | min 0.954 | 0.2Hz 0.92<-25 0.5Hz 0.64<-53 | Tr1.6-3 0.25
+  v  19.0 G  1326: nominal=0.973 b_lo=0.965 b_hi=0.980 J_hi=0.973 J1.0=0.972 b_q=0.960 b_q*J_hi=0.961 b_q*J1.0=0.960 b_lo*J_hi=0.966 ms_free=0.968 | min 0.960 | 0.2Hz 0.95<-24 0.5Hz 0.67<-54 | Tr1.6-3 0.24
+  v  22.0 G  1326: nominal=0.988 b_lo=0.982 b_hi=0.994 J_hi=0.988 J1.0=0.987 b_q=0.977 b_q*J_hi=0.978 b_q*J1.0=0.976 b_lo*J_hi=0.982 ms_free=0.986 | min 0.976 | 0.2Hz 0.98<-23 0.5Hz 0.71<-57 | Tr1.6-3 0.23
+  v  26.0 G  1326: nominal=0.995 b_lo=0.988 b_hi=1.003 J_hi=0.995 J1.0=0.995 b_q=0.983 b_q*J_hi=0.982 b_q*J1.0=0.981 b_lo*J_hi=0.988 ms_free=0.995 | min 0.981 | 0.2Hz 1.02<-21 0.5Hz 0.77<-61 | Tr1.6-3 0.21
+  v  30.0 G  1326: nominal=0.997 b_lo=0.989 b_hi=1.005 J_hi=0.997 J1.0=0.997 b_q=0.984 b_q*J_hi=0.984 b_q*J1.0=0.982 b_lo*J_hi=0.989 ms_free=0.998 | min 0.982 | 0.2Hz 1.03<-20 0.5Hz 0.78<-62 | Tr1.6-3 0.21
+--- D1b: D1b = D on the 1 kHz motor-accumulator difference (gp-0x6cc4), K_D 20
+  v   8.0 G  1525: nominal=1.003 b_lo=1.001 b_hi=1.005 J_hi=1.002 J1.0=1.000 b_q=1.003 b_q*J_hi=1.002 b_q*J1.0=1.000 b_lo*J_hi=1.000 ms_free=1.002 | min 1.000 | 0.2Hz 1.02<-6 0.5Hz 1.08<-18 | Tr1.6-3 0.99
+  v  10.0 G   628: nominal=1.001 b_lo=0.994 b_hi=1.009 J_hi=0.998 J1.0=0.988 b_q=1.001 b_q*J_hi=0.998 b_q*J1.0=0.988 b_lo*J_hi=0.991 ms_free=0.986 | min 0.986 | 0.2Hz 1.04<-17 0.5Hz 0.98<-54 | Tr1.6-3 0.31
+  v  11.9 G   561: nominal=1.000 b_lo=0.990 b_hi=1.011 J_hi=0.998 J1.0=0.991 b_q=1.000 b_q*J_hi=0.998 b_q*J1.0=0.991 b_lo*J_hi=0.990 ms_free=0.971 | min 0.971 | 0.2Hz 1.06<-21 0.5Hz 0.88<-68 | Tr1.6-3 0.22
+  v  12.5 G   656: nominal=0.994 b_lo=0.984 b_hi=1.004 J_hi=0.992 J1.0=0.986 b_q=0.979 b_q*J_hi=0.982 b_q*J1.0=0.979 b_lo*J_hi=0.984 ms_free=0.970 | min 0.970 | 0.2Hz 1.03<-22 0.5Hz 0.84<-64 | Tr1.6-3 0.23
+  v  15.0 G  1054: nominal=0.978 b_lo=0.971 b_hi=0.986 J_hi=0.978 J1.0=0.976 b_q=0.966 b_q*J_hi=0.967 b_q*J1.0=0.966 b_lo*J_hi=0.972 ms_free=0.968 | min 0.966 | 0.2Hz 0.97<-24 0.5Hz 0.77<-58 | Tr1.6-3 0.26
+  v  17.0 G  1381: nominal=0.973 b_lo=0.966 b_hi=0.980 J_hi=0.974 J1.0=0.972 b_q=0.962 b_q*J_hi=0.964 b_q*J1.0=0.963 b_lo*J_hi=0.968 ms_free=0.967 | min 0.962 | 0.2Hz 0.95<-24 0.5Hz 0.74<-55 | Tr1.6-3 0.28
+  v  19.0 G  1573: nominal=0.984 b_lo=0.977 b_hi=0.992 J_hi=0.984 J1.0=0.983 b_q=0.972 b_q*J_hi=0.973 b_q*J1.0=0.972 b_lo*J_hi=0.978 ms_free=0.980 | min 0.972 | 0.2Hz 0.98<-21 0.5Hz 0.83<-52 | Tr1.6-3 0.31
+  v  22.0 G  1791: nominal=0.997 b_lo=0.991 b_hi=1.002 J_hi=0.997 J1.0=0.996 b_q=0.988 b_q*J_hi=0.988 b_q*J1.0=0.987 b_lo*J_hi=0.991 ms_free=0.995 | min 0.987 | 0.2Hz 1.02<-17 0.5Hz 0.93<-49 | Tr1.6-3 0.33
+  v  26.0 G  2082: nominal=1.003 b_lo=0.997 b_hi=1.009 J_hi=1.003 J1.0=1.003 b_q=0.993 b_q*J_hi=0.993 b_q*J1.0=0.993 b_lo*J_hi=0.997 ms_free=1.003 | min 0.993 | 0.2Hz 1.04<-13 0.5Hz 1.06<-45 | Tr1.6-3 0.37
+  v  30.0 G  2148: nominal=1.004 b_lo=0.998 b_hi=1.010 J_hi=1.004 J1.0=1.004 b_q=0.994 b_q*J_hi=0.994 b_q*J1.0=0.994 b_lo*J_hi=0.998 ms_free=1.004 | min 0.994 | 0.2Hz 1.05<-12 0.5Hz 1.09<-44 | Tr1.6-3 0.38
+--- D1c: D1c = D on the held-angle difference through a 21 Hz low-pass, K_D 20
+  v   8.0 G  1409: nominal=1.003 b_lo=1.001 b_hi=1.006 J_hi=1.002 J1.0=0.999 b_q=1.003 b_q*J_hi=1.002 b_q*J1.0=0.999 b_lo*J_hi=1.000 ms_free=1.002 | min 0.999 | 0.2Hz 1.02<-6 0.5Hz 1.07<-20 | Tr1.6-3 0.91
+  v  10.0 G   690: nominal=1.002 b_lo=0.996 b_hi=1.010 J_hi=0.999 J1.0=0.991 b_q=1.002 b_q*J_hi=0.999 b_q*J1.0=0.991 b_lo*J_hi=0.993 ms_free=0.989 | min 0.989 | 0.2Hz 1.04<-15 0.5Hz 1.01<-49 | Tr1.6-3 0.34
+  v  11.9 G   561: nominal=1.000 b_lo=0.990 b_hi=1.011 J_hi=0.997 J1.0=0.991 b_q=1.000 b_q*J_hi=0.997 b_q*J1.0=0.991 b_lo*J_hi=0.990 ms_free=0.971 | min 0.971 | 0.2Hz 1.06<-21 0.5Hz 0.87<-68 | Tr1.6-3 0.22
+  v  12.5 G   640: nominal=0.993 b_lo=0.983 b_hi=1.003 J_hi=0.991 J1.0=0.985 b_q=0.978 b_q*J_hi=0.981 b_q*J1.0=0.978 b_lo*J_hi=0.983 ms_free=0.969 | min 0.969 | 0.2Hz 1.03<-23 0.5Hz 0.82<-65 | Tr1.6-3 0.23
+  v  15.0 G   972: nominal=0.973 b_lo=0.966 b_hi=0.981 J_hi=0.974 J1.0=0.971 b_q=0.961 b_q*J_hi=0.963 b_q*J1.0=0.962 b_lo*J_hi=0.968 ms_free=0.962 | min 0.961 | 0.2Hz 0.96<-26 0.5Hz 0.73<-61 | Tr1.6-3 0.24
+  v  17.0 G  1264: nominal=0.968 b_lo=0.961 b_hi=0.975 J_hi=0.969 J1.0=0.967 b_q=0.956 b_q*J_hi=0.958 b_q*J1.0=0.957 b_lo*J_hi=0.963 ms_free=0.961 | min 0.956 | 0.2Hz 0.94<-26 0.5Hz 0.70<-58 | Tr1.6-3 0.25
+  v  19.0 G  1452: nominal=0.981 b_lo=0.973 b_hi=0.989 J_hi=0.981 J1.0=0.980 b_q=0.968 b_q*J_hi=0.969 b_q*J1.0=0.968 b_lo*J_hi=0.974 ms_free=0.976 | min 0.968 | 0.2Hz 0.98<-22 0.5Hz 0.79<-55 | Tr1.6-3 0.28
+  v  22.0 G  1675: nominal=0.996 b_lo=0.990 b_hi=1.002 J_hi=0.996 J1.0=0.995 b_q=0.986 b_q*J_hi=0.986 b_q*J1.0=0.986 b_lo*J_hi=0.990 ms_free=0.994 | min 0.986 | 0.2Hz 1.01<-18 0.5Hz 0.90<-51 | Tr1.6-3 0.31
+  v  26.0 G  1973: nominal=1.002 b_lo=0.997 b_hi=1.009 J_hi=1.002 J1.0=1.003 b_q=0.993 b_q*J_hi=0.992 b_q*J1.0=0.992 b_lo*J_hi=0.997 ms_free=1.003 | min 0.992 | 0.2Hz 1.05<-14 0.5Hz 1.04<-47 | Tr1.6-3 0.35
+  v  30.0 G  2041: nominal=1.004 b_lo=0.998 b_hi=1.010 J_hi=1.004 J1.0=1.004 b_q=0.994 b_q*J_hi=0.994 b_q*J1.0=0.993 b_lo*J_hi=0.998 ms_free=1.004 | min 0.993 | 0.2Hz 1.05<-13 0.5Hz 1.07<-46 | Tr1.6-3 0.36
+--- D2a: D2a = D on the FRESH 1 kHz motor-rate EMA (gp-0x6abe), K_D 20
+  v   8.0 G  1526: nominal=1.003 b_lo=1.001 b_hi=1.005 J_hi=1.002 J1.0=1.000 b_q=1.003 b_q*J_hi=1.002 b_q*J1.0=1.000 b_lo*J_hi=1.000 ms_free=1.002 | min 1.000 | 0.2Hz 1.02<-6 0.5Hz 1.08<-18 | Tr1.6-3 0.99
+  v  10.0 G   627: nominal=1.001 b_lo=0.994 b_hi=1.009 J_hi=0.998 J1.0=0.988 b_q=1.001 b_q*J_hi=0.998 b_q*J1.0=0.988 b_lo*J_hi=0.991 ms_free=0.986 | min 0.986 | 0.2Hz 1.04<-17 0.5Hz 0.98<-54 | Tr1.6-3 0.31
+  v  11.9 G   560: nominal=1.000 b_lo=0.990 b_hi=1.011 J_hi=0.997 J1.0=0.991 b_q=1.000 b_q*J_hi=0.997 b_q*J1.0=0.991 b_lo*J_hi=0.990 ms_free=0.971 | min 0.971 | 0.2Hz 1.06<-21 0.5Hz 0.88<-68 | Tr1.6-3 0.22
+  v  12.5 G   654: nominal=0.994 b_lo=0.984 b_hi=1.004 J_hi=0.992 J1.0=0.986 b_q=0.979 b_q*J_hi=0.981 b_q*J1.0=0.979 b_lo*J_hi=0.984 ms_free=0.970 | min 0.970 | 0.2Hz 1.03<-22 0.5Hz 0.84<-64 | Tr1.6-3 0.23
+  v  15.0 G  1044: nominal=0.977 b_lo=0.970 b_hi=0.985 J_hi=0.978 J1.0=0.975 b_q=0.965 b_q*J_hi=0.967 b_q*J1.0=0.966 b_lo*J_hi=0.971 ms_free=0.967 | min 0.965 | 0.2Hz 0.97<-24 0.5Hz 0.76<-58 | Tr1.6-3 0.26
+  v  17.0 G  1370: nominal=0.973 b_lo=0.966 b_hi=0.980 J_hi=0.973 J1.0=0.972 b_q=0.961 b_q*J_hi=0.963 b_q*J1.0=0.962 b_lo*J_hi=0.967 ms_free=0.967 | min 0.961 | 0.2Hz 0.95<-24 0.5Hz 0.74<-55 | Tr1.6-3 0.27
+  v  19.0 G  1560: nominal=0.984 b_lo=0.977 b_hi=0.992 J_hi=0.984 J1.0=0.983 b_q=0.972 b_q*J_hi=0.973 b_q*J1.0=0.972 b_lo*J_hi=0.977 ms_free=0.980 | min 0.972 | 0.2Hz 0.98<-21 0.5Hz 0.82<-52 | Tr1.6-3 0.30
+  v  22.0 G  1776: nominal=0.996 b_lo=0.991 b_hi=1.002 J_hi=0.996 J1.0=0.996 b_q=0.987 b_q*J_hi=0.988 b_q*J1.0=0.987 b_lo*J_hi=0.991 ms_free=0.995 | min 0.987 | 0.2Hz 1.02<-17 0.5Hz 0.93<-49 | Tr1.6-3 0.33
+  v  26.0 G  2063: nominal=1.003 b_lo=0.997 b_hi=1.009 J_hi=1.003 J1.0=1.003 b_q=0.993 b_q*J_hi=0.993 b_q*J1.0=0.992 b_lo*J_hi=0.997 ms_free=1.003 | min 0.992 | 0.2Hz 1.05<-13 0.5Hz 1.06<-45 | Tr1.6-3 0.37
+  v  30.0 G  2129: nominal=1.004 b_lo=0.998 b_hi=1.010 J_hi=1.004 J1.0=1.004 b_q=0.994 b_q*J_hi=0.994 b_q*J1.0=0.993 b_lo*J_hi=0.998 ms_free=1.004 | min 0.993 | 0.2Hz 1.05<-13 0.5Hz 1.08<-44 | Tr1.6-3 0.37
+--- D2b: D2b = D2a + FORWARD-path output-lag lead (zero 5.2 Hz, pole 10.3 Hz) on E' for P
+  v   8.0 G  1795: nominal=1.002 b_lo=1.001 b_hi=1.005 J_hi=1.002 J1.0=1.001 b_q=1.002 b_q*J_hi=1.002 b_q*J1.0=1.001 b_lo*J_hi=1.000 ms_free=1.002 | min 1.000 | 0.2Hz 1.02<-5 0.5Hz 1.07<-15 | Tr1.6-3 0.95
+  v  10.0 G   635: nominal=1.001 b_lo=0.995 b_hi=1.009 J_hi=0.998 J1.0=0.988 b_q=1.001 b_q*J_hi=0.998 b_q*J1.0=0.988 b_lo*J_hi=0.991 ms_free=0.987 | min 0.987 | 0.2Hz 1.04<-17 0.5Hz 0.96<-54 | Tr1.6-3 0.29
+  v  11.9 G   605: nominal=1.002 b_lo=0.992 b_hi=1.012 J_hi=0.999 J1.0=0.993 b_q=1.002 b_q*J_hi=0.999 b_q*J1.0=0.993 b_lo*J_hi=0.991 ms_free=0.975 | min 0.975 | 0.2Hz 1.06<-20 0.5Hz 0.89<-65 | Tr1.6-3 0.23
+  v  12.5 G   711: nominal=0.996 b_lo=0.987 b_hi=1.006 J_hi=0.994 J1.0=0.989 b_q=0.982 b_q*J_hi=0.984 b_q*J1.0=0.982 b_lo*J_hi=0.987 ms_free=0.975 | min 0.975 | 0.2Hz 1.03<-20 0.5Hz 0.86<-61 | Tr1.6-3 0.24
+  v  15.0 G  1156: nominal=0.982 b_lo=0.975 b_hi=0.989 J_hi=0.982 J1.0=0.980 b_q=0.970 b_q*J_hi=0.972 b_q*J1.0=0.971 b_lo*J_hi=0.976 ms_free=0.973 | min 0.970 | 0.2Hz 0.98<-22 0.5Hz 0.79<-54 | Tr1.6-3 0.27
+  v  17.0 G  1525: nominal=0.978 b_lo=0.971 b_hi=0.985 J_hi=0.978 J1.0=0.977 b_q=0.967 b_q*J_hi=0.968 b_q*J1.0=0.968 b_lo*J_hi=0.973 ms_free=0.973 | min 0.967 | 0.2Hz 0.96<-22 0.5Hz 0.77<-52 | Tr1.6-3 0.29
+  v  19.0 G  1755: nominal=0.988 b_lo=0.981 b_hi=0.995 J_hi=0.988 J1.0=0.987 b_q=0.976 b_q*J_hi=0.977 b_q*J1.0=0.976 b_lo*J_hi=0.982 ms_free=0.984 | min 0.976 | 0.2Hz 0.99<-19 0.5Hz 0.85<-48 | Tr1.6-3 0.32
+  v  22.0 G  2027: nominal=0.998 b_lo=0.993 b_hi=1.003 J_hi=0.998 J1.0=0.998 b_q=0.990 b_q*J_hi=0.990 b_q*J1.0=0.989 b_lo*J_hi=0.993 ms_free=0.997 | min 0.989 | 0.2Hz 1.02<-15 0.5Hz 0.95<-44 | Tr1.6-3 0.36
+  v  26.0 G  2391: nominal=1.003 b_lo=0.998 b_hi=1.009 J_hi=1.003 J1.0=1.004 b_q=0.995 b_q*J_hi=0.995 b_q*J1.0=0.994 b_lo*J_hi=0.998 ms_free=1.003 | min 0.994 | 0.2Hz 1.04<-12 0.5Hz 1.07<-40 | Tr1.6-3 0.40
+  v  30.0 G  2473: nominal=1.004 b_lo=0.999 b_hi=1.010 J_hi=1.004 J1.0=1.005 b_q=0.996 b_q*J_hi=0.995 b_q*J1.0=0.995 b_lo*J_hi=0.999 ms_free=1.004 | min 0.995 | 0.2Hz 1.05<-11 0.5Hz 1.09<-39 | Tr1.6-3 0.41
+--- D2c: D2c = D2a + FEEDBACK-path output-lag lead (same filter) on r26
+  v   8.0 G  1688: nominal=1.002 b_lo=1.000 b_hi=1.004 J_hi=1.001 J1.0=0.999 b_q=1.002 b_q*J_hi=1.001 b_q*J1.0=0.999 b_lo*J_hi=0.999 ms_free=1.001 | min 0.999 | 0.2Hz 1.01<-6 0.5Hz 1.05<-19 | Tr1.6-3 0.92
+  v  10.0 G   702: nominal=1.000 b_lo=0.994 b_hi=1.008 J_hi=0.997 J1.0=0.989 b_q=1.000 b_q*J_hi=0.997 b_q*J1.0=0.989 b_lo*J_hi=0.991 ms_free=0.988 | min 0.988 | 0.2Hz 1.04<-16 0.5Hz 0.99<-50 | Tr1.6-3 0.33
+  v  11.9 G   590: nominal=0.999 b_lo=0.989 b_hi=1.009 J_hi=0.996 J1.0=0.990 b_q=0.999 b_q*J_hi=0.996 b_q*J1.0=0.990 b_lo*J_hi=0.989 ms_free=0.971 | min 0.971 | 0.2Hz 1.05<-21 0.5Hz 0.87<-66 | Tr1.6-3 0.23
+  v  12.5 G   691: nominal=0.993 b_lo=0.984 b_hi=1.002 J_hi=0.991 J1.0=0.986 b_q=0.979 b_q*J_hi=0.981 b_q*J1.0=0.979 b_lo*J_hi=0.984 ms_free=0.971 | min 0.971 | 0.2Hz 1.02<-22 0.5Hz 0.84<-63 | Tr1.6-3 0.24
+  v  15.0 G  1111: nominal=0.978 b_lo=0.971 b_hi=0.985 J_hi=0.978 J1.0=0.976 b_q=0.966 b_q*J_hi=0.968 b_q*J1.0=0.967 b_lo*J_hi=0.972 ms_free=0.968 | min 0.966 | 0.2Hz 0.97<-23 0.5Hz 0.77<-57 | Tr1.6-3 0.27
+  v  17.0 G  1444: nominal=0.973 b_lo=0.966 b_hi=0.980 J_hi=0.974 J1.0=0.972 b_q=0.962 b_q*J_hi=0.964 b_q*J1.0=0.963 b_lo*J_hi=0.968 ms_free=0.967 | min 0.962 | 0.2Hz 0.95<-24 0.5Hz 0.74<-55 | Tr1.6-3 0.28
+  v  19.0 G  1659: nominal=0.984 b_lo=0.977 b_hi=0.991 J_hi=0.984 J1.0=0.983 b_q=0.972 b_q*J_hi=0.973 b_q*J1.0=0.972 b_lo*J_hi=0.978 ms_free=0.980 | min 0.972 | 0.2Hz 0.98<-21 0.5Hz 0.82<-51 | Tr1.6-3 0.31
+  v  22.0 G  1920: nominal=0.996 b_lo=0.991 b_hi=1.002 J_hi=0.996 J1.0=0.996 b_q=0.988 b_q*J_hi=0.988 b_q*J1.0=0.987 b_lo*J_hi=0.991 ms_free=0.995 | min 0.987 | 0.2Hz 1.01<-17 0.5Hz 0.92<-48 | Tr1.6-3 0.34
+  v  26.0 G  2269: nominal=1.002 b_lo=0.997 b_hi=1.007 J_hi=1.002 J1.0=1.002 b_q=0.993 b_q*J_hi=0.993 b_q*J1.0=0.993 b_lo*J_hi=0.997 ms_free=1.002 | min 0.993 | 0.2Hz 1.04<-13 0.5Hz 1.04<-43 | Tr1.6-3 0.38
+  v  30.0 G  2348: nominal=1.003 b_lo=0.998 b_hi=1.008 J_hi=1.003 J1.0=1.003 b_q=0.994 b_q*J_hi=0.994 b_q*J1.0=0.993 b_lo*J_hi=0.998 ms_free=1.003 | min 0.993 | 0.2Hz 1.04<-12 0.5Hz 1.06<-42 | Tr1.6-3 0.39
+--- D3a: D3a = cascade: V282-style HELD rate loop inside (fb 923/1560, Kp 24, Ki 12), angle outside
+  v   8.0 G  1048: nominal=0.987 b_lo=0.984 b_hi=0.991 J_hi=0.984 J1.0=0.974 b_q=0.987 b_q*J_hi=0.984 b_q*J1.0=0.974 b_lo*J_hi=0.981 ms_free=0.984 | min 0.974 | 0.2Hz 0.97<-16 0.5Hz 0.86<-36 | Tr1.6-3 0.53
+  v  10.0 G   782: nominal=0.976 b_lo=0.971 b_hi=0.983 J_hi=0.973 J1.0=0.963 b_q=0.976 b_q*J_hi=0.973 b_q*J1.0=0.963 b_lo*J_hi=0.968 ms_free=0.962 | min 0.962 | 0.2Hz 0.95<-23 0.5Hz 0.76<-52 | Tr1.6-3 0.31
+  v  11.9 G   546: nominal=0.949 b_lo=0.941 b_hi=0.958 J_hi=0.949 J1.0=0.940 b_q=0.949 b_q*J_hi=0.949 b_q*J1.0=0.940 b_lo*J_hi=0.942 ms_free=0.913 | min 0.913 | 0.2Hz 0.90<-34 0.5Hz 0.57<-71 | Tr1.6-3 0.18
+  v  12.5 G   616: nominal=0.944 b_lo=0.936 b_hi=0.953 J_hi=0.944 J1.0=0.937 b_q=0.932 b_q*J_hi=0.935 b_q*J1.0=0.931 b_lo*J_hi=0.938 ms_free=0.914 | min 0.914 | 0.2Hz 0.89<-34 0.5Hz 0.56<-69 | Tr1.6-3 0.18
+  v  15.0 G   906: nominal=0.931 b_lo=0.925 b_hi=0.936 J_hi=0.933 J1.0=0.930 b_q=0.921 b_q*J_hi=0.924 b_q*J1.0=0.922 b_lo*J_hi=0.928 ms_free=0.918 | min 0.918 | 0.2Hz 0.85<-36 0.5Hz 0.53<-67 | Tr1.6-3 0.18
+  v  17.0 G  1217: nominal=0.934 b_lo=0.928 b_hi=0.939 J_hi=0.936 J1.0=0.934 b_q=0.924 b_q*J_hi=0.927 b_q*J1.0=0.926 b_lo*J_hi=0.931 ms_free=0.927 | min 0.924 | 0.2Hz 0.85<-34 0.5Hz 0.55<-64 | Tr1.6-3 0.20
+  v  19.0 G  1443: nominal=0.956 b_lo=0.950 b_hi=0.963 J_hi=0.957 J1.0=0.956 b_q=0.945 b_q*J_hi=0.947 b_q*J1.0=0.945 b_lo*J_hi=0.951 ms_free=0.951 | min 0.945 | 0.2Hz 0.91<-29 0.5Hz 0.64<-60 | Tr1.6-3 0.23
+  v  22.0 G  1726: nominal=0.985 b_lo=0.979 b_hi=0.990 J_hi=0.985 J1.0=0.984 b_q=0.976 b_q*J_hi=0.976 b_q*J1.0=0.975 b_lo*J_hi=0.979 ms_free=0.983 | min 0.975 | 0.2Hz 0.97<-24 0.5Hz 0.76<-56 | Tr1.6-3 0.27
+  v  26.0 G  2103: nominal=0.996 b_lo=0.990 b_hi=1.002 J_hi=0.996 J1.0=0.996 b_q=0.986 b_q*J_hi=0.986 b_q*J1.0=0.985 b_lo*J_hi=0.990 ms_free=0.996 | min 0.985 | 0.2Hz 1.01<-18 0.5Hz 0.90<-52 | Tr1.6-3 0.31
+  v  30.0 G  2189: nominal=0.997 b_lo=0.992 b_hi=1.004 J_hi=0.997 J1.0=0.998 b_q=0.988 b_q*J_hi=0.987 b_q*J1.0=0.986 b_lo*J_hi=0.991 ms_free=0.998 | min 0.986 | 0.2Hz 1.02<-17 0.5Hz 0.93<-50 | Tr1.6-3 0.32
+--- D3b: D3b = cascade: FRESH rate loop inside (gp-0x6abe via E1', fb 923/1560, Kp 46, Ki 12), angle outside
+  v   8.0 G   975: nominal=0.983 b_lo=0.981 b_hi=0.987 J_hi=0.979 J1.0=0.968 b_q=0.983 b_q*J_hi=0.979 b_q*J1.0=0.968 b_lo*J_hi=0.977 ms_free=0.979 | min 0.968 | 0.2Hz 0.95<-13 0.5Hz 0.87<-25 | Tr1.6-3 0.72
+  v  10.0 G   650: nominal=0.968 b_lo=0.962 b_hi=0.974 J_hi=0.963 J1.0=0.950 b_q=0.968 b_q*J_hi=0.963 b_q*J1.0=0.950 b_lo*J_hi=0.958 ms_free=0.949 | min 0.949 | 0.2Hz 0.91<-20 0.5Hz 0.76<-40 | Tr1.6-3 0.43
+  v  11.9 G   467: nominal=0.941 b_lo=0.933 b_hi=0.949 J_hi=0.941 J1.0=0.931 b_q=0.941 b_q*J_hi=0.941 b_q*J1.0=0.931 b_lo*J_hi=0.934 ms_free=0.899 | min 0.899 | 0.2Hz 0.86<-30 0.5Hz 0.61<-55 | Tr1.6-3 0.26
+  v  12.5 G   519: nominal=0.931 b_lo=0.923 b_hi=0.939 J_hi=0.931 J1.0=0.923 b_q=0.919 b_q*J_hi=0.923 b_q*J1.0=0.917 b_lo*J_hi=0.925 ms_free=0.895 | min 0.895 | 0.2Hz 0.83<-30 0.5Hz 0.59<-54 | Tr1.6-3 0.26
+  v  15.0 G   738: nominal=0.909 b_lo=0.904 b_hi=0.913 J_hi=0.912 J1.0=0.908 b_q=0.900 b_q*J_hi=0.904 b_q*J1.0=0.902 b_lo*J_hi=0.907 ms_free=0.894 | min 0.894 | 0.2Hz 0.77<-32 0.5Hz 0.54<-51 | Tr1.6-3 0.26
+  v  17.0 G   935: nominal=0.902 b_lo=0.897 b_hi=0.906 J_hi=0.905 J1.0=0.903 b_q=0.894 b_q*J_hi=0.898 b_q*J1.0=0.896 b_lo*J_hi=0.901 ms_free=0.894 | min 0.894 | 0.2Hz 0.75<-33 0.5Hz 0.53<-50 | Tr1.6-3 0.27
+  v  19.0 G  1079: nominal=0.927 b_lo=0.921 b_hi=0.932 J_hi=0.929 J1.0=0.926 b_q=0.917 b_q*J_hi=0.919 b_q*J1.0=0.917 b_lo*J_hi=0.923 ms_free=0.921 | min 0.917 | 0.2Hz 0.81<-29 0.5Hz 0.59<-48 | Tr1.6-3 0.30
+  v  22.0 G  1264: nominal=0.967 b_lo=0.961 b_hi=0.972 J_hi=0.967 J1.0=0.965 b_q=0.958 b_q*J_hi=0.958 b_q*J1.0=0.956 b_lo*J_hi=0.962 ms_free=0.964 | min 0.956 | 0.2Hz 0.87<-25 0.5Hz 0.68<-46 | Tr1.6-3 0.34
+  v  26.0 G  1510: nominal=0.983 b_lo=0.977 b_hi=0.989 J_hi=0.983 J1.0=0.982 b_q=0.973 b_q*J_hi=0.972 b_q*J1.0=0.970 b_lo*J_hi=0.977 ms_free=0.983 | min 0.970 | 0.2Hz 0.94<-20 0.5Hz 0.78<-44 | Tr1.6-3 0.38
+  v  30.0 G  1566: nominal=0.986 b_lo=0.980 b_hi=0.992 J_hi=0.985 J1.0=0.985 b_q=0.976 b_q*J_hi=0.975 b_q*J1.0=0.973 b_lo*J_hi=0.979 ms_free=0.986 | min 0.973 | 0.2Hz 0.95<-19 0.5Hz 0.80<-43 | Tr1.6-3 0.39

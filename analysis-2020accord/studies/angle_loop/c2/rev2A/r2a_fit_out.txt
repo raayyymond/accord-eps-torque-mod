@@ -1,0 +1,33 @@
+CONTROL P1: the 7-knot fit of the fresh34 envelope reproduces the panel table byte for byte: True
+CONTROL F1: the 7-knot fit of the held20 envelope reproduces the panel table byte for byte: True
+P2 (Kd 34, 6-knot refit under D2a's envelope (no 15.5 m/s knot): -6 B): knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9]
+   rows [(714, 1195, 1204), (1843, 1527, -7988), (2304, 628, -925), (2707, 537, 2785), (4032, 1438, 1309), (6198, 2130, 0), (65535, 2130, 0)]
+   min envelope / G over the grid 1.042
+P5 (Kd 34, 5-knot refit under D2a's envelope (no 15.5 / 17.5 m/s knots): -12 B): knots [3.1, 8.0, 10.0, 11.75, 26.9]
+   rows [(714, 1195, 1204), (1843, 1527, -7988), (2304, 628, -844), (2707, 545, 1866), (6198, 2135, 0), (65535, 2135, 0)]
+   min envelope / G over the grid 1.042
+F2 (held-rate D Kd 20, 6-knot refit under B0r's envelope (no 15.5 m/s knot): -6 B): knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9]
+   rows [(714, 1187, 896), (1843, 1434, -6388), (2304, 715, -1779), (2707, 540, 2507), (4032, 1351, 1348), (6198, 2064, 0), (65535, 2064, 0)]
+   min envelope / G over the grid 1.042
+
+REJECTED at the envelope stage -- the D term's own loop against the lowest credible damping:
+  P3 (Kd 41 (cal-only vs P1), 7-knot refit under its own envelope): D_T = (Kd/8)*4.712*0.1603 = 3.87 T per deg/s (Kd 34: 3.21; b_lo below 10 m/s and the b_q floor: 3.46); envelope = 0 at 11 grid speeds 12.5..15.25 m/s, binding ['b_q*J1.0', 'b_q*J_hi']
+  P4 (Kd 48 (cal-only vs P1), 7-knot refit under its own envelope): D_T = (Kd/8)*4.712*0.1603 = 4.53 T per deg/s (Kd 34: 3.21; b_lo below 10 m/s and the b_q floor: 3.46); envelope = 0 at 56 grid speeds 1.0..16.5 m/s, binding ['b_lo', 'b_lo*J_hi', 'b_q', 'b_q*J1.0', 'b_q*J_hi']
+
+ANGLE STIFFNESS of each implementation, T counts per degree of error at DC on the P path (= 0.1002 * Kp_eff, Kp_eff = 112 G / 256), and the envelope binding member of its structure
+impl | 1 | 3.1 | 5 | 8 | 9 | 10 | 11 | 11.75 | 12.5 | 13 | 15 | 15.5 | 17 | 19 | 22 | 26.9 | 30
+P1 | 52 | 52 | 58 | 67 | 47 | 27 | 25 | 23 | 29 | 32 | 46 | 49 | 60 | 68 | 78 | 93 | 93
+P2 | 52 | 52 | 58 | 67 | 47 | 27 | 25 | 23 | 29 | 32 | 46 | 49 | 60 | 68 | 78 | 93 | 93
+P5 | 52 | 52 | 58 | 67 | 47 | 27 | 25 | 24 | 27 | 30 | 39 | 41 | 48 | 57 | 71 | 94 | 94
+F1 | 52 | 52 | 56 | 63 | 47 | 31 | 27 | 24 | 28 | 31 | 44 | 47 | 57 | 65 | 75 | 90 | 90
+F2 | 52 | 52 | 56 | 63 | 47 | 31 | 27 | 24 | 28 | 31 | 44 | 47 | 56 | 64 | 74 | 90 | 90
+env fresh34 | 55 | 55 | 62 | 71 | 49 | 37 | 30 | 26 | 34 | 42 | 50 | 52 | 65 | 73 | 83 | 99 | 99
+bind fresh34 | J_hi | J_hi | b_lo*J_hi+h10 | b_lo*J_hi+h10 | ms_free | ms_free | ms_free | ms_free | ms_free | ms_free | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10
+env fresh41 | 65 | 65 | 71 | 79 | 55 | 41 | 32 | 29 | 0 | 45 | 0 | 57 | 71 | 79 | 90 | 105 | 105
+bind fresh41 | J_hi | J_hi | b_lo*J_hi+h10 | b_lo*J_hi+h10 | ms_free | ms_free | ms_free | ms_free | b_q*J_hi | ms_free | b_q*J1.0 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10
+env fresh48 | 0 | 0 | 0 | 0 | 61 | 0 | 0 | 32 | 0 | 0 | 0 | 0 | 79 | 85 | 97 | 113 | 113
+bind fresh48 | b_lo | b_lo | b_lo | b_lo | ms_free | b_lo*J_hi | b_lo*J_hi | ms_free | b_q | b_q | b_q*J_hi | b_q*J_hi | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10
+env held20 | 55 | 55 | 59 | 65 | 49 | 36 | 29 | 26 | 34 | 40 | 48 | 49 | 61 | 69 | 79 | 94 | 94
+bind held20 | J_hi | J_hi | b_lo*J_hi+h10 | b_lo*J_hi+h10 | ms_free | ms_free | ms_free | ms_free | ms_free | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10 | b_q*J1.0+h10
+
+TABLE BYTES per implementation (6-byte rows incl. the 0xFFFF row): P1 48, P2 42, P5 36, F1 48, F2 42

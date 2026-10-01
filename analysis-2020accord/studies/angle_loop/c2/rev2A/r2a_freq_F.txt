@@ -1,0 +1,8 @@
+F. TWO-MASS STRESS (10500 points, 13 s): collocated wheel-side mode f2 at zeta2, share r2, on nominal / b_lo / nominal+h10, every 1 m/s 1-35
+| impl | unstable points | min PM | max |T_c|,|T_ref| 5-30 Hz dB | least-damped 5-50 Hz pole (f, zeta) and where |
+|---|---|---|---|---|
+| P1 | 0 | 56.0 (b_lo 13 Hz z0.02 r0.4 @8) | -6.1 | 20.02 Hz z 0.0361 (b_lo 20 Hz z0.02 r0.2 @1) |
+| P2 | 0 | 56.0 (b_lo 13 Hz z0.02 r0.4 @8) | -6.1 | 20.02 Hz z 0.0361 (b_lo 20 Hz z0.02 r0.2 @1) |
+| P5 | 0 | 56.0 (b_lo 13 Hz z0.02 r0.4 @8) | -6.1 | 20.02 Hz z 0.0361 (b_lo 20 Hz z0.02 r0.2 @1) |
+| F1 | 0 | 55.0 (b_lo 13 Hz z0.02 r0.4 @1) | -5.0 | 19.99 Hz z 0.0339 (b_lo 20 Hz z0.02 r0.2 @1) |
+| F2 | 0 | 55.0 (b_lo 13 Hz z0.02 r0.4 @1) | -5.0 | 19.99 Hz z 0.0339 (b_lo 20 Hz z0.02 r0.2 @1) |

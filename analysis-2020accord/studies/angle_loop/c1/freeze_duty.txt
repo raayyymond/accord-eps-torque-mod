@@ -1,0 +1,5 @@
+freeze duty -> tracking gain (s02, s05) and turn-hold ratio / max hold error deg (rh), C1, nominal plant
+  v  8.0: duty 0.00: 1.003/0.960 hold 1.000 err 0.01 | duty 0.03: 1.003/0.953 hold 0.998 err 0.06 | duty 0.10: 1.000/0.946 hold 0.996 err 0.15 | duty 0.25: 0.970/0.872 hold 0.999 err 0.17 | duty 0.50: 0.926/0.777 hold 1.000 err 0.10
+  v 12.5: duty 0.00: 1.014/0.875 hold 0.996 err 0.05 | duty 0.03: 1.014/0.875 hold 0.996 err 0.05 | duty 0.10: 0.964/0.748 hold 0.997 err 0.03 | duty 0.25: 1.008/0.740 hold 1.004 err 0.05 | duty 0.50: 0.883/0.612 hold 0.996 err 0.09
+  v 19.0: duty 0.00: 0.983/0.901 hold 1.009 err 0.04 | duty 0.03: 0.972/0.873 hold 1.009 err 0.04 | duty 0.10: 0.970/0.871 hold 1.004 err 0.02 | duty 0.25: 0.951/0.844 hold 0.992 err 0.04 | duty 0.50: 0.865/0.710 hold 0.992 err 0.04
+  v 26.0: duty 0.00: 1.017/0.994 hold 1.011 err 0.03 | duty 0.03: 1.014/0.993 hold 1.014 err 0.04 | duty 0.10: 1.015/0.952 hold 1.012 err 0.03 | duty 0.25: 1.003/0.918 hold 1.013 err 0.04 | duty 0.50: 0.951/0.805 hold 0.988 err 0.04

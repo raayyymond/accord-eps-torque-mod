@@ -1,0 +1,10 @@
+route 75604b0a432fdc89_000000a6--78293a259e, 10 segments, 59423 carState frames, 42875 with latActive
+  engaged, not steeringPressed   n   41031  |wire| p50 118 p90 284 p95 375 p99 811 p99.9 1166 | frac > 250/500/700/1000/1200: 0.1322 0.0288 0.0152 0.0043 0.0000
+  engaged, all                   n   42875  |wire| p50 120 p90 347 p95 885 p99 3103 p99.9 3628 | frac > 250/500/700/1000/1200: 0.1695 0.0706 0.0576 0.0471 0.0430
+  engaged & not pressed, |rate|   0-  10 deg/s: n  38661 |wire| p50 111 p95 311 p99 548 ; frac > 500 0.0127
+  engaged & not pressed, |rate|  10-  30 deg/s: n   1962 |wire| p50 292 p95 950 p99 1144 ; frac > 500 0.2503
+  engaged & not pressed, |rate|  30-  60 deg/s: n    373 |wire| p50 466 p95 1066 p99 1185 ; frac > 500 0.4772
+  engaged & not pressed, v  0- 5 m/s: n   2583 |wire| p50 154 p95 704 p99 1080 ; frac > 500 0.0887
+  engaged & not pressed, v  5-10 m/s: n   3922 |wire| p50 166 p95 749 p99 1059 ; frac > 500 0.1094
+  engaged & not pressed, v 10-20 m/s: n  11129 |wire| p50 120 p95 384 p99 818 ; frac > 500 0.0287
+  engaged & not pressed, v 20-40 m/s: n  23397 |wire| p50 101 p95 292 p99 475 ; frac > 500 0.0088

@@ -1,0 +1,92 @@
+
+=== 3 m/s: TIME line-only passes 6, of which FREQ credible-safe 0 (TIME strict + FREQ safe: 0)
+  time   Kp 1500 Ki 1024 ICL 1024 DB0 Kd28 | freq worstPM  14.6 worstTr1.6-3 4.12 nomPM 28 nomTr 1.94 | tg 0.98/0.97 hold 0.97 fit 1.13 dj 0 Thf 1.4 tex 8.7 hard 2.11/1.80  freqfail J_hi:PM45,J_lo:PM45,b_hi:PM45,b_lo:PM45
+  time   Kp 1500 Ki 1024 ICL 1024 DB1 Kd28 | freq worstPM  14.6 worstTr1.6-3 4.12 nomPM 28 nomTr 1.94 | tg 0.98/0.97 hold 0.97 fit 0.94 dj 0 Thf 1.4 tex 8.0 hard 2.07/1.80  freqfail J_hi:PM45,J_lo:PM45,b_hi:PM45,b_lo:PM45
+  time   Kp 1500 Ki 1024 ICL 4096 DB0 Kd28 | freq worstPM  14.6 worstTr1.6-3 4.12 nomPM 28 nomTr 1.94 | tg 1.02/1.07 hold 1.00 fit 1.11 dj 0 Thf 1.4 tex 6.8 hard 2.59/1.80  freqfail J_hi:PM45,J_lo:PM45,b_hi:PM45,b_lo:PM45
+  time   Kp 1500 Ki 1024 ICL 4096 DB1 Kd28 | freq worstPM  14.6 worstTr1.6-3 4.12 nomPM 28 nomTr 1.94 | tg 1.02/1.08 hold 1.00 fit 0.91 dj 0 Thf 1.6 tex 6.9 hard 2.58/1.80  freqfail J_hi:PM45,J_lo:PM45,b_hi:PM45,b_lo:PM45
+  time   Kp 1200 Ki 1024 ICL 4096 DB1 Kd24 | freq worstPM  12.6 worstTr1.6-3 5.06 nomPM 30 nomTr 2.06 | tg 1.02/1.09 hold 1.00 fit 1.02 dj 0 Thf 1.2 tex 5.3 hard 2.86/1.80  freqfail J_hi:PM45,J_lo:PM45,b_hi:PM45,b_lo:PM45
+  time   Kp 1200 Ki 1024 ICL 4096 DB1 Kd20 | freq worstPM   8.6 worstTr1.6-3 7.33 nomPM 25 nomTr 2.48 | tg 1.02/1.09 hold 1.00 fit 1.02 dj 0 Thf 1.3 tex 5.2 hard 3.02/1.80  freqfail J_hi:PM45,J_lo:PM45,b_hi:PM45,b_lo:PM45
+
+=== 5 m/s: TIME line-only passes 6, of which FREQ credible-safe 1 (TIME strict + FREQ safe: 1)
+  BOTH+S Kp  500 Ki  256 ICL10240 DB0 Kd16 | freq worstPM  48.4 worstTr1.6-3 1.16 nomPM 65 nomTr 0.96 | tg 1.05/1.13 hold 1.00 fit 1.27 dj 0 Thf 0.5 tex 1.3 hard 1.51/1.69
+  time   Kp 1500 Ki 1024 ICL 4096 DB1 Kd28 | freq worstPM  16.2 worstTr1.6-3 3.73 nomPM 30 nomTr 1.79 | tg 1.02/1.09 hold 1.00 fit 0.88 dj 0 Thf 1.2 tex 3.9 hard 2.24/1.69  freqfail J_hi:PM45,J_lo:PM45,b_hi:PM45,b_lo:PM45
+  time   Kp 1200 Ki 1024 ICL 4096 DB0 Kd24 | freq worstPM  14.8 worstTr1.6-3 4.31 nomPM 33 nomTr 1.88 | tg 1.02/1.10 hold 1.00 fit 1.08 dj 0 Thf 1.0 tex 3.3 hard 2.52/1.69  freqfail J_hi:PM45,b_hi:PM45,b_lo:PM45,nominal:PM45
+  time   Kp 1200 Ki 1024 ICL 4096 DB1 Kd24 | freq worstPM  14.8 worstTr1.6-3 4.31 nomPM 33 nomTr 1.88 | tg 1.02/1.10 hold 1.00 fit 0.92 dj 0 Thf 1.0 tex 2.9 hard 2.49/1.69  freqfail J_hi:PM45,b_hi:PM45,b_lo:PM45,nominal:PM45
+  time   Kp 1500 Ki 1024 ICL 4096 DB0 Kd24 | freq worstPM  12.2 worstTr1.6-3 4.84 nomPM 26 nomTr 2.06 | tg 1.02/1.08 hold 1.00 fit 1.05 dj 0 Thf 1.5 tex 4.1 hard 2.47/1.69  freqfail J_hi:PM45,J_lo:PM45,b_hi:PM45,b_lo:GM6
+  time   Kp 1200 Ki 1024 ICL 4096 DB1 Kd20 | freq worstPM  10.7 worstTr1.6-3 5.92 nomPM 27 nomTr 2.22 | tg 1.02/1.09 hold 1.00 fit 0.91 dj 0 Thf 1.5 tex 2.8 hard 2.63/1.69  freqfail J_hi:PM45,J_lo:PM45,b_hi:PM45,b_lo:PM45
+
+=== 8 m/s: TIME line-only passes 12, of which FREQ credible-safe 8 (TIME strict + FREQ safe: 8)
+  BOTH+S Kp  500 Ki  256 ICL10240 DB0 Kd16 | freq worstPM  58.8 worstTr1.6-3 0.99 nomPM 75 nomTr 0.84 | tg 1.01/0.99 hold 1.00 fit 1.07 dj 0 Thf 0.5 tex 0.8 hard 1.60/2.26
+  BOTH+S Kp  500 Ki  256 ICL10240 DB1 Kd16 | freq worstPM  58.8 worstTr1.6-3 0.99 nomPM 75 nomTr 0.84 | tg 1.00/0.97 hold 1.00 fit 0.90 dj 0 Thf 0.5 tex 0.8 hard 1.67/2.26
+  BOTH+S Kp  500 Ki  256 ICL 4096 DB0 Kd16 | freq worstPM  58.8 worstTr1.6-3 0.99 nomPM 75 nomTr 0.84 | tg 1.01/0.99 hold 1.00 fit 1.07 dj 0 Thf 0.5 tex 0.8 hard 1.65/2.26
+  BOTH+S Kp  500 Ki  256 ICL 4096 DB1 Kd16 | freq worstPM  58.8 worstTr1.6-3 0.99 nomPM 75 nomTr 0.84 | tg 1.00/0.97 hold 1.00 fit 0.90 dj 0 Thf 0.6 tex 0.8 hard 1.69/2.26
+  BOTH+S Kp  500 Ki  256 ICL10240 DB0 Kd 8 | freq worstPM  46.8 worstTr1.6-3 1.27 nomPM 62 nomTr 1.02 | tg 1.00/0.99 hold 1.00 fit 1.05 dj 0 Thf 0.5 tex 0.8 hard 1.86/2.26
+  BOTH+S Kp  500 Ki  256 ICL10240 DB1 Kd 8 | freq worstPM  46.8 worstTr1.6-3 1.27 nomPM 62 nomTr 1.02 | tg 0.99/0.96 hold 1.01 fit 0.88 dj 0 Thf 0.5 tex 0.8 hard 1.89/2.26
+  BOTH+S Kp  500 Ki  256 ICL 4096 DB0 Kd 8 | freq worstPM  46.8 worstTr1.6-3 1.27 nomPM 62 nomTr 1.02 | tg 1.00/0.99 hold 1.00 fit 1.05 dj 0 Thf 0.5 tex 0.8 hard 1.86/2.26
+  BOTH+S Kp  500 Ki  256 ICL 4096 DB1 Kd 8 | freq worstPM  46.8 worstTr1.6-3 1.27 nomPM 62 nomTr 1.02 | tg 0.99/0.97 hold 1.00 fit 0.88 dj 0 Thf 0.5 tex 0.7 hard 1.90/2.26
+  time+S Kp  500 Ki  256 ICL10240 DB0 Kd 0 | freq worstPM  29.4 worstTr1.6-3 2.22 nomPM 47 nomTr 1.29 | tg 1.00/0.98 hold 1.00 fit 1.03 dj 0 Thf 0.5 tex 0.6 hard 2.45/2.26  freqfail J_hi:PM45,b_lo:PM45,tau6:PM45
+  time+S Kp  500 Ki  256 ICL10240 DB1 Kd 0 | freq worstPM  29.4 worstTr1.6-3 2.22 nomPM 47 nomTr 1.29 | tg 0.98/0.95 hold 1.00 fit 0.87 dj 0 Thf 0.5 tex 0.5 hard 2.41/2.26  freqfail J_hi:PM45,b_lo:PM45,tau6:PM45
+  time+S Kp  500 Ki  256 ICL 4096 DB0 Kd 0 | freq worstPM  29.4 worstTr1.6-3 2.22 nomPM 47 nomTr 1.29 | tg 1.00/0.98 hold 1.00 fit 1.03 dj 0 Thf 0.5 tex 0.6 hard 2.45/2.26  freqfail J_hi:PM45,b_lo:PM45,tau6:PM45
+  time+S Kp  500 Ki  256 ICL 4096 DB1 Kd 0 | freq worstPM  29.4 worstTr1.6-3 2.22 nomPM 47 nomTr 1.29 | tg 0.98/0.95 hold 1.00 fit 0.87 dj 0 Thf 0.5 tex 0.5 hard 2.41/2.26  freqfail J_hi:PM45,b_lo:PM45,tau6:PM45
+
+=== 12.5 m/s: TIME line-only passes 33, of which FREQ credible-safe 0 (TIME strict + FREQ safe: 0)
+  time   Kp 1800 Ki  512 ICL 4096 DB0 Kd16 | freq worstPM  27.3 worstTr1.6-3 2.22 nomPM 57 nomTr 1.07 | tg 1.00/0.98 hold 1.00 fit 1.00 dj 0 Thf 0.7 tex 2.2 hard 0.92/0.91  freqfail J_hi:PM45,b_lo:PM45
+  time   Kp 2000 Ki 1024 ICL 4096 DB1 Kd28 | freq worstPM  25.3 worstTr1.6-3 2.35 nomPM 55 nomTr 1.17 | tg 0.97/1.02 hold 1.01 fit 0.81 dj 0 Thf 0.9 tex 2.5 hard 0.97/0.91  freqfail J_hi:PM45,b_lo:PM45,b_lo:lineT
+  time   Kp 2000 Ki  512 ICL 4096 DB0 Kd16 | freq worstPM  23.4 worstTr1.6-3 2.60 nomPM 53 nomTr 1.12 | tg 1.00/0.97 hold 1.00 fit 0.99 dj 0 Thf 0.8 tex 2.7 hard 0.97/0.91  freqfail J_hi:PM45,b_lo:PM45
+  time   Kp 2000 Ki 1024 ICL 4096 DB1 Kd24 | freq worstPM  22.5 worstTr1.6-3 2.68 nomPM 52 nomTr 1.20 | tg 0.97/1.02 hold 1.02 fit 0.81 dj 0 Thf 0.7 tex 2.4 hard 0.97/0.91  freqfail J_hi:PM45,b_lo:PM45,b_lo:lineT
+  time   Kp 1500 Ki 1024 ICL10240 DB1 Kd16 | freq worstPM  22.5 worstTr1.6-3 2.76 nomPM 50 nomTr 1.31 | tg 0.98/1.05 hold 1.01 fit 0.83 dj 0 Thf 0.8 tex 2.0 hard 0.98/0.91  freqfail J_hi:PM45,b_lo:PM45
+  time+S Kp 1500 Ki 1024 ICL 4096 DB1 Kd16 | freq worstPM  22.5 worstTr1.6-3 2.76 nomPM 50 nomTr 1.31 | tg 0.98/1.05 hold 1.01 fit 0.83 dj 0 Thf 0.8 tex 1.9 hard 0.97/0.91  freqfail J_hi:PM45,b_lo:PM45
+  time   Kp 1800 Ki  512 ICL 4096 DB0 Kd 8 | freq worstPM  21.1 worstTr1.6-3 2.97 nomPM 51 nomTr 1.19 | tg 1.00/0.98 hold 1.00 fit 0.99 dj 0 Thf 0.6 tex 2.4 hard 0.98/0.91  freqfail J_hi:GM6,J_hi:PM45,b_lo:GM6,b_lo:PM45
+  time   Kp 2000 Ki 1024 ICL 4096 DB1 Kd20 | freq worstPM  19.6 worstTr1.6-3 3.12 nomPM 49 nomTr 1.25 | tg 0.97/1.01 hold 1.02 fit 0.81 dj 0 Thf 0.8 tex 2.6 hard 1.03/0.91  freqfail J_hi:PM45,b_lo:PM45,b_lo:lineT
+  time   Kp 2000 Ki  512 ICL 4096 DB0 Kd 8 | freq worstPM  17.5 worstTr1.6-3 3.59 nomPM 47 nomTr 1.27 | tg 0.99/0.97 hold 1.00 fit 0.99 dj 0 Thf 0.7 tex 2.5 hard 1.05/0.91  freqfail J_hi:GM6,J_hi:PM45,b_lo:GM6,b_lo:PM45
+  time+S Kp 1500 Ki 1024 ICL10240 DB1 Kd 8 | freq worstPM  15.4 worstTr1.6-3 4.08 nomPM 43 nomTr 1.40 | tg 0.98/1.04 hold 1.01 fit 0.82 dj 0 Thf 0.7 tex 1.6 hard 1.09/0.91  freqfail J_hi:GM6,J_hi:PM45,b_lo:GM6,b_lo:PM45
+  time+S Kp 1500 Ki 1024 ICL 4096 DB1 Kd 8 | freq worstPM  15.4 worstTr1.6-3 4.08 nomPM 43 nomTr 1.40 | tg 0.98/1.04 hold 1.01 fit 0.82 dj 0 Thf 0.7 tex 1.8 hard 1.08/0.91  freqfail J_hi:GM6,J_hi:PM45,b_lo:GM6,b_lo:PM45
+  time   Kp 2500 Ki  512 ICL 4096 DB0 Kd16 | freq worstPM  14.8 worstTr1.6-3 3.90 nomPM 44 nomTr 1.31 | tg 0.99/0.97 hold 0.99 fit 0.98 dj 0 Thf 0.9 tex 3.3 hard 1.03/0.91  freqfail J_hi:GM6,J_hi:PM45,b_lo:GM6,b_lo:PM45
+  time   Kp 1800 Ki  512 ICL 4096 DB0 Kd 0 | freq worstPM  13.1 worstTr1.6-3 4.46 nomPM 44 nomTr 1.37 | tg 0.99/0.98 hold 0.99 fit 0.99 dj 0 Thf 0.7 tex 2.2 hard 1.10/0.91  freqfail J_hi:GM6,J_hi:PM45,b_lo:GM6,b_lo:PM45
+  time   Kp 2000 Ki 1024 ICL 4096 DB0 Kd 8 | freq worstPM  10.4 worstTr1.6-3 6.11 nomPM 40 nomTr 1.51 | tg 1.01/1.05 hold 1.00 fit 0.98 dj 0 Thf 0.8 tex 2.5 hard 1.23/0.91  freqfail J_hi:GM6,J_hi:PM45,b_lo:GM6,b_lo:PM45
+
+=== 19 m/s: TIME line-only passes 21, of which FREQ credible-safe 21 (TIME strict + FREQ safe: 10)
+  BOTH   Kp 2000 Ki 1024 ICL 4096 DB0 Kd28 | freq worstPM  65.0 worstTr1.6-3 0.97 nomPM 73 nomTr 0.83 | tg 1.01/0.99 hold 1.01 fit 0.99 dj 0 Thf 0.6 tex 2.6 hard 0.26/0.38
+  BOTH   Kp 2000 Ki 1024 ICL 4096 DB0 Kd24 | freq worstPM  63.2 worstTr1.6-3 1.00 nomPM 72 nomTr 0.85 | tg 1.00/0.99 hold 1.01 fit 0.99 dj 0 Thf 0.6 tex 2.5 hard 0.27/0.38
+  BOTH   Kp 2000 Ki 1024 ICL 4096 DB0 Kd20 | freq worstPM  61.3 worstTr1.6-3 1.02 nomPM 70 nomTr 0.86 | tg 1.00/0.99 hold 1.01 fit 0.99 dj 0 Thf 0.6 tex 2.5 hard 0.29/0.38
+  BOTH   Kp 1800 Ki 1024 ICL 4096 DB0 Kd16 | freq worstPM  59.8 worstTr1.6-3 1.02 nomPM 67 nomTr 0.85 | tg 1.00/1.00 hold 1.00 fit 0.99 dj 0 Thf 0.8 tex 2.3 hard 0.25/0.38
+  BOTH+S Kp 1500 Ki 1024 ICL 4096 DB0 Kd28 | freq worstPM  59.6 worstTr1.6-3 0.91 nomPM 68 nomTr 0.74 | tg 1.01/1.02 hold 0.99 fit 1.01 dj 0 Thf 0.9 tex 1.8 hard 0.24/0.38
+  BOTH   Kp 2000 Ki 1024 ICL 4096 DB0 Kd16 | freq worstPM  59.5 worstTr1.6-3 1.04 nomPM 68 nomTr 0.88 | tg 1.00/0.99 hold 1.01 fit 0.99 dj 0 Thf 0.7 tex 2.3 hard 0.29/0.38
+  BOTH+S Kp 1500 Ki 1024 ICL 4096 DB0 Kd24 | freq worstPM  58.9 worstTr1.6-3 0.93 nomPM 67 nomTr 0.76 | tg 1.01/1.02 hold 0.99 fit 1.01 dj 0 Thf 1.0 tex 1.8 hard 0.24/0.38
+  BOTH+S Kp 1500 Ki 1024 ICL 4096 DB0 Kd20 | freq worstPM  58.1 worstTr1.6-3 0.94 nomPM 66 nomTr 0.77 | tg 1.01/1.02 hold 0.99 fit 1.00 dj 0 Thf 0.9 tex 1.8 hard 0.24/0.38
+  BOTH+S Kp 1500 Ki 1024 ICL10240 DB0 Kd16 | freq worstPM  57.3 worstTr1.6-3 0.97 nomPM 64 nomTr 0.79 | tg 1.01/1.02 hold 0.99 fit 1.00 dj 0 Thf 0.9 tex 1.8 hard 0.25/0.38
+  BOTH+S Kp 1500 Ki 1024 ICL 4096 DB0 Kd16 | freq worstPM  57.3 worstTr1.6-3 0.97 nomPM 64 nomTr 0.79 | tg 1.01/1.02 hold 0.99 fit 1.00 dj 0 Thf 0.9 tex 1.8 hard 0.25/0.38
+  BOTH   Kp 1800 Ki 1024 ICL 4096 DB0 Kd 8 | freq worstPM  56.1 worstTr1.6-3 1.07 nomPM 64 nomTr 0.89 | tg 1.00/0.99 hold 1.00 fit 0.99 dj 0 Thf 1.3 tex 2.1 hard 0.28/0.38
+  BOTH   Kp 2000 Ki 1024 ICL 4096 DB0 Kd 8 | freq worstPM  55.7 worstTr1.6-3 1.09 nomPM 65 nomTr 0.92 | tg 1.00/0.98 hold 1.01 fit 0.99 dj 0 Thf 0.6 tex 2.2 hard 0.31/0.38
+  BOTH+S Kp 1500 Ki 1024 ICL10240 DB0 Kd 8 | freq worstPM  55.0 worstTr1.6-3 1.03 nomPM 62 nomTr 0.84 | tg 1.01/1.02 hold 0.99 fit 1.00 dj 0 Thf 0.8 tex 1.8 hard 0.25/0.38
+  BOTH+S Kp 1500 Ki 1024 ICL 4096 DB0 Kd 8 | freq worstPM  55.0 worstTr1.6-3 1.03 nomPM 62 nomTr 0.84 | tg 1.00/1.02 hold 0.99 fit 1.00 dj 0 Thf 0.8 tex 1.8 hard 0.25/0.38
+
+=== 26 m/s: TIME line-only passes 14, of which FREQ credible-safe 13 (TIME strict + FREQ safe: 0)
+  BOTH   Kp 2500 Ki 1024 ICL 1024 DB0 Kd16 | freq worstPM  55.9 worstTr1.6-3 1.09 nomPM 65 nomTr 0.94 | tg 0.99/1.01 hold 0.98 fit 1.00 dj 0 Thf 0.9 tex 4.3 hard 0.16/0.23
+  BOTH   Kp 2500 Ki 1024 ICL10240 DB0 Kd16 | freq worstPM  55.9 worstTr1.6-3 1.09 nomPM 65 nomTr 0.94 | tg 0.99/1.02 hold 1.01 fit 0.99 dj 0 Thf 0.5 tex 4.3 hard 0.19/0.23
+  BOTH   Kp 2500 Ki 1024 ICL 4096 DB0 Kd16 | freq worstPM  55.9 worstTr1.6-3 1.09 nomPM 65 nomTr 0.94 | tg 0.99/1.01 hold 1.01 fit 0.99 dj 0 Thf 0.4 tex 4.3 hard 0.18/0.23
+  BOTH   Kp 2500 Ki 1024 ICL 1024 DB0 Kd 8 | freq worstPM  51.1 worstTr1.6-3 1.18 nomPM 62 nomTr 0.97 | tg 0.98/1.01 hold 0.99 fit 0.99 dj 0 Thf 0.9 tex 4.2 hard 0.17/0.23
+  BOTH   Kp 2500 Ki 1024 ICL10240 DB0 Kd 8 | freq worstPM  51.1 worstTr1.6-3 1.18 nomPM 62 nomTr 0.97 | tg 0.98/1.01 hold 1.01 fit 0.99 dj 0 Thf 0.8 tex 4.3 hard 0.20/0.23
+  BOTH   Kp 2500 Ki 1024 ICL 4096 DB0 Kd 8 | freq worstPM  51.1 worstTr1.6-3 1.18 nomPM 62 nomTr 0.97 | tg 0.98/1.01 hold 1.01 fit 0.99 dj 0 Thf 0.9 tex 4.3 hard 0.20/0.23
+  BOTH   Kp 3000 Ki 1024 ICL 1024 DB0 Kd16 | freq worstPM  50.0 worstTr1.6-3 1.20 nomPM 64 nomTr 0.98 | tg 0.98/0.99 hold 0.98 fit 0.99 dj 0 Thf 1.0 tex 5.0 hard 0.19/0.23
+  BOTH   Kp 3000 Ki 1024 ICL 4096 DB0 Kd16 | freq worstPM  50.0 worstTr1.6-3 1.20 nomPM 64 nomTr 0.98 | tg 0.98/0.99 hold 0.99 fit 0.99 dj 0 Thf 0.3 tex 5.1 hard 0.21/0.23
+  BOTH   Kp 2500 Ki 1024 ICL 1024 DB0 Kd 0 | freq worstPM  46.2 worstTr1.6-3 1.32 nomPM 59 nomTr 1.00 | tg 0.98/1.00 hold 0.99 fit 0.99 dj 0 Thf 0.7 tex 4.1 hard 0.18/0.23
+  BOTH   Kp 2500 Ki 1024 ICL10240 DB0 Kd 0 | freq worstPM  46.2 worstTr1.6-3 1.32 nomPM 59 nomTr 1.00 | tg 0.98/1.00 hold 1.00 fit 0.99 dj 0 Thf 0.3 tex 4.1 hard 0.21/0.23
+  BOTH   Kp 2500 Ki 1024 ICL 4096 DB0 Kd 0 | freq worstPM  46.2 worstTr1.6-3 1.32 nomPM 59 nomTr 1.00 | tg 0.98/1.00 hold 1.00 fit 0.99 dj 0 Thf 0.3 tex 4.1 hard 0.21/0.23
+  BOTH   Kp 3000 Ki 1024 ICL 1024 DB0 Kd 8 | freq worstPM  45.6 worstTr1.6-3 1.32 nomPM 61 nomTr 1.01 | tg 0.98/0.99 hold 0.98 fit 0.99 dj 0 Thf 1.0 tex 5.1 hard 0.19/0.23
+  BOTH   Kp 3000 Ki 1024 ICL 4096 DB0 Kd 8 | freq worstPM  45.6 worstTr1.6-3 1.32 nomPM 61 nomTr 1.01 | tg 0.98/0.99 hold 0.99 fit 0.99 dj 0 Thf 0.3 tex 4.9 hard 0.20/0.23
+  time   Kp 3000 Ki 1024 ICL 1024 DB0 Kd 0 | freq worstPM  40.9 worstTr1.6-3 1.46 nomPM 58 nomTr 1.04 | tg 0.98/0.99 hold 0.98 fit 0.98 dj 0 Thf 1.2 tex 4.8 hard 0.20/0.23  freqfail b_lo:PM45
+
+=== 30 m/s: TIME line-only passes 12, of which FREQ credible-safe 11 (TIME strict + FREQ safe: 0)
+  BOTH   Kp 2500 Ki 1024 ICL 1024 DB0 Kd16 | freq worstPM  55.9 worstTr1.6-3 1.09 nomPM 64 nomTr 0.93 | tg 0.99/1.01 hold 1.01 fit 1.00 dj 0 Thf 0.3 tex 4.7 hard 0.15/0.19
+  BOTH   Kp 2500 Ki 1024 ICL10240 DB0 Kd16 | freq worstPM  55.9 worstTr1.6-3 1.09 nomPM 64 nomTr 0.93 | tg 0.99/1.01 hold 1.02 fit 1.00 dj 0 Thf 0.3 tex 4.6 hard 0.17/0.19
+  BOTH   Kp 2500 Ki 1024 ICL 4096 DB0 Kd16 | freq worstPM  55.9 worstTr1.6-3 1.09 nomPM 64 nomTr 0.93 | tg 0.99/1.01 hold 1.01 fit 1.00 dj 0 Thf 0.4 tex 4.7 hard 0.17/0.19
+  BOTH   Kp 2500 Ki 1024 ICL 1024 DB0 Kd 8 | freq worstPM  51.2 worstTr1.6-3 1.18 nomPM 61 nomTr 0.97 | tg 0.99/1.01 hold 1.02 fit 0.99 dj 0 Thf 0.3 tex 4.5 hard 0.16/0.19
+  BOTH   Kp 2500 Ki 1024 ICL10240 DB0 Kd 8 | freq worstPM  51.2 worstTr1.6-3 1.18 nomPM 61 nomTr 0.97 | tg 0.99/1.01 hold 1.01 fit 0.99 dj 0 Thf 0.3 tex 4.6 hard 0.17/0.19
+  BOTH   Kp 2500 Ki 1024 ICL 4096 DB0 Kd 8 | freq worstPM  51.2 worstTr1.6-3 1.18 nomPM 61 nomTr 0.97 | tg 0.99/1.01 hold 1.01 fit 0.99 dj 0 Thf 0.3 tex 4.5 hard 0.18/0.19
+  BOTH   Kp 3000 Ki 1024 ICL 4096 DB0 Kd16 | freq worstPM  50.3 worstTr1.6-3 1.19 nomPM 64 nomTr 0.99 | tg 0.98/1.01 hold 1.02 fit 0.99 dj 0 Thf 0.3 tex 5.4 hard 0.18/0.19
+  BOTH   Kp 2500 Ki 1024 ICL 1024 DB0 Kd 0 | freq worstPM  46.3 worstTr1.6-3 1.31 nomPM 59 nomTr 1.00 | tg 0.98/1.01 hold 1.01 fit 0.99 dj 0 Thf 0.6 tex 4.6 hard 0.16/0.19
+  BOTH   Kp 2500 Ki 1024 ICL10240 DB0 Kd 0 | freq worstPM  46.3 worstTr1.6-3 1.31 nomPM 59 nomTr 1.00 | tg 0.98/1.01 hold 1.01 fit 0.99 dj 0 Thf 0.2 tex 4.6 hard 0.18/0.19
+  BOTH   Kp 2500 Ki 1024 ICL 4096 DB0 Kd 0 | freq worstPM  46.3 worstTr1.6-3 1.31 nomPM 59 nomTr 1.00 | tg 0.98/1.01 hold 1.01 fit 0.99 dj 0 Thf 0.2 tex 4.6 hard 0.18/0.19
+  BOTH   Kp 3000 Ki 1024 ICL 4096 DB0 Kd 8 | freq worstPM  45.9 worstTr1.6-3 1.31 nomPM 61 nomTr 1.01 | tg 0.98/1.01 hold 1.02 fit 0.99 dj 0 Thf 0.3 tex 5.4 hard 0.19/0.19
+  time   Kp 3000 Ki 1024 ICL 4096 DB0 Kd 0 | freq worstPM  41.3 worstTr1.6-3 1.45 nomPM 58 nomTr 1.04 | tg 0.97/1.02 hold 1.01 fit 0.98 dj 0 Thf 0.3 tex 5.2 hard 0.19/0.19  freqfail b_lo:PM45

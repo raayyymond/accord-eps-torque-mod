@@ -1,0 +1,2 @@
+C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\refute_stability\stab_lin.py:241: RuntimeWarning: invalid value encountered in log
+  s = np.log(l) / (10 * TS)

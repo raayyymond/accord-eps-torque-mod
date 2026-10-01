@@ -1,0 +1,12 @@
+max G (Kp_eff) keeping PM >= 45 on J_hi, and PM >= 30 / 45 on J_hi*b/1.8, at the trough speeds
+  v  10.5 C0 G 467 (Kp_eff 821) | J_hi PM45: G<=460 (Kp_eff 809) | J_hi*b/1.8 PM30: G<=368 (Kp_eff 647) | J_hi*b/1.8 PM45: G<=272 (Kp_eff 478)
+  v  11.0 C0 G 492 (Kp_eff 865) | J_hi PM45: G<=468 (Kp_eff 823) | J_hi*b/1.8 PM30: G<=376 (Kp_eff 661) | J_hi*b/1.8 PM45: G<=276 (Kp_eff 485)
+  v  11.5 C0 G 518 (Kp_eff 911) | J_hi PM45: G<=476 (Kp_eff 837) | J_hi*b/1.8 PM30: G<=384 (Kp_eff 675) | J_hi*b/1.8 PM45: G<=280 (Kp_eff 492)
+  v  11.9 C0 G 538 (Kp_eff 946) | J_hi PM45: G<=484 (Kp_eff 851) | J_hi*b/1.8 PM30: G<=388 (Kp_eff 682) | J_hi*b/1.8 PM45: G<=284 (Kp_eff 499)
+  v  12.5 C0 G 569 (Kp_eff 1000) | J_hi PM45: G<=604 (Kp_eff 1062) | J_hi*b/1.8 PM30: G<=472 (Kp_eff 830) | J_hi*b/1.8 PM45: G<=352 (Kp_eff 619)
+
+highway: b-scale threshold for PM 0/30/45 at reduced highway gains (J 0.2, nominal k)
+  v 26.0 Kp_eff 3000 | PM0: b>=5.36 (0.21x) | PM30: b>=9.52 (0.37x) | PM45: b>=13.34 (0.52x)
+  v 26.0 Kp_eff 2500 | PM0: b>=4.46 (0.17x) | PM30: b>=7.93 (0.31x) | PM45: b>=10.80 (0.42x)
+  v 26.0 Kp_eff 2000 | PM0: b>=3.50 (0.14x) | PM30: b>=6.31 (0.24x) | PM45: b>=8.35 (0.32x)
+  v 26.0 Kp_eff 1500 | PM0: b>=2.47 (0.10x) | PM30: b>=4.67 (0.18x) | PM45: b>=6.03 (0.23x)

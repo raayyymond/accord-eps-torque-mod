@@ -1,0 +1,10 @@
+
+===== member nominal  (suite r2tmp_pi)
+  -- LINE-ONLY
+     0/15 C1r2 (7 knots) (freeze 512+ramp)               3:stick 5:stick 5.5:stick 6:stick 7:stick 8:stick 10:stick/track 11.9:stick/track 12.5:stick/track 15:stick/track 17:stick/track 19:stick/track 22:stick/track 26:stick/track 30:track
+     0/15 alt 5 knots (freeze 512+ramp)                  3:stick 5:stick 5.5:stick 6:stick 7:stick 8:stick 10:stick/track 11.9:stick/track 12.5:stick/deadzone/track 15:stick/track 17:stick/track 19:stick/track 22:stick/track 26:stick/track 30:track
+     2/15 C1 rev 1 (REFUTED; reference)                  3:stick 5:stick 5.5:stick 6:stick 7:stick 8:PASS 10:stick 11.9:stick/track 12.5:stick/track 15:stick/track 17:stick/track 19:stick/track 22:PASS 26:stick 30:stick
+  -- STRICT (texture gated)
+     0/15 C1r2 (7 knots) (freeze 512+ramp)               3:texture/stick 5:stick 5.5:stick 6:stick 7:stick 8:stick 10:stick/track 11.9:stick/track 12.5:stick/track 15:stick/track 17:stick/track 19:stick/track 22:stick/track 26:stick/track 30:track
+     0/15 alt 5 knots (freeze 512+ramp)                  3:texture/stick 5:stick 5.5:stick 6:stick 7:stick 8:stick 10:stick/track 11.9:stick/track 12.5:stick/deadzone/track 15:stick/track 17:stick/track 19:stick/track 22:stick/track 26:stick/track 30:track
+     1/15 C1 rev 1 (REFUTED; reference)                  3:texture/stick 5:stick 5.5:stick 6:stick 7:stick 8:PASS 10:stick 11.9:stick/track 12.5:stick/track 15:stick/track 17:stick/track 19:stick/track 22:texture 26:texture/stick 30:texture/stick

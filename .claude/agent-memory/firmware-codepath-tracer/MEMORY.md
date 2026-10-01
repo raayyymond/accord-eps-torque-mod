@@ -2,6 +2,12 @@
 
 One line per entry. Detail lives in the linked file; open it before relying on any claim here.
 
+## Task rates and the steering angle (2026-09-30)
+
+- 🛑🛑★★★★★ [The PID's feedback gp-0x6a56 is a 100 Hz HOLD — FUN_0003f776's only call site 0x22de2 is in slot-4 FUN_00022ca0; corrects TRACE-2026-09-10 "no staleness"](reference_accord_gp6a56_pid_feedback_is_a_100hz_hold.md)
+- 🛑🛑★★★★★ [gp-0x6a00 (angle, 0.1°) is a 100 Hz hold, age 1–10 ms at the PID; inputs gp-0x6cc4/gp-0x69ca fresh at 1 kHz (FUN_0003bd7c @0x2224a); formula, VGR correction ×1.155, sentinels, cave encodings](reference_accord_gp6a00_angle_is_a_100hz_hold_inputs_fresh_at_1khz.md)
+- 🛑★★★★★ [gp-0x679c IS FUN_000413ae's state byte; mode 3 = gp-0x67fe==2 + valid baseline, not sticky; 0x14A b4 bit1 = 7 in 2.3 M frames ⇒ gp-0x67fe is 2 when driving; 5 writers of gp-0x67fe](reference_accord_gp679c_mode3_semantics_and_wire_bit.md)
+
 ## The LKAS rate PID — `FUN_00028ea6`, body `0x28EA6–0x2A30D`
 
 - 🛑🛑★★★★★ [Full decode: PID on steering-rate error, setpoint from CAN-0xE4 via a variant table, Ki ships ZERO; driver override is two mechanisms, both unsatisfiable on V112/V268](reference_accord_fun28ea6_lkas_rate_pid_full_decode.md)
@@ -15,6 +21,9 @@ One line per entry. Detail lives in the linked file; open it before relying on a
 - 🛑🛑★★★★★ [`gp-0x6807` gates whether gp-0x69b0 can advance — corrects "STEER_STATUS=4 is report-only"; Ghidra mis-bounds the function at a mid-function dispose](reference_accord_gp6807_gates_gp69b0_engagement_ramp.md)
 - 🛑★★★★★ [gp-0x6a34 publishes rectified |fb| into a gp-0x680a==1 lane via a third LERP; self-caught error — the knot-walk after rectification is keyed by speed, not this value](reference_accord_gp6a34_publishes_rectified_fb_to_a_gated_lane.md)
 
+- 🛑🛑★★★★★ [ANGLE LOOP, in place: the map setpoint is an 8-bit idx (1.61 deg/step, unusable); x disp 0x28F4C + add 0x28FA4 + `ld.h -0x69ae` at 0x29D6A + −Kd·rate at 0x29EDE/EE0 give E=16(θsp−θ) and D on rate; speed-Kp/I-bleed/validity need a cave](reference_accord_angle_loop_in_place_edit_set_and_8bit_setpoint.md)
+- 🛑🛑★★★★★ [0xE4 fault sentinel 0x7FFF → idx 240 → full-rail lane torque fading 2.048 s on V293–V295 (sign-hold gate passes it only same-sign); I is never reset during an override latch with the request held](reference_accord_0xe4_fault_sentinel_rails_the_lane_on_v293_plus.md)
+
 ## The feedback lag filter — `0x28F4C–0x28FBE`, cells `0xC63E8`/`0xC63EA`
 
 - 🛑🛑★★★★★ [Byte-exact: state gp-0x3d30 is 32-BIT, `a` is `ld.h` SIGNED (cap 32767), two SEPARATE `sar 0xa` floors; GATE 1 passes by Ghidra AND a controlled byte scan, empty set-difference](reference_accord_fb_lag_filter_bytes_and_gate1_private.md)
@@ -23,6 +32,9 @@ One line per entry. Detail lives in the linked file; open it before relying on a
 - 🛑🛑★★★★★ [Both PID filters are a one-pole IIR on an INCREMENT whose output is the TWO-SAMPLE SUM; the lag has >>5 (DC 0.990), the feedback EMA does NOT (DC 30.89); FUN_000428d4 is a live >10 Hz reversal detector](reference_accord_lkas_pid_filter_form_two_sample_sum_and_oscillation_detector.md)
 - 🛑🛑★★★★★ [GATE 1 for the output-lag poles 0xC63EC/EE: 0x2A504 is `dispose …,lp`, a RETURN, so the duplicate block is unreachable — the residual caveat is CLOSED](reference_accord_gate1_pole_cells_unreachable_dispose_is_a_return.md)
 - 🛑🛑★★★★★ [Pole-cell GATE-1 census: fb poles PRIVATE; output-lag poles private-in-effect; the 2nd reader at 0x2A892/2A8A2 is in a duplicate orphan; Kd slot 7 is FLAT](reference_accord_lkas_pid_pole_cell_gate1_census_2a508_second_reader.md)
+
+- 🛑🛑★★★★★ [0xE4 RX = slot 3 (prio 3, 200 Hz, cooperative) ⇒ 0-tick preemption; timeout 500 ms → sentinel at 510–514 ms, last cmd HELD; 0x2913A dominates 0x29A50; F181 = 0x13100; 6803==2 = 0.1 s ramp + fade arm 0xCBAE4](reference_accord_e4_rx_task_timeout_dominance_version_and_6803_arm.md)
+- 🛑🛑★★★★★ [0xE4 sentinel pulse IS DELIVERED (fault = ST 3, DTC 0x65 mask 0); ST 7 is STICKY to reset; gp+0x6400 b3 is coding; guard fix 0x29A56 da05→b205 (+0x29A50 cmovne r0,r27,r8)](reference_accord_sentinel_delivered_st7_sticky_and_guard_block_edits.md)
 
 ## Hooks and caves on this path
 
@@ -79,7 +91,13 @@ One line per entry. Detail lives in the linked file; open it before relying on a
 - 🛑★★★★★ [ld.hu is opcode 0x3E/0x3F, not 0x3C/0x3D — a ld.bu-only scanner gives false zeros on halfword cals](reference_accord_v850_load_opcode_map_ldhu_0x3e.md)
 - 🛑★★★★ [An operand-text hit on a displacement can land on a different physical byte when a function uses its own non-gp base register — check the base register, not just the displacement](reference_accord_operand_text_search_false_positive_wrong_base_register.md)
 
+## Angle-loop cave inputs and homes (2026-09-30, V295)
+
+- 🛑🛑★★★★★ [Speed = ld.hu gp-0x6a5e (64 ct/km/h, 100 Hz, gate on gp-0x67f4 NOT r29); no callable LERP helper; |τ| at gp-0x4f68; flight-proven RAM gp-0x6c44..39 / gp-0x6d74; 1048 B free at 0xC4BD8 → CRC 0xC4FFC only](reference_accord_angle_loop_cave_inputs_speed_torque_ram_homes_v295.md)
+
 ## Process feedback
+
+- 🛑★★★★ [Parallel subagents share ONE scratchpad — another agent's gpscan.py shadowed mine; use a private subdir + unique module names](feedback_shared_scratchpad_use_a_private_subdir.md)
 
 - 🛑★★★★★ [Grep kit memory for the address BEFORE calling a function dead — a passing scanner control proves the scanner, not the claim](feedback_check_kit_memory_before_calling_a_function_dead.md)
 - 🛑★★★★★ [Verify TCB "stack pointer/base" labels against the boot disasm, not against each other — the real stack is gp-0xC000..gp-0x86E4](feedback_verify_tcb_stack_labels_against_boot_disasm_not_each_other.md)

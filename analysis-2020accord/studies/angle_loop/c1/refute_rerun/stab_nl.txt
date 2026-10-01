@@ -1,0 +1,27 @@
+# RE-RUN on C1 of analysis-2020accord\studies\angle_loop\refute_stability\stab_nl.py   (C1 table [(714, 557, 334), (1843, 649, 0), (2765, 649, 4537), (3917, 1925, 571), (6198, 2243, 0), (65535, 2243, 0)], Kp_base 225, Ki_base 100, Kd 16, freeze |tq|>512 + ramp)
+A. 2 deg setpoint step at 1 s, held; v = 12 m/s. overshoot (deg), error zero-crossings in 3 s, T rms 1.6-3 Hz and 4-6 Hz after the step
+   nominal      v  11.9: overshoot  0.14 deg, crossings   1, T 1.6-3 Hz    5.1, 4-6 Hz    2.2, peak |T| 110
+   nominal      v  12.5: overshoot  0.12 deg, crossings   1, T 1.6-3 Hz    5.6, 4-6 Hz    2.6, peak |T| 132
+   J_hi         v  11.9: overshoot  0.20 deg, crossings   1, T 1.6-3 Hz    6.5, 4-6 Hz    2.4, peak |T| 119
+   J_hi *b/1.8  v  11.9: overshoot  0.41 deg, crossings   1, T 1.6-3 Hz    7.2, 4-6 Hz    2.4, peak |T| 116
+   J_hi         v  12.5: overshoot  0.15 deg, crossings   1, T 1.6-3 Hz    7.3, 4-6 Hz    2.9, peak |T| 141
+   J_hi *b/1.8  v  12.5: overshoot  0.40 deg, crossings   1, T 1.6-3 Hz    8.0, 4-6 Hz    3.0, peak |T| 138
+   b_lo         v  11.9: overshoot  0.01 deg, crossings   1, T 1.6-3 Hz    3.0, 4-6 Hz    2.2, peak |T| 104
+   b_lo         v  12.5: overshoot  0.02 deg, crossings   1, T 1.6-3 Hz    3.5, 4-6 Hz    2.6, peak |T| 124
+
+B. highway, motor-side damping at the 'mechanical' value (b = 5, J 0.2, nominal k and friction): 0.3 deg step at 1 s; does a 4-6 Hz oscillation grow / persist?
+   v 19.0 b  21.82: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     29 | wheel p-p 4-8 s 0.000 deg
+   v 19.0 b  12.12: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     21 | wheel p-p 4-8 s 0.000 deg
+   v 19.0 b   9.50: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     19 | wheel p-p 4-8 s 0.000 deg
+   v 19.0 b   7.00: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     17 | wheel p-p 4-8 s 0.000 deg
+   v 19.0 b   5.00: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     16 | wheel p-p 4-8 s 0.000 deg
+   v 26.0 b  25.89: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     26 | wheel p-p 4-8 s 0.000 deg
+   v 26.0 b  14.38: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     22 | wheel p-p 4-8 s 0.000 deg
+   v 26.0 b   9.50: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     18 | wheel p-p 4-8 s 0.000 deg
+   v 26.0 b   7.00: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     14 | wheel p-p 4-8 s 0.000 deg
+   v 26.0 b   5.00: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     16 | wheel p-p 4-8 s 0.000 deg
+   v 30.0 b  26.41: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     26 | wheel p-p 4-8 s 0.000 deg
+   v 30.0 b  14.67: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     22 | wheel p-p 4-8 s 0.000 deg
+   v 30.0 b   9.50: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     19 | wheel p-p 4-8 s 0.000 deg
+   v 30.0 b   7.00: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     13 | wheel p-p 4-8 s 0.000 deg
+   v 30.0 b   5.00: T rms 4-6 Hz in 4-8 s     0.0 | peak |T| 4-8 s     16 | wheel p-p 4-8 s 0.000 deg

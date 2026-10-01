@@ -1,0 +1,130 @@
+
+===== member F_hi
+  -- STRICT
+    0/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:texture/stick/deadzone 5:stick 8:stick 12.5:stick 19:texture 26:texture/track 30:texture/track
+    0/7  C0-fI0.52 (same, Ki base 188)                                3:texture/stick/deadzone 5:stick 8:stick 12.5:stick 19:texture 26:texture 30:texture/track
+    0/7  C0nb = C0 without the bleed                                  3:texture/stick/deadzone 5:stick 8:stick 12.5:stick 19:texture 26:texture/track 30:texture/track
+  -- LINE-ONLY
+    1/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick/deadzone 5:stick 8:stick 12.5:stick 19:PASS 26:track 30:track
+    2/7  C0-fI0.52 (same, Ki base 188)                                3:stick/deadzone 5:stick 8:stick 12.5:stick 19:PASS 26:PASS 30:track
+    1/7  C0nb = C0 without the bleed                                  3:stick/deadzone 5:stick 8:stick 12.5:stick 19:PASS 26:track 30:track
+
+===== member F_lo
+  -- STRICT
+    3/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:PASS 8:PASS 12.5:PASS 19:texture 26:texture 30:texture
+    3/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:PASS 8:PASS 12.5:PASS 19:texture 26:texture 30:texture
+    3/7  C0nb = C0 without the bleed                                  3:stick 5:PASS 8:PASS 12.5:PASS 19:texture 26:texture 30:texture
+  -- LINE-ONLY
+    6/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:PASS 8:PASS 12.5:PASS 19:PASS 26:PASS 30:PASS
+    6/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:PASS 8:PASS 12.5:PASS 19:PASS 26:PASS 30:PASS
+    6/7  C0nb = C0 without the bleed                                  3:stick 5:PASS 8:PASS 12.5:PASS 19:PASS 26:PASS 30:PASS
+
+===== member J_hi
+  -- STRICT
+    1/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:texture/stick 5:stick 8:PASS 12.5:stick 19:texture 26:texture/track 30:texture/track
+    2/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture 30:texture/track
+    2/7  C0nb = C0 without the bleed                                  3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture/track 30:texture/track
+  -- LINE-ONLY
+    2/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:PASS 12.5:stick 19:PASS 26:track 30:track
+    4/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:PASS 30:track
+    3/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:track 30:track
+
+===== member J_hi2
+  -- STRICT
+    1/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:texture/stick/deadzone 5:stick/deadzone 8:deadzone/track 12.5:PASS 19:texture 26:texture/track 30:texture/track
+    1/7  C0-fI0.52 (same, Ki base 188)                                3:texture/stick/deadzone 5:stick/deadzone 8:deadzone/track 12.5:PASS 19:texture 26:texture 30:texture/track
+    1/7  C0nb = C0 without the bleed                                  3:texture/stick/deadzone 5:stick/deadzone 8:deadzone/track 12.5:PASS 19:texture 26:texture/track 30:texture/track
+  -- LINE-ONLY
+    2/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick/deadzone 5:stick/deadzone 8:deadzone/track 12.5:PASS 19:PASS 26:track 30:track
+    3/7  C0-fI0.52 (same, Ki base 188)                                3:stick/deadzone 5:stick/deadzone 8:deadzone/track 12.5:PASS 19:PASS 26:PASS 30:track
+    2/7  C0nb = C0 without the bleed                                  3:stick/deadzone 5:stick/deadzone 8:deadzone/track 12.5:PASS 19:PASS 26:track 30:track
+
+===== member J_lo
+  -- STRICT
+    0/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:texture/stick 5:stick 8:stick 12.5:stick 19:texture 26:texture 30:texture/track
+    0/7  C0-fI0.52 (same, Ki base 188)                                3:texture/stick 5:stick 8:stick 12.5:stick 19:texture 26:texture 30:texture
+    0/7  C0nb = C0 without the bleed                                  3:texture/stick 5:stick 8:stick 12.5:stick 19:texture 26:texture 30:texture/track
+  -- LINE-ONLY
+    2/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:stick 12.5:stick 19:PASS 26:PASS 30:track
+    3/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:stick 12.5:stick 19:PASS 26:PASS 30:PASS
+    2/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:stick 12.5:stick 19:PASS 26:PASS 30:track
+
+===== member b_hi
+  -- STRICT
+    1/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:texture/stick 5:stick 8:PASS 12.5:stick 19:texture 26:texture/track 30:texture/track
+    1/7  C0-fI0.52 (same, Ki base 188)                                3:texture/stick 5:stick 8:PASS 12.5:stick 19:texture 26:texture/track 30:texture/track
+    1/7  C0nb = C0 without the bleed                                  3:texture/stick 5:stick 8:PASS 12.5:stick 19:texture 26:texture/track 30:texture/track
+  -- LINE-ONLY
+    2/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:PASS 12.5:stick 19:PASS 26:track 30:track
+    2/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:stick 19:PASS 26:track 30:track
+    2/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:PASS 12.5:stick 19:PASS 26:track 30:track
+
+===== member b_lo
+  -- STRICT
+    2/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:PASS 12.5:PASS 19:texture/track 26:texture 30:texture
+    2/7  C0-fI0.52 (same, Ki base 188)                                3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture/track 26:texture 30:texture
+    2/7  C0nb = C0 without the bleed                                  3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture/track 26:texture 30:texture
+  -- LINE-ONLY
+    4/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:PASS 12.5:PASS 19:track 26:PASS 30:PASS
+    4/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:PASS 19:track 26:PASS 30:PASS
+    4/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:PASS 12.5:PASS 19:track 26:PASS 30:PASS
+
+===== member light_b
+  -- STRICT
+    0/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:stick 12.5:stable/texture/stick 19:stable/texture/stick/deadzone/track/hold 26:stable/texture/stick/deadzone/track/hold 30:stable/texture/stick/deadzone/track/hold
+    0/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:stick 12.5:stable/texture/stick 19:stable/texture/stick/deadzone/track/hold 26:stable/texture/stick/deadzone/track/hold 30:stable/texture/deadzone/track/hold
+    0/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:stick 12.5:stable/texture/stick 19:stable/texture/stick/deadzone/track/hold 26:stable/texture/stick/deadzone/hold 30:stable/texture/stick/deadzone/track/hold
+  -- LINE-ONLY
+    0/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:stick 12.5:stable/stick 19:stable/stick/deadzone/track/hold 26:stable/stick/deadzone/track/hold 30:stable/stick/deadzone/track/hold
+    0/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:stick 12.5:stable/stick 19:stable/stick/deadzone/track/hold 26:stable/stick/deadzone/track/hold 30:stable/deadzone/track/hold
+    0/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:stick 12.5:stable/stick 19:stable/stick/deadzone/track/hold 26:stable/stick/deadzone/hold 30:stable/stick/deadzone/track/hold
+
+===== member ms_free
+  -- STRICT
+    1/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:texture/stick 5:stick 8:PASS 12.5:stable/deadzone/track 19:texture 26:texture/track 30:texture/track
+    1/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:stable 19:texture 26:texture 30:texture/track
+    1/7  C0nb = C0 without the bleed                                  3:texture/stick 5:stick 8:PASS 12.5:stable/deadzone/track 19:texture 26:texture/track 30:texture/track
+  -- LINE-ONLY
+    2/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:PASS 12.5:stable/deadzone/track 19:PASS 26:track 30:track
+    3/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:stable 19:PASS 26:PASS 30:track
+    2/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:PASS 12.5:stable/deadzone/track 19:PASS 26:track 30:track
+
+===== member nominal+mode13Hz
+  -- STRICT
+    2/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture 30:texture
+    1/7  C0-fI0.52 (same, Ki base 188)                                3:texture/stick 5:stick 8:PASS 12.5:stick 19:texture 26:texture 30:texture
+    2/7  C0nb = C0 without the bleed                                  3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture 30:texture
+  -- LINE-ONLY
+    5/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:PASS 30:PASS
+    4/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:stick 19:PASS 26:PASS 30:PASS
+    5/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:PASS 30:PASS
+
+===== member nominal+mode20Hz
+  -- STRICT
+    2/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture 30:texture/track
+    1/7  C0-fI0.52 (same, Ki base 188)                                3:texture/stick 5:stick 8:PASS 12.5:stick 19:texture 26:texture 30:texture
+    2/7  C0nb = C0 without the bleed                                  3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture 30:texture/track
+  -- LINE-ONLY
+    4/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:PASS 30:track
+    4/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:stick 19:PASS 26:PASS 30:PASS
+    4/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:PASS 30:track
+
+===== member tau0
+  -- STRICT
+    2/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture 30:texture
+    1/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:stick 19:texture 26:texture 30:texture
+    2/7  C0nb = C0 without the bleed                                  3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture 30:texture
+  -- LINE-ONLY
+    5/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:PASS 30:PASS
+    4/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:stick 19:PASS 26:PASS 30:PASS
+    5/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:PASS 30:PASS
+
+===== member tau6
+  -- STRICT
+    2/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture 30:texture/track
+    2/7  C0-fI0.52 (same, Ki base 188)                                3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture 30:texture
+    2/7  C0nb = C0 without the bleed                                  3:texture/stick 5:stick 8:PASS 12.5:PASS 19:texture 26:texture 30:texture/track
+  -- LINE-ONLY
+    4/7  C0 Kd16 fI0.55 DB0 ICL4096 Kp_eff 450/500/600/1000/2500/3000 3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:PASS 30:track
+    5/7  C0-fI0.52 (same, Ki base 188)                                3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:PASS 30:PASS
+    4/7  C0nb = C0 without the bleed                                  3:stick 5:stick 8:PASS 12.5:PASS 19:PASS 26:PASS 30:track

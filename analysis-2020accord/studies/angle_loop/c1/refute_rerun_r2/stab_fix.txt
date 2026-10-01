@@ -1,0 +1,13 @@
+# RE-RUN on C1 rev 2 of analysis-2020accord\studies\angle_loop\refute_stability\stab_fix.py (C0-base literals substituted: [('kd=16', 'kd=20', 1), ('450*S.G_of_v(v)/256', '112*S.G_of_v(v)/256', 1), ('450*best/256', '112*best/256', 1), ('Kpe*256/450', 'Kpe*256/112', 1), ('range(120, 1200, 4)', 'range(482, 4821, 8)', 1)]; table [(714, 940, 1306), (1843, 1300, -4025), (2304, 847, -1484), (2707, 701, 1636), (3571, 1046, 2728), (4032, 1353, 1292), (6198, 2036, 0), (65535, 2036, 0)], Kp_base 112, Ki_base 56)
+max G (Kp_eff) keeping PM >= 45 on J_hi, and PM >= 30 / 45 on J_hi*b/1.8, at the trough speeds
+  v  10.5 C0 G 805 (Kp_eff 352) | J_hi PM45: G<=1938 (Kp_eff 848) | J_hi*b/1.8 PM30: G<=1610 (Kp_eff 704) | J_hi*b/1.8 PM45: G<=1186 (Kp_eff 519)
+  v  11.0 C0 G 763 (Kp_eff 334) | J_hi PM45: G<=1970 (Kp_eff 862) | J_hi*b/1.8 PM30: G<=1642 (Kp_eff 718) | J_hi*b/1.8 PM45: G<=1202 (Kp_eff 526)
+  v  11.5 C0 G 721 (Kp_eff 315) | J_hi PM45: G<=2010 (Kp_eff 879) | J_hi*b/1.8 PM30: G<=1674 (Kp_eff 732) | J_hi*b/1.8 PM45: G<=1226 (Kp_eff 536)
+  v  11.9 C0 G 714 (Kp_eff 312) | J_hi PM45: G<=2042 (Kp_eff 893) | J_hi*b/1.8 PM30: G<=1698 (Kp_eff 743) | J_hi*b/1.8 PM45: G<=1242 (Kp_eff 543)
+  v  12.5 C0 G 770 (Kp_eff 337) | J_hi PM45: G<=2522 (Kp_eff 1103) | J_hi*b/1.8 PM30: G<=2034 (Kp_eff 890) | J_hi*b/1.8 PM45: G<=1506 (Kp_eff 659)
+
+highway: b-scale threshold for PM 0/30/45 at reduced highway gains (J 0.2, nominal k)
+  v 26.0 Kp_eff 3000 | PM0: b>=5.07 (0.20x) | PM30: b>=9.18 (0.35x) | PM45: b>=12.96 (0.50x)
+  v 26.0 Kp_eff 2500 | PM0: b>=4.16 (0.16x) | PM30: b>=7.59 (0.29x) | PM45: b>=10.39 (0.40x)
+  v 26.0 Kp_eff 2000 | PM0: b>=3.20 (0.12x) | PM30: b>=6.00 (0.23x) | PM45: b>=7.97 (0.31x)
+  v 26.0 Kp_eff 1500 | PM0: b>=2.17 (0.08x) | PM30: b>=4.39 (0.17x) | PM45: b>=5.72 (0.22x)

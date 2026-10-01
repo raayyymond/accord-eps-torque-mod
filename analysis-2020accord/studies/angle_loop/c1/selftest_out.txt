@@ -1,0 +1,18 @@
+CHECK 1  LaneC1(cave off, no I policy) vs harness_time ORIGINAL LaneVec, 40000 random ticks: 0 mismatches
+CHECK 2  LaneC1F(C0 table, 450/199, bleed 1024) vs fric_lib.LaneC0 (C0 listing), 40000 ticks: 0 mismatches
+CHECK 3  Honda exc with r6 = 0 (freeze): nonzero for 0 of 2070 DB values ; Honda exc vs mirror dead-zone formula: 0 mismatches of 20000
+CHECK 4  e5 for a +1 / -1 LSB error   (C0: G, e5+, e5-  |  C1: G, e5+, e5-)
+         v   0.0  C0 G   256 e5 +0/-1   |  C1 G   557 e5 +1/-2
+         v   3.0  C0 G   256 e5 +0/-1   |  C1 G   557 e5 +1/-2
+         v   5.0  C0 G   284 e5 +0/-1   |  C1 G   592 e5 +1/-2
+         v   8.0  C0 G   341 e5 +0/-1   |  C1 G   649 e5 +1/-2
+         v  10.0  C0 G   442 e5 +0/-1   |  C1 G   649 e5 +1/-2
+         v  11.5  C0 G   518 e5 +1/-2   |  C1 G   649 e5 +1/-2
+         v  12.0  C0 G   543 e5 +1/-2   |  C1 G   649 e5 +1/-2
+         v  12.5  C0 G   569 e5 +1/-2   |  C1 G   776 e5 +1/-2
+         v  15.0  C0 G   896 e5 +1/-2   |  C1 G  1414 e5 +2/-3
+         v  19.0  C0 G  1421 e5 +2/-3   |  C1 G  1989 e5 +3/-4
+         v  26.0  C0 G  1706 e5 +3/-4   |  C1 G  2213 e5 +4/-5
+         v  30.0  C0 G  1707 e5 +3/-4   |  C1 G  2243 e5 +4/-5
+         C1 speeds with e5 = 0 for +1 LSB: NONE
+CHECK 5  C1 walk - exact LERP over 0..65535: min -1.02 max 0.06 ; monotone True ; G at knots [557, 649, 649, 1925, 2242] ; G(0) 557 G(65535) 2243

@@ -1,0 +1,81 @@
+GOAL TRACKING METRIC (c1r2_trackmetric.slope: the kit scorer's slope through r71b's weighted desired-lateral-accel spectrum; bar 0.95-1.05) | turn-hold |T_ref(0.02 Hz)| (bar >= 0.90) | hard-turn |T_ref| peak 1.6-3 Hz
+--- P1: D2a exactly as the panel fitted it (Kd 34, 7 knots)
+  v   8.0 G  1526: metric min 1.000 (J1.0) max 1.005 | hold min 1.000 | Tr1.6-3 max 1.64 (b_lo*J_hi) nominal 0.99
+  v   9.0 G  1076: metric min 0.998 (J1.0) max 1.008 | hold min 1.000 | Tr1.6-3 max 1.05 (b_lo*J_hi) nominal 0.64
+  v  10.0 G   627: metric min 0.986 (ms_free) max 1.009 | hold min 1.000 | Tr1.6-3 max 0.58 (b_lo*J_hi) nominal 0.31
+  v  11.0 G   576: metric min 0.978 (ms_free) max 1.010 | hold min 0.999 | Tr1.6-3 max 0.50 (b_lo*J_hi) nominal 0.25
+  v  11.9 G   560: metric min 0.971 (ms_free) max 1.011 | hold min 0.999 | Tr1.6-3 max 0.47 (b_lo*J_hi) nominal 0.22
+  v  12.5 G   654: metric min 0.970 (ms_free) max 1.004 | hold min 0.999 | Tr1.6-3 max 0.66 (b_q*J_hi) nominal 0.23
+  v  13.5 G   809: metric min 0.969 (ms_free) max 0.996 | hold min 0.999 | Tr1.6-3 max 0.83 (b_q*J1.0+h10) nominal 0.24
+  v  15.0 G  1044: metric min 0.965 (b_q) max 0.985 | hold min 0.999 | Tr1.6-3 max 1.67 (b_q*J1.0+h10) nominal 0.26
+  v  17.0 G  1370: metric min 0.961 (b_q) max 0.980 | hold min 0.998 | Tr1.6-3 max 1.88 (b_q*J1.0+h10) nominal 0.27
+  v  19.0 G  1560: metric min 0.972 (b_q) max 0.992 | hold min 0.999 | Tr1.6-3 max 2.01 (b_q*J1.0+h10) nominal 0.30
+  v  22.0 G  1776: metric min 0.987 (b_q*J1.0) max 1.002 | hold min 0.999 | Tr1.6-3 max 2.01 (b_q*J1.0+h10) nominal 0.33
+  v  26.0 G  2063: metric min 0.992 (b_q*J1.0) max 1.009 | hold min 1.000 | Tr1.6-3 max 2.02 (b_q*J1.0+h10) nominal 0.37
+  v  26.9 G  2128: metric min 0.993 (b_q*J1.0) max 1.010 | hold min 1.000 | Tr1.6-3 max 2.03 (b_q*J1.0+h10) nominal 0.37
+  v  30.0 G  2129: metric min 0.993 (b_q*J1.0) max 1.010 | hold min 1.000 | Tr1.6-3 max 2.03 (b_q*J1.0+h10) nominal 0.37
+  => P1: goal metric over every member and speed >= 8: 0.961 .. 1.011 (PASS 0.95-1.05); turn-hold min 0.998 (PASS); |T_ref| 1.6-3 Hz max 2.03
+--- P2: Kd 34, 6-knot refit under D2a's envelope (no 15.5 m/s knot): -6 B
+  v   8.0 G  1526: metric min 1.000 (J1.0) max 1.005 | hold min 1.000 | Tr1.6-3 max 1.64 (b_lo*J_hi) nominal 0.99
+  v   9.0 G  1076: metric min 0.998 (J1.0) max 1.008 | hold min 1.000 | Tr1.6-3 max 1.05 (b_lo*J_hi) nominal 0.64
+  v  10.0 G   627: metric min 0.986 (ms_free) max 1.009 | hold min 1.000 | Tr1.6-3 max 0.58 (b_lo*J_hi) nominal 0.31
+  v  11.0 G   576: metric min 0.978 (ms_free) max 1.010 | hold min 0.999 | Tr1.6-3 max 0.50 (b_lo*J_hi) nominal 0.25
+  v  11.9 G   560: metric min 0.971 (ms_free) max 1.011 | hold min 0.999 | Tr1.6-3 max 0.47 (b_lo*J_hi) nominal 0.22
+  v  12.5 G   654: metric min 0.970 (ms_free) max 1.004 | hold min 0.999 | Tr1.6-3 max 0.66 (b_q*J_hi) nominal 0.23
+  v  13.5 G   811: metric min 0.969 (ms_free) max 0.996 | hold min 0.999 | Tr1.6-3 max 0.84 (b_q*J1.0+h10) nominal 0.25
+  v  15.0 G  1046: metric min 0.965 (b_q) max 0.985 | hold min 0.999 | Tr1.6-3 max 1.68 (b_q*J1.0+h10) nominal 0.26
+  v  17.0 G  1359: metric min 0.961 (b_q) max 0.979 | hold min 0.998 | Tr1.6-3 max 1.85 (b_q*J1.0+h10) nominal 0.27
+  v  19.0 G  1548: metric min 0.971 (b_q) max 0.991 | hold min 0.999 | Tr1.6-3 max 1.98 (b_q*J1.0+h10) nominal 0.30
+  v  22.0 G  1769: metric min 0.987 (b_q*J1.0) max 1.002 | hold min 0.999 | Tr1.6-3 max 2.00 (b_q*J1.0+h10) nominal 0.33
+  v  26.0 G  2063: metric min 0.992 (b_q*J1.0) max 1.009 | hold min 1.000 | Tr1.6-3 max 2.02 (b_q*J1.0+h10) nominal 0.37
+  v  26.9 G  2130: metric min 0.993 (b_q*J1.0) max 1.010 | hold min 1.000 | Tr1.6-3 max 2.03 (b_q*J1.0+h10) nominal 0.37
+  v  30.0 G  2130: metric min 0.993 (b_q*J1.0) max 1.010 | hold min 1.000 | Tr1.6-3 max 2.03 (b_q*J1.0+h10) nominal 0.37
+  => P2: goal metric over every member and speed >= 8: 0.961 .. 1.011 (PASS 0.95-1.05); turn-hold min 0.998 (PASS); |T_ref| 1.6-3 Hz max 2.03
+--- P5: Kd 34, 5-knot refit under D2a's envelope (no 15.5 / 17.5 m/s knots): -12 B
+  v   8.0 G  1526: metric min 1.000 (J1.0) max 1.005 | hold min 1.000 | Tr1.6-3 max 1.64 (b_lo*J_hi) nominal 0.99
+  v   9.0 G  1076: metric min 0.998 (J1.0) max 1.008 | hold min 1.000 | Tr1.6-3 max 1.05 (b_lo*J_hi) nominal 0.64
+  v  10.0 G   627: metric min 0.986 (ms_free) max 1.009 | hold min 1.000 | Tr1.6-3 max 0.58 (b_lo*J_hi) nominal 0.31
+  v  11.0 G   580: metric min 0.978 (ms_free) max 1.010 | hold min 0.999 | Tr1.6-3 max 0.51 (b_lo*J_hi) nominal 0.25
+  v  11.9 G   560: metric min 0.971 (ms_free) max 1.011 | hold min 0.999 | Tr1.6-3 max 0.47 (b_lo*J_hi) nominal 0.22
+  v  12.5 G   623: metric min 0.967 (ms_free) max 1.002 | hold min 0.999 | Tr1.6-3 max 0.62 (b_q*J_hi) nominal 0.22
+  v  13.5 G   728: metric min 0.962 (ms_free) max 0.991 | hold min 0.999 | Tr1.6-3 max 0.69 (b_q*J1.0+h10) nominal 0.22
+  v  15.0 G   886: metric min 0.955 (b_q) max 0.975 | hold min 0.998 | Tr1.6-3 max 1.17 (b_q*J1.0+h10) nominal 0.22
+  v  17.0 G  1096: metric min 0.946 (b_q) max 0.964 | hold min 0.998 | Tr1.6-3 max 1.27 (b_q*J1.0+h10) nominal 0.22
+  v  19.0 G  1306: metric min 0.963 (b_q) max 0.983 | hold min 0.999 | Tr1.6-3 max 1.45 (b_q*J1.0+h10) nominal 0.25
+  v  22.0 G  1621: metric min 0.985 (b_q*J1.0) max 1.001 | hold min 0.999 | Tr1.6-3 max 1.70 (b_q*J1.0+h10) nominal 0.30
+  v  26.0 G  2040: metric min 0.992 (b_q*J1.0) max 1.009 | hold min 1.000 | Tr1.6-3 max 1.98 (b_q*J1.0+h10) nominal 0.36
+  v  26.9 G  2135: metric min 0.993 (b_q*J1.0) max 1.010 | hold min 1.000 | Tr1.6-3 max 2.04 (b_q*J1.0+h10) nominal 0.37
+  v  30.0 G  2135: metric min 0.993 (b_q*J1.0) max 1.010 | hold min 1.000 | Tr1.6-3 max 2.04 (b_q*J1.0+h10) nominal 0.37
+  => P5: goal metric over every member and speed >= 8: 0.946 .. 1.011 (FAIL 0.95-1.05); turn-hold min 0.998 (PASS); |T_ref| 1.6-3 Hz max 2.04
+--- F1: B0r exactly as the panel fitted it (held-rate D Kd 20, 7 knots)
+  v   8.0 G  1433: metric min 0.999 (J1.0) max 1.006 | hold min 1.000 | Tr1.6-3 max 1.51 (b_lo*J_hi) nominal 0.93
+  v   9.0 G  1073: metric min 0.998 (J1.0) max 1.008 | hold min 1.000 | Tr1.6-3 max 1.04 (b_lo*J_hi) nominal 0.63
+  v  10.0 G   715: metric min 0.990 (ms_free) max 1.010 | hold min 1.000 | Tr1.6-3 max 0.71 (b_lo*J_hi) nominal 0.36
+  v  11.0 G   615: metric min 0.981 (ms_free) max 1.011 | hold min 1.000 | Tr1.6-3 max 0.55 (b_lo*J_hi) nominal 0.27
+  v  11.9 G   561: metric min 0.971 (ms_free) max 1.011 | hold min 0.999 | Tr1.6-3 max 0.48 (b_lo*J_hi) nominal 0.22
+  v  12.5 G   645: metric min 0.969 (ms_free) max 1.003 | hold min 0.999 | Tr1.6-3 max 0.65 (b_q*J_hi) nominal 0.23
+  v  13.5 G   784: metric min 0.967 (ms_free) max 0.994 | hold min 0.999 | Tr1.6-3 max 0.87 (b_q*J1.0+h10) nominal 0.24
+  v  15.0 G   995: metric min 0.962 (b_q) max 0.982 | hold min 0.999 | Tr1.6-3 max 1.62 (b_q*J1.0+h10) nominal 0.25
+  v  17.0 G  1299: metric min 0.958 (b_q) max 0.977 | hold min 0.998 | Tr1.6-3 max 1.75 (b_q*J1.0+h10) nominal 0.26
+  v  19.0 G  1487: metric min 0.969 (b_q) max 0.990 | hold min 0.999 | Tr1.6-3 max 1.87 (b_q*J1.0+h10) nominal 0.29
+  v  22.0 G  1706: metric min 0.986 (b_q*J1.0) max 1.002 | hold min 0.999 | Tr1.6-3 max 1.88 (b_q*J1.0+h10) nominal 0.32
+  v  26.0 G  1998: metric min 0.992 (b_q*J1.0) max 1.009 | hold min 1.000 | Tr1.6-3 max 1.91 (b_q*J1.0+h10) nominal 0.35
+  v  26.9 G  2063: metric min 0.993 (b_q*J1.0) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.92 (b_q*J1.0+h10) nominal 0.36
+  v  30.0 G  2064: metric min 0.993 (b_q*J1.0) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.92 (b_q*J1.0+h10) nominal 0.36
+  => F1: goal metric over every member and speed >= 8: 0.958 .. 1.011 (PASS 0.95-1.05); turn-hold min 0.998 (PASS); |T_ref| 1.6-3 Hz max 1.92
+--- F2: held-rate D Kd 20, 6-knot refit under B0r's envelope (no 15.5 m/s knot): -6 B
+  v   8.0 G  1433: metric min 0.999 (J1.0) max 1.006 | hold min 1.000 | Tr1.6-3 max 1.51 (b_lo*J_hi) nominal 0.93
+  v   9.0 G  1073: metric min 0.998 (J1.0) max 1.008 | hold min 1.000 | Tr1.6-3 max 1.04 (b_lo*J_hi) nominal 0.63
+  v  10.0 G   715: metric min 0.990 (ms_free) max 1.010 | hold min 1.000 | Tr1.6-3 max 0.71 (b_lo*J_hi) nominal 0.36
+  v  11.0 G   615: metric min 0.981 (ms_free) max 1.011 | hold min 1.000 | Tr1.6-3 max 0.55 (b_lo*J_hi) nominal 0.27
+  v  11.9 G   561: metric min 0.971 (ms_free) max 1.011 | hold min 0.999 | Tr1.6-3 max 0.48 (b_lo*J_hi) nominal 0.22
+  v  12.5 G   645: metric min 0.969 (ms_free) max 1.003 | hold min 0.999 | Tr1.6-3 max 0.65 (b_q*J_hi) nominal 0.23
+  v  13.5 G   786: metric min 0.967 (ms_free) max 0.995 | hold min 0.999 | Tr1.6-3 max 0.87 (b_q*J1.0+h10) nominal 0.24
+  v  15.0 G   998: metric min 0.963 (b_q) max 0.983 | hold min 0.999 | Tr1.6-3 max 1.63 (b_q*J1.0+h10) nominal 0.25
+  v  17.0 G  1280: metric min 0.957 (b_q) max 0.976 | hold min 0.998 | Tr1.6-3 max 1.70 (b_q*J1.0+h10) nominal 0.25
+  v  19.0 G  1464: metric min 0.969 (b_q) max 0.989 | hold min 0.999 | Tr1.6-3 max 1.81 (b_q*J1.0+h10) nominal 0.28
+  v  22.0 G  1692: metric min 0.986 (b_q*J1.0) max 1.002 | hold min 0.999 | Tr1.6-3 max 1.86 (b_q*J1.0+h10) nominal 0.31
+  v  26.0 G  1995: metric min 0.992 (b_q*J1.0) max 1.009 | hold min 1.000 | Tr1.6-3 max 1.91 (b_q*J1.0+h10) nominal 0.35
+  v  26.9 G  2063: metric min 0.993 (b_q*J1.0) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.92 (b_q*J1.0+h10) nominal 0.36
+  v  30.0 G  2064: metric min 0.993 (b_q*J1.0) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.92 (b_q*J1.0+h10) nominal 0.36
+  => F2: goal metric over every member and speed >= 8: 0.957 .. 1.011 (PASS 0.95-1.05); turn-hold min 0.998 (PASS); |T_ref| 1.6-3 Hz max 1.92

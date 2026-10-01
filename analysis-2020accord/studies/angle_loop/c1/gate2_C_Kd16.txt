@@ -1,0 +1,24 @@
+==============================================================================================================
+C. TWO-MASS STRESS (collocated motor-side sensor): hands-off 240 rows, hands-on 288 rows (the stability refuter's sets), and the hands-off set again with the motor-side b at the b_q value (0.25 b, floored) at >= 12.5 m/s
+==============================================================================================================
+  off    : rows 240; unstable C1 0 C0 0 V294 0 V295 0 | C1 least-damped zeta < V295's on 168/240 rows; zeta(C1)/zeta(V295) min 0.740 median 0.975; zeta(C1) - zeta(V295) min -0.1116
+      v    3 b  4.94 fz   20 r2 0.1 zw 0.01 a 0 za 0.00: C1  21.1 Hz z+0.0199 rho 0.9740 | C0 z+0.0199 | V294 z+0.0201 | V295 z+0.0197
+      v    8 b  5.24 fz   20 r2 0.1 zw 0.01 a 0 za 0.00: C1  21.1 Hz z+0.0206 rho 0.9731 | C0 z+0.0206 | V294 z+0.0208 | V295 z+0.0204
+      v    3 b  4.94 fz   16 r2 0.1 zw 0.01 a 0 za 0.00: C1  16.8 Hz z+0.0224 rho 0.9766 | C0 z+0.0224 | V294 z+0.0229 | V295 z+0.0229
+      v    8 b  5.24 fz   16 r2 0.1 zw 0.01 a 0 za 0.00: C1  16.8 Hz z+0.0232 rho 0.9758 | C0 z+0.0232 | V294 z+0.0238 | V295 z+0.0238
+      v    3 b  4.94 fz   13 r2 0.1 zw 0.01 a 0 za 0.00: C1  13.7 Hz z+0.0254 rho 0.9784 | C0 z+0.0254 | V294 z+0.0265 | V295 z+0.0274
+      v    8 b  5.24 fz   13 r2 0.1 zw 0.01 a 0 za 0.00: C1  13.7 Hz z+0.0264 rho 0.9776 | C0 z+0.0264 | V294 z+0.0276 | V295 z+0.0287
+  off_bq : rows 144; unstable C1 0 C0 0 V294 0 V295 0 | C1 least-damped zeta < V295's on 100/144 rows; zeta(C1)/zeta(V295) min 0.644 median 0.958; zeta(C1) - zeta(V295) min -0.0908
+      v 12.5 b  3.46 fz   20 r2 0.1 zw 0.01 a 0 za 0.00: C1  21.1 Hz z+0.0169 rho 0.9778 | C0 z+0.0169 | V294 z+0.0172 | V295 z+0.0166
+      v 12.5 b  3.46 fz   16 r2 0.1 zw 0.01 a 0 za 0.00: C1  16.9 Hz z+0.0187 rho 0.9804 | C0 z+0.0184 | V294 z+0.0193 | V295 z+0.0190
+      v 12.5 b  3.46 fz   13 r2 0.1 zw 0.01 a 0 za 0.00: C1  13.7 Hz z+0.0209 rho 0.9822 | C0 z+0.0204 | V294 z+0.0223 | V295 z+0.0228
+      v   19 b  5.45 fz   20 r2 0.1 zw 0.01 a 0 za 0.00: C1  21.1 Hz z+0.0209 rho 0.9732 | C0 z+0.0207 | V294 z+0.0216 | V295 z+0.0211
+      v   26 b  6.47 fz   20 r2 0.1 zw 0.01 a 0 za 0.00: C1  21.0 Hz z+0.0228 rho 0.9703 | C0 z+0.0224 | V294 z+0.0235 | V295 z+0.0231
+      v   19 b  5.45 fz   16 r2 0.1 zw 0.01 a 0 za 0.00: C1  16.9 Hz z+0.0235 rho 0.9755 | C0 z+0.0229 | V294 z+0.0250 | V295 z+0.0250
+  on     : rows 288; unstable C1 0 C0 0 V294 0 V295 0 | C1 least-damped zeta < V295's on 158/288 rows; zeta(C1)/zeta(V295) min 0.488 median 0.982; zeta(C1) - zeta(V295) min -0.1796
+      v    3 b  4.94 fz   13 r2 0.1 zw 0.02 a 1 za 0.02: C1  10.1 Hz z+0.0688 rho 0.9570 | C0 z+0.0691 | V294 z+0.0738 | V295 z+0.0812
+      v    8 b  5.24 fz   13 r2 0.1 zw 0.02 a 1 za 0.02: C1  10.1 Hz z+0.0715 rho 0.9600 | C0 z+0.0714 | V294 z+0.0770 | V295 z+0.0850
+      v   30 b 26.41 fz   13 r2 0.1 zw 0.02 a 1 za 0.02: C1   9.3 Hz z+0.0766 rho 0.9560 | C0 z+0.0776 | V294 z+0.0745 | V295 z+0.0752
+      v   26 b 25.89 fz   13 r2 0.1 zw 0.02 a 1 za 0.02: C1   9.3 Hz z+0.0774 rho 0.9556 | C0 z+0.0784 | V294 z+0.0752 | V295 z+0.0759
+      v   19 b 21.82 fz   13 r2 0.1 zw 0.02 a 1 za 0.02: C1   9.4 Hz z+0.0841 rho 0.9632 | C0 z+0.0849 | V294 z+0.0817 | V295 z+0.0830
+      v   30 b 26.41 fz   13 r2 0.1 zw 0.02 a 2 za 0.02: C1   7.6 Hz z+0.0879 rho 0.9588 | C0 z+0.0906 | V294 z+0.0824 | V295 z+0.0824

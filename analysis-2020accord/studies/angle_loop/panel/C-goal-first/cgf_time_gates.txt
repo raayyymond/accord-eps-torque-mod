@@ -1,0 +1,40 @@
+=== CONTROL: cave off + D held, cgf lane vs lane_mirror_v295 (should match) ===
+  cgf lane bounded over 2000 ticks: 2000 ok, 0 rail-exceed (expect 0 exceed)
+
+=== tracking (theta/theta_sp gain) 0.2 / 0.5 Hz + turn-hold (nominal), CGF-1 ===
+     v   tg0.2   tg0.5  hold20s  ess_deg
+   8.0   1.046   1.129    1.004   -0.018
+  10.0   1.072   1.162    1.006   -0.030
+  12.5   1.074   1.086    1.007   -0.037
+  15.0   1.021   0.897    1.009   -0.046
+  17.0   0.989   0.821    1.004   -0.022
+  19.0   1.010   0.902    1.010   -0.048
+  22.0   1.031   0.990    1.009   -0.045
+  26.9   1.056   1.120    1.002   -0.011
+
+=== low-speed dead zone (step 2 deg, 20 s): steady error + hunt; and small-amp tracking (0.1 Hz +-1.5 deg) ===
+  member     v   cand  step_ess  hunt_p2p  sine_tg sine_lag_deg   maxFF
+     nom   3.1  CGF-1    -0.048     0.296    1.125          7.8       0
+     nom   3.1  CGF-2    -0.090     0.181    1.119          8.5     170
+     nom   5.0  CGF-1     0.090     0.219    1.081          6.0       0
+     nom   5.0  CGF-2     0.053     0.106    1.078          5.5     137
+     nom   8.0  CGF-1     0.019     0.000    1.021          3.3       0
+     nom   8.0  CGF-2    -0.024     0.000    1.016          3.2      60
+      bc   3.1  CGF-1    -0.201     0.607    1.167         15.4       0
+      bc   3.1  CGF-2     0.042     0.000    1.155         16.2     170
+      bc   5.0  CGF-1     0.015     0.000    1.117          9.8       0
+      bc   5.0  CGF-2     0.041     0.000    1.119         10.3     137
+      bc   8.0  CGF-1     0.008     0.000    1.025          3.5       0
+      bc   8.0  CGF-2    -0.008     0.000    1.022          3.4      60
+
+=== override release lurch (nominal, CGF-1): hold 1 deg off a 0 setpoint for 2 s then release ===
+     v  light(<=1000)   firm(>=1100)
+   8.0          0.141          0.141
+  12.5          0.158          0.158
+  19.0          0.046          0.046
+  26.9          0.042          0.042
+
+=== 5-30 Hz texture: rms of d(theta)/dt band-limited 5-30 Hz on a 0.5 deg 0.3 Hz setpoint (nominal) ===
+  v 12.5 5-30 Hz wheel-rate rms 0.0348 deg/s
+  v 17.0 5-30 Hz wheel-rate rms 0.0351 deg/s
+  v 26.9 5-30 Hz wheel-rate rms 0.0404 deg/s

@@ -1,0 +1,39 @@
+# RE-RUN on C1 rev 2 of analysis-2020accord\studies\angle_loop\refute_stability\xcheck_hf.py (C0-base literals substituted: [('kd=16', 'kd=20', 2), ('450*G/256', '112*G/256', 2), ('199*G/256', '56*G/256', 2)]; table [(714, 940, 1306), (1843, 1300, -4025), (2304, 847, -1484), (2707, 701, 1636), (3571, 1046, 2728), (4032, 1353, 1292), (6198, 2036, 0), (65535, 2036, 0)], Kp_base 112, Ki_base 56)
+J_hi     v   9.00 G 1073 Kp_eff   469.4 | HF: fc 1.12 PM  68.9 GMlti 24.2 stable True wheel 0.77Hz z0.84
+J_hi     v  10.00 G 846 Kp_eff   370.1 | HF: fc 0.85 PM  77.2 GMlti 25.4 stable True wheel 0.49Hz z0.79
+J_hi     v  10.25 G 825 Kp_eff   360.9 | HF: fc 0.82 PM  77.7 GMlti 25.5 stable True wheel 0.49Hz z0.78
+J_hi     v  10.50 G 805 Kp_eff   352.2 | HF: fc 0.79 PM  78.1 GMlti 25.7 stable True wheel 0.48Hz z0.77
+J_hi     v  11.00 G 763 Kp_eff   333.8 | HF: fc 0.73 PM  78.6 GMlti 25.9 stable True wheel 0.47Hz z0.75
+J_hi     v  11.50 G 721 Kp_eff   315.4 | HF: fc 0.68 PM  79.0 GMlti 26.1 stable True wheel 0.45Hz z0.73
+J_hi     v  11.90 G 714 Kp_eff   312.4 | HF: fc 0.67 PM  78.6 GMlti 26.2 stable True wheel 0.45Hz z0.73
+J_hi     v  12.00 G 724 Kp_eff   316.8 | HF: fc 0.66 PM  79.2 GMlti 26.3 stable True wheel 0.44Hz z0.74
+J_hi     v  12.50 G 770 Kp_eff   336.9 | HF: fc 0.61 PM  81.6 GMlti 26.7 stable True wheel 0.39Hz z0.79
+J_hi     v  13.00 G 816 Kp_eff   357.0 | HF: fc 0.57 PM  83.3 GMlti 27.0 stable True wheel 0.35Hz z0.83
+nominal  v   9.00 G 1073 Kp_eff   469.4 | HF: fc 1.12 PM  83.9 GMlti 21.0 stable True wheel 3.49Hz z0.75
+nominal  v  10.00 G 846 Kp_eff   370.1 | HF: fc 0.75 PM  83.1 GMlti 22.6 stable True wheel 0.44Hz z0.73
+nominal  v  10.25 G 825 Kp_eff   360.9 | HF: fc 0.71 PM  82.3 GMlti 22.8 stable True wheel 0.43Hz z0.72
+nominal  v  10.50 G 805 Kp_eff   352.2 | HF: fc 0.68 PM  81.4 GMlti 23.1 stable True wheel 0.43Hz z0.71
+nominal  v  11.00 G 763 Kp_eff   333.8 | HF: fc 0.62 PM  79.8 GMlti 23.7 stable True wheel 0.41Hz z0.69
+nominal  v  11.50 G 721 Kp_eff   315.4 | HF: fc 0.56 PM  78.3 GMlti 24.2 stable True wheel 0.39Hz z0.67
+nominal  v  11.90 G 714 Kp_eff   312.4 | HF: fc 0.54 PM  77.2 GMlti 24.6 stable True wheel 0.39Hz z0.67
+nominal  v  12.00 G 724 Kp_eff   316.8 | HF: fc 0.54 PM  77.6 GMlti 24.7 stable True wheel 0.38Hz z0.67
+nominal  v  12.50 G 770 Kp_eff   336.9 | HF: fc 0.51 PM  79.4 GMlti 25.3 stable True wheel 0.36Hz z0.72
+nominal  v  13.00 G 816 Kp_eff   357.0 | HF: fc 0.49 PM  80.9 GMlti 25.8 stable True wheel 0.34Hz z0.75
+b_lo     v   9.00 G 1073 Kp_eff   469.4 | HF: fc 1.89 PM  81.1 GMlti 18.4 stable True wheel 3.25Hz z0.64
+b_lo     v  10.00 G 846 Kp_eff   370.1 | HF: fc 1.23 PM  98.1 GMlti 19.7 stable True wheel 3.50Hz z0.67
+b_lo     v  10.25 G 825 Kp_eff   360.9 | HF: fc 1.14 PM  99.0 GMlti 19.9 stable True wheel 3.53Hz z0.67
+b_lo     v  10.50 G 805 Kp_eff   352.2 | HF: fc 1.06 PM  99.5 GMlti 20.0 stable True wheel 3.56Hz z0.68
+b_lo     v  11.00 G 763 Kp_eff   333.8 | HF: fc 0.91 PM  99.8 GMlti 20.4 stable True wheel 3.62Hz z0.69
+b_lo     v  11.50 G 721 Kp_eff   315.4 | HF: fc 0.80 PM  99.2 GMlti 20.8 stable True wheel 3.68Hz z0.69
+b_lo     v  11.90 G 714 Kp_eff   312.4 | HF: fc 0.76 PM  98.4 GMlti 21.0 stable True wheel 3.71Hz z0.70
+b_lo     v  12.00 G 724 Kp_eff   316.8 | HF: fc 0.75 PM  98.6 GMlti 21.1 stable True wheel 3.72Hz z0.70
+b_lo     v  12.50 G 770 Kp_eff   336.9 | HF: fc 0.68 PM  99.3 GMlti 21.5 stable True wheel 3.78Hz z0.71
+b_lo     v  13.00 G 816 Kp_eff   357.0 | HF: fc 0.62 PM  99.8 GMlti 21.9 stable True wheel 3.82Hz z0.73
+b_lo*J_hi v  10.0: HF fc 1.42 PM  63.2 stable True wheel 1.42Hz z0.50 Tr1.6-3 0.89
+b_lo*J_hi v  11.0: HF fc 1.29 PM  72.0 stable True wheel 1.27Hz z0.59 Tr1.6-3 0.74
+b_lo*J_hi v  11.5: HF fc 1.22 PM  77.0 stable True wheel 1.18Hz z0.64 Tr1.6-3 0.67
+b_lo*J_hi v  12.0: HF fc 1.17 PM  80.4 stable True wheel 1.17Hz z0.66 Tr1.6-3 0.65
+b_lo*J_hi v  13.0: HF fc 0.89 PM  98.5 stable True wheel 1.35Hz z0.69 Tr1.6-3 0.59
+b_lo*J_hi v  15.0: HF fc 0.57 PM 103.0 stable True wheel 1.61Hz z0.74 Tr1.6-3 0.50
+b_lo*J_hi v  19.0: HF fc 0.66 PM  98.7 stable True wheel 1.59Hz z0.81 Tr1.6-3 0.52
+b_lo*J_hi v  22.0: HF fc 0.79 PM  90.0 stable True wheel 1.04Hz z0.94 Tr1.6-3 0.56

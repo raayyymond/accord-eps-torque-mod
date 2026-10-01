@@ -1,0 +1,77 @@
+C1 CAVE at 0xc4c00: 144 bytes = 96 code + 48 table ; labels C1=0xc4c00 L1=0xc4c1c SEG=0xc4c2a APPLY=0xc4c40 FRZ=0xc4c58 DONE=0xc4c5e TBL=0xc4c60
+cave region in V295 0xc4c00..0xc4c90 is all 0xFF: True ; free span 0xC4BD8..0xC4FEF all 0xFF: True
+  0xc4c00 C1     c2 82              ('shl_i', 2, 16)                       displaced 0x29D76: 4*sp
+  0xc4c02        ba 81              ('sub', 26, 16)                        displaced 0x29D78: E = 4*sp - r26 = 16*(theta_sp - theta)
+  0xc4c04        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                v = gp-0x6a5e (64 counts per km/h)            [G(v) LERP]
+  0xc4c08        29 06 60 4c 0c 00  ('mov_i32', 'TBL', 9)                  r9 -> table                                     [G(v) LERP]
+  0xc4c0e        e9 6f 01 00        ('ld_hu', 0, 9, 13)                    X0                                              [G(v) LERP]
+  0xc4c12        ed 41              ('cmp', 13, 8)                         v - X0                                          [G(v) LERP]
+  0xc4c14        cb 05              ('bh', 'L1')                           v > X0 (unsigned): walk                         [G(v) LERP]
+  0xc4c16        e9 47 03 00        ('ld_hu', 2, 9, 8)                     G = G0 (clamp low)                              [G(v) LERP]
+  0xc4c1a        b5 15              ('br', 'APPLY')                        
+  0xc4c1c L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                    X(i+1)                                          [G(v) LERP]
+  0xc4c20        ed 41              ('cmp', 13, 8)                         
+  0xc4c22        c3 05              ('bnh', 'SEG')                         v <= X(i+1): segment i                          [G(v) LERP]
+  0xc4c24        09 4e 06 00        ('addi', 6, 9, 9)                      next row (the 0xFFFF sentinel row ends the walk)
+  0xc4c28        a5 fd              ('br', 'L1')                           
+  0xc4c2a SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                    X(i)                                            [G(v) LERP]
+  0xc4c2e        ad 41              ('sub', 13, 8)                         dv = v - X(i)
+  0xc4c30        29 6f 04 00        ('ld_h', 4, 9, 13)                     S(i), Q12 slope, signed
+  0xc4c34        ed 47 20 02        ('mul', 13, 8, 0)                      dv * S(i) (low word)
+  0xc4c38        ac 42              ('sar_i', 12, 8)                       >> 12
+  0xc4c3a        e9 6f 03 00        ('ld_hu', 2, 9, 13)                    G(i)
+  0xc4c3e        cd 41              ('add', 13, 8)                         G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c40 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                      E * G (low word)                                 [THE SPEED GAIN on P and I]
+  0xc4c44        a8 82              ('sar_i', 8, 16)                       E' = (E * G) >> 8
+  0xc4c46        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                |driver torque| = gp-0x4f68                     [I FREEZE on the hand]
+  0xc4c4a        20 6e 00 02        ('movea', 512, 0, 13)                  THR = 512
+  0xc4c4e        ed 41              ('cmp', 13, 8)                         
+  0xc4c50        cb 05              ('bh', 'FRZ')                          |tq| > THR (unsigned): freeze
+  0xc4c52        ce 6e 00 80        ('andi', 32768, 14, 13)                r14 = the ramp gp-0x69b0 (the 0x2A1E6 multiplier)  [I FREEZE on ramp-in/out]
+  0xc4c56        ca 05              ('bne', 'DONE')                        ramp == 0x8000 (full): integrate normally
+  0xc4c58 FRZ    00 32              ('mov_i5', 0, 6)                       r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c5a        b6 07 24 51        ('jr', 171390)                         return PAST 0x29D7A mov r16,r6 / 0x29D7C sar 5,r6
+  0xc4c5e DONE   66 00              ('jmp', 6)                             return to 0x29D7A (r6 = the jarl link)
+  0xc4c60 TBL    ca 02              ('half', 714)                          table: X u16, G u16, S s16 Q12 per row
+  0xc4c62        ac 03              ('half', 940)                          
+  0xc4c64        1a 05              ('half', 1306)                         
+  0xc4c66        33 07              ('half', 1843)                         
+  0xc4c68        14 05              ('half', 1300)                         
+  0xc4c6a        47 f0              ('half', 61511)                        
+  0xc4c6c        00 09              ('half', 2304)                         
+  0xc4c6e        4f 03              ('half', 847)                          
+  0xc4c70        34 fa              ('half', 64052)                        
+  0xc4c72        93 0a              ('half', 2707)                         
+  0xc4c74        bd 02              ('half', 701)                          
+  0xc4c76        64 06              ('half', 1636)                         
+  0xc4c78        f3 0d              ('half', 3571)                         
+  0xc4c7a        16 04              ('half', 1046)                         
+  0xc4c7c        a8 0a              ('half', 2728)                         
+  0xc4c7e        c0 0f              ('half', 4032)                         
+  0xc4c80        49 05              ('half', 1353)                         
+  0xc4c82        0c 05              ('half', 1292)                         
+  0xc4c84        36 18              ('half', 6198)                         
+  0xc4c86        f4 07              ('half', 2036)                         
+  0xc4c88        00 00              ('half', 0)                            
+  0xc4c8a        ff ff              ('half', 65535)                        
+  0xc4c8c        f4 07              ('half', 2036)                         
+  0xc4c8e        00 00              ('half', 0)                            
+HOOK at 0x29d76: c2 82 ba 81 -> 89 37 8a ae  (jarl 0xc4c00, r6)
+CONTROL: the flown V112 hook 0x55C0E reads 86 ff 26 ef ; the encoder gives 86 ff 26 ef for jarl 0xC4B34, lp -> MATCH
+ENCODING-FORM CONTROLS (V295 bytes):
+  0x28f0e e4 57 a3 95  OK  ld.hu -0x6a5e[gp],r10 -> our ld.hu -0x6a5e[gp],r8
+  0x35cf8 e4 37 99 b0  OK  ld.hu -0x4f68[gp],r6  -> our ld.hu -0x4f68[gp],r8
+  0x29d26 e6 6f 01 00  OK  ld.hu 0[r6],r13        -> our ld.hu 0/2/6[r9],r13|r8
+  0x29cfc 30 06        OK  mov imm32,r16           -> our mov imm32,r9
+  0x29e50 ed 41        OK  cmp r13,r8              -> ours (same bytes)
+  0x29ed2 ed 3f 20 02  OK  mul r13,r7,r0          -> our mul r13,r8,r0 / mul r8,r16,r0
+  0x29e3e a8 42        OK  sar 8,r8                -> our sar 12,r8 / sar 8,r16
+  0x52688 20 6e ff 7f  OK  movea 0x7fff,r0,r13   -> our movea 512,r0,r13
+  0x29a30 01 32        OK  mov 1,r6                -> our mov 0,r6
+  0x29372 80 07 c2 03  OK  jr 0x29734           -> our jr 0x29D7E
+  0x2a1e4 d5 05        OK  br 0x2A1EE              -> our br (cond 5)
+  0x29384 f3 05        OK  bnh 0x29392             -> our bnh (cond 3)
+  0x29a56 da 05        OK  bne 0x29A60             -> our bne (cond A)
+  0x29d76 c2 82 ba 81  OK  shl 2,r16 ; sub r26,r16 -> displaced verbatim
+H1 (design time): the assembled bytes, executed by the interpreter, vs the mirror cave on 200000 random (E, v, |tq|, ramp, register file) inputs incl. the 0x7FFF sentinel and the table edges: 0 mismatches (checked: r16 = E', exit address = freeze, r6 = 0 on freeze, every register except r6/r8/r9/r13/r16 unchanged)
+   (r25 -- live 0x29A82..0x2A0AC across the hook per the 2026-09-30 dominance trace -- is among the registers checked unchanged: True)

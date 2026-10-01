@@ -1,0 +1,6 @@
+CONTROL 1 rh@8.0: this runner vs ds_time.run, 16 cave columns: max|dT| 0, max|dtheta| 0.00e+00  OK
+CONTROL 1 ov_fade@3.1: this runner vs ds_time.run, 16 cave columns: max|dT| 0, max|dtheta| 0.00e+00  OK
+CONTROL 1 sen_L16@19.0: this runner vs ds_time.run, 16 cave columns: max|dT| 0, max|dtheta| 0.00e+00  OK
+CONTROL 1 s05@26.9: this runner vs ds_time.run, 16 cave columns: max|dT| 0, max|dtheta| 0.00e+00  OK
+CONTROL 2 rh@12.5 zero-cave columns (Kd 0) vs harness_time.run/LaneVec: max|dT| 0  OK
+CONTROL 3 P1 cfg == D2a cfg: True; F1 cfg == B0r cfg: True

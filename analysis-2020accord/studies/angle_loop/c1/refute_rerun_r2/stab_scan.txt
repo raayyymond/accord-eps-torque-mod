@@ -1,0 +1,73 @@
+# RE-RUN on C1 of analysis-2020accord\studies\angle_loop\refute_stability\stab_scan.py   (C1 table [(714, 940, 1306), (1843, 1300, -4025), (2304, 847, -1484), (2707, 701, 1636), (3571, 1046, 2728), (4032, 1353, 1292), (6198, 2036, 0), (65535, 2036, 0)], Kp_base 112, Ki_base 56, Kd 20, freeze |tq|>512 + ramp)
+
+==============================================================================================================
+1. FINE SPEED GRID (0.5 m/s), credible members: min PM per member, and where
+==============================================================================================================
+nominal  min PM   67.5 at  27.0 m/s (fc 0.63 Hz) | PM<45 at [].. (0 pts) | PM<30 at [].. (0) | unstable []..(0)
+J_lo     min PM   65.9 at  27.0 m/s (fc 0.59 Hz) | PM<45 at [].. (0 pts) | PM<30 at [].. (0) | unstable []..(0)
+J_hi     min PM   52.2 at   1.0 m/s (fc 1.00 Hz) | PM<45 at [].. (0 pts) | PM<30 at [].. (0) | unstable []..(0)
+b_lo     min PM   64.1 at   8.0 m/s (fc 2.35 Hz) | PM<45 at [].. (0 pts) | PM<30 at [].. (0) | unstable []..(0)
+b_hi     min PM   57.7 at  27.0 m/s (fc 0.50 Hz) | PM<45 at [].. (0 pts) | PM<30 at [].. (0) | unstable []..(0)
+tau0     min PM   68.0 at  27.0 m/s (fc 0.63 Hz) | PM<45 at [].. (0 pts) | PM<30 at [].. (0) | unstable []..(0)
+tau6     min PM   66.6 at  27.0 m/s (fc 0.63 Hz) | PM<45 at [].. (0 pts) | PM<30 at [].. (0) | unstable []..(0)
+J_hi2    min PM   45.4 at   1.0 m/s (fc 0.83 Hz) | PM<45 at [].. (0 pts) | PM<30 at [].. (0) | unstable []..(0)
+ms_free  min PM   35.1 at  12.0 m/s (fc 0.79 Hz) | PM<45 at [np.float64(10.0), np.float64(10.5), np.float64(11.0)]..[np.float64(11.0), np.float64(11.5), np.float64(12.0)] (5 pts) | PM<30 at [].. (0) | unstable []..(0)
+light_b  min PM   11.5 at  27.0 m/s (fc 3.69 Hz) | PM<45 at [np.float64(1.0), np.float64(1.5), np.float64(2.0)]..[np.float64(34.0), np.float64(34.5), np.float64(35.0)] (61 pts) | PM<30 at [np.float64(7.0), np.float64(7.5), np.float64(8.0), np.float64(17.5)]..[np.float64(34.5), np.float64(35.0)] (39) | unstable []..(0)
+
+==============================================================================================================
+2. COMBINED CORNERS (each factor is a stated uncertainty of the identification); min PM over 1..35 m/s
+==============================================================================================================
+b_lo*J_hi          min PM   45.3 at   8.0 m/s fc 1.67 least-damped 1.73 Hz z 0.37 | PM<45 0 pts [-..-] | PM<30 0 pts [-..-] | unstable 0
+b_lo*J_hi*tau6     min PM   42.9 at   8.0 m/s fc 1.67 least-damped 1.75 Hz z 0.35 | PM<45 15 pts [1.0..8.0] | PM<30 0 pts [-..-] | unstable 0
+b_lo*tau6          min PM   60.7 at   8.0 m/s fc 2.35 least-damped 3.07 Hz z 0.53 | PM<45 0 pts [-..-] | PM<30 0 pts [-..-] | unstable 0
+J_hi*tau6          min PM   50.8 at   1.0 m/s fc 1.00 least-damped 0.73 Hz z 0.52 | PM<45 0 pts [-..-] | PM<30 0 pts [-..-] | unstable 0
+b/1.9 (G3a top)    min PM   64.1 at   8.0 m/s fc 2.35 least-damped 2.98 Hz z 0.58 | PM<45 0 pts [-..-] | PM<30 0 pts [-..-] | unstable 0
+b/1.9*J_hi         min PM   45.3 at   8.0 m/s fc 1.67 least-damped 1.73 Hz z 0.37 | PM<45 0 pts [-..-] | PM<30 0 pts [-..-] | unstable 0
+b_lo*J0.3          min PM   51.9 at   8.0 m/s fc 2.08 least-damped 2.21 Hz z 0.48 | PM<45 0 pts [-..-] | PM<30 0 pts [-..-] | unstable 0
+tau10              min PM   65.7 at  27.0 m/s fc 0.63 least-damped 50.00 Hz z 0.72 | PM<45 0 pts [-..-] | PM<30 0 pts [-..-] | unstable 0
+b_lo*tau10         min PM   57.3 at   8.0 m/s fc 2.35 least-damped 3.13 Hz z 0.48 | PM<45 0 pts [-..-] | PM<30 0 pts [-..-] | unstable 0
+
+==============================================================================================================
+3. THRESHOLDS: the b-scale (J nominal 0.2) and the J (b nominal) at which PM = 45 / 30 / 0 (instability), by speed
+==============================================================================================================
+v   3.0 (b  4.94 k   6.5 G 940) | b-scale@PM45: 0.378 (b=1.86) | b-scale@PM30: 0.205 (b=1.01) | b-scale@PM0: <0.02 | J@PM45: 0.51 | J@PM30: 0.78 | J@PM0: 1.78
+v   5.0 (b  5.05 k  11.8 G 1079) | b-scale@PM45: 0.416 (b=2.10) | b-scale@PM30: 0.248 (b=1.25) | b-scale@PM0: <0.02 | J@PM45: 0.55 | J@PM30: 0.83 | J@PM0: 1.90
+v   8.0 (b  5.24 k  20.2 G 1299) | b-scale@PM45: 0.467 (b=2.45) | b-scale@PM30: 0.304 (b=1.60) | b-scale@PM0: <0.02 | J@PM45: 0.57 | J@PM30: 0.86 | J@PM0: 2.02
+v  10.0 (b  7.56 k  22.3 G 846) | b-scale@PM45: 0.192 (b=1.45) | b-scale@PM30: 0.096 (b=0.73) | b-scale@PM0: <0.02 | J@PM45: 1.28 | J@PM30: 1.80 | J@PM0: 3.57
+v  12.5 (b 11.04 k  30.8 G 770) | b-scale@PM45: 0.115 (b=1.27) | b-scale@PM30: 0.053 (b=0.58) | b-scale@PM0: <0.02 | J@PM45: 2.32 | J@PM30: 3.19 | J@PM0: 5.95
+v  15.0 (b 16.38 k  58.0 G 1000) | b-scale@PM45: 0.097 (b=1.59) | b-scale@PM30: 0.058 (b=0.95) | b-scale@PM0: <0.02 | J@PM45: 4.43 | J@PM30: 5.74 | J@PM0: 10.08
+v  17.0 (b 20.65 k  79.7 G 1276) | b-scale@PM45: 0.092 (b=1.90) | b-scale@PM30: 0.062 (b=1.29) | b-scale@PM0: <0.02 | J@PM45: 5.74 | J@PM30: 7.34 | J@PM0: 12.78
+v  19.0 (b 21.82 k  74.9 G 1462) | b-scale@PM45: 0.100 (b=2.18) | b-scale@PM30: 0.071 (b=1.54) | b-scale@PM0: <0.02 | J@PM45: 4.83 | J@PM30: 6.43 | J@PM0: 11.79
+v  22.0 (b 23.56 k  67.6 G 1680) | b-scale@PM45: 0.108 (b=2.55) | b-scale@PM30: 0.079 (b=1.86) | b-scale@PM0: <0.02 | J@PM45: 3.96 | J@PM30: 5.60 | J@PM0: 10.96
+v  26.0 (b 25.89 k  57.9 G 1970) | b-scale@PM45: 0.121 (b=3.12) | b-scale@PM30: 0.090 (b=2.33) | b-scale@PM0: 0.027 (b=0.70) | J@PM45: 3.05 | J@PM30: 4.76 | J@PM0: 10.15
+v  30.0 (b 26.41 k  55.8 G 2036) | b-scale@PM45: 0.124 (b=3.27) | b-scale@PM30: 0.093 (b=2.45) | b-scale@PM0: 0.029 (b=0.78) | J@PM45: 2.87 | J@PM30: 4.59 | J@PM0: 9.99
+
+==============================================================================================================
+4. DELAY: exact delay margin (extra whole ticks of transport before instability) and PM vs extra hold age
+==============================================================================================================
+nominal  v   3.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 70.6 / 69.7 / 68.3 / 66.0
+nominal  v   8.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 77.0 / 75.8 / 74.0 / 71.0
+nominal  v  12.5: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 79.3 / 79.0 / 78.4 / 77.5
+nominal  v  19.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 82.3 / 82.0 / 81.5 / 80.6
+nominal  v  26.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 69.1 / 68.6 / 68.0 / 66.9
+nominal  v  30.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 67.5 / 67.1 / 66.4 / 65.3
+b_lo     v   3.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 66.9 / 65.6 / 63.7 / 60.4
+b_lo     v   8.0: delay margin 76 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 64.1 / 62.4 / 59.9 / 55.6
+b_lo     v  12.5: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 99.3 / 98.8 / 98.0 / 96.8
+b_lo     v  19.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 98.7 / 98.2 / 97.6 / 96.6
+b_lo     v  26.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 83.9 / 83.3 / 82.3 / 80.7
+b_lo     v  30.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 81.9 / 81.2 / 80.3 / 78.6
+J_hi     v   3.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 52.2 / 51.5 / 50.4 / 48.6
+J_hi     v   8.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 59.3 / 58.3 / 56.8 / 54.4
+J_hi     v  12.5: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 81.6 / 81.1 / 80.5 / 79.4
+J_hi     v  19.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 82.7 / 82.4 / 81.8 / 80.9
+J_hi     v  26.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 66.9 / 66.5 / 65.8 / 64.7
+J_hi     v  30.0: delay margin 80 ticks (ms) | PM with slot-4 late by 0/2/5/10 ticks: 65.2 / 64.8 / 64.1 / 63.0
+
+==============================================================================================================
+5. EXACT GM (monodromy bisection) at knots and knot midpoints, nominal / b_lo / J_hi
+==============================================================================================================
+nominal  GM dB  4:21.3  6.5:20.9  10.25:24.4  12.5:26.8  15.75:30.1  19:31.3  22.5:31.8  26:32.2  30:32.3
+b_lo     GM dB  4:19.4  6.5:18.8  10.25:21.4  12.5:23.0  15.75:25.5  19:26.2  22.5:26.5  26:26.7  30:26.8
+J_hi     GM dB  4:25.9  6.5:25.0  10.25:27.1  12.5:28.2  15.75:30.3  19:31.0  22.5:31.6  26:32.1  30:32.2
+tau6     GM dB  4:18.0  6.5:17.6  10.25:21.2  12.5:23.6  15.75:26.9  19:28.1  22.5:28.5  26:29.0  30:29.0

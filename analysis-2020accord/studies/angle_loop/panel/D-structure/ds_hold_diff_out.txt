@@ -1,0 +1,22 @@
+(1) fundamental of each D operand per deg/s of true wheel rate (magnitude, phase deg; ideal = 1 at 0 deg)
+    f Hz   dTheta_h(1 tick)x1000  held x/8 (EMA, hold)   fresh EMA gp-0x6abe   fresh d-diff gp-0x6cc4
+      1   1.000 <  -2.2   1.000 <  -2.9   1.000 <  -0.9   1.000 <  -0.2
+      2   0.999 <  -4.3   0.999 <  -5.7   0.999 <  -1.8   1.000 <  -0.4
+      5   0.996 < -10.8   0.992 < -14.3   0.996 <  -4.4   1.000 <  -0.9
+     10   0.984 < -21.6   0.968 < -28.5   0.984 <  -8.7   1.000 <  -1.8
+     13   0.972 < -28.1   0.946 < -37.0   0.973 < -11.3   1.000 <  -2.3
+     20   0.935 < -43.2   0.879 < -56.4   0.939 < -16.8   0.999 <  -3.6
+     30   0.858 < -64.8   0.754 < -83.2   0.877 < -23.8   0.999 <  -5.4
+   => the 1-tick difference of the HELD angle has the SAME fundamental as a 10 ms average rate (= (z^-1 - z^-11)/10 ms),
+      within 0.5 deg of the held EMA rate's phase at <= 20 Hz: the hold does NOT make it useless in the loop.
+
+(2) a 1 Hz, 10 deg/s-amplitude motion: power of the 1-tick held difference that is NOT at 1 Hz (carrier + aliases)
+   rms(operand) 22.4 deg/s ; rms(fundamental) 7.07 ; non-fundamental share of power 0.900
+   output lag gain at 100 Hz / DC: 0.0483 / 0.9902 = 0.0488  (-26 dB)
+
+(3) one 0.1 deg count of theta_h, the quantum each D form delivers (D gain set to 20 S per deg/s at DC)
+   D1a D on E (1 tick): S impulse 2000 for 1 tick -> y peak 30.9 -> T peak 5.0 T counts (area = 1.000 deg/s x s of D, exact)
+   D1c held diff, 21 Hz LP (spread over ~8 ticks): peak S 250 decaying at 21 Hz (same area as D1a's impulse)
+   B0 / D2a rate operands (no angle quantum): S impulse 0 for 1 tick -> y peak 0.0 -> T peak 0.0 T counts (area = 0.000 deg/s x s of D, exact)
+   P on the same count (Kp_eff 500): a STEP of 31 S counts = 5.0 T counts held until the next count.
+   D1b fine accumulator: one motor count (1/278.5 deg) -> S impulse 72 x 8 / 8 = 72 for 1 tick -> T peak 0.18

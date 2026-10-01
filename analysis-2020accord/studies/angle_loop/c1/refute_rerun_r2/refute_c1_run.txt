@@ -1,0 +1,81 @@
+# RE-RUN on C1 rev 2 of analysis-2020accord\studies\angle_loop\refute_stability\refute_c1_run.py (unpatched; it reads c1_lib: table [(714, 940, 1306), (1843, 1300, -4025), (2304, 847, -1484), (2707, 701, 1636), (3571, 1046, 2728), (4032, 1353, 1292), (6198, 2036, 0), (65535, 2036, 0)], Kp_base 112, Ki_base 56, Kd 20)
+====================================================================================================
+VALIDATION: independent model vs design/refuter published anchors
+====================================================================================================
+  C0 J_hi@11.9 PM = 40.8 (refuter published 40.7)  Kp_eff_C0=946
+  C1 member anchors (my PM vs design page PM):
+    nominal           @  1.0  mine   70.6   design   62.3   d+8.3
+    J_hi              @  1.0  mine   52.2   design   46.5   d+5.7
+    b_lo              @  1.0  mine   66.9   design   53.5   d+13.4
+    tau6              @  1.0  mine   68.8   design   60.2   d+8.6
+    b_lo*J_hi         @ 10.0  mine   63.6   design   35.2   d+28.4
+    b_lo*J_hi*tau6    @ 10.0  mine   61.6   design   32.7   d+28.9
+    J1.0              @ 11.9  mine   63.4   design   32.0   d+31.4
+    b_q               @ 27.0  mine   88.2   design   32.8   d+55.4
+    J_hi2             @ 11.9  mine   70.5   design   39.8   d+30.7
+    J1.3              @ 11.9  mine   52.8   design   22.7   d+30.1
+    ms_free           @ 11.9  mine   32.9   design    7.6   d+25.3
+
+====================================================================================================
+ATTACK 1: tier A (nominal must be >=45 everywhere; all single-corner credible)
+====================================================================================================
+
+--- TIER A single-corner (bar PM>=45.0) ---
+   nominal              min PM   67.5 @ 26.9
+   J_lo                 min PM   65.9 @ 26.9
+   J_hi                 min PM   52.2 @ 1.0
+   b_lo                 min PM   64.1 @ 8.0
+   b_hi                 min PM   57.7 @ 26.9
+   tau0                 min PM   68.0 @ 26.9
+   tau6                 min PM   66.6 @ 26.9
+   F_hi                 min PM   67.5 @ 26.9
+   F_lo                 min PM   67.5 @ 26.9
+
+====================================================================================================
+ATTACK 2: tier B combined members, age 0 (design claims all >=30)
+====================================================================================================
+
+--- TIER B (design-gated) (bar PM>=30.0) ---
+   b_lo*J_hi            min PM   45.3 @ 8.0
+   b_lo*J_hi*tau6       min PM   42.9 @ 8.0
+   b_lo*tau6            min PM   60.7 @ 8.0
+   J_hi*tau6            min PM   50.8 @ 1.0
+   b/1.9*J_hi           min PM   45.3 @ 8.0
+   b_lo*J0.3            min PM   51.9 @ 8.0
+   J_hi2                min PM   45.4 @ 1.0
+   J1.0                 min PM   43.4 @ 1.0
+   b_q                  min PM   70.6 @ 1.0
+   nominal+h10          min PM   65.3 @ 26.9
+   b_lo+h10             min PM   55.6 @ 8.0
+   J_hi+h10             min PM   48.6 @ 1.0
+
+====================================================================================================
+ATTACK 3: combined members WITH 10-tick hold aging (design gated +h10 ONLY on single members)
+====================================================================================================
+
+--- combined + hold age 10 (UNGATED by C1) (bar PM>=30.0) ---
+   b_lo*J_hi+hA         min PM   39.3 @ 8.0
+   b_lo*J_hi*tau6+hA    min PM   36.9 @ 8.0
+   J_hi2+hA             min PM   42.4 @ 1.0
+   J1.0+hA              min PM   40.7 @ 1.0
+   b_q+hA               min PM   66.0 @ 1.0
+   b/1.9*J_hi+hA        min PM   39.3 @ 8.0
+
+====================================================================================================
+ATTACK 4: extra combined members the design did not gate
+====================================================================================================
+
+--- extra combos (UNGATED) (bar PM>=30.0) ---
+   b_q*J_hi             min PM   52.2 @ 1.0
+   b_q*J1.0             min PM   40.9 @ 26.9
+   b_q*tau6             min PM   68.8 @ 1.0
+   J1.0*tau6            min PM   42.3 @ 1.0
+   b_q0*J_hi            min PM   48.6 @ 12.5
+
+====================================================================================================
+SUMMARY OF SUB-BAR POINTS
+====================================================================================================
+  A<45: 0 points
+  B<30: 0 points
+  comboB+h10<30: 0 points
+  extra<30: 0 points

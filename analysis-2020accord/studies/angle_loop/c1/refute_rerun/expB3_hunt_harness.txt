@@ -1,0 +1,13 @@
+# RE-RUN on C1 of analysis-2020accord\studies\angle_loop\refute_friction\expB3_hunt_harness.py   (C1 table [(714, 557, 334), (1843, 649, 0), (2765, 649, 4537), (3917, 1925, 571), (6198, 2243, 0), (65535, 2243, 0)], Kp_base 225, Ki_base 100, Kd 16, freeze |tq|>512 + ramp)
+member  v   step | slips(last 20 s)  p2p deg  T p2p | cycle period s
+nominal   3.0  3.0 |   4    0.36    188 |   7.6
+nominal   3.0  0.5 |   4    0.36    188 |   7.9
+nominal   4.0  3.0 |   5    0.32    160 |   7.5
+nominal   5.0  3.0 |   4    0.27    129 |   8.4
+nominal   5.0  5.0 |   5    0.22    129 |   7.3
+F_hi      5.0  3.0 |   0    0.00      2 |   nan
+F_hi      6.0  3.0 |   0    0.00      2 |   nan
+F_hi      7.0  8.0 |   5    0.23    134 |   7.7
+b_lo      5.0  3.0 |   0    0.00      1 |   nan
+F_lo      3.0  3.0 |   4    0.20     95 |   8.9
+F_lo      4.0  3.0 |   6    0.14     80 |   6.5

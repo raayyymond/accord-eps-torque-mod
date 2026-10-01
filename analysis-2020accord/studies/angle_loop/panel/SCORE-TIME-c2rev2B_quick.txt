@@ -1,0 +1,25 @@
+# COMMON TIME SCORER -- tag c2rev2B_quick
+candidates: ['D2a', 'B0r']   members: ['nominal', 'bc']   speeds: [3.0, 5.0, 8.0, 10.0, 12.5, 15.0, 19.0, 26.0, 30.0]
+
+========================================================================================================================
+## D2a: D2a = D on the FRESH 1 kHz motor-rate EMA (gp-0x6abe), K_D 20
+| member | dj 3-5 | dj 8-12.5 | dj 15-30 | stick% 3-5 | slips rh | turn-hold>=8 | s02 gain>=8 | lurch firm | lurch light400 | droop | texture 5-30 (holds) | tex 40-200 | sentinel push | detector frac |
+|--------|--------|-----------|----------|-----------|----------|--------------|------------|-----------|---------------|-------|---------------------|-----------|---------------|---------------|
+| nominal | 6 | 0 | 0 | 56.4 | 3 | 0.99 | 0.94-1.01 | nan | nan | nan | 0.69 | 0.77 | nan | 0.017 |
+| bc     | 7 | 0 | 0 | 62.8 | 0 | 0.99 | 0.92-0.99 | nan | nan | nan | 0.70 | 0.77 | nan | 0.020 |
+
+========================================================================================================================
+## B0r: B0r = the C1r2 structure REFITTED to the brief's credible set (its own envelope, the same knots)
+| member | dj 3-5 | dj 8-12.5 | dj 15-30 | stick% 3-5 | slips rh | turn-hold>=8 | s02 gain>=8 | lurch firm | lurch light400 | droop | texture 5-30 (holds) | tex 40-200 | sentinel push | detector frac |
+|--------|--------|-----------|----------|-----------|----------|--------------|------------|-----------|---------------|-------|---------------------|-----------|---------------|---------------|
+| nominal | 6 | 0 | 0 | 57.6 | 3 | 0.99 | 0.94-1.01 | nan | nan | nan | 0.66 | 0.78 | nan | 0.017 |
+| bc     | 7 | 0 | 0 | 63.4 | 0 | 0.99 | 0.91-0.99 | nan | nan | nan | 0.69 | 0.78 | nan | 0.020 |
+
+========================================================================================================================
+## GOAL-GATE VERDICT (nominal + bc; absolute bars from THE GOAL)
+| candidate | member | turn-hold>=0.90 | track 0.95-1.05 | lurch firm<=8 | lurch light<=8 | droop<=8 | texture<=2.0 | sentinel<=0.5 | dj 15-30=0 | detector<1 |
+|-----------|--------|-----------------|-----------------|---------------|----------------|---------|--------------|---------------|-----------|------------|
+| D2a | nominal | PASS (0.99) | **MISS** (0.94-1.01) | **MISS** (nan) | **MISS** (nan) | **MISS** (nan) | PASS (0.69) | **MISS** (nan) | PASS (0) | PASS (0.017) |
+| D2a | bc | PASS (0.99) | **MISS** (0.92-0.99) | **MISS** (nan) | **MISS** (nan) | **MISS** (nan) | PASS (0.70) | **MISS** (nan) | PASS (0) | PASS (0.020) |
+| B0r | nominal | PASS (0.99) | **MISS** (0.94-1.01) | **MISS** (nan) | **MISS** (nan) | **MISS** (nan) | PASS (0.66) | **MISS** (nan) | PASS (0) | PASS (0.017) |
+| B0r | bc | PASS (0.99) | **MISS** (0.91-0.99) | **MISS** (nan) | **MISS** (nan) | **MISS** (nan) | PASS (0.69) | **MISS** (nan) | PASS (0) | PASS (0.020) |

@@ -1,0 +1,18 @@
+# RE-RUN on C1 of analysis-2020accord\studies\angle_loop\refute_stability\stab_nl2.py   (C1 table [(714, 557, 334), (1843, 649, 0), (2765, 649, 4537), (3917, 1925, 571), (6198, 2243, 0), (65535, 2243, 0)], Kp_base 225, Ki_base 100, Kd 16, freeze |tq|>512 + ramp)
+C. 12 m/s band (the J_hi trough)
+  nominal                      v  11.9: T rms 1.6-3    1.7 | 3-6    1.4 | 5-30    1.3 || rate rms 1.6-3   0.09 | 3-6   0.12 deg/s | track err rms 0.151 deg
+  J_hi                         v  11.9: T rms 1.6-3    1.8 | 3-6    1.6 | 5-30    1.4 || rate rms 1.6-3   0.13 | 3-6   0.10 deg/s | track err rms 0.166 deg
+  J_hi*b/1.8                   v  11.9: T rms 1.6-3    1.9 | 3-6    1.6 | 5-30    1.5 || rate rms 1.6-3   0.20 | 3-6   0.12 deg/s | track err rms 0.161 deg
+  J_hi2                        v  11.9: T rms 1.6-3    2.2 | 3-6    1.8 | 5-30    1.7 || rate rms 1.6-3   0.17 | 3-6   0.08 deg/s | track err rms 0.192 deg
+  ms_free (J 2.08)             v  11.9: T rms 1.6-3    2.0 | 3-6    1.6 | 5-30    1.6 || rate rms 1.6-3   0.09 | 3-6   0.04 deg/s | track err rms 0.190 deg
+D. highway, b at the crossover band reduced (J 0.2, nominal k, friction)
+  nominal b                    v  26.0: T rms 1.6-3    2.6 | 3-6    4.1 | 5-30    4.2 || rate rms 1.6-3   0.07 | 3-6   0.15 deg/s | track err rms 0.056 deg
+  b_lo                         v  26.0: T rms 1.6-3    2.6 | 3-6    4.6 | 5-30    4.0 || rate rms 1.6-3   0.11 | 3-6   0.27 deg/s | track err rms 0.048 deg
+  b 9.5 (PM~30)                v  26.0: T rms 1.6-3    2.1 | 3-6    4.6 | 5-30    3.9 || rate rms 1.6-3   0.13 | 3-6   0.34 deg/s | track err rms 0.041 deg
+  b 7                          v  26.0: T rms 1.6-3    1.8 | 3-6    4.5 | 5-30    4.0 || rate rms 1.6-3   0.13 | 3-6   0.38 deg/s | track err rms 0.037 deg
+  b 5 (mech)                   v  26.0: T rms 1.6-3    1.7 | 3-6    4.4 | 5-30    4.1 || rate rms 1.6-3   0.15 | 3-6   0.43 deg/s | track err rms 0.034 deg
+  nominal b                    v  30.0: T rms 1.6-3    2.6 | 3-6    4.2 | 5-30    4.3 || rate rms 1.6-3   0.07 | 3-6   0.15 deg/s | track err rms 0.056 deg
+  b_lo                         v  30.0: T rms 1.6-3    2.4 | 3-6    4.7 | 5-30    4.0 || rate rms 1.6-3   0.11 | 3-6   0.27 deg/s | track err rms 0.048 deg
+  b 9.5 (PM~30)                v  30.0: T rms 1.6-3    2.0 | 3-6    4.6 | 5-30    4.0 || rate rms 1.6-3   0.13 | 3-6   0.34 deg/s | track err rms 0.039 deg
+  b 7                          v  30.0: T rms 1.6-3    1.9 | 3-6    4.4 | 5-30    4.0 || rate rms 1.6-3   0.15 | 3-6   0.39 deg/s | track err rms 0.035 deg
+  b 5 (mech)                   v  30.0: T rms 1.6-3    1.7 | 3-6    4.5 | 5-30    4.2 || rate rms 1.6-3   0.16 | 3-6   0.45 deg/s | track err rms 0.034 deg

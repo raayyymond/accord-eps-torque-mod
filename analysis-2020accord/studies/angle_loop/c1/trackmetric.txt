@@ -1,0 +1,11 @@
+# c1r2_trackmetric: route r71b, fs 100.63 Hz; weights = |H_0.5Hz filtfilt|^4 * S_dd(f), normalised
+band    <8:   118 s in 7 runs | weight median 0.080 Hz, p90 0.170 Hz, share > 0.2 Hz 0.057, > 0.5 Hz 0.0007
+band  8-15:   242 s in 9 runs | weight median 0.068 Hz, p90 0.128 Hz, share > 0.2 Hz 0.019, > 0.5 Hz 0.0001
+band 15-22:   158 s in 5 runs | weight median 0.052 Hz, p90 0.150 Hz, share > 0.2 Hz 0.038, > 0.5 Hz 0.0004
+band   >22:    74 s in 1 runs | weight median 0.043 Hz, p90 0.115 Hz, share > 0.2 Hz 0.020, > 0.5 Hz 0.0001
+POSITIVE CONTROL (the kit's own tracking_gain on synthetic Y = T*X vs the weighted prediction):
+  lag 0.25 s               <8: meas 0.975 pred 0.971 | 8-15: meas 0.979 pred 0.982 | 15-22: meas 0.991 pred 0.981 | >22: meas 0.994 pred 0.988
+  delay 0.20 s             <8: meas 0.988 pred 0.990 | 8-15: meas 0.990 pred 0.994 | 15-22: meas 0.997 pred 0.993 | >22: meas 0.998 pred 0.996
+  2nd order 0.6 Hz z0.5    <8: meas 0.987 pred 0.994 | 8-15: meas 0.992 pred 0.998 | 15-22: meas 0.999 pred 0.997 | >22: meas 1.000 pred 0.998
+  gain 0.9 + lag 0.5 s     <8: meas 0.837 pred 0.816 | 8-15: meas 0.843 pred 0.843 | 15-22: meas 0.871 pred 0.843 | >22: meas 0.879 pred 0.861
+  worst |meas - pred| = 0.0277

@@ -1,0 +1,18 @@
+# RE-RUN on C1 of analysis-2020accord\studies\angle_loop\refute_friction\selfcheck.py   (C1 table [(714, 557, 334), (1843, 649, 0), (2765, 649, 4537), (3917, 1925, 571), (6198, 2243, 0), (65535, 2243, 0)], Kp_base 225, Ki_base 100, Kd 16, freeze |tq|>512 + ramp)
+CHECK 1 LaneC0(cave off) vs lane_mirror_v295 scalar, 40000 ticks: 33350 mismatches
+CHECK 2 cave G vs Honda LERP over 0..65535: max |diff| 766 ; G at knots [557, 592, 649, 776, 1989, 2213] ; G(0)=557 G(65535)=2243
+   v   3.0 m/s  counts   691  G  557  Kp_eff  489.6  T/deg(hands-off, f=254/256)  49.5
+   v   4.0 m/s  counts   922  G  573  Kp_eff  503.6  T/deg(hands-off, f=254/256)  51.0
+   v   5.0 m/s  counts  1152  G  592  Kp_eff  520.3  T/deg(hands-off, f=254/256)  52.6
+   v   5.5 m/s  counts  1267  G  602  Kp_eff  529.1  T/deg(hands-off, f=254/256)  53.5
+   v   6.0 m/s  counts  1382  G  611  Kp_eff  537.0  T/deg(hands-off, f=254/256)  54.3
+   v   6.5 m/s  counts  1498  G  620  Kp_eff  544.9  T/deg(hands-off, f=254/256)  55.1
+   v   7.0 m/s  counts  1613  G  630  Kp_eff  553.7  T/deg(hands-off, f=254/256)  56.0
+   v   8.0 m/s  counts  1843  G  649  Kp_eff  570.4  T/deg(hands-off, f=254/256)  57.7
+   v  10.0 m/s  counts  2304  G  649  Kp_eff  570.4  T/deg(hands-off, f=254/256)  57.7
+   v  12.5 m/s  counts  2880  G  776  Kp_eff  682.0  T/deg(hands-off, f=254/256)  69.0
+   v  15.0 m/s  counts  3456  G 1414  Kp_eff 1242.8  T/deg(hands-off, f=254/256) 125.7
+   v  19.0 m/s  counts  4378  G 1989  Kp_eff 1748.1  T/deg(hands-off, f=254/256) 176.9
+   v  22.0 m/s  counts  5069  G 2085  Kp_eff 1832.5  T/deg(hands-off, f=254/256) 185.4
+   v  26.0 m/s  counts  5990  G 2213  Kp_eff 1945.0  T/deg(hands-off, f=254/256) 196.8
+   v  30.0 m/s  counts  6912  G 2243  Kp_eff 1971.4  T/deg(hands-off, f=254/256) 199.4

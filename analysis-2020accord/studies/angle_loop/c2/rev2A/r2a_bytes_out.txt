@@ -1,0 +1,207 @@
+base V295 _v295_V295-V294BASE-ACCELTRIM.B1050-SUBR.SHL2-FB.DIFF.C1024-POLE.2.0HZ.1011.1050-KP.FLAT.960.ALL-KD0-R24.2048-MAP.LINEAR.TO6X.TORQUE.TAP_plain_image.bin  sha256 5c044d65763140525a2c3651ded72e1e2111cd81ca8b41334366605fb40452ed
+hook site 0x29D76 in V295: c2 82 ba 81 (shl 2,r16 ; sub r26,r16 -- displaced verbatim into the cave)
+free span 0xC4BD8..0xC4FEF all 0xFF in V295: True
+======================================================================================================================
+P1: D2a exactly as the panel fitted it (Kd 34, 7 knots)
+  cave 0xc4c00..0xc4ca2: 162 bytes = 114 code + 48 table; sha256 caa6f39c2ba57f05
+  [1] == panel ds_cave_D2a.hex: True
+  [2] hook 0x29D76 -> 89 37 8a ae decodes from the bytes as jarl 0xc4c00 (want jarl 0xc4c00, r6: reg2 field 6); every cave branch target re-extracted from the bytes: OK
+  [3] registers written [6, 8, 9, 13, 16, 26]  (allowed [6, 8, 9, 13, 16, 26]; r25/r14 written: False) -> OK
+      memory written: none;  gp cells read: ['gp-0x4f68', 'gp-0x6a5e', 'gp-0x6abe'];  table reads: ['[r9+0]', '[r9+2]', '[r9+4]', '[r9+6]'];  last table row (65535, 2129, 0) (0xFFFF terminator: True)
+  [4] H1: the assembled bytes executed vs the lane's cave arithmetic, 60000 random inputs: 0 mismatches
+  [5] edits (each old byte asserted against V295 before replacing):
+      code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+      code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+      code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+      code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+      code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+      code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+      code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+      code 0x029ee0  10 40 bb 41  -> 1a 40 00 00   mov r16,r8 ; sub r27,r8 -> mov r26,r8 ; nop          D on the cave's operand in r26 (Kd = zxh, unchanged at 0x29EDE)
+      cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+      cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+      cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+      cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+      cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+      cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+      cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+      cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+      cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+      cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+      cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+      cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+      cal  0x0e5126  00 00        -> 22 00         Kd record Y[0] 0 -> 34                               
+      cal  0x0e5128  00 00        -> 22 00         Kd record Y[1] 0 -> 34                               
+      cal  0x0e512a  00 00        -> 22 00         Kd record Y[2] 0 -> 34                               
+      cal  0x0e512c  00 00        -> 22 00         Kd record Y[3] 0 -> 34                               
+      FULL DIFF [0x13000, 0x100000): 204 bytes differ; written: in-place code 20 + cal 24 + cave 162 = 206; UNLISTED: none
+      integrity regions dirtied (the builder recomputes and verifies them, H8): ['block holding 0xe5000', 'cal page 0xC6000-0xC6FFC', 'main code block, trailer 0xC4FFC']
+  [6] |E| <= 4*32767 + 65535 = 196603; max G over 0..60 m/s 2129; |E*G| <= 4.186e+08 (< 2^31 = 2.147e9: True); max |dv*S| in a segment 3682468 (< 2^31: True); |E'*112| <= 1.831e+08; D: |34 * 13000| = 442000 -> DCL clamp
+======================================================================================================================
+P2: Kd 34, 6-knot refit under D2a's envelope (no 15.5 m/s knot): -6 B
+  cave 0xc4c00..0xc4c9c: 156 bytes = 114 code + 42 table; sha256 75e8755743e14d93
+  [1] code bytes == P1's code bytes: True; table differs only: True
+  [2] hook 0x29D76 -> 89 37 8a ae decodes from the bytes as jarl 0xc4c00 (want jarl 0xc4c00, r6: reg2 field 6); every cave branch target re-extracted from the bytes: OK
+  [3] registers written [6, 8, 9, 13, 16, 26]  (allowed [6, 8, 9, 13, 16, 26]; r25/r14 written: False) -> OK
+      memory written: none;  gp cells read: ['gp-0x4f68', 'gp-0x6a5e', 'gp-0x6abe'];  table reads: ['[r9+0]', '[r9+2]', '[r9+4]', '[r9+6]'];  last table row (65535, 2130, 0) (0xFFFF terminator: True)
+  [4] H1: the assembled bytes executed vs the lane's cave arithmetic, 60000 random inputs: 0 mismatches
+  [5] edits (each old byte asserted against V295 before replacing):
+      code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+      code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+      code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+      code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+      code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+      code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+      code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+      code 0x029ee0  10 40 bb 41  -> 1a 40 00 00   mov r16,r8 ; sub r27,r8 -> mov r26,r8 ; nop          D on the cave's operand in r26 (Kd = zxh, unchanged at 0x29EDE)
+      cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+      cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+      cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+      cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+      cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+      cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+      cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+      cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+      cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+      cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+      cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+      cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+      cal  0x0e5126  00 00        -> 22 00         Kd record Y[0] 0 -> 34                               
+      cal  0x0e5128  00 00        -> 22 00         Kd record Y[1] 0 -> 34                               
+      cal  0x0e512a  00 00        -> 22 00         Kd record Y[2] 0 -> 34                               
+      cal  0x0e512c  00 00        -> 22 00         Kd record Y[3] 0 -> 34                               
+      FULL DIFF [0x13000, 0x100000): 198 bytes differ; written: in-place code 20 + cal 24 + cave 156 = 200; UNLISTED: none
+      integrity regions dirtied (the builder recomputes and verifies them, H8): ['block holding 0xe5000', 'cal page 0xC6000-0xC6FFC', 'main code block, trailer 0xC4FFC']
+  [6] |E| <= 4*32767 + 65535 = 196603; max G over 0..60 m/s 2130; |E*G| <= 4.188e+08 (< 2^31 = 2.147e9: True); max |dv*S| in a segment 3690125 (< 2^31: True); |E'*112| <= 1.832e+08; D: |34 * 13000| = 442000 -> DCL clamp
+======================================================================================================================
+P5: Kd 34, 5-knot refit under D2a's envelope (no 15.5 / 17.5 m/s knots): -12 B
+  cave 0xc4c00..0xc4c96: 150 bytes = 114 code + 36 table; sha256 6ca3d414a0562eb0
+  [1] code bytes == P1's code bytes: True; table differs only: True
+  [2] hook 0x29D76 -> 89 37 8a ae decodes from the bytes as jarl 0xc4c00 (want jarl 0xc4c00, r6: reg2 field 6); every cave branch target re-extracted from the bytes: OK
+  [3] registers written [6, 8, 9, 13, 16, 26]  (allowed [6, 8, 9, 13, 16, 26]; r25/r14 written: False) -> OK
+      memory written: none;  gp cells read: ['gp-0x4f68', 'gp-0x6a5e', 'gp-0x6abe'];  table reads: ['[r9+0]', '[r9+2]', '[r9+4]', '[r9+6]'];  last table row (65535, 2135, 0) (0xFFFF terminator: True)
+  [4] H1: the assembled bytes executed vs the lane's cave arithmetic, 60000 random inputs: 0 mismatches
+  [5] edits (each old byte asserted against V295 before replacing):
+      code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+      code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+      code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+      code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+      code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+      code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+      code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+      code 0x029ee0  10 40 bb 41  -> 1a 40 00 00   mov r16,r8 ; sub r27,r8 -> mov r26,r8 ; nop          D on the cave's operand in r26 (Kd = zxh, unchanged at 0x29EDE)
+      cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+      cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+      cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+      cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+      cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+      cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+      cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+      cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+      cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+      cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+      cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+      cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+      cal  0x0e5126  00 00        -> 22 00         Kd record Y[0] 0 -> 34                               
+      cal  0x0e5128  00 00        -> 22 00         Kd record Y[1] 0 -> 34                               
+      cal  0x0e512a  00 00        -> 22 00         Kd record Y[2] 0 -> 34                               
+      cal  0x0e512c  00 00        -> 22 00         Kd record Y[3] 0 -> 34                               
+      FULL DIFF [0x13000, 0x100000): 192 bytes differ; written: in-place code 20 + cal 24 + cave 150 = 194; UNLISTED: none
+      integrity regions dirtied (the builder recomputes and verifies them, H8): ['block holding 0xe5000', 'cal page 0xC6000-0xC6FFC', 'main code block, trailer 0xC4FFC']
+  [6] |E| <= 4*32767 + 65535 = 196603; max G over 0..60 m/s 2135; |E*G| <= 4.197e+08 (< 2^31 = 2.147e9: True); max |dv*S| in a segment 6514206 (< 2^31: True); |E'*112| <= 1.836e+08; D: |34 * 13000| = 442000 -> DCL clamp
+======================================================================================================================
+F1: B0r exactly as the panel fitted it (held-rate D Kd 20, 7 knots)
+  cave 0xc4c00..0xc4c90: 144 bytes = 96 code + 48 table; sha256 6627e4017f2a199c
+  [1] == panel ds_cave_B0r.hex: True
+  [2] hook 0x29D76 -> 89 37 8a ae decodes from the bytes as jarl 0xc4c00 (want jarl 0xc4c00, r6: reg2 field 6); every cave branch target re-extracted from the bytes: OK
+  [3] registers written [6, 8, 9, 13, 16]  (allowed [6, 8, 9, 13, 16, 26]; r25/r14 written: False) -> OK
+      memory written: none;  gp cells read: ['gp-0x4f68', 'gp-0x6a5e'];  table reads: ['[r9+0]', '[r9+2]', '[r9+4]', '[r9+6]'];  last table row (65535, 2064, 0) (0xFFFF terminator: True)
+  [4] H1: the assembled bytes executed vs the lane's cave arithmetic, 60000 random inputs: 0 mismatches
+  [5] edits (each old byte asserted against V295 before replacing):
+      code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+      code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+      code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+      code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+      code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+      code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+      code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+      code 0x029ede  c7 00        -> 80 39         zxh r7 -> subr r0,r7                                 -Kd
+      code 0x029ee0  10 40 bb 41  -> 24 47 aa 95   mov r16,r8 ; sub r27,r8 -> ld.h -0x6a56[gp],r8       D on the HELD rate
+      cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+      cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+      cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+      cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+      cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+      cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+      cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+      cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+      cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+      cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+      cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+      cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+      cal  0x0e5126  00 00        -> 14 00         Kd record Y[0] 0 -> 20                               
+      cal  0x0e5128  00 00        -> 14 00         Kd record Y[1] 0 -> 20                               
+      cal  0x0e512a  00 00        -> 14 00         Kd record Y[2] 0 -> 20                               
+      cal  0x0e512c  00 00        -> 14 00         Kd record Y[3] 0 -> 20                               
+      FULL DIFF [0x13000, 0x100000): 189 bytes differ; written: in-place code 23 + cal 24 + cave 144 = 191; UNLISTED: none
+      integrity regions dirtied (the builder recomputes and verifies them, H8): ['block holding 0xe5000', 'cal page 0xC6000-0xC6FFC', 'main code block, trailer 0xC4FFC']
+  [6] |E| <= 4*32767 + 65535 = 196603; max G over 0..60 m/s 2064; |E*G| <= 4.058e+08 (< 2^31 = 2.147e9: True); max |dv*S| in a segment 2944868 (< 2^31: True); |E'*112| <= 1.775e+08; D: |34 * 13000| = 442000 -> DCL clamp
+======================================================================================================================
+F2: held-rate D Kd 20, 6-knot refit under B0r's envelope (no 15.5 m/s knot): -6 B
+  cave 0xc4c00..0xc4c8a: 138 bytes = 96 code + 42 table; sha256 482de8587ce23cbc
+  [1] code bytes == F1's code bytes: True; table differs only: True
+  [2] hook 0x29D76 -> 89 37 8a ae decodes from the bytes as jarl 0xc4c00 (want jarl 0xc4c00, r6: reg2 field 6); every cave branch target re-extracted from the bytes: OK
+  [3] registers written [6, 8, 9, 13, 16]  (allowed [6, 8, 9, 13, 16, 26]; r25/r14 written: False) -> OK
+      memory written: none;  gp cells read: ['gp-0x4f68', 'gp-0x6a5e'];  table reads: ['[r9+0]', '[r9+2]', '[r9+4]', '[r9+6]'];  last table row (65535, 2064, 0) (0xFFFF terminator: True)
+  [4] H1: the assembled bytes executed vs the lane's cave arithmetic, 60000 random inputs: 0 mismatches
+  [5] edits (each old byte asserted against V295 before replacing):
+      code 0x028f4c  24 3f aa 95  -> 24 3f 00 96   ld.h -0x6a56[gp],r7 -> ld.h -0x6a00[gp],r7           operand x := theta (0.1 deg)
+      code 0x028fa4  89 d1        -> c9 d1         subr r9,r26 -> add r9,r26                            r26 = s_old + s_new (stock's sum)
+      code 0x029a50  e2 47 00 00  -> e0 df 34 43   setfe r8 -> cmovne r0,r27,r8                         r8 := (request == 1) ? bVar2 : 0
+      code 0x029a56  da 05        -> b2 05         bne 0x29A60 -> be 0x29A5C                            PID runs iff ramp != 0 AND r8 != 0
+      code 0x029d6a  08 80 ed 80  -> 24 87 52 96   mov r8,r16 ; mulh r13,r16 -> ld.h -0x69ae[gp],r16    sp := gp-0x69ae
+      code 0x029d76  c2 82 ba 81  -> 89 37 8a ae   shl 2,r16 ; sub r26,r16 -> jarl 0xC4C00,r6           the hook
+      code 0x01310d  30           -> 41            F181 '39990-TVA,A160' -> '...,A16A'                  the fork interlock (C1 rev 2's V1)
+      code 0x029ede  c7 00        -> 80 39         zxh r7 -> subr r0,r7                                 -Kd
+      code 0x029ee0  10 40 bb 41  -> 24 47 aa 95   mov r16,r8 ; sub r27,r8 -> ld.h -0x6a56[gp],r8       D on the HELD rate
+      cal  0x0c63e8  f3 03        -> 00 00         a 1011 -> 0                                          
+      cal  0x0c63ea  1a 04        -> 00 20         b 1050 -> 8192                                       
+      cal  0x0c62e6  00 04        -> ff ff         C 1024 -> 65535                                      
+      cal  0x0c62e4  04 00        -> 00 00         DB 4 -> 0                                            
+      cal  0x0c63e6  00 00        -> 38 00         Ki 0 -> 56                                           
+      cal  0x0c61ba  00 28        -> 00 10         ICL 10240 -> 4096                                    
+      cal  0x0c61b6  00 00        -> 00 28         DCL 0 -> 10240                                       
+      cal  0x0e5384  c0 03        -> 70 00         Kp record Y[0] 960 -> 112                            
+      cal  0x0e5386  c0 03        -> 70 00         Kp record Y[1] 960 -> 112                            
+      cal  0x0e5388  c0 03        -> 70 00         Kp record Y[2] 960 -> 112                            
+      cal  0x0e538a  c0 03        -> 70 00         Kp record Y[3] 960 -> 112                            
+      cal  0x0e538c  c0 03        -> 70 00         Kp record Y[4] 960 -> 112                            
+      cal  0x0e5126  00 00        -> 14 00         Kd record Y[0] 0 -> 20                               
+      cal  0x0e5128  00 00        -> 14 00         Kd record Y[1] 0 -> 20                               
+      cal  0x0e512a  00 00        -> 14 00         Kd record Y[2] 0 -> 20                               
+      cal  0x0e512c  00 00        -> 14 00         Kd record Y[3] 0 -> 20                               
+      FULL DIFF [0x13000, 0x100000): 183 bytes differ; written: in-place code 23 + cal 24 + cave 138 = 185; UNLISTED: none
+      integrity regions dirtied (the builder recomputes and verifies them, H8): ['block holding 0xe5000', 'cal page 0xC6000-0xC6FFC', 'main code block, trailer 0xC4FFC']
+  [6] |E| <= 4*32767 + 65535 = 196603; max G over 0..60 m/s 2064; |E*G| <= 4.058e+08 (< 2^31 = 2.147e9: True); max |dv*S| in a segment 3321775 (< 2^31: True); |E'*112| <= 1.775e+08; D: |34 * 13000| = 442000 -> DCL clamp
+======================================================================================================================
+[7] distinct cave instructions (P and F listings) whose exact bytes already occur at an even code address in V295 (Ghidra dry-run decode targets):
+  D2a  0xc4c04 24 d7 42 95          ('ld_h', -27326, 4, 26)                found at nowhere
+  D2a  0xc4c08 1a 46 c8 32          ('addi', 13000, 26, 8)                 found at nowhere
+  D2a  0xc4c0c 20 6e 90 65          ('movea', 26000, 0, 13)                found at nowhere
+  D2a  0xc4c12 e0 d7 36 d3          ('cmovh', 0, 26, 26)                   found at nowhere
+  D2a  0xc4c16 e4 47 a3 95          ('ld_hu', -27230, 4, 8)                found at ['0x3affc', '0x53e6a']
+  D2a  0xc4c1a 29 06 72 4c 0c 00    ('mov_i32', 'TBL', 9)                  found at nowhere
+  D2a  0xc4c20 e9 6f 01 00          ('ld_hu', 0, 9, 13)                    found at nowhere
+  D2a  0xc4c28 e9 47 03 00          ('ld_hu', 2, 9, 8)                     found at nowhere
+  D2a  0xc4c2e e9 6f 07 00          ('ld_hu', 6, 9, 13)                    found at ['0x19030']
+  D2a  0xc4c36 09 4e 06 00          ('addi', 6, 9, 9)                      found at nowhere
+  D2a  0xc4c42 29 6f 04 00          ('ld_h', 4, 9, 13)                     found at nowhere
+  D2a  0xc4c46 ed 47 20 02          ('mul', 13, 8, 0)                      found at ['0x3a7fa', '0x4558a']
+  D2a  0xc4c4c e9 6f 03 00          ('ld_hu', 2, 9, 13)                    found at nowhere
+  D2a  0xc4c52 e8 87 20 02          ('mul', 8, 16, 0)                      found at nowhere
+  D2a  0xc4c58 e4 47 99 b0          ('ld_hu', -20328, 4, 8)                found at ['0x2c508', '0x3f9ce']
+  D2a  0xc4c5c 20 6e 00 02          ('movea', 512, 0, 13)                  found at ['0x6271e']
+  D2a  0xc4c64 ce 6e 00 80          ('andi', 32768, 14, 13)                found at nowhere
+  D2a  0xc4c6c b6 07 12 51          ('jr', 171390)                         found at nowhere
+  B0   0xc4c08 29 06 60 4c 0c 00    ('mov_i32', 'TBL', 9)                  found at nowhere
+  B0   0xc4c5a b6 07 24 51          ('jr', 171390)                         found at nowhere

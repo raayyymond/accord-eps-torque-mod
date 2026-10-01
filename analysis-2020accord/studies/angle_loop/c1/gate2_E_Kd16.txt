@@ -1,0 +1,39 @@
+==============================================================================================================
+E. FORK OUTER-LOOP STAND-IN  L_o = T_ref e^{-0.06 s}/(tau_o s): PM / GM by tau_o (stab_more section 2's method)
+==============================================================================================================
+  nominal         v    3: |Tref| peak 1.31 at 0.79 Hz | tau_o 0.3: PM  45.9 GM   5.4 dB | tau_o 0.5: PM  73.1 GM   9.8 dB | tau_o 1.0: PM  84.0 GM  15.9 dB
+  nominal         v    8: |Tref| peak 1.04 at 0.62 Hz | tau_o 0.3: PM  55.2 GM   8.4 dB | tau_o 0.5: PM  70.5 GM  12.8 dB | tau_o 1.0: PM  80.8 GM  18.9 dB
+  nominal         v 11.9: |Tref| peak 1.09 at 0.46 Hz | tau_o 0.3: PM  41.5 GM   7.0 dB | tau_o 0.5: PM  64.3 GM  11.5 dB | tau_o 1.0: PM  79.1 GM  17.5 dB
+  nominal         v 12.5: |Tref| peak 1.05 at 0.43 Hz | tau_o 0.3: PM  45.2 GM   7.9 dB | tau_o 0.5: PM  65.3 GM  12.3 dB | tau_o 1.0: PM  78.9 GM  18.3 dB
+  nominal         v   19: |Tref| peak 1.00 at 0.27 Hz | tau_o 0.3: PM  54.9 GM   9.8 dB | tau_o 0.5: PM  69.2 GM  14.2 dB | tau_o 1.0: PM  79.8 GM  20.2 dB
+  nominal         v   26: |Tref| peak 1.09 at 0.60 Hz | tau_o 0.3: PM  52.9 GM   8.4 dB | tau_o 0.5: PM  70.8 GM  12.8 dB | tau_o 1.0: PM  81.6 GM  18.8 dB
+  b_lo            v    3: |Tref| peak 1.30 at 1.07 Hz | tau_o 0.3: PM  55.6 GM   6.0 dB | tau_o 0.5: PM  75.4 GM  10.5 dB | tau_o 1.0: PM  84.2 GM  16.5 dB
+  b_lo            v    8: |Tref| peak 1.02 at 1.43 Hz | tau_o 0.3: PM  59.7 GM   9.0 dB | tau_o 0.5: PM  72.0 GM  13.4 dB | tau_o 1.0: PM  81.0 GM  19.5 dB
+  b_lo            v 11.9: |Tref| peak 1.01 at 0.36 Hz | tau_o 0.3: PM  54.9 GM   9.0 dB | tau_o 0.5: PM  69.3 GM  13.4 dB | tau_o 1.0: PM  79.8 GM  19.5 dB
+  b_lo            v 12.5: |Tref| peak 1.00 at 0.01 Hz | tau_o 0.3: PM  56.8 GM   9.7 dB | tau_o 0.5: PM  69.5 GM  14.2 dB | tau_o 1.0: PM  79.6 GM  20.2 dB
+  b_lo            v   19: |Tref| peak 1.00 at 0.01 Hz | tau_o 0.3: PM  62.4 GM  11.5 dB | tau_o 0.5: PM  71.8 GM  16.0 dB | tau_o 1.0: PM  80.2 GM  22.0 dB
+  b_lo            v   26: |Tref| peak 1.00 at 1.03 Hz | tau_o 0.3: PM  63.2 GM  10.3 dB | tau_o 0.5: PM  74.0 GM  14.7 dB | tau_o 1.0: PM  82.0 GM  20.7 dB
+  J_hi            v    3: |Tref| peak 1.51 at 0.90 Hz | tau_o 0.3: PM  27.6 GM   2.0 dB | tau_o 0.5: PM  70.5 GM   6.5 dB | tau_o 1.0: PM  83.3 GM  12.5 dB
+  J_hi            v    8: |Tref| peak 1.16 at 1.20 Hz | tau_o 0.3: PM  51.8 GM   5.6 dB | tau_o 0.5: PM  68.8 GM  10.1 dB | tau_o 1.0: PM  79.8 GM  16.1 dB
+  J_hi            v 11.9: |Tref| peak 1.13 at 0.84 Hz | tau_o 0.3: PM  47.0 GM   5.4 dB | tau_o 0.5: PM  67.6 GM   9.8 dB | tau_o 1.0: PM  79.8 GM  15.8 dB
+  J_hi            v 12.5: |Tref| peak 1.07 at 0.82 Hz | tau_o 0.3: PM  50.0 GM   6.3 dB | tau_o 0.5: PM  67.9 GM  10.7 dB | tau_o 1.0: PM  79.5 GM  16.7 dB
+  J_hi            v   19: |Tref| peak 1.00 at 0.16 Hz | tau_o 0.3: PM  56.4 GM   8.8 dB | tau_o 0.5: PM  69.9 GM  13.2 dB | tau_o 1.0: PM  80.0 GM  19.2 dB
+  J_hi            v   26: |Tref| peak 1.11 at 0.67 Hz | tau_o 0.3: PM  51.7 GM   7.3 dB | tau_o 0.5: PM  70.4 GM  11.8 dB | tau_o 1.0: PM  81.4 GM  17.8 dB
+  b_lo*J_hi       v    3: |Tref| peak 1.79 at 1.25 Hz | tau_o 0.3: PM  44.0 GM   1.7 dB | tau_o 0.5: PM  73.9 GM   6.2 dB | tau_o 1.0: PM  83.6 GM  12.2 dB
+  b_lo*J_hi       v    8: |Tref| peak 1.49 at 1.65 Hz | tau_o 0.3: PM  57.7 GM   5.3 dB | tau_o 0.5: PM  70.5 GM   9.8 dB | tau_o 1.0: PM  80.1 GM  15.8 dB
+  b_lo*J_hi       v 11.9: |Tref| peak 1.58 at 1.67 Hz | tau_o 0.3: PM  58.3 GM   5.1 dB | tau_o 0.5: PM  71.0 GM   9.5 dB | tau_o 1.0: PM  80.3 GM  15.5 dB
+  b_lo*J_hi       v 12.5: |Tref| peak 1.53 at 1.84 Hz | tau_o 0.3: PM  59.6 GM   6.1 dB | tau_o 0.5: PM  70.9 GM  10.6 dB | tau_o 1.0: PM  80.0 GM  16.6 dB
+  b_lo*J_hi       v   19: |Tref| peak 1.35 at 2.58 Hz | tau_o 0.3: PM  63.3 GM   9.5 dB | tau_o 0.5: PM  72.3 GM  14.0 dB | tau_o 1.0: PM  80.4 GM  20.0 dB
+  b_lo*J_hi       v   26: |Tref| peak 1.20 at 2.10 Hz | tau_o 0.3: PM  62.9 GM   8.5 dB | tau_o 0.5: PM  73.8 GM  13.0 dB | tau_o 1.0: PM  81.9 GM  19.0 dB
+  b_lo*J_hi*tau6  v    3: |Tref| peak 1.88 at 1.28 Hz | tau_o 0.3: PM  42.9 GM   1.5 dB | tau_o 0.5: PM  73.9 GM   5.9 dB | tau_o 1.0: PM  83.6 GM  11.9 dB
+  b_lo*J_hi*tau6  v    8: |Tref| peak 1.58 at 1.68 Hz | tau_o 0.3: PM  57.5 GM   5.1 dB | tau_o 0.5: PM  70.5 GM   9.5 dB | tau_o 1.0: PM  80.0 GM  15.5 dB
+  b_lo*J_hi*tau6  v 11.9: |Tref| peak 1.69 at 1.70 Hz | tau_o 0.3: PM  58.1 GM   4.8 dB | tau_o 0.5: PM  71.0 GM   9.2 dB | tau_o 1.0: PM  80.3 GM  15.3 dB
+  b_lo*J_hi*tau6  v 12.5: |Tref| peak 1.64 at 1.87 Hz | tau_o 0.3: PM  59.4 GM   5.9 dB | tau_o 0.5: PM  70.9 GM  10.3 dB | tau_o 1.0: PM  80.0 GM  16.3 dB
+  b_lo*J_hi*tau6  v   19: |Tref| peak 1.48 at 2.62 Hz | tau_o 0.3: PM  63.1 GM   9.2 dB | tau_o 0.5: PM  72.3 GM  13.6 dB | tau_o 1.0: PM  80.4 GM  19.6 dB
+  b_lo*J_hi*tau6  v   26: |Tref| peak 1.28 at 2.17 Hz | tau_o 0.3: PM  62.8 GM   8.2 dB | tau_o 0.5: PM  73.8 GM  12.6 dB | tau_o 1.0: PM  81.9 GM  18.6 dB
+  J1.0            v    3: |Tref| peak 1.65 at 0.75 Hz | tau_o 0.3: PM  -8.8 GM  -0.7 dB | tau_o 0.5: PM  61.3 GM   3.7 dB | tau_o 1.0: PM  81.3 GM   9.7 dB
+  J1.0            v    8: |Tref| peak 1.22 at 1.06 Hz | tau_o 0.3: PM  45.0 GM   3.7 dB | tau_o 0.5: PM  64.3 GM   8.1 dB | tau_o 1.0: PM  77.0 GM  14.1 dB
+  J1.0            v 11.9: |Tref| peak 1.99 at 1.21 Hz | tau_o 0.3: PM  49.9 GM   0.9 dB | tau_o 0.5: PM  69.1 GM   5.3 dB | tau_o 1.0: PM  79.6 GM  11.3 dB
+  J1.0            v 12.5: |Tref| peak 1.76 at 1.30 Hz | tau_o 0.3: PM  53.0 GM   2.4 dB | tau_o 0.5: PM  69.0 GM   6.8 dB | tau_o 1.0: PM  79.4 GM  12.8 dB
+  J1.0            v   19: |Tref| peak 1.14 at 1.49 Hz | tau_o 0.3: PM  56.7 GM   6.9 dB | tau_o 0.5: PM  70.1 GM  11.3 dB | tau_o 1.0: PM  79.9 GM  17.4 dB
+  J1.0            v   26: |Tref| peak 1.15 at 0.75 Hz | tau_o 0.3: PM  47.6 GM   5.8 dB | tau_o 0.5: PM  69.2 GM  10.2 dB | tau_o 1.0: PM  81.0 GM  16.2 dB
