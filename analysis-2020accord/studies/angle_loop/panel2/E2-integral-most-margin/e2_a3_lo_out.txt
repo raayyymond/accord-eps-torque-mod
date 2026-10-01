@@ -1,0 +1,10 @@
+# e2_a3 low-speed (3.1 / 5 m/s) on the common scorer's own scenarios and metrics: P2 / A2 / A3 / A3-12k
+dj_events        s02+s05+ssm : P2 32.00 A2 32.00 A3 32.00 A3-12k 34.00
+stick_pct        ssm         : P2 90.70 A2 90.70 A3 90.12 A3-12k 90.12
+hold_ratio       rh          : P2 0.98 A2 1.00 A3 0.98 A3-12k 0.98
+overshoot_pct    st          : P2 32.92 A2 29.07 A3 26.39 A3-12k 26.39
+db_lag           db          : P2 0.60 A2 0.60 A3 0.60 A3-12k 0.60
+lurch_overshoot  ov_light400 : P2 10.54 A2 13.88 A3 10.60 A3-12k 10.60
+lurch_overshoot  ov_fade     : P2 10.21 A2 12.72 A3 9.60 A3-12k 9.58
+cs_droop         cs          : P2 2.17 A2 2.16 A3 2.17 A3-12k 2.16
+hold_slips       rh          : P2 14.00 A2 8.00 A3 14.00 A3-12k 14.00

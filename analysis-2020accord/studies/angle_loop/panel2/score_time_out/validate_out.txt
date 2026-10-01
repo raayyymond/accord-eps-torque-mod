@@ -1,0 +1,50 @@
+# score_time.py validate -- controls of the panel-2 common time scorer (2026-10-01)
+
+## V1 the refuter's own control, re-run unchanged: refute_c2r2_nonlinear/ctl_vs_designers.py (nl_sim vs c2/rev2A/score_time.run, sensor noise 0)
+  rh           v  11.9 nominal   : max|dtheta| [0. 0.] deg, max|dT| [0 0] counts
+  s02          v  17.0 b_lo*J_hi : max|dtheta| [0. 0.] deg, max|dT| [0 0] counts
+  ov_light400  v  10.0 bc        : max|dtheta| [0.01521778 0.01503563] deg, max|dT| [3 4] counts
+  tmo          v  26.9 F_hi      : max|dtheta| [0. 0.] deg, max|dT| [0 0] counts
+
+## V2 this scorer (CandLane + run, frame 'unity') vs nl_sim.run on the refuter's own lens scenarios, P2 / F2 / D2a / B0r x 5 speeds, sensor noise ON (same seed)
+  rh        nominal    max|dtheta| 0.000e+00 deg  max|dT| 0 counts
+  ov_lt511  b_lo*J_hi  max|dtheta| 0.000e+00 deg  max|dT| 0 counts
+  ov_firm   bc         max|dtheta| 0.000e+00 deg  max|dT| 0 counts
+  eng       bc         max|dtheta| 0.000e+00 deg  max|dT| 0 counts
+  tmos      F_hi       max|dtheta| 0.000e+00 deg  max|dT| 0 counts
+  mic05     bc         max|dtheta| 0.000e+00 deg  max|dT| 0 counts
+  sen       nominal    max|dtheta| 0.000e+00 deg  max|dT| 0 counts
+
+## V3a designer E1's own lane (e1_lane.E1Lane through nl_sim.run) vs this scorer, same columns, noise ON
+  rh        nominal    E1-reset 0.0e+00/0  E1-cal 0.0e+00/0  E1-freeze 0.0e+00/0  E1-sched 0.0e+00/0  E1-splitP 0.0e+00/0  E1-bleed 0.0e+00/0
+  ov_lt400  b_lo*J_hi  E1-reset 0.0e+00/0  E1-cal 0.0e+00/0  E1-freeze 0.0e+00/0  E1-sched 0.0e+00/0  E1-splitP 0.0e+00/0  E1-bleed 4.5e-02/4
+  ov_firm   bc         E1-reset 0.0e+00/0  E1-cal 0.0e+00/0  E1-freeze 0.0e+00/0  E1-sched 0.0e+00/0  E1-splitP 0.0e+00/0  E1-bleed 4.5e-02/5
+  eng       nominal    E1-reset 0.0e+00/0  E1-cal 0.0e+00/0  E1-freeze 0.0e+00/0  E1-sched 0.0e+00/0  E1-splitP 0.0e+00/0  E1-bleed 0.0e+00/0
+
+## V3b designer E2's own lane (E2Lane through c2/rev2A/score_time.run, the engine both designers scored on) vs this scorer, sensor noise 0 in both
+  prog  v  8.00: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 0.0e+00/0
+  prog  v 11.75: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 0.0e+00/0
+  prog  v 17.00: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 0.0e+00/0
+  prog  v 26.90: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 0.0e+00/0
+  s02   v  8.00: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 0.0e+00/0
+  s02   v 11.75: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 0.0e+00/0
+  s02   v 17.00: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 0.0e+00/0
+  s02   v 26.90: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 0.0e+00/0
+  tmo   v  8.00: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 5.2e-02/6
+  tmo   v 11.75: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 1.3e-02/3
+  tmo   v 17.00: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 1.3e-02/5
+  tmo   v 26.90: E2-R1 0.0e+00/0  E2-S 0.0e+00/0  E2-A2 0.0e+00/0  E2-A3 0.0e+00/0  E2-L 0.0e+00/0  E2-A2-X 2.0e-03/2
+
+## V3c designer G's own lane (GLane through c2/rev2A/score_time.run, the engine both designers scored on) vs this scorer, sensor noise 0 in both
+  prog  v  8.00: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  prog  v 11.75: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  prog  v 17.00: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  prog  v 26.90: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  s02   v  8.00: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  s02   v 11.75: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  s02   v 17.00: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  s02   v 26.90: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  tmo   v  8.00: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  tmo   v 11.75: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  tmo   v 17.00: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0
+  tmo   v 26.90: G-P48 0.0e+00/0  G-P44d 0.0e+00/0  G-F24 0.0e+00/0  G-A22 0.0e+00/0  G-A22d 0.0e+00/0  G-P48k40 0.0e+00/0

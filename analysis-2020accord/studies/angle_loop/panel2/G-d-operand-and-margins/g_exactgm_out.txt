@@ -1,0 +1,130 @@
+== G-P48: exact GM at the 12 lowest-LTI-GM gated points
+   b_lo*tau6|fb|k1.155              @ 8.00: LTI GM  13.9 dB   exact GM  13.9 dB
+   b_lo*tau6|fb|k1.155              @ 7.75: LTI GM  13.9 dB   exact GM  13.9 dB
+   b_lo*tau6|fb|k1.155              @ 7.50: LTI GM  13.9 dB   exact GM  13.9 dB
+   b_lo*tau6|fb|k1.155              @ 7.25: LTI GM  13.9 dB   exact GM  13.9 dB
+   b_lo*tau6|fb|k1.155              @ 7.00: LTI GM  13.9 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 6.75: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 6.50: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 6.25: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 6.00: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 5.75: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 5.50: LTI GM  14.0 dB   exact GM  14.1 dB
+   b_lo*tau6|fb|k1.155              @ 5.25: LTI GM  14.0 dB   exact GM  14.1 dB
+   fade floor (x 0.297, a light hand on the wheel) at the 12 lowest-PM-margin points: exact rho
+   J_hi+h10|k0.83                   @ 1.00: PM  47.1  rho(x0.297) 0.9854
+   J_hi+h10|k0.83                   @ 1.25: PM  47.1  rho(x0.297) 0.9854
+   J_hi+h10|k0.83                   @ 1.50: PM  47.1  rho(x0.297) 0.9854
+   J_hi+h10|k0.83                   @ 1.75: PM  47.1  rho(x0.297) 0.9854
+   J_hi+h10|k0.83                   @ 2.00: PM  47.1  rho(x0.297) 0.9854
+   J_hi+h10|k0.83                   @ 2.25: PM  47.1  rho(x0.297) 0.9854
+   J_hi+h10|k0.83                   @ 2.50: PM  47.1  rho(x0.297) 0.9854
+   J_hi+h10|k0.83                   @ 2.75: PM  47.1  rho(x0.297) 0.9854
+   J_hi+h10|k0.83                   @ 3.00: PM  47.1  rho(x0.297) 0.9854
+   J_hi+h10|k0.83                   @ 3.10: PM  47.1  rho(x0.297) 0.9854
+   J_hi+h10|k0.83                   @ 3.25: PM  47.5  rho(x0.297) 0.9848
+   J_hi+h10|k0.83                   @ 3.50: PM  48.0  rho(x0.297) 0.9837
+== G-P48d: exact GM at the 12 lowest-LTI-GM gated points
+   b_lo*tau6|fb|k1.155              @ 8.00: LTI GM  13.9 dB   exact GM  13.9 dB
+   b_lo*tau6|fb|k1.155              @ 7.75: LTI GM  13.9 dB   exact GM  13.9 dB
+   b_lo*tau6|fb|k1.155              @ 7.50: LTI GM  13.9 dB   exact GM  13.9 dB
+   b_lo*tau6|fb|k1.155              @ 7.25: LTI GM  13.9 dB   exact GM  13.9 dB
+   b_lo*tau6|fb|k1.155              @ 7.00: LTI GM  13.9 dB   exact GM  13.9 dB
+   b_lo*tau6|fb|k1.155              @ 6.75: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 6.50: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 6.25: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 6.00: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 5.75: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 5.50: LTI GM  14.0 dB   exact GM  14.0 dB
+   b_lo*tau6|fb|k1.155              @ 5.25: LTI GM  14.0 dB   exact GM  14.1 dB
+   fade floor (x 0.297, a light hand on the wheel) at the 12 lowest-PM-margin points: exact rho
+   b_q*ms_free*tau6+h10|k0.83       @15.75: PM  15.2  rho(x0.297) 0.9927
+   b_q*ms_free*tau6+h10|k0.83       @16.00: PM  15.7  rho(x0.297) 0.9926
+   b_q*ms_free*tau6+h10|fb|k0.83    @15.75: PM  15.8  rho(x0.297) 0.9927
+   b_q*ms_free*tau6+h10|k0.83       @15.50: PM  15.9  rho(x0.297) 0.9928
+   b_q*ms_free*tau6+h10|fb|k0.83    @16.00: PM  16.1  rho(x0.297) 0.9926
+   b_q*ms_free*tau6+h10|fb|k0.83    @17.50: PM  16.2  rho(x0.297) 0.9920
+   b_q*ms_free*tau6+h10|k0.83       @16.25: PM  16.2  rho(x0.297) 0.9926
+   b_q*ms_free*tau6+h10|fb|k0.83    @16.25: PM  16.5  rho(x0.297) 0.9926
+   b_q*ms_free*tau6+h10|k0.83       @17.50: PM  16.6  rho(x0.297) 0.9920
+   b_q*ms_free*tau6+h10|fb|k0.83    @17.75: PM  16.6  rho(x0.297) 0.9919
+   b_q*ms_free*tau6+h10|fb|k0.83    @15.50: PM  16.7  rho(x0.297) 0.9927
+   b_q*ms_free*tau6+h10|k0.83       @16.50: PM  16.7  rho(x0.297) 0.9926
+== G-F24: exact GM at the 12 lowest-LTI-GM gated points
+   b_lo*tau6+h10|fb|k1.155          @ 8.00: LTI GM   6.7 dB   exact GM   6.7 dB
+   b_lo*tau6+h10|fb|k1.155          @ 7.75: LTI GM   6.7 dB   exact GM   6.7 dB
+   b_lo*tau6+h10|fb|k1.155          @ 7.50: LTI GM   6.8 dB   exact GM   6.7 dB
+   b_lo*tau6+h10|fb|k1.155          @ 7.25: LTI GM   6.8 dB   exact GM   6.8 dB
+   b_lo*tau6+h10|fb|k1.155          @ 7.00: LTI GM   6.8 dB   exact GM   6.8 dB
+   b_lo*tau6+h10|fb|k1.155          @ 6.75: LTI GM   6.8 dB   exact GM   6.8 dB
+   b_lo*tau6+h10|fb|k1.155          @ 6.50: LTI GM   6.8 dB   exact GM   6.8 dB
+   b_lo*tau6+h10|fb|k1.155          @ 6.25: LTI GM   6.9 dB   exact GM   6.9 dB
+   b_lo*tau6+h10|fb|k1.155          @ 6.00: LTI GM   6.9 dB   exact GM   6.9 dB
+   b_lo*tau6+h10|fb|k1.155          @ 5.75: LTI GM   6.9 dB   exact GM   7.0 dB
+   b_lo*tau6+h10|fb|k1.155          @ 5.50: LTI GM   7.0 dB   exact GM   7.0 dB
+   b_lo*tau6+h10|fb|k1.155          @ 5.25: LTI GM   7.0 dB   exact GM   7.0 dB
+   fade floor (x 0.297, a light hand on the wheel) at the 12 lowest-PM-margin points: exact rho
+   J_hi+h10|k0.83                   @ 1.00: PM  46.9  rho(x0.297) 0.9863
+   J_hi+h10|k0.83                   @ 1.25: PM  46.9  rho(x0.297) 0.9863
+   J_hi+h10|k0.83                   @ 1.50: PM  46.9  rho(x0.297) 0.9863
+   J_hi+h10|k0.83                   @ 1.75: PM  46.9  rho(x0.297) 0.9863
+   J_hi+h10|k0.83                   @ 2.00: PM  46.9  rho(x0.297) 0.9863
+   J_hi+h10|k0.83                   @ 2.25: PM  46.9  rho(x0.297) 0.9863
+   J_hi+h10|k0.83                   @ 2.50: PM  46.9  rho(x0.297) 0.9863
+   J_hi+h10|k0.83                   @ 2.75: PM  46.9  rho(x0.297) 0.9863
+   J_hi+h10|k0.83                   @ 3.00: PM  46.9  rho(x0.297) 0.9863
+   J_hi+h10|k0.83                   @ 3.10: PM  46.9  rho(x0.297) 0.9863
+   J_hi+h10|k0.83                   @ 3.25: PM  47.3  rho(x0.297) 0.9857
+   J_hi+h10|k0.83                   @ 3.50: PM  48.0  rho(x0.297) 0.9847
+== G-P44d: exact GM at the 12 lowest-LTI-GM gated points
+   b_lo*tau6|fb|k1.155              @ 8.00: LTI GM  14.4 dB   exact GM  14.5 dB
+   b_lo*tau6|fb|k1.155              @ 7.75: LTI GM  14.5 dB   exact GM  14.5 dB
+   b_lo*tau6|fb|k1.155              @ 7.50: LTI GM  14.5 dB   exact GM  14.5 dB
+   b_lo*tau6|fb|k1.155              @ 7.25: LTI GM  14.5 dB   exact GM  14.5 dB
+   b_lo*tau6|fb|k1.155              @ 7.00: LTI GM  14.6 dB   exact GM  14.6 dB
+   b_lo*tau6|fb|k1.155              @ 6.75: LTI GM  14.6 dB   exact GM  14.6 dB
+   b_lo*tau6|fb|k1.155              @ 6.50: LTI GM  14.6 dB   exact GM  14.6 dB
+   b_lo*tau6|fb|k1.155              @ 6.25: LTI GM  14.7 dB   exact GM  14.6 dB
+   b_lo*tau6|fb|k1.155              @ 6.00: LTI GM  14.7 dB   exact GM  14.7 dB
+   b_lo*tau6|fb|k1.155              @ 5.75: LTI GM  14.7 dB   exact GM  14.7 dB
+   b_lo*tau6|fb|k1.155              @ 5.50: LTI GM  14.7 dB   exact GM  14.7 dB
+   b_lo*tau6|fb|k1.155              @ 5.25: LTI GM  14.7 dB   exact GM  14.7 dB
+   fade floor (x 0.297, a light hand on the wheel) at the 12 lowest-PM-margin points: exact rho
+   b_q*ms_free*tau6+h10|k0.83       @15.75: PM  14.9  rho(x0.297) 0.9930
+   b_q*ms_free*tau6+h10|fb|k0.83    @15.75: PM  15.4  rho(x0.297) 0.9930
+   b_q*ms_free*tau6+h10|k0.83       @16.00: PM  15.4  rho(x0.297) 0.9929
+   b_q*ms_free*tau6+h10|k0.83       @15.50: PM  15.7  rho(x0.297) 0.9930
+   b_q*ms_free*tau6+h10|fb|k0.83    @16.00: PM  15.7  rho(x0.297) 0.9929
+   b_q*ms_free*tau6+h10|fb|k0.83    @17.50: PM  15.9  rho(x0.297) 0.9923
+   b_q*ms_free*tau6+h10|k0.83       @16.25: PM  16.0  rho(x0.297) 0.9929
+   b_q*ms_free*tau6+h10|fb|k0.83    @16.25: PM  16.1  rho(x0.297) 0.9929
+   b_q*ms_free*tau6+h10|fb|k0.83    @15.50: PM  16.3  rho(x0.297) 0.9930
+   b_q*ms_free*tau6+h10|fb|k0.83    @17.75: PM  16.4  rho(x0.297) 0.9922
+   b_q*ms_free*tau6+h10|k0.83       @17.50: PM  16.4  rho(x0.297) 0.9923
+   b_q*ms_free*tau6+h10|fb|k0.83    @16.50: PM  16.5  rho(x0.297) 0.9929
+== G-A22: exact GM at the 12 lowest-LTI-GM gated points
+   b_lo*tau6+h10|fb                 @ 8.00: LTI GM   7.9 dB   exact GM   7.9 dB
+   b_lo*tau6+h10|fb                 @ 7.75: LTI GM   8.0 dB   exact GM   7.9 dB
+   b_lo*tau6+h10|fb                 @ 7.50: LTI GM   8.0 dB   exact GM   8.0 dB
+   b_lo*tau6+h10|fb                 @ 7.25: LTI GM   8.1 dB   exact GM   8.1 dB
+   b_lo*tau6+h10|fb                 @ 7.00: LTI GM   8.2 dB   exact GM   8.2 dB
+   b_lo*tau6+h10|fb                 @ 6.75: LTI GM   8.2 dB   exact GM   8.2 dB
+   b_lo*tau6+h10|fb                 @ 6.50: LTI GM   8.3 dB   exact GM   8.3 dB
+   b_lo*tau6+h10|fb                 @ 6.25: LTI GM   8.3 dB   exact GM   8.3 dB
+   b_lo*tau6+h10|fb                 @ 6.00: LTI GM   8.4 dB   exact GM   8.4 dB
+   b_lo*tau6+h10|fb                 @ 5.75: LTI GM   8.4 dB   exact GM   8.4 dB
+   b_lo*tau6+h10|fb                 @ 8.25: LTI GM   8.5 dB   exact GM   8.5 dB
+   b_lo*tau6+h10|fb                 @ 5.50: LTI GM   8.5 dB   exact GM   8.5 dB
+   fade floor (x 0.297, a light hand on the wheel) at the 12 lowest-PM-margin points: exact rho
+   J_hi+h10                         @ 1.00: PM  46.5  rho(x0.297) 0.9869
+   J_hi+h10                         @ 1.25: PM  46.5  rho(x0.297) 0.9869
+   J_hi+h10                         @ 1.50: PM  46.5  rho(x0.297) 0.9869
+   J_hi+h10                         @ 1.75: PM  46.5  rho(x0.297) 0.9869
+   J_hi+h10                         @ 2.00: PM  46.5  rho(x0.297) 0.9869
+   J_hi+h10                         @ 2.25: PM  46.5  rho(x0.297) 0.9869
+   J_hi+h10                         @ 2.50: PM  46.5  rho(x0.297) 0.9869
+   J_hi+h10                         @ 2.75: PM  46.5  rho(x0.297) 0.9869
+   J_hi+h10                         @ 3.00: PM  46.5  rho(x0.297) 0.9869
+   J_hi+h10                         @ 3.10: PM  46.5  rho(x0.297) 0.9869
+   J_hi+h10                         @ 3.25: PM  47.0  rho(x0.297) 0.9863
+   J_hi+h10                         @ 3.50: PM  47.8  rho(x0.297) 0.9853

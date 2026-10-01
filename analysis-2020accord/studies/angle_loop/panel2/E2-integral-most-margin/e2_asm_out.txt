@@ -1,0 +1,839 @@
+FORM CONTROLS (V295 bytes):
+  0x29d94 ce 05          OK  bge (cond E) -> our bge
+  0x2904c ac 05          OK  bp (cond C, the Bcond Format III form) -> our blt (cond 6) shares the encoding layout
+  0x28f26 24 7f a0 b0    OK  ld.h -0x4f60[gp],r15 -> our ld.h -0x4f60[gp],r9
+  0x29da4 24 57 31 92    OK  ld.w -0x6dd0[gp],r10 -> our ld.w -0x6dd0[gp],r13|r6
+  0x40aea 24 77 00 96    OK  ld.h -0x6a00[gp],r14 -> our ld.h -0x6a00[gp],r9
+  0x29dae a3 6a          OK  sar 3,r13 -> our sar imm5
+  0x2904e 80 39          OK  subr r0,r7 -> our subr r0,r9|r13|r6
+  0x504e2 29 61          OK  xor r9,r12 (Ghidra: FUN_0005046c) -> our xor r16,r9 (Format I op 0x09)
+  0x1c006 b6 05          OK  blt 0x1C00C (Ghidra: FUN_0001bf88) -> our blt (cond 6)
+CONTROL A: builder('P2') == c2_cave_P2.hex: True  (156 B)
+CONTROL B: this interpreter == ds_asm.run_bytes on P2's bytes, 20000 random inputs: 0 differences
+======================================================================================================================
+P2: {}: cave 156 B = 114 code + 42 table; vs P2 +0 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 72 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        cb 05              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4c68        ca 05              ('bne', 'DONE')                            ramp full: integrate
+  0xc4c6a FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c6c        b6 07 12 51        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4c70 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4c72 TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+S300: {'sgn': 300}: cave 172 B = 130 code + 42 table; vs P2 +16 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 82 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        cb 0d              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        20 6e 2c 01        ('movea', 300, 0, 13)                      T = 300                                  [2 OPPOSING HAND]
+  0xc4c68        ed 41              ('cmp', 13, 8)                             
+  0xc4c6a        d3 05              ('bnh', 'N2')                              |tq| <= T: no hand
+  0xc4c6c        24 4f a0 b0        ('ld_h', -20320, 4, 9)                     signed hand torque gp-0x4f60 (sign = the push direction)
+  0xc4c70        30 49              ('xor', 16, 9)                             sign(hand) xor sign(E')
+  0xc4c72        c6 05              ('blt', 'FRZ')                             signs differ: the hand pushes AWAY from the setpoint -> frz
+  0xc4c74 N2     ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4c78        ca 05              ('bne', 'DONE')                            ramp full: integrate
+  0xc4c7a FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c7c        b6 07 02 51        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4c80 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4c82 TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+S200: {'sgn': 200}: cave 172 B = 130 code + 42 table; vs P2 +16 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 82 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        cb 0d              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        20 6e c8 00        ('movea', 200, 0, 13)                      T = 200                                  [2 OPPOSING HAND]
+  0xc4c68        ed 41              ('cmp', 13, 8)                             
+  0xc4c6a        d3 05              ('bnh', 'N2')                              |tq| <= T: no hand
+  0xc4c6c        24 4f a0 b0        ('ld_h', -20320, 4, 9)                     signed hand torque gp-0x4f60 (sign = the push direction)
+  0xc4c70        30 49              ('xor', 16, 9)                             sign(hand) xor sign(E')
+  0xc4c72        c6 05              ('blt', 'FRZ')                             signs differ: the hand pushes AWAY from the setpoint -> frz
+  0xc4c74 N2     ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4c78        ca 05              ('bne', 'DONE')                            ramp full: integrate
+  0xc4c7a FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c7c        b6 07 02 51        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4c80 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4c82 TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+A: {'arb_sh': 6, 'arb_B': 1250}: cave 188 B = 146 code + 42 table; vs P2 +32 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 92 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        cb 15              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        24 4f 00 96        ('ld_h', -27136, 4, 9)                     th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c68        e0 49              ('cmp', 0, 9)                              
+  0xc4c6a        ae 05              ('bge', 'A1')                              
+  0xc4c6c        80 49              ('subr', 0, 9)                             |th|
+  0xc4c6e A1     c6 4a              ('shl_i', 6, 9)                            |th| << 6  (k_hat 102 T/deg)
+  0xc4c70        09 4e e2 04        ('addi', 1250, 9, 9)                       + B = 1250 S (~200 T): the bound
+  0xc4c74        24 6f 31 92        ('ld_w', -28112, 4, 13)                    I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4c78        aa 6a              ('sar_i', 10, 13)                          I >> 7 = the I's share of S
+  0xc4c7a        e0 81              ('cmp', 0, 16)                             
+  0xc4c7c        ae 05              ('bge', 'A2')                              
+  0xc4c7e        80 69              ('subr', 0, 13)                            t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4c80 A2     e9 69              ('cmp', 9, 13)                             t - bound
+  0xc4c82        ce 05              ('bge', 'FRZ')                             winding past the bound: freeze
+  0xc4c84        ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4c88        ca 05              ('bne', 'DONE')                            ramp full: integrate
+  0xc4c8a FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c8c        b6 07 f2 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4c90 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4c92 TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+Ah: {'arb_sh': 6, 'arb_B': 625}: cave 188 B = 146 code + 42 table; vs P2 +32 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 92 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        cb 15              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        24 4f 00 96        ('ld_h', -27136, 4, 9)                     th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c68        e0 49              ('cmp', 0, 9)                              
+  0xc4c6a        ae 05              ('bge', 'A1')                              
+  0xc4c6c        80 49              ('subr', 0, 9)                             |th|
+  0xc4c6e A1     c6 4a              ('shl_i', 6, 9)                            |th| << 6  (k_hat 102 T/deg)
+  0xc4c70        09 4e 71 02        ('addi', 625, 9, 9)                        + B = 625 S (~100 T): the bound
+  0xc4c74        24 6f 31 92        ('ld_w', -28112, 4, 13)                    I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4c78        aa 6a              ('sar_i', 10, 13)                          I >> 7 = the I's share of S
+  0xc4c7a        e0 81              ('cmp', 0, 16)                             
+  0xc4c7c        ae 05              ('bge', 'A2')                              
+  0xc4c7e        80 69              ('subr', 0, 13)                            t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4c80 A2     e9 69              ('cmp', 9, 13)                             t - bound
+  0xc4c82        ce 05              ('bge', 'FRZ')                             winding past the bound: freeze
+  0xc4c84        ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4c88        ca 05              ('bne', 'DONE')                            ramp full: integrate
+  0xc4c8a FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c8c        b6 07 f2 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4c90 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4c92 TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+AS: {'arb_sh': 6, 'arb_B': 1250, 'sgn': 300}: cave 204 B = 162 code + 42 table; vs P2 +48 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 a2 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        cb 1d              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        20 6e 2c 01        ('movea', 300, 0, 13)                      T = 300                                  [2 OPPOSING HAND]
+  0xc4c68        ed 41              ('cmp', 13, 8)                             
+  0xc4c6a        d3 05              ('bnh', 'N2')                              |tq| <= T: no hand
+  0xc4c6c        24 4f a0 b0        ('ld_h', -20320, 4, 9)                     signed hand torque gp-0x4f60 (sign = the push direction)
+  0xc4c70        30 49              ('xor', 16, 9)                             sign(hand) xor sign(E')
+  0xc4c72        c6 15              ('blt', 'FRZ')                             signs differ: the hand pushes AWAY from the setpoint -> frz
+  0xc4c74 N2     24 4f 00 96        ('ld_h', -27136, 4, 9)                     th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c78        e0 49              ('cmp', 0, 9)                              
+  0xc4c7a        ae 05              ('bge', 'A1')                              
+  0xc4c7c        80 49              ('subr', 0, 9)                             |th|
+  0xc4c7e A1     c6 4a              ('shl_i', 6, 9)                            |th| << 6  (k_hat 102 T/deg)
+  0xc4c80        09 4e e2 04        ('addi', 1250, 9, 9)                       + B = 1250 S (~200 T): the bound
+  0xc4c84        24 6f 31 92        ('ld_w', -28112, 4, 13)                    I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4c88        aa 6a              ('sar_i', 10, 13)                          I >> 7 = the I's share of S
+  0xc4c8a        e0 81              ('cmp', 0, 16)                             
+  0xc4c8c        ae 05              ('bge', 'A2')                              
+  0xc4c8e        80 69              ('subr', 0, 13)                            t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4c90 A2     e9 69              ('cmp', 9, 13)                             t - bound
+  0xc4c92        ce 05              ('bge', 'FRZ')                             winding past the bound: freeze
+  0xc4c94        ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4c98        ca 05              ('bne', 'DONE')                            ramp full: integrate
+  0xc4c9a FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c9c        b6 07 e2 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4ca0 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4ca2 TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+L13: {'leak': 13}: cave 168 B = 126 code + 42 table; vs P2 +12 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 7e 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        fb 05              ('bh', 'LEAK')                             |tq| > THR (unsigned): leak
+  0xc4c64        ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4c68        aa 0d              ('bne', 'DONE')                            ramp full: integrate
+  0xc4c6a FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c6c        b6 07 12 51        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4c70 LEAK   24 37 31 92        ('ld_w', -28112, 4, 6)                     I8                                              [LEAK]
+  0xc4c74        ad 32              ('sar_i', 13, 6)                           I8 >> 13
+  0xc4c76        80 31              ('subr', 0, 6)                             e5 = -(I8 >> s): inc = (e5 Ki) >> 3
+  0xc4c78        b6 07 06 51        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4c7c DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4c7e TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+A-NR: {'arb_sh': 6, 'arb_B': 1250, 'ramp': False}: cave 182 B = 140 code + 42 table; vs P2 +26 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 8c 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        ab 15              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        24 4f 00 96        ('ld_h', -27136, 4, 9)                     th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c68        e0 49              ('cmp', 0, 9)                              
+  0xc4c6a        ae 05              ('bge', 'A1')                              
+  0xc4c6c        80 49              ('subr', 0, 9)                             |th|
+  0xc4c6e A1     c6 4a              ('shl_i', 6, 9)                            |th| << 6  (k_hat 102 T/deg)
+  0xc4c70        09 4e e2 04        ('addi', 1250, 9, 9)                       + B = 1250 S (~200 T): the bound
+  0xc4c74        24 6f 31 92        ('ld_w', -28112, 4, 13)                    I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4c78        aa 6a              ('sar_i', 10, 13)                          I >> 7 = the I's share of S
+  0xc4c7a        e0 81              ('cmp', 0, 16)                             
+  0xc4c7c        ae 05              ('bge', 'A2')                              
+  0xc4c7e        80 69              ('subr', 0, 13)                            t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4c80 A2     e9 69              ('cmp', 9, 13)                             t - bound
+  0xc4c82        ae 05              ('bge', 'FRZ')                             winding past the bound: freeze
+  0xc4c84 DONE   66 00              ('jmp', 6)                                 no ramp test: return to 0x29D7A
+  0xc4c86 FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c88        b6 07 f6 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4c8c TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+A2: {'arb_sh': 6, 'arb_sh_lo': 4, 'arb_vth': 2880, 'arb_B': 1250}: cave 204 B = 162 code + 42 table; vs P2 +48 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 a2 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        cb 1d              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        24 4f 00 96        ('ld_h', -27136, 4, 9)                     th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c68        e0 49              ('cmp', 0, 9)                              
+  0xc4c6a        ae 05              ('bge', 'A1')                              
+  0xc4c6c        80 49              ('subr', 0, 9)                             |th|
+  0xc4c6e A1     e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)             [two-level slope]
+  0xc4c72        20 6e 40 0b        ('movea', 2880, 0, 13)                     VTH = 2880 (12.50 m/s)
+  0xc4c76        ed 41              ('cmp', 13, 8)                             
+  0xc4c78        bb 05              ('bh', 'AH')                               v > VTH (unsigned): high slope
+  0xc4c7a        c4 4a              ('shl_i', 4, 9)                            |th| << 4  (k_hat 26 T/deg)
+  0xc4c7c        a5 05              ('br', 'AB')                               
+  0xc4c7e AH     c6 4a              ('shl_i', 6, 9)                            |th| << 6  (k_hat 102 T/deg)
+  0xc4c80 AB     09 4e e2 04        ('addi', 1250, 9, 9)                       + B = 1250 S (~200 T): the bound
+  0xc4c84        24 6f 31 92        ('ld_w', -28112, 4, 13)                    I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4c88        aa 6a              ('sar_i', 10, 13)                          I >> 7 = the I's share of S
+  0xc4c8a        e0 81              ('cmp', 0, 16)                             
+  0xc4c8c        ae 05              ('bge', 'A2')                              
+  0xc4c8e        80 69              ('subr', 0, 13)                            t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4c90 A2     e9 69              ('cmp', 9, 13)                             t - bound
+  0xc4c92        ce 05              ('bge', 'FRZ')                             winding past the bound: freeze
+  0xc4c94        ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4c98        ca 05              ('bne', 'DONE')                            ramp full: integrate
+  0xc4c9a FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c9c        b6 07 e2 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4ca0 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4ca2 TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+A2S: {'arb_sh': 6, 'arb_sh_lo': 4, 'arb_vth': 2880, 'arb_B': 1250, 'sgn': 300}: cave 220 B = 178 code + 42 table; vs P2 +64 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 b2 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        cb 25              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        20 6e 2c 01        ('movea', 300, 0, 13)                      T = 300                                  [2 OPPOSING HAND]
+  0xc4c68        ed 41              ('cmp', 13, 8)                             
+  0xc4c6a        d3 05              ('bnh', 'N2')                              |tq| <= T: no hand
+  0xc4c6c        24 4f a0 b0        ('ld_h', -20320, 4, 9)                     signed hand torque gp-0x4f60 (sign = the push direction)
+  0xc4c70        30 49              ('xor', 16, 9)                             sign(hand) xor sign(E')
+  0xc4c72        c6 1d              ('blt', 'FRZ')                             signs differ: the hand pushes AWAY from the setpoint -> frz
+  0xc4c74 N2     24 4f 00 96        ('ld_h', -27136, 4, 9)                     th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c78        e0 49              ('cmp', 0, 9)                              
+  0xc4c7a        ae 05              ('bge', 'A1')                              
+  0xc4c7c        80 49              ('subr', 0, 9)                             |th|
+  0xc4c7e A1     e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)             [two-level slope]
+  0xc4c82        20 6e 40 0b        ('movea', 2880, 0, 13)                     VTH = 2880 (12.50 m/s)
+  0xc4c86        ed 41              ('cmp', 13, 8)                             
+  0xc4c88        bb 05              ('bh', 'AH')                               v > VTH (unsigned): high slope
+  0xc4c8a        c4 4a              ('shl_i', 4, 9)                            |th| << 4  (k_hat 26 T/deg)
+  0xc4c8c        a5 05              ('br', 'AB')                               
+  0xc4c8e AH     c6 4a              ('shl_i', 6, 9)                            |th| << 6  (k_hat 102 T/deg)
+  0xc4c90 AB     09 4e e2 04        ('addi', 1250, 9, 9)                       + B = 1250 S (~200 T): the bound
+  0xc4c94        24 6f 31 92        ('ld_w', -28112, 4, 13)                    I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4c98        aa 6a              ('sar_i', 10, 13)                          I >> 7 = the I's share of S
+  0xc4c9a        e0 81              ('cmp', 0, 16)                             
+  0xc4c9c        ae 05              ('bge', 'A2')                              
+  0xc4c9e        80 69              ('subr', 0, 13)                            t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4ca0 A2     e9 69              ('cmp', 9, 13)                             t - bound
+  0xc4ca2        ce 05              ('bge', 'FRZ')                             winding past the bound: freeze
+  0xc4ca4        ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4ca8        ca 05              ('bne', 'DONE')                            ramp full: integrate
+  0xc4caa FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4cac        b6 07 d2 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4cb0 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4cb2 TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+A3: {'arb_sh': 6, 'arb_sh_lo': 4, 'arb_vth': 2880, 'arb_B': 1250, 'arb_vcap': 1382, 'arb_cap': 4096}: cave 222 B = 180 code + 42 table; vs P2 +66 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 b4 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        db 25              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        24 4f 00 96        ('ld_h', -27136, 4, 9)                     th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c68        e0 49              ('cmp', 0, 9)                              
+  0xc4c6a        ae 05              ('bge', 'A1')                              
+  0xc4c6c        80 49              ('subr', 0, 9)                             |th|
+  0xc4c6e A1     e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)             [two-level slope]
+  0xc4c72        20 6e 40 0b        ('movea', 2880, 0, 13)                     VTH = 2880 (12.50 m/s)
+  0xc4c76        ed 41              ('cmp', 13, 8)                             
+  0xc4c78        bb 05              ('bh', 'AH')                               v > VTH (unsigned): high slope
+  0xc4c7a        c4 4a              ('shl_i', 4, 9)                            |th| << 4  (k_hat 26 T/deg)
+  0xc4c7c        a5 05              ('br', 'AB')                               
+  0xc4c7e AH     c6 4a              ('shl_i', 6, 9)                            |th| << 6  (k_hat 102 T/deg)
+  0xc4c80 AB     09 4e e2 04        ('addi', 1250, 9, 9)                       + B = 1250 S (~200 T): the bound
+  0xc4c84        20 6e 66 05        ('movea', 1382, 0, 13)                     VCAP = 1382 (6.00 m/s)  [low-speed cap]
+  0xc4c88        ed 41              ('cmp', 13, 8)                             r8 = v (still)
+  0xc4c8a        eb 05              ('bh', 'NC')                               v > VCAP: no cap
+  0xc4c8c        20 6e 00 10        ('movea', 4096, 0, 13)                     CAP = 4096 S (~655 T)
+  0xc4c90        ed 49              ('cmp', 13, 9)                             
+  0xc4c92        ed 4f 36 4b        ('cmovh', 13, 9, 9)                        bound = min(bound, CAP)
+  0xc4c96 NC     24 6f 31 92        ('ld_w', -28112, 4, 13)                    I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4c9a        aa 6a              ('sar_i', 10, 13)                          I >> 7 = the I's share of S
+  0xc4c9c        e0 81              ('cmp', 0, 16)                             
+  0xc4c9e        ae 05              ('bge', 'A2')                              
+  0xc4ca0        80 69              ('subr', 0, 13)                            t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4ca2 A2     e9 69              ('cmp', 9, 13)                             t - bound
+  0xc4ca4        ce 05              ('bge', 'FRZ')                             winding past the bound: freeze
+  0xc4ca6        ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4caa        ca 05              ('bne', 'DONE')                            ramp full: integrate
+  0xc4cac FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4cae        b6 07 d0 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4cb2 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4cb4 TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+A2L: {'arb_sh': 6, 'arb_sh_lo': 4, 'arb_vth': 2880, 'arb_B': 1250, 'sgn': 200, 'leak': 13, 'leak_opp': True, 'leak_hard': False, 'opp_first': True}: cave 232 B = 190 code + 42 table; vs P2 +76 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 be 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e c8 00        ('movea', 200, 0, 13)                      T = 200                                  [2 OPPOSING HAND]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        d3 05              ('bnh', 'N2')                              |tq| <= T: no hand
+  0xc4c64        24 4f a0 b0        ('ld_h', -20320, 4, 9)                     signed hand torque gp-0x4f60 (sign = the push direction)
+  0xc4c68        30 49              ('xor', 16, 9)                             sign(hand) xor sign(E')
+  0xc4c6a        b6 25              ('blt', 'LEAK')                            signs differ: the hand pushes AWAY from the setpoint -> leak
+  0xc4c6c N2     20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c70        ed 41              ('cmp', 13, 8)                             
+  0xc4c72        cb 1d              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c74        24 4f 00 96        ('ld_h', -27136, 4, 9)                     th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c78        e0 49              ('cmp', 0, 9)                              
+  0xc4c7a        ae 05              ('bge', 'A1')                              
+  0xc4c7c        80 49              ('subr', 0, 9)                             |th|
+  0xc4c7e A1     e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)             [two-level slope]
+  0xc4c82        20 6e 40 0b        ('movea', 2880, 0, 13)                     VTH = 2880 (12.50 m/s)
+  0xc4c86        ed 41              ('cmp', 13, 8)                             
+  0xc4c88        bb 05              ('bh', 'AH')                               v > VTH (unsigned): high slope
+  0xc4c8a        c4 4a              ('shl_i', 4, 9)                            |th| << 4  (k_hat 26 T/deg)
+  0xc4c8c        a5 05              ('br', 'AB')                               
+  0xc4c8e AH     c6 4a              ('shl_i', 6, 9)                            |th| << 6  (k_hat 102 T/deg)
+  0xc4c90 AB     09 4e e2 04        ('addi', 1250, 9, 9)                       + B = 1250 S (~200 T): the bound
+  0xc4c94        24 6f 31 92        ('ld_w', -28112, 4, 13)                    I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4c98        aa 6a              ('sar_i', 10, 13)                          I >> 7 = the I's share of S
+  0xc4c9a        e0 81              ('cmp', 0, 16)                             
+  0xc4c9c        ae 05              ('bge', 'A2')                              
+  0xc4c9e        80 69              ('subr', 0, 13)                            t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4ca0 A2     e9 69              ('cmp', 9, 13)                             t - bound
+  0xc4ca2        ce 05              ('bge', 'FRZ')                             winding past the bound: freeze
+  0xc4ca4        ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4ca8        aa 0d              ('bne', 'DONE')                            ramp full: integrate
+  0xc4caa FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4cac        b6 07 d2 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4cb0 LEAK   24 37 31 92        ('ld_w', -28112, 4, 6)                     I8                                              [LEAK]
+  0xc4cb4        ad 32              ('sar_i', 13, 6)                           I8 >> 13
+  0xc4cb6        80 31              ('subr', 0, 6)                             e5 = -(I8 >> s): inc = (e5 Ki) >> 3
+  0xc4cb8        b6 07 c6 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4cbc DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4cbe TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+A2-NR: {'arb_sh': 6, 'arb_sh_lo': 4, 'arb_vth': 2880, 'arb_B': 1250, 'ramp': False}: cave 198 B = 156 code + 42 table; vs P2 +42 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 9c 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c5c        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c60        ed 41              ('cmp', 13, 8)                             
+  0xc4c62        ab 1d              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c64        24 4f 00 96        ('ld_h', -27136, 4, 9)                     th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c68        e0 49              ('cmp', 0, 9)                              
+  0xc4c6a        ae 05              ('bge', 'A1')                              
+  0xc4c6c        80 49              ('subr', 0, 9)                             |th|
+  0xc4c6e A1     e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)             [two-level slope]
+  0xc4c72        20 6e 40 0b        ('movea', 2880, 0, 13)                     VTH = 2880 (12.50 m/s)
+  0xc4c76        ed 41              ('cmp', 13, 8)                             
+  0xc4c78        bb 05              ('bh', 'AH')                               v > VTH (unsigned): high slope
+  0xc4c7a        c4 4a              ('shl_i', 4, 9)                            |th| << 4  (k_hat 26 T/deg)
+  0xc4c7c        a5 05              ('br', 'AB')                               
+  0xc4c7e AH     c6 4a              ('shl_i', 6, 9)                            |th| << 6  (k_hat 102 T/deg)
+  0xc4c80 AB     09 4e e2 04        ('addi', 1250, 9, 9)                       + B = 1250 S (~200 T): the bound
+  0xc4c84        24 6f 31 92        ('ld_w', -28112, 4, 13)                    I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4c88        aa 6a              ('sar_i', 10, 13)                          I >> 7 = the I's share of S
+  0xc4c8a        e0 81              ('cmp', 0, 16)                             
+  0xc4c8c        ae 05              ('bge', 'A2')                              
+  0xc4c8e        80 69              ('subr', 0, 13)                            t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4c90 A2     e9 69              ('cmp', 9, 13)                             t - bound
+  0xc4c92        ae 05              ('bge', 'FRZ')                             winding past the bound: freeze
+  0xc4c94 DONE   66 00              ('jmp', 6)                                 no ramp test: return to 0x29D7A
+  0xc4c96 FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4c98        b6 07 e6 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4c9c TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+A2S-C: {'arb_sh': 6, 'arb_sh_lo': 4, 'arb_vth': 2880, 'arb_B': 1250, 'sgn': 300, 'cam': True}: cave 240 B = 198 code + 42 table; vs P2 +84 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 c6 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58        e0 c9              ('cmp', 0, 25)                             r25 = (gp-0x6803 == 2), set at 0x29A82 (READ only)   [CAMERA GATE]
+  0xc4c5a        d2 2d              ('be', 'CAM')                              not the angle fork's frame (the camera sends field 0): go inert
+  0xc4c5c        e4 47 99 b0        ('ld_hu', -20328, 4, 8)                    |driver torque| gp-0x4f68                        [HAND]
+  0xc4c60        20 6e 00 02        ('movea', 512, 0, 13)                      THR = 512                [1 hard hand]
+  0xc4c64        ed 41              ('cmp', 13, 8)                             
+  0xc4c66        cb 25              ('bh', 'FRZ')                              |tq| > THR (unsigned): freeze
+  0xc4c68        20 6e 2c 01        ('movea', 300, 0, 13)                      T = 300                                  [2 OPPOSING HAND]
+  0xc4c6c        ed 41              ('cmp', 13, 8)                             
+  0xc4c6e        d3 05              ('bnh', 'N2')                              |tq| <= T: no hand
+  0xc4c70        24 4f a0 b0        ('ld_h', -20320, 4, 9)                     signed hand torque gp-0x4f60 (sign = the push direction)
+  0xc4c74        30 49              ('xor', 16, 9)                             sign(hand) xor sign(E')
+  0xc4c76        c6 1d              ('blt', 'FRZ')                             signs differ: the hand pushes AWAY from the setpoint -> frz
+  0xc4c78 N2     24 4f 00 96        ('ld_h', -27136, 4, 9)                     th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c7c        e0 49              ('cmp', 0, 9)                              
+  0xc4c7e        ae 05              ('bge', 'A1')                              
+  0xc4c80        80 49              ('subr', 0, 9)                             |th|
+  0xc4c82 A1     e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)             [two-level slope]
+  0xc4c86        20 6e 40 0b        ('movea', 2880, 0, 13)                     VTH = 2880 (12.50 m/s)
+  0xc4c8a        ed 41              ('cmp', 13, 8)                             
+  0xc4c8c        bb 05              ('bh', 'AH')                               v > VTH (unsigned): high slope
+  0xc4c8e        c4 4a              ('shl_i', 4, 9)                            |th| << 4  (k_hat 26 T/deg)
+  0xc4c90        a5 05              ('br', 'AB')                               
+  0xc4c92 AH     c6 4a              ('shl_i', 6, 9)                            |th| << 6  (k_hat 102 T/deg)
+  0xc4c94 AB     09 4e e2 04        ('addi', 1250, 9, 9)                       + B = 1250 S (~200 T): the bound
+  0xc4c98        24 6f 31 92        ('ld_w', -28112, 4, 13)                    I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4c9c        aa 6a              ('sar_i', 10, 13)                          I >> 7 = the I's share of S
+  0xc4c9e        e0 81              ('cmp', 0, 16)                             
+  0xc4ca0        ae 05              ('bge', 'A2')                              
+  0xc4ca2        80 69              ('subr', 0, 13)                            t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4ca4 A2     e9 69              ('cmp', 9, 13)                             t - bound
+  0xc4ca6        ce 05              ('bge', 'FRZ')                             winding past the bound: freeze
+  0xc4ca8        ce 6e 00 80        ('andi', 32768, 14, 13)                    r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4cac        ca 0d              ('bne', 'DONE')                            ramp full: integrate
+  0xc4cae FRZ    00 32              ('mov_i5', 0, 6)                           r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4cb0        b6 07 ce 50        ('jr', 171390)                             return past 0x29D7A/0x29D7C
+  0xc4cb4 CAM    00 82              ('mov_i5', 0, 16)                          E' := 0 -> P = 0
+  0xc4cb6        00 d2              ('mov_i5', 0, 26)                          op := 0 -> D = 0
+  0xc4cb8        24 37 31 92        ('ld_w', -28112, 4, 6)                     I8
+  0xc4cbc        a6 32              ('sar_i', 6, 6)                            
+  0xc4cbe        80 31              ('subr', 0, 6)                             e5 = -(I8 >> 6): I x 0.125 per tick (gone in ~3 ms)
+  0xc4cc0        b6 07 be 50        ('jr', 171390)                             
+  0xc4cc4 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A
+  0xc4cc6 TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written
+======================================================================================================================
+K0: {'nopol': True}: cave 132 B = 90 code + 42 table; vs P2 -24 B
+  0xc4c00 C      c2 82              ('shl_i', 2, 16)                           displaced 0x29D76: 4 sp
+  0xc4c02        ba 81              ('sub', 26, 16)                            displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95        ('ld_h', -27326, 4, 26)                    op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32        ('addi', 13000, 26, 8)                     Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65        ('movea', 26000, 0, 13)                    
+  0xc4c10        ed 41              ('cmp', 13, 8)                             
+  0xc4c12        e0 d7 36 d3        ('cmovh', 0, 26, 26)                       op + 13000 > 26000 unsigned (incl. the 0x7FFF sentinel): op := 0
+  0xc4c16        e4 47 a3 95        ('ld_hu', -27230, 4, 8)                    v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1a        29 06 5a 4c 0c 00  ('mov_i32', 'TBL', 9)                      r9 -> table                                     [G(v)]
+  0xc4c20        e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X0
+  0xc4c24        ed 41              ('cmp', 13, 8)                             
+  0xc4c26        cb 05              ('bh', 'L1')                               v > X0 (unsigned): walk
+  0xc4c28        e9 47 03 00        ('ld_hu', 2, 9, 8)                         G = G0 (clamp low)
+  0xc4c2c        b5 15              ('br', 'APPLY')                            
+  0xc4c2e L1     e9 6f 07 00        ('ld_hu', 6, 9, 13)                        X(i+1)
+  0xc4c32        ed 41              ('cmp', 13, 8)                             
+  0xc4c34        c3 05              ('bnh', 'SEG')                             v <= X(i+1): segment i
+  0xc4c36        09 4e 06 00        ('addi', 6, 9, 9)                          next row (the 0xFFFF row ends the walk)
+  0xc4c3a        a5 fd              ('br', 'L1')                               
+  0xc4c3c SEG    e9 6f 01 00        ('ld_hu', 0, 9, 13)                        X(i)
+  0xc4c40        ad 41              ('sub', 13, 8)                             dv = v - X(i)
+  0xc4c42        29 6f 04 00        ('ld_h', 4, 9, 13)                         S(i), Q12, signed
+  0xc4c46        ed 47 20 02        ('mul', 13, 8, 0)                          dv * S(i) (low word)
+  0xc4c4a        ac 42              ('sar_i', 12, 8)                           >> 12
+  0xc4c4c        e9 6f 03 00        ('ld_hu', 2, 9, 13)                        G(i)
+  0xc4c50        cd 41              ('add', 13, 8)                             G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c52 APPLY  e8 87 20 02        ('mul', 8, 16, 0)                          E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c56        a8 82              ('sar_i', 8, 16)                           E' = (E G) >> 8
+  0xc4c58 DONE   66 00              ('jmp', 6)                                 return to 0x29D7A (no I policy: Ki = 0 in this implementation)
+  0xc4c5a TBL    ca 02              ('half', 714)                              table: X u16, G u16, S s16 Q12 per row
+  H1: bytes executed vs cave_ref (E2Lane's ordered decision), 40000 inputs incl. sign/threshold/bound edges: 0 mismatches; scratch (6, 8, 9, 13, 16, 26), no RAM written

@@ -1,0 +1,80 @@
+--- G-P48k40: (i)+Ki fresh-rate D Kd 48, Ki 56 -> 40 (PI corner 0.62 -> 0.44 Hz), full extended set
+  v   8.0 G  1634 (T/deg  71.6): metric nominal 1.001 min 0.994 (b_q*J1.0|k0.83) max 1.005 | hold min 1.000 | Tr1.6-3 max 1.17 (b_lo*J_hi) nominal 0.82
+  v   9.0 G  1218 (T/deg  53.4): metric nominal 1.001 min 0.990 (b_q*J1.0|k0.83) max 1.006 | hold min 1.000 | Tr1.6-3 max 1.03 (b_lo*ms_free) nominal 0.57
+  v  10.0 G   804 (T/deg  35.2): metric nominal 0.996 min 0.974 (b_lo*ms_free) max 1.005 | hold min 0.999 | Tr1.6-3 max 0.58 (b_lo*J_hi) nominal 0.33
+  v  11.0 G   684 (T/deg  30.0): metric nominal 0.992 min 0.959 (b_lo*ms_free) max 1.002 | hold min 0.998 | Tr1.6-3 max 0.46 (b_lo*J_hi) nominal 0.25
+  v  11.9 G   609 (T/deg  26.7): metric nominal 0.987 min 0.943 (b_lo*ms_free) max 0.998 | hold min 0.998 | Tr1.6-3 max 0.39 (b_lo*J_hi) nominal 0.21
+  v  12.5 G   667 (T/deg  29.2): metric nominal 0.974 min 0.934 (b_q*ms_free) max 0.985 | hold min 0.997 | Tr1.6-3 max 0.48 (b_q*J_hi) nominal 0.20
+  v  13.5 G   764 (T/deg  33.5): metric nominal 0.956 min 0.922 (b_q*ms_free) max 0.966 | hold min 0.996 | Tr1.6-3 max 0.63 (b_q*J1.0|k0.83) nominal 0.20
+  v  15.0 G   910 (T/deg  39.9): metric nominal 0.936 min 0.913 (b_q*ms_free) max 0.941 | hold min 0.996 | Tr1.6-3 max 0.89 (b_q*J1.0|k0.83) nominal 0.20
+  v  17.0 G  1104 (T/deg  48.4): metric nominal 0.919 min 0.903 (b_q*ms_free) max 0.924 | hold min 0.995 | Tr1.6-3 max 0.89 (b_q*J1.0|k0.83) nominal 0.19
+  v  19.0 G  1346 (T/deg  59.0): metric nominal 0.949 min 0.933 (b_q*ms_free) max 0.955 | hold min 0.997 | Tr1.6-3 max 1.12 (b_q*ms_free) nominal 0.23
+  v  22.0 G  1733 (T/deg  76.0): metric nominal 0.985 min 0.973 (b_q*ms_free) max 0.991 | hold min 0.998 | Tr1.6-3 max 1.23 (b_q*J1.0|k0.83) nominal 0.29
+  v  26.0 G  2248 (T/deg  98.5): metric nominal 0.998 min 0.985 (b_q*J1.0|k0.83) max 1.004 | hold min 0.999 | Tr1.6-3 max 1.48 (b_q*J1.0+h10) nominal 0.36
+  v  26.9 G  2365 (T/deg 103.7): metric nominal 1.000 min 0.987 (b_q*J1.0|k0.83) max 1.006 | hold min 0.999 | Tr1.6-3 max 1.54 (b_q*J1.0+h10) nominal 0.37
+  v  30.0 G  2365 (T/deg 103.7): metric nominal 1.000 min 0.987 (b_q*J1.0|k0.83) max 1.006 | hold min 0.999 | Tr1.6-3 max 1.54 (b_q*J1.0+h10) nominal 0.37
+  => G-P48k40: linear goal metric >= 8 m/s 0.903 .. 1.006 (FAIL 0.95-1.05); turn-hold min 0.995; |T_ref| 1.6-3 Hz max 1.54
+--- G-F24: (ii) held-rate D Kd 24, full extended set
+  v   8.0 G  1254 (T/deg  55.0): metric nominal 1.003 min 0.998 (b_q*J1.0|k0.83) max 1.007 | hold min 1.000 | Tr1.6-3 max 1.15 (b_lo*J_hi) nominal 0.77
+  v   9.0 G   923 (T/deg  40.5): metric nominal 1.004 min 0.995 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 0.80 (b_lo*ms_free) nominal 0.50
+  v  10.0 G   592 (T/deg  26.0): metric nominal 1.002 min 0.980 (b_lo*ms_free) max 1.010 | hold min 0.999 | Tr1.6-3 max 0.49 (b_lo*J_hi) nominal 0.27
+  v  11.0 G   492 (T/deg  21.6): metric nominal 0.998 min 0.964 (b_lo*ms_free) max 1.008 | hold min 0.999 | Tr1.6-3 max 0.37 (b_lo*J_hi) nominal 0.20
+  v  11.9 G   430 (T/deg  18.9): metric nominal 0.992 min 0.947 (b_lo*ms_free) max 1.004 | hold min 0.998 | Tr1.6-3 max 0.31 (b_lo*J_hi) nominal 0.16
+  v  12.5 G   482 (T/deg  21.1): metric nominal 0.981 min 0.941 (b_q*ms_free) max 0.992 | hold min 0.998 | Tr1.6-3 max 0.40 (b_q*J_hi) nominal 0.16
+  v  13.5 G   568 (T/deg  24.9): metric nominal 0.966 min 0.932 (b_q*ms_free) max 0.976 | hold min 0.997 | Tr1.6-3 max 0.48 (b_q*J1.0|k0.83) nominal 0.16
+  v  15.0 G   698 (T/deg  30.6): metric nominal 0.948 min 0.925 (b_q*ms_free) max 0.955 | hold min 0.997 | Tr1.6-3 max 0.75 (b_q*J1.0|k0.83) nominal 0.16
+  v  17.0 G   871 (T/deg  38.2): metric nominal 0.935 min 0.918 (b_q*ms_free) max 0.941 | hold min 0.996 | Tr1.6-3 max 0.83 (b_q*J1.0|k0.83) nominal 0.16
+  v  19.0 G  1079 (T/deg  47.3): metric nominal 0.963 min 0.947 (b_q*ms_free) max 0.971 | hold min 0.998 | Tr1.6-3 max 0.98 (b_q*J1.0|k0.83) nominal 0.20
+  v  22.0 G  1409 (T/deg  61.8): metric nominal 0.992 min 0.981 (b_q*ms_free) max 0.999 | hold min 0.999 | Tr1.6-3 max 1.22 (b_q*ms_free) nominal 0.25
+  v  26.0 G  1848 (T/deg  81.0): metric nominal 1.002 min 0.991 (b_q*J1.0|k0.83) max 1.009 | hold min 1.000 | Tr1.6-3 max 1.48 (b_q*J1.0+h10) nominal 0.32
+  v  26.9 G  1947 (T/deg  85.4): metric nominal 1.004 min 0.992 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.54 (b_q*J1.0+h10) nominal 0.33
+  v  30.0 G  1948 (T/deg  85.4): metric nominal 1.004 min 0.992 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.54 (b_q*J1.0+h10) nominal 0.33
+  => G-F24: linear goal metric >= 8 m/s 0.918 .. 1.010 (FAIL 0.95-1.05); turn-hold min 0.996; |T_ref| 1.6-3 Hz max 1.54
+--- G-F24d: (ii) held-rate D Kd 24, ms_free x b_q products DECLARED (not gated)
+  v   8.0 G  1254 (T/deg  55.0): metric nominal 1.003 min 0.998 (b_q*J1.0|k0.83) max 1.007 | hold min 1.000 | Tr1.6-3 max 1.15 (b_lo*J_hi) nominal 0.77
+  v   9.0 G   924 (T/deg  40.5): metric nominal 1.004 min 0.996 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 0.80 (b_lo*ms_free) nominal 0.50
+  v  10.0 G   597 (T/deg  26.2): metric nominal 1.002 min 0.980 (b_lo*ms_free) max 1.010 | hold min 0.999 | Tr1.6-3 max 0.49 (b_lo*J_hi) nominal 0.27
+  v  11.0 G   488 (T/deg  21.4): metric nominal 0.997 min 0.964 (b_lo*ms_free) max 1.008 | hold min 0.999 | Tr1.6-3 max 0.37 (b_lo*J_hi) nominal 0.20
+  v  11.9 G   430 (T/deg  18.9): metric nominal 0.992 min 0.947 (b_lo*ms_free) max 1.004 | hold min 0.998 | Tr1.6-3 max 0.31 (b_lo*J_hi) nominal 0.16
+  v  12.5 G   524 (T/deg  23.0): metric nominal 0.986 min 0.949 (b_q*ms_free) max 0.997 | hold min 0.998 | Tr1.6-3 max 0.44 (b_q*J_hi) nominal 0.17
+  v  13.5 G   680 (T/deg  29.8): metric nominal 0.979 min 0.949 (b_q*ms_free) max 0.989 | hold min 0.998 | Tr1.6-3 max 0.63 (b_q*J1.0|k0.83) nominal 0.20
+  v  15.0 G   915 (T/deg  40.1): metric nominal 0.970 min 0.950 (b_q*ms_free) max 0.978 | hold min 0.998 | Tr1.6-3 max 1.19 (b_q*J1.0|k0.83) nominal 0.22
+  v  17.0 G  1227 (T/deg  53.8): metric nominal 0.966 min 0.951 (b_q*ms_free) max 0.973 | hold min 0.998 | Tr1.6-3 max 1.34 (b_q*J1.0|k0.83) nominal 0.24
+  v  19.0 G  1408 (T/deg  61.7): metric nominal 0.980 min 0.965 (b_q*ms_free) max 0.988 | hold min 0.999 | Tr1.6-3 max 1.67 (b_q*ms_free) nominal 0.26
+  v  22.0 G  1613 (T/deg  70.7): metric nominal 0.995 min 0.985 (b_q*ms_free) max 1.001 | hold min 0.999 | Tr1.6-3 max 1.47 (b_q*J1.0+h10) nominal 0.29
+  v  26.0 G  1886 (T/deg  82.7): metric nominal 1.002 min 0.991 (b_q*J1.0|k0.83) max 1.009 | hold min 1.000 | Tr1.6-3 max 1.53 (b_q*J1.0+h10) nominal 0.32
+  v  26.9 G  1947 (T/deg  85.4): metric nominal 1.004 min 0.992 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.54 (b_q*J1.0+h10) nominal 0.33
+  v  30.0 G  1948 (T/deg  85.4): metric nominal 1.004 min 0.992 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.54 (b_q*J1.0+h10) nominal 0.33
+  => G-F24d: linear goal metric >= 8 m/s 0.947 .. 1.010 (FAIL 0.95-1.05); turn-hold min 0.998; |T_ref| 1.6-3 Hz max 1.67
+--- G-A22: (iii) angle-own D box10 (k_op 64) Kd 22, full extended set
+  v   8.0 G  1162 (T/deg  50.9): metric nominal 1.002 min 0.996 (b_q*J1.0|k0.83) max 1.006 | hold min 1.000 | Tr1.6-3 max 1.31 (b_lo*J_hi) nominal 0.81
+  v   9.0 G   854 (T/deg  37.4): metric nominal 1.002 min 0.993 (b_q*J1.0|k0.83) max 1.008 | hold min 1.000 | Tr1.6-3 max 0.83 (b_lo*J_hi) nominal 0.52
+  v  10.0 G   548 (T/deg  24.0): metric nominal 0.998 min 0.974 (b_lo*ms_free) max 1.007 | hold min 0.999 | Tr1.6-3 max 0.53 (b_lo*J_hi) nominal 0.28
+  v  11.0 G   455 (T/deg  19.9): metric nominal 0.993 min 0.957 (b_lo*ms_free) max 1.003 | hold min 0.998 | Tr1.6-3 max 0.40 (b_lo*J_hi) nominal 0.20
+  v  11.9 G   398 (T/deg  17.4): metric nominal 0.986 min 0.937 (b_lo*ms_free) max 0.998 | hold min 0.998 | Tr1.6-3 max 0.33 (b_lo*J_hi) nominal 0.16
+  v  12.5 G   446 (T/deg  19.6): metric nominal 0.974 min 0.930 (b_q*ms_free) max 0.985 | hold min 0.997 | Tr1.6-3 max 0.44 (b_q*J_hi) nominal 0.16
+  v  13.5 G   527 (T/deg  23.1): metric nominal 0.958 min 0.921 (b_q*ms_free) max 0.968 | hold min 0.997 | Tr1.6-3 max 0.51 (b_q*J_hi) nominal 0.16
+  v  15.0 G   649 (T/deg  28.5): metric nominal 0.939 min 0.916 (b_q*ms_free) max 0.946 | hold min 0.996 | Tr1.6-3 max 0.78 (b_q*J1.0|k0.83) nominal 0.16
+  v  17.0 G   811 (T/deg  35.6): metric nominal 0.926 min 0.909 (b_q*ms_free) max 0.932 | hold min 0.996 | Tr1.6-3 max 0.91 (b_q*J1.0|k0.83) nominal 0.16
+  v  19.0 G  1015 (T/deg  44.5): metric nominal 0.958 min 0.941 (b_q*ms_free) max 0.965 | hold min 0.998 | Tr1.6-3 max 1.09 (b_q*J1.0|k0.83) nominal 0.19
+  v  22.0 G  1341 (T/deg  58.8): metric nominal 0.990 min 0.979 (b_q*ms_free) max 0.997 | hold min 0.999 | Tr1.6-3 max 1.40 (b_q*ms_free) nominal 0.25
+  v  26.0 G  1776 (T/deg  77.9): metric nominal 1.001 min 0.990 (b_q*J1.0|k0.83) max 1.008 | hold min 0.999 | Tr1.6-3 max 1.70 (b_q*J1.0+h10) nominal 0.31
+  v  26.9 G  1874 (T/deg  82.2): metric nominal 1.003 min 0.991 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.77 (b_q*J1.0+h10) nominal 0.33
+  v  30.0 G  1874 (T/deg  82.2): metric nominal 1.003 min 0.991 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.77 (b_q*J1.0+h10) nominal 0.33
+  => G-A22: linear goal metric >= 8 m/s 0.909 .. 1.010 (FAIL 0.95-1.05); turn-hold min 0.996; |T_ref| 1.6-3 Hz max 1.77
+--- G-A22d: (iii) angle-own D box10 Kd 22, ms_free x b_q products DECLARED (not gated)
+  v   8.0 G  1160 (T/deg  50.9): metric nominal 1.002 min 0.996 (b_q*J1.0|k0.83) max 1.006 | hold min 1.000 | Tr1.6-3 max 1.31 (b_lo*J_hi) nominal 0.81
+  v   9.0 G   856 (T/deg  37.5): metric nominal 1.002 min 0.993 (b_q*J1.0|k0.83) max 1.008 | hold min 1.000 | Tr1.6-3 max 0.83 (b_lo*J_hi) nominal 0.52
+  v  10.0 G   553 (T/deg  24.2): metric nominal 0.998 min 0.975 (b_lo*ms_free) max 1.007 | hold min 0.999 | Tr1.6-3 max 0.54 (b_lo*J_hi) nominal 0.28
+  v  11.0 G   451 (T/deg  19.8): metric nominal 0.992 min 0.956 (b_lo*ms_free) max 1.003 | hold min 0.998 | Tr1.6-3 max 0.40 (b_lo*J_hi) nominal 0.20
+  v  11.9 G   398 (T/deg  17.4): metric nominal 0.986 min 0.937 (b_lo*ms_free) max 0.998 | hold min 0.998 | Tr1.6-3 max 0.33 (b_lo*J_hi) nominal 0.16
+  v  12.5 G   486 (T/deg  21.3): metric nominal 0.979 min 0.940 (b_q*ms_free) max 0.991 | hold min 0.998 | Tr1.6-3 max 0.49 (b_q*J_hi) nominal 0.17
+  v  13.5 G   632 (T/deg  27.7): metric nominal 0.972 min 0.941 (b_q*ms_free) max 0.983 | hold min 0.998 | Tr1.6-3 max 0.63 (b_q*J1.0+h10) nominal 0.19
+  v  15.0 G   853 (T/deg  37.4): metric nominal 0.964 min 0.943 (b_q*ms_free) max 0.972 | hold min 0.998 | Tr1.6-3 max 1.31 (b_q*J1.0+h10) nominal 0.21
+  v  17.0 G  1147 (T/deg  50.3): metric nominal 0.961 min 0.945 (b_q*ms_free) max 0.968 | hold min 0.998 | Tr1.6-3 max 1.56 (b_q*J1.0+h10) nominal 0.23
+  v  19.0 G  1323 (T/deg  58.0): metric nominal 0.976 min 0.960 (b_q*ms_free) max 0.984 | hold min 0.998 | Tr1.6-3 max 1.82 (b_q*ms_free) nominal 0.26
+  v  22.0 G  1529 (T/deg  67.0): metric nominal 0.994 min 0.983 (b_q*ms_free) max 1.000 | hold min 0.999 | Tr1.6-3 max 1.71 (b_q*ms_free) nominal 0.29
+  v  26.0 G  1803 (T/deg  79.0): metric nominal 1.002 min 0.990 (b_q*J1.0|k0.83) max 1.008 | hold min 0.999 | Tr1.6-3 max 1.74 (b_q*J1.0+h10) nominal 0.32
+  v  26.9 G  1865 (T/deg  81.8): metric nominal 1.003 min 0.991 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.75 (b_q*J1.0+h10) nominal 0.33
+  v  30.0 G  1865 (T/deg  81.8): metric nominal 1.003 min 0.991 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.75 (b_q*J1.0+h10) nominal 0.33
+  => G-A22d: linear goal metric >= 8 m/s 0.937 .. 1.010 (FAIL 0.95-1.05); turn-hold min 0.998; |T_ref| 1.6-3 Hz max 1.82

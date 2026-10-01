@@ -1,0 +1,4 @@
+# E1 goal tracking metric (angle space, 0.5 Hz LPF, OLS slope) on r71b's own paths; bar 0.95-1.05 + hands-off reaction-torque telegraph (a6 duty, BELIEF)
+band  8-15 nominal     P2base:0.900  E1a:0.988  E1d:0.787
+band 15-22 nominal     P2base:0.856  E1a:0.993  E1d:0.890
+band   >22 nominal     P2base:1.002  E1a:1.006  E1d:1.006

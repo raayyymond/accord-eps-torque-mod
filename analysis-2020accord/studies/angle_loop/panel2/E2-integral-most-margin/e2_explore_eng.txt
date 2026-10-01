@@ -1,0 +1,17 @@
+# e2_explore eng: columns P2 I6k I8k I12k S200r S300r S200l A12 A12h A11 L13 LS A12S A12-12k
+engage droop max nominal        ramp  33: P2 4.66 I6k 4.66 I8k 4.66 I12k 4.67 S200r 4.66 S300r 4.66 S200l 4.66 A12 4.66 A12h 4.66 A11 4.66 L13 4.66 LS 4.67 A12S 4.66 A12-12k 4.66
+engage overshoot max nominal    ramp  33: P2 0.19 I6k 0.19 I8k 0.20 I12k 0.19 S200r 0.19 S300r 0.19 S200l 0.20 A12 0.19 A12h 0.19 A11 0.19 L13 0.19 LS 0.19 A12S 0.19 A12-12k 0.19
+engage droop max nominal        ramp 328: P2 3.02 I6k 3.03 I8k 3.03 I12k 3.03 S200r 3.03 S300r 3.03 S200l 3.03 A12 3.03 A12h 3.03 A11 3.03 L13 3.03 LS 3.02 A12S 3.03 A12-12k 3.03
+engage overshoot max nominal    ramp 328: P2 0.12 I6k 0.12 I8k 0.12 I12k 0.12 S200r 0.12 S300r 0.13 S200l 0.12 A12 0.12 A12h 0.11 A11 0.12 L13 0.12 LS 0.12 A12S 0.12 A12-12k 0.12
+engage droop max bc             ramp  33: P2 5.19 I6k 5.20 I8k 5.20 I12k 5.20 S200r 5.20 S300r 5.19 S200l 5.20 A12 5.20 A12h 5.19 A11 5.19 L13 5.20 LS 5.20 A12S 5.20 A12-12k 5.20
+engage overshoot max bc         ramp  33: P2 0.05 I6k 0.06 I8k 0.05 I12k 0.05 S200r 0.05 S300r 0.05 S200l 0.05 A12 0.05 A12h 0.05 A11 0.05 L13 0.05 LS 0.06 A12S 0.05 A12-12k 0.05
+engage droop max bc             ramp 328: P2 3.36 I6k 3.35 I8k 3.36 I12k 3.36 S200r 3.36 S300r 3.36 S200l 3.36 A12 3.36 A12h 3.36 A11 3.36 L13 3.36 LS 3.36 A12S 3.36 A12-12k 3.36
+engage overshoot max bc         ramp 328: P2 0.02 I6k 0.02 I8k 0.02 I12k 0.03 S200r 0.02 S300r 0.02 S200l 0.02 A12 0.02 A12h 0.02 A11 0.02 L13 0.02 LS 0.05 A12S 0.02 A12-12k 0.02
+engage droop max b_lo*J_hi      ramp  33: P2 7.90 I6k 7.90 I8k 7.90 I12k 7.91 S200r 7.90 S300r 7.90 S200l 7.90 A12 7.90 A12h 7.90 A11 7.90 L13 7.90 LS 7.90 A12S 7.90 A12-12k 7.90
+engage overshoot max b_lo*J_hi  ramp  33: P2 0.43 I6k 0.43 I8k 0.42 I12k 0.43 S200r 0.43 S300r 0.43 S200l 0.42 A12 0.42 A12h 0.43 A11 0.41 L13 0.42 LS 0.42 A12S 0.42 A12-12k 0.42
+engage droop max b_lo*J_hi      ramp 328: P2 5.19 I6k 5.19 I8k 5.19 I12k 5.20 S200r 5.19 S300r 5.19 S200l 5.20 A12 5.19 A12h 5.19 A11 5.19 L13 5.19 LS 5.20 A12S 5.19 A12-12k 5.19
+engage overshoot max b_lo*J_hi  ramp 328: P2 0.31 I6k 0.33 I8k 0.32 I12k 0.32 S200r 0.32 S300r 0.32 S200l 0.31 A12 0.32 A12h 0.32 A11 0.32 L13 0.32 LS 0.32 A12S 0.32 A12-12k 0.33
+engage droop max b_lo*J_hi+h10  ramp  33: P2 8.12 I6k 8.12 I8k 8.12 I12k 8.13 S200r 8.13 S300r 8.12 S200l 8.12 A12 8.12 A12h 8.12 A11 8.12 L13 8.12 LS 8.13 A12S 8.13 A12-12k 8.12
+engage overshoot max b_lo*J_hi+h10 ramp  33: P2 0.64 I6k 0.63 I8k 0.64 I12k 0.63 S200r 0.64 S300r 0.64 S200l 0.63 A12 0.63 A12h 0.64 A11 0.63 L13 0.63 LS 0.64 A12S 0.64 A12-12k 0.64
+engage droop max b_lo*J_hi+h10  ramp 328: P2 5.46 I6k 5.46 I8k 5.46 I12k 5.46 S200r 5.46 S300r 5.46 S200l 5.46 A12 5.46 A12h 5.46 A11 5.46 L13 5.46 LS 5.46 A12S 5.46 A12-12k 5.46
+engage overshoot max b_lo*J_hi+h10 ramp 328: P2 0.54 I6k 0.56 I8k 0.53 I12k 0.53 S200r 0.54 S300r 0.54 S200l 0.54 A12 0.54 A12h 0.54 A11 0.54 L13 0.55 LS 0.52 A12S 0.53 A12-12k 0.54

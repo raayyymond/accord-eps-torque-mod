@@ -1,0 +1,6 @@
+# e2_freq: GATE 2 on the common scorer, 6 gated members x 5 speeds (19 s)
+[P2       ] minPM nominal 64.9 | tier-A single 46.7 | tier-B combined 34.0 (b_q*J1.0+h10@26.90 fc~1.57Hz) | peak 5-30 -6.0 dB | M20 x0.67 | L20 x0.67 | fails 0
+[P2-I0    ] minPM nominal 81.5 | tier-A single 62.6 | tier-B combined 50.8 (b_q*J1.0+h10@17.00 fc~1.73Hz) | peak 5-30 -5.4 dB | M20 x0.67 | L20 x0.67 | fails 0
+[P2-FA    ] minPM nominal 60.3 | tier-A single 43.2 | tier-B combined 30.9 (b_q*J1.0+h10@26.90 fc~1.58Hz) | peak 5-30 -7.0 dB | M20 x0.58 | L20 x0.58 | fails 1
+      fail ('J_hi', 3.0, ['PM45'], np.float64(43.2))
+[P2-I0-FA ] minPM nominal 78.6 | tier-A single 60.3 | tier-B combined 48.2 (b_q*J1.0+h10@17.00 fc~1.72Hz) | peak 5-30 -6.3 dB | M20 x0.58 | L20 x0.58 | fails 0

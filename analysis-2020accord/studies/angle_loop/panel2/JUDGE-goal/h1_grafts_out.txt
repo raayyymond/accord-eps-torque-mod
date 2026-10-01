@@ -1,0 +1,10 @@
+P2 156 mismatches 0 / 3000 
+E2-A3 222 mismatches 0 / 3000 
+G-P48 156 mismatches 0 / 3000 
+G-P44 156 mismatches 0 / 3000 
+J-G48-A3 222 mismatches 0 / 3000 
+J-G48-A3-12k 222 mismatches 0 / 3000 
+J-G44-A3 222 mismatches 0 / 3000 
+J-G48d-A3 222 mismatches 0 / 3000 
+J-F24-A3 None mismatches None / 0 
+NEG (P2 rows in the lane, G-P48 rows in the bytes): mismatches 1498 / 1500

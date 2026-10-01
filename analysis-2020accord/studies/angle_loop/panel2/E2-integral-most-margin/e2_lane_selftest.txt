@@ -1,0 +1,4 @@
+CONTROL E2-0 rh@11.9 nominal: E2Lane (defaults) vs DSLane, P2/F2/P2-ICL8192: max|dT| 0, max|dtheta| 0.00e+00  OK
+CONTROL E2-0 ov_light400@8.0 b_lo*J_hi: E2Lane (defaults) vs DSLane, P2/F2/P2-ICL8192: max|dT| 0, max|dtheta| 0.00e+00  OK
+CONTROL E2-0 eng_load@10.0 bc: E2Lane (defaults) vs DSLane, P2/F2/P2-ICL8192: max|dT| 0, max|dtheta| 0.00e+00  OK
+CONTROL E2-0 s02@17.0 F_hi: E2Lane (defaults) vs DSLane, P2/F2/P2-ICL8192: max|dT| 0, max|dtheta| 0.00e+00  OK

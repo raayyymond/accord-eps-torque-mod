@@ -1,0 +1,6 @@
+NEG-CONTROL E1-reset policy on P2 bytes: mismatches 309 / 1500  (must be > 0)
+NEG-CONTROL E2-A2 policy on S300 bytes: mismatches 125 / 1500  (must be > 0)
+NEG-CONTROL G-A22 on G-A22d bytes (table differs): mismatches 1325 / 1500  (must be > 0)
+NEG-CONTROL E2-L policy, leak 14 vs L13 bytes: mismatches 600 / 1500  (must be > 0)
+NEG-CONTROL F2 held cand on P2 bytes: mismatches 1500 / 1500  (must be > 0)
+NEG-CONTROL E1-freeze thr 320 cand on thr-512 bytes: mismatches 167 / 1500  (must be > 0)

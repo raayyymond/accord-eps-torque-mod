@@ -1,0 +1,7 @@
+FUN_00028ea6 (CONTROL)       0x28ea6: Format-V branches [('0x22522', 'jarl', 'r31')]; LE32 literals at []
+FUN_0002a508                 0x2a508: Format-V branches []; LE32 literals at []
+FUN_0002a93a                 0x2a93a: Format-V branches []; LE32 literals at []
+FUN_0002b35a                 0x2b35a: Format-V branches []; LE32 literals at []
+FUN_0004e82e                 0x4e82e: Format-V branches []; LE32 literals at ['0xb7870']
+0x2B418 (twin tail)          0x2b418: Format-V branches []; LE32 literals at []
+CONTROL 0x22522 -> 0x28EA6 found: True

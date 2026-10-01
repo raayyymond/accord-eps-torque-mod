@@ -1,0 +1,180 @@
+GATE 2 -- rev2A-F2: REFERENCE rev2-A F2 (held D Kd 20) as published  (48020 points, 0 s)
+  table rows [(714, 1187, 896), (1843, 1434, -6388), (2304, 715, -1779), (2707, 540, 2507), (4032, 1351, 1348), (6198, 2064, 0), (65535, 2064, 0)]  Kd 20
+  points where pm_fixed != the shared formula: 0  (min pm_raw there nan; max rho there nan)
+  max exact rho over ALL points (gated + report): 0.99775  unstable points: 0
+  GATE-2 fails (strict tiering): 1562
+      b_q*ms_free*tau6+h10|fb|k0.83      v 12.50-24.75 (50 pts) worst PM   7.7  ['GM6', 'PM30']
+      b_q*ms_free*tau6+h10|k0.83         v 12.50-24.00 (47 pts) worst PM   8.0  ['GM6', 'PM30']
+      b_q*ms_free+h10|fb|k0.83           v 12.50-24.25 (48 pts) worst PM   9.6  ['PM30']
+      b_q*ms_free+h10|k0.83              v 12.50-23.50 (45 pts) worst PM   9.8  ['PM30']
+      b_lo*ms_free*tau6+h10|k0.83        v  5.75-13.50 (33 pts) worst PM  11.9  ['PM30']
+      b_q*ms_free*tau6|k0.83             v 12.50-22.50 (41 pts) worst PM  12.5  ['PM30']
+      b_q*ms_free*tau6|fb|k0.83          v 12.50-23.25 (44 pts) worst PM  12.6  ['PM30']
+      b_lo*ms_free+h10|k0.83             v  7.50-13.25 (25 pts) worst PM  13.0  ['PM30']
+      b_q*ms_free*tau6+h10               v 12.50-23.00 (43 pts) worst PM  13.0  ['PM30']
+      b_lo*ms_free*tau6+h10|fb|k0.83     v  4.25-13.50 (39 pts) worst PM  13.7  ['PM30']
+      b_q*ms_free|k0.83                  v 12.50-21.75 (38 pts) worst PM  14.4  ['PM30']
+      b_q*ms_free|fb|k0.83               v 12.50-22.50 (41 pts) worst PM  14.6  ['PM30']
+      b_lo*ms_free*tau6|k0.83            v  8.50-13.25 (21 pts) worst PM  14.8  ['PM30']
+      b_q*ms_free+h10                    v 12.50-22.25 (40 pts) worst PM  14.9  ['PM30']
+      b_lo*ms_free+h10|fb|k0.83          v  6.00-13.25 (31 pts) worst PM  15.0  ['PM30']
+      b_lo*ms_free|k0.83                 v  8.75-13.00 (18 pts) worst PM  15.9  ['PM30']
+      b_lo*ms_free*tau6|fb|k0.83         v  8.25-13.00 (21 pts) worst PM  16.9  ['PM30']
+      b_q*ms_free*tau6+h10|k1.155        v 12.50-22.00 (39 pts) worst PM  17.5  ['PM30']
+      b_q*ms_free*tau6+h10|fb|k1.155     v 12.50-23.00 (43 pts) worst PM  17.5  ['PM30']
+      b_q*ms_free*tau6                   v 12.50-21.25 (36 pts) worst PM  17.6  ['PM30']
+      b_lo*ms_free|fb|k0.83              v  8.50-13.00 (19 pts) worst PM  18.1  ['PM30']
+      b_lo*ms_free*tau6+h10              v  8.25-13.00 (20 pts) worst PM  18.4  ['PM30']
+      b_q*ms_free+h10|k1.155             v 12.50-21.25 (36 pts) worst PM  19.3  ['PM30']
+      b_q*ms_free                        v 12.50-20.25 (32 pts) worst PM  19.4  ['PM30']
+      b_lo*ms_free+h10                   v  8.50-12.75 (17 pts) worst PM  19.5  ['PM30']
+      b_q*ms_free+h10|fb|k1.155          v 12.50-22.00 (39 pts) worst PM  19.5  ['PM30']
+      b_lo*ms_free*tau6                  v 10.00-12.50 (12 pts) worst PM  21.3  ['PM30']
+      b_q*ms_free*tau6|k1.155            v 12.50-19.75 (30 pts) worst PM  22.0  ['PM30']
+      b_lo*ms_free                       v 10.00-12.50 (12 pts) worst PM  22.4  ['PM30']
+      b_q*ms_free*tau6|fb|k1.155         v 13.00-20.50 (31 pts) worst PM  22.4  ['PM30']
+      b_lo*J_hi*tau6+h10|fb|k0.83        v  1.00- 8.25 (31 pts) worst PM  23.7  ['PM30']
+      b_q*ms_free|k1.155                 v 12.75-18.75 (25 pts) worst PM  23.8  ['PM30']
+      b_lo*ms_free*tau6+h10|k1.155       v 10.25-12.25 (10 pts) worst PM  24.3  ['PM30']
+      b_q*ms_free|fb|k1.155              v 13.50-19.25 (24 pts) worst PM  24.4  ['PM30']
+      b_lo*J_hi*tau6+h10|k0.83           v  1.00- 8.00 (60 pts) worst PM  24.8  ['PM30']
+      b_lo*ms_free+h10|k1.155            v 10.50-12.25 (9 pts) worst PM  25.4  ['PM30']
+      b_lo*J_hi+h10|fb|k0.83             v  1.00- 8.00 (30 pts) worst PM  26.2  ['PM30']
+      b_q*J1.0+h10|fb|k0.83              v 14.75-35.00 (83 pts) worst PM  26.4  ['PM30']
+      b_lo*ms_free*tau6+h10|fb|k1.155    v 10.50-12.25 (8 pts) worst PM  26.8  ['PM30']
+      b_lo*J_hi+h10|k0.83                v  1.00- 8.00 (30 pts) worst PM  26.9  ['PM30']
+      b_lo*ms_free*tau6|k1.155           v 11.90-12.00 (2 pts) worst PM  27.2  ['PM30']
+      b_q*J1.0+h10|k0.83                 v 15.25-16.25 (5 pts) worst PM  28.1  ['PM30']
+      b_lo*ms_free+h10|fb|k1.155         v 11.90-12.00 (2 pts) worst PM  28.1  ['PM30']
+      b_lo*ms_free|k1.155                v 11.90-12.00 (2 pts) worst PM  28.3  ['PM30']
+      b_lo*J_hi*tau6|fb|k0.83            v  1.00- 3.50 (12 pts) worst PM  29.6  ['PM30']
+      b_lo*ms_free*tau6|fb|k1.155        v 11.90-11.90 (1 pts) worst PM  30.0  ['PM30']
+      b_lo*J_hi*tau6|k0.83               v  1.00- 3.10 (20 pts) worst PM  30.0  ['PM30']
+      J_hi+h10|k0.83                     v  1.00- 8.00 (30 pts) worst PM  38.1  ['PM45']
+      J_hi+h10|fb|k0.83                  v  1.00- 8.00 (30 pts) worst PM  38.2  ['PM45']
+      ms_free+h10|fb|k0.83               v  6.25-12.00 (20 pts) worst PM  38.2  ['PM45']
+      ms_free+h10|k0.83                  v  8.25-12.00 (14 pts) worst PM  38.8  ['PM45']
+      b_lo+h10|fb|k0.83                  v  1.00- 8.00 (30 pts) worst PM  39.6  ['PM45']
+      J_hi|k0.83                         v  1.00- 4.25 (15 pts) worst PM  42.5  ['PM45']
+      b_lo+h10|k0.83                     v  1.00- 8.00 (30 pts) worst PM  42.5  ['PM45']
+      J_hi+h10                           v  1.00- 4.25 (15 pts) worst PM  42.6  ['PM45']
+      ms_free|fb|k0.83                   v  8.50-11.90 (6 pts) worst PM  42.7  ['PM45']
+      ms_free|k0.83                      v  8.75-11.90 (5 pts) worst PM  42.8  ['PM45']
+      J_hi|fb|k0.83                      v  1.00- 4.00 (14 pts) worst PM  43.1  ['PM45']
+      ms_free+h10                        v  8.50- 9.25 (4 pts) worst PM  43.6  ['PM45']
+      b_lo+h10|fb|k1.155                 v  7.25- 8.00 (4 pts) worst PM  44.5  ['PM45']
+  GATE-2 fails (brief literal tiering): 188
+      b_lo*J_hi+h10|fb|k0.83             v  1.00- 8.00 (30 pts) worst PM  26.2  ['PM30']
+      b_q*J1.0+h10|fb|k0.83              v 14.75-35.00 (83 pts) worst PM  26.4  ['PM30']
+      b_lo*J_hi+h10|k0.83                v  1.00- 8.00 (30 pts) worst PM  26.9  ['PM30']
+      b_q*J1.0+h10|k0.83                 v 15.25-16.25 (5 pts) worst PM  28.1  ['PM30']
+      J_hi|k0.83                         v  1.00- 4.25 (15 pts) worst PM  42.5  ['PM45']
+      ms_free|fb|k0.83                   v  8.50-11.90 (6 pts) worst PM  42.7  ['PM45']
+      ms_free|k0.83                      v  8.75-11.90 (5 pts) worst PM  42.8  ['PM45']
+      J_hi|fb|k0.83                      v  1.00- 4.00 (14 pts) worst PM  43.1  ['PM45']
+  per member (min over speed; the frame variant that binds):
+    member                            tier  min PM (v, frame)                 min GM   max T530   least-damped pole (v)        max L20/V295
+    J_hi                               A       42.5 ( 1.00, |k0.83        ) fc 1.21    19.8   -11.8    1.82 Hz z 0.422 ( 8.00)    0.711
+    J_hi+h10                           A       38.1 ( 1.00, |k0.83        ) fc 1.21    13.7   -11.6    1.87 Hz z 0.363 ( 8.00)    0.711
+    J_lo                               A       65.3 (27.00, |k0.83        ) fc 0.60    14.5    -3.4    5.96 Hz z 0.566 ( 8.00)    0.711
+    J_lo+h10                           A       63.1 (27.00, |k0.83        ) fc 0.60     9.4    -1.4    5.79 Hz z 0.428 ( 8.00)    0.711
+    b_hi                               A       57.3 (26.90, |k0.83        ) fc 0.50    18.7    -7.6    0.31 Hz z 0.549 (11.90)    0.711
+    b_hi+h10                           A       55.2 ( 1.00, |k0.83        ) fc 1.12    13.5    -6.5    0.32 Hz z 0.541 (11.90)    0.711
+    b_lo                               A       48.3 ( 1.00, |fb|k0.83     ) fc 2.33    13.8    -1.8    3.23 Hz z 0.412 ( 8.00)    0.711
+    b_lo+h10                           A       39.6 ( 8.00, |fb|k0.83     ) fc 2.74     8.2    -0.3    3.29 Hz z 0.303 ( 8.00)    0.711
+    mode13                             A       59.0 ( 1.00, |k0.83        ) fc 1.57    18.2    -4.6   12.93 Hz z 0.133 ( 1.00)    0.711
+    mode13+h10                         A       53.2 ( 1.00, |fb|k0.83     ) fc 1.80    10.9    -3.3   12.85 Hz z 0.123 ( 1.00)    0.711
+    mode20                             A       59.0 ( 1.00, |k0.83        ) fc 1.57    16.2    -4.4   19.93 Hz z 0.070 ( 1.00)    0.711
+    mode20+h10                         A       53.2 ( 1.00, |fb|k0.83     ) fc 1.81    10.7    -3.1   19.81 Hz z 0.069 ( 1.00)    0.711
+    ms_free                            A       42.7 ( 9.00, |fb|k0.83     ) fc 1.25    17.4    -6.9    0.77 Hz z 0.175 (11.90)    0.711
+    ms_free+h10                        A       38.2 ( 9.00, |fb|k0.83     ) fc 1.25    12.1    -6.1    0.77 Hz z 0.164 (11.90)    0.711
+    nominal                            A       59.1 ( 1.00, |k0.83        ) fc 1.57    16.0    -4.4    3.95 Hz z 0.584 ( 8.00)    0.711
+    nominal+h10                        A       53.3 ( 1.00, |fb|k0.83     ) fc 1.81    10.6    -3.0    4.00 Hz z 0.469 ( 8.00)    0.711
+    tau0                               A       60.2 ( 1.00, |k0.83        ) fc 1.57    17.7    -4.6    3.91 Hz z 0.607 ( 8.00)    0.711
+    tau0+h10                           A       54.5 ( 1.00, |k0.83        ) fc 1.57    11.4    -3.2    4.01 Hz z 0.492 ( 8.00)    0.711
+    tau6                               A       56.8 ( 1.00, |k0.83        ) fc 1.57    13.3    -3.8    4.00 Hz z 0.537 ( 8.00)    0.711
+    tau6+h10                           A       50.7 ( 1.00, |fb|k0.83     ) fc 1.81     9.3    -2.5    3.95 Hz z 0.427 ( 8.00)    0.711
+    J1.0                               B       36.3 ( 1.00, |k0.83        ) fc 0.89    23.5   -18.5    1.39 Hz z 0.331 ( 8.00)    0.711
+    J1.0+h10                           B       33.1 ( 1.00, |k0.83        ) fc 0.89    16.5   -18.5    1.40 Hz z 0.295 ( 8.00)    0.711
+    b_lo*J_hi                          B       31.9 ( 1.00, |fb|k0.83     ) fc 1.58    17.4   -11.3    2.03 Hz z 0.252 ( 8.00)    0.711
+    b_lo*J_hi*tau6                     B       29.6 ( 1.00, |fb|k0.83     ) fc 1.58    14.1   -11.2    2.04 Hz z 0.230 ( 8.00)    0.711
+    b_lo*J_hi*tau6+h10                 B       23.7 ( 8.00, |fb|k0.83     ) fc 1.93     8.6   -11.2    2.05 Hz z 0.173 ( 8.00)    0.711
+    b_lo*J_hi+h10                      B       26.2 ( 1.00, |fb|k0.83     ) fc 1.58    10.5   -11.2    2.05 Hz z 0.196 ( 8.00)    0.711
+    b_lo*ms_free                       B       15.9 (11.90, |k0.83        ) fc 0.81    15.8    -5.5    0.82 Hz z 0.061 (11.90)    0.711
+    b_lo*ms_free*tau6                  B       14.8 (11.90, |k0.83        ) fc 0.81    13.1    -5.2    0.82 Hz z 0.057 (11.90)    0.711
+    b_lo*ms_free*tau6+h10              B       11.9 (11.90, |k0.83        ) fc 0.81     8.6    -4.8    0.82 Hz z 0.045 (11.90)    0.711
+    b_lo*ms_free+h10                   B       13.0 (11.90, |k0.83        ) fc 0.81    10.2    -4.9    0.82 Hz z 0.050 (11.90)    0.711
+    b_lo*tau6                          B       45.0 ( 1.00, |fb|k0.83     ) fc 2.33    11.1    -1.1    3.27 Hz z 0.368 ( 8.00)    0.711
+    b_lo*tau6+h10                      B       35.7 ( 8.00, |fb|k0.83     ) fc 2.74     6.8    +0.0    3.27 Hz z 0.262 ( 8.00)    0.711
+    b_q                                B       59.1 ( 1.00, |k0.83        ) fc 1.57    15.4    -2.7    4.68 Hz z 0.427 (15.00)    0.711
+    b_q*J1.0                           B       32.4 (15.50, |fb|k0.83     ) fc 1.68    14.3   -17.0    1.77 Hz z 0.127 (15.75)    0.711
+    b_q*J1.0+h10                       B       26.4 (15.50, |fb|k0.83     ) fc 1.68     8.4   -17.1    1.77 Hz z 0.102 (15.75)    0.711
+    b_q*J_hi                           B       42.5 ( 1.00, |k0.83        ) fc 1.21    15.4    -9.9    2.70 Hz z 0.249 (17.50)    0.711
+    b_q*J_hi+h10                       B       38.1 ( 1.00, |k0.83        ) fc 1.21     9.6    -9.8    2.71 Hz z 0.206 (17.50)    0.711
+    b_q*ms_free                        B       14.4 (15.75, |k0.83        ) fc 1.26    15.1    -6.9    1.28 Hz z 0.051 (15.75)    0.711
+    b_q*ms_free*tau6                   B       12.5 (15.75, |k0.83        ) fc 1.26    11.1    -6.5    1.28 Hz z 0.044 (15.75)    0.711
+    b_q*ms_free*tau6+h10               B        7.7 (15.75, |fb|k0.83     ) fc 1.36     4.1    -5.9    1.37 Hz z 0.027 (15.75)    0.711
+    b_q*ms_free+h10                    B        9.6 (15.75, |fb|k0.83     ) fc 1.36     6.1    -6.1    1.38 Hz z 0.034 (15.75)    0.711
+    b_q*tau6                           B       56.8 ( 1.00, |k0.83        ) fc 1.57    12.6    -1.9    4.65 Hz z 0.381 (14.50)    0.711
+    b_q*tau6+h10                       B       50.7 ( 1.00, |fb|k0.83     ) fc 1.81     8.3    +0.1    4.54 Hz z 0.276 (14.00)    0.711
+    b_q+h10                            B       53.3 ( 1.00, |fb|k0.83     ) fc 1.81     9.7    -0.7    4.58 Hz z 0.316 (14.00)    0.711
+    J1.0*tau6                          report  35.0 ( 1.00, |k0.83        ) fc 0.89    21.4   -20.9    1.26 Hz z 0.337 ( 8.00)    0.711
+    J1.0*tau6+h10                      report  31.8 ( 1.00, |k0.83        ) fc 0.89    15.7   -21.0    1.27 Hz z 0.303 ( 8.00)    0.711
+    J1.3                               report  35.5 ( 1.00, |k0.83        ) fc 0.79    26.0   -22.0    1.14 Hz z 0.336 ( 8.00)    0.711
+    J_hi*tau6                          report  40.7 ( 1.00, |k0.83        ) fc 1.21    18.2   -14.4    1.63 Hz z 0.430 ( 8.00)    0.711
+    J_hi*tau6+h10                      report  36.4 ( 1.00, |k0.83        ) fc 1.21    13.2   -14.4    1.67 Hz z 0.374 ( 8.00)    0.711
+    J_hi+h20                           report  38.3 ( 1.00, nominal frame ) fc 1.20    11.8   -14.5    1.69 Hz z 0.409 ( 8.00)    0.697
+    J_hi2                              report  37.5 ( 1.00, |k0.83        ) fc 0.99    23.4   -18.9    1.36 Hz z 0.371 ( 8.00)    0.711
+    J_hi2*tau6                         report  36.1 ( 1.00, |k0.83        ) fc 0.99    20.3   -18.9    1.37 Hz z 0.355 ( 8.00)    0.711
+    J_hi2*tau6+h10                     report  32.5 ( 1.00, |k0.83        ) fc 0.99    14.9   -18.9    1.38 Hz z 0.315 ( 8.00)    0.711
+    J_hi2+h10                          report  34.0 ( 1.00, |k0.83        ) fc 0.99    16.7   -18.9    1.38 Hz z 0.331 ( 8.00)    0.711
+    b/1.9                              report  49.8 ( 1.00, |k0.83        ) fc 2.05    15.5    -4.9    2.87 Hz z 0.461 ( 8.00)    0.711
+    b/1.9*J1.0                         report  26.2 ( 1.00, |k0.83        ) fc 1.05    22.2   -20.4    1.40 Hz z 0.198 ( 8.00)    0.711
+    b/1.9*J1.0*tau6                    report  24.7 ( 1.00, |k0.83        ) fc 1.05    18.3   -20.3    1.40 Hz z 0.185 ( 8.00)    0.711
+    b/1.9*J1.0*tau6+h10                report  20.9 ( 1.00, |k0.83        ) fc 1.05    11.4   -20.4    1.40 Hz z 0.153 ( 8.00)    0.711
+    b/1.9*J1.0+h10                     report  22.4 ( 1.00, |k0.83        ) fc 1.05    13.8   -20.4    1.40 Hz z 0.166 ( 8.00)    0.711
+    b/1.9*J_hi                         report  32.1 ( 1.00, |k0.83        ) fc 1.43    18.7   -14.0    1.85 Hz z 0.268 ( 8.00)    0.711
+    b/1.9*J_hi*tau6                    report  30.0 ( 1.00, |k0.83        ) fc 1.43    15.4   -14.0    1.86 Hz z 0.247 ( 8.00)    0.711
+    b/1.9*J_hi*tau6+h10                report  24.8 ( 1.00, |k0.83        ) fc 1.43     9.9   -14.0    1.87 Hz z 0.195 ( 8.00)    0.711
+    b/1.9*J_hi+h10                     report  26.9 ( 1.00, |k0.83        ) fc 1.43    11.7   -14.0    1.87 Hz z 0.216 ( 8.00)    0.711
+    b/1.9*J_hi2                        report  27.3 ( 1.00, |k0.83        ) fc 1.16    20.9   -18.6    1.52 Hz z 0.213 ( 8.00)    0.711
+    b/1.9*J_hi2*tau6                   report  25.6 ( 1.00, |k0.83        ) fc 1.16    17.3   -18.6    1.53 Hz z 0.198 ( 8.00)    0.711
+    b/1.9*J_hi2*tau6+h10               report  21.4 ( 1.00, |k0.83        ) fc 1.16    10.9   -18.6    1.53 Hz z 0.160 ( 8.00)    0.711
+    b/1.9*J_hi2+h10                    report  23.1 ( 1.00, |k0.83        ) fc 1.16    13.1   -18.5    1.53 Hz z 0.175 ( 8.00)    0.711
+    b/1.9*tau6                         report  46.9 ( 1.00, |k0.83        ) fc 2.05    12.8    -4.5    2.92 Hz z 0.419 ( 8.00)    0.711
+    b/1.9*tau6+h10                     report  39.5 ( 1.00, |k0.83        ) fc 2.05     8.4    -4.0    2.96 Hz z 0.317 ( 8.00)    0.711
+    b/1.9+h10                          report  42.5 ( 1.00, |k0.83        ) fc 2.05     9.9    -4.1    2.96 Hz z 0.357 ( 8.00)    0.711
+    b_lo*J0.3                          report  38.4 ( 1.00, |k0.83        ) fc 1.81    16.5    -8.7    2.34 Hz z 0.343 ( 8.00)    0.711
+    b_lo*J0.3+h10                      report  31.9 ( 1.00, |k0.83        ) fc 1.81    10.3    -8.5    2.39 Hz z 0.268 ( 8.00)    0.711
+    b_lo*J1.0                          report  26.2 ( 1.00, |k0.83        ) fc 1.05    22.2   -20.5    1.40 Hz z 0.198 ( 8.00)    0.711
+    b_lo*J1.0*tau6                     report  24.7 ( 1.00, |k0.83        ) fc 1.05    18.3   -20.5    1.40 Hz z 0.185 ( 8.00)    0.711
+    b_lo*J1.0*tau6+h10                 report  20.9 ( 1.00, |k0.83        ) fc 1.05    11.4   -20.5    1.40 Hz z 0.153 ( 8.00)    0.711
+    b_lo*J1.0+h10                      report  22.4 ( 1.00, |k0.83        ) fc 1.05    13.8   -20.5    1.40 Hz z 0.166 ( 8.00)    0.711
+    b_lo*J1.3                          report  25.7 ( 1.00, |k0.83        ) fc 0.93    23.7   -21.2    0.94 Hz z 0.161 (11.90)    0.711
+    b_lo*J_hi+h20                      report  26.9 ( 1.00, nominal frame ) fc 1.44     8.9   -14.2    1.90 Hz z 0.211 ( 8.00)    0.697
+    b_lo*J_hi2                         report  27.3 ( 1.00, |k0.83        ) fc 1.16    20.9   -18.6    1.52 Hz z 0.213 ( 8.00)    0.711
+    b_lo*J_hi2*tau6                    report  25.6 ( 1.00, |k0.83        ) fc 1.16    17.3   -18.6    1.53 Hz z 0.198 ( 8.00)    0.711
+    b_lo*J_hi2*tau6+h10                report  21.4 ( 1.00, |k0.83        ) fc 1.16    10.9   -18.7    1.53 Hz z 0.160 ( 8.00)    0.711
+    b_lo*J_hi2+h10                     report  23.1 ( 1.00, |k0.83        ) fc 1.16    13.1   -18.6    1.53 Hz z 0.175 ( 8.00)    0.711
+    b_lo*tau10                         report  43.9 ( 1.00, |k0.83        ) fc 2.05    10.7    -4.2    2.95 Hz z 0.378 ( 8.00)    0.711
+    b_q*J1.0*tau6                      report  31.5 (15.50, |k0.83        ) fc 1.54    12.5   -19.4    1.64 Hz z 0.122 (15.75)    0.711
+    b_q*J1.0*tau6+h10                  report  25.9 (15.50, |k0.83        ) fc 1.54     8.0   -19.5    1.64 Hz z 0.099 (15.75)    0.711
+    b_q*J1.0+h20                       report  27.8 (15.50, nominal frame ) fc 1.56     7.7   -19.6    1.79 Hz z 0.110 (17.50)    0.697
+    b_q*J1.3                           report  23.8 (15.75, |k0.83        ) fc 1.42    14.7   -20.4    1.45 Hz z 0.089 (15.75)    0.711
+    b_q*J1.3+h10                       report  18.7 (15.75, |k0.83        ) fc 1.42     8.8   -21.9    1.45 Hz z 0.069 (15.75)    0.711
+    b_q*J_hi*tau6                      report  40.7 ( 1.00, |k0.83        ) fc 1.21    13.8   -12.5    2.48 Hz z 0.253 (17.50)    0.711
+    b_q*J_hi*tau6+h10                  report  36.4 ( 1.00, |k0.83        ) fc 1.21     9.3   -12.6    2.49 Hz z 0.214 (17.50)    0.711
+    b_q*J_hi2                          report  37.5 ( 1.00, |k0.83        ) fc 0.99    16.0   -17.2    1.78 Hz z 0.168 (15.50)    0.711
+    b_q*J_hi2*tau6                     report  36.1 ( 1.00, |k0.83        ) fc 0.99    12.9   -17.2    1.78 Hz z 0.158 (15.50)    0.711
+    b_q*J_hi2*tau6+h10                 report  32.5 (27.00, |k0.83        ) fc 1.72     8.4   -17.3    1.79 Hz z 0.132 (15.50)    0.711
+    b_q*J_hi2+h10                      report  34.0 ( 1.00, |k0.83        ) fc 0.99    10.0   -17.3    1.79 Hz z 0.142 (15.50)    0.711
+    b_q0                               report  59.1 ( 1.00, |k0.83        ) fc 1.57    17.3    -5.5    4.07 Hz z 0.488 (15.75)    0.711
+    b_q0*J_hi                          report  42.5 ( 1.00, |k0.83        ) fc 1.21    16.6   -12.6    2.47 Hz z 0.268 (17.50)    0.711
+    bq10*J1.0                          report  33.7 (15.50, |k0.83        ) fc 1.54    15.5   -19.4    1.61 Hz z 0.131 (15.50)    0.711
+    bq10*J1.0*tau6+h10                 report  25.9 (15.50, |k0.83        ) fc 1.54     8.0   -19.5    1.64 Hz z 0.099 (15.75)    0.711
+    bq10*J1.0+h10                      report  28.1 (15.50, |k0.83        ) fc 1.54     9.5   -19.4    1.64 Hz z 0.108 (15.75)    0.711
+    light_b                            report   4.5 (27.00, |k0.83        ) fc 3.66     2.3    +4.2    3.69 Hz z 0.028 (27.00)    0.711
+    ms_free+h20                        report  39.5 ( 9.00, nominal frame ) fc 1.12    10.9    -9.2    0.77 Hz z 0.183 (11.90)    0.697
+    nominal+h20                        report  53.3 ( 1.00, nominal frame ) fc 1.60     9.4    -5.9    3.18 Hz z 0.487 ( 8.00)    0.697
+    tau10                              report  54.5 ( 1.00, |k0.83        ) fc 1.57    13.2    -6.3    3.23 Hz z 0.603 ( 8.00)    0.711
+  M20 / V295's M20 in the same frame: max 0.711x (nominal+h10|k0.83 @ 27.0); at kappa 1: max 0.697x

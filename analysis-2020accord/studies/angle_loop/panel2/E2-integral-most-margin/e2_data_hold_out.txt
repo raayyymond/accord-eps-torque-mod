@@ -1,0 +1,17 @@
+tap polarity check: sign(T) == sign(cmd) on 0.999 of |T| > 40 frames (expected +sign(cmd))
+steady holds  3- 8 m/s n   2365 (|angle| p50 1.5 p95 9.2): |T| p50 96 p95 248 p99 376 max 400 T
+   ARB sh 6 B 1250: frames with |T| > bound 0.0000; worst excess -119 T
+   ARB sh 6 B 625: frames with |T| > bound 0.0000; worst excess -19 T
+   ARB sh 5 B 1250: frames with |T| > bound 0.0000; worst excess -86 T
+steady holds  8-15 m/s n   6314 (|angle| p50 0.6 p95 3.4): |T| p50 48 p95 184 p99 608 max 800 T
+   ARB sh 6 B 1250: frames with |T| > bound 0.0000; worst excess -111 T
+   ARB sh 6 B 625: frames with |T| > bound 0.0000; worst excess -11 T
+   ARB sh 5 B 1250: frames with |T| > bound 0.0000; worst excess -73 T
+steady holds 15-22 m/s n   3312 (|angle| p50 0.9 p95 9.9): |T| p50 72 p95 344 p99 560 max 591 T
+   ARB sh 6 B 1250: frames with |T| > bound 0.0000; worst excess -152 T
+   ARB sh 6 B 625: frames with |T| > bound 0.0000; worst excess -52 T
+   ARB sh 5 B 1250: frames with |T| > bound 0.0000; worst excess -116 T
+steady holds 22-40 m/s n    559 (|angle| p50 0.5 p95 2.3): |T| p50 27 p95 184 p99 408 max 408 T
+   ARB sh 6 B 1250: frames with |T| > bound 0.0000; worst excess -188 T
+   ARB sh 6 B 625: frames with |T| > bound 0.0000; worst excess -88 T
+   ARB sh 5 B 1250: frames with |T| > bound 0.0000; worst excess -124 T

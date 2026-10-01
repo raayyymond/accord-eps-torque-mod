@@ -1,0 +1,120 @@
+GATE 2 -- G-A22d: (iii) angle-own D box10 Kd 22, ms_free x b_q products DECLARED (not gated)  (21560 points, 91 s)
+  table rows [(714, 898, 954), (1843, 1161, -5402), (2304, 553, -1799), (2707, 376, 2612), (4032, 1221, 1218), (6198, 1865, 0), (65535, 1865, 0)]  Kd 22
+  points where pm_fixed != the shared formula: 0  (min pm_raw there nan; max rho there nan)
+  max exact rho over ALL points (gated + report): 0.99575  unstable points: 0
+  GATE-2 fails (strict tiering): 250
+      b_q*ms_free*tau6+h10|fb            v 13.25-23.00 (40 pts) worst PM  16.1  ['PM30']
+      b_q*ms_free*tau6+h10               v 13.25-22.00 (36 pts) worst PM  16.5  ['PM30']
+      b_q*ms_free+h10|fb                 v 13.50-22.25 (36 pts) worst PM  18.0  ['PM30']
+      b_q*ms_free+h10                    v 13.25-21.25 (33 pts) worst PM  18.2  ['PM30']
+      b_q*ms_free*tau6|fb                v 13.75-21.00 (30 pts) worst PM  20.8  ['PM30']
+      b_q*ms_free*tau6                   v 13.75-20.25 (27 pts) worst PM  20.9  ['PM30']
+      b_q*ms_free                        v 14.00-19.50 (23 pts) worst PM  22.7  ['PM30']
+      b_q*ms_free|fb                     v 14.00-20.00 (25 pts) worst PM  22.8  ['PM30']
+  GATE-2 fails (brief literal tiering): 0
+  per member (min over speed; the frame variant that binds):
+    member                            tier  min PM (v, frame)                 min GM   max T530   least-damped pole (v)        max L20/V295
+    J_hi                               A       50.1 ( 1.00, nominal frame ) fc 0.98    19.8   -14.1    0.73 Hz z 0.528 ( 1.00)    0.651
+    J_hi+h10                           A       46.5 ( 1.00, nominal frame ) fc 0.98    14.9   -14.0    0.76 Hz z 0.512 ( 1.00)    0.651
+    J_lo                               A       65.6 (26.90, nominal frame ) fc 0.55    14.8    -4.8    5.34 Hz z 0.608 ( 8.00)    0.651
+    J_lo+h10                           A       63.7 (26.90, nominal frame ) fc 0.55    10.5    -3.2    5.21 Hz z 0.491 ( 8.00)    0.651
+    b_hi                               A       57.4 (26.90, nominal frame ) fc 0.47    18.9    -9.5    0.58 Hz z 0.528 ( 1.00)    0.651
+    b_hi+h10                           A       55.7 (26.90, nominal frame ) fc 0.47    14.6    -8.8    0.60 Hz z 0.519 ( 1.00)    0.651
+    b_lo                               A       61.0 ( 8.00, |fb           ) fc 2.55    13.9    -4.3    3.40 Hz z 0.486 ( 8.00)    0.651
+    b_lo+h10                           A       51.8 ( 8.00, |fb           ) fc 2.55     9.2    -3.5    3.45 Hz z 0.371 ( 8.00)    0.651
+    mode13                             A       67.2 ( 1.00, nominal frame ) fc 1.25    17.1    -6.8   12.88 Hz z 0.131 ( 1.00)    0.651
+    mode13+h10                         A       62.7 ( 1.00, nominal frame ) fc 1.25    11.8    -6.0   12.81 Hz z 0.125 ( 1.00)    0.651
+    mode20                             A       67.2 ( 1.00, nominal frame ) fc 1.25    16.3    -6.6   19.89 Hz z 0.070 ( 1.00)    0.652
+    mode20+h10                         A       62.7 ( 1.00, nominal frame ) fc 1.25    11.7    -5.8   19.79 Hz z 0.071 ( 1.00)    0.652
+    ms_free                            A       56.0 ( 9.00, nominal frame ) fc 0.98    17.9    -9.4    0.71 Hz z 0.252 (11.90)    0.651
+    ms_free+h10                        A       52.2 ( 8.75, |fb           ) fc 1.17    13.5    -9.0    0.71 Hz z 0.245 (11.90)    0.651
+    nominal                            A       67.3 ( 1.00, nominal frame ) fc 1.25    16.1    -6.5    0.65 Hz z 0.629 ( 1.00)    0.651
+    nominal+h10                        A       62.8 ( 1.00, nominal frame ) fc 1.25    11.7    -5.7    3.53 Hz z 0.537 ( 8.00)    0.651
+    tau0                               A       67.7 (26.90, nominal frame ) fc 0.59    17.5    -6.7    0.64 Hz z 0.630 ( 1.00)    0.651
+    tau0+h10                           A       63.7 ( 1.00, nominal frame ) fc 1.25    12.4    -5.8    3.53 Hz z 0.556 ( 8.00)    0.651
+    tau6                               A       65.5 ( 1.00, nominal frame ) fc 1.25    14.0    -6.1    3.52 Hz z 0.595 ( 8.00)    0.651
+    tau6+h10                           A       61.0 ( 1.00, nominal frame ) fc 1.25    10.4    -5.4    3.50 Hz z 0.500 ( 8.00)    0.651
+    J1.0                               B       42.2 ( 1.00, nominal frame ) fc 0.73    24.1   -20.6    0.66 Hz z 0.413 ( 1.00)    0.651
+    J1.0+h10                           B       39.6 ( 1.00, nominal frame ) fc 0.73    18.8   -20.6    0.68 Hz z 0.393 ( 1.00)    0.651
+    b_lo*J_hi                          B       42.9 ( 1.00, nominal frame ) fc 1.21    18.1   -13.6    1.87 Hz z 0.354 ( 8.00)    0.651
+    b_lo*J_hi*tau6                     B       41.2 ( 1.00, nominal frame ) fc 1.21    15.6   -13.6    1.89 Hz z 0.333 ( 8.00)    0.651
+    b_lo*J_hi*tau6+h10                 B       36.2 ( 8.00, |fb           ) fc 1.76    11.1   -13.7    1.93 Hz z 0.276 ( 8.00)    0.651
+    b_lo*J_hi+h10                      B       38.6 ( 1.00, nominal frame ) fc 1.21    12.7   -13.6    1.92 Hz z 0.299 ( 8.00)    0.651
+    b_lo*ms_free                       B       39.1 (10.50, nominal frame ) fc 0.86    16.2    -8.2    0.76 Hz z 0.123 (11.90)    0.651
+    b_lo*ms_free*tau6                  B       37.8 (10.50, nominal frame ) fc 0.86    14.0    -8.1    0.76 Hz z 0.120 (11.90)    0.651
+    b_lo*ms_free*tau6+h10              B       33.7 ( 8.75, |fb           ) fc 1.38    10.3    -7.9    0.76 Hz z 0.112 (11.90)    0.651
+    b_lo*ms_free+h10                   B       35.7 ( 8.75, |fb           ) fc 1.38    11.5    -7.9    0.76 Hz z 0.115 (11.90)    0.651
+    b_lo*tau6                          B       57.3 ( 8.00, |fb           ) fc 2.55    11.6    -3.9    3.44 Hz z 0.439 ( 8.00)    0.651
+    b_lo*tau6+h10                      B       48.1 ( 8.00, |fb           ) fc 2.55     7.9    -3.4    3.43 Hz z 0.329 ( 8.00)    0.651
+    b_q                                B       67.3 ( 1.00, nominal frame ) fc 1.25    15.1    -4.7    4.42 Hz z 0.434 (16.00)    0.651
+    b_q*J1.0                           B       40.7 (26.90, |fb           ) fc 1.67    16.5   -18.6    1.90 Hz z 0.155 (17.50)    0.651
+    b_q*J1.0+h10                       B       34.7 (26.90, |fb           ) fc 1.67    10.5   -18.7    1.90 Hz z 0.128 (17.50)    0.651
+    b_q*J_hi                           B       50.1 ( 1.00, nominal frame ) fc 0.98    15.8   -11.6    2.70 Hz z 0.276 (17.50)    0.651
+    b_q*J_hi+h10                       B       46.5 ( 1.00, nominal frame ) fc 0.98    10.6   -11.7    2.72 Hz z 0.231 (17.50)    0.651
+    b_q*ms_free                        B       22.7 (15.75, nominal frame ) fc 1.22    15.9    -9.4    1.25 Hz z 0.075 (15.75)    0.651
+    b_q*ms_free*tau6                   B       20.8 (15.75, |fb           ) fc 1.33    13.5    -9.2    1.25 Hz z 0.069 (15.75)    0.651
+    b_q*ms_free*tau6+h10               B       16.1 (15.75, |fb           ) fc 1.33     8.1    -8.9    1.35 Hz z 0.053 (15.75)    0.651
+    b_q*ms_free+h10                    B       18.0 (15.75, |fb           ) fc 1.33    10.4    -9.0    1.35 Hz z 0.060 (15.75)    0.651
+    b_q*tau6                           B       65.5 ( 1.00, nominal frame ) fc 1.25    12.9    -4.2    4.42 Hz z 0.397 (15.75)    0.651
+    b_q*tau6+h10                       B       61.0 ( 1.00, nominal frame ) fc 1.25     9.4    -3.0    4.28 Hz z 0.311 (15.00)    0.651
+    b_q+h10                            B       62.8 ( 1.00, nominal frame ) fc 1.25    10.6    -3.4    4.35 Hz z 0.344 (15.25)    0.651
+    J1.0*tau6                          report  41.2 ( 1.00, nominal frame ) fc 0.73    22.9   -22.0    0.67 Hz z 0.405 ( 1.00)    0.651
+    J1.0*tau6+h10                      report  38.5 ( 1.00, nominal frame ) fc 0.73    18.4   -22.0    0.68 Hz z 0.384 ( 1.00)    0.651
+    J1.3                               report  41.1 ( 1.00, nominal frame ) fc 0.65    25.9   -23.0    0.61 Hz z 0.391 ( 1.00)    0.651
+    J_hi*tau6                          report  48.6 ( 1.00, nominal frame ) fc 0.98    18.8   -15.6    0.74 Hz z 0.522 ( 1.00)    0.651
+    J_hi*tau6+h10                      report  45.1 ( 1.00, nominal frame ) fc 0.98    14.8   -15.6    0.77 Hz z 0.506 ( 1.00)    0.651
+    J_hi+h20                           report  43.0 ( 1.00, nominal frame ) fc 0.98    13.0   -15.7    0.79 Hz z 0.494 ( 1.00)    0.651
+    J_hi2                              report  43.9 ( 1.00, nominal frame ) fc 0.81    23.9   -20.0    0.70 Hz z 0.441 ( 1.00)    0.651
+    J_hi2*tau6                         report  42.8 ( 1.00, nominal frame ) fc 0.81    21.4   -20.0    0.71 Hz z 0.433 ( 1.00)    0.651
+    J_hi2*tau6+h10                     report  39.8 ( 1.00, nominal frame ) fc 0.81    17.2   -20.0    0.73 Hz z 0.412 ( 1.00)    0.651
+    J_hi2+h10                          report  41.0 ( 1.00, nominal frame ) fc 0.81    18.6   -20.0    0.72 Hz z 0.421 ( 1.00)    0.651
+    b/1.9                              report  63.0 ( 1.00, nominal frame ) fc 1.75    15.2    -6.2    3.01 Hz z 0.554 ( 8.00)    0.651
+    b/1.9*J1.0                         report  35.1 ( 1.00, nominal frame ) fc 0.89    23.8   -21.1    1.28 Hz z 0.267 ( 8.00)    0.651
+    b/1.9*J1.0*tau6                    report  33.8 ( 1.00, nominal frame ) fc 0.89    21.1   -21.1    1.29 Hz z 0.256 ( 8.00)    0.651
+    b/1.9*J1.0*tau6+h10                report  30.6 ( 1.00, nominal frame ) fc 0.89    15.9   -21.1    1.30 Hz z 0.227 ( 8.00)    0.651
+    b/1.9*J1.0+h10                     report  31.9 ( 1.00, nominal frame ) fc 0.89    17.8   -21.1    1.29 Hz z 0.239 ( 8.00)    0.651
+    b/1.9*J_hi                         report  42.9 ( 1.00, nominal frame ) fc 1.21    19.4   -15.2    1.68 Hz z 0.371 ( 8.00)    0.651
+    b/1.9*J_hi*tau6                    report  41.2 ( 1.00, nominal frame ) fc 1.21    16.8   -15.1    1.70 Hz z 0.352 ( 8.00)    0.651
+    b/1.9*J_hi*tau6+h10                report  36.8 ( 1.00, nominal frame ) fc 1.21    12.4   -15.2    1.73 Hz z 0.301 ( 8.00)    0.651
+    b/1.9*J_hi+h10                     report  38.6 ( 1.00, nominal frame ) fc 1.21    14.0   -15.2    1.72 Hz z 0.322 ( 8.00)    0.651
+    b/1.9*J_hi2                        report  36.7 ( 1.00, nominal frame ) fc 0.98    22.3   -19.3    1.39 Hz z 0.290 ( 8.00)    0.651
+    b/1.9*J_hi2*tau6                   report  35.3 ( 1.00, nominal frame ) fc 0.98    19.6   -19.3    1.40 Hz z 0.277 ( 8.00)    0.651
+    b/1.9*J_hi2*tau6+h10               report  31.7 ( 1.00, nominal frame ) fc 0.98    14.7   -19.3    1.41 Hz z 0.243 ( 8.00)    0.651
+    b/1.9*J_hi2+h10                    report  33.2 ( 1.00, nominal frame ) fc 0.98    16.5   -19.3    1.41 Hz z 0.257 ( 8.00)    0.651
+    b/1.9*tau6                         report  60.5 ( 1.00, nominal frame ) fc 1.75    13.0    -5.9    3.07 Hz z 0.509 ( 8.00)    0.651
+    b/1.9*tau6+h10                     report  53.8 ( 8.00, nominal frame ) fc 2.20     9.2    -5.6    3.11 Hz z 0.401 ( 8.00)    0.651
+    b/1.9+h10                          report  56.7 ( 1.00, nominal frame ) fc 1.75    10.5    -5.6    3.11 Hz z 0.443 ( 8.00)    0.651
+    b_lo*J0.3                          report  51.0 ( 1.00, nominal frame ) fc 1.56    16.5   -10.0    2.18 Hz z 0.479 ( 8.00)    0.651
+    b_lo*J0.3+h10                      report  45.4 ( 1.00, nominal frame ) fc 1.56    11.5    -9.8    2.29 Hz z 0.395 ( 8.00)    0.651
+    b_lo*J1.0                          report  35.1 ( 1.00, nominal frame ) fc 0.89    23.8   -21.2    1.28 Hz z 0.267 ( 8.00)    0.651
+    b_lo*J1.0*tau6                     report  33.8 ( 1.00, nominal frame ) fc 0.89    21.1   -21.2    1.29 Hz z 0.256 ( 8.00)    0.651
+    b_lo*J1.0*tau6+h10                 report  30.6 ( 1.00, nominal frame ) fc 0.89    15.9   -21.2    1.30 Hz z 0.227 ( 8.00)    0.651
+    b_lo*J1.0+h10                      report  31.9 ( 1.00, nominal frame ) fc 0.89    17.8   -21.2    1.29 Hz z 0.239 ( 8.00)    0.651
+    b_lo*J1.3                          report  34.3 ( 1.00, nominal frame ) fc 0.79    24.4   -21.9    1.28 Hz z 0.241 ( 8.00)    0.651
+    b_lo*J_hi+h20                      report  34.2 ( 1.00, nominal frame ) fc 1.21    10.4   -15.3    1.75 Hz z 0.270 ( 8.00)    0.651
+    b_lo*J_hi2                         report  36.7 ( 1.00, nominal frame ) fc 0.98    22.3   -19.5    1.39 Hz z 0.290 ( 8.00)    0.651
+    b_lo*J_hi2*tau6                    report  35.3 ( 1.00, nominal frame ) fc 0.98    19.6   -19.4    1.40 Hz z 0.277 ( 8.00)    0.651
+    b_lo*J_hi2*tau6+h10                report  31.7 ( 1.00, nominal frame ) fc 0.98    14.7   -19.5    1.41 Hz z 0.243 ( 8.00)    0.651
+    b_lo*J_hi2+h10                     report  33.2 ( 1.00, nominal frame ) fc 0.98    16.5   -19.4    1.41 Hz z 0.257 ( 8.00)    0.651
+    b_lo*tau10                         report  58.0 ( 1.00, nominal frame ) fc 1.75    11.2    -5.7    3.10 Hz z 0.464 ( 8.00)    0.651
+    b_q*J1.0*tau6                      report  41.0 (26.90, nominal frame ) fc 1.51    14.8   -20.1    1.76 Hz z 0.153 (17.50)    0.651
+    b_q*J1.0*tau6+h10                  report  35.5 (26.90, nominal frame ) fc 1.51    10.0   -20.2    1.75 Hz z 0.128 (17.50)    0.651
+    b_q*J1.0+h20                       report  32.2 (26.90, nominal frame ) fc 1.51     8.0   -20.3    1.75 Hz z 0.114 (17.50)    0.651
+    b_q*J1.3                           report  31.8 (17.50, |fb           ) fc 1.62    16.7   -21.2    1.68 Hz z 0.115 (17.50)    0.651
+    b_q*J1.3+h10                       report  28.0 (15.75, nominal frame ) fc 1.37    11.3   -22.6    1.42 Hz z 0.098 (15.75)    0.651
+    b_q*J_hi*tau6                      report  48.6 ( 1.00, nominal frame ) fc 0.98    14.6   -13.3    2.48 Hz z 0.282 (17.50)    0.651
+    b_q*J_hi*tau6+h10                  report  45.1 ( 1.00, nominal frame ) fc 0.98    10.4   -13.5    2.49 Hz z 0.241 (17.50)    0.651
+    b_q*J_hi2                          report  43.9 ( 1.00, nominal frame ) fc 0.81    17.5   -17.9    1.95 Hz z 0.201 (17.50)    0.651
+    b_q*J_hi2*tau6                     report  42.8 ( 1.00, nominal frame ) fc 0.81    14.8   -17.9    1.95 Hz z 0.190 (17.50)    0.651
+    b_q*J_hi2*tau6+h10                 report  39.8 ( 1.00, nominal frame ) fc 0.81    10.2   -18.1    1.96 Hz z 0.162 (17.50)    0.651
+    b_q*J_hi2+h10                      report  41.0 ( 1.00, nominal frame ) fc 0.81    11.7   -18.0    1.96 Hz z 0.173 (17.50)    0.651
+    b_q0                               report  67.3 ( 1.00, nominal frame ) fc 1.25    16.4    -6.6    4.04 Hz z 0.487 (16.25)    0.651
+    b_q0*J_hi                          report  50.1 ( 1.00, nominal frame ) fc 0.98    17.1   -13.4    2.46 Hz z 0.298 (17.50)    0.651
+    bq10*J1.0                          report  42.2 ( 1.00, nominal frame ) fc 0.73    17.8   -20.1    1.60 Hz z 0.161 (15.75)    0.651
+    bq10*J1.0*tau6+h10                 report  35.5 (26.90, nominal frame ) fc 1.51    10.0   -20.2    1.75 Hz z 0.128 (17.50)    0.651
+    bq10*J1.0+h10                      report  37.7 (26.90, nominal frame ) fc 1.51    11.6   -20.2    1.76 Hz z 0.138 (17.50)    0.651
+    light_b                            report   6.0 (26.90, |fb           ) fc 3.94     2.8    +2.5    3.98 Hz z 0.039 (26.90)    0.651
+    ms_free+h20                        report  48.5 ( 8.75, nominal frame ) fc 1.04    12.0   -10.6    0.71 Hz z 0.239 (11.90)    0.651
+    nominal+h20                        report  58.3 ( 1.00, nominal frame ) fc 1.25    10.2    -7.3    3.16 Hz z 0.529 ( 8.00)    0.651
+    tau10                              report  63.7 ( 1.00, nominal frame ) fc 1.25    13.6    -7.6    0.66 Hz z 0.625 ( 1.00)    0.651
+  M20 / V295's M20 in the same frame: max 0.753x (nominal+h20 @ 26.9); at kappa 1: max 0.652x

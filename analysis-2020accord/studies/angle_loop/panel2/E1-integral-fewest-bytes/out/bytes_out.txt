@@ -1,0 +1,11 @@
+# E1 byte account (vs C2 rev2-A P2: 156-byte cave, 200 B written). ICL is a CAL (0 code bytes).
+# firm reset block = 12 B ['movea FIRM,r0,r13', 'cmp r13,r8', 'bnh .noz', 'st.w r0,-0x6dd0[gp]']
+# light bleed block = 22 B ['movea BLO,r0,r13', 'cmp r13,r8', 'bnh .nobleed', 'ld.w -0x6dd0[gp],r17', 'mov r17,r18', 'sar 3,r18', 'sub r18,r17', 'st.w r17,-0x6dd0[gp]']
+
+impl        cave B  written  d vs P2    ICL  reset  bleed   frz   Kp  note
+E1-cal         156      200       +0   8192   None   None   512  112  flat ICL 8192, pure cal. +0 code bytes. Meets the goal; both lurches declared.
+E1-reset       168      212      +12   8192   1536   None   512  112  flat ICL 8192 + firm-hand reset. +12 cave B. PRIMARY: firm lurch bounded, light declared.
+E1-bleed       190      234      +34   8192   1536    256   512  112  flat ICL 8192 + firm reset + light-hand bleed. +34 cave B. Bounds the light lurch (hands-off risk).
+E1-freeze      168      212      +12   8192   1536   None   320  112  flat ICL 8192 + reset + freeze lowered to 320. +12 cave B. DOMINATED: freeze holds I high.
+E1-sched       200      244      +44  sched   1536   None   512  112  speed-scheduled ICL (col + walk + inject @0x29DA0) + reset. +~44 B. REJECTED: fails tracking.
+E1-splitP      168      212      +12   3072   1536   None   512  200  Kp 200 record + ICL 3072 + reset. +0 code for Kp/ICL (cals). REJECTED: GATE 2 + turn-hold.

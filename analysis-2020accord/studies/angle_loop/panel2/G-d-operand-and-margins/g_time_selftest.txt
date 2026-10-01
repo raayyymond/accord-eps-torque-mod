@@ -1,0 +1,4 @@
+CONTROL A rh@8.0: GLane vs DSLane through score_time.run, 8 columns: max|dT| 0  OK
+CONTROL A s05@26.9: GLane vs DSLane through score_time.run, 8 columns: max|dT| 0  OK
+CONTROL A ov_fade@3.1: GLane vs DSLane through score_time.run, 8 columns: max|dT| 0  OK
+CONTROL B box10 (G-A22): GLane operand vs g_cave.box10_ref over 4000 ticks (refreshes every 10, a 30-tick skip): 0 mismatches  OK

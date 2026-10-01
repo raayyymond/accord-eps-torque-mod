@@ -190,11 +190,16 @@ def scenario(name, v):
 # ---------------------------------------------------------------------------------------------------------------------
 # the runner (ds_time.run, extended: two lanes side by side, the aged hold, the fork stop, an external hand torque)
 # ---------------------------------------------------------------------------------------------------------------------
-def run(scn, cave_cfgs, a_rows_v, mem_name, v, seed=11):
+def run(scn, cave_cfgs, a_rows_v, mem_name, v, seed=11, lane_cls=None):
+    """EXTENSION (designer E2, 2026-10-01; additive, every default reproduces the original bit for bit -- CONTROL 1-3
+    re-run after the edit): lane_cls = a DSLane subclass for the cave columns (None = DSLane); scn['ramp_in'] = the
+    engage ramp increment per tick (default 33 = 0xC63F8, 0.99 s; 328 = 0xC63FC, the gp-0x6803 == 2 arm, 0.10 s);
+    scn['tq_cols'] = fn(t, plant, tq_scalar, hand_prev) -> per-column gp-0x4f60 (a sensor model that reads the hand
+    or the plant state, e.g. word = hand torque / kappa); None = the scalar scn['tq'] for every column."""
     cal = HT.base_cal()
     nc, na = len(cave_cfgs), len(a_rows_v)
     B = nc + na
-    lane = DL.DSLane(cal, cave_cfgs) if nc else None
+    lane = (lane_cls or DL.DSLane)(cal, cave_cfgs) if nc else None
     laneA = _LANEVEC_ORIG(cal, HT.Cfg(a_rows_v)) if na else None
     mem = member(mem_name)
     aged = mem_name.endswith("+h10")
@@ -233,6 +238,7 @@ def run(scn, cave_cfgs, a_rows_v, mem_name, v, seed=11):
         th_grab = np.zeros(B)
     tqf = scn["tq"]
     sen = False
+    hh_prev = None
     HT._WRAPS["n"] = 0
     for n in range(n_t):
         t = n * 1e-3
@@ -250,7 +256,7 @@ def run(scn, cave_cfgs, a_rows_v, mem_name, v, seed=11):
         elif mode == "latch":
             ramp, act, req = max(0, ramp - 328), 0, 1
         elif mode == "relatch":
-            ramp, act, req = min(0x8000, ramp + 33), 1, 1
+            ramp, act, req = min(0x8000, ramp + scn.get("ramp_in", 33)), 1, 1
         elif mode == "off":
             ramp, act, req = max(0, ramp - 16), 0, 0
         stopped = t_stop is not None and t >= t_stop
@@ -270,6 +276,8 @@ def run(scn, cave_cfgs, a_rows_v, mem_name, v, seed=11):
         th_now = pl.th
         om_now = pl.om
         tq = 0 if tqf is None else int(round(float(tqf(np.array(t)))))
+        if scn.get("tq_cols") is not None:                          # E2 extension: per-column sensor model
+            tq = np.asarray(scn["tq_cols"](t, pl, tq, hh_prev), np.int64)
         g4f50 = s16(np.round(DM.ABE_PER * om_now + rng.normal(0.0, DT.N4F50, B)).astype(np.int64))
         st_prev = st_ema
         st_ema = st_ema + (((g4f50 * 1024 - st_ema) * 37) >> 7)
@@ -278,11 +286,13 @@ def run(scn, cave_cfgs, a_rows_v, mem_name, v, seed=11):
         if nc:
             lane.abe = s16(st_ema[:nc] >> 10)
             lane.dacc = np.floor(DM.D_PER * th_now[:nc] + 0.5).astype(np.int64)
-            T[:nc] = lane.tick(held_th[:nc], held_x[:nc], cmd[:nc], tq, 0, spd, ramp, act, req)
+            T[:nc] = lane.tick(held_th[:nc], held_x[:nc], cmd[:nc], tq if np.ndim(tq) == 0 else tq[:nc], 0, spd, ramp,
+                               act, req)
         if na:
             cA = cmd[nc:]
             cA = int(cA[0]) if bool((cA == cA[0]).all()) else cA
-            T[nc:] = laneA.tick(held_th[nc:], held_x[nc:], cA, tq, 0, spd, ramp, act, req)
+            T[nc:] = laneA.tick(held_th[nc:], held_x[nc:], cA, tq if np.ndim(tq) == 0 else tq[nc:], 0, spd, ramp, act,
+                                req)
         # ---- slot 4 (100 Hz), AFTER the lane; '+h10' delivers the sample taken 10 ticks earlier
         x_now = np.clip(-((s16(st_ema >> 10) * 48 * 1159) >> 15), -12000, 12000).astype(np.int64)
         q_now = HT.q_angle(th_now)
@@ -306,6 +316,7 @@ def run(scn, cave_cfgs, a_rows_v, mem_name, v, seed=11):
                 th_grab = pl.th.copy()
             frac = min(1.0, (n - n_h0) / n_hramp)
             hh = (hand["Kh"], hand["Bh"], th_grab + frac * hand["delta"])
+        hh_prev = hh                                                # E2 extension: the hand the sensor reads next tick
         uu = -Tapp + (u_ext(t) if u_ext is not None else 0.0)
         pl.step(uu, hand=hh)
         th_r[n] = pl.th

@@ -1,0 +1,33 @@
+# H1: cave BYTES executed by nl_cave.Cpu (+ Cpu2 forms) vs CandLane.cave_stage (the time grid's own cave)
+# 3000 cases per candidate: random + edges (validity +-13000/13001 and 0x7FFF, |tq| at every threshold +-1, signed hand words, ramp 0/partial/0x8000/0xFFFF, table knots +-1, 1382/2880 speed knees, Honda's first-tick sentinel, box10 RAM states); checks r16 = E', the exit (0x29D7A / 0x29D7E), r6 at the 0x29D7E exit, r26 out, gp-0x6dd0 / -0x6c44 / -0x6c40 after, every other RAM cell and every non-scratch register unchanged
+P2          bytes  156  mismatches 0 / 3000
+F2          bytes  138  mismatches 0 / 3000
+D2a         bytes  162  mismatches 0 / 3000
+B0r         bytes  144  mismatches 0 / 3000
+E1-reset    bytes  168  mismatches 0 / 3000
+E1-cal      bytes  156  mismatches 0 / 3000
+E1-bleed    NO LISTING (mirror only: E1 rejected; bleed = listed bytes I8 -= I8>>3 (no hex))
+E1-freeze   bytes  168  mismatches 0 / 3000
+E1-sched    NO LISTING (mirror only: E1 rejected; ICL(v) = the designer's walk (no hex))
+E1-splitP   bytes  168  mismatches 0 / 3000
+E2-R1       bytes  156  mismatches 0 / 3000
+E2-S        bytes  172  mismatches 0 / 3000
+E2-A2       bytes  204  mismatches 0 / 3000
+E2-A3       bytes  222  mismatches 0 / 3000
+E2-A3-12k   bytes  222  mismatches 0 / 3000
+E2-A2-X     bytes  204  mismatches 0 / 3000
+E2-L        bytes  168  mismatches 0 / 3000
+E2-K0       bytes  132  mismatches 0 / 3000
+G-P48d      bytes  156  mismatches 0 / 3000
+G-P44d      bytes  156  mismatches 0 / 3000
+G-P48       bytes  156  mismatches 0 / 3000
+G-P44       bytes  156  mismatches 0 / 3000
+G-F24       bytes  138  mismatches 0 / 3000
+G-F24d      bytes  138  mismatches 0 / 3000
+G-A22       bytes  210  mismatches 0 / 3000
+G-A22d      bytes  210  mismatches 0 / 3000
+G-P48L      bytes  156  mismatches 0 / 3000
+G-P48k40    bytes  156  mismatches 0 / 3000
+H-A         NO LISTING (mirror only: fb gp-0x69ca fresh; perfect fork SR fold (BELIEF); D2a table)
+H-B         NO LISTING (mirror only: held D Kd 23; B0r table)
+ALL HEX-BACKED CANDIDATES: 0 mismatches

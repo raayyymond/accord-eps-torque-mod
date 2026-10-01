@@ -1,0 +1,75 @@
+# ICL sizing from the spring load.  T per unit ICL (hands off) = 0.16028 T.  ICL 4096 -> 656 T.
+# theta_sw = a_lat * 2.83 * 16.0 / v^2 (deg); load = k*sat*tanh(theta/sat) from the r71b family.
+
+=== a_lat 1.0 m/s^2 ===
+     v                nominal              b_lo*J_hi                     bc                   F_hi
+     8  40.5d   707T icl  4411  40.5d   846T icl  5280  40.5d   707T icl  4411  40.5d   707T icl  4411
+    10  25.9d   506T icl  3157  25.9d   539T icl  3364  25.9d   506T icl  3157  25.9d   506T icl  3157
+  11.9  18.3d   396T icl  2470  18.3d   381T icl  2374  18.3d   396T icl  2470  18.3d   396T icl  2470
+  12.5  16.6d   458T icl  2859  16.6d   441T icl  2754  16.6d   458T icl  2859  16.6d   458T icl  2859
+    13  15.4d   502T icl  3129  15.4d   483T icl  3016  15.4d   502T icl  3129  15.4d   502T icl  3129
+    15  11.5d   618T icl  3855  11.5d   597T icl  3723  11.5d   618T icl  3855  11.5d   618T icl  3855
+    16  10.1d   652T icl  4070  10.1d   630T icl  3933  10.1d   652T icl  4070  10.1d   652T icl  4070
+    17   9.0d   676T icl  4217   9.0d   653T icl  4077   9.0d   676T icl  4217   9.0d   676T icl  4217
+    18   8.0d   590T icl  3680   8.0d   573T icl  3576   8.0d   590T icl  3680   8.0d   590T icl  3680
+    19   7.2d   517T icl  3224   7.2d   505T icl  3150   7.2d   517T icl  3224   7.2d   517T icl  3224
+    20   6.5d   454T icl  2834   6.5d   446T icl  2784   6.5d   454T icl  2834   6.5d   454T icl  2834
+    22   5.4d   354T icl  2207   5.4d   352T icl  2196   5.4d   354T icl  2207   5.4d   354T icl  2207
+    24   4.5d   278T icl  1734   4.5d   280T icl  1749   4.5d   278T icl  1734   4.5d   278T icl  1734
+  26.9   3.6d   198T icl  1233   3.6d   204T icl  1275   3.6d   198T icl  1233   3.6d   198T icl  1233
+    30   2.9d   160T icl   995   2.9d   165T icl  1029   2.9d   160T icl   995   2.9d   160T icl   995
+
+=== a_lat 1.5 m/s^2 ===
+     v                nominal              b_lo*J_hi                     bc                   F_hi
+     8  60.8d   913T icl  5699  60.8d  1093T icl  6822  60.8d   913T icl  5699  60.8d   913T icl  5699
+    10  38.9d   662T icl  4127  38.9d   705T icl  4398  38.9d   662T icl  4127  38.9d   662T icl  4127
+  11.9  27.5d   525T icl  3278  27.5d   505T icl  3152  27.5d   525T icl  3278  27.5d   525T icl  3278
+  12.5  24.9d   612T icl  3819  24.9d   590T icl  3678  24.9d   612T icl  3819  24.9d   612T icl  3819
+    13  23.0d   673T icl  4202  23.0d   649T icl  4051  23.0d   673T icl  4202  23.0d   673T icl  4202
+    15  17.3d   849T icl  5297  17.3d   820T icl  5116  17.3d   849T icl  5297  17.3d   849T icl  5297
+    16  15.2d   907T icl  5657  15.2d   876T icl  5466  15.2d   907T icl  5657  15.2d   907T icl  5657
+    17  13.5d   950T icl  5925  13.5d   918T icl  5727  13.5d   950T icl  5925  13.5d   950T icl  5925
+    18  12.0d   837T icl  5220  12.0d   813T icl  5071  12.0d   837T icl  5220  12.0d   837T icl  5220
+    19  10.8d   739T icl  4611  10.8d   722T icl  4504  10.8d   739T icl  4611  10.8d   739T icl  4611
+    20   9.7d   654T icl  4082   9.7d   643T icl  4010   9.7d   654T icl  4082   9.7d   654T icl  4082
+    22   8.0d   515T icl  3215   8.0d   513T icl  3198   8.0d   515T icl  3215   8.0d   515T icl  3215
+    24   6.8d   408T icl  2545   6.8d   412T icl  2568   6.8d   408T icl  2545   6.8d   408T icl  2545
+  26.9   5.4d   292T icl  1824   5.4d   302T icl  1886   5.4d   292T icl  1824   5.4d   292T icl  1824
+    30   4.3d   237T icl  1480   4.3d   245T icl  1530   4.3d   237T icl  1480   4.3d   237T icl  1480
+
+=== a_lat 2.0 m/s^2 ===
+     v                nominal              b_lo*J_hi                     bc                   F_hi
+     8  81.1d  1033T icl  6448  81.1d  1237T icl  7718  81.1d  1033T icl  6448  81.1d  1033T icl  6448
+    10  51.9d   756T icl  4717  51.9d   806T icl  5026  51.9d   756T icl  4717  51.9d   756T icl  4717
+  11.9  36.6d   609T icl  3799  36.6d   585T icl  3653  36.6d   609T icl  3799  36.6d   609T icl  3799
+  12.5  33.2d   713T icl  4451  33.2d   687T icl  4286  33.2d   713T icl  4451  33.2d   713T icl  4451
+    13  30.7d   789T icl  4922  30.7d   760T icl  4745  30.7d   789T icl  4922  30.7d   789T icl  4922
+    15  23.1d  1018T icl  6351  23.1d   983T icl  6134  23.1d  1018T icl  6351  23.1d  1018T icl  6351
+    16  20.3d  1100T icl  6865  20.3d  1063T icl  6634  20.3d  1100T icl  6865  20.3d  1100T icl  6865
+    17  18.0d  1166T icl  7274  18.0d  1127T icl  7032  18.0d  1166T icl  7274  18.0d  1166T icl  7274
+    18  16.0d  1038T icl  6479  16.0d  1009T icl  6295  16.0d  1038T icl  6479  16.0d  1038T icl  6479
+    19  14.4d   926T icl  5780  14.4d   905T icl  5646  14.4d   926T icl  5780  14.4d   926T icl  5780
+    20  13.0d   827T icl  5162  13.0d   813T icl  5071  13.0d   827T icl  5162  13.0d   827T icl  5162
+    22  10.7d   661T icl  4123  10.7d   657T icl  4101  10.7d   661T icl  4123  10.7d   661T icl  4123
+    24   9.0d   528T icl  3297   9.0d   533T icl  3326   9.0d   528T icl  3297   9.0d   528T icl  3297
+  26.9   7.2d   383T icl  2387   7.2d   395T icl  2467   7.2d   383T icl  2387   7.2d   383T icl  2387
+    30   5.8d   312T icl  1948   5.8d   323T icl  2014   5.8d   312T icl  1948   5.8d   312T icl  1948
+
+FLAT ICL to carry a_lat 1.0: nominal needs 4411, b_lo*J_hi needs 5280
+FLAT ICL to carry a_lat 1.5: nominal needs 5925, b_lo*J_hi needs 6822
+FLAT ICL to carry a_lat 2.0: nominal needs 7274, b_lo*J_hi needs 7718
+
+worst-ICL speed (a 2.0) for nominal: 17 m/s, needs ICL 7274
+worst-ICL speed (a 2.0) for b_lo*J_hi: 8 m/s, needs ICL 7718
+worst-ICL speed (a 2.0) for bc: 17 m/s, needs ICL 7274
+worst-ICL speed (a 2.0) for F_hi: 17 m/s, needs ICL 7274
+
+SCHEDULED ICL table (a_lat 1.75, nominal, quantised 256, floor 2048, cap 12288):
+  X   714 (  3.1 m/s)  ICL  8448  -> T_I  1354 T
+  X  1843 (  8.0 m/s)  ICL  6144  -> T_I   985 T
+  X  2304 ( 10.0 m/s)  ICL  4352  -> T_I   698 T
+  X  2707 ( 11.7 m/s)  ICL  3584  -> T_I   574 T
+  X  3571 ( 15.5 m/s)  ICL  6144  -> T_I   985 T
+  X  4032 ( 17.5 m/s)  ICL  6144  -> T_I   985 T
+  X  6198 ( 26.9 m/s)  ICL  2048  -> T_I   328 T
+  X 65535 (  inf m/s)  ICL  2048  -> T_I   328 T

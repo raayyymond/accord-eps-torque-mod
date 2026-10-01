@@ -1,0 +1,4 @@
+# E1 consolidated key metrics (P2 impl unless noted). Turn-hold bar 0.90; lurch = overshoot deg on release
+P2base  : turn-hold min a1.5 0.806  a2.0 0.727
+E1a     : turn-hold min a1.5 0.998  a2.0 0.998
+E1d     : turn-hold min a1.5 0.998  a2.0 0.998

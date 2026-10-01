@@ -1,0 +1,31 @@
+# e2_k0: policy (iii) Ki 0 + fork angle integral (tau_o); 'P2' = the reference (Ki 56, no fork integral)
+nominal    P2           turn-hold (8 s hold, last 2 s) min 0.693; 2 s after ramp min 0.693
+           P2           r71b goal metric band  8-15: 0.900
+           P2           r71b goal metric band 15-22: 0.856
+           P2           r71b goal metric band   >22: 1.002
+           P2           light-hand (word 400, 3 s) lurch max 7.17 deg 8:4.57 11.75:7.17 19:2.49 26.9:2.74
+nominal    K0 tau_o 1 s turn-hold (8 s hold, last 2 s) min 0.997; 2 s after ramp min 0.850
+           K0 tau_o 1 s r71b goal metric band  8-15: 0.969
+           K0 tau_o 1 s r71b goal metric band 15-22: 0.920
+           K0 tau_o 1 s r71b goal metric band   >22: 0.971
+           K0 tau_o 1 s light-hand (word 400, 3 s) lurch max 36.18 deg 8:36.18 11.75:10.31 19:3.42 26.9:2.34
+nominal    K0 tau_o 2 s turn-hold (8 s hold, last 2 s) min 0.940; 2 s after ramp min 0.689
+           K0 tau_o 2 s r71b goal metric band  8-15: 0.911
+           K0 tau_o 2 s r71b goal metric band 15-22: 0.787
+           K0 tau_o 2 s r71b goal metric band   >22: 0.910
+           K0 tau_o 2 s light-hand (word 400, 3 s) lurch max 18.78 deg 8:18.78 11.75:4.73 19:1.50 26.9:1.22
+b_lo*J_hi  P2           turn-hold (8 s hold, last 2 s) min 0.707; 2 s after ramp min 0.707
+           P2           r71b goal metric band  8-15: 0.892
+           P2           r71b goal metric band 15-22: 0.864
+           P2           r71b goal metric band   >22: 1.000
+           P2           light-hand (word 400, 3 s) lurch max 10.47 deg 8:8.09 11.75:10.47 19:3.43 26.9:3.41
+b_lo*J_hi  K0 tau_o 1 s turn-hold (8 s hold, last 2 s) min 0.996; 2 s after ramp min 0.849
+           K0 tau_o 1 s r71b goal metric band  8-15: 0.967
+           K0 tau_o 1 s r71b goal metric band 15-22: 0.919
+           K0 tau_o 1 s r71b goal metric band   >22: 0.967
+           K0 tau_o 1 s light-hand (word 400, 3 s) lurch max 43.25 deg 8:43.25 11.75:12.80 19:4.09 26.9:2.63
+b_lo*J_hi  K0 tau_o 2 s turn-hold (8 s hold, last 2 s) min 0.941; 2 s after ramp min 0.695
+           K0 tau_o 2 s r71b goal metric band  8-15: 0.908
+           K0 tau_o 2 s r71b goal metric band 15-22: 0.790
+           K0 tau_o 2 s r71b goal metric band   >22: 0.907
+           K0 tau_o 2 s light-hand (word 400, 3 s) lurch max 26.00 deg 8:26.00 11.75:5.69 19:1.80 26.9:1.33

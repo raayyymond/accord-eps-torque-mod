@@ -1,0 +1,56 @@
+== out_2_511_3 v 12.75 b_lo*J_hi  release at 5.80 s  setpoint 5.80 deg
+  t   4.80: C3-P th   10.93 I  -5771 frz 0 arb 0 T   1036 hand   1352 | P2   th   11.04 I  -4096 frz 0 arb 0 T    815 hand   1135
+  t   5.50: C3-P th   10.76 I  -7933 frz 0 arb 0 T   1381 hand   1691 | P2   th   11.04 I  -4096 frz 0 arb 0 T    815 hand   1135
+  t   5.79: C3-P th   10.74 I  -8098 frz 1 arb 1 T   1421 hand   1733 | P2   th   11.04 I  -4096 frz 0 arb 0 T    815 hand   1135
+  t   5.90: C3-P th   -0.27 I  -8047 frz 0 arb 0 T    758 hand      0 | P2   th    3.62 I  -4088 frz 0 arb 0 T    449 hand      0
+  t   6.00: C3-P th  -12.90 I  -7312 frz 0 arb 0 T    415 hand      0 | P2   th   -5.30 I  -3614 frz 0 arb 0 T    143 hand      0
+  t   6.10: C3-P th  -17.68 I  -6020 frz 0 arb 0 T    336 hand      0 | P2   th   -8.00 I  -2669 frz 0 arb 0 T     27 hand      0
+  t   6.20: C3-P th  -17.23 I  -4594 frz 0 arb 0 T    260 hand      0 | P2   th   -6.35 I  -1686 frz 0 arb 0 T    -19 hand      0
+  t   6.30: C3-P th  -14.40 I  -3267 frz 0 arb 0 T    177 hand      0 | P2   th   -3.34 I   -883 frz 0 arb 0 T    -50 hand      0
+  t   6.50: C3-P th   -6.76 I  -1254 frz 0 arb 0 T     42 hand      0 | P2   th    1.33 I    105 frz 0 arb 0 T   -104 hand      0
+  t   6.80: C3-P th    0.79 I    274 frz 0 arb 0 T    -99 hand      0 | P2   th    3.91 I    761 frz 0 arb 0 T   -163 hand      0
+  t   7.30: C3-P th    4.72 I   1051 frz 0 arb 0 T   -180 hand      0 | P2   th    5.32 I   1135 frz 0 arb 0 T   -192 hand      0
+  t   8.30: C3-P th    5.73 I   1248 frz 0 arb 0 T   -201 hand      0 | P2   th    5.76 I   1248 frz 0 arb 0 T   -200 hand      0
+  t   9.20: C3-P th    5.77 I   1254 frz 0 arb 0 T   -200 hand      0 | P2   th    5.76 I   1248 frz 0 arb 0 T   -199 hand      0
+== nudge_5_511_3 v 12.75 b_lo*J_hi  release at 4.30 s  setpoint 0.00 deg
+  t   3.30: C3-P th    4.54 I  -4196 frz 1 arb 1 T    785 hand    912 | P2   th    4.54 I  -4096 frz 0 arb 0 T    794 hand    922
+  t   4.00: C3-P th    4.54 I  -4196 frz 1 arb 1 T    785 hand    912 | P2   th    4.54 I  -4096 frz 0 arb 0 T    794 hand    922
+  t   4.29: C3-P th    4.54 I  -4196 frz 1 arb 1 T    785 hand    912 | P2   th    4.54 I  -4096 frz 0 arb 0 T    794 hand    922
+  t   4.40: C3-P th   -1.24 I  -4194 frz 0 arb 0 T    438 hand      0 | P2   th   -1.45 I  -4093 frz 0 arb 0 T    498 hand      0
+  t   4.50: C3-P th   -7.87 I  -3928 frz 0 arb 0 T    275 hand      0 | P2   th   -8.59 I  -3734 frz 0 arb 0 T    257 hand      0
+  t   4.60: C3-P th  -10.43 I  -3368 frz 0 arb 0 T    249 hand      0 | P2   th  -10.83 I  -2998 frz 0 arb 0 T    164 hand      0
+  t   4.70: C3-P th  -10.36 I  -2732 frz 0 arb 0 T    219 hand      0 | P2   th   -9.66 I  -2224 frz 0 arb 0 T    123 hand      0
+  t   4.80: C3-P th   -9.28 I  -2131 frz 0 arb 0 T    175 hand      0 | P2   th   -7.35 I  -1583 frz 0 arb 0 T     99 hand      0
+  t   5.00: C3-P th   -6.12 I  -1187 frz 0 arb 0 T    106 hand      0 | P2   th   -3.54 I   -793 frz 0 arb 0 T     59 hand      0
+  t   5.30: C3-P th   -2.62 I   -422 frz 0 arb 0 T     37 hand      0 | P2   th   -1.44 I   -285 frz 0 arb 0 T     15 hand      0
+  t   5.80: C3-P th   -0.60 I    -16 frz 0 arb 0 T     -4 hand      0 | P2   th   -0.39 I      3 frz 0 arb 0 T     -8 hand      0
+  t   6.80: C3-P th   -0.04 I    101 frz 0 arb 0 T    -15 hand      0 | P2   th   -0.04 I     96 frz 0 arb 0 T    -15 hand      0
+  t   7.70: C3-P th   -0.03 I    101 frz 0 arb 0 T    -16 hand      0 | P2   th   -0.04 I     96 frz 0 arb 0 T    -15 hand      0
+== out_2_511_1 v 8.0 b_lo*J_hi  release at 3.80 s  setpoint 15.00 deg
+  t   2.80: C3-P th   28.43 I   -714 frz 0 arb 0 T    952 hand   1837 | P2   th   28.43 I   -812 frz 0 arb 0 T    942 hand   1826
+  t   3.50: C3-P th   28.77 I  -5894 frz 1 arb 1 T   1830 hand   2459 | P2   th   28.89 I  -4096 frz 0 arb 0 T   1587 hand   2218
+  t   3.79: C3-P th   28.77 I  -5894 frz 1 arb 1 T   1831 hand   2459 | P2   th   28.89 I  -4096 frz 0 arb 0 T   1587 hand   2218
+  t   3.90: C3-P th   12.55 I  -5888 frz 0 arb 0 T    512 hand      0 | P2   th   13.85 I  -4096 frz 0 arb 0 T    550 hand      0
+  t   4.00: C3-P th   -3.73 I  -4192 frz 0 arb 0 T   -623 hand      0 | P2   th   -2.33 I  -2560 frz 0 arb 0 T   -684 hand      0
+  t   4.10: C3-P th   -2.06 I  -1188 frz 0 arb 0 T   -709 hand      0 | P2   th   -0.09 I    328 frz 0 arb 0 T   -922 hand      0
+  t   4.20: C3-P th    7.57 I    830 frz 0 arb 0 T   -382 hand      0 | P2   th   11.55 I   1975 frz 0 arb 0 T   -458 hand      0
+  t   4.30: C3-P th   13.93 I   1482 frz 0 arb 0 T   -199 hand      0 | P2   th   18.29 I   1936 frz 0 arb 0 T    -84 hand      0
+  t   4.50: C3-P th   14.08 I   1596 frz 0 arb 0 T   -322 hand      0 | P2   th   13.33 I   1363 frz 0 arb 0 T   -336 hand      0
+  t   4.80: C3-P th   14.30 I   2095 frz 0 arb 0 T   -368 hand      0 | P2   th   15.05 I   2239 frz 0 arb 0 T   -348 hand      0
+  t   5.30: C3-P th   14.87 I   2268 frz 0 arb 0 T   -369 hand      0 | P2   th   14.91 I   2147 frz 0 arb 0 T   -350 hand      0
+  t   6.30: C3-P th   15.00 I   2308 frz 0 arb 0 T   -369 hand      0 | P2   th   14.91 I   2256 frz 0 arb 0 T   -367 hand      0
+  t   7.20: C3-P th   15.00 I   2308 frz 0 arb 0 T   -370 hand      0 | P2   th   15.00 I   2303 frz 0 arb 0 T   -369 hand      0
+== kap_2_2_3 v 11.25 b_lo*J_hi  release at 5.80 s  setpoint 7.74 deg
+  t   4.80: C3-P th   14.95 I  -3564 frz 1 arb 0 T    741 hand   1050 | P2   th   14.95 I  -3499 frz 1 arb 0 T    741 hand   1051
+  t   5.50: C3-P th   14.95 I  -3564 frz 1 arb 0 T    741 hand   1050 | P2   th   14.95 I  -3499 frz 1 arb 0 T    741 hand   1051
+  t   5.79: C3-P th   14.95 I  -3564 frz 1 arb 0 T    741 hand   1050 | P2   th   14.95 I  -3499 frz 1 arb 0 T    741 hand   1051
+  t   5.90: C3-P th    7.72 I  -3626 frz 1 arb 1 T    316 hand      0 | P2   th    7.46 I  -3802 frz 0 arb 0 T    429 hand      0
+  t   6.00: C3-P th   -1.81 I  -3376 frz 0 arb 0 T     71 hand      0 | P2   th   -3.34 I  -3492 frz 0 arb 0 T    124 hand      0
+  t   6.10: C3-P th   -6.33 I  -2707 frz 0 arb 0 T     32 hand      0 | P2   th   -8.55 I  -2664 frz 0 arb 0 T     -6 hand      0
+  t   6.20: C3-P th   -6.65 I  -1897 frz 0 arb 0 T     15 hand      0 | P2   th   -8.12 I  -1682 frz 0 arb 0 T    -54 hand      0
+  t   6.30: C3-P th   -5.09 I  -1123 frz 0 arb 0 T    -24 hand      0 | P2   th   -4.98 I   -810 frz 0 arb 0 T    -79 hand      0
+  t   6.50: C3-P th   -0.25 I     61 frz 0 arb 0 T    -94 hand      0 | P2   th    1.85 I    299 frz 0 arb 0 T   -116 hand      0
+  t   6.80: C3-P th    5.01 I    918 frz 0 arb 0 T   -162 hand      0 | P2   th    5.98 I    895 frz 0 arb 0 T   -167 hand      0
+  t   7.30: C3-P th    7.49 I   1214 frz 0 arb 0 T   -193 hand      0 | P2   th    7.31 I   1151 frz 0 arb 0 T   -190 hand      0
+  t   8.30: C3-P th    7.73 I   1227 frz 0 arb 0 T   -196 hand      0 | P2   th    7.67 I   1217 frz 0 arb 0 T   -194 hand      0
+  t   9.20: C3-P th    7.73 I   1227 frz 0 arb 0 T   -196 hand      0 | P2   th    7.67 I   1217 frz 0 arb 0 T   -194 hand      0

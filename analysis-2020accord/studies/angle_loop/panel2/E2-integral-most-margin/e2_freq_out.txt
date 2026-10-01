@@ -1,0 +1,17 @@
+# e2_freq: GATE 2 on the common scorer, 34 gated members x 140 speeds (147 s)
+[P2       ] minPM nominal 64.9 | tier-A single 46.7 | tier-B combined 32.6 (b_lo*J_hi+h10@1.00 fc~1.38Hz) | peak 5-30 -5.6 dB | M20 x0.67 | L20 x0.68 | fails 0
+[P2-I0    ] minPM nominal 81.5 | tier-A single 62.6 | tier-B combined 48.4 (b_lo*J_hi+h10@8.00 fc~1.85Hz) | peak 5-30 -5.0 dB | M20 x0.67 | L20 x0.68 | fails 0
+[P2-FA    ] minPM nominal 60.3 | tier-A single 43.2 | tier-B combined 28.3 (b_lo*J_hi+h10@1.00 fc~1.38Hz) | peak 5-30 -6.7 dB | M20 x0.58 | L20 x0.58 | fails 50
+      fail ('J_hi', np.float64(1.0), ['PM45'], np.float64(43.2))
+      fail ('J_hi', np.float64(1.25), ['PM45'], np.float64(43.2))
+      fail ('J_hi', np.float64(1.5), ['PM45'], np.float64(43.2))
+      fail ('J_hi', np.float64(1.75), ['PM45'], np.float64(43.2))
+      fail ('J_hi', np.float64(2.0), ['PM45'], np.float64(43.2))
+      fail ('J_hi', np.float64(2.25), ['PM45'], np.float64(43.2))
+      fail ('J_hi', np.float64(2.5), ['PM45'], np.float64(43.2))
+      fail ('J_hi', np.float64(2.75), ['PM45'], np.float64(43.2))
+      fail ('J_hi', np.float64(3.0), ['PM45'], np.float64(43.2))
+      fail ('J_hi', 3.1, ['PM45'], np.float64(43.2))
+      fail ('J_hi', np.float64(3.25), ['PM45'], np.float64(43.5))
+      fail ('J_hi', np.float64(3.5), ['PM45'], np.float64(43.9))
+[P2-I0-FA ] minPM nominal 78.6 | tier-A single 60.3 | tier-B combined 45.4 (b_lo*J_hi+h10@8.00 fc~1.83Hz) | peak 5-30 -6.0 dB | M20 x0.58 | L20 x0.58 | fails 0

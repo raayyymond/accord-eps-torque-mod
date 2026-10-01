@@ -1,0 +1,60 @@
+## Main table (c3_vgr frame) -- worst over the four members; '>=8' = worst over every speed 8-30 m/s
+
+| cand | cave B | trk r71b 8-15 / 15-22 / >22 | trk replay 8-15 / 15-22 / >22 | real-curve hold min | turn-hold a<=2.0 min >=8 | a 2.5 min >=8 | in-phase gain +-1 deg 0.2 Hz min >=8 | dwell-jump +-1 deg >=8 (max snap) | dwell-jump +-0.3 deg >=8 (max snap) | light lurch max >=8 (b_lo*J_hi) | firm lurch max >=8 (b_lo*J_hi) | engage droop max >=8 | co-steer droop max >=8 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| P2 | 156 | 0.892 / 0.856 / 1.002 | 0.892 / 0.855 / 1.001 | 0.76 | 0.73 | 0.69 | 0.86 | 225 (1.75) | 1024 (0.62) | 10.9 (10.9) | 7.9 (7.9) | 6.3 | 2.4 |
+| E2-A3 | 222 | 0.986 / 0.993 / 1.006 | 0.985 / 0.991 / 1.005 | 0.98 | 0.98 | 0.98 | 0.86 | 228 (1.75) | 1034 (0.61) | 5.8 (5.8) | 4.7 (4.7) | 6.3 | 2.4 |
+| G-P48 | 156 | 0.892 / 0.835 / 1.002 | 0.891 / 0.834 / 1.001 | 0.72 | 0.69 | 0.64 | 0.67 | 272 (1.61) | 1034 (0.63) | 10.1 (10.1) | 6.2 (6.2) | 6.0 | 2.3 |
+| G-F24 | 138 | 0.882 / 0.821 / 1.002 | 0.882 / 0.820 / 1.001 | 0.70 | 0.67 | 0.61 | 0.56 | 311 (1.73) | 1009 (0.60) | 10.9 (10.9) | 6.4 (6.4) | 6.6 | 2.5 |
+| C3-P | 222 | 0.981 / 0.991 / 1.006 | 0.980 / 0.987 / 1.006 | 0.98 | 0.98 | 0.98 | 0.69 | 271 (1.60) | 1029 (0.63) | 4.1 (4.1) | 3.2 (3.2) | 6.0 | 2.3 |
+| C3-F | 204 | 0.983 / 0.988 / 1.006 | 0.981 / 0.983 / 1.005 | 0.96 | 0.98 | 0.98 | 0.56 | 310 (1.73) | 1011 (0.58) | 4.0 (4.0) | 3.1 (3.1) | 6.6 | 2.5 |
+| C3-PA2 | 204 | 0.981 / 0.991 / 1.006 | 0.980 / 0.987 / 1.006 | 0.98 | 0.98 | 0.98 | 0.69 | 269 (1.62) | 1024 (0.63) | 4.1 (4.1) | 3.2 (3.2) | 6.0 | 2.3 |
+| C3-Pd | 222 | 0.982 / 0.994 / 1.006 | 0.981 / 0.991 / 1.006 | 0.98 | 0.97 | 0.97 | 0.70 | 226 (1.60) | 977 (0.63) | 4.1 (4.1) | 3.2 (3.2) | 6.0 | 2.3 |
+| C3-P44 | 222 | 0.983 / 0.990 / 1.006 | 0.982 / 0.986 / 1.006 | 0.97 | 0.97 | 0.97 | 0.66 | 309 (1.69) | 1027 (0.62) | 4.4 (4.4) | 3.5 (3.5) | 6.2 | 2.3 |
+
+## Goal-criteria fails per band (the goal's decidable time criteria; '<8' is outside the goal's bands)
+TRK/TRKq = tracking outside 0.95-1.05 (clean / r71b's own torque word replayed; data band 8-15 serves 8-10, 10-12.5 and 12.5-15); HOLD = synthetic turn-hold < 0.90 at a_lat <= 2.0; RHOLD = a real r71b curve held < 0.90; HUNT = a limit cycle (>= 2 reversals and >= 0.2 deg p2p in the last 20 s of a 30 s constant setpoint); TEX = T 5-30 Hz > 2.0 counts in that hold; LURCH = a light or firm release lurch > 8 deg (rev2-B's pre-registered bar; a time gate of the brief, not one of the goal's own criteria).  Dwell-then-jump is NOT in this table: the goal's criterion is relative to V282 (not simulable); its counts are in their own tables.
+
+| cand | <8 | 8-10 | 10-12.5 | 12.5-15 | 15-22 | >22 |
+|---|---|---|---|---|---|---|
+| P2 | n/a | TRK 0.892; TRKq 0.892; LURCH 9.8 | TRK 0.892; TRKq 0.892; LURCH 10.9 | TRK 0.892; TRKq 0.892; HOLD 0.778; LURCH 8.1 | TRK 0.856; TRKq 0.855; HOLD 0.732; RHOLD 0.756 | pass |
+| E2-A3 | n/a | pass | pass | pass | pass | pass |
+| G-P48 | n/a | TRK 0.892; TRKq 0.891; LURCH 8.2 | TRK 0.892; TRKq 0.891; LURCH 10.1 | TRK 0.892; TRKq 0.891; HOLD 0.744 | TRK 0.835; TRKq 0.834; HOLD 0.689; RHOLD 0.723 | pass |
+| G-F24 | n/a | TRK 0.882; TRKq 0.882; HOLD 0.885; LURCH 9.0 | TRK 0.882; TRKq 0.882; LURCH 10.9 | TRK 0.882; TRKq 0.882; HOLD 0.725; LURCH 8.2 | TRK 0.821; TRKq 0.820; HOLD 0.670; RHOLD 0.702 | pass |
+| C3-P | n/a | pass | pass | pass | pass | pass |
+| C3-F | n/a | pass | pass | pass | pass | pass |
+| C3-PA2 | n/a | pass | pass | pass | pass | pass |
+| C3-Pd | n/a | pass | pass | pass | pass | pass |
+| C3-P44 | n/a | pass | pass | pass | pass | pass |
+
+## Per-band detail (worst over the four members and the band's speeds)
+
+### Synthetic turn-hold, a_lat <= 2.0 m/s^2 (min hold ratio; < 8 m/s: the A_TURN hold)
+
+| cand | <8 | 8-10 | 10-12.5 | 12.5-15 | 15-22 | >22 |
+|---|---|---|---|---|---|---|
+| P2 | 0.988 | 0.901 | 0.925 | 0.778 | 0.732 | 0.976 |
+| E2-A3 | 0.988 | 0.996 | 0.992 | 0.993 | 0.986 | 0.977 |
+| G-P48 | 0.979 | 0.900 | 0.923 | 0.744 | 0.689 | 0.975 |
+| G-F24 | 0.975 | 0.885 | 0.915 | 0.725 | 0.670 | 0.981 |
+| C3-P | 0.979 | 0.997 | 0.994 | 0.993 | 0.985 | 0.976 |
+| C3-F | 0.975 | 0.997 | 0.990 | 0.993 | 0.985 | 0.980 |
+| C3-PA2 | 0.998 | 0.997 | 0.994 | 0.993 | 0.985 | 0.976 |
+| C3-Pd | 0.979 | 0.997 | 0.994 | 0.993 | 0.986 | 0.973 |
+| C3-P44 | 0.978 | 0.995 | 0.990 | 0.993 | 0.985 | 0.974 |
+
+### Synthetic turn-hold at a_lat 2.5 m/s^2 (r71b's sustained maximum at <= 18 m/s)
+
+| cand | <8 | 8-10 | 10-12.5 | 12.5-15 | 15-22 | >22 |
+|---|---|---|---|---|---|---|
+| P2 | - | 0.893 | 0.897 | 0.741 | 0.689 | 0.924 |
+| E2-A3 | - | 0.996 | 0.992 | 0.993 | 0.983 | 0.977 |
+| G-P48 | - | 0.898 | 0.881 | 0.699 | 0.640 | 0.920 |
+| G-F24 | - | 0.883 | 0.871 | 0.675 | 0.615 | 0.913 |
+| C3-P | - | 0.997 | 0.992 | 0.993 | 0.980 | 0.976 |
+| C3-F | - | 0.997 | 0.990 | 0.993 | 0.978 | 0.980 |
+| C3-PA2 | - | 0.997 | 0.992 | 0.993 | 0.979 | 0.976 |
+| C3-Pd | - | 0.997 | 0.992 | 0.993 | 0.983 | 0.973 |
+| C3-P44 | - | 0.995 | 0.990 | 0.993 | 0.979 | 0.974 |
+
+### In-phase wire gain, +-1 deg at 0.2 Hz (min)

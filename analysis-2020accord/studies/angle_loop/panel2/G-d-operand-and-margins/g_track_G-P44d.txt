@@ -1,0 +1,16 @@
+--- G-P44d: (i) fresh-rate D Kd 44 (10 % M20 margin), ms_free x b_q products DECLARED (not gated)
+  v   8.0 G  1429 (T/deg  62.6): metric nominal 1.004 min 1.000 (b_q*J1.0|k0.83) max 1.007 | hold min 1.000 | Tr1.6-3 max 1.27 (b_lo*J_hi) nominal 0.85
+  v   9.0 G  1009 (T/deg  44.2): metric nominal 1.005 min 0.997 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 0.88 (b_lo*ms_free) nominal 0.53
+  v  10.0 G   591 (T/deg  25.9): metric nominal 1.002 min 0.981 (b_lo*ms_free) max 1.011 | hold min 0.999 | Tr1.6-3 max 0.46 (b_lo*J_hi) nominal 0.26
+  v  11.0 G   504 (T/deg  22.1): metric nominal 0.999 min 0.967 (b_lo*ms_free) max 1.010 | hold min 0.999 | Tr1.6-3 max 0.36 (b_lo*J_hi) nominal 0.20
+  v  11.9 G   464 (T/deg  20.3): metric nominal 0.996 min 0.954 (b_lo*ms_free) max 1.008 | hold min 0.998 | Tr1.6-3 max 0.32 (b_lo*J_hi) nominal 0.17
+  v  12.5 G   570 (T/deg  25.0): metric nominal 0.990 min 0.956 (b_q*ms_free) max 1.001 | hold min 0.998 | Tr1.6-3 max 0.46 (b_q*J_hi) nominal 0.19
+  v  13.5 G   746 (T/deg  32.7): metric nominal 0.984 min 0.957 (b_q*ms_free) max 0.994 | hold min 0.998 | Tr1.6-3 max 0.69 (b_q*J1.0|k0.83) nominal 0.21
+  v  15.0 G  1011 (T/deg  44.3): metric nominal 0.977 min 0.958 (b_q*ms_free) max 0.984 | hold min 0.998 | Tr1.6-3 max 1.32 (b_q*J1.0|k0.83) nominal 0.24
+  v  17.0 G  1364 (T/deg  59.8): metric nominal 0.973 min 0.958 (b_q*ms_free) max 0.980 | hold min 0.998 | Tr1.6-3 max 1.48 (b_q*J1.0|k0.83) nominal 0.26
+  v  19.0 G  1554 (T/deg  68.1): metric nominal 0.984 min 0.970 (b_q*ms_free) max 0.992 | hold min 0.999 | Tr1.6-3 max 1.91 (b_q*ms_free) nominal 0.29
+  v  22.0 G  1756 (T/deg  77.0): metric nominal 0.997 min 0.987 (b_q*ms_free) max 1.003 | hold min 0.999 | Tr1.6-3 max 1.58 (b_q*J1.0+h10) nominal 0.32
+  v  26.0 G  2025 (T/deg  88.8): metric nominal 1.003 min 0.992 (b_q*J1.0|k0.83) max 1.009 | hold min 1.000 | Tr1.6-3 max 1.63 (b_q*J1.0+h10) nominal 0.35
+  v  26.9 G  2085 (T/deg  91.4): metric nominal 1.004 min 0.993 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.64 (b_q*J1.0+h10) nominal 0.35
+  v  30.0 G  2086 (T/deg  91.4): metric nominal 1.004 min 0.993 (b_q*J1.0|k0.83) max 1.010 | hold min 1.000 | Tr1.6-3 max 1.64 (b_q*J1.0+h10) nominal 0.35
+  => G-P44d: linear goal metric >= 8 m/s 0.954 .. 1.011 (PASS 0.95-1.05); turn-hold min 0.998; |T_ref| 1.6-3 Hz max 1.91

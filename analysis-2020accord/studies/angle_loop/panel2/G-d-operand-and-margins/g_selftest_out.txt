@@ -1,0 +1,12 @@
+C1 P2 rows == c2_cave_P2.hex: True; F2 rows == c2_cave_F2.hex: True  OK
+C2 metrics_ext (kappa 1) vs score_freq.score, P2+F2 x 12 members x 6 speeds x 10 keys: max rel diff 1.43e-15  OK
+C3 pm_fixed vs pm_raw:
+   P2 / F2 at their own tables over the brief's gated set (8 speeds): 0 points differ  (the published P2/F2 numbers are unaffected)
+   fresh Kd 41 b_q*J1.0@14.0 G 40: pm_raw  -179.5  pm_fixed   91.2  exact rho 0.9986  crossings 0.02 Hz ph -88.8; 1.01 Hz ph +0.5; 1.19 Hz ph -37.5
+   fresh Kd 48 b_q*J_hi@13.0 G 40: pm_raw  -160.5  pm_fixed   91.4  exact rho 0.9980  crossings 0.03 Hz ph -88.6; 0.99 Hz ph +19.5; 1.77 Hz ph -59.4
+   fresh Kd 48 b_lo@5.0 G 40: pm_raw  -164.0  pm_fixed   89.0  exact rho 0.9917  crossings 0.08 Hz ph -91.0; 0.65 Hz ph +16.0; 2.29 Hz ph -60.1
+   fresh Kd 41 b_q*J_hi@12.5 G 60: pm_raw    92.1  pm_fixed   92.1  exact rho 0.9965  crossings 0.05 Hz ph -87.9; 1.09 Hz ph -5.1; 1.40 Hz ph -38.8
+   fresh Kd 48 b_q*J1.0@15.0 G 60: pm_raw  -164.0  pm_fixed   91.6  exact rho 0.9982  crossings 0.03 Hz ph -88.4; 1.03 Hz ph +16.0; 1.42 Hz ph -57.3
+C4 kd-linear decomposition == score_freq L: max rel err 6.74e-16  OK
+C5 box10 Kd 25 k_op 64: D per deg/s at 0.01 / 0.1 / 1 Hz = -20.000 / -19.999 / -19.950  (arithmetic -(kd k_op)/80 = -20.000)  OK
+SELFTEST PASS

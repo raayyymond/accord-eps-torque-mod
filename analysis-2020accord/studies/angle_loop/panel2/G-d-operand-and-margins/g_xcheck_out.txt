@@ -1,0 +1,96 @@
+X1  rev2-A's REJECTED structures (fresh-rate Kd 41 / 48) at the low-G rows where its envelope 'collapsed', on the refuter's own engine (c2r2_model): 
+    Kd 41 b_q*J1.0 @14.0 G   40: shared-formula PM  -179.5 | crossings 0.02 Hz ph  -88.8 ->  91.2; 1.01 Hz ph   +0.5 -> 179.5; 1.19 Hz ph  -37.5 -> 142.5 | exact rho 0.9986 | exact delay margin inf ms
+    Kd 41 b_q*J_hi @13.0 G   40: shared-formula PM    91.4 | crossings 0.03 Hz ph  -88.6 ->  91.4; 1.16 Hz ph   -0.1 -> 179.9; 1.52 Hz ph  -40.0 -> 140.0 | exact rho 0.9980 | exact delay margin inf ms
+    Kd 48 b_q*J_hi @13.0 G   40: shared-formula PM  -160.5 | crossings 0.03 Hz ph  -88.6 ->  91.4; 0.99 Hz ph  +19.5 -> 160.5; 1.77 Hz ph  -59.4 -> 120.6 | exact rho 0.9980 | exact delay margin 189.1 ms
+    Kd 48 b_lo     @ 5.0 G   40: shared-formula PM  -164.0 | crossings 0.08 Hz ph  -91.0 ->  89.0; 0.65 Hz ph  +16.0 -> 164.0; 2.29 Hz ph  -60.1 -> 119.9 | exact rho 0.9917 | exact delay margin 145.5 ms
+    Kd 48 b_q*J1.0 @15.0 G   60: shared-formula PM  -164.0 | crossings 0.03 Hz ph  -88.4 ->  91.6; 1.03 Hz ph  +16.0 -> 164.0; 1.42 Hz ph  -57.3 -> 122.7 | exact rho 0.9982 | exact delay margin inf ms
+X2  binding points of each implementation (g_gate), re-derived on c2r2_model (independent engine):
+    rev2A-P2 b_q*ms_free*tau6+h10|fb|k0.83 @15.75: g_gate PM   6.4 rho 0.9981 | c2r2_model PM   6.3 rho 0.9981 (pole 1.37 Hz z 0.022)
+    rev2A-P2 b_q*ms_free*tau6+h10|k0.83    @15.75: g_gate PM   6.4 rho 0.9983 | c2r2_model PM   6.4 rho 0.9983 (pole 1.27 Hz z 0.022)
+    rev2A-P2 b_q*ms_free+h10|k0.83         @15.75: g_gate PM   8.2 rho 0.9977 | c2r2_model PM   8.2 rho 0.9977 (pole 1.27 Hz z 0.028)
+    rev2A-P2 b_q*ms_free+h10|fb|k0.83      @15.75: g_gate PM   8.3 rho 0.9975 | c2r2_model PM   8.3 rho 0.9975 (pole 1.37 Hz z 0.028)
+    rev2A-P2 b_q*ms_free*tau6|k0.83        @15.75: g_gate PM  10.5 rho 0.9970 | c2r2_model PM  10.5 rho 0.9970 (pole 1.29 Hz z 0.037)
+    rev2A-P2 b_q*ms_free*tau6|fb|k0.83     @15.75: g_gate PM  10.6 rho 0.9967 | c2r2_model PM  10.6 rho 0.9967 (pole 1.39 Hz z 0.038)
+    rev2A-P2 b_q*ms_free*tau6+h10          @15.75: g_gate PM  11.7 rho 0.9967 | c2r2_model PM  11.7 rho 0.9967 (pole 1.27 Hz z 0.041)
+    rev2A-P2 b_lo*ms_free*tau6+h10|k0.83   @11.90: g_gate PM  12.2 rho 0.9977 | c2r2_model PM  12.2 rho 0.9977 (pole 0.81 Hz z 0.045)
+    rev2A-F2 b_q*ms_free*tau6+h10|fb|k0.83 @15.75: g_gate PM   7.7 rho 0.9977 | c2r2_model PM   7.7 rho 0.9977 (pole 1.37 Hz z 0.027)
+    rev2A-F2 b_q*ms_free*tau6+h10|k0.83    @15.75: g_gate PM   8.0 rho 0.9978 | c2r2_model PM   8.0 rho 0.9977 (pole 1.27 Hz z 0.028)
+    rev2A-F2 b_q*ms_free+h10|fb|k0.83      @15.75: g_gate PM   9.6 rho 0.9971 | c2r2_model PM   9.7 rho 0.9970 (pole 1.38 Hz z 0.034)
+    rev2A-F2 b_q*ms_free+h10|k0.83         @15.75: g_gate PM   9.8 rho 0.9972 | c2r2_model PM   9.9 rho 0.9972 (pole 1.28 Hz z 0.035)
+    rev2A-F2 b_lo*ms_free*tau6+h10|k0.83   @11.90: g_gate PM  11.9 rho 0.9977 | c2r2_model PM  11.9 rho 0.9976 (pole 0.82 Hz z 0.046)
+    rev2A-F2 b_q*ms_free*tau6|k0.83        @15.75: g_gate PM  12.5 rho 0.9964 | c2r2_model PM  12.6 rho 0.9964 (pole 1.28 Hz z 0.044)
+    rev2A-F2 b_q*ms_free*tau6|fb|k0.83     @15.75: g_gate PM  12.6 rho 0.9961 | c2r2_model PM  12.6 rho 0.9961 (pole 1.38 Hz z 0.045)
+    rev2A-F2 b_lo*ms_free+h10|k0.83        @11.90: g_gate PM  13.0 rho 0.9974 | c2r2_model PM  13.1 rho 0.9974 (pole 0.82 Hz z 0.050)
+    G-P48 J_hi+h10|k0.83                @ 1.00: g_gate PM  47.1 rho 0.9670 | c2r2_model PM  47.1 rho 0.9670 (pole 0.89 Hz z 0.516)
+    G-P48 b_lo*ms_free*tau6+h10|k0.83   @ 9.00: g_gate PM  33.6 rho 0.9825 | c2r2_model PM  33.5 rho 0.9825 (pole 1.27 Hz z 0.216)
+    G-P48 b_lo*ms_free*tau6+h10|fb|k0.83@ 8.75: g_gate PM  33.7 rho 0.9783 | c2r2_model PM  33.7 rho 0.9783 (pole 1.49 Hz z 0.228)
+    G-P48 J_hi+h10|fb|k0.83             @ 1.00: g_gate PM  48.9 rho 0.9602 | c2r2_model PM  48.9 rho 0.9602 (pole 0.95 Hz z 0.563)
+    G-P48 b_q*J1.0+h10|fb|k0.83         @26.90: g_gate PM  34.2 rho 0.9780 | c2r2_model PM  34.2 rho 0.9780 (pole 1.89 Hz z 0.184)
+    G-P48 ms_free+h10|k0.83             @ 9.00: g_gate PM  49.3 rho 0.9730 | c2r2_model PM  49.2 rho 0.9731 (pole 1.13 Hz z 0.359)
+    G-P48 b_q*ms_free*tau6+h10|k0.83    @15.75: g_gate PM  34.9 rho 0.9920 | c2r2_model PM  34.9 rho 0.9920 (pole 1.21 Hz z 0.105)
+    G-P48 ms_free+h10|fb|k0.83          @ 8.75: g_gate PM  49.9 rho 0.9664 | c2r2_model PM  49.9 rho 0.9664 (pole 1.34 Hz z 0.377)
+    G-P44 J_hi+h10|k0.83                @ 1.00: g_gate PM  46.6 rho 0.9691 | c2r2_model PM  46.6 rho 0.9691 (pole 0.86 Hz z 0.502)
+    G-P44 b_lo*ms_free*tau6+h10|fb|k0.83@ 8.50: g_gate PM  33.3 rho 0.9767 | c2r2_model PM  33.3 rho 0.9767 (pole 1.60 Hz z 0.228)
+    G-P44 b_lo*ms_free*tau6+h10|k0.83   @ 8.75: g_gate PM  33.4 rho 0.9811 | c2r2_model PM  33.4 rho 0.9811 (pole 1.35 Hz z 0.220)
+    G-P44 J_hi+h10|fb|k0.83             @ 1.00: g_gate PM  48.5 rho 0.9628 | c2r2_model PM  48.5 rho 0.9628 (pole 0.93 Hz z 0.546)
+    G-P44 b_q*J1.0+h10|fb|k0.83         @27.00: g_gate PM  34.3 rho 0.9787 | c2r2_model PM  34.3 rho 0.9787 (pole 1.87 Hz z 0.180)
+    G-P44 ms_free+h10|k0.83             @ 8.75: g_gate PM  49.4 rho 0.9703 | c2r2_model PM  49.4 rho 0.9703 (pole 1.19 Hz z 0.373)
+    G-P44 ms_free+h10|fb|k0.83          @ 8.75: g_gate PM  49.9 rho 0.9678 | c2r2_model PM  49.9 rho 0.9678 (pole 1.32 Hz z 0.366)
+    G-P44 b_lo*ms_free+h10|k0.83        @ 8.75: g_gate PM  35.2 rho 0.9802 | c2r2_model PM  35.2 rho 0.9802 (pole 1.34 Hz z 0.231)
+    G-P48d b_q*ms_free*tau6+h10|k0.83    @15.75: g_gate PM  15.2 rho 0.9956 | c2r2_model PM  15.2 rho 0.9956 (pole 1.28 Hz z 0.055)
+    G-P48d b_q*ms_free*tau6+h10|fb|k0.83 @15.75: g_gate PM  15.8 rho 0.9950 | c2r2_model PM  15.8 rho 0.9950 (pole 1.38 Hz z 0.057)
+    G-P48d b_q*ms_free+h10|k0.83         @15.75: g_gate PM  17.0 rho 0.9951 | c2r2_model PM  17.0 rho 0.9951 (pole 1.28 Hz z 0.061)
+    G-P48d b_q*ms_free+h10|fb|k0.83      @15.75: g_gate PM  17.8 rho 0.9944 | c2r2_model PM  17.8 rho 0.9944 (pole 1.38 Hz z 0.064)
+    G-P48d b_q*ms_free*tau6|k0.83        @15.75: g_gate PM  18.8 rho 0.9942 | c2r2_model PM  18.8 rho 0.9942 (pole 1.30 Hz z 0.071)
+    G-P48d b_q*ms_free*tau6|fb|k0.83     @15.75: g_gate PM  19.5 rho 0.9935 | c2r2_model PM  19.5 rho 0.9935 (pole 1.40 Hz z 0.074)
+    G-P48d b_q*ms_free|k0.83             @15.75: g_gate PM  20.7 rho 0.9937 | c2r2_model PM  20.7 rho 0.9936 (pole 1.30 Hz z 0.078)
+    G-P48d b_q*ms_free|fb|k0.83          @15.75: g_gate PM  21.5 rho 0.9928 | c2r2_model PM  21.5 rho 0.9928 (pole 1.40 Hz z 0.082)
+    G-P48L J_hi+h10|k0.83                @ 1.00: g_gate PM  47.1 rho 0.9670 | c2r2_model PM  47.1 rho 0.9670 (pole 0.89 Hz z 0.516)
+    G-P48L J_hi+h10|fb|k0.83             @ 1.00: g_gate PM  48.9 rho 0.9602 | c2r2_model PM  48.9 rho 0.9602 (pole 0.95 Hz z 0.563)
+    G-P48L b_q*J1.0+h10|fb|k0.83         @26.90: g_gate PM  34.2 rho 0.9780 | c2r2_model PM  34.2 rho 0.9780 (pole 1.89 Hz z 0.184)
+    G-P48L b_lo*ms_free*tau6+h10|fb|k0.83@ 8.25: g_gate PM  34.2 rho 0.9710 | c2r2_model PM  34.1 rho 0.9710 (pole 1.81 Hz z 0.251)
+    G-P48L b_lo*ms_free*tau6+h10|k0.83   @ 8.50: g_gate PM  34.4 rho 0.9767 | c2r2_model PM  34.4 rho 0.9767 (pole 1.49 Hz z 0.245)
+    G-P48L b_lo*J_hi*tau6+h10|fb|k0.83   @ 8.00: g_gate PM  34.5 rho 0.9665 | c2r2_model PM  34.5 rho 0.9665 (pole 2.00 Hz z 0.261)
+    G-P48L ms_free+h10|k0.83             @ 8.50: g_gate PM  50.3 rho 0.9637 | c2r2_model PM  50.3 rho 0.9637 (pole 1.30 Hz z 0.413)
+    G-P48L b_q*ms_free*tau6+h10|fb|k0.83 @20.75: g_gate PM  35.3 rho 0.9850 | c2r2_model PM  35.4 rho 0.9850 (pole 1.71 Hz z 0.140)
+    G-F24 J_hi+h10|k0.83                @ 1.00: g_gate PM  46.9 rho 0.9693 | c2r2_model PM  46.9 rho 0.9693 (pole 0.80 Hz z 0.530)
+    G-F24 J_hi+h10|fb|k0.83             @ 1.00: g_gate PM  48.5 rho 0.9627 | c2r2_model PM  48.5 rho 0.9627 (pole 0.83 Hz z 0.588)
+    G-F24 b_lo*ms_free*tau6+h10|fb|k0.83@ 8.75: g_gate PM  33.7 rho 0.9779 | c2r2_model PM  33.7 rho 0.9779 (pole 1.48 Hz z 0.234)
+    G-F24 b_lo*ms_free*tau6+h10|k0.83   @ 8.75: g_gate PM  34.5 rho 0.9795 | c2r2_model PM  34.5 rho 0.9795 (pole 1.35 Hz z 0.239)
+    G-F24 b_q*J1.0+h10|fb|k0.83         @27.00: g_gate PM  34.8 rho 0.9777 | c2r2_model PM  34.8 rho 0.9777 (pole 1.88 Hz z 0.187)
+    G-F24 b_q*ms_free*tau6+h10|fb|k0.83 @15.75: g_gate PM  35.1 rho 0.9915 | c2r2_model PM  35.1 rho 0.9915 (pole 1.30 Hz z 0.103)
+    G-F24 b_lo+h10|fb|k1.155            @ 8.00: g_gate PM  50.5 rho 0.9426 | c2r2_model PM  50.5 rho 0.9426 (pole 4.43 Hz z 0.318)
+    G-F24 J_hi|k0.83                    @ 1.00: g_gate PM  50.7 rho 0.9692 | c2r2_model PM  50.7 rho 0.9692 (pole 0.76 Hz z 0.545)
+    G-F24d b_q*ms_free*tau6+h10|fb|k0.83 @15.75: g_gate PM  16.4 rho 0.9951 | c2r2_model PM  16.5 rho 0.9951 (pole 1.37 Hz z 0.058)
+    G-F24d b_q*ms_free*tau6+h10|k0.83    @15.75: g_gate PM  16.5 rho 0.9955 | c2r2_model PM  16.6 rho 0.9954 (pole 1.26 Hz z 0.057)
+    G-F24d b_q*ms_free+h10|k0.83         @15.75: g_gate PM  18.3 rho 0.9949 | c2r2_model PM  18.4 rho 0.9949 (pole 1.26 Hz z 0.064)
+    G-F24d b_q*ms_free+h10|fb|k0.83      @15.75: g_gate PM  18.3 rho 0.9945 | c2r2_model PM  18.4 rho 0.9945 (pole 1.37 Hz z 0.065)
+    G-F24d b_q*ms_free*tau6|k0.83        @15.75: g_gate PM  21.0 rho 0.9942 | c2r2_model PM  21.1 rho 0.9942 (pole 1.26 Hz z 0.073)
+    G-F24d b_q*ms_free*tau6|fb|k0.83     @15.75: g_gate PM  21.2 rho 0.9936 | c2r2_model PM  21.3 rho 0.9936 (pole 1.37 Hz z 0.075)
+    G-F24d b_q*ms_free*tau6+h10          @15.75: g_gate PM  22.5 rho 0.9935 | c2r2_model PM  22.6 rho 0.9935 (pole 1.27 Hz z 0.081)
+    G-F24d b_q*ms_free|k0.83             @15.75: g_gate PM  22.8 rho 0.9937 | c2r2_model PM  22.9 rho 0.9937 (pole 1.26 Hz z 0.079)
+    G-A22: box10 is not expressible in c2r2_model (no angle-own D) -- cross-checked by g_exact vs the LTI fundamental instead (g_gate rho on every point)
+    G-A22d: box10 is not expressible in c2r2_model (no angle-own D) -- cross-checked by g_exact vs the LTI fundamental instead (g_gate rho on every point)
+    G-P48k40: no gate cache
+    G-P48k32: no gate cache
+    G-P44d b_q*ms_free*tau6+h10|k0.83    @15.75: g_gate PM  14.9 rho 0.9959 | c2r2_model PM  14.9 rho 0.9959 (pole 1.27 Hz z 0.052)
+    G-P44d b_q*ms_free*tau6+h10|fb|k0.83 @15.75: g_gate PM  15.4 rho 0.9954 | c2r2_model PM  15.4 rho 0.9954 (pole 1.37 Hz z 0.054)
+    G-P44d b_q*ms_free+h10|k0.83         @15.75: g_gate PM  16.7 rho 0.9954 | c2r2_model PM  16.7 rho 0.9954 (pole 1.27 Hz z 0.058)
+    G-P44d b_q*ms_free+h10|fb|k0.83      @15.75: g_gate PM  17.3 rho 0.9948 | c2r2_model PM  17.4 rho 0.9948 (pole 1.37 Hz z 0.060)
+    G-P44d b_q*ms_free*tau6|k0.83        @15.75: g_gate PM  18.5 rho 0.9946 | c2r2_model PM  18.6 rho 0.9946 (pole 1.28 Hz z 0.067)
+    G-P44d b_q*ms_free*tau6|fb|k0.83     @15.75: g_gate PM  19.1 rho 0.9939 | c2r2_model PM  19.1 rho 0.9939 (pole 1.39 Hz z 0.070)
+    G-P44d b_q*ms_free|k0.83             @15.75: g_gate PM  20.3 rho 0.9940 | c2r2_model PM  20.4 rho 0.9940 (pole 1.28 Hz z 0.074)
+    G-P44d b_q*ms_free|fb|k0.83          @15.75: g_gate PM  21.0 rho 0.9933 | c2r2_model PM  21.1 rho 0.9933 (pole 1.38 Hz z 0.077)
+X3  the round-2 stability refuter's F1 (frame), F4 (ms_free products) and F6 (aged single corners) rows, on its own engine, worst over its grid (1-35 m/s at 0.25 + knots), every implementation (P2 / F2 = its published values):
+    member                  frame  bar |             P2 |             F2 |       rev2A-P2 |       rev2A-F2 |          G-P48 |          G-P44 |         G-P48d |         G-P48L |          G-F24 |         G-F24d |       G-P48k40 |       G-P48k32 |         G-P44d
+    J_hi                     FA     45 |   43.2 @ 1.00* |   43.4 @ 1.00* |   43.2 @ 1.00* |   43.4 @ 1.00* |   53.0 @ 1.00  |   52.2 @ 1.00  |   53.0 @ 1.00  |   53.0 @ 1.00  |   51.9 @ 1.00  |   51.9 @ 1.00  |   54.0 @ 1.00  |   55.4 @ 1.00  |   52.2 @ 1.00 
+    ms_free                  FA     45 |   43.8 @ 8.75* |   43.8 @ 9.00* |   43.8 @ 8.75* |   43.8 @ 9.00* |   53.9 @ 9.00  |   54.2 @ 8.75  |   54.0 @ 9.00  |   55.4 @ 8.50  |   56.7 @ 9.00  |   56.6 @ 9.00  |   55.7 @ 8.75  |   56.7 @ 9.00  |   54.2 @ 8.75 
+    b_lo*J_hi+h10            FA     30 |   28.3 @ 1.00* |   28.0 @ 1.00* |   28.3 @ 1.00* |   28.0 @ 1.00* |   40.4 @ 1.00  |   40.1 @ 1.00  |   40.4 @ 1.00  |   39.5 @ 8.00  |   39.7 @ 1.00  |   39.7 @ 1.00  |   38.0 @ 1.00  |   38.6 @ 1.00  |   40.1 @ 1.00 
+    b_q*J1.0+h10             FB     30 |   28.5 @27.00* |   27.5 @15.50* |   28.5 @27.00* |   27.5 @15.50* |   35.3 @27.00  |   35.4 @27.00  |   35.9 @27.00  |   35.3 @27.00  |   35.8 @27.00  |   35.6 @17.50  |   35.8 @27.00  |   35.4 @27.00  |   36.1 @27.00 
+    b_lo*J_hi*tau6+h10       FB     30 |   24.6 @ 8.00* |   24.8 @ 8.00* |   24.6 @ 8.00* |   24.8 @ 8.00* |   38.7 @ 8.00  |   36.9 @ 8.00  |   38.6 @ 8.00  |   36.0 @ 8.00  |   37.1 @ 8.00  |   37.1 @ 8.00  |   34.7 @ 1.00  |   34.8 @ 1.00  |   36.9 @ 8.00 
+    b_q*ms_free+h10          nom    30 |   13.5 @15.75* |   14.9 @15.75* |   13.5 @15.75* |   14.9 @15.75* |   44.4 @15.75  |   45.4 @20.75  |   24.0 @15.75* |   45.5 @20.50  |   44.0 @15.75  |   24.4 @15.75* |   43.2 @15.75  |   43.2 @15.75  |   23.5 @15.75*
+    b_q*ms_free              nom    30 |   17.3 @15.75* |   19.5 @15.75* |   17.3 @15.75* |   19.5 @15.75* |   45.7 @15.75  |   47.0 @15.75  |   27.2 @15.75* |   47.6 @20.25  |   48.3 @15.75  |   28.9 @15.75* |   44.8 @15.75  |   45.0 @15.75  |   26.7 @15.75*
+    b_lo*ms_free             nom    30 |   22.8 @11.90* |   22.5 @11.90* |   22.8 @11.90* |   22.5 @11.90* |   45.8 @ 9.00  |   45.5 @ 8.75  |   45.9 @ 9.00  |   47.0 @ 8.50  |   47.1 @ 9.00  |   47.0 @ 9.00  |   44.3 @11.90  |   42.8 @11.90  |   45.5 @ 8.75 
+    J_hi+h10                 nom    45 |   42.2 @ 1.00* |   42.6 @ 1.00* |   42.2 @ 1.00* |   42.6 @ 1.00* |   53.5 @ 1.00  |   52.5 @ 1.00  |   53.5 @ 1.00  |   53.5 @ 1.00  |   52.5 @ 1.00  |   52.5 @ 1.00  |   54.4 @ 1.00  |   55.8 @ 1.00  |   52.5 @ 1.00 
+    ms_free+h10              nom    45 |   43.8 @ 8.75* |   43.5 @ 9.00* |   43.8 @ 8.75* |   43.5 @ 9.00* |   56.0 @ 9.00  |   55.7 @ 8.75  |   56.1 @ 8.75  |   56.9 @ 8.50  |   57.4 @ 8.75  |   57.4 @ 8.75  |   57.2 @ 8.75  |   58.2 @ 8.75  |   55.7 @ 8.75 
+    (* = below the bar; FA = D operand x 1/1.155, FB = G and k x 1.155: the refuter's own two readings)

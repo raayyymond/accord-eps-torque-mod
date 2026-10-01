@@ -1,0 +1,9 @@
+scorer's own ov_lt511 (INWARD drag to 0, stiff hand, word 511), C3-P b_lo*J_hi: hand force at release, I at release, lurch
+  v  8.00: Ah 15.00 deg  hand force   1346 T  I   2692 S  lurch  4.09 deg
+  v 10.00: Ah  9.98 deg  hand force    607 T  I   1890 S  lurch  2.04 deg
+  v 11.75: Ah  6.99 deg  hand force    381 T  I   1466 S  lurch  1.91 deg
+  v 12.75: Ah  5.80 deg  hand force    407 T  I   1685 S  lurch  1.78 deg
+  v 15.00: Ah  4.28 deg  hand force    428 T  I   1856 S  lurch  0.81 deg
+  v 17.00: Ah  3.27 deg  hand force    411 T  I   1828 S  lurch  0.45 deg
+  v 22.00: Ah  2.01 deg  hand force    329 T  I   1380 S  lurch  0.71 deg
+  v 26.90: Ah  1.44 deg  hand force    321 T  I   1380 S  lurch  0.87 deg

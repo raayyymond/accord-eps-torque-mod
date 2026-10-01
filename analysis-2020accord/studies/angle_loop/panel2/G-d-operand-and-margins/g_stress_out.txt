@@ -1,0 +1,36 @@
+rev2A-P2: 4200 points (51 s): unstable 0; least-damped 5-50 Hz pole 20.02 Hz zeta 0.036 (b_lo, mode 20.0 Hz z2 0.02 r2 0.2, 1.0 m/s); max 5-30 Hz closed-loop peak -6.1 dB (b_lo, mode 20.0 Hz z2 0.02, 8.0 m/s)
+    mode 13.0 Hz (open zeta 0.02): closed-loop least zeta 0.047 at 13.04 Hz (b_lo, 1.0 m/s); max peak -6.4 dB
+    mode 15.0 Hz (open zeta 0.02): closed-loop least zeta 0.042 at 15.03 Hz (b_lo, 1.0 m/s); max peak -6.3 dB
+    mode 16.5 Hz (open zeta 0.02): closed-loop least zeta 0.040 at 16.53 Hz (b_lo, 1.0 m/s); max peak -6.2 dB
+    mode 17.0 Hz (open zeta 0.02): closed-loop least zeta 0.039 at 17.02 Hz (b_lo, 1.0 m/s); max peak -6.2 dB
+    mode 20.0 Hz (open zeta 0.02): closed-loop least zeta 0.036 at 20.02 Hz (b_lo, 1.0 m/s); max peak -6.1 dB
+G-P48: 4200 points (27 s): unstable 0; least-damped 5-50 Hz pole 20.05 Hz zeta 0.036 (b_lo, mode 20.0 Hz z2 0.02 r2 0.2, 1.0 m/s); max 5-30 Hz closed-loop peak -3.8 dB (b_lo, mode 20.0 Hz z2 0.02, 8.0 m/s)
+    mode 13.0 Hz (open zeta 0.02): closed-loop least zeta 0.048 at 13.09 Hz (b_lo, 1.0 m/s); max peak -4.0 dB
+    mode 15.0 Hz (open zeta 0.02): closed-loop least zeta 0.043 at 15.08 Hz (b_lo, 1.0 m/s); max peak -3.9 dB
+    mode 16.5 Hz (open zeta 0.02): closed-loop least zeta 0.040 at 16.57 Hz (b_lo, 1.0 m/s); max peak -3.9 dB
+    mode 17.0 Hz (open zeta 0.02): closed-loop least zeta 0.039 at 17.06 Hz (b_lo, 1.0 m/s); max peak -3.9 dB
+    mode 20.0 Hz (open zeta 0.02): closed-loop least zeta 0.036 at 20.05 Hz (b_lo, 1.0 m/s); max peak -3.8 dB
+G-P48d: 4200 points (21 s): unstable 0; least-damped 5-50 Hz pole 20.05 Hz zeta 0.036 (b_lo, mode 20.0 Hz z2 0.02 r2 0.2, 1.0 m/s); max 5-30 Hz closed-loop peak -3.8 dB (b_lo, mode 20.0 Hz z2 0.02, 8.0 m/s)
+    mode 13.0 Hz (open zeta 0.02): closed-loop least zeta 0.048 at 13.09 Hz (b_lo, 1.0 m/s); max peak -4.0 dB
+    mode 15.0 Hz (open zeta 0.02): closed-loop least zeta 0.043 at 15.08 Hz (b_lo, 1.0 m/s); max peak -3.9 dB
+    mode 16.5 Hz (open zeta 0.02): closed-loop least zeta 0.040 at 16.57 Hz (b_lo, 1.0 m/s); max peak -3.9 dB
+    mode 17.0 Hz (open zeta 0.02): closed-loop least zeta 0.039 at 17.06 Hz (b_lo, 1.0 m/s); max peak -3.8 dB
+    mode 20.0 Hz (open zeta 0.02): closed-loop least zeta 0.036 at 20.05 Hz (b_lo, 1.0 m/s); max peak -3.8 dB
+G-P44d: 4200 points (22 s): unstable 0; least-damped 5-50 Hz pole 20.04 Hz zeta 0.036 (b_lo, mode 20.0 Hz z2 0.02 r2 0.2, 1.0 m/s); max 5-30 Hz closed-loop peak -4.5 dB (b_lo, mode 20.0 Hz z2 0.02, 8.0 m/s)
+    mode 13.0 Hz (open zeta 0.02): closed-loop least zeta 0.048 at 13.07 Hz (b_lo, 1.0 m/s); max peak -4.7 dB
+    mode 15.0 Hz (open zeta 0.02): closed-loop least zeta 0.043 at 15.06 Hz (b_lo, 1.0 m/s); max peak -4.6 dB
+    mode 16.5 Hz (open zeta 0.02): closed-loop least zeta 0.040 at 16.56 Hz (b_lo, 1.0 m/s); max peak -4.6 dB
+    mode 17.0 Hz (open zeta 0.02): closed-loop least zeta 0.039 at 17.05 Hz (b_lo, 1.0 m/s); max peak -4.6 dB
+    mode 20.0 Hz (open zeta 0.02): closed-loop least zeta 0.036 at 20.04 Hz (b_lo, 1.0 m/s); max peak -4.5 dB
+G-F24d: 4200 points (25 s): unstable 0; least-damped 5-50 Hz pole 20.00 Hz zeta 0.033 (b_lo, mode 20.0 Hz z2 0.02 r2 0.2, 1.0 m/s); max 5-30 Hz closed-loop peak -3.8 dB (nominal+h10|k1.155, mode 20.0 Hz z2 0.02, 8.0 m/s)
+    mode 13.0 Hz (open zeta 0.02): closed-loop least zeta 0.042 at 13.07 Hz (b_lo, 1.0 m/s); max peak -4.0 dB
+    mode 15.0 Hz (open zeta 0.02): closed-loop least zeta 0.038 at 15.04 Hz (b_lo, 1.0 m/s); max peak -3.9 dB
+    mode 16.5 Hz (open zeta 0.02): closed-loop least zeta 0.036 at 16.53 Hz (b_lo, 1.0 m/s); max peak -3.9 dB
+    mode 17.0 Hz (open zeta 0.02): closed-loop least zeta 0.036 at 17.02 Hz (b_lo, 1.0 m/s); max peak -3.9 dB
+    mode 20.0 Hz (open zeta 0.02): closed-loop least zeta 0.033 at 20.00 Hz (b_lo, 1.0 m/s); max peak -3.8 dB
+G-A22d: 2800 points (18 s): unstable 0; least-damped 5-50 Hz pole 19.97 Hz zeta 0.034 (b_lo, mode 20.0 Hz z2 0.02 r2 0.2, 1.0 m/s); max 5-30 Hz closed-loop peak -6.3 dB (b_lo, mode 20.0 Hz z2 0.02, 8.0 m/s)
+    mode 13.0 Hz (open zeta 0.02): closed-loop least zeta 0.041 at 13.02 Hz (b_lo, 1.0 m/s); max peak -6.6 dB
+    mode 15.0 Hz (open zeta 0.02): closed-loop least zeta 0.038 at 15.00 Hz (b_lo, 1.0 m/s); max peak -6.5 dB
+    mode 16.5 Hz (open zeta 0.02): closed-loop least zeta 0.036 at 16.49 Hz (b_lo, 1.0 m/s); max peak -6.4 dB
+    mode 17.0 Hz (open zeta 0.02): closed-loop least zeta 0.036 at 16.99 Hz (b_lo, 1.0 m/s); max peak -6.4 dB
+    mode 20.0 Hz (open zeta 0.02): closed-loop least zeta 0.034 at 19.97 Hz (b_lo, 1.0 m/s); max peak -6.3 dB

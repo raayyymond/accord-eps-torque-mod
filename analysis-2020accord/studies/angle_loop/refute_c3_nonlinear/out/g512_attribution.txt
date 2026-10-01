@@ -1,0 +1,40 @@
+G 463: e5 for error -2/-1/+1/+2 counts = -2/-1/0/1
+G 511: e5 for error -2/-1/+1/+2 counts = -2/-1/0/1
+G 512: e5 for error -2/-1/+1/+2 counts = -2/-1/1/2
+G 537: e5 for error -2/-1/+1/+2 counts = -3/-2/1/2
+== small_0.3_0.1 F_hi: in-phase gain / dwell events
+  v 11.00: C3-P           1.04 dj   5 | C3-P/G>=512    1.09 dj   5 | P2             0.94 dj   6 | P2/G463        0.89 dj   6
+  v 11.50: C3-P           0.77 dj   6 | C3-P/G>=512    0.97 dj   5 | P2             1.00 dj   5 | P2/G463        0.77 dj   6
+  v 11.75: C3-P           0.75 dj   6 | C3-P/G>=512    0.95 dj   5 | P2             1.11 dj   5 | P2/G463        0.76 dj   6
+  v 12.00: C3-P           0.74 dj   6 | C3-P/G>=512    0.94 dj   5 | P2             0.92 dj   6 | P2/G463        0.75 dj   6
+  v 12.50: C3-P           0.98 dj   5 | C3-P/G>=512    1.05 dj   6 | P2             0.91 dj   6 | P2/G463        0.91 dj   6
+== small_0.3_0.1 bc: in-phase gain / dwell events
+  v 11.00: C3-P           0.96 dj   6 | C3-P/G>=512    0.96 dj   6 | P2             0.96 dj   6 | P2/G463        0.96 dj   6
+  v 11.50: C3-P           0.37 dj   6 | C3-P/G>=512    0.79 dj   6 | P2             0.92 dj   6 | P2/G463        0.38 dj   6
+  v 11.75: C3-P           0.39 dj   6 | C3-P/G>=512    0.76 dj   6 | P2             0.90 dj   6 | P2/G463        0.35 dj   6
+  v 12.00: C3-P           0.33 dj   6 | C3-P/G>=512    0.75 dj   6 | P2             0.96 dj   6 | P2/G463        0.34 dj   6
+  v 12.50: C3-P           0.88 dj   6 | C3-P/G>=512    0.88 dj   6 | P2             0.93 dj   6 | P2/G463        0.96 dj   6
+== small_0.5_0.2 F_hi: in-phase gain / dwell events
+  v 11.00: C3-P           0.59 dj   6 | C3-P/G>=512    0.58 dj   6 | P2             0.61 dj   6 | P2/G463        0.61 dj   6
+  v 11.50: C3-P           0.02 dj   6 | C3-P/G>=512    0.24 dj   6 | P2             0.54 dj   6 | P2/G463        0.03 dj   6
+  v 11.75: C3-P          -0.03 dj   6 | C3-P/G>=512    0.22 dj   6 | P2             0.51 dj   6 | P2/G463        0.00 dj   6
+  v 12.00: C3-P          -0.17 dj   6 | C3-P/G>=512    0.21 dj   6 | P2             0.54 dj   6 | P2/G463       -0.03 dj   6
+  v 12.50: C3-P           0.45 dj   6 | C3-P/G>=512    0.45 dj   6 | P2             0.67 dj   6 | P2/G463        0.68 dj   6
+== small_0.5_0.2 bc: in-phase gain / dwell events
+  v 11.00: C3-P           0.73 dj   6 | C3-P/G>=512    0.73 dj   6 | P2             0.72 dj   6 | P2/G463        0.72 dj   6
+  v 11.50: C3-P          -0.01 dj   6 | C3-P/G>=512    0.41 dj   6 | P2             0.65 dj   6 | P2/G463        0.14 dj   6
+  v 11.75: C3-P          -0.06 dj   6 | C3-P/G>=512    0.38 dj   6 | P2             0.62 dj   6 | P2/G463       -0.03 dj   6
+  v 12.00: C3-P          -0.05 dj   6 | C3-P/G>=512    0.35 dj   6 | P2             0.53 dj   6 | P2/G463       -0.04 dj   6
+  v 12.50: C3-P           0.37 dj   6 | C3-P/G>=512    0.35 dj   6 | P2             0.64 dj   6 | P2/G463        0.64 dj   6
+== small_1_0.3 F_hi: in-phase gain / dwell events
+  v 11.00: C3-P           0.39 dj   0 | C3-P/G>=512    0.39 dj   0 | P2             0.47 dj   0 | P2/G463        0.47 dj   0
+  v 11.50: C3-P           0.05 dj   6 | C3-P/G>=512    0.13 dj   6 | P2             0.31 dj   4 | P2/G463       -0.04 dj   6
+  v 11.75: C3-P          -0.09 dj   6 | C3-P/G>=512    0.11 dj   6 | P2             0.25 dj   2 | P2/G463       -0.06 dj   6
+  v 12.00: C3-P          -0.05 dj   6 | C3-P/G>=512    0.09 dj   6 | P2             0.32 dj   0 | P2/G463       -0.06 dj   6
+  v 12.50: C3-P           0.12 dj   0 | C3-P/G>=512    0.12 dj   0 | P2             0.45 dj   0 | P2/G463        0.44 dj   0
+== small_1_0.3 bc: in-phase gain / dwell events
+  v 11.00: C3-P           0.53 dj   0 | C3-P/G>=512    0.53 dj   0 | P2             0.59 dj   0 | P2/G463        0.59 dj   0
+  v 11.50: C3-P           0.24 dj   6 | C3-P/G>=512    0.33 dj   6 | P2             0.47 dj   1 | P2/G463        0.15 dj   6
+  v 11.75: C3-P           0.08 dj   6 | C3-P/G>=512    0.30 dj   6 | P2             0.44 dj   1 | P2/G463        0.13 dj   6
+  v 12.00: C3-P           0.12 dj   6 | C3-P/G>=512    0.21 dj   6 | P2             0.45 dj   3 | P2/G463        0.11 dj   6
+  v 12.50: C3-P           0.22 dj   6 | C3-P/G>=512    0.28 dj   1 | P2             0.51 dj   0 | P2/G463        0.51 dj   0

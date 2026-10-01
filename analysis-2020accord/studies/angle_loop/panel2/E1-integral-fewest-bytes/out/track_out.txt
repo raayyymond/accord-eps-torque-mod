@@ -1,0 +1,7 @@
+# E1 goal tracking metric (angle space, 0.5 Hz LPF, OLS slope) on r71b's own paths; bar 0.95-1.05
+band  8-15 nominal     P2base:0.900  E1a:0.988  E1a_fz384:0.988  E1a_fz320:0.988  E1b:0.893  E1d:0.988
+band  8-15 b_lo*J_hi   P2base:0.892  E1a:0.986  E1a_fz384:0.986  E1a_fz320:0.986  E1b:0.885  E1d:0.986
+band 15-22 nominal     P2base:0.856  E1a:0.993  E1a_fz384:0.993  E1a_fz320:0.993  E1b:0.928  E1d:0.993
+band 15-22 b_lo*J_hi   P2base:0.864  E1a:0.994  E1a_fz384:0.994  E1a_fz320:0.994  E1b:0.935  E1d:0.994
+band   >22 nominal     P2base:1.002  E1a:1.006  E1a_fz384:1.006  E1a_fz320:1.006  E1b:0.948  E1d:1.006
+band   >22 b_lo*J_hi   P2base:1.000  E1a:1.001  E1a_fz384:1.001  E1a_fz320:1.001  E1b:0.941  E1d:1.001

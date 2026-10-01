@@ -1,0 +1,3 @@
+CONTROL 1 E1Lane(baseline) vs nl_sim.Lane over 32 cases (rh turn-hold 2 m/s^2): max|dT| 0, max|dtheta| 0.00e+00  OK
+CONTROL 2 flat ICL table == flat cal 4096: OK
+CONTROL 3 P2 table G at knots: [1195, 1526, 627, 536, 1437, 2130]

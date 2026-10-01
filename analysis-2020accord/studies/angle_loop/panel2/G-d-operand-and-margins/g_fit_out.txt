@@ -1,0 +1,252 @@
+G-P48: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [1178, 1465, 692, 463, 1068, 2188]  area 203645
+G-P48: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [1178, 1474, 665, 489, 771, 2188]  area 203486
+G-P48: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [1178, 1545, 997, 692, 463, 1068, 2188]  area 204265
+G-P48: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 1178, 1041), (1843, 1465, -6868), (2304, 692, -2328), (2707, 463, 1870), (4032, 1068, 2118), (6198, 2188, 0), (65535, 2188, 0)]
+    v  1.00: env   1228 (J_hi+h10|k0.83                  ) table   1178  Kp_eff   515  T/deg  51.6
+    v  3.10: env   1228 (J_hi+h10|k0.83                  ) table   1178  Kp_eff   515  T/deg  51.6
+    v  5.00: env   1490 (J_hi+h10|k0.83                  ) table   1289  Kp_eff   564  T/deg  56.5
+    v  8.00: env   1610 (b_lo*J_hi*tau6+h10|fb|k0.83     ) table   1464  Kp_eff   640  T/deg  64.2
+    v  9.00: env   1136 (ms_free+h10|k0.83               ) table   1077  Kp_eff   471  T/deg  47.2
+    v 10.00: env    742 (b_lo*ms_free+h10|k0.83          ) table    692  Kp_eff   303  T/deg  30.3
+    v 11.00: env    589 (b_lo*ms_free*tau6+h10|k0.83     ) table    561  Kp_eff   245  T/deg  24.6
+    v 11.90: env    524 (b_lo*ms_free*tau6|k0.83         ) table    478  Kp_eff   209  T/deg  21.0
+    v 12.50: env    612 (b_q*ms_free*tau6+h10|k0.83      ) table    541  Kp_eff   237  T/deg  23.7
+    v 13.50: env    714 (b_q*ms_free*tau6+h10|k0.83      ) table    646  Kp_eff   283  T/deg  28.3
+    v 15.00: env    867 (b_q*ms_free+h10|k0.83           ) table    804  Kp_eff   352  T/deg  35.2
+    v 17.00: env   1136 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1015  Kp_eff   444  T/deg  44.5
+    v 19.00: env   1326 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1246  Kp_eff   545  T/deg  54.6
+    v 22.00: env   1739 (b_q*ms_free*tau6+h10|k0.83      ) table   1604  Kp_eff   702  T/deg  70.3
+    v 24.00: env   2030 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1842  Kp_eff   806  T/deg  80.7
+    v 26.90: env   2280 (b_q*J1.0+h10|fb|k0.83           ) table   2188  Kp_eff   957  T/deg  95.9
+    v 30.00: env   2280 (b_q*J1.0+h10|fb|k0.83           ) table   2188  Kp_eff   957  T/deg  95.9
+G-P44: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [1090, 1429, 592, 451, 998, 2106]  area 194036
+G-P44: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [1090, 1429, 592, 452, 741, 2106]  area 194533
+G-P44: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [1090, 1429, 1009, 641, 451, 998, 2106]  area 194302
+G-P44: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9], rows [(714, 1090, 1230), (1843, 1429, -7437), (2304, 592, -1423), (2707, 452, 1580), (3456, 741, 2039), (6198, 2106, 0), (65535, 2106, 0)]
+    v  1.00: env   1136 (J_hi+h10|k0.83                  ) table   1090  Kp_eff   477  T/deg  47.8
+    v  3.10: env   1136 (J_hi+h10|k0.83                  ) table   1090  Kp_eff   477  T/deg  47.8
+    v  5.00: env   1379 (J_hi+h10|k0.83                  ) table   1221  Kp_eff   534  T/deg  53.5
+    v  8.00: env   1549 (b_lo*ms_free*tau6+h10|fb|k0.83  ) table   1429  Kp_eff   625  T/deg  62.6
+    v  9.00: env   1052 (b_lo*ms_free*tau6+h10|k0.83     ) table   1009  Kp_eff   441  T/deg  44.2
+    v 10.00: env    687 (b_lo*ms_free*tau6+h10|k0.83     ) table    591  Kp_eff   259  T/deg  25.9
+    v 11.00: env    566 (b_lo*ms_free+h10|k0.83          ) table    512  Kp_eff   224  T/deg  22.4
+    v 11.90: env    485 (b_lo*ms_free*tau6+h10|k0.83     ) table    465  Kp_eff   203  T/deg  20.4
+    v 12.50: env    589 (b_q*ms_free*tau6|k0.83          ) table    518  Kp_eff   227  T/deg  22.7
+    v 13.50: env    687 (b_q*ms_free+h10|k0.83           ) table    607  Kp_eff   266  T/deg  26.6
+    v 15.00: env    802 (b_q*ms_free*tau6+h10|k0.83      ) table    740  Kp_eff   324  T/deg  32.4
+    v 17.00: env   1093 (b_q*ms_free*tau6+h10|k0.83      ) table    970  Kp_eff   424  T/deg  42.5
+    v 19.00: env   1276 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1199  Kp_eff   525  T/deg  52.6
+    v 22.00: env   1673 (b_q*ms_free+h10|fb|k0.83        ) table   1543  Kp_eff   675  T/deg  67.6
+    v 24.00: env   1953 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1773  Kp_eff   776  T/deg  77.7
+    v 26.90: env   2194 (b_q*J1.0+h10|fb|k0.83           ) table   2105  Kp_eff   921  T/deg  92.3
+    v 30.00: env   2194 (b_q*J1.0+h10|fb|k0.83           ) table   2106  Kp_eff   921  T/deg  92.3
+G-P48d: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [1178, 1468, 686, 474, 1519, 2168]  area 216444
+G-P48d: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [1178, 1465, 694, 454, 1178, 2182]  area 215205
+G-P48d: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [1178, 1545, 997, 686, 474, 1519, 2168]  area 217035
+G-P48d: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 1178, 1052), (1843, 1468, -6948), (2304, 686, -2155), (2707, 474, 3230), (4032, 1519, 1227), (6198, 2168, 0), (65535, 2168, 0)]
+    v  1.00: env   1228 (J_hi+h10|k0.83                  ) table   1178  Kp_eff   515  T/deg  51.6
+    v  3.10: env   1228 (J_hi+h10|k0.83                  ) table   1178  Kp_eff   515  T/deg  51.6
+    v  5.00: env   1490 (J_hi+h10|k0.83                  ) table   1290  Kp_eff   564  T/deg  56.6
+    v  8.00: env   1610 (b_lo*J_hi*tau6+h10|fb|k0.83     ) table   1467  Kp_eff   642  T/deg  64.3
+    v  9.00: env   1136 (ms_free+h10|k0.83               ) table   1076  Kp_eff   471  T/deg  47.2
+    v 10.00: env    742 (b_lo*ms_free+h10|k0.83          ) table    686  Kp_eff   300  T/deg  30.1
+    v 11.00: env    589 (b_lo*ms_free*tau6+h10|k0.83     ) table    564  Kp_eff   247  T/deg  24.7
+    v 11.90: env    524 (b_lo*ms_free*tau6|k0.83         ) table    501  Kp_eff   219  T/deg  22.0
+    v 12.50: env    661 (b_lo*ms_free+h10|k0.83          ) table    610  Kp_eff   267  T/deg  26.7
+    v 13.50: env    901 (b_lo*ms_free*tau6+h10|k0.83     ) table    791  Kp_eff   346  T/deg  34.7
+    v 15.00: env   1228 (b_q*J1.0+h10|k0.83              ) table   1064  Kp_eff   466  T/deg  46.6
+    v 17.00: env   1549 (b_q*J1.0+h10|fb|k0.83           ) table   1428  Kp_eff   625  T/deg  62.6
+    v 19.00: env   1739 (b_q*J1.0+h10|k0.83              ) table   1622  Kp_eff   710  T/deg  71.1
+    v 22.00: env   1953 (b_q*J1.0+h10|fb|k0.83           ) table   1829  Kp_eff   800  T/deg  80.2
+    v 24.00: env   2110 (b_q*J1.0+h10|fb|k0.83           ) table   1967  Kp_eff   861  T/deg  86.2
+    v 26.90: env   2280 (b_q*J1.0+h10|fb|k0.83           ) table   2167  Kp_eff   948  T/deg  95.0
+    v 30.00: env   2280 (b_q*J1.0+h10|fb|k0.83           ) table   2168  Kp_eff   948  T/deg  95.0
+G-P48dd: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [1178, 1545, 568, 562, 1519, 2168]  area 218023
+G-P48dd: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [1178, 1545, 568, 558, 1178, 2182]  area 216503
+G-P48dd: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [1178, 1545, 1055, 800, 562, 1519, 2168]  area 219297
+G-P48dd: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 1178, 1331), (1843, 1545, -8681), (2304, 568, -61), (2707, 562, 2958), (4032, 1519, 1227), (6198, 2168, 0), (65535, 2168, 0)]
+    v  1.00: env   1228 (J_hi+h10|k0.83                  ) table   1178  Kp_eff   515  T/deg  51.6
+    v  3.10: env   1228 (J_hi+h10|k0.83                  ) table   1178  Kp_eff   515  T/deg  51.6
+    v  5.00: env   1490 (J_hi+h10|k0.83                  ) table   1320  Kp_eff   578  T/deg  57.9
+    v  8.00: env   1610 (b_lo*J_hi*tau6+h10|fb|k0.83     ) table   1544  Kp_eff   676  T/deg  67.7
+    v  9.00: env   1136 (ms_free+h10|k0.83               ) table   1055  Kp_eff   462  T/deg  46.2
+    v 10.00: env    867 (ms_free+h10|k0.83               ) table    567  Kp_eff   248  T/deg  24.9
+    v 11.00: env    714 (ms_free+h10|k0.83               ) table    564  Kp_eff   247  T/deg  24.7
+    v 11.90: env    612 (ms_free+h10|k0.83               ) table    587  Kp_eff   257  T/deg  25.7
+    v 12.50: env    802 (ms_free+h10|k0.83               ) table    686  Kp_eff   300  T/deg  30.1
+    v 13.50: env   1093 (b_q*J1.0+h10|k0.83              ) table    853  Kp_eff   373  T/deg  37.4
+    v 15.00: env   1228 (b_q*J1.0+h10|k0.83              ) table   1102  Kp_eff   482  T/deg  48.3
+    v 17.00: env   1549 (b_q*J1.0+h10|fb|k0.83           ) table   1435  Kp_eff   628  T/deg  62.9
+    v 19.00: env   1739 (b_q*J1.0+h10|k0.83              ) table   1622  Kp_eff   710  T/deg  71.1
+    v 22.00: env   1953 (b_q*J1.0+h10|fb|k0.83           ) table   1829  Kp_eff   800  T/deg  80.2
+    v 24.00: env   2110 (b_q*J1.0+h10|fb|k0.83           ) table   1967  Kp_eff   861  T/deg  86.2
+    v 26.90: env   2280 (b_q*J1.0+h10|fb|k0.83           ) table   2167  Kp_eff   948  T/deg  95.0
+    v 30.00: env   2280 (b_q*J1.0+h10|fb|k0.83           ) table   2168  Kp_eff   948  T/deg  95.0
+G-P44d: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [1090, 1429, 592, 438, 1453, 2086]  area 206578
+G-P44d: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [1090, 1429, 592, 429, 1112, 2100]  area 205201
+G-P44d: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [1090, 1429, 1009, 646, 438, 1453, 2086]  area 206874
+G-P44d: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 1090, 1230), (1843, 1429, -7437), (2304, 592, -1565), (2707, 438, 3138), (4032, 1453, 1197), (6198, 2086, 0), (65535, 2086, 0)]
+    v  1.00: env   1136 (J_hi+h10|k0.83                  ) table   1090  Kp_eff   477  T/deg  47.8
+    v  3.10: env   1136 (J_hi+h10|k0.83                  ) table   1090  Kp_eff   477  T/deg  47.8
+    v  5.00: env   1379 (J_hi+h10|k0.83                  ) table   1221  Kp_eff   534  T/deg  53.5
+    v  8.00: env   1549 (b_lo*ms_free*tau6+h10|fb|k0.83  ) table   1429  Kp_eff   625  T/deg  62.6
+    v  9.00: env   1052 (b_lo*ms_free*tau6+h10|k0.83     ) table   1009  Kp_eff   441  T/deg  44.2
+    v 10.00: env    687 (b_lo*ms_free*tau6+h10|k0.83     ) table    591  Kp_eff   259  T/deg  25.9
+    v 11.00: env    566 (b_lo*ms_free+h10|k0.83          ) table    504  Kp_eff   220  T/deg  22.1
+    v 11.90: env    485 (b_lo*ms_free*tau6+h10|k0.83     ) table    464  Kp_eff   203  T/deg  20.3
+    v 12.50: env    612 (b_lo*ms_free*tau6+h10|k0.83     ) table    570  Kp_eff   249  T/deg  25.0
+    v 13.50: env    867 (b_lo*ms_free*tau6+h10|k0.83     ) table    746  Kp_eff   326  T/deg  32.7
+    v 15.00: env   1181 (b_q*J1.0+h10|k0.83              ) table   1011  Kp_eff   442  T/deg  44.3
+    v 17.00: env   1490 (b_q*J1.0+h10|fb|k0.83           ) table   1364  Kp_eff   597  T/deg  59.8
+    v 19.00: env   1673 (b_q*J1.0+h10|k0.83              ) table   1554  Kp_eff   680  T/deg  68.1
+    v 22.00: env   1879 (b_q*J1.0+h10|fb|k0.83           ) table   1756  Kp_eff   768  T/deg  77.0
+    v 24.00: env   2030 (b_q*J1.0+h10|fb|k0.83           ) table   1890  Kp_eff   827  T/deg  82.9
+    v 26.90: env   2194 (b_q*J1.0+h10|fb|k0.83           ) table   2085  Kp_eff   912  T/deg  91.4
+    v 30.00: env   2194 (b_q*J1.0+h10|fb|k0.83           ) table   2086  Kp_eff   913  T/deg  91.4
+G-P48L: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [1178, 1534, 485, 320, 1068, 2188]  area 200771
+G-P48L: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [1178, 1534, 485, 288, 771, 2188]  area 200766
+G-P48L: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [1178, 1545, 932, 562, 320, 1068, 2188]  area 201013
+G-P48L: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 1178, 1292), (1843, 1534, -9320), (2304, 485, -1677), (2707, 320, 2312), (4032, 1068, 2118), (6198, 2188, 0), (65535, 2188, 0)]
+    v  1.00: env   1228 (J_hi+h10|k0.83                  ) table   1178  Kp_eff   515  T/deg  51.6
+    v  3.10: env   1228 (J_hi+h10|k0.83                  ) table   1178  Kp_eff   515  T/deg  51.6
+    v  5.00: env   1490 (J_hi+h10|k0.83                  ) table   1316  Kp_eff   576  T/deg  57.7
+    v  8.00: env   1610 (b_lo*J_hi*tau6+h10|fb|k0.83     ) table   1534  Kp_eff   671  T/deg  67.2
+    v  9.00: env   1136 (ms_free+h10|k0.83               ) table   1008  Kp_eff   441  T/deg  44.2
+    v 10.00: env    594 (b_lo*ms_free+h10|k0.83          ) table    485  Kp_eff   212  T/deg  21.3
+    v 11.00: env    471 (b_lo*ms_free*tau6+h10|k0.83     ) table    390  Kp_eff   171  T/deg  17.1
+    v 11.90: env    419 (b_lo*ms_free*tau6|k0.83         ) table    339  Kp_eff   148  T/deg  14.9
+    v 12.50: env    490 (b_q*ms_free*tau6+h10|k0.83      ) table    417  Kp_eff   182  T/deg  18.3
+    v 13.50: env    571 (b_q*ms_free*tau6+h10|k0.83      ) table    547  Kp_eff   239  T/deg  24.0
+    v 15.00: env    867 (b_q*ms_free+h10|k0.83           ) table    742  Kp_eff   325  T/deg  32.5
+    v 17.00: env   1136 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1002  Kp_eff   438  T/deg  43.9
+    v 19.00: env   1326 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1246  Kp_eff   545  T/deg  54.6
+    v 22.00: env   1739 (b_q*ms_free*tau6+h10|k0.83      ) table   1604  Kp_eff   702  T/deg  70.3
+    v 24.00: env   2030 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1842  Kp_eff   806  T/deg  80.7
+    v 26.90: env   2280 (b_q*J1.0+h10|fb|k0.83           ) table   2188  Kp_eff   957  T/deg  95.9
+    v 30.00: env   2280 (b_q*J1.0+h10|fb|k0.83           ) table   2188  Kp_eff   957  T/deg  95.9
+G-P48k40: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [1464, 1635, 804, 595, 1153, 2365]  area 226488
+G-P48k40: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [1463, 1638, 799, 599, 831, 2365]  area 225596
+G-P48k40: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [1461, 1655, 1203, 804, 595, 1153, 2365]  area 226604
+G-P48k40: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 1464, 620), (1843, 1635, -7383), (2304, 804, -2124), (2707, 595, 1725), (4032, 1153, 2292), (6198, 2365, 0), (65535, 2365, 0)]
+    v  1.00: env   1549 (J_hi+h10|k0.83                  ) table   1464  Kp_eff   640  T/deg  64.2
+    v  3.10: env   1549 (J_hi+h10|k0.83                  ) table   1464  Kp_eff   640  T/deg  64.2
+    v  5.00: env   1610 (b_lo*J_hi*tau6+h10|fb|k0.83     ) table   1530  Kp_eff   669  T/deg  67.1
+    v  8.00: env   1739 (b_lo*ms_free*tau6+h10|fb|k0.83  ) table   1634  Kp_eff   715  T/deg  71.6
+    v  9.00: env   1276 (b_lo*ms_free*tau6+h10|fb|k0.83  ) table   1218  Kp_eff   533  T/deg  53.4
+    v 10.00: env    867 (b_lo*ms_free*tau6+h10|k0.83     ) table    804  Kp_eff   352  T/deg  35.2
+    v 11.00: env    714 (b_lo*ms_free*tau6+h10|k0.83     ) table    684  Kp_eff   299  T/deg  30.0
+    v 11.90: env    636 (b_lo*ms_free*tau6+h10|k0.83     ) table    609  Kp_eff   266  T/deg  26.7
+    v 12.50: env    742 (b_q*ms_free*tau6+h10|k0.83      ) table    667  Kp_eff   292  T/deg  29.2
+    v 13.50: env    834 (b_q*ms_free*tau6+h10|k0.83      ) table    764  Kp_eff   334  T/deg  33.5
+    v 15.00: env    973 (b_q*ms_free*tau6+h10|k0.83      ) table    910  Kp_eff   398  T/deg  39.9
+    v 17.00: env   1276 (b_q*ms_free*tau6+h10|k0.83      ) table   1104  Kp_eff   483  T/deg  48.4
+    v 19.00: env   1433 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1346  Kp_eff   589  T/deg  59.0
+    v 22.00: env   1808 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1733  Kp_eff   758  T/deg  76.0
+    v 24.00: env   2194 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1991  Kp_eff   871  T/deg  87.3
+    v 26.90: env   2464 (b_q*J1.0+h10|fb|k0.83           ) table   2365  Kp_eff  1035  T/deg 103.7
+    v 30.00: env   2464 (b_q*J1.0+h10|fb|k0.83           ) table   2365  Kp_eff  1035  T/deg 103.7
+G-P48k32: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [1535, 1663, 896, 671, 1183, 2479]  area 237094
+G-P48k32: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [1534, 1666, 892, 677, 838, 2479]  area 235726
+G-P48k32: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [1530, 1717, 1255, 896, 671, 1183, 2479]  area 237542
+G-P48k32: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 1535, 464), (1843, 1663, -6815), (2304, 896, -2287), (2707, 671, 1583), (4032, 1183, 2451), (6198, 2479, 0), (65535, 2479, 0)]
+    v  1.00: env   1610 (b_lo+h10|fb|k0.83               ) table   1535  Kp_eff   672  T/deg  67.3
+    v  3.10: env   1610 (b_lo+h10|fb|k0.83               ) table   1535  Kp_eff   672  T/deg  67.3
+    v  5.00: env   1673 (b_lo*J_hi*tau6+h10|fb|k0.83     ) table   1584  Kp_eff   693  T/deg  69.4
+    v  8.00: env   1808 (b_lo*ms_free*tau6+h10|fb|k0.83  ) table   1662  Kp_eff   727  T/deg  72.9
+    v  9.00: env   1379 (ms_free+h10|fb|k0.83            ) table   1278  Kp_eff   559  T/deg  56.0
+    v 10.00: env    936 (b_lo*ms_free*tau6+h10|k0.83     ) table    895  Kp_eff   392  T/deg  39.2
+    v 11.00: env    802 (b_lo*ms_free*tau6+h10|k0.83     ) table    767  Kp_eff   336  T/deg  33.6
+    v 11.90: env    714 (b_lo*ms_free+h10|k0.83          ) table    684  Kp_eff   299  T/deg  30.0
+    v 12.50: env    802 (b_q*ms_free*tau6+h10|k0.83      ) table    737  Kp_eff   322  T/deg  32.3
+    v 13.50: env    901 (b_q*ms_free*tau6+h10|k0.83      ) table    826  Kp_eff   361  T/deg  36.2
+    v 15.00: env   1052 (b_q*ms_free+h10|fb|k0.83        ) table    960  Kp_eff   420  T/deg  42.1
+    v 17.00: env   1326 (b_q*ms_free*tau6+h10|k0.83      ) table   1138  Kp_eff   498  T/deg  49.9
+    v 19.00: env   1549 (b_q*ms_free*tau6+h10|k0.83      ) table   1390  Kp_eff   608  T/deg  60.9
+    v 22.00: env   1879 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1803  Kp_eff   789  T/deg  79.0
+    v 24.00: env   2280 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   2079  Kp_eff   910  T/deg  91.1
+    v 26.90: env   2662 (b_q*J1.0+h10|fb|k0.83           ) table   2479  Kp_eff  1085  T/deg 108.7
+    v 30.00: env   2662 (b_q*J1.0+h10|fb|k0.83           ) table   2479  Kp_eff  1085  T/deg 108.7
+G-F24: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [1009, 1255, 593, 417, 915, 1948]  area 178653
+G-F24: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [1009, 1256, 592, 420, 640, 1948]  area 178019
+G-F24: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [1009, 1286, 892, 593, 417, 915, 1948]  area 178895
+G-F24: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 1009, 892), (1843, 1255, -5882), (2304, 593, -1789), (2707, 417, 1539), (4032, 915, 1953), (6198, 1948, 0), (65535, 1948, 0)]
+    v  1.00: env   1052 (J_hi+h10|k0.83                  ) table   1009  Kp_eff   441  T/deg  44.2
+    v  3.10: env   1052 (J_hi+h10|k0.83                  ) table   1009  Kp_eff   441  T/deg  44.2
+    v  5.00: env   1228 (b_lo+h10|fb|k0.83               ) table   1104  Kp_eff   483  T/deg  48.4
+    v  8.00: env   1379 (b_lo+h10|fb|k0.83               ) table   1254  Kp_eff   549  T/deg  55.0
+    v  9.00: env    973 (b_lo*ms_free*tau6+h10|k0.83     ) table    923  Kp_eff   404  T/deg  40.5
+    v 10.00: env    636 (b_lo*ms_free*tau6+h10|k0.83     ) table    592  Kp_eff   259  T/deg  26.0
+    v 11.00: env    524 (b_lo*ms_free+h10|k0.83          ) table    492  Kp_eff   215  T/deg  21.6
+    v 11.90: env    449 (b_lo*ms_free*tau6+h10|k0.83     ) table    430  Kp_eff   188  T/deg  18.9
+    v 12.50: env    545 (b_q*ms_free+h10|k0.83           ) table    482  Kp_eff   211  T/deg  21.1
+    v 13.50: env    636 (b_q*ms_free+h10|k0.83           ) table    568  Kp_eff   248  T/deg  24.9
+    v 15.00: env    742 (b_q*ms_free*tau6+h10|k0.83      ) table    698  Kp_eff   305  T/deg  30.6
+    v 17.00: env   1012 (b_q*ms_free*tau6+h10|k0.83      ) table    871  Kp_eff   381  T/deg  38.2
+    v 19.00: env   1181 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1079  Kp_eff   472  T/deg  47.3
+    v 22.00: env   1490 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1409  Kp_eff   616  T/deg  61.8
+    v 24.00: env   1808 (b_q*ms_free*tau6+h10|fb|k0.83   ) table   1629  Kp_eff   713  T/deg  71.4
+    v 26.90: env   2030 (b_q*J1.0+h10|fb|k0.83           ) table   1947  Kp_eff   852  T/deg  85.4
+    v 30.00: env   2030 (b_q*J1.0+h10|fb|k0.83           ) table   1948  Kp_eff   852  T/deg  85.4
+G-F24d: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [1009, 1254, 597, 407, 1306, 1948]  area 190378
+G-F24d: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [1009, 1253, 599, 402, 988, 1948]  area 188395
+G-F24d: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [1009, 1286, 892, 597, 407, 1306, 1948]  area 190623
+G-F24d: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 1009, 889), (1843, 1254, -5837), (2304, 597, -1931), (2707, 407, 2779), (4032, 1306, 1214), (6198, 1948, 0), (65535, 1948, 0)]
+    v  1.00: env   1052 (J_hi+h10|k0.83                  ) table   1009  Kp_eff   441  T/deg  44.2
+    v  3.10: env   1052 (J_hi+h10|k0.83                  ) table   1009  Kp_eff   441  T/deg  44.2
+    v  5.00: env   1228 (b_lo+h10|fb|k0.83               ) table   1104  Kp_eff   483  T/deg  48.4
+    v  8.00: env   1379 (b_lo+h10|fb|k0.83               ) table   1254  Kp_eff   549  T/deg  55.0
+    v  9.00: env    973 (b_lo*ms_free*tau6+h10|k0.83     ) table    924  Kp_eff   404  T/deg  40.5
+    v 10.00: env    636 (b_lo*ms_free*tau6+h10|k0.83     ) table    597  Kp_eff   261  T/deg  26.2
+    v 11.00: env    524 (b_lo*ms_free+h10|k0.83          ) table    488  Kp_eff   214  T/deg  21.4
+    v 11.90: env    449 (b_lo*ms_free*tau6+h10|k0.83     ) table    430  Kp_eff   188  T/deg  18.9
+    v 12.50: env    589 (b_lo*ms_free+h10|k0.83          ) table    524  Kp_eff   229  T/deg  23.0
+    v 13.50: env    834 (b_lo*ms_free+h10|k0.83          ) table    680  Kp_eff   298  T/deg  29.8
+    v 15.00: env   1052 (b_q*J1.0+h10|k0.83              ) table    915  Kp_eff   400  T/deg  40.1
+    v 17.00: env   1326 (b_q*J1.0+h10|fb|k0.83           ) table   1227  Kp_eff   537  T/deg  53.8
+    v 19.00: env   1490 (b_q*J1.0+h10|fb|k0.83           ) table   1408  Kp_eff   616  T/deg  61.7
+    v 22.00: env   1739 (b_q*J1.0+h10|fb|k0.83           ) table   1613  Kp_eff   706  T/deg  70.7
+    v 24.00: env   1879 (b_q*J1.0+h10|fb|k0.83           ) table   1749  Kp_eff   765  T/deg  76.7
+    v 26.90: env   2030 (b_q*J1.0+h10|fb|k0.83           ) table   1947  Kp_eff   852  T/deg  85.4
+    v 30.00: env   2030 (b_q*J1.0+h10|fb|k0.83           ) table   1948  Kp_eff   852  T/deg  85.4
+G-A22: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [898, 1162, 549, 386, 852, 1874]  area 168564
+G-A22: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [898, 1163, 548, 389, 581, 1874]  area 167810
+G-A22: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [898, 1210, 807, 549, 386, 852, 1874]  area 168941
+G-A22: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 898, 958), (1843, 1162, -5447), (2304, 549, -1657), (2707, 386, 1441), (4032, 852, 1933), (6198, 1874, 0), (65535, 1874, 0)]
+    v  1.00: env    936 (J_hi+h10                        ) table    898  Kp_eff   393  T/deg  39.4
+    v  3.10: env    936 (J_hi+h10                        ) table    898  Kp_eff   393  T/deg  39.4
+    v  5.00: env   1136 (b_lo+h10|fb                     ) table   1000  Kp_eff   438  T/deg  43.8
+    v  8.00: env   1276 (b_lo+h10|fb                     ) table   1162  Kp_eff   508  T/deg  50.9
+    v  9.00: env    901 (b_lo*ms_free*tau6+h10           ) table    854  Kp_eff   374  T/deg  37.4
+    v 10.00: env    589 (b_lo*ms_free*tau6+h10           ) table    548  Kp_eff   240  T/deg  24.0
+    v 11.00: env    485 (b_lo*ms_free+h10                ) table    455  Kp_eff   199  T/deg  19.9
+    v 11.90: env    415 (b_lo*ms_free*tau6+h10           ) table    398  Kp_eff   174  T/deg  17.4
+    v 12.50: env    504 (b_q*ms_free+h10                 ) table    446  Kp_eff   195  T/deg  19.6
+    v 13.50: env    589 (b_q*ms_free*tau6+h10            ) table    527  Kp_eff   231  T/deg  23.1
+    v 15.00: env    714 (b_q*ms_free+h10                 ) table    649  Kp_eff   284  T/deg  28.5
+    v 17.00: env    936 (b_q*ms_free*tau6+h10|fb         ) table    811  Kp_eff   355  T/deg  35.6
+    v 19.00: env   1093 (b_q*ms_free*tau6+h10|fb         ) table   1015  Kp_eff   444  T/deg  44.5
+    v 22.00: env   1433 (b_q*ms_free*tau6+h10|fb         ) table   1341  Kp_eff   587  T/deg  58.8
+    v 24.00: env   1739 (b_q*J1.0+h10|fb                 ) table   1558  Kp_eff   682  T/deg  68.3
+    v 26.90: env   1953 (b_q*J1.0+h10|fb                 ) table   1874  Kp_eff   820  T/deg  82.2
+    v 30.00: env   1953 (b_q*J1.0+h10|fb                 ) table   1874  Kp_eff   820  T/deg  82.2
+G-A22d: knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] -> G [898, 1161, 553, 376, 1221, 1865]  area 179131
+G-A22d: knots [3.1, 8.0, 10.0, 11.75, 15.0, 26.9] -> G [898, 1161, 554, 373, 913, 1874]  area 177748
+G-A22d: knots [3.1, 8.0, 9.0, 10.0, 11.75, 17.5, 26.9] -> G [898, 1210, 807, 553, 376, 1221, 1865]  area 179516
+G-A22d: CHOSEN knots [3.1, 8.0, 10.0, 11.75, 17.5, 26.9], rows [(714, 898, 954), (1843, 1161, -5402), (2304, 553, -1799), (2707, 376, 2612), (4032, 1221, 1218), (6198, 1865, 0), (65535, 1865, 0)]
+    v  1.00: env    936 (J_hi+h10                        ) table    898  Kp_eff   393  T/deg  39.4
+    v  3.10: env    936 (J_hi+h10                        ) table    898  Kp_eff   393  T/deg  39.4
+    v  5.00: env   1136 (b_lo+h10|fb                     ) table   1000  Kp_eff   438  T/deg  43.8
+    v  8.00: env   1276 (b_lo+h10|fb                     ) table   1160  Kp_eff   508  T/deg  50.9
+    v  9.00: env    901 (b_lo*ms_free*tau6+h10           ) table    856  Kp_eff   374  T/deg  37.5
+    v 10.00: env    589 (b_lo*ms_free*tau6+h10           ) table    553  Kp_eff   242  T/deg  24.2
+    v 11.00: env    485 (b_lo*ms_free+h10                ) table    451  Kp_eff   197  T/deg  19.8
+    v 11.90: env    415 (b_lo*ms_free*tau6+h10           ) table    398  Kp_eff   174  T/deg  17.4
+    v 12.50: env    545 (b_lo*ms_free+h10                ) table    486  Kp_eff   213  T/deg  21.3
+    v 13.50: env    772 (b_lo*ms_free*tau6+h10           ) table    632  Kp_eff   276  T/deg  27.7
+    v 15.00: env    973 (b_q*J1.0+h10|fb                 ) table    853  Kp_eff   373  T/deg  37.4
+    v 17.00: env   1276 (b_q*J1.0+h10|fb                 ) table   1147  Kp_eff   502  T/deg  50.3
+    v 19.00: env   1433 (b_q*J1.0+h10|fb                 ) table   1323  Kp_eff   579  T/deg  58.0
+    v 22.00: env   1610 (b_q*J1.0+h10|fb                 ) table   1529  Kp_eff   669  T/deg  67.0
+    v 24.00: env   1739 (b_q*J1.0+h10|fb                 ) table   1666  Kp_eff   729  T/deg  73.0
+    v 26.90: env   1953 (b_q*J1.0+h10|fb                 ) table   1865  Kp_eff   816  T/deg  81.8
+    v 30.00: env   1953 (b_q*J1.0+h10|fb                 ) table   1865  Kp_eff   816  T/deg  81.8
