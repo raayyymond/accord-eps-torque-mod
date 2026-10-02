@@ -26,6 +26,5 @@
  "AccordEpsSpringScale": 1.0,
  "LaneCentering": true,
  "AccordEpsAngleLoop": false,
- "UseAutoSteerDelay": true,
- "SteerRatio": 16.84
+ "UseAutoSteerDelay": true
 }

@@ -2,7 +2,13 @@
 """Write the V298 drive-1 Galaxy toggle config and its revert (delta files, Galaxy's own codec).
 
   toggle-config_V298_angle_loop.json                  = V295 r2's 26 keys + AccordEpsAngleLoop true + UseAutoSteerDelay true
+                                                        + SteerRatio 16.84
   toggle-config_V298_angle_loop_REVERT_to_V295_r2.json = V295 r2's 26 keys + AccordEpsAngleLoop false + UseAutoSteerDelay true
+                                                        + SteerRatio 16.84
+SteerRatio is PINNED (rev 2, 2026-10-01): in angle mode its level scales the setpoint directly.  16.84 is the device's
+value in route 71b's initData (2026-09-29, the latest drive; raw scan of segment 0's params list).  The 2026-09-10
+backup that positive-controls the codec carries 16.33 -- stale, three weeks older than that drive -- so it is NOT used.
+Rev 1's files are in superseded/.
 (+ a .decoded.json beside each).  Every key is checked against the fork's params_keys.h at the working tree, the kit
 codec is positive-controlled on the operator's 2026-09-10 backup, and both files are decoded back FROM DISK by the kit
 codec and by the fork's own utilities.py functions (git show, never the working tree).  Files open with "x": never
@@ -45,9 +51,11 @@ r2_enc = json.load(open(os.path.join(REF, R2 + ".json"), encoding="utf-8"))
 r2 = json.load(open(os.path.join(REF, R2 + ".decoded.json"), encoding="utf-8"))
 assert K.decode_parameters(r2_enc["data"]) == r2 == F["decode_parameters"](r2_enc["data"]) and len(r2) == 26
 
+STEER_RATIO = 16.84  # the device's value (route 71b initData, 2026-09-29); the 2026-09-10 backup's 16.33 is stale
+assert "SteerRatio" not in r2
 configs = {
-  OUT: dict(r2, AccordEpsAngleLoop=True, UseAutoSteerDelay=True),
-  REVERT: dict(r2, AccordEpsAngleLoop=False, UseAutoSteerDelay=True),
+  OUT: dict(r2, AccordEpsAngleLoop=True, UseAutoSteerDelay=True, SteerRatio=STEER_RATIO),
+  REVERT: dict(r2, AccordEpsAngleLoop=False, UseAutoSteerDelay=True, SteerRatio=STEER_RATIO),
 }
 for name, vals in configs.items():
   assert set(vals) <= fork_keys, set(vals) - fork_keys
