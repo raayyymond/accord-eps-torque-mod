@@ -136,6 +136,53 @@ def cand_params(c):
                 sgn=int(c.sgn_thr), arb=(list(c.arb) if c.arb is not None else None))
 
 
+# ---- the cave's integral policy (the freeze tests and the A3 bound), shared by cand_lane and the V299 checks ----------
+ARB_V299 = (6, 4, 2880, 1250, 2880, 6144, 1, 1382, 4096)
+"""V299 rev 2/3 (DESIGN-V299-SYNTHESIS-rev3 section 1.3, cave_rev2; H1: the rev-2 BYTES == that mirror):
+(sh, sh_lo, vth, B, vcap, cap, asym, vcap_lo, cap_lo) = bound S = (max(theta*sgn(E'), 0) << (4 if v <= 2880 else 6))
++ 1250, capped at 4096 when v-word <= 1382 and at 6144 when 1382 < v <= 2880 (no cap above 2880).  The 6-tuple forms
+(ARB_A2, ARB_A3 = V298) keep |theta| and one cap, unchanged.  With thr 1229 and sgn 0 (no opposing clause)."""
+
+
+def static_freeze(p, q, Ep, rr):
+    """the cave's memoryless freezes: |gp-0x4f68| > thr (V298 512, V299 1229 = Honda steeringPressed), the opposing-
+    hand clause |gp-0x4f60| > sgn with sign != sign(E') (V298 300, V299 none), and the ramp-in freeze."""
+    q = np.asarray(q, np.int64)
+    atq = np.minimum(np.abs(q), 0xFFFF)
+    c1 = atq > p["thr"]
+    hs = s16(q)
+    c2 = (p["sgn"] > 0) & (np.abs(hs) > p["sgn"]) & ((hs ^ Ep) < 0)
+    c4 = (p["ramp_frz"] & ((np.asarray(rr) & 0x8000) == 0)) if p["ramp_frz"] else np.zeros(len(q), bool)
+    return c1 | c2 | c4
+
+
+def arb_bound(arb, a6, vwm, Ep):
+    """the A3 bound in S units (= I8 >> 10), integer-exact.  6-tuple: V298 (|theta|, one cap at v <= vcap).
+    9-tuple: V299 (asym: max(theta*sgn(E'), 0); two-level cap: cap_lo at v <= vcap_lo, cap at vcap_lo < v <= vcap)."""
+    sh, sh_lo, vth, Bb, vcap, cap = arb[:6]
+    th6 = s16(a6)
+    vwm = np.asarray(vwm, np.int64)
+    shv = np.where((sh_lo >= 0) & (vwm <= vth), sh_lo, sh)
+    if len(arb) == 6:
+        base = np.abs(th6)
+        capv = cap
+    else:
+        asym, vcap_lo, cap_lo = arb[6:9]
+        base = np.maximum(np.where(np.asarray(Ep) < 0, -th6, th6), 0) if asym else np.abs(th6)
+        capv = np.where(vwm <= vcap_lo, cap_lo, cap)
+    bound = s32((base << shv) + Bb)
+    capon = (vcap >= 0) & (vwm <= vcap)
+    return np.where(capon & (bound > capv), capv, bound)
+
+
+def v299_cand(ST, base):
+    """V299 = V298's lane (base = the drive read's C3B-P: GB-P rows, fresh D, Kd 48, Ki 40, ICL 8192) with the V299
+    integral policy: hard freeze 1229, no opposing clause, ARB_V299.  The source lane (score_time.CandLane) does not
+    implement the 9-tuple, so this candidate exists only in the fast lane (cand_params never falls back for it)."""
+    import dataclasses
+    return dataclasses.replace(base, id="V299", thr=1229, sgn_thr=0, arb=ARB_V299, note="V299 rev 2/3 integral policy")
+
+
 def _bounds(cal, kp=112, ki=56, kd=48, DCL=10240):
     """the loop's no-wrap guarantees, from the image's own constants (see the module docstring)."""
     SCL, ob, oa, fwd, OCL, PCL = cal["SCL"], cal["ob"], cal["oa"], cal["fwd"], cal["OCL"], cal["PCL"]
@@ -189,21 +236,10 @@ def cand_lane(p, glut, cal, th, cmd, tq, x, abe, vws, eng, R, r0, rec_I=False):
     E = s32((sp << 2) - r26)
     G = np.asarray(glut, np.int64)[vw]
     Ep = s32(E * G) >> 8
-    atq = np.minimum(np.abs(q), 0xFFFF)
-    c1 = atq > p["thr"]
-    hs = s16(q)
-    c2 = (p["sgn"] > 0) & (np.abs(hs) > p["sgn"]) & ((hs ^ Ep) < 0)
-    c4 = (p["ramp_frz"] & ((rr & 0x8000) == 0)) if p["ramp_frz"] else np.zeros(len(rr), bool)
-    fs = c1 | c2 | c4
+    fs = static_freeze(p, q, Ep, rr)
     arb_on = p["arb"] is not None
     if arb_on:
-        sh, sh_lo, vth, Bb, vcap, cap = p["arb"]
-        th6 = s16(a6)
-        vwm = vw & 0xFFFF
-        shv = np.where((sh_lo >= 0) & (vwm <= vth), sh_lo, sh)
-        bound = s32((np.abs(th6) << shv) + Bb)
-        capon = (vcap >= 0) & (vwm <= vcap)
-        bound = np.where(capon & (bound > cap), cap, bound)
+        bound = arb_bound(p["arb"], a6, vw & 0xFFFF, Ep)
     else:
         bound = np.zeros(len(rr), np.int64)
     e5 = Ep >> 5                                            # DB 0: exc = e5

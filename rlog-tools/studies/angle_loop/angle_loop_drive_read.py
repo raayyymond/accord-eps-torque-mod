@@ -58,6 +58,14 @@ for the clauses rev2 inherits) -- every threshold is in THR below with its sourc
                    disengaged gain vs the V294 route (V295's rlog is not on disk -- stated, not hidden).
   4  next step     breakaway (stick->slip tap) and Coulomb friction (sign(w) coefficient) per speed band -- the
                    sizing data for friction compensation.  NOT a verdict.
+  6  V299 / DRIVE 2 (added 2026-10-02, drive_read_v299.py; every block above is unchanged on a V298 wire):
+                   attribution of carFw A16B + the V299 fork params + starpilotCarState.accordAngleStatus (the fork
+                   cache, r79_extract_fork.py, schema pinned to the route's commit); the RULE-IDENTITY replay (V298 vs
+                   V299 rule, pooled + 30-s windows; the V299 rule validated against the spec mirror cave_rev2 every
+                   run); the stutter readouts vs V282 + the surge enrichment at |bar| 300/512/1229 crossings; F3/F5
+                   release-relative; F4 turn-ins; F10; the cap-shortfall read; F7/F7b/F9; the F8 bar check; and the
+                   DRIVE-2 VERDICT block.  On an A16B wire the structural regression's I component is the V299 rule's
+                   replay (the rule that ran), printed as such.
 
 UNITS AND SIGNS (each EVIDENCE, source in brackets):
   raw     0xE4 STEER_TORQUE, i16 BE bytes 0-1 (bus 129 = what the EPS received).  The fork sends raw = -10*theta_sp_deg
@@ -1221,6 +1229,10 @@ def replay_cands(ST):
                               sgn_thr=300, note="D not re-sized (P2's Kd 34)")
     C["C3B-F"] = ST.Cand("C3B-F", "RBF", tuple(RT.GB_F), "held", 24, ki=40, icl=8192, arb=ST.ARB_A3, sgn_thr=300,
                          note="C3-rev2-F")
+    # V299 (DESIGN-V299-SYNTHESIS-rev3 section 1.3): C3B-P's lane with the V299 integral policy (freeze 1229, no
+    # opposing clause, asymmetric bound, two-level cap).  FAST LANE ONLY (drive_read_fastlane.v299_cand); not in the
+    # default replay() set, so every pre-V299 read is unchanged.  Rule identity: components(W, ref="V299", ...).
+    C["V299"] = FL.v299_cand(ST, C["C3B-P"])
     return C
 
 
@@ -1700,8 +1712,12 @@ def read(W, refs=None, with_replay=True, with_presence=True):
     S["reg_struct_v0"] = regress_struct(W, comp0)
     # the decision-bearing structural form: the arm that ran, the word's lead, the I re-anchored per window
     si = struct_inputs(W)
+    # the rule whose I the structural regression carries: V299's on an A16B wire (the V299 image), else C3B-P = V298
+    ref = "V299" if (S["attrib"].get("image_letter") == "A16B" and "V299" in replay_cands(load_score_time())) else "C3B-P"
+    if ref != "C3B-P":
+        si["ref"] = ref
     try:
-        comp = components(W, ramp_steps=tuple(si["ramp"]), q_lead=si["q_lead"])
+        comp = components(W, ref=ref, ramp_steps=tuple(si["ramp"]), q_lead=si["q_lead"])
     except NotImplementedError:
         si.update(ramp=[33, 16], note="fast lane off: the direction-0 ramp was used")
         _RT["fallback"].append("structural replay on the direction-0 ramp (fast lane off)")
@@ -1730,6 +1746,16 @@ def read(W, refs=None, with_replay=True, with_presence=True):
     S["friction"] = friction(W)
     S["light"] = light_holds(W, Rs, comp)
     S["refs"] = {k: {kk: vv for kk, vv in v.items() if kk != "census"} for k, v in (refs or {}).items()}
+    # ---- 6. the V299 / drive-2 blocks (drive_read_v299.py): additions only; nothing above reads them
+    #      (DRIVE_READ_NO_V299=1 skips them: the pre-V299 read, for timing and identity checks)
+    if os.environ.get("DRIVE_READ_NO_V299"):
+        return S
+    try:
+        import drive_read_v299 as V2
+        S["v299"] = V2.read(sys.modules[__name__], W, S, refs)
+    except Exception as e:                          # a failure here must never hide sections 0-5 -- printed loudly
+        import traceback
+        S["v299_error"] = "%s: %s\n%s" % (type(e).__name__, e, traceback.format_exc()[-1500:])
     return S
 
 
@@ -1749,14 +1775,17 @@ def attribution(W):
     fw = [f.get("fw", "").rstrip("\x00 ") for f in eps]
     params = m.get("params", {})
     keys = ("AccordEpsAngleLoop", "SteerDelay", "UseAutoSteerDelay", "AlwaysOnLateral", "SteerRatio",
-            "AccordVariableSteerRatio", "ForceTorqueController", "SteerControlType", "GitCommit", "GitBranch")
+            "AccordVariableSteerRatio", "ForceTorqueController", "SteerControlType", "GitCommit", "GitBranch",
+            "AccordAngleBarFromEps", "AccordAngleMaxRate", "AccordAngleClipScale")        # the last three: V299 fork
     # the FORK's angle interface on the wire (SPEC C3): while lateral is allowed but NOT requested the fork sends
     # the measured angle verbatim (raw == the 0x14A field).  A torque fork sends ~0 there instead.
     ina = (~W["req"]) & W["have"] & np.isfinite(W["raw"])
     nz = ina & (np.abs(W["f14a"]) >= 20)                       # >= 2 deg off centre, so 0 cannot pass by accident
     match = float(np.mean(np.abs(W["raw"][nz] - W["f14a"][nz]) <= 2)) if nz.sum() >= 50 else np.nan
     act = W["req"] & W["have"]
-    return dict(eps_fw=fw, live_image=any("A16A" in s for s in fw) if fw else None,
+    # the angle-loop image family (spec V299 rev 2 F9): 39990-TVA,A16A = V298, A16B = V299 (A160 = V294/V295: NOT live)
+    letter = next((x for x in ("A16A", "A16B") if any(("39990-TVA," + x) in s for s in fw)), None)
+    return dict(eps_fw=fw, live_image=(letter is not None) if fw else None, image_letter=letter,
                 params={k: params.get(k) for k in keys if k in params}, cam=m.get("cam"), git=m.get("git"),
                 fork_inactive_match=match, n_inactive=int(nz.sum()),
                 raw_max=float(np.nanmax(np.abs(W["raw"][act]))) if act.any() else np.nan)
@@ -1784,7 +1813,8 @@ def report(S):
     P("ANGLE-LOOP DRIVE READ -- %s" % S["meta"].get("tag", S["meta"].get("name", "?")))
     P("=" * 110)
     a = S["attrib"]
-    P("0. ATTRIBUTION  EPS fw %s -> image %s" % (a["eps_fw"], {True: "A16A (LIVE image)", False: "NOT A16A",
+    P("0. ATTRIBUTION  EPS fw %s -> image %s" % (a["eps_fw"], {True: "%s (LIVE image)" % a.get("image_letter"),
+                                                              False: "NOT A16A/A16B",
                                                               None: "unknown (no carFw)"}[a["live_image"]]))
     P("   fork params %s ; git %s" % (a["params"], a.get("git")))
     P("   fork angle interface (SPEC C3): inactive frames >= 2 deg with raw == 0x14A field: %s (n %d)  [angle fork ~1.0,"
@@ -1810,6 +1840,9 @@ def report(S):
           " torque word %d frame(s) ahead of 0x18F, I re-anchored per ~%.0f s window%s" % (
               si["arm"], si["ramp"][0], si["ramp"][1], si["ramp_src"], si["q_lead"], si["anchor_s"],
               ("; " + si["note"]) if si.get("note") else ""))
+        if si.get("ref"):
+            P("   (A16B wire: the I component and C3B-P* below are the %s rule's replay -- section 6B decides which rule"
+              " ran)" % si["ref"])
     P("   tap = a P_raw + b P_meas + c I + d D (+ one intercept per window); LIVE design: a = b = c = d = 1 (lag %d"
       " frames; R2 within-window)" % R["lag_frames"])
     P("   %-8s %6s %6s %6s %6s %6s %7s %7s %6s %7s %7s" % ("band", "s", "a", "b", "c", "d", "c_P", "pred", "c_I/P",
@@ -1919,6 +1952,11 @@ def report(S):
         P("   t %.1f %-7s %.1f s @ %.1f m/s  dI %.0f T [%s]  release overshoot %.2f deg (bar %.1f) [%s]" % (
             r["t"], r["kind"], r["dur"], r["v"], r["dI_T"], "flat" if r["flat"] else "RAMPS", r["release_ovs"],
             r["ovs_bar"], "pass" if r["ovs_pass"] else "FAIL"))
+    if S.get("v299"):
+        import drive_read_v299 as V2
+        L.append(V2.report(S["v299"]))
+    elif S.get("v299_error"):
+        L.append("\n6. V299 / DRIVE-2 BLOCKS FAILED -- %s" % S["v299_error"])
     return "\n".join(L)
 
 

@@ -1,7 +1,26 @@
 # -*- coding: utf-8 -*-
-"""r79_extract_fork.py -- ONE-PASS FORK-SIDE CACHE OF ROUTE 79 (V298 angle-loop flight), for the panel.
+"""r79_extract_fork.py -- ONE-PASS FORK-SIDE CACHE OF A ROUTE (route 79 = the V298 angle-loop flight by default).
 
     python analysis-2020accord/studies/angle_loop/v298_flight/r79_extract_fork.py [--procs 16]
+            [--route <dongle_counter--hash>] [--commit auto|<sha>] [--out <npz>]
+
+GENERALISED 2026-10-02 FOR DRIVE 2 (V299); route 79's arrays unchanged (a re-run on r79 reproduces every array of the
+existing r79_fork.npz bit for bit; the only additions are the keys below and meta fields):
+  * --route: any route (default route 79).  Output: CACHE/r79_fork.npz for route 79 (the panel's path, unchanged),
+    else CACHE/<tag>_fork.npz, tag = r<counter>_<hash6>_al (the drive read's own tag; the counter alone is REUSED).
+    ALIGN 2026-10-02: the name comes from ONE function, drive_read_v299.fork_cache_path (default_out calls it; the
+    drive read passes it as --out and never re-runs this script when that file exists).  --print-out prints the path.
+  * THE SCHEMA IS PINNED TO A COMMIT, not to whatever the fork's working tree holds: each schema file is read with
+    `git -C <fork> show <commit>:<path>` (opendbc_repo is a vendored tree in the fork, not a submodule, so one
+    commit pins all five files; the blobs are git's canonical LF text -- the clone has core.autocrlf=true, so the old
+    working-tree copy, stamp 'sha1 51e7b68af19fc408', was the same five files with CRLF: EVIDENCE, each working-tree
+    file == its 2712e1336 blob after CRLF->LF, all five; the pinned stamp at 2712e1336 is 'sha1 dc2036e24425c226').
+    --commit auto (default) = the route's own initData GitCommit, read from segment 0
+    with the bootstrap schema at 2712e1336 (initData is in the stable base schema).  The full sha, the schema files'
+    sha1 and whether the schema defines starpilotCarState.accordAngleStatus are written into meta_json.
+  * NEW KEYS: cs_canvalid (carState.canValid -- the spec's F8 "any canValid drop in angle mode") and spcs_angstat
+    (starpilotCarState.accordAngleStatus @31, the V299 fork's status word, DESIGN-V299-SYNTHESIS-rev2 §2.2 F8:
+    4 rate/jerk-bound, 8 EPS-torque stale/bad, 16 clip-bound) -- spcs_angstat only when the pinned schema defines it.
 
 WHAT IT DOES
   Decodes every segment of 75604b0a432fdc89_00000079--a1f5d2a272 ONCE, in parallel (one process per
@@ -94,8 +113,28 @@ PREFIX = "75604b0a432fdc89_00000079--a1f5d2a272"
 WIRE = os.path.join(CACHE, "r79_a1f5d2_al.npz")
 OUT = os.path.join(CACHE, "r79_fork.npz")
 FORK = "C:/Users/dudei/Desktop/Projects/openpilots/raayyymond-StarPilot/StarPilot"
-FORK_COMMIT = "2712e1336"
+FORK_COMMIT = "2712e1336"            # the BOOTSTRAP / default pin (route 79's initData GitCommit)
 SCHEMA_DIR = os.path.join(REPO, "_scratch", "cereal_fork_dom_" + FORK_COMMIT)
+
+
+def _naming():
+    """THE fork-cache naming lives in ONE place, drive_read_v299.route_tag / fork_cache_path (ALIGN 2026-10-02): the
+    drive read looks up exactly the file this script writes.  Imported lazily, in the parent process only (the decode
+    workers never call it)."""
+    import drive_read_v299 as V2
+    return V2
+
+
+def route_tag(prefix):
+    """the drive read's cache tag for a route: r<counter>_<hash6>_al (drive_read_v299.route_tag)."""
+    return _naming().route_tag(prefix)
+
+
+def default_out(prefix):
+    """route 79 with no --out: the panel's legacy CACHE/r79_fork.npz (unchanged); every other route: the drive read's
+    own name, drive_read_v299.fork_cache_path(prefix) = CACHE/<route_tag>_fork.npz.  The drive read always passes that
+    path as --out, so the two agree for route 79 as well (CACHE/r79_a1f5d2_al_fork.npz)."""
+    return OUT if prefix == PREFIX else str(_naming().fork_cache_path(prefix, CACHE))
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -112,33 +151,80 @@ _SRC = (("cereal/log.capnp", "log.capnp"), ("cereal/custom.capnp", "custom.capnp
         ("opendbc_repo/opendbc/car/car.capnp", "car.capnp"))
 
 
-def build_schema():
+def _git(*args):
+    import subprocess
+    return subprocess.run(["git", "-C", FORK] + list(args), check=True, capture_output=True).stdout
+
+
+def resolve_commit(commit):
+    """full sha of <commit> in the fork repo (SystemExit if the fork clone does not have it: fetch it first)."""
+    try:
+        return _git("rev-parse", "--verify", commit + "^{commit}").decode().strip()
+    except Exception as e:
+        raise SystemExit("fork commit %s is not in %s -- fetch it (%s)" % (commit, FORK, str(e)[:120]))
+
+
+def build_schema(commit=FORK_COMMIT):
+    """the fork's cereal AT <commit> (git show, never the working tree) copied into _scratch and stamped.
+    -> (stamp, schema_dir, full sha).  The stamp keeps the pre-2026-10-02 format ('fork <short> sha1 <16 hex>')."""
+    full = resolve_commit(commit)
+    short = full[:9]
+    blobs = [_git("show", "%s:%s" % (full, s)) for s, _ in _SRC]
     h = hashlib.sha1()
-    for s, _ in _SRC:
-        h.update(open(os.path.join(FORK, s), "rb").read())
-    want = "fork %s sha1 %s\n" % (FORK_COMMIT, h.hexdigest()[:16])
-    stamp = os.path.join(SCHEMA_DIR, ".stamp")
+    for b in blobs:
+        h.update(b)
+    schema_dir = os.path.join(REPO, "_scratch", "cereal_fork_" + short)
+    want = "fork %s sha1 %s\n" % (short, h.hexdigest()[:16])
+    stamp = os.path.join(schema_dir, ".stamp")
     have = io.open(stamp, encoding="utf-8").read() if os.path.exists(stamp) else ""
     if have != want:
-        if os.path.isdir(SCHEMA_DIR):
-            shutil.rmtree(SCHEMA_DIR)
-        os.makedirs(os.path.join(SCHEMA_DIR, "include"))
-        for s, d in _SRC:
-            shutil.copy(os.path.join(FORK, s), os.path.join(SCHEMA_DIR, d))
+        if os.path.isdir(schema_dir):
+            shutil.rmtree(schema_dir)
+        os.makedirs(os.path.join(schema_dir, "include"))
+        for b, (_, d) in zip(blobs, _SRC):
+            with open(os.path.join(schema_dir, d), "wb") as fh:
+                fh.write(b)
         io.open(stamp, "w", encoding="utf-8").write(want)
-    return want.strip()
+    return want.strip(), schema_dir, full
 
 
-_LOG = None
+_LOG = {}
 
 
-def load_log():
-    global _LOG
-    if _LOG is None:
+def load_log(schema_dir=SCHEMA_DIR):
+    if schema_dir not in _LOG:
         import capnp
         capnp.remove_import_hook()
-        _LOG = capnp.load(os.path.join(SCHEMA_DIR, "log.capnp"))
-    return _LOG
+        _LOG[schema_dir] = capnp.load(os.path.join(schema_dir, "log.capnp"))
+    return _LOG[schema_dir]
+
+
+def route_commit_fast(seg0):
+    """the 40-hex GitCommit of a route from segment 0's raw bytes (the first 40-hex run within 256 bytes after the
+    initData param key b"GitCommit").  A GUESS that main() verifies against the decoded initData."""
+    import re
+    import zstandard
+    data = zstandard.ZstdDecompressor().stream_reader(open(seg0, "rb")).read(16 << 20)
+    i = data.find(b"GitCommit")
+    m = re.search(rb"[0-9a-f]{40}", data[i:i + 256]) if i >= 0 else None
+    return m.group(0).decode() if m else None
+
+
+def route_commit(seg0, schema_dir):
+    """initData.params GitCommit of a route, read from its first segment with the bootstrap schema."""
+    import zstandard
+    log = load_log(schema_dir)
+    data = zstandard.ZstdDecompressor().stream_reader(open(seg0, "rb")).read()
+    for ev in log.Event.read_multiple_bytes(data):
+        try:
+            if ev.which() == "initData":
+                for e in ev.initData.params.entries:
+                    if str(e.key) == "GitCommit":
+                        return bytes(e.value).decode("utf-8", "replace").strip()
+                return str(ev.initData.gitCommit).strip() or None
+        except Exception:
+            continue
+    return None
 
 
 def i16be(d, i):
@@ -188,9 +274,11 @@ def _carparams_dict(cp):
     return out
 
 
-def work(path):
+def work(job):
     import zstandard
-    log = load_log()
+    path, schema_dir = job if isinstance(job, tuple) else (job, SCHEMA_DIR)
+    log = load_log(schema_dir)
+    has_angstat = None                  # does the pinned schema define starpilotCarState.accordAngleStatus?
     sn = int(os.path.basename(path).split("--")[2])
     data = zstandard.ZstdDecompressor().stream_reader(open(path, "rb")).read()
     L = {}
@@ -300,6 +388,7 @@ def work(path):
             ap("cs_aoff", c.steeringAngleOffsetDeg)
             ap("cs_steerdis", c.steeringDisengage); ap("cs_stocklkas", c.stockLkas)
             ap("cs_invlkas", c.invalidLkasSetting)
+            ap("cs_canvalid", c.canValid)
         elif w == "selfdriveState":
             s = ev.selfdriveState
             ap("t_sd", t)
@@ -320,6 +409,11 @@ def work(path):
             ap("t_spcs", t)
             ap("spcs_aol_en", s.alwaysOnLateralEnabled); ap("spcs_aol_allowed", s.alwaysOnLateralAllowed)
             ap("spcs_pauselat", s.pauseLateral)
+            if has_angstat is None:
+                has_angstat = "accordAngleStatus" in s.schema.fieldnames
+                meta["has_accordAngleStatus"] = has_angstat
+            if has_angstat:
+                ap("spcs_angstat", s.accordAngleStatus)
         elif w == "starpilotPlan":
             s = ev.starpilotPlan
             ap("t_spp", t)
@@ -457,19 +551,38 @@ def derive_e4(D, key):
 def main():
     ap_ = argparse.ArgumentParser()
     ap_.add_argument("--procs", type=int, default=16)
+    ap_.add_argument("--route", default=PREFIX)
+    ap_.add_argument("--commit", default="auto")
+    ap_.add_argument("--out", default=None)
+    ap_.add_argument("--print-out", action="store_true", help="print the output path this run would write, and exit")
     a = ap_.parse_args()
     T0 = time.perf_counter()
-    stamp = build_schema()
-    segs = sorted(glob.glob(os.path.join(RLOGS, PREFIX + "--*--rlog.zst")),
+    prefix = a.route
+    out_path = a.out or default_out(prefix)
+    if a.print_out:
+        print(out_path)
+        return
+    wire_path = WIRE if prefix == PREFIX else os.path.join(CACHE, route_tag(prefix) + ".npz")
+    segs = sorted(glob.glob(os.path.join(RLOGS, prefix + "--*--rlog.zst")),
                   key=lambda p: int(os.path.basename(p).split("--")[2]))
     if not segs:
-        raise SystemExit("no segments for " + PREFIX)
-    print("schema: %s  (%s)" % (SCHEMA_DIR, stamp))
+        raise SystemExit("no segments for " + prefix)
+    commit, commit_src = a.commit, "--commit"
+    if commit == "auto":
+        # a byte search of segment 0 (no capnp in THIS process: a schema loaded here before the decode Pool spawns
+        # kills the run -- measured 2026-10-02, exit 127, no traceback), VERIFIED after the decode against the
+        # initData GitCommit the pinned schema reads (a mismatch stops the run)
+        commit = route_commit_fast(segs[0])
+        commit_src = "initData GitCommit of %s" % os.path.basename(segs[0])
+        if not commit:
+            raise SystemExit("no GitCommit in the route's initData: pass --commit")
+    stamp, schema_dir, full_sha = build_schema(commit)
+    print("schema: %s  (%s; commit %s from %s)" % (schema_dir, stamp, full_sha, commit_src))
     print("segments: %d -> %d procs" % (len(segs), min(a.procs, len(segs))), flush=True)
     # biggest segments first so the tail is short
     order = sorted(segs, key=lambda p: -os.path.getsize(p))
     with Pool(min(a.procs, len(segs))) as pool:
-        res = pool.map(work, order, chunksize=1)
+        res = pool.map(work, [(p, schema_dir) for p in order], chunksize=1)
     T_dec = time.perf_counter() - T0
     res.sort(key=lambda r: r[0])
     seg_ids = [r[0] for r in res]
@@ -497,6 +610,9 @@ def main():
     cp = next((m["carparams"] for m in metas if m["carparams"]), None)
     cp_diff = sorted({m["seg"] for m in metas if m["carparams"] and m["carparams"] != cp})
     ini = next((m["initdata"] for m in metas if m["initdata"]), None)
+    gc = ((ini or {}).get("params") or {}).get("GitCommit", "").strip()
+    if commit_src.startswith("initData") and gc != full_sha:
+        raise SystemExit("the schema pin %s != the decoded initData GitCommit %r: re-run with --commit" % (full_sha, gc))
     ini_diff = sorted({m["seg"] for m in metas if m["initdata"] and m["initdata"]["params"] != ini["params"]})
     tog = next((m["sp_toggles"] for m in metas if m["sp_toggles"]), None)
     tog_changes = sum(m["sp_toggles_changes"] for m in metas)
@@ -509,8 +625,12 @@ def main():
         for k, v in m["counts"].items():
             counts[k] = counts.get(k, 0) + v
 
-    # ---- ALIGNMENT against the wire cache
-    W = np.load(WIRE)
+    # ---- ALIGNMENT against the wire cache (skipped, and said so, when the route has no wire cache yet)
+    if os.path.exists(wire_path):
+        W = np.load(wire_path)
+    else:
+        print("no wire cache %s: alignment checks skipped" % wire_path)
+        W = dict(tcs=D["t_cs"][:0], cs_ang=D["cs_ang"][:0], t14=np.zeros(0), ang=np.zeros(0))
     tcs_w, ang_w = W["tcs"], W["cs_ang"]
     idx = np.searchsorted(D["t_cs"], tcs_w)
     idx = np.clip(idx, 0, len(D["t_cs"]) - 1)
@@ -522,18 +642,18 @@ def main():
                  max_abs_ang_residual_deg=float(np.max(np.abs(res_ang))) if len(res_ang) else float("nan"))
     # second, independent check: carState angle vs the 0x14A wire angle (different CAN source), lag-fit
     t14, a14 = W["t14"], W["ang"]
-    m = (D["t_cs"] > t14[0]) & (D["t_cs"] < t14[-1])
-    best = None
-    for lag in np.arange(-0.05, 0.0501, 0.005):
+    m = ((D["t_cs"] > t14[0]) & (D["t_cs"] < t14[-1])) if len(t14) else np.zeros(len(D["t_cs"]), bool)
+    best = (float("nan"), float("nan"), float("nan"))
+    for lag in np.arange(-0.05, 0.0501, 0.005) if m.any() else []:
         r = D["cs_ang"][m] - np.interp(D["t_cs"][m] + lag, t14, a14)
         s = float(np.median(np.abs(r)))
-        if best is None or s < best[1]:
+        if not np.isfinite(best[1]) or s < best[1]:
             best = (float(lag), s, float(np.percentile(np.abs(r), 99)))
     align["cs_vs_0x14A_best_lag_s"] = round(best[0], 4)
     align["cs_vs_0x14A_median_abs_deg"] = best[1]
     align["cs_vs_0x14A_p99_abs_deg"] = best[2]
     # third: this cache's src-129 0xE4 echo must BE the wire cache's te4/cmd/req, row for row
-    if "t_e4tx1" in D:
+    if "t_e4tx1" in D and "te4" in W:
         te4, cmd, req = W["te4"], W["cmd"], W["req"]
         same_n = len(te4) == len(D["t_e4tx1"])
         align["e4tx1_equals_wire_te4_cmd_req"] = bool(
@@ -547,8 +667,11 @@ def main():
         align["e4send_to_next_co_median_dt_s"] = float(np.median(D["t_co"][j] - D["t_e4send"]))
 
     wall = time.perf_counter() - T0
+    has_as = sorted({mm["has_accordAngleStatus"] for mm in metas if mm.get("has_accordAngleStatus") is not None})
     D["meta_json"] = np.array(json.dumps(dict(
-        route=PREFIX, segments=seg_ids, fork_commit=FORK_COMMIT, schema=stamp, schema_dir=SCHEMA_DIR,
+        route=prefix, segments=seg_ids, fork_commit=full_sha[:9], fork_commit_full=full_sha,
+        fork_commit_source=commit_src, schema=stamp, schema_dir=schema_dir,
+        has_accordAngleStatus=(has_as[0] if len(has_as) == 1 else has_as), wire_cache=wire_path,
         decode_wall_s=round(T_dec, 2), wall_time_s=round(wall, 2), procs=min(a.procs, len(segs)),
         failed_segments=[dict(seg=mm["seg"], err=mm["failed"]) for mm in metas if mm["failed"]],
         event_counts=counts, nonmonotonic_steps=nonmono, alignment=align,
@@ -563,10 +686,11 @@ def main():
     D["initdata_params_json"] = np.array(json.dumps(ini, default=str))
     D["sp_toggles_json"] = np.array(tog or "")
     D["meta_wall_time_s"] = np.array(wall)
-    np.savez(OUT, **D)
+    np.savez(out_path, **D)
     wall2 = time.perf_counter() - T0
     print("decode %.1f s   total (incl. merge+verify+save) %.1f s" % (T_dec, wall2))
-    print("wrote %s  (%.1f MB, %d keys)" % (OUT, os.path.getsize(OUT) / 1e6, len(D)))
+    print("wrote %s  (%.1f MB, %d keys)" % (out_path, os.path.getsize(out_path) / 1e6, len(D)))
+    print("starpilotCarState.accordAngleStatus in the pinned schema: %s" % (has_as,))
     print("alignment:", json.dumps(align, indent=1))
     print("counts:", {k: counts[k] for k in sorted(counts) if k in (
         "controlsState", "carControl", "carOutput", "carState", "selfdriveState", "liveParameters",
