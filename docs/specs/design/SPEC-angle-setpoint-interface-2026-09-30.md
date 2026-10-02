@@ -360,6 +360,23 @@ is a **position hold**. With O1 the press releases it. Without O1 it is a 730 T 
 
 ## 5. Fork change shortlist: the brief for the operator
 
+> **V298 ADDENDUM (2026-10-01) — this supersedes the C1-era numbers below where they differ.** The built candidate is
+> V298 (`DESIGN-ANGLE-LOOP-C3-rev2-2026-10-01.md` + the camera interlock; image sha `177abf04…`). Five things change the
+> brief: **(1)** the version string IS changed: F181 reads `39990-TVA,A16A` — the interface gate (§5.1) keys on exactly
+> that string. **(2)** the fork must send **0xE4 byte 2 bits 3:2 = 2 on EVERY frame, including frames with
+> `STEER_TORQUE_REQUEST` = 0** — the EPS lane runs only when `gp-0x6803 == 2`; a 0 there makes the lane inert and drops
+> the engage state machine to the direction-0 timing. The stock camera sends 0/1 there (census in progress). **(3) No
+> fork angle integral at all on drive 1** (operator ruling 2026-10-01; the stability refuter showed τ_o < 6 s rings at the
+> curve operating points). **(4)** V298's gains are lower than C1's: Kp_eff ≈ 515 / 641 / 332 / 245 / 467 / 957 at
+> 3.1 / 8 / 10 / 11.75 / 17.5 / 26.9 m/s (DC stiffness ≈ 52 / 64 / 33 / 25 / 47 / 96 lane counts per degree of error;
+> the P term alone reaches the rail at ≈ 48° / 38° / 74° / 100° / 53° / 26° of error) — re-size Δmax(v) (§5.2) against
+> these, not the C1 table. **(5)** the EPS integrator FREEZES above 512 internal counts of hand torque and against an
+> opposing hand above 300 (≈ 524 / 293 on the 0x18F wire) and is bounded by an angle-referenced limit; align the fork's
+> "pressed" hysteresis with ≈ 600 wire on / 500 off as §5.3 step 4 says. Everything else in §5 stands (steerControlType
+> angle, `apply_steer_angle_limits_vm`, measured angle while inactive, 0 when not allowed, pack STEER_TORQUE when
+> inactive, the mode-3 fault, `UseAutoSteerDelay`, camera LKAS off).
+>
+
 This is the minimal set. Everything else in the torque-mode tree (rate-plant FF, observer, friction dither,
 LAF/Ki toggles) goes **inert automatically**, because `LatControlTorque` is not instantiated (EVIDENCE §0 item 5).
 
