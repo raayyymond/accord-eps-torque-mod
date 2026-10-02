@@ -1,0 +1,12 @@
+PREREG (written before any check) - V299 rev 2 bytes/fail-safe re-refutation, 2026-10-02
+FAIL if any of:
+ F-a  an old byte asserted by rev 2 s1.1 != V298 image at that address
+ F-b  my independent rebuild != rev 2's cave sha e22193b9.., image sha 30ff05fa.., trailer 95 3b dd 70, or diff count != 67
+ F-c  Ghidra decode of the rebuilt span != s1.1's 24 instructions, or any instruction straddles 0xC4CAC / lands mid-instruction
+ F-d  any branch (in-span or external) targets a non-instruction-start, or an external xref targets the span
+ F-e  any st.* / new RAM write in the cave (GATE 1)
+ F-f  camera / op-skip / sentinel / ramp / hard-freeze paths change behaviour vs V298 other than the stated 512->1229 + bound
+ F-g  the cap structure does not equal s1.3's mirror (v<=1382 -> 4096, 1382<v<=2880 -> 6144, v>2880 -> no cap) on edges 1381..1383, 2879..2881
+ F-h  CRC chain or bootloader-replay walk != 0, or an edit straddles a CRC block
+ F-i  any prior bytes-refuter defect (D1,D2,D3) merely re-worded, not resolved
+Default: refuted where uncertain.

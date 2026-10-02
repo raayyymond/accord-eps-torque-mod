@@ -1,0 +1,26 @@
+RE-REFUTER (stability-nonlinear) of DESIGN-V299-SYNTHESIS-rev2 -- PRE-REGISTERED FAIL CRITERIA.
+Written 2026-10-02 BEFORE any script of mine ran. Target: V298 + 67 B (two-level A3 cap 4096 <=1382 / 6144 <=2880,
+freeze 1229, opposing clause removed, asymmetric bound) + fork config A with NO override (ruling (i)).
+A "do not build" (FAIL) verdict is reachable through ANY of:
+ R0. CARRY-OVER: any HIGH defect of REFUTE-V299-stability-nonlinear (D1 F4 self-trip, D2/D3 B relay) is not
+     actually resolved in rev 2's DRIVE configuration when re-run on my engine (re-worded only).
+ RA. GATE 2: a linear loop rev 2 operates in has PM < 30 / GM < 6 dB / rho >= 1 where V298 was at the bar
+     (an inherited V298 point = defect, not FAIL).
+ RB. A sustained self-excited cycle (>= 3 consecutive cycles >= 0.5 deg, or 1-10 Hz wheel-rate rms >= 5 deg/s) in a
+     hands-off hold / slow track / turn, r79F or b_lo*J_hi, nominal twist, absent in V298 -- incl. a v-word-noise
+     relay at the new 1382 / 2880 cap boundaries.
+ RC. My engine OR S2 predicts one of the design's OWN revert criteria (F3, F4, F5, F6b, F9, F10) firing on a
+     manoeuvre the drive card asks for or inside the r79 envelope (<= 12.5 m/s, turns <= 90 deg, holds <= 10 s),
+     where the design's page predicts it does NOT fire (or predicts a smaller size by > 1.5 deg / > 25 %).
+     A firing the page itself declares and escalates (F7b, F3 "at the bar") is a DEFECT unless my engines put it
+     materially worse (> 1.5 deg or on a card item at a speed the page says is clean) -- then FAIL.
+ RD. F4 over the full 3-12.5 m/s x {30,45,60,90} grid, both members, both engines, linear AND raised-cosine
+     plans: any F4 column at <= 10 m/s with turn >= 45 deg in either engine (rev 2 claims 0).
+ RE. Light-hand (300-1229 raw) release lurch > 8 deg at >= 8 m/s, or > 1.5 deg worse than the page's own
+     prediction at any card speed, or a toward-centre droop > 4 deg (F5) on any member.
+ RF. Config A alone (no override) does NOT carry the note-2 gain: hands-off 60-90 deg turn-in t90 at 3-8 m/s not
+     >= 25 % faster than V298 on both members in both engines, or the 4-8 Hz readout / stall-surges worse than V298.
+ RG. ms_free ring (F10 metric) at 10-12.5 m/s larger than V298's on any member, or the page's "no ring <= 12.5"
+     claim false in my engine.
+PASS_WITH_DEFECTS: none fires at nominal, but defects remain (declared misses, inherited shortfalls, model edges).
+Default where uncertain: refuted.
