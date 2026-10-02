@@ -1,0 +1,18 @@
+built image sha256 30ff05fa464e87ab7eecfcbab9cbf6dfb3afcb57ceb5c89e4a29c1f748c38f08
+built cave  sha256 e22193b9dd2999c6ee4e8a7f8928feb3ea15ddc71cfacbbdab672aa0f1133608  (260 B, read from the image not a hex)
+built-image cave == rev2_cave.hex (the reviser's frozen bytes): PASS
+
+cross-check golden bound() == spec cave_rev2 bound: 0 mismatches of 6000 (must be 0)
+
+H1 BUILT cave vs V299 mirror (rev-2 caps):
+  random valid/frz : 0 mismatches of 5881
+  random op-skip   : 0 mismatches of 5381
+  random camera    : 0 mismatches of 738
+  targeted         : 0 valid + 0 frz mismatches of 4000 valid (all 4000 others accounted) ; first None
+
+NEGATIVE CONTROLS (targeted 2000, must be > 0):
+  N1 V298 bytes vs V299 mirror : 2056 mismatches  first {'case': (-8700, 63868, 1382, 910, 32768, -334, 6033039, -452, 1), 'cls': 'run', 'mirror': '0x29d7a', 'bytes': '0x29d7e'}
+  N2 alt4 bytes vs V299 mirror : 118 mismatches  first {'case': (3612, -26302, 1381, 759, 32768, 882, 6235395, 60, 1), 'cls': 'frz', 'mirror': '0x29d7e', 'bytes': '0x29d7a'}
+
+TOTALS: valid 9881, targeted 4000, op-skip 5381 (incl. dedicated census 2688), camera 738 (dedicated census 667), negatives N1=2056 N2=118
+wall 9.8 s

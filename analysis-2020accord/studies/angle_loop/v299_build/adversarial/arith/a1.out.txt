@@ -1,0 +1,3 @@
+V299 bytes vs my mirror: 0 / 30000 mismatches; exit classes {'FRZ29D7E': 23242, 'DONE': 5011, 'SKIP': 1747}
+NEG CONTROL V298 bytes vs V299 mirror: 282 / 3000 mismatches (must be > 0)
+wall 3.1 s

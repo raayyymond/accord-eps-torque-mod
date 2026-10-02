@@ -1,0 +1,41 @@
+V299 bytes vs my mirror: 0 / 30000 mismatches; exit classes {'FRZ29D7E': 23242, 'DONE': 5011, 'SKIP': 1747}
+NEG CONTROL V298 bytes vs V299 mirror: 282 / 3000 mismatches (must be > 0)
+wall 3.0 s
+== bound over ALL theta (s16) x sgn(Ep) in {-,0,+} x v-edges ==
+v=    0 sgn=+ : bound in [1250, 4096]; max(b99-b98)=0; first theta at cap: 178
+v=    1 sgn=+ : bound in [1250, 4096]; max(b99-b98)=0; first theta at cap: 178
+v=  714 sgn=+ : bound in [1250, 4096]; max(b99-b98)=0; first theta at cap: 178
+v= 1381 sgn=+ : bound in [1250, 4096]; max(b99-b98)=0; first theta at cap: 178
+v= 1382 sgn=+ : bound in [1250, 4096]; max(b99-b98)=0; first theta at cap: 178
+v= 1383 sgn=+ : bound in [1250, 6144]; max(b99-b98)=0; first theta at cap: 306
+v= 1384 sgn=+ : bound in [1250, 6144]; max(b99-b98)=0; first theta at cap: 306
+v= 2000 sgn=+ : bound in [1250, 6144]; max(b99-b98)=0; first theta at cap: 306
+v= 2879 sgn=+ : bound in [1250, 6144]; max(b99-b98)=0; first theta at cap: 306
+v= 2880 sgn=+ : bound in [1250, 6144]; max(b99-b98)=0; first theta at cap: 306
+v= 2881 sgn=+ : bound in [1250, 2098338]; max(b99-b98)=0; first theta at cap: uncapped
+v= 2882 sgn=+ : bound in [1250, 2098338]; max(b99-b98)=0; first theta at cap: uncapped
+v= 6198 sgn=+ : bound in [1250, 2098338]; max(b99-b98)=0; first theta at cap: uncapped
+v=65534 sgn=+ : bound in [1250, 2098338]; max(b99-b98)=0; first theta at cap: uncapped
+v=65535 sgn=+ : bound in [1250, 2098338]; max(b99-b98)=0; first theta at cap: uncapped
+max over all of (bound99 - bound98) = 0 (<= 0 means V299 never allows more winding than V298)
+opposing sign => bound == 1250 at every v edge: OK
+== v regime over ALL v (u16) at theta=1000 (same-sign) ==
+  v     0.. 1382: bound [4096]
+  v  1383.. 2880: bound [6144]
+  v  2881..65535: bound [65250]
+== GB-P walk over ALL v ==
+  G min 559 @v=2707, max 2188, monotone pieces ok; nonpositive: 0
+  |E| max (sp s16<<2, r26 clamp 65535 @0x28FA6) = 196607 ; |E|*Gmax = 430176116 (2^31 = 2147483648) -> wrap: False
+  Ep max = 1680375 ; e5 = Ep>>5 = 52511 ; inc = (e5*40)>>3 = 262555 I-units = 2051.2 output counts per tick
+== one-tick overshoot past the bound (output counts, I>>7) vs angle error, G at min/max ==
+  dtheta(deg)  E=16*dth(0.1deg)  overshoot@G=560  @G=2188
+      1.0        160           0.39       1.64
+      2.0        320           0.82       3.32
+      5.0        800           2.11       8.32
+     10.0       1600           4.26      16.68
+     20.0       3200           8.52      33.36
+     45.0       7200          19.18      75.12
+     90.0      14400          38.36     150.23
+    180.0      28800          76.76     300.47
+    409.6      65536         174.69     683.75
+wall 0.39 s

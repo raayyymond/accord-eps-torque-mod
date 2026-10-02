@@ -1,0 +1,4 @@
+Format-V targets into the cave: [('0x29d76', '0xc4c00', 'jarl')]
+bcond into span: [('0xc4c70', '0xc4c74'), ('0xc4c76', '0xc4c7a'), ('0xc4c84', '0xc4ca6'), ('0xc4c92', '0xc4c9a'), ('0xc4c98', '0xc4c9e')]
+  of which from OUTSIDE the span: []
+wall 0.03 s

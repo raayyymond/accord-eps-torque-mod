@@ -1,0 +1,13 @@
+{
+  "valid": 9881,
+  "targeted": 4000,
+  "opskip": 5381,
+  "camera": 738,
+  "neg_controls": [
+    2056,
+    118
+  ],
+  "valid_mismatch": 0,
+  "targeted_mismatch": 0,
+  "wall": 9.8
+}

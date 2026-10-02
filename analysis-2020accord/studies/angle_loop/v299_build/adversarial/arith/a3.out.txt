@@ -1,0 +1,29 @@
+V299 bytes vs my mirror: 0 / 30000 mismatches; exit classes {'FRZ29D7E': 23242, 'DONE': 5011, 'SKIP': 1747}
+NEG CONTROL V298 bytes vs V299 mirror: 282 / 3000 mismatches (must be > 0)
+wall 2.9 s
+== S1/S2 constant v vs jitter across the 1382 / 2880 edges (theta 60 deg, same-sign error 10 deg) ==
+  v=1382 constant                                            final S=I>>7   4099  peak   4099
+  v=1383 constant                                            final S=I>>7   6153  peak   6153
+  v alternates 1382/1383 every tick                          final S=I>>7   6153  peak   6153
+  v=1382 with 1-in-50 ticks at 1383                          final S=I>>7   4633  peak   4633
+  v=2880 constant                                            final S=I>>7   6147  peak   6147
+  v=2881 constant                                            final S=I>>7   8192  peak   8192
+  v alternates 2880/2881 every tick                          final S=I>>7   8192  peak   8192
+  v=2880 with 1-in-50 ticks at 2881                          final S=I>>7   6309  peak   6309
+== S3 decel through both edges while the same-sign error persists (carry-over) ==
+  v 3500 (3 s) -> 600 ramp (4 s) -> 600 (2 s)                final S=I>>7   8192  peak   8192
+    at v=600 the cap is 4096, held S = 8192 (cap is a WINDING limit; freeze holds, never bleeds)
+    then error REVERSES (E<0) at v=600 for 0.5 s             final S=I>>7   3680  peak   8182
+== S4 one-tick overshoot at a large error, low band ==
+  tick 0: S 4095 -> 4180  exit DONE bound 4096
+  tick 1: S 4180 -> 4180  exit FRZ29D7E bound 4096
+  tick 2: S 4180 -> 4180  exit FRZ29D7E bound 4096
+== S5 the ICL with an uncapped bound (v>2880, theta 3000) and the rail error ==
+  S after 2 s at rail error: 8192 (ICL 8192), raw I8 8388608 -> no wrap: True
+== S6 sar-10 floor asymmetry at the bound (low band, theta 300 same sign) ==
+  sign +1: largest |I8| still winding = 4194296  (= 4095.9922 S-counts)
+  sign -1: largest |I8| still winding = 4193280  (= 4095.0000 S-counts)
+== S7 hard-freeze edge: raw |tau| 1229 winds, 1230 holds ==
+  a4f68=1229 -> DONE r6=None
+  a4f68=1230 -> FRZ29D7E r6=0
+wall 0.1 s
