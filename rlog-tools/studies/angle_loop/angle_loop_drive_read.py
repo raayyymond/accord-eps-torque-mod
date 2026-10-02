@@ -13,13 +13,40 @@ for the clauses rev2 inherits) -- every threshold is in THR below with its sourc
 
   0  attribution   carFw EPS = 39990-TVA,A16A (F181); AccordEpsAngleLoop in initData; camera (bus-2 0xE4) silent;
                    STEER_STATUS / 0x14A b4 health (R8).
-  1  LIVE / NOT LIVE / INVERTED   the 427-tap regression, per speed band, hands-off (|0x18F bar| < 500 wire),
-                   request 1, >= 1.2 s after engage, 0.3-3 Hz band-pass (C0 §6), regressors passed through the image's
-                   own output-lag pole (0xC63EC/0xC63EE, no free parameter):
+  1  LIVE / NOT LIVE / INVERTED   per speed band, hands-off (|0x18F bar| < 500 wire), request 1, >= 1.2 s after
+                   engage, on the 0x1AB tap's native 50 Hz instants (lag scanned):
+                   DECISION-BEARING = the STRUCTURAL regression on the C3-rev2-P lane's own components, each carried
+                   through the image's linear output path (no free constant inside the chain):
+                       tap = a P_raw + b P_meas + c I + d D            (LIVE design: a = b = c = d = 1)
+                       c_meas/c_raw = -b/a ; c_P = a c_P,pred ; c_I/c_P = (c/a) 2.79 /s ; c_D = d 0.566 tap/(deg/s)
+                   with three corrections made 2026-10-02 after route 79 fired a FALSE R1 (c_D -0.135, c_I/c_P 1.24,
+                   while seven independent estimators found D opposing and Ki at design -- docs/scoring/
+                   DRIVE-READ-V298-r79-2026-10-02.md sections 1 and 6; M1-attribution-identity.md section 3.4;
+                   M3-integrator-freeze.md sections 4 and 6):
+                     (a) the replayed I uses the ENGAGE-RAMP ARM that ran: direction 2 (+328 / -66 per tick, image cells
+                         0xC63FC / 0xC63FA) when the fork ran the angle interface (AccordEpsAngleLoop = 1 => 0xE4 byte-2
+                         arm 2), else direction 0 (+33 / -16).  Direction 0 froze the replayed I for 0.99 s at every
+                         engage instead of 0.10 s.
+                     (b) the firmware's torque word LEADS the 0x18F sample by 10 ticks (one frame) on the car: the
+                         replay's freezes and fade read it one frame early (M3 timing scan: replay R2 0.834 -> 0.928).
+                     (c) the replayed I is RE-ANCHORED per ~5 s window: one intercept per window of each hands-off run
+                         (within-window demeaning of the tap and every regressor), the regression form of M1's per-window
+                         I0.  The un-anchored I drifts after hands-on manoeuvres and a single intercept let that drift
+                         drag c toward 0 (errors-in-variables) and push the error into b and d.
+                   The pre-2026-10-02 structural form (direction-0 ramp, word on the 0x18F frame, one intercept) is
+                   still computed and PRINTED for comparison; it is not decision-bearing.
+                   R1 (INVERTED) needs TWO METHODS TO AGREE: the structural fit above AND a second estimator -- the
+                   design's literal regression band-passed at 2-5 Hz, where D is identified (M1 section 3.2: the 0.3-3
+                   Hz band cannot identify D; there D is a small quadrature term beside P and I):
                        tap = c_raw*raw + c_meas*f14a + c_I*Sum(raw - f14a)dt + c_D*w18 (+c0)       [ratio test]
                        tap = c_P*(raw - f14a) + c_I*Sum(raw - f14a)dt + c_D*w18 (+c0)              [P/I/D test]
-                   and a SECOND METHOD: the byte-exact lane REPLAYED on the wire inputs for each candidate image
-                   (C3-rev2-P, C3 Ki 56, cave skipped, V295) -> R2 of the tap against each replay (zero free params).
+                   regressors passed through the image's own output-lag pole (0xC63EC/0xC63EE).  A clause of R1 fires
+                   only when BOTH methods cross its sign threshold; both values are printed beside it.  The same literal
+                   form at 0.3-3 Hz (C0 §6) is printed as before, not decision-bearing.
+                   And a REPLAY method: the byte-exact lane REPLAYED on the wire inputs for each candidate image
+                   (C3-rev2-P, C3 Ki 56, cave skipped, V295) -> R2 of the tap against each replay (zero free params),
+                   with the direction-0 ramp and the word on the 0x18F frame for every candidate (the image-identity
+                   comparison, unchanged); the corrected C3-rev2-P replay (a)+(b) is printed beside it.
   2  stop bands    R1 INVERTED, R2 |tap| >= 300 LSB hands-off > 0.3 s, R3* 0.25-5.5 Hz ring (grows, or >= 4 cycles
                    zeta < 0.25) on 0x14A angle / 0x18F rate / the tracking error, R4 a new 5-30 Hz line vs the
                    reference routes, R5 ring presence > 0.5 % or F7 > 0, R6 |theta - theta_sp| > 10 deg hands-off
@@ -64,8 +91,11 @@ import math
 import os
 import re
 import sys
+import time as _time
 import types
 from pathlib import Path
+
+_T0 = _time.time()
 
 import numpy as np
 from scipy import signal
@@ -86,7 +116,7 @@ AL = KIT / "analysis-2020accord" / "studies" / "angle_loop"
 GRIND = KIT / "rlog-tools" / "studies" / "grind"
 for _q in (GRIND, KIT / "rlog-tools" / "studies" / "osc-highangle", KIT / "analysis-2020accord" / "studies" / "v280",
            KIT / "analysis-2020accord" / "lib", AL / "refute_c2r2_nonlinear", AL / "c3" / "rev2B", AL,
-           AL / "panel", AL / "c1"):
+           AL / "panel", AL / "c1", HERE):
     if str(_q) not in sys.path:
         sys.path.insert(0, str(_q))
 if hasattr(sys.stdout, "reconfigure"):
@@ -95,6 +125,12 @@ if hasattr(sys.stdout, "reconfigure"):
 SCR = KIT / "_scratch" / "angle_loop" / "drive-read"
 FS = 100.0
 DT = 0.01
+# RUNTIME (operator rule 2026-10-02: analyses run in seconds on a per-route cache).  The 1 kHz lane replays are the
+# integer-exact fast lane (drive_read_fastlane.py: memoryless stages in numpy, only the recursions in a scalar loop,
+# bit-exact against the source lane), cached per (wire inputs + image + VERSION) under SCR/replay.
+import drive_read_fastlane as FL                             # noqa: E402
+_RT = dict(replay_s=0.0, hits=0, misses=0, fallback=[])
+_MEMO = {}
 
 # =====================================================================================================================
 # PRE-REGISTERED THRESHOLDS -- each from the design record, cited by heading.  None is fitted on a flight.
@@ -136,7 +172,19 @@ THR = dict(
                                           #   V282's own 20 Hz grind line reads 5.9-6.5 dB this way on r6c/r39)
     r4_ref_db=2.0,                        # "absent" on a reference: < 2 dB excess within +-0.75 Hz
     r4_amp_ratio=1.5,                     # and >= 1.5x every reference's +-1 Hz band amplitude
+    # ---- R1's sign tests (unchanged since rev2 §7): INVERTED = c_meas/c_raw > 0, or c_D < 0 (aiding)
+    r1_ratio=0.0, r1_cD=0.0,              # R1 INVERTED: c_meas/c_raw > 0 ; c_D aiding < 0                 (rev2 §7)
+    # ---- the structural regression's INPUT corrections and R1's second method, set 2026-10-02 AFTER route 79 (they
+    #      are identification fixes of the instrument, not bars fitted on a flight; the sign tests above are unchanged)
+    struct_anchor_s=5.0,                  # replayed I re-anchored per ~5 s window (one intercept each)    (M1 §2.1, §3.4)
+    tq_lead_frames=1,                     # torque word leads the 0x18F sample by 10 ticks = 1 frame       (M3 §4 scan)
+    r1b_lo=2.0, r1b_hi=5.0,               # R1 second method: the literal regression at 2-5 Hz, where D   (M1 §3.2;
+                                          #   is identified; R1 needs it AND the structural fit to agree    synthesis §6.1)
 )
+# the engage-ramp cells (u16 LE, per tick): direction 0 in/out, direction 2 in/out -- read from the V298 image at run
+# time when it is on disk (ramp_cells), else these values (M1 §1 "Ramp cells 0xC63F6..FC = 16 / 33 / 66 / 328")
+RAMP_CELLS = dict(in0=0xC63F8, out0=0xC63F6, in2=0xC63FC, out2=0xC63FA)
+RAMP_FALLBACK = dict(in0=33, out0=16, in2=328, out2=66)
 # the release-overshoot values C3-rev2 §4 states (judge's n1_ki40 re-run, worst over members)
 REL_S4 = dict(inward=7.2, outward_lo=7.2, outward_hi=2.8, nudge=2.0)
 
@@ -416,9 +464,14 @@ def _lagfilt(x, a):
     return signal.lfilter([1.0 - a], [1.0, -a], np.nan_to_num(x))
 
 
+_BPSOS = {}
+
+
 def _bp(x, lo=0.3, hi=3.0, fs=50.0):
-    sos = signal.butter(2, [lo, hi], "bandpass", fs=fs, output="sos")
-    return signal.sosfiltfilt(sos, x)
+    k = (lo, hi, fs)
+    if k not in _BPSOS:                                      # butter() is deterministic: the same sos, designed once
+        _BPSOS[k] = signal.butter(2, [lo, hi], "bandpass", fs=fs, output="sos")
+    return signal.sosfiltfilt(_BPSOS[k], x)
 
 
 def regress(W, lag_frames=None, lagfilter=True, bp=(0.3, 3.0), bands=BANDS_CP, min_run_s=2.0, extra_mask=None):
@@ -456,8 +509,15 @@ def regress(W, lag_frames=None, lagfilter=True, bp=(0.3, 3.0), bands=BANDS_CP, m
                 f = (lambda z: _bp(z, *bp)) if bp else (lambda z: z - z.mean())
                 e_ = 25 if bp else 0
                 sl = slice(e_, (r1 - r0) - e_)
-                y_ = f(y)[sl]
-                c = {k: f(regs[k][idx])[sl] for k in regs}
+                if bp:
+                    # one sosfiltfilt over the stacked rows (y + the five regressors): the filter runs each row on its
+                    # own, so every row is the 1-D call's result
+                    Z = _bp(np.vstack([y] + [regs[k][idx] for k in regs]), *bp)
+                    y_ = Z[0][sl]
+                    c = {k: Z[1 + i][sl] for i, k in enumerate(regs)}
+                else:
+                    y_ = f(y)[sl]
+                    c = {k: f(regs[k][idx])[sl] for k in regs}
                 X1.append(np.c_[c["ew"], c["Iw"], c["w18"]])
                 X2.append(np.c_[c["raw"], c["f14a"], c["Iw"], c["w18"]])
                 Y.append(y_)
@@ -523,8 +583,11 @@ def _ratio_se(b, se):
     return abs(b[1] / b[0]) * math.sqrt((se[0] / b[0]) ** 2 + (se[1] / b[1]) ** 2) if abs(b[1]) > 1e-12 else np.nan
 
 
-def verdict(R, W=None, a2=None, rep=None):
-    """LIVE / NOT LIVE / INVERTED / INCONCLUSIVE, with every clause and its margin."""
+def verdict(R, W=None, a2=None, rep=None, r1b=None):
+    """LIVE / NOT LIVE / INVERTED / INCONCLUSIVE, with every clause and its margin.
+    r1b = R1's SECOND METHOD (regress() at THR r1b_lo..r1b_hi Hz).  When given, each R1 clause fires only if BOTH the
+    fit R and r1b cross its sign threshold (both values printed); when None, R alone decides (the synthetic controls'
+    and the literal read's form, unchanged)."""
     rows = {k: v for k, v in R["rows"].items() if v.get("ok")}
     cl = []
     P = R["pooled"]
@@ -536,15 +599,39 @@ def verdict(R, W=None, a2=None, rep=None):
     cm_cr = [(abs(v.get("c_meas", -v.get("b", np.nan))) / max(abs(v.get("c_raw", v.get("a", np.nan))), 1e-12), v["n"])
              for v in rows.values()]
     cm_cr = [p for p in cm_cr if np.isfinite(p[0])]
-    inv_ratio = bool(np.isfinite(ratio) and ratio > 0)
+    inv_ratio = bool(np.isfinite(ratio) and ratio > THR["r1_ratio"])
     cDs = [v["cD"] for v in rows.values() if v["n"] >= 500]
     cD_med = P.get("cD", np.nan) if structural else (float(np.median(cDs)) if cDs else P.get("cD", np.nan))
-    inv_D = bool(np.isfinite(cD_med) and cD_med < 0)
+    inv_D = bool(np.isfinite(cD_med) and cD_med < THR["r1_cD"])
+    r1b_ratio = r1b_cD = np.nan
+    if r1b is not None:
+        # the second method is a plain (non-structural) fit: read per band, exposure-weighted median ratio, median c_D
+        rows_b = {k: v for k, v in r1b["rows"].items() if v.get("ok")}
+        rb_b = [(v["ratio"], v["n"]) for v in rows_b.values() if np.isfinite(v.get("ratio", np.nan))]
+        r1b_ratio = _wmed(rb_b) if rb_b else r1b["pooled"].get("ratio", np.nan)
+        cDs_b = [v["cD"] for v in rows_b.values() if v["n"] >= 500]
+        r1b_cD = float(np.median(cDs_b)) if cDs_b else r1b["pooled"].get("cD", np.nan)
+        inv_ratio_b = bool(np.isfinite(r1b_ratio) and r1b_ratio > THR["r1_ratio"])
+        inv_D_b = bool(np.isfinite(r1b_cD) and r1b_cD < THR["r1_cD"])
+        votes = dict(ratio=(inv_ratio, inv_ratio_b), cD=(inv_D, inv_D_b))
+        inv_ratio, inv_D = inv_ratio and inv_ratio_b, inv_D and inv_D_b
     live_ratio = bool(THR["ratio_lo"] <= ratio <= THR["ratio_hi"])
     q = (abs(P.get("c_meas", np.nan)) / max(abs(P.get("c_raw", np.nan)), 1e-12)) if structural else         (_wmed(cm_cr) if cm_cr else np.nan)
     notlive_img = bool(np.isfinite(q) and q < THR["notlive_ratio"])
-    cl.append(("R1 INVERTED: c_meas/c_raw > 0", inv_ratio, ("pooled %.3f" if structural else "band median %.3f") % ratio))
-    cl.append(("R1 INVERTED: c_D aiding (< 0)", inv_D, ("pooled %.3f tap/(deg/s)" if structural else "median over bands %.3f tap/(deg/s)") % cD_med))
+    if r1b is None:
+        cl.append(("R1 INVERTED: c_meas/c_raw > 0", inv_ratio, ("pooled %.3f" if structural else "band median %.3f") % ratio))
+        cl.append(("R1 INVERTED: c_D aiding (< 0)", inv_D, ("pooled %.3f tap/(deg/s)" if structural else "median over bands %.3f tap/(deg/s)") % cD_med))
+    else:
+        yn = {True: "fires", False: "no"}
+        bp_ = "%g-%g Hz" % tuple(r1b.get("bp") or (np.nan, np.nan))
+        cl.append(("R1 INVERTED: c_meas/c_raw > 0 (BOTH methods must agree)", inv_ratio,
+                   "%s %.3f [%s] ; %s band median %.3f [%s]" % ("structural pooled" if structural else "band median",
+                                                                ratio, yn[votes["ratio"][0]], bp_, r1b_ratio,
+                                                                yn[votes["ratio"][1]])))
+        cl.append(("R1 INVERTED: c_D aiding (< 0) (BOTH methods must agree)", inv_D,
+                   "%s %.3f [%s] ; %s band median %.3f [%s] tap/(deg/s)" % (
+                       "structural pooled" if structural else "band median", cD_med, yn[votes["cD"][0]], bp_, r1b_cD,
+                       yn[votes["cD"][1]])))
     cl.append(("LIVE angle loop: c_meas/c_raw in [%.2f, %.2f]" % (THR["ratio_lo"], THR["ratio_hi"]), live_ratio,
                ("pooled %.3f" if structural else "band median %.3f") % ratio))
     cl.append(("NOT LIVE wrong image: |c_meas| < 0.2 |c_raw|", notlive_img,
@@ -634,7 +721,8 @@ def verdict(R, W=None, a2=None, rep=None):
         bad = list(dict.fromkeys(bad))
         if bad:
             v = "LIVE angle loop, NOT the designed loop: %s" % ", ".join(bad)
-    return dict(verdict=v, clauses=cl, ratio=ratio, cD=cD_med, cIcP=cIcP, dip=dip, hi=hi, sched=sched, ident=ident)
+    return dict(verdict=v, clauses=cl, ratio=ratio, cD=cD_med, cIcP=cIcP, dip=dip, hi=hi, sched=sched, ident=ident,
+                r1b_ratio=r1b_ratio, r1b_cD=r1b_cD)
 
 
 def _wmed(pairs):
@@ -670,7 +758,159 @@ def replay(W, cands=("C3B-P", "C3-P56", "SKIP", "C3B-P-kd34", "C3B-F"), with_v29
     return out
 
 
-def _replay_cand(ST, use, th, cmd, tq, x, abe, vws, eng, rec_I=False):
+def _replay_cand(ST, use, th, cmd, tq, x, abe, vws, eng, rec_I=False, ramp_steps=(33, 16), tag=""):
+    """_replay_cand_source's output, word for word, from drive_read_fastlane.cand_lane (one column per candidate;
+    the columns of the source lane are independent), cached per (wire inputs + candidate + cal + VERSION).  A candidate
+    whose cave feature the fast lane does not implement falls back to the source march.  ramp_steps != (33, 16) (the
+    direction-2 arm) exists only in the fast lane: there the source fallback is refused (the caller drops to (33, 16)
+    and says so)."""
+    n = len(th)
+    B = len(use)
+    out = np.zeros((n, B))
+    Ilog = np.zeros((n, B)) if rec_I else None
+    eng = np.asarray(eng, bool)
+    for b, c in enumerate(use):
+        job = _cand_job(ST, c, th, cmd, tq, x, abe, vws, eng, ramp_steps=ramp_steps, tag=tag)
+        if job is None and tuple(ramp_steps) != (33, 16):
+            raise NotImplementedError("ramp %s needs the fast lane" % (ramp_steps,))
+        if job is None:
+            r = _replay_cand_source(ST, [c], th, cmd, tq, x, abe, vws, eng, rec_I=True)
+            T, I = r[0][:, 0], r[1][:, 0]
+        else:
+            T, I = _cached(*job)
+        out[:, b] = T
+        if rec_I:
+            Ilog[:, b] = I
+    return (out, Ilog) if rec_I else out
+
+
+def _inkey(*arrs):
+    """sha256 of the replay's wire inputs (int64 words; the engaged mask as bool)."""
+    return FL.key_of(*(np.asarray(a, bool) if np.asarray(a).dtype == bool else np.asarray(a, np.int64) for a in arrs))
+
+
+def _fast_lane_drift(ST=None):
+    """[] when every source function the fast lanes mirror is unchanged (drive_read_fastlane.SOURCE_SHA); else the
+    names that moved -- and then the replays run the SOURCE march (slow, correct) and RUNTIME says so."""
+    if "drift" not in _MEMO:
+        import lane_mirror_v295 as LM
+        import nl_sim as NS
+        ST = ST or load_score_time()
+        _MEMO["drift"] = FL.drift({
+            "score_time.CandLane": ST.CandLane, "score_time.Cand": ST.Cand, "nl_sim.lerp_vec": NS.lerp_vec,
+            "nl_sim.s32": NS.s32, "nl_sim.s16": NS.s16, "lane_mirror_v295.lane_tick": LM.lane_tick,
+            "lane_mirror_v295.setpoint_chain": LM.setpoint_chain, "lane_mirror_v295.lerp": LM.lerp,
+            "drive_read._replay_cand_source": _replay_cand_source, "drive_read._replay_v295_source": _replay_v295_source})
+        if _MEMO["drift"]:
+            _RT["fallback"].append("fast lane OFF (source changed: %s)" % ",".join(_MEMO["drift"]))
+    return _MEMO["drift"]
+
+
+def _cand_job(ST, c, th, cmd, tq, x, abe, vws, eng, ramp_steps=(33, 16), tag=""):
+    """(key, label, fn, args) of one candidate's fast replay, or None when the fast lane does not implement it.
+    The default (33, 16) ramp keeps the pre-2026-10-02 cache key; any other ramp or a tag extends it."""
+    if _fast_lane_drift(ST):
+        return None
+    try:
+        p = FL.cand_params(c)
+    except NotImplementedError:
+        return None
+    import nl_sim as NS
+    calk = {k: NS.CAL[k] for k in ("PCL", "SCL", "OCL", "oa", "ob", "g74a3", "dz", "fwd", "fadeA", "fadeB")}
+    glut = ST.glut(c.rows)
+    key = FL.key_of(_inkey(th, cmd, tq, x, abe, vws, eng), "cand", p, calk, glut)
+    if tuple(ramp_steps) != (33, 16) or tag:
+        key = FL.key_of(key, "ramp", list(ramp_steps), tag)
+    r0, R = _ramp(eng, ramp_steps)
+    return (key, "cand_" + c.id + ("_" + tag if tag else ""), FL.cand_lane,
+            (p, glut, NS.CAL, th, cmd, tq, x, abe, vws, eng, R, r0, True))
+
+
+def _v295_job(th, cmd, tq, x, vws, eng):
+    import lane_mirror_v295 as LM
+    cal = LM.load_cal()
+    key = FL.key_of(_inkey(th, cmd, tq, x, vws, eng), "v295", cal)
+    r0, R = _ramp(eng)
+    return key, "V295", FL.v295_lane, (cal, th, cmd, tq, x, vws, eng, R, r0)
+
+
+def _ramp(eng, ramp_steps=(33, 16)):
+    k = ("ramp", tuple(ramp_steps), FL.key_of(np.asarray(eng, bool)))
+    if k not in _MEMO:
+        _MEMO[k] = FL.ramp_ticks(eng, *ramp_steps)
+    return _MEMO[k]
+
+
+def ramp_cells():
+    """the engage-ramp per-tick steps {in0, out0, in2, out2}, u16 LE from the V298 image when it is on disk (cells
+    RAMP_CELLS), else RAMP_FALLBACK (the same values, M1 §1).  -> (cells, source)."""
+    if "rampcells" not in _MEMO:
+        import struct
+        p = sorted(glob.glob(os.path.join(os.environ.get("ACCORD_FIRMWARE_ROOT", ""), "analysis-2020accord",
+                                          "_v298_*_plain_image.bin")))
+        cells, src = dict(RAMP_FALLBACK), "RAMP_FALLBACK (no V298 image on disk)"
+        if len(p) == 1:
+            img = Path(p[0]).read_bytes()
+            cells = {k: struct.unpack_from("<H", img, a)[0] for k, a in RAMP_CELLS.items()}
+            src = "cells read from the V298 image"
+        _MEMO["rampcells"] = (cells, src)
+    return _MEMO["rampcells"]
+
+
+def struct_inputs(W):
+    """the structural regression's replay inputs for THIS wire (the 2026-10-02 corrections a and b, docstring §1):
+    ramp arm 2 when the fork ran the angle interface (initData AccordEpsAngleLoop == "1": the angle fork sends 0xE4
+    byte-2 bits 3:2 = 2 -- BELIEF from the param; EVIDENCE on route 79, arm 2 on 120 763 / 120 763 frames, M1 §4),
+    else arm 0; the torque word's lead THR tq_lead_frames on a real route (a property of the car's 0x18F timing, M3 §4),
+    0 on a synthetic wire (its generator latches the word on its own frame)."""
+    cells, src = ramp_cells()
+    meta = W.get("meta") or {}
+    arm = 2 if str((meta.get("params") or {}).get("AccordEpsAngleLoop", "")).strip() == "1" else 0
+    steps = (cells["in2"], cells["out2"]) if arm == 2 else (cells["in0"], cells["out0"])
+    lead = int(THR["tq_lead_frames"]) if meta.get("source") == "route" else 0
+    return dict(arm=arm, ramp=[int(steps[0]), int(steps[1])], ramp_src=src, q_lead=lead,
+                anchor_s=THR["struct_anchor_s"])
+
+
+def _cache_path(key, label):
+    return SCR / "replay" / ("%s_%s.npz" % (key[:32], label))
+
+
+def _cached(key, label, fn, args):
+    """in-process memo, then SCR/replay/<key>_<label>.npz, else fn(*args) -> (T, I|None), stored on first
+    computation.  (Worker processes were tried and REJECTED: on Windows each spawn re-imports scipy, and six of them
+    cost more than the ~4 s of serial fast-lane marching they would overlap -- 17-18 s vs 15 s cold on route 79.)"""
+    if key in _MEMO:
+        return _MEMO[key]
+    p = _cache_path(key, label)
+    t0 = _time.time()
+    res = None
+    if p.exists():
+        try:
+            Z = np.load(p)
+            res = (Z["T"], Z["I"] if "I" in Z.files else None)
+            _RT["hits"] += 1
+        except Exception:
+            res = None
+    if res is None:
+        res = fn(*args)
+    if not isinstance(res, tuple):
+        res = (res, None)
+    if not p.exists():
+        _RT["misses"] += 1
+        try:
+            p.parent.mkdir(parents=True, exist_ok=True)
+            tmp = p.with_name(p.stem + ".tmp.npz")
+            np.savez(tmp, **({"T": res[0]} if res[1] is None else {"T": res[0], "I": res[1]}))
+            os.replace(tmp, p)
+        except OSError:
+            pass
+    _RT["replay_s"] += _time.time() - t0
+    _MEMO[key] = res
+    return res
+
+
+def _replay_cand_source(ST, use, th, cmd, tq, x, abe, vws, eng, rec_I=False):
     """the CandLane at 1 kHz on the wire's inputs.  The speed word enters only through G(v) (the cave's walk) and the
     A3 policy's speed tests, so the lane's per-column G / vw are refreshed whenever the frame's speed word changes.
     Frames more than 1 s after a request drop with the ramp at 0 are skipped (the lane's output is 0 there and its
@@ -740,7 +980,7 @@ def wire_inputs(W, n=None):
     return th, cmd, tq, x, abe, vws
 
 
-def components(W, ref="C3B-P"):
+def components(W, ref="C3B-P", ramp_steps=(33, 16), q_lead=0):
     """the C3-rev2-P lane's COMPONENT signals reconstructed from the wire, each carried through the image's own
     linear output path (fade f(|tq|>>5), the 0xC63EC/EE lag at 1 kHz, x ramp/32768, x -fwd/32768, /8 = tap LSB):
         P_raw  = ((4 gp-0x69ae) G >> 8) 112 >> 8          the setpoint half of P
@@ -748,13 +988,18 @@ def components(W, ref="C3B-P"):
         D      = (48 gp-0x6abe) >> 3                      the fresh-rate D (Kd 48)
         I      = I >> 7 from the byte-exact lane march (the A3 bound, the hard and opposing-hand freezes, ICL, Ki 40)
     For the LIVE design every coefficient of  tap = a P_raw + b P_meas + c I + d D (+ c0)  is 1.  The P/D/I terms
-    are memoryless given the inputs except I, which the march supplies; nothing is fitted inside the chain."""
+    are memoryless given the inputs except I, which the march supplies; nothing is fitted inside the chain.
+    ramp_steps / q_lead (defaults = the pre-2026-10-02 inputs): the engage-ramp per-tick steps the replay marches, and
+    the torque word's lead over the 0x18F frame in frames (the replay's freezes and the fade read tq[k + q_lead])."""
     ST = load_score_time()
     C = replay_cands(ST)
     th, cmd, tq, x, abe, vws = wire_inputs(W)
-    T, Il = _replay_cand(ST, [C[ref]], th, cmd, tq, x, abe, vws, W["eng"], rec_I=True)
+    if q_lead:
+        tq = np.r_[tq[q_lead:], np.repeat(tq[-1:], q_lead)]
+    tag = "" if (tuple(ramp_steps) == (33, 16) and not q_lead) else "r%d_%d_q%d" % (ramp_steps[0], ramp_steps[1], q_lead)
+    T, Il = _replay_cand(ST, [C[ref]], th, cmd, tq, x, abe, vws, W["eng"], rec_I=True, ramp_steps=ramp_steps, tag=tag)
     n = len(th)
-    G = np.array([_glut(tuple(C[ref].rows))[v] for v in vws])
+    G = _glut(tuple(C[ref].rows))[vws]
     th1 = np.repeat(th, 10).astype(float)
     th1 = np.r_[np.full(5, th1[0]), th1[:-5]]                 # ticks 10k..10k+4 see frame k-1 (see _replay_cand)
     r26 = 8 * th1 + 8 * np.r_[th1[:1], th1[:-1]]
@@ -771,11 +1016,8 @@ def components(W, ref="C3B-P"):
     fA = int(NS.lerp_vec(*c["fadeA"], np.zeros(1, np.int64))[0])
     f = ((fA * fB) & 0xFFFF) >> 8
     e10 = np.repeat(W["eng"], 10)
-    ramp = np.zeros(n * 10)
-    rr = 0
-    for i in range(n * 10):
-        rr = min(0x8000, rr + 33) if e10[i] else max(0, rr - 16)
-        ramp[i] = rr
+    # the per-tick ramp (+33 capped at 0x8000 engaged, -16 floored at 0 otherwise), closed-form per frame
+    ramp = _ramp(W["eng"], ramp_steps)[1].ravel().astype(float)
     run = e10 & (ramp > 0)
     from scipy.signal import lfilter
     out = {}
@@ -789,10 +1031,13 @@ def components(W, ref="C3B-P"):
     return out
 
 
-def regress_struct(W, comp, bands=BANDS_CP, min_run_s=2.0):
+def regress_struct(W, comp, bands=BANDS_CP, min_run_s=2.0, anchor_s=None):
     """tap = a P_raw + b P_meas + c I + d D + c0 per band (hands-off, request 1, settled), on the tap's native
     instants (lag scanned), rail frames excluded.  Mapped onto the design's quantities with NO free constant:
-        c_meas/c_raw = -b/a ; c_P = a * c_P,pred(band) ; c_I/c_P = (c/a) * 2.79 ; c_D = d * 0.566."""
+        c_meas/c_raw = -b/a ; c_P = a * c_P,pred(band) ; c_I/c_P = (c/a) * 2.79 ; c_D = d * 0.566.
+    anchor_s (None = the pre-2026-10-02 form, one intercept): each hands-off run is cut into ~anchor_s windows and the
+    tap and every regressor are demeaned within each window (= one intercept per window), which re-anchors the
+    replayed I's slow offset window by window (M1 §2.1's per-window I0).  R2 is then the within-window R2."""
     K = image_constants()
     base = W["eng"] & W["handsoff"] & (W["tse"] >= THR["settle_s"])
     tt = W["T_t"]
@@ -819,8 +1064,15 @@ def regress_struct(W, comp, bands=BANDS_CP, min_run_s=2.0):
             X = np.c_[[comp[k][idx] for k in keys]].T
             Y = W["T"][sel] / 8.0
             Gm = G_of_v(W["vego"][idx])
-            Xi = np.c_[X, np.ones(len(Y))]
-            b, r2, se = _ols(Xi, Y)
+            if anchor_s:
+                # window id per sample: each run cut into round(len / (anchor_s * 50)) (>= 1) equal windows
+                gid = np.concatenate([_win_ids(r1 - r0, anchor_s * 50.0) + 1000000 * i for i, (r0, r1) in enumerate(rr)])
+                Xi = _demean_by(X, gid)
+                Yf = _demean_by(Y[:, None], gid)[:, 0]
+            else:
+                Xi = np.c_[X, np.ones(len(Y))]
+                Yf = Y
+            b, r2, se = _ols(Xi, Yf)
             a_, b_, c_, d_ = b[:4]
             pred = float(Gm.mean() * K["cP_per_G"])
             rows[nm] = dict(ok=True, n=len(Y), s=len(Y) / 50.0, a=a_, b=b_, c=c_, d=d_, r2=r2, se=se[:4].tolist(),
@@ -830,7 +1082,7 @@ def regress_struct(W, comp, bands=BANDS_CP, min_run_s=2.0):
                                       if abs(a_) > 1e-9 and abs(b_) > 1e-9 else np.nan),
                             G_mean=float(Gm.mean()), r2_replay=r2_of(Y, comp["T_replay"][idx]))
             allX.append(Xi)
-            ally.append(Y)
+            ally.append(Yf)
         if ally:
             b, r2, se = _ols(np.vstack(allX), np.concatenate(ally))
             pooled = dict(n=int(sum(len(y) for y in ally)), a=b[0], b=b[1], c=b[2], d=b[3], r2=r2,
@@ -851,6 +1103,23 @@ def regress_struct(W, comp, bands=BANDS_CP, min_run_s=2.0):
     return res
 
 
+def _win_ids(n, w):
+    """window index 0..k-1 for n consecutive samples cut into k = max(1, round(n / w)) equal windows."""
+    k = max(1, int(round(n / w)))
+    return np.minimum((np.arange(n) * k) // max(n, 1), k - 1)
+
+
+def _demean_by(X, gid):
+    """X minus its mean within each group (fixed effects); X (n, p), gid (n,) int."""
+    X = np.asarray(X, float)
+    u, inv = np.unique(gid, return_inverse=True)
+    cnt = np.bincount(inv, minlength=len(u)).astype(float)
+    M = np.zeros((len(u), X.shape[1]))
+    for j in range(X.shape[1]):
+        M[:, j] = np.bincount(inv, weights=X[:, j], minlength=len(u)) / cnt
+    return X - M[inv]
+
+
 def r2_of(y, yh):
     y = np.asarray(y, float)
     yh = np.asarray(yh, float)
@@ -859,6 +1128,14 @@ def r2_of(y, yh):
 
 
 def _replay_v295(th, cmd, tq, x, vws, eng):
+    """_replay_v295_source's output, word for word, from drive_read_fastlane.v295_lane, cached like _replay_cand."""
+    if _fast_lane_drift():
+        return _replay_v295_source(th, cmd, tq, x, vws, eng)
+    T = _cached(*_v295_job(th, cmd, tq, x, vws, np.asarray(eng, bool)))[0]
+    return T.astype(float)
+
+
+def _replay_v295_source(th, cmd, tq, x, vws, eng):
     """lane_mirror_v295.lane_tick (byte-exact V295) on the same wire inputs and the same slot-4 timing convention."""
     import lane_mirror_v295 as LM
     cal = LM.load_cal()
@@ -1155,9 +1432,34 @@ def ring_presence_f7(W, with_presence=True):
     g = dict(bar=W["bar"], wire=W["wire"], eng=W["eng"], vego=W["vego"], t=W["t"])
     out = {}
     if with_presence:
-        with contextlib.redirect_stdout(io.StringIO()):
-            out["presence"] = FR.presence(g, W["eng"] & W["handsoff"], label="hands-off")
-            out["presence_all"] = FR.presence(g, W["eng"], label="engaged")
+        # FR.presence's predicate and aggregates, EXACT, via drive_read_fastpresence (the prominence median taken on
+        # the 15-26 Hz rows locate reads; library-checked), cached per (bar, wire, masks) under SCR/presence
+        import drive_read_fastpresence as FP
+        m_ho, m_all = W["eng"] & W["handsoff"], W["eng"]
+        fdrift = FP.drift(FR)
+        key = FL.key_of(np.asarray(W["bar"], float), np.asarray(W["wire"], float), np.asarray(m_ho, bool),
+                        np.asarray(m_all, bool), FP.VERSION, float(FR.FS), float(FR.CPD))
+        pp = SCR / "presence" / ("%s.json" % key[:32])
+        got = None
+        if fdrift:                               # a mirrored library function changed: the library's own (slow) call
+            _RT["fallback"].append("fast presence OFF (library changed: %s)" % ",".join(fdrift))
+            with contextlib.redirect_stdout(io.StringIO()):
+                got = dict(presence=FR.presence(g, m_ho, label="hands-off"),
+                           presence_all=FR.presence(g, m_all, label="engaged"))
+        elif pp.exists():
+            try:
+                got = json.loads(pp.read_text())
+            except (OSError, ValueError):
+                got = None
+        if got is None:
+            Pr = FP.Presence(FR)
+            got = dict(presence=Pr(g, m_ho, label="hands-off"), presence_all=Pr(g, m_all, label="engaged"))
+            try:
+                pp.parent.mkdir(parents=True, exist_ok=True)
+                pp.write_text(json.dumps(got))
+            except OSError:
+                pass
+        out["presence"], out["presence_all"] = got["presence"], got["presence_all"]
     r = types.SimpleNamespace(eng=W["eng"], ang=W["theta"], wire=W["wire"], vego=W["vego"], bar=W["bar"],
                               T=W["T100"] * 8.0, idx=np.full(len(W["t"]), 255.0))
     with contextlib.redirect_stdout(io.StringIO()):
@@ -1383,8 +1685,9 @@ def _js(x):
 # THE WHOLE READ
 # =====================================================================================================================
 def read(W, refs=None, with_replay=True, with_presence=True):
-    """the decision-bearing regression is the STRUCTURAL one (regress_struct on components); the design's literal
-    form (regress) is computed beside it and printed.  Why: on the synthetic positive control the literal form
+    """the decision-bearing regression is the STRUCTURAL one (regress_struct on components, with the 2026-10-02 input
+    corrections and the per-window I anchor -- docstring §1), and R1 additionally needs the 2-5 Hz literal fit to agree;
+    the pre-correction structural form and the design's 0.3-3 Hz literal form are computed beside it and printed.  Why: on the synthetic positive control the literal form
     reads c_D 0.15-0.49 against the design's 0.566 (closed-loop collinearity of e and w plus the frozen-I
     misspecification) and fails its own pre-registered c_D clause on the correct build, while the structural form
     recovers a, b, c, d = 0.93-0.99 (angle_loop_controls.py, section A).  Both use the SAME pre-registered thresholds."""
@@ -1392,11 +1695,24 @@ def read(W, refs=None, with_replay=True, with_presence=True):
     S["exposure"] = exposure(W)
     S["attrib"] = attribution(W)
     S["a2"] = a2_r7(W)
-    comp = components(W)
-    Rs = regress_struct(W, comp)
+    # the pre-2026-10-02 structural form (direction-0 ramp, word on the 0x18F frame, one intercept): REPORTED ONLY
+    comp0 = components(W)
+    S["reg_struct_v0"] = regress_struct(W, comp0)
+    # the decision-bearing structural form: the arm that ran, the word's lead, the I re-anchored per window
+    si = struct_inputs(W)
+    try:
+        comp = components(W, ramp_steps=tuple(si["ramp"]), q_lead=si["q_lead"])
+    except NotImplementedError:
+        si.update(ramp=[33, 16], note="fast lane off: the direction-0 ramp was used")
+        _RT["fallback"].append("structural replay on the direction-0 ramp (fast lane off)")
+        comp = components(W, q_lead=si["q_lead"])
+    Rs = regress_struct(W, comp, anchor_s=si["anchor_s"])
     S["reg_struct"] = Rs
+    S["struct_inputs"] = si
     S["replay"] = replay(W) if with_replay else None
-    S["verdict"] = verdict(Rs, W, S["a2"], S["replay"])
+    S["replay_corrected"] = _score_replay(W, np.round(comp["T_replay"] * 8.0), len(W["t"]))
+    S["reg_r1b"] = regress(W, bp=(THR["r1b_lo"], THR["r1b_hi"]))
+    S["verdict"] = verdict(Rs, W, S["a2"], S["replay"], r1b=S["reg_r1b"])
     R = regress(W)
     S["reg"] = R
     S["verdict_literal"] = verdict(R, W, S["a2"])
@@ -1430,7 +1746,7 @@ def exposure(W):
 def attribution(W):
     m = W["meta"]
     eps = [f for f in m.get("carfw", []) if "eps" in str(f.get("ecu", "")).lower()]
-    fw = [f.get("fw", "").rstrip("  ") for f in eps]
+    fw = [f.get("fw", "").rstrip("\x00 ") for f in eps]
     params = m.get("params", {})
     keys = ("AccordEpsAngleLoop", "SteerDelay", "UseAutoSteerDelay", "AlwaysOnLateral", "SteerRatio",
             "AccordVariableSteerRatio", "ForceTorqueController", "SteerControlType", "GitCommit", "GitBranch")
@@ -1484,10 +1800,18 @@ def report(S):
                                                    for k, v in e.items() if isinstance(v, dict))))
     V = S["verdict"]
     P("")
-    P("1. VERDICT (structural regression, decision-bearing): %s" % V["verdict"])
+    P("1. VERDICT (structural regression, decision-bearing; R1 also needs the %g-%g Hz fit): %s" % (
+        THR["r1b_lo"], THR["r1b_hi"], V["verdict"]))
     _clauses(L, V)
     R = S["reg_struct"]
-    P("   tap = a P_raw + b P_meas + c I + d D (+c0); LIVE design: a = b = c = d = 1 (lag %d frames)" % R["lag_frames"])
+    si = S.get("struct_inputs") or {}
+    if si:
+        P("   structural inputs: C3-rev2-P lane replayed with the engage-ramp arm %d (+%d / -%d per tick, %s), the"
+          " torque word %d frame(s) ahead of 0x18F, I re-anchored per ~%.0f s window%s" % (
+              si["arm"], si["ramp"][0], si["ramp"][1], si["ramp_src"], si["q_lead"], si["anchor_s"],
+              ("; " + si["note"]) if si.get("note") else ""))
+    P("   tap = a P_raw + b P_meas + c I + d D (+ one intercept per window); LIVE design: a = b = c = d = 1 (lag %d"
+      " frames; R2 within-window)" % R["lag_frames"])
     P("   %-8s %6s %6s %6s %6s %6s %7s %7s %6s %7s %7s" % ("band", "s", "a", "b", "c", "d", "c_P", "pred", "c_I/P",
                                                         "R2", "R2rep"))
     for nm, v in R["rows"].items():
@@ -1499,15 +1823,38 @@ def report(S):
     Pp = R["pooled"]
     if Pp.get("n"):
         P("   pooled   a %.3f b %.3f c %.3f d %.3f  R2 %.4f" % (Pp["a"], Pp["b"], Pp["c"], Pp["d"], Pp["r2"]))
+    Rb = S.get("reg_r1b")
+    if Rb:
+        P("   R1 SECOND METHOD -- the literal regression at %g-%g Hz (D is identified there), lag %d frames:" % (
+            THR["r1b_lo"], THR["r1b_hi"], Rb["lag_frames"]))
+        P("     %-8s %6s %7s %7s %7s %6s" % ("band", "s", "c_D", "se", "ratio", "R2"))
+        for nm, v in Rb["rows"].items():
+            if v.get("ok"):
+                P("     %-8s %6.1f %7.3f %7.3f %7.3f %6.3f" % (nm, v["s"], v["cD"], v["se_cD"], v["ratio"], v["r2"]))
+        P("     band median: c_D %s  ratio %s   (the design: c_D 0.566, ratio -1)" % (f3(V.get("r1b_cD")),
+                                                                                    f3(V.get("r1b_ratio"))))
+    R0 = S.get("reg_struct_v0")
+    if R0 and R0["pooled"].get("n"):
+        P0 = R0["pooled"]
+        P("   SUPERSEDED structural form (pre-2026-10-02: direction-0 ramp, word on the 0x18F frame, one intercept),"
+          " for comparison only:")
+        P("     pooled ratio %s  c_I/c_P %s  c_D %s  (a %.3f b %.3f c %.3f d %.3f, lag %d); per band c_D %s" % (
+            f3(P0["ratio"]), f3(P0["cIcP"], "%.2f"), f3(P0["cD"]), P0["a"], P0["b"], P0["c"], P0["d"],
+            R0["lag_frames"], " ".join("%s %.3f" % (k, v["cD"]) for k, v in R0["rows"].items() if v.get("ok"))))
     VL = S["verdict_literal"]
     P("   the design's LITERAL regression (0.3-3 Hz, lag-matched), reported, not decision-bearing: %s" % VL["verdict"])
     P("     ratio %s  c_I/c_P %s  c_D %s  dip %s  hi %s" % (f3(VL["ratio"]), f3(VL["cIcP"], "%.2f"), f3(VL["cD"]),
                                                           f3(VL["dip"]), f3(VL["hi"])))
     if S.get("replay"):
-        P("   SECOND METHOD -- the lane replayed on the wire inputs (R2 of the tap vs each image's arithmetic):")
+        P("   REPLAY METHOD -- the lane replayed on the wire inputs (R2 of the tap vs each image's arithmetic):")
         for k, v in S["replay"].items():
             P("     %-12s R2 %s  gain %s  lag %s  n %s" % (k, f3(v.get("r2")), f3(v.get("gain")), v.get("lag"),
                                                         v.get("n")))
+        rc = S.get("replay_corrected") or {}
+        if rc.get("n"):
+            P("     %-12s R2 %s  gain %s  lag %s  n %s   <- C3B-P with the structural inputs (arm %s ramp, word %s"
+              " frame ahead)" % ("C3B-P*", f3(rc.get("r2")), f3(rc.get("gain")), rc.get("lag"), rc.get("n"),
+                                 si.get("arm"), si.get("q_lead")))
     A2 = S["a2"]
     P("   A2: %d request drops, %d with |tap| < 20 LSB within 0.15 s; R7 (pushing toward 0 > 0.2 s): %s" % (
         A2["n"], A2["n_pass"], A2["r7"]))
@@ -1588,12 +1935,20 @@ def main():
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     refs = {}
+    t_ref = _time.time()
     for r in [x for x in a.refs.split(",") if x]:
         pr("  reference %s ..." % r)
         refs[r] = ref_summary(r, with_presence=not a.no_presence)
+    t_load = _time.time()
     W = load_route(a.route)
+    t_read = _time.time()
     S = read(W, refs=refs, with_replay=not a.no_replay, with_presence=not a.no_presence)
+    t_end = _time.time()
     txt = report(S)
+    txt += ("\n\nRUNTIME %.1f s wall (imports %.1f, references %.1f, route load %.1f, read %.1f incl. lane replays %.1f;"
+            " replay cache %d hit / %d computed, under %s)" % (
+                t_end - _T0, t_ref - _T0, t_load - t_ref, t_read - t_load, t_end - t_read, _RT["replay_s"],
+                _RT["hits"], _RT["misses"], SCR / "replay")) + "".join("; " + x for x in _RT["fallback"])
     pr(txt)
     out = Path(a.json) if a.json else SCR / ("read_%s.json" % W["meta"]["tag"])
     out.parent.mkdir(parents=True, exist_ok=True)
