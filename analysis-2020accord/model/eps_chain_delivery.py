@@ -78,6 +78,7 @@ from eps_chain_control import (
     _self_check_v294,
     _self_check_v295,
     _self_check_v298,
+    _self_check_v299,
     a160_governor_rate_cap,
     computed_runtime_governor,
     engage_decider,
@@ -530,6 +531,11 @@ def _self_check():
     # reads the built image's cals + GB-P cave table + the relinked/op-skip/camera bytes, and reproduces the
     # fb filter r26 = 16*theta and the angle error E = 16*(theta_sp - theta). Skips silently if the image is absent.
     _self_check_v298()
+    # V299 rev 2 / the two-level A3 cap + raw-1229 hard freeze + asymmetric bound. Asserts only, prints nothing;
+    # reads the built V299 image's rev-2 cave immediates and the A16B string, and mirrors cave_rev2 on hand cases
+    # at the 1382/2880 cap boundaries, the sign(theta) != sign(E') bounding, and the 1229/1230 freeze edge. Skips
+    # silently if the V299 image is absent.
+    _self_check_v299()
 
 
 def _demo():

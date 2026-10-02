@@ -1300,6 +1300,136 @@ def _self_check_v298():
             assert (sp << 2) - r26 == 16 * (theta_sp - theta)  # = 16*(theta_sp - theta), the angle error
 
 
+def _self_check_v299():
+    """V299 rev 2 / the angle loop with the TWO-LEVEL A3 cap, the raw-1229 hard freeze, no opposing clause and
+    the asymmetric (|theta| dropped when sign(theta) != sign(E')) integral bound.  Called from _self_check();
+    prints NOTHING, so the hashed _self_check()+_demo() stdout is unchanged.
+
+    Reads the V299 cave immediates and the F181 string FROM the built image (skips silently if the image is not
+    on disk), asserts them against the design, then runs a scalar integer mirror of the rev-2 cave (cave_rev2 in
+    the spec, SECTION 1.3 of DESIGN-V299-SYNTHESIS-rev2) and asserts hand-computed cases at the cap regimes
+    (the 1382 / 2880 v-word boundaries), the sign(theta) != sign(E') bounding (bound == B = 1250), and the hard
+    freeze at raw 1229 / 1230.  The bytes == this mirror on random + targeted + op-skip + camera cases is proved
+    INDEPENDENTLY by the kit's V850E2 interpreter on the FLIGHT bytes (studies/angle_loop/v299_build, H1
+    0 mismatches, two negative controls fail) -- stated here, not re-asserted."""
+    import glob
+    import os
+    import struct
+    root = os.environ.get("ACCORD_FIRMWARE_ROOT", "C:/Users/dudei/Desktop/Projects/accord-firmwares")
+    hits = glob.glob(os.path.join(root, "analysis-2020accord", "_v299_*plain_image.bin"))
+    if not hits:
+        return                                                  # image not present: skip (prints nothing either way)
+    img = open(hits[0], "rb").read()
+    u16 = lambda a: struct.unpack_from("<H", img, a)[0]         # noqa: E731
+    s16 = lambda x: ((int(x) + 0x8000) & 0xFFFF) - 0x8000        # noqa: E731
+    s32 = lambda x: ((int(x) + (1 << 31)) & 0xFFFFFFFF) - (1 << 31)  # noqa: E731
+
+    # 0. the cave is unchanged from V298 except the rev-2 span; the shared cals + GB-P table are V298's.
+    assert (struct.unpack_from("<h", img, 0xC63E8)[0], u16(0xC63EA), u16(0xC62E6)) == (0, 8192, 65535)  # a/b/C
+    assert (u16(0xC63E6), u16(0xC61BA), u16(0xC61B6)) == (40, 8192, 10240)                              # Ki/ICL/DCL
+    assert all(u16(0xE5384 + 2 * i) == 112 for i in range(5))                        # Kp flat 112
+    assert all(u16(0xE5126 + 2 * i) == 48 for i in range(4))                         # Kd 48
+    assert struct.unpack_from("<I", img, 0xC4C1E)[0] == 0xC4CDA                       # the relinked table pointer
+    t, rows = 0xC4CDA, []
+    while True:
+        X, G, S = struct.unpack_from("<HHh", img, t)
+        rows.append((X, G, S))
+        if X == 0xFFFF:
+            break
+        t += 6
+    assert rows == [(714, 1178, 1041), (1843, 1465, -6264), (2304, 760, -2033), (2707, 560, 1570),
+                    (4032, 1068, 2118), (6198, 2188, 0), (65535, 2188, 0)]            # GB-P, V298's table
+
+    # 1. the rev-2 cave immediates, read LE from the built image (movea/addi/shl/sar hw2, and the op-skip window)
+    HARD = u16(0xC4C64)      # movea imm16 @0xC4C62 -- hard-freeze threshold (raw |gp-0x4f68| > HARD)
+    VNOCAP = u16(0xC4C80)    # movea @0xC4C7E -- v-word above which the gain is shl 6 and uncapped
+    VCAP = u16(0xC4C8E)      # movea @0xC4C8C -- v-word at/below which the low cap applies
+    CAPLO = u16(0xC4C96)     # movea @0xC4C94 -- low cap (v <= VCAP)
+    CAPHI = u16(0xC4C9C)     # movea @0xC4C9A -- high cap (VCAP < v <= VNOCAP)
+    B_LO = u16(0xC4C8A)      # addi imm16 @0xC4C88 -- B offset on the shl-4 path
+    B_HI = u16(0xC4CAA)      # addi imm16 @0xC4CA8 -- B offset on the shl-6 (no-cap) path
+    SKIP_ADD = u16(0xC4C0A)  # addi imm16 @0xC4C08 -- op-skip bias (13000)
+    SKIP_HI = u16(0xC4C0E)   # movea imm16 @0xC4C0C -- op-skip ceiling (26000)
+    assert (HARD, VNOCAP, VCAP, CAPLO, CAPHI) == (1229, 2880, 1382, 4096, 6144)
+    assert B_LO == 1250 and B_HI == 1250 and (SKIP_ADD, SKIP_HI) == (13000, 26000)
+    assert img[0xC4C86:0xC4C88] == bytes.fromhex("c44a")        # shl 0x4,r9   (low-speed gain)
+    assert img[0xC4CA6:0xC4CA8] == bytes.fromhex("c64a")        # shl 0x6,r9   (high-speed gain)
+    assert img[0xC4CB0:0xC4CB2] == bytes.fromhex("aa6a")        # sar 0xa,r13  (t = I8 >> 10)
+    assert img[0xC4C5A:0xC4C5E] == bytes.fromhex("e0c9e235")    # camera gate: cmp r0,r25 ; be CAM
+    assert img[0xC4C14:0xC4C18] == bytes.fromhex("b6075055")    # op-skip jr 0x2A164
+    assert img[0xC4CC4:0xC4CC8] == bytes.fromhex("b607ba50")    # FRZ jr 0x29D7E
+    assert img[0xC4CD4:0xC4CD8] == bytes.fromhex("b607aa50")    # CAM jr 0x29D7E
+    assert img[0x13100:0x1310E] == b"39990-TVA,A16B"            # the fork interlock string (V298 was A16A)
+
+    # 2. the scalar integer mirror of cave_rev2 (reading the asserted immediates, not hard-coded constants).
+    def bound(th, Ep, vv):                                     # 0xC4C6A..0xC4CA8: max(theta*sgn(E'),0), gain+B, cap
+        r9 = s16(th)
+        if Ep < 0:                                            # 0xC4C6E cmp r0,r16 ; bge ; subr r0,r9
+            r9 = -r9
+        if r9 < 0:                                            # 0xC4C74 cmp r0,r9 ; bge ; mov 0,r9
+            r9 = 0
+        if (vv & 0xFFFF) > VNOCAP:                            # 0xC4C7E movea VNOCAP ; bh 0xC4CA6
+            return s32((r9 << 6) + B_HI)                      # 0xC4CA6 shl 6 ; addi B  (no cap)
+        r9 = s32((r9 << 4) + B_LO)                            # 0xC4C86 shl 4 ; addi B
+        cap = CAPLO if (vv & 0xFFFF) <= VCAP else CAPHI       # 0xC4C8C movea VCAP ; bh ; movea CAPLO | CAPHI
+        if (r9 & 0xFFFFFFFF) > cap:                           # 0xC4C9E cmp r13,r9 ; cmovh r13,r9,r9
+            r9 = cap
+        return r9
+
+    def cave(sp, r26, ramp, r25, abe, v, a4f68, th, I8, G):
+        E = s32(s32(sp << 2) - r26)                           # 0xC4C00 shl 2,r16 ; sub r26,r16
+        op = s16(abe)                                         # 0xC4C04 ld.h -0x6abe
+        if ((op + SKIP_ADD) & 0xFFFFFFFF) > SKIP_HI:          # 0xC4C08..0xC4C12 op-skip
+            return "SKIP", None, None
+        Ep = s32(E * G) >> 8                                  # 0xC4C54 mul r8,r16 ; sar 8
+        if r25 == 0:                                          # 0xC4C5A camera gate
+            return "CAM", None, Ep
+        if (a4f68 & 0xFFFF) > HARD:                           # 0xC4C5E hard freeze
+            return "FRZ_HARD", None, Ep
+        r9 = bound(th, Ep, v)
+        t_ = s32(I8) >> 10                                    # 0xC4CAC ld.w -0x6dd0 ; sar 10
+        if Ep < 0:                                            # 0xC4CB2 cmp r0,r16 ; bge ; subr r0,r13
+            t_ = -t_
+        if t_ >= r9:                                          # 0xC4CB8 cmp r9,r13 ; bge FRZ
+            return "FRZ_WIND", r9, Ep
+        if (ramp & 0x8000) == 0:                              # 0xC4CBC andi 0x8000,r14 ; bne DONE
+            return "FRZ_RAMP", r9, Ep
+        return "DONE", r9, Ep                                 # 0xC4CD8 jmp [r6] -> Honda's I/P/D
+
+    G0 = rows[0][1]                                            # a positive table gain for deterministic E' sign
+    EP_POS = dict(sp=1000, r26=0)                             # E = 4000 > 0  -> Ep > 0
+    EP_NEG = dict(sp=0, r26=4000)                             # E = -4000 < 0 -> Ep < 0
+
+    # 2a. the TWO-LEVEL cap regimes, with a large same-sign angle so the cap binds (th 1000, Ep > 0 -> r9 = 1000)
+    assert bound(1000, +1, 1000) == 4096                      # v <= 1382 : low cap (= V298)
+    assert bound(1000, +1, VCAP) == 4096                      # v == 1382 : still low cap
+    assert bound(1000, +1, VCAP + 1) == 6144                  # v == 1383 : the new upper level
+    assert bound(1000, +1, VNOCAP) == 6144                    # v == 2880 : still capped at the upper level
+    assert bound(1000, +1, VNOCAP + 1) == (1000 << 6) + 1250  # v == 2881 : shl 6, NO cap (= V298 high path)
+    assert bound(50, +1, 1000) == (50 << 4) + 1250            # small angle below the cap: 16|th| + B, uncapped
+
+    # 2b. the asymmetric bound: when sign(theta) != sign(E') the |theta| term is dropped -> bound == B = 1250
+    assert bound(1000, -1, 1000) == 1250                      # th > 0, Ep < 0 : r9 -> 0 -> (0<<4)+B
+    assert bound(-1000, +1, 1000) == 1250                     # th < 0, Ep > 0 : symmetric
+    assert bound(1000, -1, VNOCAP + 1) == 1250                # the drop holds on the no-cap path too
+    assert bound(1000, +1, 1000) != bound(1000, -1, 1000)     # the clause actually moves the bound
+
+    # 2c. the hard freeze at raw 1229 / 1230 (fires iff raw |gp-0x4f68| > 1229)
+    base = dict(ramp=0x8000, r25=1, abe=0, v=1000, th=5, I8=0)
+    assert cave(a4f68=HARD, G=G0, **EP_POS, **base)[0] != "FRZ_HARD"     # 1229: not frozen (proceeds)
+    assert cave(a4f68=HARD + 1, G=G0, **EP_POS, **base)[0] == "FRZ_HARD"  # 1230: hard freeze
+    assert cave(a4f68=HARD + 1, G=G0, **EP_POS, **base)[2] == s32((4000 * G0)) >> 8  # E' still computed before the freeze
+
+    # 2d. the remaining exits (op-skip window, camera gate, winding past the bound, ramp-in freeze)
+    assert cave(abe=SKIP_HI - SKIP_ADD, G=G0, a4f68=0, **{k: v for k, v in base.items() if k != "abe"}, **EP_POS)[0] != "SKIP"
+    assert cave(abe=SKIP_HI - SKIP_ADD + 1, G=G0, a4f68=0, **{k: v for k, v in base.items() if k != "abe"}, **EP_POS)[0] == "SKIP"
+    assert cave(abe=-SKIP_ADD - 1, G=G0, a4f68=0, **{k: v for k, v in base.items() if k != "abe"}, **EP_POS)[0] == "SKIP"
+    assert cave(r25=0, G=G0, a4f68=0, **{k: v for k, v in base.items() if k != "r25"}, **EP_POS)[0] == "CAM"
+    assert cave(I8=(8 << 20), G=G0, a4f68=0, **{k: v for k, v in base.items() if k != "I8"}, **EP_POS)[0] == "FRZ_WIND"
+    assert cave(ramp=0, G=G0, a4f68=0, **{k: v for k, v in base.items() if k != "ramp"}, **EP_POS)[0] == "FRZ_RAMP"
+    assert cave(G=G0, a4f68=0, **base, **EP_POS)[0] == "DONE"            # armed, below bound, below hard, in window
+
+
 def steer_torque_arbitration(sensors: SensorInputs, st: EpsState, cal: Calibration) -> int:
     """
     Limit the LKAS setpoint, apply the Q15 gain/clamp, and run the two inlined SMs (driver assist is
