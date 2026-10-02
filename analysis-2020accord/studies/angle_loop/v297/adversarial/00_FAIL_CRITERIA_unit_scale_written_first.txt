@@ -1,0 +1,35 @@
+ADV UNIT-SCALE V297 (C3-rev2-F fallback) -- FAIL CRITERIA, written 2026-10-01 BEFORE any check was run.
+Author: adversary UNIT-SCALE, a SUBAGENT of the orchestrator. Any ONE of these => verdict DO_NOT_FLASH.
+
+U0  NO ARTIFACT: no V297 plain image exists on disk (or the builder reports none written). The unit chain
+    cannot be re-derived from bytes that do not exist; nothing has cleared any gate. DO_NOT_FLASH is the
+    default and is reachable by construction.
+U1  ORPHAN ARTIFACT: any V297-named image / .rwd / build script / cave hex exists although the builder
+    reported none -> unattributed, unaudited -> DO_NOT_FLASH.
+U2  SETPOINT FRAME: in the image, gp-0x69ae != clamp(-4*raw, +-0x4000) (0xE4 intake at 0x526CC..0x526F2),
+    or the cave forms E with a shift other than shl 2 -> E != 16*(theta_sp - theta) with theta_sp = -raw.
+U3  ANGLE FRAME: E1 does not read gp-0x6a00 (0.1 deg/count, same sign as openpilot), or the fb-lag
+    arithmetic with a=0,b=8192 does not give r26 = 8*theta[n] + 8*theta[n-1] (the b>>10 Q-format), or the
+    r26 clamp C=65535 truncates inside the operating range (|theta| < 409.6 deg).
+U4  LOOP SIGN: the D term does not oppose d(theta)/dt in the theta frame (E5a must negate Kd for the held
+    gp-0x6a56 operand), or P/I do not push theta toward theta_sp -> positive feedback.
+U5  RATE OPERAND FRAME: gp-0x6a56's unit (claimed 8 counts per wheel deg/s, carrying pol like theta) is not
+    reproducible from FUN_0003f776 bytes, so Kd 24 is mis-sized by >= 2x; or (if any fresh-op read is
+    added for the hardened F3 skip) the gp-0x6abe validity test uses the wrong frame/threshold (+-13000).
+U6  SPEED KEY: gp-0x6a5e is not 64 counts per km/h at the G-table knots, or the cave's knot compare is
+    signed where the key is unsigned (or vice versa) so a knot is mis-selected.
+U7  G-TABLE Q-FORMAT: Ep = (E*G)>>8 is not what the cave bytes do (e.g. >>7, or mulh truncating G>32767,
+    or the slope term's Q differs) -> delivered gain differs from the design's GB-F by >= 2x anywhere,
+    or min G < 512 at any speed in the BUILT table (the N2 refutation).
+U8  OVERFLOW / WIDTH: any intermediate (E*G, I8<<3, Ep*Kp, Kd*op, S*fade) overflows int32 or is stored
+    narrower than its range inside the operating envelope, or a sign-extension (sxh/zxh) is wrong.
+U9  RAIL: the delivered torque surface read from the image's clamps (SCL, 5346, OCL) differs from the
+    design's rail (2461) or the design page's stated peak is a clamp never reached (the V274 error).
+U10 PAGE vs IMAGE: any decision-bearing number on the design page (Kp 112, Kd 24, Ki 40, ICL 8192,
+    DCL 10240, GB-F knots, cave address, sha) disagrees with the bytes of the built image.
+U11 FLIGHT != SCORE: the flight cave differs from the H1-validated score cave in anything but a declared,
+    relinked op-skip (the add_opskip stale-link defect: absolute G-table pointer and relative jr after the
+    splice not moved).
+
+What a PASS would require: U0/U1 clear AND U2-U11 each re-derived from the BUILT V297 image bytes
+(Python LE reads + Ghidra decode of the image as imported), never from the build script or the page.

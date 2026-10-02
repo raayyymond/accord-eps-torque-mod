@@ -1,0 +1,26 @@
+ADV BUILD-AUDIT V296 -- FAIL CRITERIA, written 2026-10-01T23:47Z BEFORE any check was run.
+Any ONE of these => verdict DO_NOT_FLASH.
+
+F0  NO ARTIFACT: no V296 plain image + .rwd + build script exists on disk, or the builder reports
+    "none written". There is then nothing that has passed any gate; DO_NOT_FLASH is the only verdict
+    available, and it is reachable by construction (it is the default unless F1-F11 are all cleared).
+F1  ORPHAN ARTIFACT: any file under a V296 name (image, .rwd, build_v296_tva.py, cave hex) exists on
+    disk although the builder reported none written -> unattributed, unaudited -> DO_NOT_FLASH.
+F2  REBUILD MISMATCH: my own independent rebuild from the V295 plain image (no builder imports) does
+    not reproduce the builder's sha256.
+F3  UNEXPLAINED BYTE: any byte in [0x13000,0x100000) differing from V295 not accounted for by the
+    design's edit set + CRC trailers + version string.
+F4  CRC: any block CRC trailer wrong, or the bootloader walk not 100 % pass (all blocks).
+F5  RWD DECODE: decoding the .rwd does not reproduce the plain image bit-for-bit.
+F6  HEADER: version byte 0x1310D changed but the .rwd '/' header does not list BOTH part strings.
+F7  DUPLICATES: more than ONE flashable .rwd carries the V296 build number.
+F8  ORIGINALS: V295 / V294 plain image or .rwd hash differs from the recorded value (5c044d65... /
+    f42a06bd... for V295) -> the revert path is compromised.
+F9  STALE LINK: the flight cave in the image carries the add_opskip defect (G-table mov imm32 ->
+    0xC4CC4 instead of 0xC4CC6, freeze-return jr landing 0x29D80 instead of 0x29D7E), or flight bytes
+    differ from the H1-validated score cave in anything other than the declared op-skip.
+F10 ASSERTION CENSUS: the build's pass rests on assertions that are vacuous (entailed by base hash),
+    tautological (readback of what was just written) or stale, with no independent check of the
+    edit's effect.
+F11 MODEL CONTRACT: facade != 94 non-dunder symbols, or _self_check/_demo stdout hash !=
+    740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d.

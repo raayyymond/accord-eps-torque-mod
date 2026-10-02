@@ -1,0 +1,110 @@
+ADV V297 build-audit -- independent script, stdlib only
+
+=== A. ARTIFACT CENSUS ===
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v296
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v297
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v296\adversarial\ADV-build-audit-V296.md
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v296\adversarial\ADV-interlocks-gates-V296.md
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v296\adversarial\ADV-unit-scale-V296.md
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v296\adversarial\adv_arith_v296.py
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v296\adversarial\adv_census_v296.py
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v297\adversarial\ADV-arithmetic-V297.md
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v297\adversarial\ADV-interlocks-gates-V297.md
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v297\adversarial\adv_arith_v297_presence.out.txt
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v297\adversarial\adv_arith_v297_presence.py
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v297\adversarial\adv_ig_v297_inputs.py
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v297\adversarial\adv_v297_audit.py
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v297\adversarial\adv_v297_audit_out.txt
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v297\adversarial\adv_v297_model_contract.py
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\analysis-2020accord\studies\angle_loop\v297\adversarial\adv_v297_model_contract_out.txt
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\_scratch\angle_loop\adv-unit-scale-v296
+    name-hit: C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\_scratch\angle_loop\v298-build
+  [PASS] no V296/V297/A16A/REHEADERED artifact outside the adversaries' own study folders  -- 0 unexpected of 18 name hits
+    V294: 1 flashable .rwd
+    V295: 1 flashable .rwd
+    V296: 0 flashable .rwd
+    V297: 0 flashable .rwd
+    V298: 0 flashable .rwd
+    V299: 0 flashable .rwd
+  [PASS] V297 flashable .rwd count == 0 (nothing built)
+  [PASS] V296 flashable .rwd count == 0
+  [PASS] V295 flashable .rwd count == 1
+  [PASS] V294 flashable .rwd count == 1
+  [FAIL] no build number in rwd/ has >1 flashable .rwd  -- V31Px2
+  [PASS] build_v297_tva.py absent
+  [PASS] no _v296_/_v297_ plain image in accord-firmwares/analysis-2020accord  -- []
+
+=== B. ORIGINALS (revert path) ===
+  [PASS] V294: exactly one plain image  -- 1
+  [PASS] V294: plain image sha256 == recorded  -- 3143616d5b79bdb7
+  [PASS] V294: .rwd sha256 == recorded  -- a2b418f061160f66
+  [PASS] V294: git blob == disk for _v294_V294-V293BASE-ACCELTRIM.SUBR...  -- 82bead54eaa4
+  [PASS] V294: git blob == disk for 39990-TVA,A160-V294-V293BASE-ACCEL...  -- 96b07dcd8dc1
+  [PASS] V295: exactly one plain image  -- 1
+  [PASS] V295: plain image sha256 == recorded  -- 5c044d6576314052
+  [PASS] V295: .rwd sha256 == recorded  -- f42a06bda5a737eb
+  [PASS] V295: git blob == disk for _v295_V295-V294BASE-ACCELTRIM.B105...  -- 541ee97aa47e
+  [PASS] V295: git blob == disk for 39990-TVA,A160-V295-V294BASE-ACCEL...  -- 38ec32104f93
+
+=== C. V295 .rwd DECODE (own parser + own cipher solver) ===
+    header tags: ['#', '?', '/', '!', '&', '%']
+    '/' part strings: [b'39990-TVA-A110', b'39990-TVA,A160']
+  [PASS] V295: file checksum trailer == sum(body) & 0xFFFFFFFF  -- 0x04D4BBCA
+  [PASS] V295: cipher solved from '&' key BF109E  -- ((16, 191, 158), (0, 0, 4))
+    payload covers [0x13000, 0x100000)  chunks=7584  contiguous=True
+  [PASS] V295: payload is [0x13000,0x100000) contiguous
+  [PASS] V295: decoded .rwd == plain image over [0x13000,0x100000) bit-for-bit  -- 0 differing bytes
+    image version string @0x13100: b'39990-TVA,A16039'  byte 0x1310D = 0x30
+  [PASS] V295: image part string 39990-TVA,A160 listed in the '/' header  -- ['39990-TVA-A110', '39990-TVA,A160']
+
+=== D. V295 CRC CHAIN (own replay) ===
+  [PASS] V295: bootloader walk (bridge): 49/49 pass, expect 49/49
+  [PASS] V295: full linked chain (no bridge): 50/50 pass, expect 50/50
+
+=== C. V294 .rwd DECODE (own parser + own cipher solver) ===
+    header tags: ['#', '?', '/', '!', '&', '%']
+    '/' part strings: [b'39990-TVA-A110', b'39990-TVA,A160']
+  [PASS] V294: file checksum trailer == sum(body) & 0xFFFFFFFF  -- 0x04D4BB0B
+  [PASS] V294: cipher solved from '&' key BF109E  -- ((16, 191, 158), (0, 0, 4))
+    payload covers [0x13000, 0x100000)  chunks=7584  contiguous=True
+  [PASS] V294: payload is [0x13000,0x100000) contiguous
+  [PASS] V294: decoded .rwd == plain image over [0x13000,0x100000) bit-for-bit  -- 0 differing bytes
+    image version string @0x13100: b'39990-TVA,A16039'  byte 0x1310D = 0x30
+  [PASS] V294: image part string 39990-TVA,A160 listed in the '/' header  -- ['39990-TVA-A110', '39990-TVA,A160']
+
+=== D. V294 CRC CHAIN (own replay) ===
+  [PASS] V294: bootloader walk (bridge): 49/49 pass, expect 49/49
+  [PASS] V294: full linked chain (no bridge): 50/50 pass, expect 50/50
+
+=== NEGATIVE CONTROLS ===
+  [PASS] NEG-CTRL: 1-bit flip at 0xC4C00 -> bootloader walk reports a mismatch  -- 1 failing block(s): 0x13000
+  [PASS] NEG-CTRL: flip at 0xC5100 -> bootloader walk BLIND (0) but full chain catches it (1)  -- BL 0, full 1
+  [PASS] NEG-CTRL: V294 image != V295 image under the same comparison used in C
+
+=== E. V295 vs V294 full diff over [0x13000,0x100000) ===
+    diff run 0xC63EA..0xC63EB: V294 3702 -> V295 1a04
+    diff run 0xC6FFC..0xC6FFF: V294 651144f3 -> V295 d92b988d
+    cal 0xC63EA (u16 LE): V294 567 -> V295 1050
+  [PASS] V295-V294 differ ONLY at 0xC63EA (u16) + CRC trailer words  -- 6 bytes differ, 0 unexplained
+  [PASS] 0xC63EA: 567 -> 1050 (as recorded)
+
+=== F. C3-rev2 cave hex files (decoded-bytes sha256) ===
+    C3B-F flight    220 B  sha 9de9365fa952
+    C3B-F score     220 B  sha 9de9365fa952
+    C3B-P flight    240 B  sha 9a10cdc4ec75
+    C3B-P score     238 B  sha b5a1d0ce1e0e
+  [PASS] C3B-F flight == C3B-F score (no op-skip splice in the default fallback)
+  [PASS] C3B-F sha 9de9365fa952 (design page)
+  [PASS] C3B-P sha 9a10cdc4ec75 (design page)
+    C3B-P flight: +0x1C bytes 29 06 -> mov imm32 0x0C4CC4, r9 (cave base 0xC4C00 -> table offset +0xC4, cave len 0xF0)
+    C3B-P score: +0x1A bytes 29 06 -> mov imm32 0x0C4CC4, r9 (cave base 0xC4C00 -> table offset +0xC4, cave len 0xEE)
+    C3B-F: +0x08 bytes 29 06 -> mov imm32 0x0C4CB2, r9 (cave base 0xC4C00 -> table offset +0xB2, cave len 0xDC)
+    C3B-P flight vs score: first differing byte at +0x12
+    after a 2-byte insert at +0x12: 216/220 tail bytes equal; mismatch offsets (score) ['0x12', '0x13', '0x14', '0x15']
+    C3B-P flight: jr sites (cave @0xC4C00) +0x14->0x2A164, +0xC0->0x29D80
+    C3B-P score: jr sites (cave @0xC4C00) +0xBE->0x29D7E
+    C3B-F: jr sites (cave @0xC4C00) +0xAC->0x29D7E
+  [PASS] C3B-P: score[+0xC4:] == flight[+0xC6:] (table moved +2 in flight)  -- score tail ca029a0411043307 flight tail ca029a0411043307
+  [PASS] KNOWN DEFECT REPRODUCED: C3B-P flight mov imm32 -> 0xC4CC4 while its table sits at 0xC4CC6  -- ptr 0xC4CC4
+
+TALLY: 42 checks, 41 pass, 1 fail

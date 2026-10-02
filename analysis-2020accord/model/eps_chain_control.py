@@ -1238,6 +1238,68 @@ def _self_check_v293():
     assert (st.notch_s1, st.notch_s2, st.notch_e, st.notch_flag) == (5, 6, 7, 0x20)   # untouched
 
 
+def _self_check_v298():
+    """V298 / the first firmware ANGLE LOOP, PRIMARY + CAMERA INTERLOCK (C3-rev2-P + R1-P-cam gate).
+    Called from _self_check(); prints NOTHING, so the hashed _self_check()+_demo() stdout is unchanged.
+
+    Mirrors the BUILT V298 image BYTE-EXACTLY for the part the golden model covers: it reads every lane cal
+    and the GB-P cave table FROM the image (skips silently if the image is not on disk, e.g. a CI box), then
+    reproduces, with this model's own lkas_fb_lag, the angle-loop fb filter r26 = 16*theta and the error
+    E = 16*(theta_sp - theta).  The cave's integral POLICY (A3 angle-referenced bound, opposing-hand freeze
+    sgn 300, rate-invalid op-skip jr 0x2A164, camera gate gp-0x6803 == 2) is not part of the golden model's
+    lkas_rate_pid_tick; it is verified independently by the common time scorer's cave H1 on the FLIGHT bytes
+    (analysis-2020accord/studies/angle_loop, 0/40000) -- stated here, not re-asserted."""
+    import glob
+    import os
+    import struct
+    root = os.environ.get("ACCORD_FIRMWARE_ROOT", "C:/Users/dudei/Desktop/Projects/accord-firmwares")
+    hits = glob.glob(os.path.join(root, "analysis-2020accord", "_v298_*plain_image.bin"))
+    if not hits:
+        return                                                  # image not present: skip (prints nothing either way)
+    img = open(hits[0], "rb").read()
+    u16 = lambda a: struct.unpack_from("<H", img, a)[0]         # noqa: E731
+    i16 = lambda a: struct.unpack_from("<h", img, a)[0]         # noqa: E731
+
+    # 0. the lane cals, read LE from the BUILT image (the angle-loop cal set)
+    assert (i16(0xC63E8), u16(0xC63EA), u16(0xC62E6)) == (0, 8192, 65535)        # fb pole a / gain b / clamp C
+    assert (u16(0xC62E4), u16(0xC63E6)) == (0, 40)                               # I deadband / Ki
+    assert (u16(0xC61BA), u16(0xC61B6)) == (8192, 10240)                         # I clamp / D clamp
+    assert all(u16(0xE5384 + 2 * i) == 112 for i in range(5))                    # Kp flat 112 (deg-error gain)
+    assert all(u16(0xE5126 + 2 * i) == 48 for i in range(4))                     # Kd 48 (the fresh-rate D)
+    assert img[0x13100:0x1310E] == b"39990-TVA,A16A"                             # V1 the fork interlock string
+
+    # 1. the cave table reached through the relinked mov-imm32 pointer is GB-P (N2: G >= 559)
+    assert struct.unpack_from("<I", img, 0xC4C1E)[0] == 0xC4CDA                  # the RELINKED table pointer
+    rows, t = [], 0xC4CDA
+    while True:
+        X, G, S = struct.unpack_from("<HHh", img, t)
+        rows.append((X, G, S))
+        if X == 0xFFFF:
+            break
+        t += 6
+    assert rows == [(714, 1178, 1041), (1843, 1465, -6264), (2304, 760, -2033), (2707, 560, 1570),
+                    (4032, 1068, 2118), (6198, 2188, 0), (65535, 2188, 0)]
+
+    # 2. the relinked references and the two fail-safe bytes (the defect this build fixes)
+    assert img[0xC4C14:0xC4C18] == bytes.fromhex("b6075055")                     # op-skip  jr 0x2A164
+    assert img[0xC4CC4:0xC4CC8] == bytes.fromhex("b607ba50")                     # FRZ      jr 0x29D7E (not 0x29D80)
+    assert img[0xC4CD4:0xC4CD8] == bytes.fromhex("b607aa50")                     # CAM      jr 0x29D7E
+    assert img[0xC4C5A:0xC4C5E] == bytes.fromhex("e0c9e235")                     # camera gate: cmp r0,r25 ; be CAM
+
+    # 3. the GOLDEN MODEL's fb filter reproduces r26 = 16*theta and E = 16*(theta_sp - theta) on the built cals
+    cal = replace(Calibration(), fb_lag_a=i16(0xC63E8), fb_lag_b=u16(0xC63EA), fb_clamp=u16(0xC62E6),
+                  fb_op="sum", e_shift=2)
+    for theta in (-2000, -3, 0, 5, 1000):
+        st = EpsState()
+        lkas_fb_lag(theta, st, cal)                            # prime theta[n-1]
+        r26 = lkas_fb_lag(theta, st, cal)
+        assert r26 == 16 * theta                               # the two-sample sum at a=0,b=8192
+        for raw in (-1000, -1, 0, 1, 1000):
+            sp = _clamp(-(raw << 2), -0x4000, 0x4000)          # gp-0x69ae = e4_handler(raw) = clamp(-4*raw)
+            theta_sp = -raw                                    # E4 sets sp = gp-0x69ae; E = (sp<<2) - r26
+            assert (sp << 2) - r26 == 16 * (theta_sp - theta)  # = 16*(theta_sp - theta), the angle error
+
+
 def steer_torque_arbitration(sensors: SensorInputs, st: EpsState, cal: Calibration) -> int:
     """
     Limit the LKAS setpoint, apply the Q15 gain/clamp, and run the two inlined SMs (driver assist is

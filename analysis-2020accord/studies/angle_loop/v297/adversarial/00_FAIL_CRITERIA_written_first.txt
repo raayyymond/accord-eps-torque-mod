@@ -1,0 +1,30 @@
+ADV BUILD-AUDIT V297 (C3-rev2-F fallback) -- FAIL CRITERIA, written 2026-10-01T23:48Z
+BEFORE the rebuild / CRC / decode / census checks were run. (Filesystem listing and the
+V294/V295 hash read had already run, as the orientation step; they are re-run by script below.)
+Any ONE of these => verdict DO_NOT_FLASH. DO_NOT_FLASH is the default; PASS needs F0-F12 all cleared.
+
+F0  NO ARTIFACT: no V297 plain image + .rwd + build script on disk, or the builder reports "none
+    written". Nothing has passed any gate, so DO_NOT_FLASH is the only verdict available. It is
+    reachable by construction.
+F1  ORPHAN ARTIFACT: any file under a V297 name (image, .rwd, build_v297_tva.py, cave hex, REHEADERED
+    revert copy) on disk although the builder reported none written. Unattributed and unaudited.
+F2  REBUILD MISMATCH: my independent rebuild from the V295 plain image (no builder imports) does not
+    reproduce the builder's sha256.
+F3  UNEXPLAINED BYTE: any byte in [0x13000,0x100000) differing from V295 that the design's edit set +
+    CRC trailers + version string 0x1310D do not account for.
+F4  CRC: any block CRC trailer wrong, or the bootloader walk not 100 % pass.
+F5  RWD DECODE: decoding the .rwd does not reproduce the plain image bit-for-bit.
+F6  HEADER: 0x1310D changed (A160->A16A) but the .rwd '/' header does not list BOTH part strings.
+F7  DUPLICATES: more than ONE flashable .rwd carries the V297 build number.
+F8  ORIGINALS: a V295 / V294 plain image or .rwd hash differs from the recorded value
+    (V295 5c044d65.../f42a06bd...; V294 3143616d.../a2b418f0..., BUILD-LINEAGE-PART6), or a git blob
+    differs from disk. The revert path is then compromised.
+F9  STALE LINK: the flight cave carries the add_opskip relink defect (G-table mov imm32 off by the
+    splice, a freeze-return jr landing 2 B off), or the flight bytes differ from the H1-validated score
+    cave in anything other than a declared, relinked op-skip.
+F10 DESIGN UNDER-SPECIFIED: the build ships a cave (e.g. the "hardened" fallback, ruling 0.3.3) that
+    the design never pinned byte-exact, so there is no reference to rebuild against.
+F11 ASSERTION CENSUS: the build's pass rests on vacuous / tautological / stale assertions, with no
+    independent check of the edit's effect.
+F12 MODEL CONTRACT: facade != 94 non-dunder symbols, or _self_check/_demo stdout sha256 !=
+    740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d.

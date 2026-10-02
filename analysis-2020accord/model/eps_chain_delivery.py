@@ -77,6 +77,7 @@ from eps_chain_control import (
     _self_check_v293,
     _self_check_v294,
     _self_check_v295,
+    _self_check_v298,
     a160_governor_rate_cap,
     computed_runtime_governor,
     engage_decider,
@@ -525,6 +526,10 @@ def _self_check():
     # V295 / the trim gain b x1.852 (2026-09-30). Asserts only, prints nothing; reproduces build_v295_tva.py's
     # FF identity (both signs), the operand orbit, the unchanged 616 T cap, the int32 margin and the x1.852 gain.
     _self_check_v295()
+    # V298 / the first firmware ANGLE LOOP + camera interlock (C3-rev2-P + R1-P-cam). Asserts only, prints nothing;
+    # reads the built image's cals + GB-P cave table + the relinked/op-skip/camera bytes, and reproduces the
+    # fb filter r26 = 16*theta and the angle error E = 16*(theta_sp - theta). Skips silently if the image is absent.
+    _self_check_v298()
 
 
 def _demo():

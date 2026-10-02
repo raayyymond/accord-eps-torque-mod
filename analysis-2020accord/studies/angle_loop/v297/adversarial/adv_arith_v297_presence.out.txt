@@ -1,0 +1,9 @@
+A0/A1 V297-named artefacts outside this pass: ['C:\\Users\\dudei\\Desktop\\Projects\\accord-eps-torque-mod\\analysis-2020accord\\studies\\angle_loop\\v297']
+A0 plain image _v297*: NONE
+A0 .rwd *V297*:       NONE
+A0 build_v297_tva.py exists: False
+V295 image sha == recorded 5c044d65...: True
+V295 .rwd  sha == recorded f42a06bd...: True
+C3B-F: flight 220 B sha 9de9365fa952 | score 220 B sha 9de9365fa952 | identical=True | first diff offset=none | n_diff_bytes_in_common_prefix=0
+C3B-P: flight 240 B sha 9a10cdc4ec75 | score 238 B sha b5a1d0ce1e0e | identical=False | first diff offset=0x12 | n_diff_bytes_in_common_prefix=216
+PRESENCE-GATE RESULT: DO_NOT_FLASH

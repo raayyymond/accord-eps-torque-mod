@@ -1,0 +1,26 @@
+ADV UNIT-SCALE V296 -- FAIL CRITERIA, written 2026-10-01 BEFORE any unit/scale check was run.
+Author: adversary UNIT-SCALE (subagent). Any ONE of these => verdict DO_NOT_FLASH.
+Every check is to be re-derived from the BUILT V296 IMAGE bytes, never from the build script or design page.
+
+U0  NO IMAGE: no V296 plain image / .rwd exists on disk. A unit chain cannot be re-derived from an image
+    that does not exist; nothing has passed any gate -> DO_NOT_FLASH (reachable by construction; default).
+U1  ORPHAN: a V296-named image/.rwd/cave exists that the builder did not report -> unattributed -> DO_NOT_FLASH.
+U2  ANGLE FRAME: the image's writer of gp-0x6a00 does not give +10 counts per openpilot degree (0.1 deg/count)
+    with the sign the cave's error E assumes, or the 100 Hz hold is not what the cave samples.
+U3  RATE OPERAND: the fresh-rate operand's frame cannot be re-derived from bytes, or its ratio to d(angle)/dt in
+    the cave's units differs from the design's 1.155 by > 5 %, or has the wrong sign (D would become anti-damping).
+U4  SPEED KEY: the cave's speed operand is not 64 counts per km/h (re-derived from its RAM writer), or any G-table
+    knot in the image sits at a speed other than the one the design page states.
+U5  G-TABLE Q-FORMAT: the image's multiply/shift chain turns a table entry into a gain that differs from the
+    design page's stated gain by > 5 % at any knot, or the interpolation weights are mis-scaled.
+U6  WIDTH: any intermediate (product, accumulator, integral state) can exceed its storage or operand width, or
+    sign-extend wrongly, within the reachable input range (E, rate, speed, integral bound) -> wrap/sign flip.
+U7  Kd / Ki UNITS: the derivative or integral term's units in the image disagree with the page (per-tick vs per-s,
+    1 kHz vs 100 Hz), giving a gain wrong by >= 2x.
+U8  RAIL: the delivered lane counts reach the 2461 rail (or the V295 clamp chain) at a demand/error other than
+    the page states, or the cave output bypasses the existing clamps.
+U9  STALE LINK: the flight cave bytes differ from the H1/GATE-2-validated score cave in anything other than the
+    declared op-skip. In particular any absolute address or PC-relative branch that crosses the splice point
+    is off by 2. A unit chain validated on the score bytes does not transfer to unrelinked flight bytes.
+U10 PAGE vs IMAGE: any decision-bearing number on the design page (Ki 40, cal bytes, G-table values, knots,
+    1.155, 64 counts/km/h) is not what the image carries.

@@ -1,0 +1,5 @@
+non-dunder symbols: 94  (expect 94)
+_self_check+_demo stdout: 2512 bytes  sha256 740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d
+expect                     2512 bytes  sha256 740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d
+V296..V299 mentions in model modules: none
+CONTRACT PASS
