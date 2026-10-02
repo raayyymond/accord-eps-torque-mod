@@ -517,3 +517,48 @@ fly — that decision is his.**_
 **Session reports:** `studies/v295/flight/` (attribution, bands) · `census/V294-LKAS-PID-DESIGN-SPACE.md` · `plant/V294-PLANT-IDENT-r71b.md` · `metric/V294-ACCEL-TRACKING-METRIC.md` · `design/{harness,trim-ratio,p-gain,dynamics,robust-joint}/` · `build/V295-BUILD.md` · `adversarial/ADV-{A,B,C,D}-*.md` · page https://claude.ai/artifact/RABj94ezP9gqNqHq8JaxXu · handoff `docs/handoffs/2026-09/HANDOFF-2026-09-30-v294-flew-v295-trim-gain-built.md`.
 
 **Fork config for the second V295 drive (2026-09-30, later the same session):** `toggle-config_V295_r2alt_KiHigh0.8_GATE-FAIL-G4-G8.json` = the r1 config + `AccordTorqueKiHigh` 0.8 (the fork's existing Ki schedule 0.3 → 0.8 over 8–18 m/s; the only differing key; revert = r1). The harness found no existing-param config that passes every gate (anything touching the loop below 8 m/s raises low-speed wander/stick-slip; one LAF cannot fit the speed-shaped deficit); this is the one speed-selective knob. Predicted 15–22 m/s tracking 0.83 → 0.92–0.93; read = Ki(v) by speed bin; details in `studies/v295/fork-config/V295-FORK-CONFIG-r2.md`.
+
+### V296 — the angle-loop PRIMARY (C3-rev2-P) WITHOUT the camera interlock  (2026-10-01, **DESIGNED, NOT BUILT**)
+
+**Pointer entry; no image exists.** The design is `docs/specs/design/DESIGN-ANGLE-LOOP-C3-rev2-2026-10-01.md` (merged primary C3B-P). Its builder was halted by an automated safety classifier. **It was superseded by the operator's 2026-10-01 ruling** that the flight candidate is V298 = this primary + the gp-0x6803 == 2 camera interlock: the stock-camera-0xE4-on-relay-close hazard must be structurally impossible, not avoided by procedure. `studies/angle_loop/v296/adversarial/` holds four **DO_NOT_FLASH** reports on criterion F0/A0 ("no V296 artifact exists"). That is a verdict on an absent build, not on the design. Its drive card `docs/scoring/DRIVE-CARD-V296-angle-loop-2026-10-01.md` carries over to V298 as the ≥ 8 m/s card. **The number V296 is spent; do not reuse it.**
+
+### V297 — the angle-loop FALLBACK (C3-rev2-F, held-rate D, pol-free, 267 B)  (2026-10-01, **DESIGNED, NOT BUILT**)
+
+**Pointer entry; no image exists.** This is the held-rate-D fallback of C3-rev2. Its D operand is the 100 Hz held rate `gp-0x6a56` via E5 with Kd 24, rather than the primary's fresh `gp-0x6abe` with Kd 48, so it does not depend on pol = −1. Design: `DESIGN-ANGLE-LOOP-C3-rev2-2026-10-01.md` (the C3-rev2-F column of its comparison table) + the `-A`/`-B` revisions. Its builder was halted by the classifier. `studies/angle_loop/v297/adversarial/` holds four **DO_NOT_FLASH** reports on "no V297 artifact exists". It stays the fallback if V298's fresh-D sign (pol) is ever falsified on the car. **The number V297 is spent; do not reuse it.**
+
+### V298 — THE FIRST FIRMWARE ANGLE LOOP + the gp-0x6803 == 2 CAMERA INTERLOCK (C3-rev2-P + R1-P-cam, flight cave relinked)  (2026-10-01, **BUILT, NOT FLOWN. Four adversarial lenses on the BUILT image all PASS_WITH_DEFECTS, no flash-blocker. The decision to flash is the operator's. V295 stays on the car until then.**)
+
+**Class:** this is new. It is the first loop this car has ever closed on steering ANGLE (gp-0x6a00, 0.1°/count) rather than on rate or acceleration. It is the goal set on 2026-09-30 (STATE 🎯 box): E = 16·(θ_sp − θ), a speed-gain cave E′ = (E·G(v))>>8 on P and I, Ki 40 with an A3 θ-referenced integral bound + opposing-hand freeze (sgn 300), fresh-rate D guarded by Honda's ±13000 form with an op-skip to Honda's own epilogue on an invalid rate, and the A2/B2 guards that kill the 0x7FFF timeout pulse that rails P for 2 s on V293–V295. The camera gate (`cmp r0,r25 ; be CAM`, r25 = (gp-0x6803 == 2), set by Honda at 0x29A82) makes the lane inert on any frame whose 0xE4 byte-2 bits 3:2 ≠ 2. **Design lineage:** C0 → C1 → C2 → C3 → C3-rev2, each refuted (`studies/angle_loop/reports/REFUTE-*`); the narrative is in the handoff.
+
+**base** V295 (`5c044d65…40452ed`, flown 2026-09-30) · **image** sha256 `177abf043550851789e1063b6625a0e17115a1beb50851571f1b38780bf32066` (`_v298_V298-ANGLELOOP.C3REV2P.CAM-…A16A_plain_image.bin`) · **rwd** sha256 `1a69b92760b8a9538b504b020076e5b025fed7af03b34800ecd05dd687ce960e` (`39990-TVA,A160-V298-ANGLELOOP.C3REV2P.CAM-KI40.GBP.A3.OPH300.OPSKIP.KP112.KD48-FB.SUM.SP69AE.A16A-0x13000-0x100000.rwd`) · **325 B vs V295** (2471 vs stock) · one 260 B cave at 0xC4C00 (218 code + 42 table), **0 RAM** · F181 → `39990-TVA,A16A` · script `analysis-2020accord/builds/v108_plus/build_v298_tva.py`.
+
+**The cell list is the build script's docstring, section 0** ("EVERY BYTE V298 CHANGES vs V295"): 8 in-place code sites (E1, E2, B2, A2, E4, HOOK, OPH, V1), the cave, 7 calibration cells, the Kp/Kd record Y values and the fadeB2 neutralisation. Section 0b covers which direction-2 cal arms become live and which are kept or re-written. Section 0c covers the version string and the revert path. **Read it there; it is not repeated here.** Grep the addresses in `BUILD-LINEAGE-PART1-LEVER-INDEX.md` before reusing any of them.
+
+**The defect this build fixes (EVIDENCE, two refuters):** C3-rev2's flight cave hex had been byte-spliced (+2-byte op-skip) without relinking. The G-table pointer (0xC4CC4, should be 0xC4CC6) and the freeze-return jr (0x29D80, should be 0x29D7E) were stale, so the scored bytes were never the shipped bytes. V298 injects the op-skip at listing level and assembles with a two-pass linker. The orchestrator re-decoded all four references from the image: table ptr 0xC4CDA, op-skip → 0x2A164, freeze/camera returns → 0x29D7E.
+
+**Verification (as `docs/STATE.md` records it):** CRC chain 50/50 + bootloader 49/49 · H1 0/40000 **on the flight bytes**, with two negative controls · golden contract 94 symbols / hash `740f4bcd…` unchanged · `_self_check_v298` asserts against the image.
+
+**Adversarial pass on the BUILT image (2026-10-01, four lenses, FAIL criteria written first; `studies/angle_loop/v298/adversarial/`):**
+- **Arithmetic: PASS_WITH_DEFECTS.** The bounded sar-5 integrator floor bias is ≤ ~+204 output counts worst case, covered by R6 and the c0 term. The relink is confirmed from the image.
+- **Unit/scale: PASS_WITH_DEFECTS.** Every unit on the page agrees with the image. The fresh-D sign rides on pol = −1, which is car-specific.
+- **Build audit: PASS_WITH_DEFECTS.** 27 of 48 "substantive" assertions are base-readbacks. This is a census defect and collateral only.
+- **Interlocks/GATE 1/GATE 2: PASS_WITH_DEFECTS.** Flash-blockers F1–F10 are clean. 0 RAM. The θ=0 box has 0 fails (worst PM 38.5°). Operating points pass 45120/45120 non-ms_free (worst 32.8°). The ms_free J≈2 family is declared: PM down to 4.6°, ρ < 1, stop band R3* 0.25–0.9 Hz.
+
+**Revert files:** V295 and V294 rwd re-headered to also list A16A (`39990-TVA,A160-V29{5,4}-REHEADERED-FOR-REVERT-FROM-V298-A16A-0x13000-0x100000.rwd`, sha fb6969fc… / e64f035d…). The original V295/V294 rwd files are untouched. Fork revert: `studies/angle_loop/fork-config/toggle-config_V298_angle_loop_REVERT_to_V295_r2.json`. **The switch and the image must agree**, otherwise the fork raises a permanent fault and openpilot will not engage (safe; README there).
+
+**Prerequisites (open, in STATE's order):**
+- The fork interface on `raayyymond-StarPilot/StarPilot` `Dom` (`51c199f28`, `38cff0247`, `2712e1336`; local, **unpushed**; the reviewers returned PASS_WITH_DEFECTS). It sends byte-2 bits 3:2 = 2 on every frame including the request-drop, accepts A16A, sends raw = −10·θ_des, sends the measured angle while inactive, has **no angle integral**, and has `UseAutoSteerDelay` on.
+- Toggle config rev 2 (`SteerRatio` 16.84; check the device first).
+- Pull → Rebuild Params → flash (operator names file and bus) → reboot → restore config → reboot.
+- The car's own LKAS OFF on drive 1. The camera premise is EVIDENCE regardless (`docs/traces/TRACE-2026-10-01-camera-0xE4-byte2-census.md`: 95 routes, 6.9 M frames, field = 2 on none).
+- pol = −1 is checked by the controlled-setting drive's INVERTED read instead of a UDS read (operator's choice).
+- Cards: `docs/scoring/DRIVE-CARD-V298-controlled-setting-2026-10-01.md` (drive 1) then `DRIVE-CARD-V296-angle-loop-2026-10-01.md` (≥ 8 m/s). Reader: `rlog-tools/studies/angle_loop/angle_loop_drive_read.py`.
+
+**Declared misses (on the record before the drive):**
+- Low-speed stick-slip below 8 m/s, from a dead zone ≈ Fc/Kp ≈ 1.5° (every candidate has it; V282 is not simulated as a baseline, so "≤ V282" is unscored).
+- The ms_free J≈2 ring (R3*).
+- Outward-hand lurch up to 14° on b_lo × J_hi.
+- Small-signal tracking in the 11–12.5 m/s dip.
+- 13 Hz anti-damping 1.33× V295 at some hold ages (R4 watch).
+
+**Close-out gaps:** **no artifact page** (the page write was classifier-stopped and not re-attempted). Handoff `docs/handoffs/2026-10/HANDOFF-2026-10-01-angle-loop-v298-built.md`.
