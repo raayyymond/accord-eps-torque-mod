@@ -1,0 +1,88 @@
+C1 PASS: V298 flight cave re-derived byte for byte (260 B, sha ef1861e10421), score cave (258 B)
+D1c flight cave: 252 B = 210 code + 42 table (V298 260 = 218 + 42); sha 80dd2052edc0; score cave 250 B sha a35e4fa5b642; free region ends 0xC4FF0: fits
+
+D1c FLIGHT LISTING (address, label, bytes, instruction, comment)
+  0xc4c00 C      c2 82          ('shl_i', 2, 16)                       displaced 0x29D76: 4 sp
+  0xc4c02        ba 81          ('sub', 26, 16)                        displaced 0x29D78: E = 4 sp - r26 = 16 (th_sp - th)
+  0xc4c04        24 d7 42 95    ('ld_h', -27326, 4, 26)                op = gp-0x6abe (fresh 1 kHz motor-rate EMA)        [D OPERAND]
+  0xc4c08        1a 46 c8 32    ('addi', 13000, 26, 8)                 Honda's validity form (FUN_0003f776): op + 13000
+  0xc4c0c        20 6e 90 65    ('movea', 26000, 0, 13)                
+  0xc4c10        ed 41          ('cmp', 13, 8)                         
+  0xc4c12        b3 05          ('bnh', 'CONT')                        rate valid: continue  [op-skip]
+  0xc4c14        b6 07 50 55    ('jr', 172388)                         rate INVALID: jr 0x2A164 (Honda A2/B2 epilogue)  [F3]
+  0xc4c18 CONT   e4 47 a3 95    ('ld_hu', -27230, 4, 8)                v = gp-0x6a5e (64 counts per km/h)            [G(v)]
+  0xc4c1c        29 06 d2 4c 0c 00 ('mov_i32', 'TBL', 9)                  r9 -> table                                     [G(v)]
+  0xc4c22        e9 6f 01 00    ('ld_hu', 0, 9, 13)                    X0
+  0xc4c26        ed 41          ('cmp', 13, 8)                         
+  0xc4c28        cb 05          ('bh', 'L1')                           v > X0 (unsigned): walk
+  0xc4c2a        e9 47 03 00    ('ld_hu', 2, 9, 8)                     G = G0 (clamp low)
+  0xc4c2e        b5 15          ('br', 'APPLY')                        
+  0xc4c30 L1     e9 6f 07 00    ('ld_hu', 6, 9, 13)                    X(i+1)
+  0xc4c34        ed 41          ('cmp', 13, 8)                         
+  0xc4c36        c3 05          ('bnh', 'SEG')                         v <= X(i+1): segment i
+  0xc4c38        09 4e 06 00    ('addi', 6, 9, 9)                      next row (the 0xFFFF row ends the walk)
+  0xc4c3c        a5 fd          ('br', 'L1')                           
+  0xc4c3e SEG    e9 6f 01 00    ('ld_hu', 0, 9, 13)                    X(i)
+  0xc4c42        ad 41          ('sub', 13, 8)                         dv = v - X(i)
+  0xc4c44        29 6f 04 00    ('ld_h', 4, 9, 13)                     S(i), Q12, signed
+  0xc4c48        ed 47 20 02    ('mul', 13, 8, 0)                      dv * S(i) (low word)
+  0xc4c4c        ac 42          ('sar_i', 12, 8)                       >> 12
+  0xc4c4e        e9 6f 03 00    ('ld_hu', 2, 9, 13)                    G(i)
+  0xc4c52        cd 41          ('add', 13, 8)                         G = G(i) + ((v - X(i)) * S(i) >> 12)
+  0xc4c54 APPLY  e8 87 20 02    ('mul', 8, 16, 0)                      E * G (low word)                                 [THE SPEED GAIN]
+  0xc4c58        a8 82          ('sar_i', 8, 16)                       E' = (E G) >> 8
+  0xc4c5a        e0 c9          ('cmp', 0, 25)                         r25 = (gp-0x6803 == 2), set at 0x29A82 (READ only)   [CAMERA GATE]
+  0xc4c5c        a2 35          ('be', 'CAM')                          not the angle fork's frame (the camera sends field 0): go inert
+  0xc4c5e        e4 47 99 b0    ('ld_hu', -20328, 4, 8)                |driver torque| gp-0x4f68                        [HAND]
+  0xc4c62        20 6e cd 04    ('movea', 1229, 0, 13)                 THR = 1229                [1 hard hand]
+  0xc4c66        ed 41          ('cmp', 13, 8)                         
+  0xc4c68        9b 2d          ('bh', 'FRZ')                          |tq| > THR (unsigned): freeze
+  0xc4c6a        24 4f 00 96    ('ld_h', -27136, 4, 9)                 th = gp-0x6a00 (the held angle the P sees)    [3 ANGLE-REFERENCED BOUND]
+  0xc4c6e        09 68          ('mov', 9, 13)                         r13 = theta                                   [D1c ASYMMETRIC BOUND]
+  0xc4c70        30 69          ('xor', 16, 13)                        theta ^ E'
+  0xc4c72        ae 05          ('bge', 'AS')                          same sign: the I winds AWAY from centre -> the theta-referenced bound
+  0xc4c74        00 4a          ('mov_i5', 0, 9)                       toward centre: |theta| term := 0 -> bound = B (1250 S)
+  0xc4c76 AS     e0 49          ('cmp', 0, 9)                          
+  0xc4c78        ae 05          ('bge', 'A1')                          
+  0xc4c7a        80 49          ('subr', 0, 9)                         |th|
+  0xc4c7c A1     e4 47 a3 95    ('ld_hu', -27230, 4, 8)                v = gp-0x6a5e (64 counts per km/h)             [two-level slope]
+  0xc4c80        20 6e 40 0b    ('movea', 2880, 0, 13)                 VTH = 2880 (12.50 m/s)
+  0xc4c84        ed 41          ('cmp', 13, 8)                         
+  0xc4c86        bb 05          ('bh', 'AH')                           v > VTH (unsigned): high slope
+  0xc4c88        c4 4a          ('shl_i', 4, 9)                        |th| << 4  (k_hat 26 T/deg)
+  0xc4c8a        a5 05          ('br', 'AB')                           
+  0xc4c8c AH     c6 4a          ('shl_i', 6, 9)                        |th| << 6  (k_hat 102 T/deg)
+  0xc4c8e AB     09 4e e2 04    ('addi', 1250, 9, 9)                   + B = 1250 S (~200 T): the bound
+  0xc4c92        20 6e 66 05    ('movea', 1382, 0, 13)                 VCAP = 1382 (6.00 m/s)  [low-speed cap]
+  0xc4c96        ed 41          ('cmp', 13, 8)                         r8 = v (still)
+  0xc4c98        eb 05          ('bh', 'NC')                           v > VCAP: no cap
+  0xc4c9a        20 6e 00 10    ('movea', 4096, 0, 13)                 CAP = 4096 S (~655 T)
+  0xc4c9e        ed 49          ('cmp', 13, 9)                         
+  0xc4ca0        ed 4f 36 4b    ('cmovh', 13, 9, 9)                    bound = min(bound, CAP)
+  0xc4ca4 NC     24 6f 31 92    ('ld_w', -28112, 4, 13)                I8 = gp-0x6dd0 (Honda's I state, 8 x I; READ only)
+  0xc4ca8        aa 6a          ('sar_i', 10, 13)                      I >> 7 = the I's share of S
+  0xc4caa        e0 81          ('cmp', 0, 16)                         
+  0xc4cac        ae 05          ('bge', 'A2')                          
+  0xc4cae        80 69          ('subr', 0, 13)                        t = sgn(E') (I >> 7): + when the I would wind further
+  0xc4cb0 A2     e9 69          ('cmp', 9, 13)                         t - bound
+  0xc4cb2        ce 05          ('bge', 'FRZ')                         winding past the bound: freeze
+  0xc4cb4        ce 6e 00 80    ('andi', 32768, 14, 13)                r14 = the ramp gp-0x69b0                          [4 RAMP-IN]
+  0xc4cb8        ca 0d          ('bne', 'DONE')                        ramp full: integrate
+  0xc4cba FRZ    00 32          ('mov_i5', 0, 6)                       r6 := e5 := 0 -> Honda's exc = 0 -> I unchanged
+  0xc4cbc        b6 07 c2 50    ('jr', 171390)                         return past 0x29D7A/0x29D7C
+  0xc4cc0 CAM    00 82          ('mov_i5', 0, 16)                      E' := 0 -> P = 0
+  0xc4cc2        00 d2          ('mov_i5', 0, 26)                      op := 0 -> D = 0
+  0xc4cc4        24 37 31 92    ('ld_w', -28112, 4, 6)                 I8
+  0xc4cc8        a6 32          ('sar_i', 6, 6)                        
+  0xc4cca        80 31          ('subr', 0, 6)                         e5 = -(I8 >> 6): I x 0.125 per tick (gone in ~3 ms)
+  0xc4ccc        b6 07 b2 50    ('jr', 171390)                         
+  0xc4cd0 DONE   66 00          ('jmp', 6)                             return to 0x29D7A
+  0xc4cd2 TBL    GB-P table, 7 rows x (X u16, G u16, S s16)
+
+raw byte diff vs V298 flight cave: 154 of 260 positions differ (relink shifts the tail)
+
+C2 H1 control: V298 score cave bytes vs D1Lane(V298 switches): 0/3000 mismatches (code 258 B)
+H1 D1c: D1c score cave bytes vs D1Lane(D1c switches): 0/8000 mismatches (code 250 B)
+H1 NEGATIVE control: D1c bytes vs a mirror WITHOUT the asym bound: 29/1500 mismatches (must be > 0)
+H1 NEGATIVE control: D1c bytes vs a mirror with hard 512: 159/1500 mismatches (must be > 0)
+wall 11.7 s

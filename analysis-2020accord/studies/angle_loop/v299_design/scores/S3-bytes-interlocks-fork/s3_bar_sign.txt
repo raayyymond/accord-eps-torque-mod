@@ -1,0 +1,13 @@
+steady hands-off holds with |tap|>=3 LSB: 11628 frames
+  sign(tap) == sign(angle) [+ = left]: 0.0015
+  sign(current bar) == sign(angle): 0.0563  (n 11379)
+  D1  +8*s10  : sign agrees with the current bar on 0.9422
+  D2  -8*s10  : sign agrees with the current bar on 0.0578
+  D5  -T      : sign agrees with the current bar on 0.0578
+  fork field co_tq: nonzero on 0 of 121383 rows
+  fork field ang_output: nonzero on 0 of 121443 rows
+  fork field cs_tqeps: nonzero on 0 of 121383 rows
+  fork field cc_tq: nonzero on 0 of 121443 rows
+  liveDelay ld_lat unique: [0.34999999]
+
+wall 0.1 s

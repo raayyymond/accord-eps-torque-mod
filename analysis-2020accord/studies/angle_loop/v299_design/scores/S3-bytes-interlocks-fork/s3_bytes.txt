@@ -1,0 +1,60 @@
+V298 image _v298_V298-ANGLELOOP.C3REV2P.CAM-KI40.GBP.A3.OPH300.OPSKIP.KP112.KD48-FB.SUM.SP69AE.A16A_plain_image.bin
+  sha256 177abf043550851789e1063b6625a0e17115a1beb50851571f1b38780bf32066  (OK 177abf04)
+  control: V298 trailers reproduce with zlib.crc32: {'0x13000': True, '0xc6000': True, '0xe5000': True}
+
+(1) cited cells vs the V298 image
+  0xC4C62  206e0002       OK   [D1/D2/D3/D5] movea 512,r0,r13 (hard freeze)
+  0xC4C6A  206e2c01       OK   [D1/D2/D3/D5] movea 300,r0,r13 (opposing freeze)
+  0xC4C5E  e44799b0       OK   [D1] ld.hu -0x4f68[gp],r8
+  0xC4C1C  2906da4c0c00   OK   [D1] mov 0xC4CDA,r9 (table ptr)
+  0xC4CDA  ca029a041104   OK   [D1/D3] GB-P row0 X 714 G 1178 S 1041
+  0xC4CE4  88e7           OK   [D4] S1 -6264
+  0xC4CE8  f802           OK   [D4] G2 760
+  0xC4CEA  0ff8           OK   [D4] S2 -2033
+  0xC4CEE  3002           OK   [D4] G3 560
+  0xC4CF0  2206           OK   [D4] S3 1570
+  0xC4CF4  2c04           OK   [D4] G4 1068
+  0xC4CF6  4608           OK   [D4] S4 2118
+  0xC4CA2  206e0010       OK   [D2 graft G-b] movea 4096 (A3 low-speed cap)
+  0x29D72  6487ce95       OK   [D4 N0] st.h r16,-0x6a32[gp]
+  0xC4B92  2437b494       OK   [D4 T7] ld.h -0x6b4c[gp],r6 (0x14A b4.7 rung)
+  0x1310D  41             OK   [D3/D4/D5] F181 version byte 'A'
+  0xC4FFC  f3d87c6b       OK   [D4/D5] main-block CRC trailer
+  0xC61BC  003c           OK   [D3b] PCL 15360
+  0xC61BE  003c           OK   [D3b] SCL 15360
+  0xC61B4  000c           OK   [D3] OCL 3072
+  0xC6CD0  e214           OK   [D3] fwd gain 5346
+  version string context 0x13100: b'39990-TVA,A16A3999'
+  pattern 206e2c01: ['0xc4c6a']
+  pattern 206e0002: ['0x6271e', '0xc4c62']
+  pattern 206e0010: ['0x31c74', '0xc4ca2']
+  free run 0xC4D04..0xC4FF0: 748 B, all 0xFF: True
+  bytes 0xC4FF0..0xC4FFC: 010101010000c6001300b200
+
+(2) candidate byte counts (in-memory images only; nothing written)
+  D1a (cal-only)         pre-CRC    4 B | with CRC    8 B | CRC blocks ['0x13000'] | caves 0 new (V298's) cave 260 B | RAM 0 | outside-CRC bytes [] | crc_ok True 
+  D1-a2 G0-1400 (alone)  pre-CRC    4 B | with CRC    8 B | CRC blocks ['0x13000'] | caves 0 new cave 260 B | RAM 0 | outside-CRC bytes [] | crc_ok True 
+  D1c hex: 252 B sha 80dd2052edc08cd3 (claimed 80dd2052edc0)
+  D1c cave-region bytes differing from V298: 152 (claimed 152); first diff at 0xc4c1e; table ptr bytes 2906d24c0c00
+  D1c (cave, A16A kept)  pre-CRC  152 B | with CRC  156 B | CRC blocks ['0x13000'] | caves 1 (V298's, relinked) cave 252 B | RAM 0 | outside-CRC bytes [] | crc_ok True 
+  D1c + A16B             pre-CRC  153 B | with CRC  157 B | CRC blocks ['0x13000'] | caves 1 (relinked) cave 252 B | RAM 0 | outside-CRC bytes [] | crc_ok True 
+  D2a/D2b                pre-CRC    0 B | with CRC    0 B | CRC blocks [] | caves 0 cave 0 B | RAM 0 | outside-CRC bytes [] | crc_ok True 
+  D3a cave sha 83b9799b (claimed 83b9799b)
+  D3a                    pre-CRC    9 B | with CRC   13 B | CRC blocks ['0x13000'] | caves 0 new (V298's) cave 260 B | RAM 0 | outside-CRC bytes [] | crc_ok True 
+  D3b                    pre-CRC   13 B | with CRC   21 B | CRC blocks ['0x13000', '0xc6000'] | caves 0 new cave 260 B | RAM 0 | outside-CRC bytes [] | crc_ok True 
+  D4a GB-S13             pre-CRC   14 B | with CRC   18 B | CRC blocks ['0x13000'] | caves 0 new cave 260 B | RAM 0 | outside-CRC bytes [] | crc_ok True 
+  D4b hex: 312 B sha 59b90cbdf00422ef (claimed 59b90cbdf004)
+  D4b cave-region bytes differing: 211; nop form at 0x29D72 = 00000000 (V850 nop is 0x0000 halfword)
+  D4b                    pre-CRC  218 B | with CRC  222 B | CRC blocks ['0x13000'] | caves 1 (V298's, grown) cave 312 B | RAM 1 | outside-CRC bytes [] | crc_ok True 
+  D5b                    pre-CRC    5 B | with CRC    9 B | CRC blocks ['0x13000'] | caves 0 new cave 260 B | RAM 0 | outside-CRC bytes [] | crc_ok True 
+
+(3) table slope controls
+  V298: G0 1178 S0 = 1041.2
+  D3a: G0 1414 S0 = 185.0
+  D1-a2: G0 1400 S0 = 235.8
+  D4a S1 = -4238.2
+  D4a S2 = -2642.6
+  D4a S3 = 2040.3
+  D4a S4 = 1512.8
+
+wall 0.7 s

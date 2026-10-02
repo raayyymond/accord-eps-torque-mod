@@ -1,0 +1,44 @@
+gp-relative decodes (all even offsets): 23178
+  positive control gp-0x6abe: 29 accessors
+  positive control gp-0x6dd0: 6 accessors
+  positive control gp-0x6cf8: 4 accessors
+  positive control gp-0x4f68: 45 accessors
+
+D4b gp-0x6a32 = 0xFEDF15CE
+  direct  0x29D72 st.h   disp -0x6a32 w2
+  direct  0x2AC68 st.h   disp -0x6a32 w2
+  gp-base materialisation 0x36D1C gp-0x6b24 (word at offset +0xf2 from it)
+  gp-base materialisation 0x36D28 gp-0x6b20 (word at offset +0xee from it)
+  gp-base materialisation 0x36D2C gp-0x6b22 (word at offset +0xf0 from it)
+  gp-base materialisation 0x36D30 gp-0x6b1e (word at offset +0xec from it)
+  gp-base materialisation 0x41F12 gp-0x6a1c (word at offset -0x16 from it)
+  gp-base materialisation 0x41F16 gp-0x6a20 (word at offset -0x12 from it)
+  gp-base materialisation 0x41F1E gp-0x6a1e (word at offset -0x14 from it)
+  gp-base materialisation 0x41F22 gp-0x6a1a (word at offset -0x18 from it)
+  gp-base materialisation 0x45630 gp-0x6944 (word at offset -0xee from it)
+  gp-base materialisation 0x45650 gp-0x693c (word at offset -0xf6 from it)
+  absolute 32-bit literal (2-aligned): []
+  movhi 0xFEDF sites: 433 (lo 0x15ce; pairs adjudicated below)
+  movhi+(ld/st/addi/movea) pairs landing within 0x100 of the word: [('0x2d630', '0x2d634', 5768), ('0x2d63a', '0x2d63e', 5768), ('0x3beb2', '0x3beb6', 5484), ('0x3bec6', '0x3beca', 5484), ('0x3bed8', '0x3bedc', 5484), ('0x3d532', '0x3d536', 5485), ('0x3d770', '0x3d774', 5484), ('0x3d780', '0x3d784', 5484), ('0x3d790', '0x3d794', 5485), ('0x3d860', '0x3d864', 5485), ('0x3d97e', '0x3d982', 5485), ('0x3dcb2', '0x3dcb6', 5485), ('0x3dcc4', '0x3dcc8', 5485), ('0x3e8d2', '0x3e8d6', 5485)]
+
+D5a gp-0x6c44 = 0xFEDF13BC
+  direct accessors: NONE
+  gp-base materialisation 0x28AEE gp-0x6b4a (word at offset -0xfa from it)
+  gp-base materialisation 0x28B38 gp-0x6b4c (word at offset -0xf8 from it)
+  gp-base materialisation 0x34376 gp-0x6bca (word at offset -0x7a from it)
+  gp-base materialisation 0x3437E gp-0x6bc6 (word at offset -0x7e from it)
+  gp-base materialisation 0x34382 gp-0x6bc8 (word at offset -0x7c from it)
+  gp-base materialisation 0x34386 gp-0x6bc4 (word at offset -0x80 from it)
+  gp-base materialisation 0x34A94 gp-0x6bb8 (word at offset -0x8c from it)
+  gp-base materialisation 0x34AA0 gp-0x6bb4 (word at offset -0x90 from it)
+  gp-base materialisation 0x34AA4 gp-0x6bb6 (word at offset -0x8e from it)
+  gp-base materialisation 0x34AA8 gp-0x6bb2 (word at offset -0x92 from it)
+  gp-base materialisation 0x36572 gp-0x6b5c (word at offset -0xe8 from it)
+  gp-base materialisation 0x3657E gp-0x6b58 (word at offset -0xec from it)
+  gp-base materialisation 0x36582 gp-0x6b5a (word at offset -0xea from it)
+  gp-base materialisation 0x36586 gp-0x6b56 (word at offset -0xee from it)
+  absolute 32-bit literal (2-aligned): []
+  movhi 0xFEDF sites: 433 (lo 0x13bc; pairs adjudicated below)
+  movhi+(ld/st/addi/movea) pairs landing within 0x100 of the word: []
+
+wall 0.1 s

@@ -1,0 +1,37 @@
+C0 rb_table.GB_P == d2_common.ROWS (read from the V298 image, sha 177abf04): True
+S2Lane(V298) vs CandLane [hard @ 11.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(V298) vs CandLane [hard @ 17.0 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(V298) vs CandLane [hard @ 26.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(V298) vs CandLane [hard @ 3.1 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(V298) vs CandLane [ov_lt1000 @ 11.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(V298) vs CandLane [ov_lt1000 @ 17.0 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(V298) vs CandLane [ov_lt1000 @ 26.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(V298) vs CandLane [ov_lt1000 @ 3.1 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D1c) vs D1Lane [hard @ 11.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D1c) vs D1Lane [hard @ 17.0 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D1c) vs D1Lane [hard @ 26.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D1c) vs D1Lane [hard @ 3.1 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D1c) vs D1Lane [ov_lt1000 @ 11.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D1c) vs D1Lane [ov_lt1000 @ 17.0 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D1c) vs D1Lane [ov_lt1000 @ 26.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D1c) vs D1Lane [ov_lt1000 @ 3.1 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4a) vs D4Lane [hard @ 11.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4a) vs D4Lane [hard @ 17.0 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4a) vs D4Lane [hard @ 26.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4a) vs D4Lane [hard @ 3.1 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4b) vs D4Lane [hard @ 11.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4b) vs D4Lane [hard @ 17.0 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4b) vs D4Lane [hard @ 26.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4b) vs D4Lane [hard @ 3.1 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4a) vs D4Lane [ov_lt1000 @ 11.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4a) vs D4Lane [ov_lt1000 @ 17.0 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4a) vs D4Lane [ov_lt1000 @ 26.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4a) vs D4Lane [ov_lt1000 @ 3.1 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4b) vs D4Lane [ov_lt1000 @ 11.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4b) vs D4Lane [ov_lt1000 @ 17.0 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4b) vs D4Lane [ov_lt1000 @ 26.9 m/s]: max|dT| 0  max|dth| 0.0e+00
+S2Lane(D4b) vs D4Lane [ov_lt1000 @ 3.1 m/s]: max|dT| 0  max|dth| 0.0e+00
+NEGATIVE CONTROL S2Lane(D1c) vs CandLane(V298) [ov_lt1000]: max|dT| per speed [263, 40, 33, 114] (must be > 0)
+ALL CONTROLS PASS: True ; negative control differs: True
+job walls: S2 9.8 s, CandLane 11.2 s, D1Lane 10.8 s, D4Lane 9.5 s
+wall 11.9 s

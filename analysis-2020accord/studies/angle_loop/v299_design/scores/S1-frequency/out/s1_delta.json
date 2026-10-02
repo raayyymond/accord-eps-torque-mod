@@ -1,0 +1,252 @@
+{
+ "G0-1400|core-gate": {
+  "n": 9120,
+  "min_dPM": -9.102351479587938,
+  "at": "b_lo*tau6 @2.00 FB.83 e10 PID",
+  "max_dPM": 0.0,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "G0-1400|core-R79": {
+  "n": 3648,
+  "min_dPM": -9.128202241344482,
+  "at": "b_lo*tau6 @2.00 R79.55 e10 PD",
+  "max_dPM": 0.0,
+  "new30": 2,
+  "newbar": 2,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "G0-1400|op-points": {
+  "n": 12160,
+  "min_dPM": -8.667312638312794,
+  "at": "b_lo*tau6 @2.00 FB.83 e10 PID",
+  "max_dPM": 0.0,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "G0-1400|friction": {
+  "n": 9728,
+  "min_dPM": -10.941431696888543,
+  "at": "b_lo*J_hi @2.00 FB.83 e10 PD",
+  "max_dPM": 8.279622984612288,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "G0-1400|hands-on x0.30": {
+  "n": 304,
+  "min_dPM": -17.125274249509744,
+  "at": "J1.0 @2.00 nom e0 PD",
+  "max_dPM": 0.0,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D3a-tab|core-gate": {
+  "n": 9120,
+  "min_dPM": -9.632816663222414,
+  "at": "b_lo*tau6 @2.00 FB.83 e10 PID",
+  "max_dPM": 0.0,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D3a-tab|core-R79": {
+  "n": 3648,
+  "min_dPM": -9.655356487150371,
+  "at": "b_lo*tau6 @2.00 R79.55 e10 PD",
+  "max_dPM": 0.0,
+  "new30": 2,
+  "newbar": 2,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D3a-tab|op-points": {
+  "n": 12160,
+  "min_dPM": -9.172997883875851,
+  "at": "b_lo*tau6 @2.00 FB.83 e10 PID",
+  "max_dPM": 0.0,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D3a-tab|friction": {
+  "n": 9728,
+  "min_dPM": -11.678989462596505,
+  "at": "b_lo*J_hi @2.00 FB.83 e10 PD",
+  "max_dPM": 8.658629585166068,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D3a-tab|hands-on x0.30": {
+  "n": 304,
+  "min_dPM": -17.94768886267653,
+  "at": "J1.0 @2.00 nom e0 PD",
+  "max_dPM": 0.0,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "GB-S13|core-gate": {
+  "n": 9120,
+  "min_dPM": -52.94725590286464,
+  "at": "b_lo*ms_free @15.00 FB.83 e10 PID",
+  "max_dPM": 10.55063570601996,
+  "new30": 23,
+  "newbar": 23,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "GB-S13|core-R79": {
+  "n": 3648,
+  "min_dPM": -50.3121347416796,
+  "at": "b_q*J_hi @15.00 R79.55 e0 PID",
+  "max_dPM": 9.189099452481202,
+  "new30": 20,
+  "newbar": 22,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "GB-S13|op-points": {
+  "n": 12160,
+  "min_dPM": -41.717374174733024,
+  "at": "b_lo*ms_free @17.50 FB.83 e10 PID",
+  "max_dPM": 10.401032454124874,
+  "new30": 95,
+  "newbar": 101,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "GB-S13|friction": {
+  "n": 9728,
+  "min_dPM": -41.73882800294817,
+  "at": "b_q*ms_free @20.00 R79.55 e10 PID",
+  "max_dPM": 9.718787675738795,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 205,
+  "newGM6": 0
+ },
+ "GB-S13|hands-on x0.30": {
+  "n": 304,
+  "min_dPM": 0.0,
+  "at": "nominal @2.00 nom e0 PD",
+  "max_dPM": 0.0,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D5a-small|core-gate": {
+  "n": 9120,
+  "min_dPM": -42.61751122371467,
+  "at": "b_q*J_hi @20.00 FA.83 e10 PID",
+  "max_dPM": 46.02598438108191,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D5a-small|core-R79": {
+  "n": 3648,
+  "min_dPM": -42.48665956878624,
+  "at": "b_q*J_hi @20.00 R79.55 e-1 PID",
+  "max_dPM": 19.808627098765726,
+  "new30": 17,
+  "newbar": 17,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D5a-small|op-points": {
+  "n": 12160,
+  "min_dPM": -29.14949459864752,
+  "at": "J1.0 @20.00 FA.83 e10 PD",
+  "max_dPM": 12.465169599968704,
+  "new30": 67,
+  "newbar": 72,
+  "rescued30": 0,
+  "newGM6": 1
+ },
+ "D5a-small|friction": {
+  "n": 9728,
+  "min_dPM": -39.74310888558293,
+  "at": "b_q*ms_free @20.00 R79.55 e10 PID",
+  "max_dPM": 8.791608937431775,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 248,
+  "newGM6": 0
+ },
+ "D5a-small|hands-on x0.30": {
+  "n": 304,
+  "min_dPM": -20.454459421192126,
+  "at": "J1.0 @2.00 nom e0 PD",
+  "max_dPM": 0.0,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D5a-sat|core-gate": {
+  "n": 9120,
+  "min_dPM": -24.71766547229238,
+  "at": "b_lo @11.00 FA1.155 e-1 PID",
+  "max_dPM": 66.85498088462928,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D5a-sat|core-R79": {
+  "n": 3648,
+  "min_dPM": -19.656192182384146,
+  "at": "b_lo*J_hi @11.75 R79.88 e10 PID",
+  "max_dPM": 70.4363752071769,
+  "new30": 1,
+  "newbar": 1,
+  "rescued30": 1,
+  "newGM6": 0
+ },
+ "D5a-sat|op-points": {
+  "n": 12160,
+  "min_dPM": -46.92596113703728,
+  "at": "b_lo @11.75 FB1.155 e10 PID",
+  "max_dPM": 64.47771975943499,
+  "new30": 72,
+  "newbar": 90,
+  "rescued30": 1,
+  "newGM6": 12
+ },
+ "D5a-sat|friction": {
+  "n": 9728,
+  "min_dPM": -13.543470155485139,
+  "at": "b_lo @9.00 nom e0 PID",
+  "max_dPM": 23.806301387209373,
+  "new30": 56,
+  "newbar": 54,
+  "rescued30": 0,
+  "newGM6": 0
+ },
+ "D5a-sat|hands-on x0.30": {
+  "n": 304,
+  "min_dPM": -2.268413952299511,
+  "at": "b_hi @2.00 nom e0 PD",
+  "max_dPM": 15.981494453403911,
+  "new30": 0,
+  "newbar": 0,
+  "rescued30": 0,
+  "newGM6": 0
+ }
+}

@@ -1,0 +1,18 @@
+REFUTER (stability-nonlinear) -- PRE-REGISTERED FAIL CRITERIA, written 2026-10-02 BEFORE any script of mine ran.
+Target: DESIGN-V299-SYNTHESIS-2026-10-02.md (V298 + 3 in-place integral-policy edits; fork G4/lead0/takeover/cap250/clip x1.6).
+A "do not build" (FAIL) verdict is reachable through ANY of:
+ FA. GATE 2: a linear loop the V299 system actually operates in (inner PID, inner PD, O1 loop lead 0 incl. the 80 ms
+     G4 debounce, clip-bound loop) with PM < 30 deg or GM < 6 dB or rho >= 1 at a point where V298 was >= the bar
+     (an INHERITED V298 sub-bar point is a defect, not a FAIL).
+ FB. A sustained self-excited cycle (>= 3 consecutive cycles, wheel amplitude >= 0.5 deg or 1-10 Hz wheel-rate rms
+     >= 5 deg/s) in a hands-off hold / slow track / turn on r79F or b_lo*J_hi at nominal twist, which V298 lacks.
+ FC. My sim predicts the design's OWN pre-registered drive FAIL (F3, F4, F5, F6b, X3) firing at a plausible
+     hands-off or light-hand manoeuvre inside the r79 envelope (<= 12 m/s, turns <= 90 deg, holds <= 10 s),
+     where V298 (or the design's own prediction) does not.
+ FD. A relay (1229 freeze or the fork O1) cycling >= 2 /s for >= 1 s hands-off at NOMINAL twist (FAIL), or at a
+     twist scale <= 1.3x (defect: the twist model is R^2 0.31).
+ FE. 13-17 or 18-22 Hz closed-loop gain > 1.10 x V298's at the same point.
+ FF. Light-hand (300-614 words, the band neither the 1229 freeze nor the G4 O1 covers) release lurch > V298's at a
+     matched hold age, or > 8 deg at >= 8 m/s, for holds <= 10 s.
+PASS_WITH_DEFECTS: none of FA-FF fires at nominal, but a criterion fires inside the model's declared uncertainty.
+Default where uncertain: refuted.

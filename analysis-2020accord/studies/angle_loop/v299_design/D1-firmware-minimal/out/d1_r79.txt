@@ -1,0 +1,58 @@
+load + lane terms 1.5 s; frames 122394, marched 67872; engaged 671 s, settled hands-off 586 s, settled pressed 75 s
+reaction fit (settled, hands-off): J -0.691 b -0.693 Fc -163.4 k -0.132 c0 -60.5; R2 0.313; residual std 206 words, lag-1 autocorr (100 Hz) 0.890
+
+A. HAND-FREEZE per rule (1 kHz ticks; the 100 Hz word held 10 ticks, leading 0x18F by 10 ticks)
+   duty = share of hands-off run ticks frozen by a hand rule; lost = |inc|-weighted share of commanded integration
+   discarded by the hand rule (no A3: the refuter's form); tog = hand-freeze on/off transitions per minute;
+   PRESSED = settled & steeringPressed (a real hand) -- the duty a safe rule must KEEP high there
+   rule                                                 <5              5-8           8-12.5          12.5-22              >22              all     PRESSED
+                                             duty/lost/tog    duty/lost/tog    duty/lost/tog    duty/lost/tog    duty/lost/tog    duty/lost/tog        duty
+   V298 (512 | opp300)                      26.2/37.7/ 409   26.2/41.5/ 555   13.4/24.5/ 409    6.0/10.5/ 249    3.0/ 8.3/ 189   11.4/28.3/ 325       99.7%
+   opp threshold only: 512 | opp700         13.7/20.8/ 248   15.4/24.9/ 337    5.9/10.0/ 128    1.5/ 2.3/  45    0.6/ 2.1/  30    5.1/14.5/ 114       99.7%
+   hard 1229 | opp300 (no gate)             23.8/36.0/ 382   22.4/37.9/ 530   11.6/23.4/ 405    5.6/10.1/ 249    2.9/ 8.0/ 193   10.2/26.6/ 319       99.1%
+   D1a: hard 1229, opp inert                 0.7/ 0.7/  19    1.2/ 2.0/  46    0.5/ 0.5/  21    0.1/ 0.1/   3    0.0/ 0.0/   1    0.4/ 0.8/  13       97.3%
+   D1a-c8k                                   0.7/ 0.7/  19    1.2/ 2.0/  46    0.5/ 0.5/  21    0.1/ 0.1/   3    0.0/ 0.0/   1    0.4/ 0.8/  13       97.3%
+   D1b: 1229 | opp300 & ~closing(A0 10)      5.2/ 5.1/ 140    4.2/ 6.9/ 207    2.8/ 3.5/ 186    2.1/ 2.6/ 164    1.8/ 2.7/ 160    2.8/ 4.6/ 171       97.4%
+   D1b A0 0                                  3.2/ 3.4/ 136    3.2/ 5.7/ 154    1.6/ 2.1/ 106    0.8/ 0.8/  60    0.8/ 0.9/  89    1.5/ 3.0/  93       97.3%
+   D1b A0 24 (5 deg/s)                       7.0/ 7.1/ 186    5.6/ 8.6/ 279    4.5/ 5.9/ 293    3.6/ 5.3/ 227    2.3/ 4.1/ 182    4.1/ 6.7/ 236       97.5%
+   D1b-c8k                                   5.2/ 5.1/ 140    4.2/ 6.9/ 207    2.8/ 3.5/ 186    2.1/ 2.6/ 164    1.8/ 2.7/ 160    2.8/ 4.6/ 171       97.4%
+   D1c: D1a hand rule + ASYM bound           0.7/ 0.7/  19    1.2/ 2.0/  46    0.5/ 0.5/  21    0.1/ 0.1/   3    0.0/ 0.0/   1    0.4/ 0.8/  13       97.3%
+   D1f: 1229 | opp300 & |abe|<=10 + ASYM     4.2/ 3.0/ 120    2.7/ 4.0/ 161    2.3/ 2.5/ 169    1.9/ 2.3/ 156    1.6/ 2.5/ 151    2.3/ 3.0/ 155       97.4%
+   D1f W20 (4 deg/s) + ASYM                  5.7/ 4.8/ 166    3.9/ 5.4/ 221    3.6/ 4.2/ 255    3.1/ 4.4/ 210    2.1/ 3.5/ 173    3.4/ 4.7/ 211       97.5%
+
+B. STALL-SURGE events (M4 detector, unmodified) near a hand-freeze TOGGLE (+-0.25 s) -- the refuter's D4 split,
+   per rule, evaluated at 100 Hz on the wire (|word| = |bar|, sign(word) = -sign(bar), sign(E') = sign(err),
+   closing = sign(w18) == sign(err) & |w18| > A0/4.712).  'lose' = V298-near events with no toggle of the rule
+   within +-0.25 s (the events the freeze fix acts on; that the stall would then not occur is BELIEF -- the
+   refuter's near/free contrast 80.7 vs 30.3 /min and the no-enrichment control on V282/V294 are the evidence)
+   V298 (512 | opp300)                    0-5: ev 27 near 22 (turn-time near 49%) lose 0, tog 291/min | 5-10: ev 68 near 56 (turn-time near 65%) lose 0, tog 526/min | 10-20: ev 9 near 6 (turn-time near 44%) lose 0, tog 273/min
+   D1a: hard 1229, opp inert              0-5: ev 27 near 9 (turn-time near 24%) lose 15, tog 41/min | 5-10: ev 68 near 26 (turn-time near 34%) lose 35, tog 88/min | 10-20: ev 9 near 1 (turn-time near 45%) lose 6, tog 168/min
+   D1f: 1229 | opp300 & |w|<=2.1 deg/s    0-5: ev 27 near 19 (turn-time near 29%) lose 5, tog 71/min | 5-10: ev 68 near 38 (turn-time near 42%) lose 23, tog 138/min | 10-20: ev 9 near 4 (turn-time near 55%) lose 3, tog 218/min
+   D1b: 1229 | opp300 & ~closing(A0 10)   0-5: ev 27 near 22 (turn-time near 34%) lose 2, tog 85/min | 5-10: ev 68 near 43 (turn-time near 48%) lose 18, tog 181/min | 10-20: ev 9 near 7 (turn-time near 63%) lose 0, tog 281/min
+   hard 1229 | opp300 (no gate)           0-5: ev 27 near 22 (turn-time near 51%) lose 0, tog 270/min | 5-10: ev 68 near 59 (turn-time near 70%) lose 0, tog 505/min | 10-20: ev 9 near 6 (turn-time near 55%) lose 0, tog 344/min
+
+C. REPLAYS (V298 lane arithmetic, the rule's freeze + A3 with the rule's cap; open loop on the recorded error)
+   V298 (512 | opp300)                    R2 vs tap 0.928 (lag +1) | |replay tap| hands-off manoeuvres p50  46.2 p99 148.9 (<8 m/s p99 158.8), max 198.6 LSB | |I>>7| p90  5531 S | at A3 bound  4.2%, A3 toggles   20/min
+   opp threshold only: 512 | opp700       R2 vs tap 0.444 (lag +4) | |replay tap| hands-off manoeuvres p50  55.7 p99 180.5 (<8 m/s p99 183.6), max 222.5 LSB | |I>>7| p90  6757 S | at A3 bound  9.8%, A3 toggles  107/min
+   hard 1229 | opp300 (no gate)           R2 vs tap 0.881 (lag +2) | |replay tap| hands-off manoeuvres p50  48.2 p99 150.0 (<8 m/s p99 159.6), max 198.7 LSB | |I>>7| p90  5532 S | at A3 bound  5.1%, A3 toggles   23/min
+   D1a: hard 1229, opp inert              R2 vs tap 0.324 (lag +5) | |replay tap| hands-off manoeuvres p50  60.9 p99 194.0 (<8 m/s p99 202.9), max 245.0 LSB | |I>>7| p90  7967 S | at A3 bound 16.3%, A3 toggles  139/min
+   D1a-c8k                                R2 vs tap 0.173 (lag +5) | |replay tap| hands-off manoeuvres p50  69.4 p99 196.3 (<8 m/s p99 204.7), max 245.4 LSB | |I>>7| p90  8138 S | at A3 bound 10.1%, A3 toggles  124/min
+   D1b: 1229 | opp300 & ~closing(A0 10)   R2 vs tap 0.451 (lag +5) | |replay tap| hands-off manoeuvres p50  60.4 p99 194.0 (<8 m/s p99 202.8), max 245.0 LSB | |I>>7| p90  7971 S | at A3 bound 15.2%, A3 toggles  140/min
+   D1b A0 0                               R2 vs tap 0.338 (lag +5) | |replay tap| hands-off manoeuvres p50  60.6 p99 194.0 (<8 m/s p99 202.9), max 245.0 LSB | |I>>7| p90  7970 S | at A3 bound 15.9%, A3 toggles  141/min
+   D1b A0 24 (5 deg/s)                    R2 vs tap 0.529 (lag +5) | |replay tap| hands-off manoeuvres p50  60.2 p99 193.6 (<8 m/s p99 202.7), max 245.0 LSB | |I>>7| p90  7986 S | at A3 bound 14.4%, A3 toggles  114/min
+   D1b-c8k                                R2 vs tap 0.324 (lag +5) | |replay tap| hands-off manoeuvres p50  68.8 p99 196.3 (<8 m/s p99 204.7), max 245.4 LSB | |I>>7| p90  8165 S | at A3 bound  9.4%, A3 toggles  125/min
+   D1c: D1a hand rule + ASYM bound        R2 vs tap 0.409 (lag +4) | |replay tap| hands-off manoeuvres p50  57.2 p99 194.0 (<8 m/s p99 202.9), max 245.0 LSB | |I>>7| p90  7979 S | at A3 bound 19.8%, A3 toggles  141/min
+   D1f: 1229 | opp300 & |abe|<=10 + ASYM  R2 vs tap 0.516 (lag +4) | |replay tap| hands-off manoeuvres p50  56.8 p99 194.0 (<8 m/s p99 202.8), max 245.0 LSB | |I>>7| p90  7899 S | at A3 bound 18.9%, A3 toggles  139/min
+   D1f W20 (4 deg/s) + ASYM               R2 vs tap 0.574 (lag +4) | |replay tap| hands-off manoeuvres p50  56.6 p99 193.6 (<8 m/s p99 202.7), max 245.0 LSB | |I>>7| p90  7911 S | at A3 bound 18.4%, A3 toggles  121/min
+   measured tap (engaged) p99 108, max 183 LSB; rail 307.6 LSB
+
+D. ONE-SHORT-DRIVE DISCRIMINATOR: on r79 the TRUE rule is V298.  In each 30 s settled window, does the V298
+   replay beat the D1 replay (R2 vs the tap, lag fixed at the pooled best)?  The next drive runs the same test the
+   other way round: it says WHICH RULE RAN with zero firmware bytes (a model-selection instrument, like M3's).
+   windows: 18
+   V298 vs D1b: 1229 | opp300 & ~closing(A0 10)  : windows 18, true rule wins 89% (by > 0.02: 89%), dR2 p50 +0.417 p10 +0.153; windows with >= 2 s of hands-off manoeuvre 10, true wins 100%
+   V298 vs D1a: hard 1229, opp inert             : windows 18, true rule wins 100% (by > 0.02: 100%), dR2 p50 +0.624 p10 +0.245; windows with >= 2 s of hands-off manoeuvre 10, true wins 100%
+   V298 vs D1c: D1a hand rule + ASYM bound       : windows 18, true rule wins 100% (by > 0.02: 100%), dR2 p50 +0.605 p10 +0.229; windows with >= 2 s of hands-off manoeuvre 10, true wins 100%
+   V298 vs D1f: 1229 | opp300 & |abe|<=10 + ASYM : windows 18, true rule wins 94% (by > 0.02: 94%), dR2 p50 +0.408 p10 +0.110; windows with >= 2 s of hands-off manoeuvre 10, true wins 100%
+
+wall 3.3 s

@@ -1,0 +1,18 @@
+d1_gate2_report: PHYSICAL op-points only (theta <= theta(v, 3 m/s^2), <= 470 deg)
+part design loop | credible set: n PM<bar GM<6 pk>3 rho>=1 worst(PM-bar @ member v th e) | ms_free products: n PM<bar
+E Kd24     PID |  8400  579   0   0   0   -15.4 @ b_lo*J_hi 8.0 th110 e10 |  1575  346
+E Kd24     PD  |  8400    4   0   0   0    -2.1 @ b_lo 8.0 th110 e0 |  1575    1
+E Kd36     PID |  8400   44   0   0   0    -6.3 @ b_lo*J_hi 8.0 th110 e10 |  1575  135
+E Kd36     PD  |  8400    0   0   0   0    +6.0 @ b_lo 8.0 th110 e0 |  1575    0
+E V298     PID |  8400    0   0   0   0    +2.4 @ b_lo*J_hi 8.0 th110 e10 |  1575   49
+E V298     PD  |  8400    0   0   0   0   +11.7 @ b_lo 8.0 th110 e0 |  1575    0
+
+B/C per speed (credible set, physical): worst PM - bar, PID | PD
+  V298      +11|+19   +9|+18   +7|+17   +5|+15   +5|+14   +5|+13   +2|+12  +13|+30  +14|+38   (v 2 3.1 4 5 6 7 8 9 10)
+  Kp168       -       -       -       -       -       -       -       -       -      (v 2 3.1 4 5 6 7 8 9 10)
+  Kp224       -       -       -       -       -       -       -       -       -      (v 2 3.1 4 5 6 7 8 9 10)
+  G0-1400     -       -       -       -       -       -       -       -       -      (v 2 3.1 4 5 6 7 8 9 10)
+  G0-1600     -       -       -       -       -       -       -       -       -      (v 2 3.1 4 5 6 7 8 9 10)
+  Kd36       +3|+14   +1|+13   -1|+11   -3|+10   -4| +8   -4| +8   -6| +6   +8|+23   +9|+31   (v 2 3.1 4 5 6 7 8 9 10)
+  Kd24       -7| +6   -9| +5  -10| +3  -12| +1  -13| +0  -13| -0  -15| -2   -2|+15   +2|+22   (v 2 3.1 4 5 6 7 8 9 10)
+wall 1.00 s
