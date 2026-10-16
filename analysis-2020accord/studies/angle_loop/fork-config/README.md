@@ -1,3 +1,53 @@
+# V300 / accord-PTM fork config (the release)
+
+**Fork:** branch `accord-PTM` (= local `Dom-release`), HEAD `45a1a529c2a17e3221573985aefef330e68aa9b1`, pushed to `origin/accord-PTM`.
+**Firmware:** V300 rev 2, `39990-TVA,A16C`.
+
+| file | sha256 | what |
+|---|---|---|
+| `toggle-config_V300_accord-PTM.json` | `102448fadd6daf66414da93827b767e31e9f9713f1c82fe7b8bc9b6e7ffa4c4a` | **Restore this** (Galaxy: restore toggle config). 10 keys, a delta. |
+| `toggle-config_V300_accord-PTM.decoded.json` | `c0cc674c6d7a5e23ef2755af5cbe7a3decd324f5b8484cb85c1eb649ebc7b92e` | Readable copy. |
+| `write_v300_config.py` | | Writer. Kit codec positive-controlled; fork codec read with `git show` at the commit, equal to the kit's and unchanged since `c6452361e`; every key checked against `params_keys.h` at `45a1a529c2` (declared, BOOL/FLOAT, defaults); base V299-A re-hashed; both codecs decode the written files back from disk. |
+
+No `REVERT` file is needed: `toggle-config_V299-A_relays-bar.json` is the revert's config (below).
+
+### Why a 10-key file replaces the 32-key V299-A
+On `accord-PTM` the angle mode is selected by the EPS fwVersion alone, so the switch and every `Accord*` tuning key are gone.
+**Undeclared keys are skipped, not an error** (EVIDENCE: `_restore_toggle_values` in `the_galaxy.py` at the commit: a key not in `_get_toggle_backup_keys()` does `skipped_count += 1; continue`). The 23 undeclared V299-A keys are therefore omitted.
+
+**Proof that the angle controller is selected whatever `ForceTorqueController` says** (EVIDENCE, read at `45a1a529c2`):
+1. `honda/interface.py`: `is_accord_eps_angle_loop_fw` (`values.py`: `39990-TVA,A16` + one capital letter, so `A16C` matches) sets `steerControlType = angle`.
+2. `controlsd.py`: `if self.CP.steerControlType == angle: self.LaC = LatControlAngle(...)` is the first branch, before pid/torque.
+3. `starpilot_variables.py`: `toggle.force_torque_controller = get_value("ForceTorqueController", condition=lateral_tuning and not is_angle_car)` is False for an angle car; `interfaces.py` also skips `configure_torque_tune` when `steerControlType == angle`.
+So the value cannot change the controller. It is written `false` (the declared default) so nothing stale lingers.
+
+| key | status | value | reader (EVIDENCE: file at `45a1a529c2`) |
+|---|---|---|---|
+| 23 keys: `AccordAngleBarFromEps/ClipScale/MaxRate`, `AccordEpsAngleLoop`, `AccordRatePlantFF`, `AccordTorqueKi`, `AccordTorqueKiHigh`, `AccordTurnFFTaper`, `AccordHoldMap/Level`, `AccordFrictionHyst/Band`, `AccordRateLoopGain`, `AccordErrorNotchQ`, `AccordRefFilter`, `AccordDobHz`, `AccordDither/Gate`, `AccordJerkLpHz`, `AccordFFRateGain`, `AccordEpsGainScale/SpringScale`, `KeepLearnedLatAccelOffset` | DROPPED (not in `common/params_keys.h`) | omitted | none; Galaxy skips them |
+| `LaneCentering` | LIVE | true | `starpilot_variables.py` -> `controlsd.py` `lane_centering.update(...)`, `lib/lane_centering.py` |
+| `UseAutoSteerDelay` | LIVE | true | `starpilot_variables.py` (`use_auto_steer_delay`) -> `locationd/lagd.py` (learned delay unless custom) |
+| `AdvancedLateralTune` | LIVE (gate) | true (= declared default) | `starpilot_variables.py`: gates `UseAutoSteerDelay` and `SteerRatio` |
+| `SteerRatio` | KEPT at 16.84 | 16.84 | `controlsd.py` replaces the ratio with `accord_angle_steer_ratio` in angle mode (its LEVEL is the constant 16.84), so it is inert there; `paramsd.py` still publishes it when `use_custom_steerRatio`. **Not set to the default**: the stored default `0.0` is clamped to 0.5 x the car ratio and would turn the custom path on. 16.84 is what every angle drive ran |
+| `SteerKP` | INERT -> default | 0.0 | `starpilot_variables.py`: read only under `is_torque_car and not is_angle_car` |
+| `SteerFriction` | INERT -> default | 0.0 | `use_custom_friction` needs `is_torque_car`; torque controller only |
+| `SteerLatAccel` | INERT -> default | 0.0 | same, `use_custom_latAccelFactor` |
+| `ForceAutoTune` | INERT -> default | false | condition includes `not is_angle_car` |
+| `ForceAutoTuneOff` | INERT -> default | true (declared default) | same |
+| `ForceTorqueController` | INERT, ADDED | false | see proof above |
+
+Not in the file (left alone, not in V299-A either): `LaneCenterOffset` / `LaneCenteringE2EAuthority` (read `controlsd.py` via `starpilot_variables.py`, only under `LaneCentering`), `AlwaysOnLateral*`, `SafeMode`. **Safe Mode** forces managed keys incl. `UseAutoSteerDelay`; keep it off.
+
+### Deploy order (V300)
+1. Device: `git fetch origin accord-PTM && git checkout -B accord-PTM origin/accord-PTM`; reboot.
+2. Flash V300 rev 2 (operator names the file and the bus; openpilot killed first). Reboot.
+3. Restore `toggle-config_V300_accord-PTM.json` while parked. Reboot.
+4. Check: carFw EPS `39990-TVA,A16C`; `carParams.steerControlType` = angle; no LKAS fault; the car's own LKAS off.
+
+### REVERT
+Reflash the V299 rwd (`39990-TVA,A16B`), check out Dom `c6452361e` on the device, restore `toggle-config_V299-A_relays-bar.json`, reboot after each. The V300 file does not touch the `Accord*` keys, and on `c6452361e` they keep whatever the device last held, so restoring V299-A re-sets them.
+
+---
+
 # V299 fork config (the angle loop's drive 2)
 
 **Fork:** `raayyymond-StarPilot/StarPilot` @ `Dom`, local commit **`c6452361e43812c7a7931c76dd4e036bbe5a1835`**

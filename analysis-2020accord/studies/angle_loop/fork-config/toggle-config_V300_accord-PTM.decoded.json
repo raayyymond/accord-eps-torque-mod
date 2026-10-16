@@ -1,0 +1,12 @@
+{
+ "AdvancedLateralTune": true,
+ "ForceAutoTune": false,
+ "ForceAutoTuneOff": true,
+ "LaneCentering": true,
+ "SteerFriction": 0.0,
+ "SteerKP": 0.0,
+ "SteerLatAccel": 0.0,
+ "SteerRatio": 16.84,
+ "UseAutoSteerDelay": true,
+ "ForceTorqueController": false
+}
