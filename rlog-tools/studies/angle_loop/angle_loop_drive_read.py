@@ -101,6 +101,7 @@ import re
 import sys
 import time as _time
 import types
+import warnings
 from pathlib import Path
 
 _T0 = _time.time()
@@ -207,6 +208,64 @@ REF_BUILD = {"r6c": "V282", "r39": "V282", "r3a": "V282", "r3c": "V282", "r71b_v
 
 def pr(s=""):
     print(s, flush=True)
+
+
+# =====================================================================================================================
+# TAP AVAILABILITY (2026-10-15, release close-out).  The lane telemetry exists ONLY on the angle-loop images that carry
+# it: 39990-TVA,A16A (V298) and A16B (V299).  The release firmware (A16C = V300) removed it: 0x1AB is Honda's own motor
+# torque again and 0x14A byte 4 bits 3-7 are stock.  Attribution is by fwVersion, never by the signal itself (a stock
+# 0x1AB looks like a valid tap).  Any block that reads W["T"] / W["T100"] must be gated on tap_ok(W).
+# =====================================================================================================================
+TAP_LETTERS = ("A16A", "A16B")
+IMAGE_NAME = {"A16A": "V298", "A16B": "V299", "A16C": "V300 (release)"}
+NOTAP = "NOT AVAILABLE on release firmware (no tap)"
+
+
+def eps_fw_letter(meta):
+    """the angle-loop family letter of the EPS fwVersion (`39990-TVA,A16<letter>`), else None."""
+    for f in (meta or {}).get("carfw", []) or []:
+        if "eps" in str(f.get("ecu", "")).lower():
+            m = re.search(r"39990-TVA,(A16[A-Z])", str(f.get("fw", "")))
+            if m:
+                return m.group(1)
+    return None
+
+
+def tap_state(meta):
+    """-> dict(available, why, letter).  Unavailable when the EPS fwVersion is an A16 letter that carries no telemetry
+    (A16C = V300 release), or when meta['tap_override'] says so (--no-tap / the synthetic strip).  Legacy images (A160,
+    V282 ...) and a route with no carFw keep the tap (they predate the removal)."""
+    letter = eps_fw_letter(meta)
+    ov = (meta or {}).get("tap_override")
+    if ov:
+        return dict(available=False, why=str(ov), letter=letter)
+    if letter and letter not in TAP_LETTERS:
+        return dict(available=False, letter=letter,
+                    why="fwVersion 39990-TVA,%s = %s: telemetry removed (0x1AB is Honda's motor torque; 0x14A byte 4 "
+                        "bits 3-7 are stock)" % (letter, IMAGE_NAME.get(letter, "a post-V299 image")))
+    return dict(available=True, why="", letter=letter)
+
+
+def tap_ok(W):
+    return bool(((W.get("meta") or {}).get("tap") or {}).get("available", True))
+
+
+def strip_tap(W, seed=0):
+    """SYNTHETIC RELEASE (--synthetic-release): turn a cached V299 wire into what a release route looks like to this
+    reader.  The tap becomes deterministic non-tap garbage (an integer torque-like series in 8-count steps, NOT zeros:
+    a leak must show), 0x14A byte 4 bits 3-7 are cleared, and the EPS fwVersion is rewritten to A16C.  Stock-signal
+    columns (angle, 0xE4, bar, wire, vego, pressed) are untouched."""
+    rng = np.random.default_rng(seed)
+    W["T"] = np.round(rng.normal(0.0, 40.0, len(W["T"]))) * 8.0
+    W["T_lsb"] = W["T"] / 8.0
+    W["T100"] = _zoh(W["T_t"], W["T_lsb"], W["t"])
+    if np.isfinite(W["b4"]).any():
+        W["b4"] = np.where(np.isfinite(W["b4"]), W["b4"].astype(np.int64, copy=False) & 7, np.nan).astype(float)
+    m = W["meta"]
+    m["carfw"] = [dict(f, fw=str(f.get("fw", "")).replace("A16B", "A16C").replace("A16A", "A16C")) for f in m.get("carfw", [])]
+    m["synthetic_release"] = True
+    m["tap"] = tap_state(m)
+    return W
 
 
 # =====================================================================================================================
@@ -461,6 +520,7 @@ def load_route(arg, with_extras=True):
         pressed = _zoh(D["tcs"], D["cs_press"], t)
     W = make_wire(t, g["ang"], np.round(g["cmd"]), g["req"], g["sca"], g["bar"], g["wire"], g["vego"],
                   g["T_t"], g["T"], status=status, b4=b4, pressed=pressed, have=g["have18"], meta=meta)
+    W["meta"]["tap"] = tap_state(W["meta"])
     return W
 
 
@@ -1473,8 +1533,10 @@ def ring_presence_f7(W, with_presence=True):
                 pass
         out["presence"], out["presence_all"] = got["presence"], got["presence_all"]
     r = types.SimpleNamespace(eng=W["eng"], ang=W["theta"], wire=W["wire"], vego=W["vego"], bar=W["bar"],
-                              T=W["T100"] * 8.0, idx=np.full(len(W["t"]), 255.0))
-    with contextlib.redirect_stdout(io.StringIO()):
+                              T=(W["T100"] * 8.0 if tap_ok(W) else np.full(len(W["t"]), np.nan)),   # no tap: NaN, not Honda's torque
+                              idx=np.full(len(W["t"]), 255.0))
+    with contextlib.redirect_stdout(io.StringIO()), warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)         # an all-NaN tap column (release firmware) has no median
         out["strongturn"] = FR.strongturn(r)
     sp = None
     with contextlib.redirect_stdout(io.StringIO()):
@@ -1706,6 +1768,9 @@ def read(W, refs=None, with_replay=True, with_presence=True):
     S = dict(meta=W["meta"])
     S["exposure"] = exposure(W)
     S["attrib"] = attribution(W)
+    S["tap"] = dict(W["meta"].get("tap") or tap_state(W["meta"]))
+    if not S["tap"]["available"]:
+        return _read_notap(W, S, refs, with_presence)
     S["a2"] = a2_r7(W)
     # the pre-2026-10-02 structural form (direction-0 ramp, word on the 0x18F frame, one intercept): REPORTED ONLY
     comp0 = components(W)
@@ -1733,6 +1798,16 @@ def read(W, refs=None, with_replay=True, with_presence=True):
     S["reg"] = R
     S["verdict_literal"] = verdict(R, W, S["a2"])
     S["r2"] = r2_rail(W)
+    _read_stock(W, S, refs, with_presence)
+    S["friction"] = friction(W)
+    S["light"] = light_holds(W, Rs, comp)
+    S["refs"] = {k: {kk: vv for kk, vv in v.items() if kk != "census"} for k, v in (refs or {}).items()}
+    return _read_v299(W, S, refs)
+
+
+def _read_stock(W, S, refs, with_presence):
+    """the sections that read STOCK signals only (angle, 0xE4, the 0x18F word and rate, speed, pressed): they run
+    unchanged on a release route.  The order of the calls is the order the full read always made them in."""
     S["r3"] = r3_ring(W)
     S["r6"] = r6_err(W)
     S["r8"] = r8_health(W)
@@ -1743,9 +1818,20 @@ def read(W, refs=None, with_replay=True, with_presence=True):
     S["goal"] = tracking_and_hold(W)
     S["dj"] = dwell_jump(W)
     S["dwells"] = symptom_dwells(W)
-    S["friction"] = friction(W)
-    S["light"] = light_holds(W, Rs, comp)
+
+
+def _read_notap(W, S, refs, with_presence):
+    """RELEASE FIRMWARE: no lane tap.  Every tap-dependent section is marked unavailable (S[...] = None, S['tap']
+    says why); the stock-signal sections run exactly as on a full read."""
+    for k in ("a2", "reg_struct_v0", "reg_struct", "struct_inputs", "replay", "replay_corrected", "reg_r1b", "verdict",
+              "reg", "verdict_literal", "r2", "friction", "light"):
+        S[k] = None
+    _read_stock(W, S, refs, with_presence)
     S["refs"] = {k: {kk: vv for kk, vv in v.items() if kk != "census"} for k, v in (refs or {}).items()}
+    return _read_v299(W, S, refs)
+
+
+def _read_v299(W, S, refs):
     # ---- 6. the V299 / drive-2 blocks (drive_read_v299.py): additions only; nothing above reads them
     #      (DRIVE_READ_NO_V299=1 skips them: the pre-V299 read, for timing and identity checks)
     if os.environ.get("DRIVE_READ_NO_V299"):
@@ -1784,7 +1870,7 @@ def attribution(W):
     match = float(np.mean(np.abs(W["raw"][nz] - W["f14a"][nz]) <= 2)) if nz.sum() >= 50 else np.nan
     act = W["req"] & W["have"]
     # the angle-loop image family (spec V299 rev 2 F9): 39990-TVA,A16A = V298, A16B = V299 (A160 = V294/V295: NOT live)
-    letter = next((x for x in ("A16A", "A16B") if any(("39990-TVA," + x) in s for s in fw)), None)
+    letter = next((x for x in ("A16A", "A16B", "A16C") if any(("39990-TVA," + x) in s for s in fw)), None)
     return dict(eps_fw=fw, live_image=(letter is not None) if fw else None, image_letter=letter,
                 params={k: params.get(k) for k in keys if k in params}, cam=m.get("cam"), git=m.get("git"),
                 fork_inactive_match=match, n_inactive=int(nz.sum()),
@@ -1815,7 +1901,12 @@ def report(S):
     a = S["attrib"]
     P("0. ATTRIBUTION  EPS fw %s -> image %s" % (a["eps_fw"], {True: "%s (LIVE image)" % a.get("image_letter"),
                                                               False: "NOT A16A/A16B",
-                                                              None: "unknown (no carFw)"}[a["live_image"]]))
+                                                              None: "unknown (no carFw)"}[a["live_image"]]
+                                                 + (" = %s" % IMAGE_NAME[a["image_letter"]]
+                                                    if a.get("image_letter") == "A16C" else "")))
+    tap = S.get("tap") or {}
+    if tap and not tap.get("available", True):
+        P("   LANE TAP: %s -- %s" % (NOTAP, tap.get("why")))
     P("   fork params %s ; git %s" % (a["params"], a.get("git")))
     P("   fork angle interface (SPEC C3): inactive frames >= 2 deg with raw == 0x14A field: %s (n %d)  [angle fork ~1.0,"
       " torque fork ~0]; max |raw| engaged %s (SPEC C2 clip 4000)" % (f3(a["fork_inactive_match"]), a["n_inactive"],
@@ -1830,71 +1921,80 @@ def report(S):
                                                    for k, v in e.items() if isinstance(v, dict))))
     V = S["verdict"]
     P("")
-    P("1. VERDICT (structural regression, decision-bearing; R1 also needs the %g-%g Hz fit): %s" % (
-        THR["r1b_lo"], THR["r1b_hi"], V["verdict"]))
-    _clauses(L, V)
-    R = S["reg_struct"]
-    si = S.get("struct_inputs") or {}
-    if si:
-        P("   structural inputs: C3-rev2-P lane replayed with the engage-ramp arm %d (+%d / -%d per tick, %s), the"
-          " torque word %d frame(s) ahead of 0x18F, I re-anchored per ~%.0f s window%s" % (
-              si["arm"], si["ramp"][0], si["ramp"][1], si["ramp_src"], si["q_lead"], si["anchor_s"],
-              ("; " + si["note"]) if si.get("note") else ""))
-        if si.get("ref"):
-            P("   (A16B wire: the I component and C3B-P* below are the %s rule's replay -- section 6B decides which rule"
-              " ran)" % si["ref"])
-    P("   tap = a P_raw + b P_meas + c I + d D (+ one intercept per window); LIVE design: a = b = c = d = 1 (lag %d"
-      " frames; R2 within-window)" % R["lag_frames"])
-    P("   %-8s %6s %6s %6s %6s %6s %7s %7s %6s %7s %7s" % ("band", "s", "a", "b", "c", "d", "c_P", "pred", "c_I/P",
-                                                        "R2", "R2rep"))
-    for nm, v in R["rows"].items():
-        if not v.get("ok"):
-            P("   %-8s %6.1f   (too little hands-off exposure)" % (nm, v.get("n", 0) / 50.0))
-            continue
-        P("   %-8s %6.1f %6.3f %6.3f %6.3f %6.3f %7.3f %7.3f %6.2f %7.4f %7.4f" % (
-            nm, v["s"], v["a"], v["b"], v["c"], v["d"], v["cP"], v["cP_pred"], v["cIcP"], v["r2"], v["r2_replay"]))
-    Pp = R["pooled"]
-    if Pp.get("n"):
-        P("   pooled   a %.3f b %.3f c %.3f d %.3f  R2 %.4f" % (Pp["a"], Pp["b"], Pp["c"], Pp["d"], Pp["r2"]))
-    Rb = S.get("reg_r1b")
-    if Rb:
-        P("   R1 SECOND METHOD -- the literal regression at %g-%g Hz (D is identified there), lag %d frames:" % (
-            THR["r1b_lo"], THR["r1b_hi"], Rb["lag_frames"]))
-        P("     %-8s %6s %7s %7s %7s %6s" % ("band", "s", "c_D", "se", "ratio", "R2"))
-        for nm, v in Rb["rows"].items():
-            if v.get("ok"):
-                P("     %-8s %6.1f %7.3f %7.3f %7.3f %6.3f" % (nm, v["s"], v["cD"], v["se_cD"], v["ratio"], v["r2"]))
-        P("     band median: c_D %s  ratio %s   (the design: c_D 0.566, ratio -1)" % (f3(V.get("r1b_cD")),
-                                                                                    f3(V.get("r1b_ratio"))))
-    R0 = S.get("reg_struct_v0")
-    if R0 and R0["pooled"].get("n"):
-        P0 = R0["pooled"]
-        P("   SUPERSEDED structural form (pre-2026-10-02: direction-0 ramp, word on the 0x18F frame, one intercept),"
-          " for comparison only:")
-        P("     pooled ratio %s  c_I/c_P %s  c_D %s  (a %.3f b %.3f c %.3f d %.3f, lag %d); per band c_D %s" % (
-            f3(P0["ratio"]), f3(P0["cIcP"], "%.2f"), f3(P0["cD"]), P0["a"], P0["b"], P0["c"], P0["d"],
-            R0["lag_frames"], " ".join("%s %.3f" % (k, v["cD"]) for k, v in R0["rows"].items() if v.get("ok"))))
-    VL = S["verdict_literal"]
-    P("   the design's LITERAL regression (0.3-3 Hz, lag-matched), reported, not decision-bearing: %s" % VL["verdict"])
-    P("     ratio %s  c_I/c_P %s  c_D %s  dip %s  hi %s" % (f3(VL["ratio"]), f3(VL["cIcP"], "%.2f"), f3(VL["cD"]),
-                                                          f3(VL["dip"]), f3(VL["hi"])))
-    if S.get("replay"):
-        P("   REPLAY METHOD -- the lane replayed on the wire inputs (R2 of the tap vs each image's arithmetic):")
-        for k, v in S["replay"].items():
-            P("     %-12s R2 %s  gain %s  lag %s  n %s" % (k, f3(v.get("r2")), f3(v.get("gain")), v.get("lag"),
-                                                        v.get("n")))
-        rc = S.get("replay_corrected") or {}
-        if rc.get("n"):
-            P("     %-12s R2 %s  gain %s  lag %s  n %s   <- C3B-P with the structural inputs (arm %s ramp, word %s"
-              " frame ahead)" % ("C3B-P*", f3(rc.get("r2")), f3(rc.get("gain")), rc.get("lag"), rc.get("n"),
-                                 si.get("arm"), si.get("q_lead")))
-    A2 = S["a2"]
-    P("   A2: %d request drops, %d with |tap| < 20 LSB within 0.15 s; R7 (pushing toward 0 > 0.2 s): %s" % (
-        A2["n"], A2["n_pass"], A2["r7"]))
+    if V is None:
+        P("1. VERDICT (structural regression on the lane tap): %s" % NOTAP)
+        P("   (LIVE / NOT LIVE / INVERTED, the tap regression, the replay method and A2/R7 all read 0x1AB, which on this "
+          "firmware is Honda's motor torque, not the lane)")
+    else:
+        P("1. VERDICT (structural regression, decision-bearing; R1 also needs the %g-%g Hz fit): %s" % (
+            THR["r1b_lo"], THR["r1b_hi"], V["verdict"]))
+        _clauses(L, V)
+        R = S["reg_struct"]
+        si = S.get("struct_inputs") or {}
+        if si:
+            P("   structural inputs: C3-rev2-P lane replayed with the engage-ramp arm %d (+%d / -%d per tick, %s), the"
+              " torque word %d frame(s) ahead of 0x18F, I re-anchored per ~%.0f s window%s" % (
+                  si["arm"], si["ramp"][0], si["ramp"][1], si["ramp_src"], si["q_lead"], si["anchor_s"],
+                  ("; " + si["note"]) if si.get("note") else ""))
+            if si.get("ref"):
+                P("   (A16B wire: the I component and C3B-P* below are the %s rule's replay -- section 6B decides which rule"
+                  " ran)" % si["ref"])
+        P("   tap = a P_raw + b P_meas + c I + d D (+ one intercept per window); LIVE design: a = b = c = d = 1 (lag %d"
+          " frames; R2 within-window)" % R["lag_frames"])
+        P("   %-8s %6s %6s %6s %6s %6s %7s %7s %6s %7s %7s" % ("band", "s", "a", "b", "c", "d", "c_P", "pred", "c_I/P",
+                                                            "R2", "R2rep"))
+        for nm, v in R["rows"].items():
+            if not v.get("ok"):
+                P("   %-8s %6.1f   (too little hands-off exposure)" % (nm, v.get("n", 0) / 50.0))
+                continue
+            P("   %-8s %6.1f %6.3f %6.3f %6.3f %6.3f %7.3f %7.3f %6.2f %7.4f %7.4f" % (
+                nm, v["s"], v["a"], v["b"], v["c"], v["d"], v["cP"], v["cP_pred"], v["cIcP"], v["r2"], v["r2_replay"]))
+        Pp = R["pooled"]
+        if Pp.get("n"):
+            P("   pooled   a %.3f b %.3f c %.3f d %.3f  R2 %.4f" % (Pp["a"], Pp["b"], Pp["c"], Pp["d"], Pp["r2"]))
+        Rb = S.get("reg_r1b")
+        if Rb:
+            P("   R1 SECOND METHOD -- the literal regression at %g-%g Hz (D is identified there), lag %d frames:" % (
+                THR["r1b_lo"], THR["r1b_hi"], Rb["lag_frames"]))
+            P("     %-8s %6s %7s %7s %7s %6s" % ("band", "s", "c_D", "se", "ratio", "R2"))
+            for nm, v in Rb["rows"].items():
+                if v.get("ok"):
+                    P("     %-8s %6.1f %7.3f %7.3f %7.3f %6.3f" % (nm, v["s"], v["cD"], v["se_cD"], v["ratio"], v["r2"]))
+            P("     band median: c_D %s  ratio %s   (the design: c_D 0.566, ratio -1)" % (f3(V.get("r1b_cD")),
+                                                                                        f3(V.get("r1b_ratio"))))
+        R0 = S.get("reg_struct_v0")
+        if R0 and R0["pooled"].get("n"):
+            P0 = R0["pooled"]
+            P("   SUPERSEDED structural form (pre-2026-10-02: direction-0 ramp, word on the 0x18F frame, one intercept),"
+              " for comparison only:")
+            P("     pooled ratio %s  c_I/c_P %s  c_D %s  (a %.3f b %.3f c %.3f d %.3f, lag %d); per band c_D %s" % (
+                f3(P0["ratio"]), f3(P0["cIcP"], "%.2f"), f3(P0["cD"]), P0["a"], P0["b"], P0["c"], P0["d"],
+                R0["lag_frames"], " ".join("%s %.3f" % (k, v["cD"]) for k, v in R0["rows"].items() if v.get("ok"))))
+        VL = S["verdict_literal"]
+        P("   the design's LITERAL regression (0.3-3 Hz, lag-matched), reported, not decision-bearing: %s" % VL["verdict"])
+        P("     ratio %s  c_I/c_P %s  c_D %s  dip %s  hi %s" % (f3(VL["ratio"]), f3(VL["cIcP"], "%.2f"), f3(VL["cD"]),
+                                                              f3(VL["dip"]), f3(VL["hi"])))
+        if S.get("replay"):
+            P("   REPLAY METHOD -- the lane replayed on the wire inputs (R2 of the tap vs each image's arithmetic):")
+            for k, v in S["replay"].items():
+                P("     %-12s R2 %s  gain %s  lag %s  n %s" % (k, f3(v.get("r2")), f3(v.get("gain")), v.get("lag"),
+                                                            v.get("n")))
+            rc = S.get("replay_corrected") or {}
+            if rc.get("n"):
+                P("     %-12s R2 %s  gain %s  lag %s  n %s   <- C3B-P with the structural inputs (arm %s ramp, word %s"
+                  " frame ahead)" % ("C3B-P*", f3(rc.get("r2")), f3(rc.get("gain")), rc.get("lag"), rc.get("n"),
+                                     si.get("arm"), si.get("q_lead")))
+        A2 = S["a2"]
+        P("   A2: %d request drops, %d with |tap| < 20 LSB within 0.15 s; R7 (pushing toward 0 > 0.2 s): %s" % (
+            A2["n"], A2["n_pass"], A2["r7"]))
     P("")
     P("2. STOP BANDS (any one -> REVERT)")
-    P("   R1 INVERTED          %s" % (V["verdict"] == "INVERTED"))
-    P("   R2 rail hands-off    %s  %s" % (S["r2"]["fire"], S["r2"]["events"][:3]))
+    if V is None:
+        P("   R1 INVERTED          %s" % NOTAP)
+        P("   R2 rail hands-off    %s" % NOTAP)
+    else:
+        P("   R1 INVERTED          %s" % (V["verdict"] == "INVERTED"))
+        P("   R2 rail hands-off    %s  %s" % (S["r2"]["fire"], S["r2"]["events"][:3]))
     P("   R3* 0.25-5.5 Hz ring %s  %d events %s" % (S["r3"]["fire"], S["r3"]["n"], [
         (e_["chan"], round(e_["f0"], 2), round(e_["amp_max"], 2), round(e_["r_gm"], 2), e_["growing"], round(e_["t"], 1))
         for e_ in S["r3"]["events"][:4]]))
@@ -1905,7 +2005,7 @@ def report(S):
     P("   R5 ring presence %s %%  F7 %s /100 s (n %s, %.0f s at |angle| >= 30)" % (
         f3(pres.get("pres_pct"), "%.2f"), f3(st.get("f7_per100"), "%.2f"), st.get("n_f7"), st.get("hi_ang_s", 0)))
     P("   R6 |err| > 10 deg     %s  %s" % (S["r6"]["fire"], S["r6"]["events"][:3]))
-    P("   R7 (see A2)          %s" % A2["r7"])
+    P("   R7 (see A2)          %s" % (NOTAP if V is None else A2["r7"]))
     P("   R8 health            %s  (status bad %d, b4 bad %d; have status %s b4 %s)" % (
         S["r8"]["fire"], S["r8"]["bad_status"], S["r8"]["bad_b4"], S["r8"]["have_status"], S["r8"]["have_b4"]))
     P("")
@@ -1938,20 +2038,25 @@ def report(S):
         P("   5-30 Hz lines on %-4s (>= %.0f dB): %s" % (ch, THR["r4_excess_db"], [
             (round(n_["f"], 1), round(n_["excess_db"], 1)) for n_ in S["census"][ch]["lines"]]))
     P("")
-    P("4. FRICTION per band (hands-off; T counts; next-step sizing, NOT a verdict)")
-    for nm, v in S["friction"].items():
-        if v.get("ok"):
-            P("   %-7s %5.0f s  Coulomb Fc %6.1f +- %4.1f  breakaway p50/p90 %6.1f / %6.1f (n %d)  k %.1f T/deg  b %.2f" % (
-                nm, v["secs"], v["Fc"], v["se_Fc"], v["Fs_p50"], v["Fs_p90"], v["n_break"], v["k"], v["b"]))
-        else:
-            P("   %-7s %5.0f s  (too little sliding/exposure)" % (nm, v.get("secs", 0)))
-    lh = S["light"]
-    P("")
-    P("5. LIGHT-HOLD EPISODES (300 <= |bar| < 512 for >= 1 s): %d" % lh.get("n", 0))
-    for r in lh.get("rows", []):
-        P("   t %.1f %-7s %.1f s @ %.1f m/s  dI %.0f T [%s]  release overshoot %.2f deg (bar %.1f) [%s]" % (
-            r["t"], r["kind"], r["dur"], r["v"], r["dI_T"], "flat" if r["flat"] else "RAMPS", r["release_ovs"],
-            r["ovs_bar"], "pass" if r["ovs_pass"] else "FAIL"))
+    if S["friction"] is None:
+        P("4. FRICTION per band (hands-off; T counts): %s" % NOTAP)
+        P("")
+        P("5. LIGHT-HOLD EPISODES (300 <= |bar| < 512 for >= 1 s): %s" % NOTAP)
+    else:
+        P("4. FRICTION per band (hands-off; T counts; next-step sizing, NOT a verdict)")
+        for nm, v in S["friction"].items():
+            if v.get("ok"):
+                P("   %-7s %5.0f s  Coulomb Fc %6.1f +- %4.1f  breakaway p50/p90 %6.1f / %6.1f (n %d)  k %.1f T/deg  b %.2f" % (
+                    nm, v["secs"], v["Fc"], v["se_Fc"], v["Fs_p50"], v["Fs_p90"], v["n_break"], v["k"], v["b"]))
+            else:
+                P("   %-7s %5.0f s  (too little sliding/exposure)" % (nm, v.get("secs", 0)))
+        lh = S["light"]
+        P("")
+        P("5. LIGHT-HOLD EPISODES (300 <= |bar| < 512 for >= 1 s): %d" % lh.get("n", 0))
+        for r in lh.get("rows", []):
+            P("   t %.1f %-7s %.1f s @ %.1f m/s  dI %.0f T [%s]  release overshoot %.2f deg (bar %.1f) [%s]" % (
+                r["t"], r["kind"], r["dur"], r["v"], r["dI_T"], "flat" if r["flat"] else "RAMPS", r["release_ovs"],
+                r["ovs_bar"], "pass" if r["ovs_pass"] else "FAIL"))
     if S.get("v299"):
         import drive_read_v299 as V2
         L.append(V2.report(S["v299"]))
@@ -1971,6 +2076,11 @@ def main():
     ap.add_argument("--no-replay", action="store_true")
     ap.add_argument("--no-presence", action="store_true")
     ap.add_argument("--json", default=None)
+    ap.add_argument("--no-tap", action="store_true",
+                    help="treat the route as having no lane tap (release firmware); normally decided by the EPS fwVersion")
+    ap.add_argument("--synthetic-release", action="store_true",
+                    help="SELF-CHECK: strip the tap from a cached V299 route (garbage 0x1AB, 0x14A b4 bits 3-7 cleared, "
+                         "fwVersion rewritten to A16C, fork status field dropped) and run the release path on it")
     a = ap.parse_args()
     refs = {}
     t_ref = _time.time()
@@ -1979,6 +2089,11 @@ def main():
         refs[r] = ref_summary(r, with_presence=not a.no_presence)
     t_load = _time.time()
     W = load_route(a.route)
+    if a.no_tap:
+        W["meta"]["tap_override"] = "--no-tap"
+        W["meta"]["tap"] = tap_state(W["meta"])
+    if a.synthetic_release:
+        strip_tap(W)
     t_read = _time.time()
     S = read(W, refs=refs, with_replay=not a.no_replay, with_presence=not a.no_presence)
     t_end = _time.time()

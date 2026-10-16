@@ -153,6 +153,8 @@ THR2 = dict(
     cap_level=6144, cap_d3_vlo=8.0, cap_d3_vhi=10.0, cap_d3_deg=3.0, cap_d3_min=60.0, cap_d3_max=90.0,  # D3 = 60-90 deg
     # ---- information: the 1.6-3 Hz hard-turn wheel-rate (m6_goal_scoring.spectral, its own definition)
     hard_lo=1.6, hard_hi=3.0, hard_theta=20.0, hard_run=200,
+    # ---- the reaction test (2026-10-15): window and R2 floor, pre-registered with the label, not fitted
+    react_win_s=1.0, react_r2=0.5, hi_angle=60.0,
 )
 # the spec's sim predictions (rev 3 §7.2 / the card §4; BELIEF), printed beside each readout -- never used as a bar
 PRED = dict(
@@ -183,8 +185,246 @@ STATUS_BITS = {STATUS_RATE: "rate/jerk-bound", STATUS_STALE: "EPS-torque stale/b
 STATUS_RESERVED = 0xFFFF & ~(STATUS_RATE | STATUS_CLIP | STATUS_STALE)
 # the fork's error clip (identical at 2712e1336 = V298 and c6452361e = V299, values.py ANGLE_ERROR_MAX_*): tags a
 # setpoint step as clip-bound on a route whose fork publishes no status word (route 79)
-ERR_MAX_BP = (3.1, 8.0, 10.0, 11.75, 17.5, 26.9)
+ERR_MAX_BP = (3.1, 8.0, 10.0, 11.75, 17.5, 26.9)          # FALLBACK only: fork_constants() reads values.py (below)
 ERR_MAX_V = (17.0, 15.5, 19.5, 17.0, 8.5, 4.5)
+
+# =====================================================================================================================
+# THE FORK'S LIMITER CONSTANTS, READ FROM THE FORK'S OWN SOURCE (2026-10-15).  Nothing here is hard-coded: the release
+# fork's opendbc_repo/opendbc/car/honda/values.py (MAX_ANGLE_RATE, ANGLE_ERROR_MAX_BP / _V, STEER_STEP), lateral.py
+# (MAX_LATERAL_JERK = 3.0 + g * AVERAGE_ROAD_ROLL) and car/__init__.py (g, DT_CTRL) are parsed with a literal-only
+# evaluator.  ERR_MAX_BP / ERR_MAX_V above are the fallback when the worktree is missing (printed).
+# =====================================================================================================================
+RELEASE_WT = Path(os.environ.get("ACCORD_RELEASE_WORKTREE",
+                                 "C:/Users/dudei/Desktop/Projects/openpilots/raayyymond-StarPilot/StarPilot-release"))
+_FC = {}
+
+
+def _lit(expr, env):
+    """evaluate a numeric literal expression (numbers, names from env, + - * /) -- nothing else."""
+    def ev(n):
+        if isinstance(n, ast.Constant) and isinstance(n.value, (int, float)):
+            return float(n.value)
+        if isinstance(n, ast.Name) and n.id in env:
+            return env[n.id]
+        if isinstance(n, ast.BinOp) and isinstance(n.op, (ast.Add, ast.Sub, ast.Mult, ast.Div)):
+            a, b = ev(n.left), ev(n.right)
+            return {ast.Add: a + b, ast.Sub: a - b, ast.Mult: a * b, ast.Div: a / b}[type(n.op)]
+        if isinstance(n, ast.UnaryOp) and isinstance(n.op, ast.USub):
+            return -ev(n.operand)
+        raise ValueError("non-literal expression")
+    return ev(ast.parse(expr.strip(), mode="eval").body)
+
+
+def _grab(text, name, env=None, lst=False):
+    import re
+    m = re.search(r"^\s*%s\s*(?::[^=\n]+)?=\s*([^#\n]+?)\s*(?:#.*)?$" % re.escape(name), text, re.M)
+    if not m:
+        return None
+    rhs = m.group(1).rstrip(",")
+    try:
+        if lst:
+            return [float(x) for x in ast.literal_eval(rhs)]
+        return _lit(rhs, env or {})
+    except (ValueError, SyntaxError):
+        return None
+
+
+def fork_constants(root=None):
+    """-> dict(src, ok, rate_deg_frame, err_bp, err_v, max_lat_jerk, steer_step, dt_ctrl, why).  Read from the RELEASE
+    worktree's source files; ok False (with the fallback err table) when the worktree is missing."""
+    root = Path(root) if root else RELEASE_WT
+    if str(root) in _FC:
+        return _FC[str(root)]
+    car = root / "opendbc_repo" / "opendbc" / "car"
+    out = dict(src=str(car / "honda" / "values.py"), ok=False, rate_deg_frame=None, err_bp=list(ERR_MAX_BP),
+               err_v=list(ERR_MAX_V), max_lat_jerk=None, steer_step=1.0, dt_ctrl=0.01, why="")
+    try:
+        v = (car / "honda" / "values.py").read_text(encoding="utf-8")
+        lat = (car / "lateral.py").read_text(encoding="utf-8")
+        ini = (car / "__init__.py").read_text(encoding="utf-8")
+        g = _grab(ini, "ACCELERATION_DUE_TO_GRAVITY")
+        out["dt_ctrl"] = _grab(ini, "DT_CTRL") or 0.01
+        roll = _grab(lat, "AVERAGE_ROAD_ROLL")
+        out["max_lat_jerk"] = _grab(lat, "MAX_LATERAL_JERK", dict(ACCELERATION_DUE_TO_GRAVITY=g, AVERAGE_ROAD_ROLL=roll))
+        out["steer_step"] = _grab(v, "STEER_STEP") or 1.0
+        out["rate_deg_frame"] = _grab(v, "MAX_ANGLE_RATE")
+        bp, vv = _grab(v, "ANGLE_ERROR_MAX_BP", lst=True), _grab(v, "ANGLE_ERROR_MAX_V", lst=True)
+        if bp and vv and len(bp) == len(vv):
+            out["err_bp"], out["err_v"] = bp, vv
+        out["ok"] = bool(bp and vv and out["rate_deg_frame"] is not None and out["max_lat_jerk"] is not None)
+        if not out["ok"]:
+            out["why"] = "a constant could not be parsed from %s" % out["src"]
+    except OSError as e:
+        out["why"] = "worktree not readable (%s): the hard-coded fallback err table is used" % e
+    _FC[str(root)] = out
+    return out
+
+
+def rate_cap(params, fw_letter=None):
+    """the angle-rate cap (deg/FRAME, 100 frames/s) the fork actually ran, and where that number came from.
+    Order: (1) the logged initData param AccordAngleMaxRate (deg/s, /100); (2) a V298/V299 wire (A16A/A16B) that logs
+    no param = c6452361e's documented default 120 deg/s (defaults are not written to initData); (3) the release fork's own values.py MAX_ANGLE_RATE; (4)
+    NOTHING logged and nothing readable -> 2.5 deg/frame (250 deg/s), SAID so."""
+    mr = (params or {}).get("AccordAngleMaxRate")
+    try:
+        if mr not in (None, ""):
+            return float(mr) / 100.0, "logged param AccordAngleMaxRate=%s deg/s" % mr
+    except ValueError:
+        pass
+    if fw_letter in ("A16A", "A16B"):
+        return 1.2, ("%s fork: no AccordAngleMaxRate param in initData; 1.2 deg/frame = 120 deg/s, c6452361e's "
+                     "ANGLE_MAX_RATE_PARAM default ('the defaults are V298's values exactly')" % IMAGE_OF[fw_letter])
+    K = fork_constants()
+    if K["ok"] and K["rate_deg_frame"]:
+        return float(K["rate_deg_frame"]), "release fork constant MAX_ANGLE_RATE in %s (nothing logged)" % K["src"]
+    return 2.5, "DEFAULT 2.5 deg/frame (250 deg/s): nothing logged and the release values.py is not readable"
+
+
+def _prev_idx(t_src, t_dst, back=0):
+    j = np.searchsorted(t_src, t_dst, side="right") - 1 - back
+    return np.clip(j, 0, len(t_src) - 1)
+
+
+def derive_status(FK, params=None, steer_ratio=None, fw_letter=None):
+    """The rate-bound and clip-bound bits of starpilotCarState.accordAngleStatus, derived OFFLINE (the release fork no
+    longer publishes the field).  Per carOutput row (one card loop), from the fork's own limiter (carcontroller
+    _update_angle, read in the release worktree):
+        RATE  latActive and |desired - last| > min(jerk delta(v), MAX_ANGLE_RATE), desired = carControl.actuators.
+              steeringAngleDeg, last = the previous carOutput angle, jerk delta = degrees(MAX_LATERAL_JERK / v^2 * sR l
+              (1 - sf v^2)) * STEER_STEP * DT_CTRL (opendbc get_max_angle_delta_vm, the bicycle model of carParams)
+        CLIP  latActive and |carOutput angle - carState angle| reaches ANGLE_ERROR_MAX(v) (clip scale applied below
+              11.75 m/s when AccordAngleClipScale is logged)
+    carControl is the row BEFORE the latest one at or before the carOutput row, carState the latest at or before it
+    (EVIDENCE: that alignment reproduces the logged bits at 99.9-100 % on routes 9c/9d; the same-row alignment gives
+    99.4-99.6 %).  -> dict(t, lat, rate, clip, rate_cap, rate_src, consts)."""
+    K = fork_constants()
+    cap, src = rate_cap(params, fw_letter)
+    t = np.asarray(FK["t_co"], float)
+    co = np.asarray(FK["co_ang"], float)
+    jc = _prev_idx(np.asarray(FK["t_cc"], float), t, 1)
+    js = _prev_idx(np.asarray(FK["t_cs"], float), t, 0)
+    lat = np.asarray(FK["cc_latActive"])[jc].astype(bool)
+    des = np.asarray(FK["cc_ang"], float)[jc]
+    th = np.asarray(FK["cs_ang"], float)[js]
+    vk = "cs_vegoraw" if "cs_vegoraw" in FK.files else "cs_vego"
+    v = np.asarray(FK[vk], float)[js]
+    cp = dict(VM_DEFAULT)
+    try:
+        cp.update({k: x for k, x in json.loads(str(FK["carparams_json"])).items() if k in cp})
+    except Exception:
+        pass
+    sR = float(steer_ratio) if steer_ratio else cp["steerRatio"]
+    m, l, aF = cp["mass"], cp["wheelbase"], cp["centerToFront"]
+    aR = l - aF
+    cF, cR = cp["tireStiffnessFront"], cp["tireStiffnessRear"]
+    sf = m * (cF * aF - cR * aR) / (l ** 2 * cF * cR)
+    u = np.maximum(v, 1.0)
+    jerk = K["max_lat_jerk"] if K["max_lat_jerk"] else 3.0 + 9.81 * 0.06
+    dj = np.degrees((jerk / u ** 2) * sR * l * (1.0 - sf * u ** 2)) * (K["dt_ctrl"] * K["steer_step"])
+    delta = np.minimum(dj, cap)
+    last = np.r_[co[:1], co[:-1]]
+    rate = lat & (np.abs(des - last) > delta)
+    cs_ = (params or {}).get("AccordAngleClipScale")
+    try:
+        cscale = float(cs_) if cs_ not in (None, "") else 1.0
+    except ValueError:
+        cscale = 1.0
+    bp = np.asarray(K["err_bp"], float)
+    ev = np.asarray(K["err_v"], float) * np.where(bp <= 11.75, cscale, 1.0)
+    emax = np.interp(v, bp, ev)
+    clip = lat & (np.abs(co - th) >= emax - 1e-3)
+    return dict(t=t, lat=lat, rate=rate, clip=clip, rate_cap=cap, rate_src=src, consts=K, sR=sR)
+
+
+def derived_vs_logged(FK, params=None, steer_ratio=None, fw_letter=None):
+    """VALIDATION of derive_status against the fork's LOGGED bits (routes that still carry the field).  Agreement is
+    reported per bit over ALL carOutput rows and over latActive rows, with the disagreement split into false positives
+    (derived set, logged clear) and false negatives."""
+    if "spcs_angstat" not in FK.files or not len(FK["spcs_angstat"]):
+        return dict(available=False, why="no logged accordAngleStatus on this route")
+    D = derive_status(FK, params, steer_ratio, fw_letter)
+    t = D["t"]
+    ts = np.asarray(FK["t_spcs"], float)
+    j = np.clip(np.searchsorted(ts, t), 1, len(ts) - 1)
+    j = np.where(np.abs(ts[j - 1] - t) <= np.abs(ts[j] - t), j - 1, j)
+    ok = np.abs(ts[j] - t) <= 0.005
+    st = np.asarray(FK["spcs_angstat"]).astype(np.int64)[j]
+    out = dict(available=True, n=int(ok.sum()), n_lat=int((ok & D["lat"]).sum()))
+    for nm, bit, der in (("rate", STATUS_RATE, D["rate"]), ("clip", STATUS_CLIP, D["clip"])):
+        lg = (st & bit) > 0
+        agree = (lg == der)[ok]
+        out[nm] = dict(agree=float(agree.mean()) if agree.size else np.nan, logged_duty=float(lg[ok].mean()),
+                       derived_duty=float(der[ok].mean()), n_logged=int(lg[ok].sum()), n_derived=int(der[ok].sum()),
+                       false_pos=int((der & ~lg)[ok].sum()), false_neg=int((~der & lg)[ok].sum()),
+                       agree_lat=float((lg == der)[ok & D["lat"]].mean()) if (ok & D["lat"]).any() else np.nan)
+    both_ok = ((((st & STATUS_RATE) > 0) == D["rate"]) & (((st & STATUS_CLIP) > 0) == D["clip"]))[ok]
+    out["joint_agree"] = float(both_ok.mean()) if both_ok.size else np.nan
+    out["rate_cap"], out["rate_src"] = D["rate_cap"], D["rate_src"]
+    return out
+
+
+NOTAP_V = "NOT AVAILABLE on release firmware (no tap)"
+
+
+def _tap_ok(W):
+    """False on a release route (EPS fwVersion 39990-TVA,A16C): 0x1AB is Honda's motor torque there, not the lane tap."""
+    return bool((((W.get("meta") or {}).get("tap")) or {}).get("available", True))
+
+
+def reaction_label(W, win_s=None, r2_thr=None):
+    """THE REACTION TEST (routes-review, 2026-10-15; high_angle_probe.py): at high steering angle the 0x18F torque word
+    can be the WHEEL'S OWN INERTIAL REACTION, not a hand: bar ~ k * (d2 theta/dt2) with R2 0.88 on 9c at 704-707 s.  Here
+    it is a centred sliding window of win_s: R2 = Pearson r^2 of the bar against the wheel's angular acceleration (theta
+    low-passed at 8 Hz, zero-phase, twice differentiated), and k = the regression slope.  A frame is a REACTION frame
+    when latActive, R2 >= r2_thr and k > 0.  Pre-registered here, not fitted: window 1 s, R2 >= 0.5.  BELIEF: a hand
+    that itself accelerates the wheel can also score a high R2 (the test cannot tell them apart by R2 alone); that is
+    why the original |bar| < 300 label stays the decision-bearing one and this label is printed beside it.
+    -> dict(mask, r2, k)."""
+    from scipy.ndimage import uniform_filter1d
+    win_s = THR2["react_win_s"] if win_s is None else win_s
+    r2_thr = THR2["react_r2"] if r2_thr is None else r2_thr
+    th = np.nan_to_num(np.asarray(W["theta"], float))
+    y = np.nan_to_num(np.asarray(W["bar"], float))
+    n = len(th)
+    if n < 64:
+        return dict(mask=np.zeros(n, bool), r2=np.full(n, np.nan), k=np.full(n, np.nan))
+    ths = signal.sosfiltfilt(signal.butter(2, 8.0, fs=FS, output="sos"), th)
+    acc = np.gradient(np.gradient(ths)) * FS * FS                      # deg/s^2
+    w = max(int(round(win_s * FS)) | 1, 3)
+    uf = lambda a: uniform_filter1d(a, w, mode="nearest")             # noqa: E731
+    mx, my = uf(acc), uf(y)
+    vx, vy = uf(acc * acc) - mx * mx, uf(y * y) - my * my
+    cv = uf(acc * y) - mx * my
+    ok = (vx > 1e-9) & (vy > 1e-9)
+    r2 = np.where(ok, cv * cv / np.where(ok, vx * vy, 1.0), np.nan)
+    k = np.where(ok, cv / np.where(ok, vx, 1.0), np.nan)
+    mask = np.asarray(W["eng"], bool) & ok & (r2 >= r2_thr) & (k > 0)
+    return dict(mask=mask, r2=r2, k=k)
+
+
+def handsoff_v3_alt(W, react=None):
+    """handsoff_v3 with the reaction test: a frame whose |bar| >= 300 (or steeringPressed) but which the REACTION test
+    explains as the wheel's own inertia is NOT a hand.  Same 0.5 s clean-history rule.  -> bool (n,)."""
+    R = reaction_label(W) if react is None else react
+    bar = np.abs(np.where(np.isfinite(W["bar"]), W["bar"], np.inf))
+    pressed = np.nan_to_num(W["pressed"]) > 0.5
+    bad = ((bar >= THR2["ho_bar"]) | pressed) & ~R["mask"]
+    n = int(round(THR2["ho_pre_s"] * FS))
+    cs = np.r_[0, np.cumsum(bad)]
+    k = np.arange(len(bar))
+    clean = (cs[k + 1] - cs[np.maximum(k - n, 0)]) == 0
+    return np.asarray(W["eng"], bool) & ~bad & clean
+
+
+def handsoff_before_alt(W, idx, react=None, n=None):
+    """handsoff_before with the reaction test (see handsoff_v3_alt)."""
+    R = reaction_label(W) if react is None else react
+    bar = np.abs(np.where(np.isfinite(W["bar"]), W["bar"], np.inf))
+    bad = ((bar >= THR2["ho_bar"]) | (np.nan_to_num(W["pressed"]) > 0.5)) & ~R["mask"]
+    n = int(round(THR2["ho_pre_s"] * FS)) if n is None else n
+    cs = np.r_[0, np.cumsum(bad)]
+    idx = np.asarray(idx, np.int64)
+    return (idx >= n) & ((cs[idx] - cs[np.maximum(idx - n, 0)]) == 0)
 
 
 def handsoff_v3(W):
@@ -394,7 +634,7 @@ def fw_family(fw_list):
     return None
 
 
-IMAGE_OF = {"A16A": "V298", "A16B": "V299"}
+IMAGE_OF = {"A16A": "V298", "A16B": "V299", "A16C": "V300"}      # A16C = the RELEASE firmware: no lane tap
 V299_PARAMS = ("AccordAngleBarFromEps", "AccordAngleMaxRate", "AccordAngleClipScale")
 
 
@@ -428,6 +668,21 @@ def attribution(W, S, FK, fkmeta):
     else:
         out["status"] = None
         present = 0.0 if n_lat else np.nan                  # the schema lacks the field: absent on every frame
+    # the RELEASE fork no longer publishes accordAngleStatus: rate / clip bits are derived offline (derive_status) and,
+    # where a route still logs the field, the derivation is validated against it (derived_vs_logged)
+    out["release"] = bool(letter) and letter not in ("A16A", "A16B")
+    out["rate_cap"], out["rate_cap_src"] = rate_cap(params, letter)
+    try:
+        if "spcs_angstat" in FK.files and len(FK["spcs_angstat"]):
+            out["derived_check"] = derived_vs_logged(FK, params, None, letter)
+        else:
+            Dd = derive_status(FK, params, None, letter)
+            mm = Dd["lat"]
+            out["derived"] = dict(n_lat=int(mm.sum()),
+                                  rate=float(Dd["rate"][mm].mean()) if mm.any() else np.nan,
+                                  clip=float(Dd["clip"][mm].mean()) if mm.any() else np.nan)
+    except Exception as e:
+        out["derived_error"] = "%s: %s" % (type(e).__name__, str(e)[:120])
     # F1: accordAngleStatus PRESENT on >= 99 % of latActive carState rows (a starpilotCarState row within 5 ms)
     out["status_present"] = present
     out["status_n_lat"] = n_lat
@@ -487,14 +742,17 @@ def _zoh_idx(t_src, t_dst):
     return np.clip(j, 0, max(len(t_src) - 1, 0)), j >= 0
 
 
-def o1_snaps(FK, params):
+def o1_snaps(FK, params, fw_letter=None):
     """F1's O1-like SETPOINT SNAP, the spec's own definition (rev 3 §7.2 F1): |d theta_sp| > 1.2 deg in ONE frame
     TOWARD the wheel, outside the first frame and the latActive rising edge.  theta_sp = carOutput's setpoint (co_ang,
     the limiter's output the fork packed into 0xE4), theta = carState.steeringAngleDeg of the same frame, latActive =
     carControl's (ZOH).  A step counts only when BOTH its frames are latActive (so the rising edge and the first frame
     never count); "toward the wheel" = sign(d theta_sp) == sign(theta - theta_sp) at the step's start; "one frame" =
     the allowance scales with the 10-ms frames the step spans (a dropped log row is not a snap).  The allowance is the
-    LITERAL 1.2 deg/frame on every config (orchestrator ruling 2026-10-02 -- NOT AccordAngleMaxRate / 100).  Each snap
+    RATE CAP THE FORK ACTUALLY RAN (rate_cap(): the logged AccordAngleMaxRate / 100, else the V298/V299 default 1.2,
+    else the release fork's values.py MAX_ANGLE_RATE, else 2.5 -- SAID in the output).  Until 2026-10-15 this was the
+    literal 1.2 deg/frame on every config (ruling 2026-10-02), which fires on every step of a 250 deg/s dose: 239 / 115
+    false snaps on routes 9c / 9d.  At config A (120 deg/s) the two are identical.  Each snap
     is tagged CLIP-BOUND when the fork's error clip bound that frame (status bit 16 when published, else |co - theta|
     at the error-clip table, values.py ANGLE_ERROR_MAX_*): the V299 fork KEEPS that clip, and it drags the setpoint
     faster than 1.2 deg/frame behind a wheel the hand turns fast, by design.  By the same ruling a clip-bound step is
@@ -517,7 +775,7 @@ def o1_snaps(FK, params):
         cscale = float(params.get("AccordAngleClipScale")) if params.get("AccordAngleClipScale") is not None else 1.0
     except ValueError:
         cscale = 1.0
-    cap = THR2["f1_snap"]                                       # the literal 1.2 deg/frame (ruling), whatever MaxRate
+    cap, cap_src = rate_cap(params, fw_letter)                  # the cap the fork ran (deg/frame), and where it came from
     d = np.diff(co)
     nfr = np.maximum(1.0, np.rint(np.diff(t) / 0.01))
     both = lat[1:] & lat[:-1] & oks[1:] & oks[:-1]
@@ -541,7 +799,8 @@ def o1_snaps(FK, params):
     sc = snap & clip[1:]
     k = np.flatnonzero(snap)
     ev = [(float(t[i + 1] - t[0]), float(d[i]), float(gap0[i]), float(v[i + 1]), bool(clip[i + 1])) for i in k[:8]]
-    return dict(testable=bool(both.any()), why="" if both.any() else "no latActive step", cap=cap, n_steps=int(both.sum()),
+    return dict(testable=bool(both.any()), why="" if both.any() else "no latActive step", cap=cap, cap_src=cap_src,
+                n_steps=int(both.sum()),
                 n_snap=int(snap.sum()), n_snap_clip=int(sc.sum()), n_snap_noclip=int((snap & ~clip[1:]).sum()),
                 max_toward=float(np.max(np.abs(d)[both & toward] / nfr[both & toward])) if (both & toward).any() else 0.0,
                 clip_src=src, events=ev, max_rate_param=mr)
@@ -554,9 +813,9 @@ def f1_snap_clause(SN):
     are printed.  -> (status, text)."""
     if not SN.get("testable"):
         return "NOT TESTABLE", "O1-snap check: %s" % SN.get("why")
-    txt = ("O1-like snaps (|d theta_sp| > %.1f deg / frame toward the wheel, both frames latActive): %d NOT clip-bound "
-           "(counted) + %d clip-bound (not counted, ruling) of %d steps" % (SN["cap"], SN["n_snap_noclip"],
-                                                                          SN["n_snap_clip"], SN["n_steps"]))
+    txt = ("O1-like snaps (|d theta_sp| > the fork's rate cap %.2f deg / frame toward the wheel, both frames latActive): "
+           "%d NOT clip-bound (counted) + %d clip-bound (not counted, ruling) of %d steps" % (
+               SN["cap"], SN["n_snap_noclip"], SN["n_snap_clip"], SN["n_steps"]))
     return ("FAIL" if SN["n_snap_noclip"] else "PASS"), txt
 
 
@@ -924,6 +1183,20 @@ def enrichment(W, ss, levels=((300,), (512,), (300, 512), (1229,)), onset_levels
     out["onsets1229"] = dict(n=int(len(idx)), per_min_turn=pm(len(idx)), n_short=int(np.sum(lens < 10)),
                              n_handsoff=int(ho.sum()), per_min_handsoff=pm(int(ho.sum())),
                              n_handsoff_short=int(np.sum(ho & (lens < 10))), turn_s=float(tsec))
+    # the SAME onsets under the REACTION-TEST hands-off label (reaction_label): a freeze toggled by the wheel's own
+    # inertial reaction at high angle is a hands-off onset too (the |bar| < 300 label cannot see it)
+    RL = reaction_label(W)
+    hor = handsoff_before_alt(W, idx, RL)
+    hi = eng & (np.abs(np.nan_to_num(W["theta"])) >= THR2["hi_angle"])
+    out["onsets1229"].update(
+        n_handsoff_r2=int(hor.sum()), per_min_handsoff_r2=pm(int(hor.sum())), n_handsoff_r2_short=int(np.sum(hor & (lens < 10))),
+        react_frac_eng=float(RL["mask"][eng].mean()) if eng.any() else np.nan,
+        react_k_median=float(np.nanmedian(RL["k"][RL["mask"]])) if RL["mask"].any() else np.nan,
+        hi_s=float(hi.sum() / FS), hi_handsoff_s=float((hi & handsoff_v3(W)).sum() / FS),
+        hi_handsoff_r2_s=float((hi & handsoff_v3_alt(W, RL)).sum() / FS),
+        hi_react_s=float((hi & RL["mask"]).sum() / FS), n_all_in_hi=int((on & hi).sum()),
+        n_handsoff_r2_in_hi=int((hor & hi[idx]).sum()) if len(idx) else 0,
+        n_handsoff_in_hi=int((ho & hi[idx]).sum()) if len(idx) else 0)
     return out
 
 
@@ -1193,7 +1466,8 @@ def turnins(W):
         ovs = float(np.max((th[k90:we] - spf) * s)) if k90 is not None and we > k90 else np.nan
         rows.append(dict(t=float(W["t"][a0]), v=float(v[a0]), size=size, start=sp0, final=spf, crit=crit, bar=bar,
                          ovs=ovs, t90=((k90 - a0) / FS) if k90 is not None else np.nan,
-                         wheel_peak=float(np.max(th[a0:we] * s)), tap_peak=float(np.max(T[a0:we])),
+                         wheel_peak=float(np.max(th[a0:we] * s)),
+                         tap_peak=float(np.max(T[a0:we])) if _tap_ok(W) else np.nan,
                          fire=bool(crit is not None and np.isfinite(ovs) and ovs > bar),
                          reached=k90 is not None, sp_moved=sp_moved, truncated=trunc_))
     out = dict(n=len(rows), n_returns=len(rets), n_not_handsoff=n_noho, rows=sorted(rows, key=lambda r: -np.nan_to_num(
@@ -1346,6 +1620,10 @@ def cap_read(W, spl, alat, cap=None, turnins_=None):
 # H. HANDS / AUTHORITY: F7, F7b, F9
 # =====================================================================================================================
 def hands_authority(W):
+    if not _tap_ok(W):
+        return dict(unavailable=True, why=NOTAP_V, f7=None, n_f7=None, f7_longest=np.nan, f7b=None, n_f7b=None,
+                    f7b_longest=np.nan, f7b_events=[], f9=None, tap_max_handsoff=np.nan, n_f9_hi=None,
+                    pressed_known=bool(np.isfinite(W["pressed"]).any()))
     T = np.nan_to_num(W["T100"])                               # tap LSB (T / 8), ZOH of the 50 Hz frames
     bar = np.nan_to_num(W["bar"])
     eng = W["eng"]
@@ -1378,6 +1656,9 @@ def hands_authority(W):
 def bar_check(W, FR, FK, fw_letter=None):
     if FK is None:
         return dict(testable=False, why="no fork cache")
+    if not _tap_ok(W):
+        return dict(testable=False, unavailable=True, why=NOTAP_V + ": F8 compares carState.steeringTorqueEps with the tap",
+                    canvalid=_canvalid(FK, fw_letter))
     if "spcs_angstat" not in FK.files or not len(FK["spcs_angstat"]):
         cs = FK["cs_tqeps"]
         return dict(testable=False, why="accordAngleStatus absent (the fork's schema at this commit predates spec F8)",
@@ -1415,7 +1696,7 @@ def angle_mode(FK, fw_letter):
         sct = json.loads(str(FK["carparams_json"])).get("steerControlType")
     except Exception:
         sct = None
-    ok = (str(sct) == "angle") and fw_letter in ("A16A", "A16B")
+    ok = (str(sct) == "angle") and fw_letter in ("A16A", "A16B", "A16C")      # A16C = the release firmware
     return ok, "steerControlType %s, carFw %s" % (sct, fw_letter)
 
 
@@ -1452,6 +1733,11 @@ def read(D, W, S, refs=None):
     V = {}
     FR = D._fr()
     FK, fkmeta, fkpath = fork_cache(W, FR)
+    if FK is not None and (W.get("meta") or {}).get("synthetic_release"):      # --synthetic-release: the release fork's
+        FK = _FakeNpz({k: FK[k] for k in FK.files if k != "spcs_angstat"})     # carState has no accordAngleStatus
+        fkmeta = dict(fkmeta, has_accordAngleStatus=False)
+    tap = _tap_ok(W)
+    V["tap"] = dict(((W.get("meta") or {}).get("tap")) or dict(available=True, why=""))
     tm["fork_cache"] = time.time() - t0
     t1 = time.time()
     ST = D.load_score_time()
@@ -1470,16 +1756,22 @@ def read(D, W, S, refs=None):
         except Exception as e:
             V["o1"] = dict(testable=False, why="the panel's limiter reconstruction failed on this route (%s: %s)" % (
                 type(e).__name__, str(e)[:120]))
-        V["snap"] = o1_snaps(FK, params)                       # F1's clause, the spec's own definition
+        V["snap"] = o1_snaps(FK, params, V["attrib"]["fw_letter"])   # F1's clause, the spec's own definition
     else:
         V["o1"] = dict(testable=False, why="no fork cache")
         V["snap"] = dict(testable=False, why="no fork cache")
     tm["o1"] = time.time() - t1
     t1 = time.time()
-    RI = rule_identity(D, W, S)
-    rep = RI.pop("_rep", None)
-    V["rule_identity"] = RI
-    V["posctrl"] = positive_control(D, W, RI)
+    if tap:
+        RI = rule_identity(D, W, S)
+        rep = RI.pop("_rep", None)
+        V["rule_identity"] = RI
+        V["posctrl"] = positive_control(D, W, RI)
+    else:                                    # a release route: the replay is scored against the tap, which is not there
+        rep = None
+        RI = dict(ok=False, why=NOTAP_V)
+        V["rule_identity"] = RI
+        V["posctrl"] = dict(ran=None, source=NOTAP_V)
     tm["rule_identity"] = time.time() - t1
     t1 = time.time()
     st, ss = stutter(W, S.get("dwells"))
@@ -1502,6 +1794,8 @@ def read(D, W, S, refs=None):
         glut = ST.glut(C["V299"].rows)
         cap = bound_active(D, W, rep["V299"], glut)
     V["cap"] = cap_read(W, spl, alat, cap, V["turnins"])
+    if not tap:
+        V["cap"]["sentence"] = NOTAP_V + " (the replayed integrator's bound state is scored against the tap)"
     V["turnins"].pop("_all", None)                           # the full list served cap_read; not in the JSON
     V["hands"] = hands_authority(W)
     V["bar"] = bar_check(W, FR, FK, V["attrib"]["fw_letter"])
@@ -1540,6 +1834,25 @@ def score_f6(st, enrich):
     notes = ([] if np.isfinite(en) else ["enrichment under-exposed"]) + ([] if np.isfinite(rms) else
                                                                          ["no 5-10 m/s in-turn spectrum"])
     return ("FAIL" if why else "PASS"), meas, "; ".join((["fires on: " + ", ".join(why)] if why else []) + notes)
+
+
+def dose_of(A):
+    """the dose that FLEW: (label, text).  The rate cap from rate_cap() (logged param, else the documented default, else the
+    release constant), the error-clip scale, the bar-from-EPS flag.  config A = cap 120 deg/s, clip x1.0."""
+    cap, src = rate_cap(A.get("params") or {}, A.get("fw_letter"))
+    cs_ = (A.get("params") or {}).get("AccordAngleClipScale")
+    try:
+        cscale = float(cs_) if cs_ not in (None, "") else 1.0
+    except ValueError:
+        cscale = 1.0
+    degs = cap * 100.0
+    if abs(degs - 120.0) < 1e-6 and abs(cscale - 1.0) < 1e-9:
+        label = "config A"
+    else:
+        label = "cap-%.0f dose" % degs + ("" if abs(cscale - 1.0) < 1e-9 else ", clip x%g" % cscale)
+    return label, ("rate cap %.0f deg/s (%.2f deg/frame; %s); error-clip scale x%g (%s); AccordAngleBarFromEps %s" % (
+        degs, cap, src, cscale, "logged" if cs_ not in (None, "") else "default 1.0, nothing logged",
+        (A.get("params") or {}).get("AccordAngleBarFromEps")))
 
 
 def verdict(V, S):
@@ -1593,13 +1906,26 @@ def verdict(V, S):
     pcs = ("positive control = THIS instrument on route 79 (%s): %s wins, V298 %s / V299 %s of %s windows, pooled dR2 "
            "%s" % (pc.get("source"), pc.get("ran"), pc.get("wins_V298"), pc.get("wins_V299"), pc.get("n_win"),
                    _f(pc.get("dR2_pooled"), "%+.3f"))) if pc.get("ran") else "positive control: %s" % pc.get("source")
-    clipnote = ("; %d CLIP-BOUND steps > 1.2 deg/frame toward the wheel are NOT counted (orchestrator ruling "
+    clipnote = ("; %d CLIP-BOUND steps > the rate cap (%.2f deg/frame) toward the wheel are NOT counted (orchestrator ruling "
                 "2026-10-02: the V299 fork's error clip drags the setpoint behind a hand turning faster than the rate "
-                "cap, by design -- not an override)" % SN["n_snap_clip"]) if SN.get("n_snap_clip") else ""
+                "cap, by design -- not an override)" % (SN["n_snap_clip"], SN["cap"])) if SN.get("n_snap_clip") else ""
     add("F1", st, "; ".join(parts), "pooled dR2 >= +0.05 AND V299 wins >= 2/3 of the 30-s hands-off windows (>= 200 tap "
         "frames), then the winning replay's pooled R2 >= 0.5 (else NOT TESTABLE); A16B; accordAngleStatus on >= 99 % of "
-        "latActive frames; no NON-clip-bound O1-like snap (> 1.2 deg/frame toward the wheel)",
+        "latActive frames; no NON-clip-bound O1-like snap (> the fork's rate cap per frame toward the wheel)",
         "; ".join(fails + nt + ["predicted (BELIEF): " + PRED["F1"], pcs]) + clipnote)
+    tapv = (V.get("tap") or {}).get("available", True)
+    if not tapv:                                  # release firmware: F1 is a V299-image identity; say what can be read
+        rel = ["carFw %s = %s" % (A["fw_letter"], A["image"]), "rule-identity replay: " + NOTAP_V]
+        if A.get("derived"):
+            dd = A["derived"]
+            rel.append("accordAngleStatus field removed in the release fork; bits derived offline: rate-bound %.2f %%, "
+                       "clip-bound %.2f %% of %d latActive frames" % (100 * dd["rate"], 100 * dd["clip"], dd["n_lat"]))
+        if SN.get("testable"):
+            rel.append(stxt)
+        rows[-1] = dict(id="F1", status="NOT AVAILABLE", measured="; ".join(rel),
+                        bar="V299 replay identity (needs the tap); the setpoint-step clause below is stock-signal",
+                        note="setpoint-step clause alone: %s (cap %.2f deg/frame: %s)" % (
+                            ss_, SN.get("cap", np.nan), SN.get("cap_src")) if SN.get("testable") else "")
     # ---- F2
     rp = S.get("rp") or {}
     pres = (rp.get("presence") or {}).get("pres_pct", np.nan)
@@ -1663,20 +1989,38 @@ def verdict(V, S):
             "1229 enrichment under-exposed (%s s near)" % _f(u9["near_s"], "%.0f"))
     else:
         add("F6b", "NOT TESTABLE", "no turning time", "", "")
+    if "per_min_handsoff_r2" in on:
+        r2on, bo = on["per_min_handsoff_r2"], on["per_min_handsoff"]
+        add("F6b-R", "OBSERVATION", "HANDS-OFF |w| > 1229 onsets under the REACTION-TEST label (R2 >= %.1f of |bar| vs the "
+            "wheel's angular acceleration, %.0f s window; a bar the wheel's own inertia explains is not a hand): %.1f /min "
+            "of turning (n %d, %d < 0.1 s) against %.1f /min (n %d) under the |bar| < 300 label; at |theta| >= %.0f deg: "
+            "%d vs %d onsets" % (THR2["react_r2"], THR2["react_win_s"], r2on, on["n_handsoff_r2"],
+                                 on["n_handsoff_r2_short"], bo, on["n_handsoff"], THR2["hi_angle"],
+                                 on["n_handsoff_r2_in_hi"], on["n_handsoff_in_hi"]),
+            "by construction an OBSERVATION (the label is new 2026-10-15, not in the spec); the bar F6b uses is > 20 /min "
+            "-> this label %s" % ("WOULD FIRE F6b" if np.isfinite(r2on) and r2on > THR2["f6b_onsets"] else "would not fire"),
+            "BELIEF: R2 alone cannot tell a wheel the hand is accelerating from a wheel accelerating by itself")
     # ---- F7 / F7b
     HA = V["hands"]
-    if HA["pressed_known"]:
+    if HA.get("unavailable"):
+        add("F7", "NOT AVAILABLE", NOTAP_V, "", "pressed + tap opposing needs the lane tap")
+    elif HA["pressed_known"]:
         add("F7", "FAIL" if HA["f7"] else "PASS", "pressed + tap >= 50 %% rail opposing: %d runs > 0.5 s (longest "
             "%.2f s)" % (HA["n_f7"], HA["f7_longest"]), "any > 0.5 s, or 'fights my hands'",
             "predicted (BELIEF): " + PRED["F7"])
     else:
         add("F7", "NOT TESTABLE", "no steeringPressed on this route", "", "")
-    add("F7b", "OBSERVATION", "|wire| > 600 + tap >= 40 %% rail opposing, not pressed: %d runs > 0.3 s (longest "
-        "%.2f s)" % (HA["n_f7b"], HA["f7b_longest"]), "by ruling an OBSERVATION; R9 (the operator) is the criterion",
-        "predicted (BELIEF): " + PRED["F7b"])
+    if HA.get("unavailable"):
+        add("F7b", "NOT AVAILABLE", NOTAP_V, "", "needs the lane tap")
+    else:
+        add("F7b", "OBSERVATION", "|wire| > 600 + tap >= 40 %% rail opposing, not pressed: %d runs > 0.3 s (longest "
+            "%.2f s)" % (HA["n_f7b"], HA["f7b_longest"]), "by ruling an OBSERVATION; R9 (the operator) is the criterion",
+            "predicted (BELIEF): " + PRED["F7b"])
     # ---- F8
     B = V["bar"]
-    if B.get("testable"):
+    if B.get("unavailable") and not (((B.get("canvalid") or {}).get("drops") or 0) > 0):
+        add("F8", "NOT AVAILABLE", B.get("why", NOTAP_V), "", "canValid drops: %s" % _cv_s(B.get("canvalid")))
+    elif B.get("testable"):
         fail = (B["mismatch_frac"] > THR2["f8_frac"] or (np.isfinite(B["bit8_duty_lat"]) and B["bit8_duty_lat"] >
                 THR2["f8_frac"]) or ((B.get("canvalid") or {}).get("drops") or 0) > 0 or
                 (np.isfinite(B["bar_sign_agree"]) and B["bar_sign_agree"] < 1.0))
@@ -1691,7 +2035,9 @@ def verdict(V, S):
     else:
         add("F8", "NOT TESTABLE", B.get("why", ""), "", "canValid drops: %s" % _cv_s(B.get("canvalid")))
     # ---- F9
-    if np.isfinite(HA["tap_max_handsoff"]):
+    if HA.get("unavailable"):
+        add("F9", "NOT AVAILABLE", NOTAP_V, "", "the hands-off tap maximum needs the lane tap")
+    elif np.isfinite(HA["tap_max_handsoff"]):
         add("F9", "FAIL" if HA["f9"] else "PASS", "hands-off tap max %.0f LSB; >= 230 for > 0.3 s: %d" % (
             HA["tap_max_handsoff"], HA["n_f9_hi"]), "> 250, or >= 230 for > 0.3 s", "predicted (BELIEF): " + PRED["F9"])
     else:
@@ -1704,12 +2050,14 @@ def verdict(V, S):
             "half-peak > 1 deg or > 2 consecutive half-cycles >= 0.5 deg", "predicted (BELIEF): " + PRED["F10"])
     else:
         add("F10", "NOT TESTABLE", "no >= 3 s hands-off curve hold at 10-13 m/s with |a_lat| >= 1.5", "", "card D7 / D9")
-    add("X3", "N/A", "config A (cap 120, clip x1.0)", "a later dose only", "")
+    dlabel, dtext = dose_of(A)
+    add("X3", "DOSE", "%s: %s" % (dlabel, dtext), "a later dose only (config A = cap 120, clip x1.0)",
+        "the dose that flew, read from the logged params / the fork's constants -- not assumed")
     add("R9", "OPERATOR", "the operator's report (grinding, ratcheting, vibration, a lurch, 'fights my hands', anything "
         "new)", "his call; outranks every band", "")
     fails = [r["id"] for r in rows if r["status"] == "FAIL"]
     nts = [r["id"] for r in rows if r["status"] == "NOT TESTABLE"]
-    return dict(rows=rows, fails=fails, not_testable=nts,
+    return dict(rows=rows, fails=fails, not_testable=nts, dose=dlabel,
                 headline=("FAIL: %s" % ", ".join(fails)) if fails else
                 ("no pre-registered FAIL fired (NOT TESTABLE: %s)" % (", ".join(nts) or "none")))
 
@@ -1729,25 +2077,52 @@ def report(V):
       "preceding 0.5 s (wire = bar / 1.024 = carState.steeringTorque units)")
     P("6A ATTRIBUTION  EPS family %s -> image %s ; V299 fork params %s ; AccordEpsAngleLoop %s" % (
         A["fw_letter"], A["image"], A["params"], A["angle_loop"]))
+    dlabel, dtext = dose_of(A)
+    P("   DOSE THAT FLEW (%s): %s" % (dlabel, dtext))
     if A.get("fork_cache"):
         P("   fork cache %s ; schema pinned to %s (%s) ; accordAngleStatus field in schema: %s" % (
             Path(A["fork_cache_path"]).name, A["fork_commit"], A["fork_schema"], A["has_status_field"]))
         pr_ = A.get("status_present")
-        P("   accordAngleStatus PRESENT on %s of %d latActive carState frames [F1 needs >= 99 %%]" % (
-            _f(100 * pr_ if pr_ is not None and np.isfinite(pr_) else np.nan, "%.2f %%"), A.get("status_n_lat", 0)))
+        if A.get("release"):
+            P("   accordAngleStatus: not published by the release fork (removed by design, not a defect); %d latActive "
+              "carState frames" % A.get("status_n_lat", 0))
+        else:
+            P("   accordAngleStatus PRESENT on %s of %d latActive carState frames [F1 needs >= 99 %%]" % (
+                _f(100 * pr_ if pr_ is not None and np.isfinite(pr_) else np.nan, "%.2f %%"), A.get("status_n_lat", 0)))
         s = A.get("status")
         if s:
             P("   decoded (the fork's values: 4 rate/jerk, 16 clip, 256 EPS stale): %s ; reserved bits set on %d frames "
               "(the spec's literal 8 on %d)" % ("  ".join("%s %.2f %%" % (k, 100 * s[k]) for k in STATUS_BITS.values()),
                                                s["reserved_frames"], s["spec_bit8_frames"]))
+        K = fork_constants()
+        P("   limiter constants read from %s : MAX_ANGLE_RATE %s deg/frame, MAX_LATERAL_JERK %s, error clip BP %s V %s%s" % (
+            K["src"], _f(K["rate_deg_frame"], "%.2f"), _f(K["max_lat_jerk"], "%.4f"), K["err_bp"], K["err_v"],
+            "" if K["ok"] else "  [FALLBACK: %s]" % K["why"]))
+        dc = A.get("derived_check")
+        if dc and dc.get("available"):
+            P("   DERIVED-STATUS CHECK (the release derivation vs the logged bits, %d carOutput rows, %d latActive): rate-bound "
+              "agree %.4f %% (logged %.3f %%, derived %.3f %%, %d false+ / %d false-); clip-bound agree %.4f %% (logged "
+              "%.3f %%, derived %.3f %%, %d false+ / %d false-); both bits %.4f %%" % (
+                  dc["n"], dc["n_lat"], 100 * dc["rate"]["agree"], 100 * dc["rate"]["logged_duty"],
+                  100 * dc["rate"]["derived_duty"], dc["rate"]["false_pos"], dc["rate"]["false_neg"],
+                  100 * dc["clip"]["agree"], 100 * dc["clip"]["logged_duty"], 100 * dc["clip"]["derived_duty"],
+                  dc["clip"]["false_pos"], dc["clip"]["false_neg"], 100 * dc["joint_agree"]))
+        dd = A.get("derived")
+        if dd:
+            P("   accordAngleStatus FIELD ABSENT on this route%s: bits derived offline from carControl / carOutput / carState"
+              " (derive_status): rate-bound %.2f %%, clip-bound %.2f %% of %d latActive frames" % (
+                  " (the release fork removed it)" if A.get("release") else "", 100 * dd["rate"], 100 * dd["clip"],
+                  dd["n_lat"]))
+        if A.get("derived_error"):
+            P("   derived status FAILED: %s" % A["derived_error"])
     else:
         P("   fork cache: none (%s)" % A.get("fork_reason"))
     SN = V.get("snap") or {}
     if SN.get("testable"):
-        P("   O1-LIKE SNAPS (F1; |d theta_sp| > %.1f deg in one frame TOWARD the wheel -- the literal allowance on every "
-          "config, AccordAngleMaxRate %s -- both frames latActive): %d of %d latActive steps -- %d NOT clip-bound "
+        P("   O1-LIKE SNAPS (F1; |d theta_sp| > %.2f deg in one frame TOWARD the wheel -- the fork's rate cap, %s -- both "
+          "frames latActive): %d of %d latActive steps -- %d NOT clip-bound "
           "(COUNTED by F1), %d clip-bound (%s; NOT counted, orchestrator ruling 2026-10-02); largest toward-wheel step "
-          "%.2f deg/frame" % (SN["cap"], _f(SN.get("max_rate_param"), "%.0f"), SN["n_snap"], SN["n_steps"],
+          "%.2f deg/frame" % (SN["cap"], SN.get("cap_src"), SN["n_snap"], SN["n_steps"],
                               SN["n_snap_noclip"], SN["n_snap_clip"], SN["clip_src"], SN["max_toward"]))
         for e in SN["events"][:4]:
             P("     +%7.1f s  step %+6.2f deg toward a wheel %+6.2f deg away, @ %4.1f m/s%s" % (
@@ -1830,6 +2205,16 @@ def report(V):
       "HANDS-OFF (the 0.5 s before = hands-off frames) %d = %.1f /min (%d short)   [* = under-exposed: < 10 s near or "
       "< 5 events]" % (o["n"], o["per_min_turn"], o["turn_s"], o["n_short"], o["n_handsoff"], o["per_min_handsoff"],
                        o["n_handsoff_short"]))
+    if "n_handsoff_r2" in o:
+        P("   REACTION-TEST hands-off label (R2 >= %.1f of |bar| vs the wheel's angular acceleration over a %.0f s window, "
+          "k > 0; BELIEF: cannot separate a hand that accelerates the wheel): HANDS-OFF |w| > 1229 onsets %d = %.1f /min "
+          "(%d short) against %d = %.1f /min under the |bar| < 300 label; reaction frames %.1f %% of engaged time (median "
+          "k %s word/(deg/s^2)); at |theta| >= %.0f deg (%.1f s engaged): hands-off %.1f s by |bar| < 300, %.1f s with "
+          "the reaction test, %.1f s are reaction frames; onsets there %d vs %d" % (
+              THR2["react_r2"], THR2["react_win_s"], o["n_handsoff_r2"], o["per_min_handsoff_r2"],
+              o["n_handsoff_r2_short"], o["n_handsoff"], o["per_min_handsoff"], 100 * o["react_frac_eng"],
+              _f(o["react_k_median"], "%.2f"), THR2["hi_angle"], o["hi_s"], o["hi_handsoff_s"], o["hi_handsoff_r2_s"],
+              o["hi_react_s"], o["n_handsoff_r2_in_hi"], o["n_handsoff_in_hi"]))
     H = V.get("hard") or {}
     P("   (information, ruling ii) 1.6-3 Hz HARD-TURN wheel-rate rms, deg/s (m6_goal_scoring's definition: |theta| >= 20,"
       " unpressed) [refs]: %s" % "  ".join("%s %s [%s]" % (b, _f((H.get(b) or {}).get("rms")), "/".join(
@@ -1855,7 +2240,7 @@ def report(V):
     for r in TI["rows"][:8]:
         P("   t %7.1f @ %4.1f m/s %+6.1f -> %+6.1f deg (%4.1f) %-4s overshoot %s [bar %s] t90 %s wheel %5.1f tap %5.1f%s"
           % (r["t"], r["v"], r["start"], r["final"], r["size"], r["crit"] or "-", _f(r["ovs"]), _f(r["bar"], "%.1f"),
-             _f(r["t90"]), r["wheel_peak"], r["tap_peak"], " FIRES" if r["fire"] else "")
+             _f(r["t90"]), r["wheel_peak"], _f(r["tap_peak"], "%5.1f"), " FIRES" if r["fire"] else "")
           + (" SP-MOVED" if r.get("sp_moved") else "") + (" TRUNCATED" if r.get("truncated") else ""))
     for r in TI["returns"][:4]:
         P("   return t %7.1f @ %4.1f m/s %+6.1f -> %+6.1f deg, unwind past centre %s deg%s" % (
@@ -1880,12 +2265,18 @@ def report(V):
         CP["d3_n"], _f(CP["d3_ovs_max"])))
     P("   CAP NULL SENTENCE (card §4 / spec §6.2): %s" % CP["sentence"])
     HA = V["hands"]
-    P("6H HANDS / AUTHORITY  F7 runs %d (longest %.2f s) ; F7b runs %d (longest %.2f s) %s ; hands-off tap max %s LSB, "
-      ">= 230 for > 0.3 s: %d" % (HA["n_f7"], HA["f7_longest"], HA["n_f7b"], HA["f7b_longest"],
-                                  [(round(a, 1), round(b, 2), round(c, 1), round(d)) for a, b, c, d in HA["f7b_events"][:4]],
-                                  _f(HA["tap_max_handsoff"], "%.0f"), HA["n_f9_hi"]))
+    if HA.get("unavailable"):
+        P("6H HANDS / AUTHORITY  %s: F7, F7b and F9 read the lane tap" % NOTAP_V)
+    else:
+        P("6H HANDS / AUTHORITY  F7 runs %d (longest %.2f s) ; F7b runs %d (longest %.2f s) %s ; hands-off tap max %s LSB, "
+          ">= 230 for > 0.3 s: %d" % (HA["n_f7"], HA["f7_longest"], HA["n_f7b"], HA["f7b_longest"],
+                                      [(round(a, 1), round(b, 2), round(c, 1), round(d)) for a, b, c, d in HA["f7b_events"][:4]],
+                                      _f(HA["tap_max_handsoff"], "%.0f"), HA["n_f9_hi"]))
     B = V["bar"]
-    if B.get("testable"):
+    if B.get("unavailable"):
+        P("6I BAR CHECK  %s; canValid drops (every angle-mode frame after the first valid one): %s" % (
+            B.get("why"), _cv_s(B.get("canvalid"))))
+    elif B.get("testable"):
         P("6I BAR CHECK  cs_tqeps == -8 tap: mismatch %.3f %% of %d stale-bit-clear frames (vs the previous 0x1AB frame "
           "too: %.3f %%); stale bit (256) on %.3f %% of latActive; canValid drops %s; drawn-bar sign agrees %s" % (
               100 * B["mismatch_frac"], B["n_clear"], 100 * B["mismatch_frac_tolerant"], 100 * B["bit8_duty_lat"],
@@ -1896,8 +2287,13 @@ def report(V):
     VD = V["verdict"]
     P("")
     P("=" * 110)
-    P("DRIVE-2 VERDICT (V299 config A; pre-registered: spec rev 3 §7 + the drive card) -- %s" % VD["headline"])
-    if A["image"] != "V299":
+    P("DRIVE-2 VERDICT (V299 %s; pre-registered: spec rev 3 §7 + the drive card) -- %s" % (VD.get("dose", "config A"),
+                                                                                         VD["headline"]))
+    if A["image"] == "V300":
+        P("   NOTE: this route's EPS image is V300 (%s), the RELEASE firmware: no lane tap. F1 (replay identity), F7, F7b, F8, "
+          "F9 and the cap read are NOT AVAILABLE; the stock-signal rows below (angle, 0xE4 setpoint, driver torque word, "
+          "speed) are valid reads." % A["fw_letter"])
+    elif A["image"] != "V299":
         P("   NOTE: this route's EPS image is %s (%s), not V299 -- the block below is a CONTROL read (on route 79 F1 "
           "must FAIL: V298's rule wins)" % (A["image"], A["fw_letter"]))
     for r in VD["rows"]:
@@ -2335,35 +2731,111 @@ def selftest():
     co[800:] = co[799] + 2.0                                   # a 2-deg step toward it: a snap, tagged clip-bound
     FK = _FakeNpz(t_co=t, co_ang=co, t_cc=t.copy(), cc_latActive=lat, t_cs=t.copy(), cs_ang=th,
                   cs_vegoraw=np.full(n, 8.0))
-    SN = o1_snaps(FK, {})
+    SN = o1_snaps(FK, {"AccordAngleMaxRate": "120"})                 # config A: cap 1.2 deg/frame
     oks["A2"] = (SN["testable"] and SN["n_snap"] == 2 and SN["n_snap_clip"] == 1 and SN["n_snap_noclip"] == 1
                  and f1_snap_clause(SN)[0] == "FAIL")
     P("A2 O1-like snaps: %d (clip-bound %d, not %d) of %d latActive steps; expected 2 (1 clip-bound); F1 snap clause %s "
       "(the non-clip-bound one counts) -> %s" % (SN["n_snap"], SN["n_snap_clip"], SN["n_snap_noclip"], SN["n_steps"],
                                                  f1_snap_clause(SN)[0], "PASS" if oks["A2"] else "FAIL"))
     # ---- A3. the snap RULING (orchestrator 2026-10-02): (i) a wire whose ONLY snap is clip-bound PASSES the clause
-    #      (both counts printed); (ii) the allowance is the LITERAL 1.2 deg/frame on every config: with
-    #      AccordAngleMaxRate 250 (old allowance 2.5) a 2-deg non-clip step toward the wheel still counts
+    #      (both counts printed); (ii) REVISED 2026-10-15: the allowance is the rate cap the fork ACTUALLY RAN (the
+    #      logged AccordAngleMaxRate / 100): at 250 deg/s a 2-deg non-clip step toward the wheel is within the cap (not
+    #      a snap), at 120 deg/s it is a snap; a 3-deg step is a snap at either cap; nothing logged on a V298 wire = 1.2,
+    #      on a release wire = the release values.py constant 2.5
     coA = co.copy()
     coA[500:] = co[499]                                        # remove the 3-deg non-clip snap
     coA[600:] = coA[599] - 3.0 * np.sign(th[599] - coA[599])
     coA[701:] = coA[700] + 2.4 * np.sign(th[700] - coA[700])
     coA[800:] = coA[799] + 2.0                                 # the clip-bound step stays
     SNa = o1_snaps(_FakeNpz(t_co=t, co_ang=coA, t_cc=t.copy(), cc_latActive=lat, t_cs=t.copy(), cs_ang=th,
-                            cs_vegoraw=np.full(n, 8.0)), {})
+                            cs_vegoraw=np.full(n, 8.0)), {"AccordAngleMaxRate": "120"})
     coB = np.zeros(n)
     coB[100:] = 5.0
     coB[500:] = 7.0                                            # 2 deg toward a wheel at 10 deg (gap 5 -> 3; no clip)
     thB = np.full(n, 10.0)
-    SNb = o1_snaps(_FakeNpz(t_co=t, co_ang=coB, t_cc=t.copy(), cc_latActive=lat, t_cs=t.copy(), cs_ang=thB,
-                            cs_vegoraw=np.full(n, 8.0)), {"AccordAngleMaxRate": "250"})
+    mk = lambda co_, prm, fwl=None: o1_snaps(_FakeNpz(t_co=t, co_ang=co_, t_cc=t.copy(), cc_latActive=lat, t_cs=t.copy(),   # noqa: E731
+                                                       cs_ang=thB, cs_vegoraw=np.full(n, 8.0)), prm, fwl)
+    SNb = mk(coB, {"AccordAngleMaxRate": "250"})               # 2 deg, cap 2.5: allowed
+    SNc = mk(coB, {"AccordAngleMaxRate": "120"})               # 2 deg, cap 1.2: a snap
+    coD = coB.copy()
+    coD[500:] = 8.0                                            # 3 deg toward the wheel (gap 5 -> 2): a snap at either cap
+    SNd = mk(coD, {"AccordAngleMaxRate": "250"})
+    SNe = mk(coB, {}, "A16A")                                  # a V298 wire logs no param: 1.2 -> the 2-deg step is a snap
+    SNf = mk(coB, {}, "A16C")                                  # a release wire logs none: the values.py constant (2.5)
     oks["A3"] = (SNa["n_snap"] == 1 and SNa["n_snap_clip"] == 1 and SNa["n_snap_noclip"] == 0
                  and f1_snap_clause(SNa)[0] == "PASS" and "1 clip-bound" in f1_snap_clause(SNa)[1]
-                 and abs(SNb["cap"] - 1.2) < 1e-12 and SNb["n_snap_noclip"] == 1 and f1_snap_clause(SNb)[0] == "FAIL")
-    P("A3 snap ruling: only a clip-bound step -> clause %s (%s); MaxRate 250, a 2-deg non-clip step toward the wheel -> "
-      "allowance %.1f, counted %d, clause %s -> %s" % (f1_snap_clause(SNa)[0], f1_snap_clause(SNa)[1][-60:], SNb["cap"],
-                                                       SNb["n_snap_noclip"], f1_snap_clause(SNb)[0],
-                                                       "PASS" if oks["A3"] else "FAIL"))
+                 and abs(SNb["cap"] - 2.5) < 1e-12 and SNb["n_snap_noclip"] == 0 and f1_snap_clause(SNb)[0] == "PASS"
+                 and abs(SNc["cap"] - 1.2) < 1e-12 and SNc["n_snap_noclip"] == 1 and f1_snap_clause(SNc)[0] == "FAIL"
+                 and SNd["n_snap_noclip"] == 1 and abs(SNe["cap"] - 1.2) < 1e-12 and SNe["n_snap_noclip"] == 1
+                 and abs(SNf["cap"] - fork_constants()["rate_deg_frame"]) < 1e-12 and SNf["n_snap_noclip"] == 0)
+    P("A3 snap ruling: only a clip-bound step -> clause %s (%s); a 2-deg non-clip step toward the wheel: MaxRate 250 -> cap "
+      "%.2f, counted %d, clause %s; MaxRate 120 -> cap %.2f, counted %d, clause %s; 3 deg at 250 -> counted %d; V298 wire, "
+      "nothing logged -> cap %.2f counted %d; release wire, nothing logged -> cap %.2f counted %d -> %s" % (
+          f1_snap_clause(SNa)[0], f1_snap_clause(SNa)[1][-60:], SNb["cap"], SNb["n_snap_noclip"], f1_snap_clause(SNb)[0],
+          SNc["cap"], SNc["n_snap_noclip"], f1_snap_clause(SNc)[0], SNd["n_snap_noclip"], SNe["cap"],
+          SNe["n_snap_noclip"], SNf["cap"], SNf["n_snap_noclip"], "PASS" if oks["A3"] else "FAIL"))
+    # ---- R1. RELEASE CONTROLS (2026-10-15): the tap flag from the EPS fwVersion, the reaction test, the derived status bits
+    import angle_loop_drive_read as D_
+    fw = lambda x: dict(carfw=[dict(ecu="eps", fw=x)])                      # noqa: E731
+    st_a, st_b, st_c = (D_.tap_state(fw("39990-TVA,A16" + c)) for c in "ABC")
+    st_0, st_n = D_.tap_state(fw("39990-TVA,A160")), D_.tap_state({})
+    st_o = D_.tap_state(dict(fw("39990-TVA,A16B"), tap_override="--no-tap"))
+    oks["R1"] = bool(st_a["available"] and st_b["available"] and (not st_c["available"]) and st_c["letter"] == "A16C"
+                     and st_0["available"] and st_n["available"] and (not st_o["available"]))
+    P("R1 tap flag from the EPS fwVersion: A16A %s, A16B %s, A16C %s (unavailable), A160 %s, no carFw %s, --no-tap override "
+      "%s -> %s" % (st_a["available"], st_b["available"], st_c["available"], st_0["available"], st_n["available"],
+                    st_o["available"], "PASS" if oks["R1"] else "FAIL"))
+    # reaction test: a wheel swinging at 1.5 Hz whose bar IS 0.6 x its angular acceleration (inertial reaction) is labelled;
+    # the same wheel with a bar of unrelated noise is not; the label feeds handsoff_v3_alt / handsoff_before_alt
+    n = 2000
+    D_, Wr = _synth(n)
+    tt = Wr["t"]
+    Wr["ang"] = 60.0 * np.sin(2 * np.pi * 1.5 * tt)
+    acc_ = -60.0 * (2 * np.pi * 1.5) ** 2 * np.sin(2 * np.pi * 1.5 * tt)
+    Wr["bar"] = 0.6 * acc_
+    W1 = _mk(D_, Wr)
+    L1 = reaction_label(W1)
+    Wr["bar"] = np.random.default_rng(3).normal(0, 1500.0, n)
+    W2 = _mk(D_, Wr)
+    L2 = reaction_label(W2)
+    ho_plain = handsoff_v3(W1)
+    ho_alt = handsoff_v3_alt(W1, L1)
+    ia = np.arange(200, 1800, 100)
+    oks["R2"] = (L1["mask"][100:-100].mean() > 0.95 and abs(np.nanmedian(L1["k"][100:-100]) - 0.6) < 0.05
+                 and L2["mask"][100:-100].mean() < 0.2 and ho_plain[200:1800].mean() < 0.05
+                 and ho_alt[200:1800].mean() > 0.95 and handsoff_before_alt(W1, ia, L1).mean() > 0.95
+                 and handsoff_before(W1, ia).mean() < 0.05)
+    P("R2 reaction test: bar = 0.6 x angular acceleration -> %.0f %% of frames labelled (k %.2f), hands-off %.0f %% (|bar| < 300 "
+      "label: %.0f %%); unrelated bar noise -> %.0f %% labelled -> %s" % (
+          100 * L1["mask"][100:-100].mean(), np.nanmedian(L1["k"][100:-100]), 100 * ho_alt[200:1800].mean(),
+          100 * ho_plain[200:1800].mean(), 100 * L2["mask"][100:-100].mean(), "PASS" if oks["R2"] else "FAIL"))
+    # derived status bits on a synthetic fork cache (a limiter that follows the desired angle at the 2.5 deg/frame cap and has
+    # no error clip, so the setpoint ends 40 deg from a wheel at 0): rate bound while |desired - last| exceeds min(jerk, cap)
+    # (the 40-deg step takes 16 frames), clip bound once the setpoint sits at the error clip or beyond; latActive only
+    n = 600
+    tq = np.arange(n) * 0.01
+    ccx = np.zeros(n)
+    ccx[200:] = 40.0                                            # a 40-deg desired step at frame 200 (the limiter rate-limits)
+    cox = np.zeros(n)
+    for i in range(1, n):
+        cox[i] = cox[i - 1] + np.clip(ccx[max(i - 1, 0)] - cox[i - 1], -2.5, 2.5) if i >= 200 else 0.0
+    thx = np.zeros(n)
+    FKd = _FakeNpz(t_co=tq, co_ang=cox, t_cc=tq.copy(), cc_latActive=np.ones(n, bool), cc_ang=ccx, t_cs=tq.copy(),
+                   cs_ang=thx, cs_vegoraw=np.full(n, 20.0), carparams_json=np.array("{}"))
+    Dv = derive_status(FKd, {"AccordAngleMaxRate": "250"}, None, "A16B")
+    emax20 = float(np.interp(20.0, fork_constants()["err_bp"], fork_constants()["err_v"]))
+    oks["R3"] = (not Dv["rate"][:200].any() and Dv["rate"][202:215].all() and not Dv["rate"][220:].any()
+                 and Dv["clip"][:200].sum() == 0 and Dv["clip"][220:].all())
+    P("R3 derived status bits (synthetic limiter: 40-deg desired step at 250 deg/s, 20 m/s, error clip %.1f deg): rate-bound "
+      "%d frames (the ramp only), clip-bound %d frames, none before the step -> %s" % (
+          emax20, int(Dv["rate"].sum()), int(Dv["clip"].sum()), "PASS" if oks["R3"] else "FAIL"))
+    # the release constants come from the fork's own source, not from this file
+    K_ = fork_constants()
+    oks["R4"] = (K_["ok"] and abs(K_["max_lat_jerk"] - 3.5886) < 1e-6 and K_["rate_deg_frame"] == 2.5
+                 and tuple(K_["err_bp"]) == ERR_MAX_BP and tuple(K_["err_v"]) == ERR_MAX_V) or (not K_["ok"])
+    P("R4 limiter constants parsed from %s: MAX_ANGLE_RATE %s, MAX_LATERAL_JERK %s, error clip == the hard-coded fallback %s "
+      "-> %s" % (K_["src"], K_["rate_deg_frame"], K_["max_lat_jerk"],
+                 tuple(K_["err_bp"]) == ERR_MAX_BP and tuple(K_["err_v"]) == ERR_MAX_V, "PASS" if oks["R4"] else "FAIL"))
     # ---- F1R. the replay clause in the ORCHESTRATOR'S ORDER through f1_decide + f1_replay_clause:
     #      (a) not beating -> FAIL, INCLUDING when the fit is also poor (the defect: the floor used to win -> NT);
     #      (b) beating but the winner's R2 < 0.5 -> NOT TESTABLE, loudly; (c) beating and fitting -> PASS

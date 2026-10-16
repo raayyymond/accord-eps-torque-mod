@@ -1,0 +1,162 @@
+Selector-indexed pointer tables in the STOCK image (0xC0000-0xF8000), record = exactly one stride (<=64 B).
+TVAA1 row (slot 2): 63fd=10 674c=2 674d=5 674e=1 674f=5 | TVCA4 row (slot 11): 63fd=24 674c=4 674d=13 674e=7 674f=12
+@0xc7064 n=11 stride=0x1c rec@0xea168  | gp-0x674e 1/7 DIFF 060000000800f0002001200380040000 vs 06000000080048002001200380040000
+@0xc7090 n=11 stride=0x2 rec@0xea018  same
+@0xc70bc n=11 stride=0x4 rec@0xea000  | gp-0x674e 1/7 DIFF 00640000 vs 00780000
+@0xc70e8 n=11 stride=0x2 rec@0xea024  same
+@0xc7114 n=11 stride=0x2 rec@0xea030  same
+@0xc7140 n=11 stride=0x1c rec@0xea210  | gp-0x674e 1/7 DIFF 0600000003001c0034004b006e000000 vs 06000000020014002d0041006e000000
+@0xc716c n=11 stride=0x2 rec@0xea03c  same
+@0xc7198 n=11 stride=0x2 rec@0xea048  same
+@0xc71c4 n=11 stride=0x2 rec@0xea054  same
+@0xc71f0 n=11 stride=0x2 rec@0xea060  same
+@0xc721c n=11 stride=0x2 rec@0xea06c  same
+@0xc7248 n=11 stride=0x2 rec@0xea078  same
+@0xc7274 n=11 stride=0x2 rec@0xea084  same
+@0xc72a0 n=11 stride=0x2 rec@0xea090  same
+@0xc72cc n=11 stride=0x2 rec@0xea09c  same
+@0xc72f8 n=11 stride=0x2 rec@0xea0a8  same
+@0xc7324 n=11 stride=0x2 rec@0xea0b4  same
+@0xc7350 n=11 stride=0x2 rec@0xea0c0  same
+@0xc737c n=11 stride=0x2 rec@0xea0cc  | gp-0x674e 1/7 DIFF 8011 vs 000a
+@0xc73a8 n=11 stride=0x2 rec@0xea0d8  same
+@0xc73d4 n=11 stride=0x2 rec@0xea0e4  same
+@0xc7400 n=11 stride=0x2 rec@0xea0f0  same
+@0xc742c n=11 stride=0x2 rec@0xea0fc  same
+@0xc7458 n=11 stride=0x2 rec@0xea108  same
+@0xc7484 n=11 stride=0x2 rec@0xea114  same
+@0xc74b0 n=11 stride=0x2 rec@0xea120  | gp-0x674e 1/7 DIFF 1a00 vs 1100
+@0xc74dc n=11 stride=0x2 rec@0xea12c  | gp-0x674e 1/7 DIFF 1f00 vs 0f00
+@0xc7508 n=11 stride=0x2 rec@0xea138  same
+@0xc7534 n=11 stride=0x2 rec@0xea144  same
+@0xc7560 n=11 stride=0x1c rec@0xea2b8  | gp-0x674e 1/7 DIFF 060000000002ec030006330700080004 vs 06000000f601ec03d807000a000c0004
+@0xc758c n=11 stride=0x1c rec@0xea360  same
+@0xc75b8 n=11 stride=0x2 rec@0xea150  same
+@0xc75e4 n=11 stride=0x2 rec@0xea15c  same
+@0xc7610 n=11 stride=0x1c rec@0xea408  | gp-0x674e 1/7 DIFF 060000009a0133039a05000800140004 vs 06000000f601ec03e205000a66320004
+@0xc763c n=11 stride=0x1c rec@0xea4b0  | gp-0x674e 1/7 DIFF 060000008007400b401a8025803e0000 vs 060000008007400b00198020803e0000
+@0xc7668 n=39 stride=0x2 rec@0xed000  same
+@0xc7704 n=39 stride=0x2 rec@0xed00c  | gp-0x674f 5/12 DIFF 0603 vs 3603 | gp-0x674d 5/13 DIFF 0603 vs 5003
+@0xc77a0 n=58 stride=0xc rec@0xce068  same
+@0xc7888 n=58 stride=0x2c rec@0xce010  same
+@0xc7970 n=58 stride=0x18 rec@0xce080  same
+@0xc7a58 n=58 stride=0x2 rec@0xce000  same
+@0xc7b40 n=58 stride=0x28 rec@0xce0b0  | gp+0x63fd 10/24 DIFF 09000000c80090012003b0040807b80b vs 09000000c80090012003b0040807b80b
+@0xc7c28 n=58 stride=0x28 rec@0xce100  | gp+0x63fd 10/24 DIFF 0900000096002c016a02b0040807b80b vs 0900000096002c016a02b0040807b80b
+@0xc7d10 n=58 stride=0x28 rec@0xce150  | gp+0x63fd 10/24 DIFF 0900000096002c015f02b0040807b80b vs 0900000096002c015f02b0040807b80b
+@0xc7df8 n=58 stride=0x28 rec@0xce1a0  | gp+0x63fd 10/24 DIFF 0900000096002c0158028403b0040807 vs 0900000096002c0158028403b0040807
+@0xc7ee0 n=58 stride=0x28 rec@0xce1f0  | gp+0x63fd 10/24 DIFF 0900000096002c0158028403b0040807 vs 0900000096002c0158028403b0040807
+@0xc7fc8 n=58 stride=0x28 rec@0xce240  | gp+0x63fd 10/24 DIFF 0900000096002c0158028403b0040807 vs 0900000096002c0158028403b0040807
+@0xc80c0 n=54 stride=0x28 rec@0xd03d8  | gp+0x63fd 10/24 DIFF 0900000096002c0158028403b0040807 vs 090000009e003b017602b203ed046307
+@0xc81a8 n=54 stride=0x1c rec@0xd0450  | gp+0x63fd 10/24 DIFF 060000000300090012001d0028000000 vs 060000000300090012001d0028000000
+@0xc8280 n=39 stride=0x2 rec@0xed018  | gp-0x674f 5/12 DIFF 0c01 vs ed00 | gp-0x674d 5/13 DIFF 0c01 vs ef00
+@0xc831c n=39 stride=0x2 rec@0xed024  | gp-0x674f 5/12 DIFF e600 vs a300 | gp-0x674d 5/13 DIFF e600 vs b600
+@0xc83b8 n=39 stride=0x2 rec@0xed030  same
+@0xc8454 n=39 stride=0x2 rec@0xed03c  same
+@0xc84f0 n=39 stride=0x2 rec@0xed048  same
+@0xc858c n=39 stride=0x2 rec@0xed054  same
+@0xc8628 n=39 stride=0x2 rec@0xed060  same
+@0xc86c4 n=39 stride=0x1 rec@0xed2a0  same
+@0xc8760 n=39 stride=0x2 rec@0xed06c  same
+@0xc87fc n=39 stride=0x2 rec@0xed078  same
+@0xc8898 n=39 stride=0x2 rec@0xed084  same
+@0xc8934 n=39 stride=0x1 rec@0xed2a6  same
+@0xc89d0 n=39 stride=0x2 rec@0xed090  same
+@0xc8a6c n=39 stride=0x2 rec@0xed09c  same
+@0xc8b08 n=39 stride=0x2 rec@0xed0a8  same
+@0xc8ba4 n=39 stride=0x1 rec@0xed2ac  same
+@0xc8c40 n=39 stride=0x1 rec@0xed2b2  same
+@0xc8cdc n=39 stride=0x2 rec@0xed0b4  same
+@0xc8d78 n=39 stride=0x1 rec@0xed2b8  same
+@0xc8e14 n=39 stride=0x2 rec@0xed0c0  same
+@0xc8eb0 n=39 stride=0x2 rec@0xed0cc  same
+@0xc8f4c n=39 stride=0x2 rec@0xed0d8  same
+@0xc8fe8 n=39 stride=0x2 rec@0xed0e4  same
+@0xc9084 n=39 stride=0x2 rec@0xed0f0  same
+@0xc9120 n=39 stride=0x2 rec@0xed0fc  same
+@0xc91bc n=39 stride=0x2 rec@0xed108  same
+@0xc9258 n=39 stride=0x2 rec@0xed114  same
+@0xc9304 n=54 stride=0x2c rec@0xd04a4  same
+@0xc93ec n=54 stride=0x2c rec@0xd0528  | gp+0x63fd 10/24 DIFF 0a00000022006500f500f3014e036007 vs 0a00000022006500f500f3014e036007
+@0xc94d4 n=54 stride=0x2c rec@0xd05ac  | gp+0x63fd 10/24 DIFF 0a00000022007000f600be010b036e05 vs 0a00000022007000f600be010b036e05
+@0xc95bc n=54 stride=0x2c rec@0xd0630  | gp+0x63fd 10/24 DIFF 0a0000002700860001012402b9038d05 vs 0a0000002700860001012402b9038d05
+@0xc96a4 n=54 stride=0x2c rec@0xd06b4  | gp+0x63fd 10/24 DIFF 0a0000002d0086000101de010c030705 vs 0a0000002d0086000101de010c030705
+@0xc977c n=39 stride=0x2 rec@0xed120  same
+@0xc9818 n=39 stride=0x2 rec@0xed12c  same
+@0xc98b4 n=39 stride=0x2 rec@0xed138  same
+@0xc9950 n=39 stride=0x2 rec@0xed144  same
+@0xc99ec n=39 stride=0x2 rec@0xed150  same
+@0xc9a88 n=28 stride=0x2c rec@0xe4000  | gp-0x674c 2/4 DIFF 0a0000000c0014001800200040006000 vs 0a0000000c0014001800200040006000
+@0xc9af8 n=39 stride=0x2 rec@0xed15c  same
+@0xc9b94 n=39 stride=0x2 rec@0xed168  same
+@0xc9c30 n=39 stride=0x1 rec@0xed2be  same
+@0xc9cdc n=54 stride=0x14 rec@0xd0738  same
+@0xc9dc4 n=54 stride=0x18 rec@0xd0774  same
+@0xc9eac n=54 stride=0x14 rec@0xd07bc  | gp+0x63fd 10/24 DIFF 0400c008000f001400230000ea00ad01 vs 04008007000f001400230000ea00a201
+@0xc9f94 n=54 stride=0x14 rec@0xd07f8  | gp+0x63fd 10/24 DIFF 04003c009001c409a00f00008c001b02 vs 04003c009001c409a00f00008e001802
+@0xca06c n=58 stride=0x2 rec@0xce004  same
+@0xca164 n=54 stride=0x1c rec@0xd0834  | gp+0x63fd 10/24 DIFF 060000008002000a0014801e00282802 vs 060000008002000a0014801e00283802
+@0xca24c n=54 stride=0x1c rec@0xd0888  | gp+0x63fd 10/24 DIFF 0600000033010004cd06000c00180040 vs 0600000033010004cd06000c00180040
+@0xca324 n=58 stride=0x2 rec@0xce008  same
+@0xca40c n=58 stride=0x1 rec@0xce00c  same
+@0xca504 n=54 stride=0x1c rec@0xd08dc  | gp+0x63fd 10/24 DIFF 060000000002d205e1093d0e00140040 vs 060000000002d205e1093d0e00140040
+@0xca5ec n=54 stride=0x1c rec@0xd0930  | gp+0x63fd 10/24 DIFF 060000000005cb0c0014002300320000 vs 060000000005cb0c0014002300320000
+@0xca6c4 n=39 stride=0x2 rec@0xed174  same
+@0xca760 n=39 stride=0x2 rec@0xed180  same
+@0xca7fc n=39 stride=0x2 rec@0xed18c  same
+@0xca898 n=39 stride=0x2 rec@0xed198  same
+@0xca934 n=39 stride=0x2 rec@0xed1a4  same
+@0xca9d0 n=39 stride=0x2 rec@0xed1b0  same
+@0xcaa6c n=39 stride=0x2 rec@0xed1bc  same
+@0xcab08 n=39 stride=0xc rec@0xed350  same
+@0xcaba4 n=39 stride=0xc rec@0xed398  same
+@0xcac40 n=39 stride=0x2 rec@0xed1c8  same
+@0xcacdc n=39 stride=0xc rec@0xed3e0  same
+@0xcad78 n=39 stride=0xc rec@0xed428  same
+@0xcae14 n=39 stride=0x2 rec@0xed1d4  same
+@0xcaeb0 n=39 stride=0x2 rec@0xed1e0  same
+@0xcaf4c n=39 stride=0x2 rec@0xed1ec  same
+@0xcafe8 n=39 stride=0x2 rec@0xed1f8  same
+@0xcb084 n=39 stride=0x2 rec@0xed204  same
+@0xcb120 n=39 stride=0x2 rec@0xed210  same
+@0xcb1bc n=39 stride=0x2 rec@0xed21c  same
+@0xcb258 n=39 stride=0x1 rec@0xed2c4  same
+@0xcb2f4 n=39 stride=0x2 rec@0xed228  same
+@0xcb390 n=39 stride=0x2 rec@0xed234  same
+@0xcb42c n=39 stride=0x2 rec@0xed240  same
+@0xcb4c8 n=39 stride=0x2 rec@0xed24c  same
+@0xcb564 n=39 stride=0x2 rec@0xed258  same
+@0xcb600 n=39 stride=0x2 rec@0xed264  same
+@0xcb69c n=39 stride=0x10 rec@0xed2f0  same
+@0xcb738 n=39 stride=0x100 rec@0xed470  | gp-0x674f 5/12 DIFF 91071a063f05ab0460042c041a043604 vs d90755065a05d4046d0431041d043d04 | gp-0x674d 5/13 DIFF 91071a063f05ab0460042c041a043604 vs 0a07e405040596043e040a040a041b04
+@0xcb7d4 n=28 stride=0x14 rec@0xe4108  | gp-0x674c 2/4 DIFF 040000000b0016002000400040004000 vs 040000000b0016002000800080008000
+@0xcb844 n=28 stride=0x28 rec@0xe4180  same
+@0xcb8b4 n=28 stride=0x14 rec@0xe4270  | gp-0x674c 2/4 DIFF 04002000260040006600ff00ff00ff00 vs 04002000260050007000ff00ff00ff00
+@0xcb924 n=28 stride=0x14 rec@0xe42e8  | gp-0x674c 2/4 DIFF 04002000260036006000ff00ff00df00 vs 040020002a0050007000ff00ff00ff00 | gp-0x674f 5/12 DIFF 04002000260036006000ff00ff00df00 vs 04002000300040007000ff00cd009a00 | gp-0x674d 5/13 DIFF 04002000260036006000ff00ff00df00 vs 04002000300040007000ff00cd009a00
+@0xcb994 n=28 stride=0x18 rec@0xe4360  | gp-0x674e 1/7 DIFF 05000000440070008800d0000a011402 vs 05000000440070008800d000f8000002 | gp-0x674c 2/4 DIFF 0500000030008000a000d000cd009a01 vs 05000000440070008800d000cd00cd01 | gp-0x674f 5/12 DIFF 0500000030008000a000d000cd009a01 vs 0500000030007000a000d00033013302 | gp-0x674d 5/13 DIFF 0500000030008000a000d000cd009a01 vs 0500000030007000a000d00033013302
+@0xcba04 n=28 stride=0x14 rec@0xe43f0  | gp-0x674f 5/12 DIFF 0400460048004e005000fe00ea000c00 vs 04002000300040007000ff00cd009a00 | gp-0x674d 5/13 DIFF 0400460048004e005000fe00ea000c00 vs 04002000300040007000ff00cd009a00
+@0xcba74 n=28 stride=0x14 rec@0xe4468  | gp-0x674f 5/12 DIFF 0400460048004e005000fe00ea000c00 vs 04002000300040007000ff00cd009a00 | gp-0x674d 5/13 DIFF 0400460048004e005000fe00ea000c00 vs 04002000300040007000ff00cd009a00
+@0xcbae4 n=28 stride=0x1c rec@0xe44e0  | gp-0x674f 5/12 DIFF 060018002d004000500060007000ff00 vs 06001d004000600076008000a000ff00 | gp-0x674d 5/13 DIFF 060018002d004000500060007000ff00 vs 06001d004000600076008000a000ff00
+@0xcbb54 n=28 stride=0x1c rec@0xe4588  | gp-0x674c 2/4 DIFF 060000000300060008000a001400ff00 vs 060000000300060008000a001400ff00 | gp-0x674f 5/12 DIFF 060000000300060008000a001400ff00 vs 0600000002000400060008000a00ff00 | gp-0x674d 5/13 DIFF 060000000300060008000a001400ff00 vs 0600000002000400060008000a00ff00
+@0xcbbc4 n=28 stride=0x1c rec@0xe4630  | gp-0x674c 2/4 DIFF 060010001a002600300040006000ff00 vs 060010001a002600300040006000ff00
+@0xcbc34 n=28 stride=0x1c rec@0xe46d8  | gp-0x674c 2/4 DIFF 060000000300060008000a001400ff00 vs 060000000300060008000a001400ff00 | gp-0x674f 5/12 DIFF 060000000300060008000a001400ff00 vs 0600000002000400060008000a00ff00 | gp-0x674d 5/13 DIFF 060000000300060008000a001400ff00 vs 0600000002000400060008000a00ff00
+@0xcbcb4 n=54 stride=0x24 rec@0xd0984  | gp+0x63fd 10/24 DIFF 080000000002000400063309000c000e vs 080000000002000400063309000c000e
+@0xcbd9c n=54 stride=0x1c rec@0xd09f0  | gp+0x63fd 10/24 DIFF 06008002000a0014001e002800320000 vs 06008002000a0014001e002800320000
+@0xcbe84 n=54 stride=0x10 rec@0xd0a44  same
+@0xcbf6c n=54 stride=0x14 rec@0xd0a74  | gp+0x63fd 10/24 DIFF 0400000090017805b80b000c000c1209 vs 0400000090017805b80b010c010c1209
+@0xcc054 n=54 stride=0x14 rec@0xd0ab0  | gp+0x63fd 10/24 DIFF 040000009001dc05b80b000a000ac608 vs 040000009001dc05b80b010a010ac608
+@0xcc13c n=54 stride=0x14 rec@0xd0aec  | gp+0x63fd 10/24 DIFF 040000009001dc05b80bff08ff086708 vs 040000009001dc05b80b000900096608
+@0xcc224 n=54 stride=0x14 rec@0xd0b28  | gp+0x63fd 10/24 DIFF 040000009001dc05b80b660866080108 vs 040000009001dc05b80b660866080008
+@0xcc2fc n=39 stride=0x1 rec@0xed2ca  same
+@0xcc398 n=39 stride=0x2 rec@0xed270  same
+@0xcc434 n=39 stride=0x1 rec@0xed2d0  same
+@0xcc4d0 n=39 stride=0x1 rec@0xed2d6  same
+@0xcc56c n=39 stride=0x1 rec@0xed2dc  same
+@0xcc608 n=39 stride=0x2 rec@0xed27c  same
+@0xcc6a4 n=39 stride=0x2 rec@0xed288  same
+@0xcc740 n=39 stride=0x2 rec@0xed294  same
+@0xcc7dc n=39 stride=0x1 rec@0xed2e2  same
+@0xcc878 n=39 stride=0x1 rec@0xed2e8  same
+@0xcc924 n=54 stride=0xc rec@0xd0b64  same
+@0xcca0c n=54 stride=0x10 rec@0xd0b88  same
+{'gp-0x674c': '8 of 47 tables differ', 'gp-0x674e': '10 of 47 tables differ', 'gp-0x674f': '11 of 87 tables differ', 'gp-0x674d': '11 of 87 tables differ', 'gp+0x63fd': '24 of 37 tables differ'}

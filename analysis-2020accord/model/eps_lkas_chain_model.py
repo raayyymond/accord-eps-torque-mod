@@ -614,6 +614,7 @@ from eps_chain_control import (
     GOVERNOR_RATE_X,
     GOVERNOR_RATE_Y,
     _self_check_v299,
+    _self_check_v300,
     a160_governor_rate_cap,
     arb_deadband_relative_width,
     computed_runtime_governor,

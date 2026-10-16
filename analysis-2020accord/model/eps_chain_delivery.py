@@ -79,6 +79,7 @@ from eps_chain_control import (
     _self_check_v295,
     _self_check_v298,
     _self_check_v299,
+    _self_check_v300,
     a160_governor_rate_cap,
     computed_runtime_governor,
     engage_decider,
@@ -536,6 +537,9 @@ def _self_check():
     # at the 1382/2880 cap boundaries, the sign(theta) != sign(E') bounding, and the 1229/1230 freeze edge. Skips
     # silently if the V299 image is absent.
     _self_check_v299()
+    # V300 / THE RELEASE (2026-10-15): stock + the angle loop. Asserts only, prints nothing; the cave is V299's byte for
+    # byte, Kp/Kd on all 28 records, every telemetry/legacy run back to stock, id string A16C. Skips if images are absent.
+    _self_check_v300()
 
 
 def _demo():

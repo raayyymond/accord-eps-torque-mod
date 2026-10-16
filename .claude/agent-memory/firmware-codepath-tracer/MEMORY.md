@@ -111,3 +111,5 @@ The filenames are descriptive and searchable. Index only what a future session w
 (Corrected 2026-09-13: five index links used hyphens where the files use underscores, and the earlier
 "STALE LINK" note about `reference_accord_fun28ea6_publishes_its_pid_internals_to_gp_cells.md` was wrong —
 that file does exist on disk.)
+- [V37 cells are not slot-indexed; dormant at standstill (2026-10-05)](reference_accord_v37_cells_are_not_slot_indexed_and_dormant_at_standstill.md) — 42-byte diff, reader census, slot 2 vs 11 identical, no latch path found
+- [Coding area 0x1000, sensor trim chain, 37 hard DTC ids, 3 corrections (2026-10-05)](reference_accord_coding_area_0x1000_sensor_trim_and_hard_dtc_census.md) — per-ECU data below 0x13000; 0xC64C3 gate = 0

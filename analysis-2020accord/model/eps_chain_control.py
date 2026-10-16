@@ -1430,6 +1430,75 @@ def _self_check_v299():
     assert cave(G=G0, a4f68=0, **base, **EP_POS)[0] == "DONE"            # armed, below bound, below hard, in window
 
 
+def _self_check_v300():
+    """V300 / THE RELEASE: stock + the angle loop, built FROM STOCK (2026-10-15).  Called from _self_check(); prints
+    NOTHING, so the hashed _self_check()+_demo() stdout is unchanged.
+
+    Reads the BUILT V300 image (skips silently if absent) and asserts, byte-for-byte against the STOCK dump and
+    the V299 image: (a) the cave 0xC4C00..0xC4D03 is V299's (so _self_check_v299's cave mirror and the H1 on the
+    V299 bytes apply unchanged); (b) the lane cals the loop uses (a/b/C/DB, Ki, ICL, DCL) and the authority chain
+    (0xC6CD0 = 5346, clamps 3072) are V299's; (c) Kp 112 / Kd 48 on ALL 28 records reached through the pointer
+    tables (V299 carried 960 / 0 on the 27 non-selected records); (d) the telemetry hook, the telemetry cave,
+    the CAN-427 tap window, the x6 assist map, the LIM ceilings, the r24 gate/arm, the biquad arm, the Coulomb
+    relay knee/K1 and the base-assist damper pages 0xCE..0xD9 are STOCK -- EXCEPT (rev 2) the DampAxis lane's 13 bytes
+    (Y rows 0xD7A5C/0xD7A6C, alpha2 0xC40DC) which stay at V299 by the GATE 2 re-score; (e) the id string is 39990-TVA,A16C; (f) the
+    in-place lane edits (E1/B2/A2/E4/HOOK/OPH) and the dir-2 hand-fade record are V299's."""
+    import glob
+    import os
+    import struct
+    root = os.environ.get("ACCORD_FIRMWARE_ROOT", "C:/Users/dudei/Desktop/Projects/accord-firmwares")
+    hits = glob.glob(os.path.join(root, "analysis-2020accord", "_v300_*plain_image.bin"))
+    h299 = glob.glob(os.path.join(root, "analysis-2020accord", "_v299_*plain_image.bin"))
+    stock_p = os.path.join(root, "analysis-2020accord", "stock_fw_dump", "code.bin")
+    if not hits or not h299 or not os.path.exists(stock_p):
+        return                                                  # images not present: skip (prints nothing either way)
+    img = open(hits[0], "rb").read()
+    v299 = open(h299[0], "rb").read()
+    stock = open(stock_p, "rb").read()
+    u16 = lambda b, a: struct.unpack_from("<H", b, a)[0]        # noqa: E731
+    u32 = lambda b, a: struct.unpack_from("<I", b, a)[0]        # noqa: E731
+
+    # (a) the cave is V299's, byte for byte; its table pointer still lands on the GB-P table
+    assert img[0xC4C00:0xC4D04] == v299[0xC4C00:0xC4D04]
+    assert u32(img, 0xC4C1E) == 0xC4CDA
+    # (b) lane cals + authority chain
+    assert (struct.unpack_from("<h", img, 0xC63E8)[0], u16(img, 0xC63EA), u16(img, 0xC62E6), u16(img, 0xC62E4)) == (0, 8192, 65535, 0)
+    assert (u16(img, 0xC63E6), u16(img, 0xC61BA), u16(img, 0xC61B6)) == (40, 8192, 10240)
+    assert (u16(img, 0xC6CD0), u16(img, 0xC61B2), u16(img, 0xC61B4)) == (5346, 3072, 3072)
+    assert img[0x2A1F0:0x2A1F2] == v299[0x2A1F0:0x2A1F2] != stock[0x2A1F0:0x2A1F2]
+    # (c) Kp / Kd on all 28 records (record = u16 N, X[N], Y[N]); X knots stock
+    for tab, val in ((0xCB994, 112), (0xCB7D4, 48)):
+        for k in range(28):
+            p = u32(stock, tab + 4 * k)
+            n = u16(stock, p)
+            assert all(u16(img, p + 2 + 2 * n + 2 * i) == val for i in range(n))
+            assert img[p:p + 2 + 2 * n] == stock[p:p + 2 + 2 * n]
+    # (d) removed: telemetry, map, LIM, r24, biquad, Coulomb relay, damper pages -- all STOCK
+    assert img[0x55C0E:0x55C12] == stock[0x55C0E:0x55C12] and img[0x55DF2:0x55E12] == stock[0x55DF2:0x55E12]
+    assert img[0xC4B34:0xC4BD8] == b"\xff" * 164 == stock[0xC4B34:0xC4BD8]
+    for k in range(28):
+        p = u32(stock, 0xC9A88 + 4 * k)
+        assert img[p:p + 42] == stock[p:p + 42]                 # the assist map record (X + Y) is Honda's
+    for k in range(10):
+        p = u32(stock, 0xCB844 + 4 * k)
+        assert img[p:p + 40] == stock[p:p + 40]                 # the LIM record is Honda's
+    assert img[0x3AA96] == stock[0x3AA96] and u16(img, 0xC6446) == u16(stock, 0xC6446) == 512
+    assert img[0x35A08:0x35A1A] == stock[0x35A08:0x35A1A] and img[0xC649B] == stock[0xC649B]
+    assert img[0xC40BC:0xC40DC] == stock[0xC40BC:0xC40DC] and img[0xC64DE] == stock[0xC64DE] == 17
+    # rev 2: the DampAxis lane (gp-0x6b26) stays at V299 -- GATE 2 re-score fails its revert (GM 20 -> 5.2 dB at 3 m/s)
+    assert img[0xC40DC] == v299[0xC40DC] == 14 and stock[0xC40DC] == 22
+    assert img[0xD7A5C:0xD7A62] == v299[0xD7A5C:0xD7A62] and img[0xD7A6C:0xD7A72] == v299[0xD7A6C:0xD7A72]
+    assert struct.unpack_from("<3h", img, 0xD7A5C) == (-29490, -17202, -16000)
+    kept = set(range(0xD7A5C, 0xD7A62)) | set(range(0xD7A6C, 0xD7A72)) | set(range(0xD7FFC, 0xD8000))
+    assert all(img[a] == stock[a] for a in range(0xCE000, 0xDA000) if a not in kept)
+    assert img[0x454FE] == stock[0x454FE] and img[0x14120] == stock[0x14120]
+    # (e) the id string; (f) the in-place edits and the dir-2 fade record are V299's; D4 / D6 kept
+    assert img[0x13100:0x1310E] == b"39990-TVA,A16C"
+    for a, n in ((0x28F4E, 2), (0x29A50, 4), (0x29A56, 1), (0x29D6A, 4), (0x29D76, 4), (0x29EE0, 4), (0xE54FC, 26)):
+        assert img[a:a + n] == v299[a:a + n]
+    assert u16(img, 0xC62EA) == 0 and img[0xC61C0:0xC61C6] == b"\xff" * 6 and img[0xC64B4:0xC64B9] == b"\xff" * 5
+
+
 def steer_torque_arbitration(sensors: SensorInputs, st: EpsState, cal: Calibration) -> int:
     """
     Limit the LKAS setpoint, apply the Q15 gain/clamp, and run the two inlined SMs (driver assist is
