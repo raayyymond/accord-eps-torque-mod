@@ -5,7 +5,7 @@ Previous: `HANDOFF-2026-10-02-v298-flown-v299-built.md`. Page (published, privat
 ## 0. Where things stand
 - **On the car: V299** (`39990-TVA,A16B`) with fork Dom `c6452361` — flown on routes `0000009c--7f2f4d267c` and `0000009d--371ec93849` (both with the 250 deg/s cap, config B). Loop LIVE, grind gone, tracking ≥ 0.975 above 15 m/s.
 - **V300 rev 2 is BUILT, VERIFIED, NOT FLOWN** — the release firmware, built FROM STOCK: image sha256 `7d58c823544e9e6ec369e7cc0fc0d7aa42fc8b075ad9b0005f58973d400f384e`, rwd `39990-TVA,A160-V300-REV2-RELEASE-ANGLELOOP.FROMSTOCK-KP112.KD48.KI40.ICL8192-FRZ1229.CAP4096.6144-NOTELEMETRY.NOMAP.STOCKASSIST.DAMPAXIS.V299.A16C-0x13000-0x100000.rwd` sha256 `42f562c069d39c877b66067fe56c6437c43b1609c48ffec8a83dc7303b8e7603`, F181 `39990-TVA,A16C` (both in `../accord-firmwares`). 766 B vs stock in 8 CRC blocks; 2110 B of V299 returned to stock.
-- **The fork is rebuilt on upstream as branch `Dom-release`** (upstream `823a5d5674` + 5 commits, HEAD `45a1a529c2`), in the worktree `openpilots/raayyymond-StarPilot/StarPilot-release`. Local, NOT pushed; `Dom` untouched.
+- **The fork is rebuilt on upstream as branch `Dom-release`** (upstream `823a5d5674` + 5 commits, HEAD `45a1a529c2`), in the worktree `openpilots/raayyymond-StarPilot/StarPilot-release`. PUSHED as origin/accord-PTM (2026-10-15); `Dom` untouched.
 - **The flash and the push are the operator's calls.**
 
 ## 1. Operator rulings this session (binding)
