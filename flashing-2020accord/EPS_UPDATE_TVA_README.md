@@ -1,10 +1,40 @@
-# eps-update-tva.py — V850/TVA-aware EPS flasher
+# eps-update-tva.py — V850/TVA EPS flasher (runs on the comma device)
 
-A drop-in adaptation of upstream
+> **2026-10-17 rework — runs on a comma 4 / 3X with the STANDARD panda + opendbc
+> libraries. No WSL, no red panda, no custom `sunnypilot_eps` panda fork.**
+> The operator-facing instructions are `ONBOARDING.md` (same folder; it is the file
+> shipped to other people together with the script). What changed:
+>
+> | Before (WSL + custom fork) | Now |
+> |---|---|
+> | `from panda.python.uds import UdsClient` — only exists in the sunnypilot_eps panda fork | `opendbc.car.uds` first (current openpilot), `panda.python.uds` as a legacy fallback |
+> | `DATA_IDENTIFIER_TYPE.FLASH_DECRYPTION_KEY` — a fork-only enum member | pinned locally as `FLASH_DECRYPTION_KEY_DID = 0xF101` (EVIDENCE: every archived flash log shows `2E F1 01 BF 10 9E` on the wire; the docstring's old "0xF050" was wrong) |
+> | `Panda.SAFETY_ELM327` | `CarParams.SafetyModel.elm327` (value 3 in both) with fallbacks |
+> | needed `PYTHONPATH` to a checkout, and a python with `usb1` | on a comma device `python3 eps-update-tva.py` re-execs itself under `/usr/local/venv/bin/python3` (the only interpreter there with the panda deps) and adds `/data/openpilot` to `sys.path`; `OPENPILOT_ROOT` overrides on a laptop |
+> | silent fallback to a MagicMock when the panda could not be opened — printed `DRY RUN COMPLETE` with nothing tested | **refuses** with a diagnosis; the mock is an explicit `--mock` flag, refused under `--danger` |
+> | nothing stopped you running with openpilot up | refuses while `pandad`/`manager.py` is running and tells you to `tmux kill-server` |
+> | — | prints panda type/transport and the ignition state from `panda.health()` before the first UDS frame |
+> | `--debug` printed the ISO-TP/CAN trace via the fork's `debug=` kwarg | turns `opendbc.car.carlog` up to DEBUG so the same trace prints |
+>
+> The UDS method signatures the flash path calls (`tester_present`, `read_data_by_identifier`,
+> `diagnostic_session_control`, `security_access`, `routine_control`, `write_data_by_identifier`,
+> `request_download`, `transfer_data`, `request_transfer_exit`) were diffed between the fork's
+> `uds.py` and the device's `opendbc/car/uds.py`: identical. The wire sequence is unchanged.
+> `Panda(disable_checks=True)` disables the panda's heartbeat watchdog and power-save, which is
+> what keeps the panda in ELM327 mode for the ~4-minute transfer (the firmware otherwise drops to
+> SILENT 2–5 s after the last heartbeat).
+>
+> Verified on the operator's comma 4 (AGNOS 19.8.1, openpilot 0.11.2 fork) on 2026-10-17:
+> `--selftest`, `--mock`, the venv re-exec, `panda`/`opendbc` resolution and the pandad guard.
+> The on-car dry run is the operator's step (`ONBOARDING.md` §6).
+
+A self-contained (single-file) descendant of upstream
 [`hdlineage/sunnypilot_eps/eps-update.py`](https://github.com/hdlineage/sunnypilot_eps/blob/release-c3-eps/eps-update.py)
-that handles both the SH-2A `.rwd` family (Civic, Clarity, CR-V, Pilot,
-Insight — upstream's only target) and the V850 `.rwd` family (2020 Accord
-TVA, ILX TV9, 9th-gen Accord T2F/T3L, etc. — new in this fork).
+for the V850 `.rwd` family (2020 Accord TVA, ILX TV9, 9th-gen Accord T2F/T3L, etc.).
+The SH-2A x5a path (Civic, Clarity, CR-V, Pilot, Insight) was removed when the
+script was made portable; it is rejected by magic byte with a clear message.
+The pre-2026-10-17 repo version (two-file, x5a-capable) is kept as
+`archive/eps-update-tva-pre-20261017-repo-version.py`.
 
 Container parsing, SA-key computation, and CAN-address routing are all
 auto-selected from the `.rwd` magic byte. Defaults to dry-run; `--danger`
@@ -135,12 +165,12 @@ No flash risk in any of those — the dry run never reaches
 Per `CLAUDE.md` and `docs/guides/EPS-FLASH-RUNBOOK.md`:
 
 - **Car ignition ON** (engine off is fine; CAN bus must be active).
-- **Panda is the only device on OBD-II.** If a comma device's harness
-  is connected, unplug it.
-- **openpilot / pandad must be killed** before any flash workflow. On a
-  comma device: `tmux kill-server`. Failing to kill openpilot has been
-  reported to illuminate every dashboard error light (recoverable but
-  alarming).
+- **On a comma device: `tmux kill-server` first, then wait ~3 s.** The script
+  now refuses to start while `pandad` is running. Failing to kill openpilot has
+  been reported to illuminate every dashboard error light (recoverable but
+  alarming). `sudo reboot` afterwards to bring openpilot back.
+- **Red-panda path only: the panda is the only device on OBD-II.** If a comma
+  device's harness is connected, unplug it.
 - **Firmware part number must match the target car.** Cross-flashing
   between part numbers (or between V850 and SH-2A families) is not
   safe. The dry run will print the ECU's reported application-software
@@ -162,7 +192,8 @@ Per `CLAUDE.md` and `docs/guides/EPS-FLASH-RUNBOOK.md`:
   and the patched-firmware pipeline. (Distilled from the former `V850_ALGORITHM_VERIFIED.md`,
   `ACCORD_TVA_ARCHITECTURE_MAP.md`, `ENCODER_REPORT.md`, `STOCK_RECONSTRUCTION_REPORT.md`.)
 - `analysis-2020accord/notes/TORQUE_PATH_AND_TABLE.md` — torque input→output code path + tables
-- `docs/guides/EPS-FLASH-RUNBOOK.md` — red panda + laptop flash workflow
+- `ONBOARDING.md` — **the comma-device flash procedure shipped to other operators**
+- `docs/guides/EPS-FLASH-RUNBOOK.md` — the old red panda + laptop (WSL) workflow; historical
 
 ---
 
@@ -179,7 +210,9 @@ Per `CLAUDE.md` and `docs/guides/EPS-FLASH-RUNBOOK.md`:
 | Dry-run default | yes (raises after SA) | yes (clean exit after SA) |
 | `--danger` confirmation | none | interactive `FLASH` prompt (skip via `--yes`) |
 | Echoes firmware file + bus | no | yes (per CLAUDE.md safety rule #2) |
-| Mock client when no panda | yes | yes (canned values updated for V850) |
+| Mock client when no panda | yes (silent fallback) | explicit `--mock` only; a connect failure is fatal |
+| UDS library | fork's `panda.python.uds` | standard `opendbc.car.uds` (legacy fallback) |
+| Runs on the comma device itself | no | yes (`python3 eps-update-tva.py`, auto venv + sys.path) |
 
 ---
 

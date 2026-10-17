@@ -1,6 +1,6 @@
 # EPS Flash Runbook — Red Panda + Laptop
 
-> **This is the PRIMARY workflow.** `CLAUDE.md` also describes a Comma 4 SSH workflow (Option B), but the red panda + laptop approach is what we're using. The Comma 4 path is documented as a future alternative.
+> **SUPERSEDED 2026-10-17.** The flasher now runs on the comma 4 itself with the standard panda + opendbc libraries; see `flashing-2020accord/ONBOARDING.md` (the shipped procedure) and `flashing-2020accord/EPS_UPDATE_TVA_README.md`. This file records the earlier red panda + WSL laptop workflow and stays as a record.
 
 > **Topology correction (2026-05-28, per operator):** the red panda connects **through the comma Bosch harness** (installed in the car; the comma powers it), NOT directly into the OBD-II port. OBD-II-direct wording below has been corrected. See `memory/reference/tooling/reference_operator_flash_hardware_topology.md`.
 
