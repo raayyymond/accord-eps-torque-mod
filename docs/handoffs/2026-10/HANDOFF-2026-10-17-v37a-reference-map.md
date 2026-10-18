@@ -1,6 +1,20 @@
 # HANDOFF 2026-10-17 — V37A: the operator's V37 file, with the 2× moved onto the rate-reference map
 
-**Status at close-out:** V37A BUILT, VERIFIED, ADVERSARIALLY PASSED (four lenses, none "do not flash"), **NOT FLOWN**.
+**Status at close-out:** V37A **REV 2** BUILT, VERIFIED, **NOT FLOWN**. Four adversarial lenses passed rev 1 (none "do not
+flash"); the focused re-check of the rev-2 delta is PASS_WITH_DEFECTS (`docs/review/ADV-V37A-REV2-DELTA-2026-10-17.md`): rail +820 (+827/−828 with D), the 1024 clamp cannot bind, no truncation, no lane-derived threshold crossed; OPEN: DTC 0x5E observer under a prolonged stall at the rail — watch its latch on the first drive.
+
+## REV 2 (same day) — the operator's correction
+After rev 1 was reported, the operator ruled: *"no, peak torque should be 2x and peak angle velocity setpoint should be 2x
+too."* Rev 1 had put `0xC646C`/`0xC61B2`/`0xC61B4` back to stock (891/512/512). **Rev 2 keeps V37's 1782/1024/1024** and
+carries the same map [A] and clamp [B]. Delivered rail = 2 × Honda's: 820 counts (P 15360 × 254/256 → lag 0.990 → ×1782
+>> 15), under the 1024 clamp, reached from idx 63 at a stalled wheel (V37 reached 799 only at idx 240). 350 B vs V37.
+rwd `39990-TVA,A160-V37A-REV2-V37BASE-MAP.SLOPE2X.NOCAP-GAIN1782-CLAMPS1024-FBCLAMP42865-0x13000-0x100000.rwd` sha256
+`71652fa89e2bc90b1f54a5b3f5acc717df18ec4f14666cc892018666430ee0b0`; image `_v37a_REV2_plain_image.bin` sha256
+`6b457089a831d27c8a2bad7c1ce6842b99cd5efea2e0cf8c5b8d3222de153413`. Rev 1 renamed `SUPERSEDED-DO-NOT-FLASH-REV1-…` /
+`_v37a_REV1_SUPERSEDED_plain_image.bin`. Golden `_self_check_v37a` repointed to rev 2 (97 symbols, hash unchanged).
+Risks shift: 2× authority arrives from idx 63; V280's 7 Hz stall mechanism at 1/3 of V280's torque; the 0xE4 RX-fault
+sentinel pulse is 820 T for 2 s chasing 123 deg/s (V37: 794 T chasing 22). **Everything below describes REV 1 unless it
+says otherwise; where it says "Honda's 410" or "halves", rev 2 reads 820 / "2× as V37".**
 Not part of the V300 release line (`STATE.md` decision box is unchanged except for a side-build paragraph).
 
 ## What was asked

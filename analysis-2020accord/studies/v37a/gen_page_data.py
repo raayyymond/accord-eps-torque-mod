@@ -22,7 +22,7 @@ ROOT = os.environ.get("ACCORD_FIRMWARE_ROOT", "C:/Users/dudei/Desktop/Projects/a
 R = Path(ROOT) / "analysis-2020accord"
 IMGS = {"stock": (R / "stock_fw_dump" / "code.bin").read_bytes(),
         "V37": (R / "_v37_plain_image.bin").read_bytes(),
-        "V37A": (R / "_v37a_plain_image.bin").read_bytes()}
+        "V37A": (R / "_v37a_REV2_plain_image.bin").read_bytes()}
 u16 = lambda b, a: struct.unpack_from("<H", b, a)[0]      # noqa: E731
 s16 = lambda b, a: struct.unpack_from("<h", b, a)[0]      # noqa: E731
 u32 = lambda b, a: struct.unpack_from("<I", b, a)[0]      # noqa: E731

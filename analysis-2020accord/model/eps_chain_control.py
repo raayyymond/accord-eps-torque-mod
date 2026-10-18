@@ -1501,25 +1501,26 @@ def _self_check_v300():
 
 
 def _self_check_v37a():
-    """V37A (2026-10-17): V37's 2x LKAS mod MOVED from the torque constant to the RATE-REFERENCE MAP.  Called from
+    """V37A REV 2 (2026-10-17): V37 (2x torque KEPT) + the RATE-REFERENCE MAP at 2x slope, no cap.  Called from
     _self_check(); prints NOTHING, so the hashed _self_check()+_demo() stdout is unchanged.
 
     Reads the BUILT V37A image, the V37 base and the STOCK dump (skips silently if any is absent) and asserts:
-    (a) 0xC646C/0xC61B2/0xC61B4 are STOCK (891/512/512) on V37A and 1782/1024/1024 on V37; (b) 0xC62E6 is 42865 on
+    (a) 0xC646C/0xC61B2/0xC61B4 are V37's 1782/1024/1024 on V37A (= 2x stock 891/512/512; rev 1 had reverted them -- the
+    operator ruled "peak torque should be 2x and peak angle velocity setpoint should be 2x too"); (b) 0xC62E6 is 42865 on
     V37A, 7680 on stock and V37, and Honda's setpoint:feedback ratio 7680/(32*172) is held at the new top 32*960 to
     2e-5; (c) all 28 assist-map records keep n = 10 and the stock X row, Y[0] = 0, and the live slot-7 record 0xE502C
     reads 0,48,80,96,128,256,384,512,640,960; (d) through THIS module's integer LERP walk the live record returns
     exactly 4*idx for EVERY idx 0..240 (no cap) while stock returns 2*idx only to idx 12 and saturates at 172;
     (e) through lkas_rate_pid_surface() with every PID cell read from each image: at fb = 0 the stalled-wheel P rails
-    from idx 63 on V37A and never on stock (14964 < 15360 at idx 240); delivered T at idx 240 is 410 on V37A (Honda's
-    rail, gain 891) vs 399 stock vs 799 V37 (the x2 constant it replaces); (f) nothing below 0xC0000 differs V37A vs
+    from idx 63 on V37A and never on stock (14964 < 15360 at idx 240); delivered T at idx 240 is 820 on V37A (2x Honda's
+    410 rail, gain 1782, under the 1024 clamp) vs 399 stock vs 799 V37; (f) nothing below 0xC0000 differs V37A vs
     V37 (cal-only), and the V36/V37 debounce/DTC bytes are carried."""
     import glob
     import os
     import struct
     from dataclasses import replace as _replace
     root = os.environ.get("ACCORD_FIRMWARE_ROOT", "C:/Users/dudei/Desktop/Projects/accord-firmwares")
-    hit = glob.glob(os.path.join(root, "analysis-2020accord", "_v37a_plain_image.bin"))
+    hit = glob.glob(os.path.join(root, "analysis-2020accord", "_v37a_REV2_plain_image.bin"))
     base_p = os.path.join(root, "analysis-2020accord", "_v37_plain_image.bin")
     stock_p = os.path.join(root, "analysis-2020accord", "stock_fw_dump", "code.bin")
     if not hit or not os.path.exists(base_p) or not os.path.exists(stock_p):
@@ -1546,8 +1547,8 @@ def _self_check_v37a():
                         out_lag_b=u16(b, 0xC63EE), lkas_forward_gain=u16(b, 0xC646C), out_clamp=u16(b, 0xC61B4))
 
     # (a) gain + clamps
-    assert (u16(img, 0xC646C), u16(img, 0xC61B2), u16(img, 0xC61B4)) == (891, 512, 512) == (u16(stock, 0xC646C), u16(stock, 0xC61B2), u16(stock, 0xC61B4))
-    assert (u16(v37, 0xC646C), u16(v37, 0xC61B2), u16(v37, 0xC61B4)) == (1782, 1024, 1024)
+    assert (u16(img, 0xC646C), u16(img, 0xC61B2), u16(img, 0xC61B4)) == (1782, 1024, 1024) == (u16(v37, 0xC646C), u16(v37, 0xC61B2), u16(v37, 0xC61B4))
+    assert (u16(stock, 0xC646C), u16(stock, 0xC61B2), u16(stock, 0xC61B4)) == (891, 512, 512)
     assert img[0x2A1EE:0x2A1F2] == stock[0x2A1EE:0x2A1F2] == bytes.fromhex("253f6c74")      # ld.h 0x746c[tp]: reads 0xC646C
     # (b) feedback clamp
     assert u16(img, 0xC62E6) == 42865 and u16(stock, 0xC62E6) == u16(v37, 0xC62E6) == 7680
@@ -1569,7 +1570,8 @@ def _self_check_v37a():
     assert all(lkas_rate_lerp(sx, sy, i) == 2 * i for i in range(13)) and lkas_rate_lerp(sx, sy, 240) == 172 == lkas_rate_lerp(sx, sy, 300)
     # (e) the delivered surface at fb = 0 (a BOUND, the stalled wheel)
     ca, cb, cs = cal_of(img), cal_of(v37), cal_of(stock)
-    assert (lkas_rate_pid_surface(240, ca)["T"], lkas_rate_pid_surface(240, cs)["T"], lkas_rate_pid_surface(240, cb)["T"]) == (410, 399, 799)
+    assert (lkas_rate_pid_surface(240, ca)["T"], lkas_rate_pid_surface(240, cs)["T"], lkas_rate_pid_surface(240, cb)["T"]) == (820, 399, 799)
+    assert 820 < u16(img, 0xC61B4)                                                                   # the 1024 clamp never binds
     assert lkas_rate_pid_surface(240, ca)["P"] == 15360 and lkas_rate_pid_surface(240, cs)["P"] == 14964
     rail = next(i for i in range(241) if lkas_rate_pid_surface(i, ca)["P"] >= 15360)
     assert rail == 63 and lkas_rate_pid_surface(62, ca)["P"] < 15360
