@@ -1501,18 +1501,19 @@ def _self_check_v300():
 
 
 def _self_check_v37a():
-    """V37A REV 2 (2026-10-17): V37 (2x torque KEPT) + the RATE-REFERENCE MAP at 2x slope, no cap.  Called from
+    """V37A REV 3 (2026-10-17): V37 (2x torque KEPT) + the RATE-REFERENCE MAP as a straight line to 2x the stock top
+    (slot 7: 344 at idx 240), fb clamp 2x (15360).  Rev 2 (4*idx line, clamp 42865) superseded.  Called from
     _self_check(); prints NOTHING, so the hashed _self_check()+_demo() stdout is unchanged.
 
     Reads the BUILT V37A image, the V37 base and the STOCK dump (skips silently if any is absent) and asserts:
     (a) 0xC646C/0xC61B2/0xC61B4 are V37's 1782/1024/1024 on V37A (= 2x stock 891/512/512; rev 1 had reverted them -- the
-    operator ruled "peak torque should be 2x and peak angle velocity setpoint should be 2x too"); (b) 0xC62E6 is 42865 on
+    operator ruled "peak torque should be 2x and peak angle velocity setpoint should be 2x too"); (b) 0xC62E6 is 15360 on
     V37A, 7680 on stock and V37, and Honda's setpoint:feedback ratio 7680/(32*172) is held at the new top 32*960 to
     2e-5; (c) all 28 assist-map records keep n = 10 and the stock X row, Y[0] = 0, and the live slot-7 record 0xE502C
-    reads 0,48,80,96,128,256,384,512,640,960; (d) through THIS module's integer LERP walk the live record returns
-    exactly 4*idx for EVERY idx 0..240 (no cap) while stock returns 2*idx only to idx 12 and saturates at 172;
+    reads 0,17,29,34,46,92,138,183,229,344; (d) through THIS module's integer LERP walk the live record stays within
+    1.37 counts of the line 344*idx/240 for EVERY idx 0..240 (no cap) while stock saturates at 172;
     (e) through lkas_rate_pid_surface() with every PID cell read from each image: at fb = 0 the stalled-wheel P rails
-    from idx 63 on V37A and never on stock (14964 < 15360 at idx 240); delivered T at idx 240 is 820 on V37A (2x Honda's
+    from idx 128 on V37A and never on stock (14964 < 15360 at idx 240); delivered T at idx 240 is 820 on V37A (2x Honda's
     410 rail, gain 1782, under the 1024 clamp) vs 399 stock vs 799 V37; (f) nothing below 0xC0000 differs V37A vs
     V37 (cal-only), and the V36/V37 debounce/DTC bytes are carried."""
     import glob
@@ -1520,7 +1521,7 @@ def _self_check_v37a():
     import struct
     from dataclasses import replace as _replace
     root = os.environ.get("ACCORD_FIRMWARE_ROOT", "C:/Users/dudei/Desktop/Projects/accord-firmwares")
-    hit = glob.glob(os.path.join(root, "analysis-2020accord", "_v37a_REV2_plain_image.bin"))
+    hit = glob.glob(os.path.join(root, "analysis-2020accord", "_v37a_REV3_plain_image.bin"))
     base_p = os.path.join(root, "analysis-2020accord", "_v37_plain_image.bin")
     stock_p = os.path.join(root, "analysis-2020accord", "stock_fw_dump", "code.bin")
     if not hit or not os.path.exists(base_p) or not os.path.exists(stock_p):
@@ -1551,21 +1552,21 @@ def _self_check_v37a():
     assert (u16(stock, 0xC646C), u16(stock, 0xC61B2), u16(stock, 0xC61B4)) == (891, 512, 512)
     assert img[0x2A1EE:0x2A1F2] == stock[0x2A1EE:0x2A1F2] == bytes.fromhex("253f6c74")      # ld.h 0x746c[tp]: reads 0xC646C
     # (b) feedback clamp
-    assert u16(img, 0xC62E6) == 42865 and u16(stock, 0xC62E6) == u16(v37, 0xC62E6) == 7680
-    assert abs(42865 / (32 * 960) - 7680 / (32 * 172)) < 2e-5
+    assert u16(img, 0xC62E6) == 15360 and u16(stock, 0xC62E6) == u16(v37, 0xC62E6) == 7680
+    assert 15360 / (32 * 344) == 7680 / (32 * 172)
     # (c) the 28 records
-    live_y = (0, 48, 80, 96, 128, 256, 384, 512, 640, 960)
+    live_y = (0, 17, 29, 34, 46, 92, 138, 183, 229, 344)
     for k in range(28):
         p = u32(stock, 0xC9A88 + 4 * k)
         assert u32(img, 0xC9A88 + 4 * k) == p and u16(img, p) == 10
         X, Y = rec(img, p, 10)
         sX, sY = rec(stock, p, 10)
         assert X == sX == (0, 12, 20, 24, 32, 64, 96, 128, 160, 240) and Y[0] == 0
-        assert Y[1] == 2 * sY[1] and all(Y[i + 1] > Y[i] for i in range(9))
+        assert Y[-1] == 2 * sY[-1] and all(Y[i + 1] > Y[i] for i in range(9))
         assert rec(v37, p, 10) == (sX, sY)                                                   # V37 never touched the map
     assert rec(img, u32(img, 0xC9A88 + 28), 10)[1] == live_y
     # (d) the walk: exact line, no cap, vs stock's shape
-    assert all(lkas_rate_lerp((0, 12, 20, 24, 32, 64, 96, 128, 160, 240), live_y, i) == 4 * i for i in range(241))
+    assert all(abs(lkas_rate_lerp((0, 12, 20, 24, 32, 64, 96, 128, 160, 240), live_y, i) - 344 * i / 240) < 1.5 for i in range(241))
     sx, sy = rec(stock, u32(stock, 0xC9A88 + 28), 10)
     assert all(lkas_rate_lerp(sx, sy, i) == 2 * i for i in range(13)) and lkas_rate_lerp(sx, sy, 240) == 172 == lkas_rate_lerp(sx, sy, 300)
     # (e) the delivered surface at fb = 0 (a BOUND, the stalled wheel)
@@ -1574,9 +1575,9 @@ def _self_check_v37a():
     assert 820 < u16(img, 0xC61B4)                                                                   # the 1024 clamp never binds
     assert lkas_rate_pid_surface(240, ca)["P"] == 15360 and lkas_rate_pid_surface(240, cs)["P"] == 14964
     rail = next(i for i in range(241) if lkas_rate_pid_surface(i, ca)["P"] >= 15360)
-    assert rail == 63 and lkas_rate_pid_surface(62, ca)["P"] < 15360
-    assert lkas_rate_pid_surface(12, ca)["sp"] == 48 == 2 * lkas_rate_pid_surface(12, cs)["sp"]
-    assert lkas_rate_pid_surface(60, ca)["sp"] == 240 and 32 * 240 == 7680                 # the stock clamp's rate, reached at idx 60
+    assert rail == 128 and lkas_rate_pid_surface(127, ca)["P"] < 15360
+    assert lkas_rate_pid_surface(240, ca)["sp"] == 344 == 2 * lkas_rate_pid_surface(240, cs)["sp"]
+    assert lkas_rate_pid_surface(120, ca)["sp"] == 171 and lkas_rate_pid_surface(12, ca)["sp"] == 17 < 24   # below stock at small signal
     # (f) cal-only and carried
     assert img[0x13000:0xC0000] == v37[0x13000:0xC0000]
     assert img[0xC64B4:0xC64B9] == b"\xff" * 5 == v37[0xC64B4:0xC64B9] and img[0xC61C0:0xC61C6] == b"\xff" * 6

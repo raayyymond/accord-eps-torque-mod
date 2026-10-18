@@ -1,6 +1,20 @@
 # -*- coding: utf-8 -*-
 
-r"""builds/v18_v49/build_v37a_tva.py -- V37A REV 2 = V37 (2x torque KEPT) + the RATE-REFERENCE MAP at 2x slope, no cap.
+r"""builds/v18_v49/build_v37a_tva.py -- V37A REV 3 = V37 (2x torque KEPT) + the RATE-REFERENCE MAP as a STRAIGHT LINE to
+2x THE STOCK TOP (slot 7: 172 -> 344 at idx 240), fb clamp 2x (7680 -> 15360).
+
+=== REV 3 (2026-10-17, same day) ===================================================================
+Operator: "assist map should also not just be 2x slope, sorry, should just be linear with 2x the previous max."
+Rev 3 map: per record Y'[i] = round(2 * Ytop * X[i] / 240) -- V280 rev 2's straight-line formula with K_TOP = 2.  Slot 7:
+0, 17, 29, 34, 46, 92, 138, 183, 229, 344 (1.433 counts/idx; the integer walk is within 1.37 counts of the line).  The fb
+clamp scales with the top: 7680 -> 15360 EXACTLY (= 2x), Honda's 1.3953 sp:fb ratio held.  Torque stays V37's 2x
+(1782 / 1024 / 1024).  Delivered (fb = 0): idx 12 T 33 (stock 23, V37 46), idx 60 T 275 (152 / 304), idx 120 T 755
+(324 / 649), P rails from idx 128 -> T 820 = 2 x Honda's 410 (V37: 799 at idx 240 only).  Vs stock the reference is
+0.71x at idx 12 (17 vs 24: the concave stock map is STEEPER than the line at small signal), 1x at idx ≈ 77, 2x at the top.
+Rev 2 (line 4*idx to 960, clamp 42865; image 6b457089..., rwd 71652fa8...) is SUPERSEDED-DO-NOT-FLASH.  Text below
+from rev 1 / rev 2 is kept as the record; the live numbers are printed by the script from the images.
+
+=== REV 2 (superseded) -- was: V37 (2x torque KEPT) + the RATE-REFERENCE MAP at 2x slope, no cap.
 Cal-only.  Built 2026-10-17 on the operator's instruction.
 
 === REV 2 (2026-10-17, same day) ===================================================================
@@ -198,7 +212,7 @@ START, END = 0x13000, 0x100000
 
 LABEL = "V37A"
 
-TAG = "REV2-V37BASE-MAP.SLOPE2X.NOCAP-GAIN1782-CLAMPS1024-FBCLAMP42865"
+TAG = "REV3-V37BASE-MAP.LINE.2XTOP344-GAIN1782-CLAMPS1024-FBCLAMP15360"
 
 BASE_IMAGE = plain_image_path("_v37_plain_image.bin")
 
@@ -206,7 +220,7 @@ BASE_SHA = "9ce6609059e2549246d459d593de943363ebe46e07fd984e4ec0c6a0498f0487"   
 
 BASE_RWD_SHA = "8a809d1b320957e4846c9145ee662858759d514681ce46c247a4a197784202da"  # the operator's file
 
-BIN_OUT = plain_image_path("_v37a_REV2_plain_image.bin")
+BIN_OUT = plain_image_path("_v37a_REV3_plain_image.bin")
 
 WRITE = os.environ.get("ACCORD_V37A_WRITE", "1").strip().lower() not in ("0", "no", "false")
 
@@ -220,11 +234,11 @@ MAP_X = (0, 12, 20, 24, 32, 64, 96, 128, 160, 240)
 
 LIVE_Y_STOCK = (0, 24, 42, 50, 62, 100, 126, 154, 166, 172)
 
-LIVE_Y_NEW = (0, 48, 80, 96, 128, 256, 384, 512, 640, 960)
+LIVE_Y_NEW = (0, 17, 29, 34, 46, 92, 138, 183, 229, 344)
 
 # [B] feedback clamp
 
-FB_CELL, FB_STOCK, FB_NEW = 0xC62E6, 7680, 42865
+FB_CELL, FB_STOCK, FB_NEW = 0xC62E6, 7680, 15360
 
 FB_SITES = (0x28F96, 0x28F9C, 0x28FB8)
 
@@ -276,9 +290,10 @@ def rec(b, p, n):
 
 
 
-def line_y(y1, x):
-    """Y'[i] = round-half-up(2 * Y[1] * X[i] / 12): twice the record's first-segment slope, through the origin."""
-    return (2 * y1 * x * 2 + 12) // 24
+def line_y(ytop, x):
+    """REV 3: Y'[i] = round-half-up(2 * Ytop * X[i] / 240): a straight line from the origin to TWICE the record's own
+    stock top at X = 240 (V280 rev 2's formula with K_TOP = 2)."""
+    return (2 * ytop * x * 2 + 240) // 480
 
 
 
@@ -363,14 +378,14 @@ def main():
     changed = 0
     for s, p in enumerate(ptrs):
         X, Y = rec(base, p, MAP_N)
-        newY = [line_y(Y[1], x) for x in X]
+        newY = [line_y(Y[-1], x) for x in X]
         for i, v in enumerate(newY):
             struct.pack_into("<h", code, p + 2 + 2 * MAP_N + 2 * i, v)
         gX, gY = rec(code, p, MAP_N)
         changed += sum(1 for i in range(MAP_N) for k in (0, 1)
                        if code[p + 2 + 2 * MAP_N + 2 * i + k] != base[p + 2 + 2 * MAP_N + 2 * i + k])
         ok = gX == X and gY == newY and gY[0] == 0 and all(gY[i + 1] > gY[i] for i in range(MAP_N - 1)) and max(gY) < 32767
-        ok &= gY[1] == 2 * Y[1]                                    # exactly 2x at the first knot, every record
+        ok &= gY[-1] == 2 * Y[-1]                                  # exactly 2x the stock top, every record
         if s == LIVE_SLOT:
             ok &= tuple(gY) == LIVE_Y_NEW
         check(ok, f"slot {s:2d} rec 0x{p:05X}: Y1 {Y[1]:3d} -> {gY[1]:3d}, top {Y[-1]:3d} -> {gY[-1]:4d}   "
@@ -379,8 +394,9 @@ def main():
           f"{changed} map bytes changed: every Y[1..9] knot of all 28 records moved, Y[0] = 0 untouched everywhere")
     live = ptrs[LIVE_SLOT]
     mx, my = rec(code, live, MAP_N)
-    check(all(GM.lkas_rate_lerp(mx, my, i) == 4 * i for i in range(0, 241)),
-          "golden-model integer LERP walk on the live record == 4 * idx for EVERY idx 0..240 (no cap, exact)")
+    dev = max(abs(GM.lkas_rate_lerp(mx, my, i) - 344 * i / 240) for i in range(0, 241))
+    check(dev < 1.5 and GM.lkas_rate_lerp(mx, my, 240) == 344 and GM.lkas_rate_lerp(mx, my, 120) == 171,
+          f"golden-model integer LERP walk on the live record is within {dev:.2f} counts of the line 344*idx/240 at EVERY idx 0..240 (no cap)")
     check(all(GM.lkas_rate_lerp(MAP_X, LIVE_Y_STOCK, i) == 2 * i for i in range(0, 13)) and GM.lkas_rate_lerp(MAP_X, LIVE_Y_STOCK, 240) == 172,
           "stock live record: slope 2/idx on the first segment, saturates at 172 -- the shape being replaced")
 
@@ -388,10 +404,10 @@ def main():
     print(f"\n  [3] [B] FEEDBACK CLAMP 0xC62E6  {FB_STOCK} -> {FB_NEW}")
     struct.pack_into("<H", code, FB_CELL, FB_NEW)
     check(u16(code, FB_CELL) == FB_NEW, f"0xC62E6 == {FB_NEW}")
-    r0, r1 = FB_STOCK / (32 * 172), FB_NEW / (32 * 960)
-    check(abs(r1 - r0) < 2e-5, f"Honda's setpoint:feedback ratio {r0:.4f} held at the new top ({r1:.4f})")
+    r0, r1 = FB_STOCK / (32 * 172), FB_NEW / (32 * 344)
+    check(r1 == r0, f"Honda's setpoint:feedback ratio {r0:.4f} held EXACTLY at the new top ({r1:.4f}): 15360 = 2 x 7680 as 344 = 2 x 172")
     check(all(is_ld_hu(code, a) and code[a:a + 4] == stock[a:a + 4] for a in FB_SITES),
-          "all 3 readers of 0xC62E6 are ld.hu (unsigned) and byte-stock -> 42865 > 32767 is safe")
+          "all 3 readers of 0xC62E6 are ld.hu (unsigned) and byte-stock (15360 fits either way)")
     with contextlib.redirect_stdout(io.StringIO()):
         mid = walk_all_blocks(bytes(code))
     check(mid == 6, f"before CRC recompute exactly the 6 touched blocks fail ({mid}) -- the edits landed where expected and nowhere else")
@@ -448,15 +464,15 @@ def main():
     check(S["V37A"][240]["P"] == u16(code, 0xC61BC) and 810 <= t_rail <= 830 and t_rail < u16(code, 0xC61B4),
           f"V37A at full demand: P railed at {u16(code, 0xC61BC)}, delivered T = {t_rail} = 2 x Honda's 410 rail (gain 1782), under the 1024 clamp")
     check(S["V37"][240]["T"] > 1.9 * S["stock"][240]["T"], f"V37's full-demand torque {S['V37'][240]['T']} ~= 2x stock's {S['stock'][240]['T']} -- the constant it replaces")
-    check(S["V37A"][12]["sp"] == 2 * S["stock"][12]["sp"] and S["V37A"][60]["sp"] == 240,
-          "V37A reference == 2x stock at idx 12; 240 counts (= the stock fb clamp 7680/32) at idx 60")
+    check(S["V37A"][240]["sp"] == 344 == 2 * S["stock"][240]["sp"] and S["V37A"][120]["sp"] == 171,
+          "V37A reference top == 2 x stock's 172 = 344; 171 at idx 120 (the line's midpoint)")
     rail_from = next(i for i in range(0, 241) if GM.lkas_rate_pid_surface(i, cal_for(code))["P"] >= u16(code, 0xC61BC))
     stock_rails = any(GM.lkas_rate_pid_surface(i, cal_for(stock))["P"] >= u16(stock, 0xC61BC) for i in (120, 200, 240))
-    check(60 <= rail_from <= 66 and not stock_rails, f"P rails from idx {rail_from} at a stalled wheel on V37A (Kp climbs 248 -> 512 across idx 0..68); stock never rails (14964 < 15360 at idx 240)")
+    check(126 <= rail_from <= 130 and not stock_rails, f"P rails from idx {rail_from} at a stalled wheel on V37A (Kp 645..696 there); stock never rails (14964 < 15360 at idx 240)")
     # the fb-clamp consequence, in the model: at the stock clamp the error can't change sign above sp 240
     c_old = replace(cal_for(code), fb_clamp=FB_STOCK)
-    e_old = 32 * 960 - min(10 ** 9, c_old.fb_clamp)
-    e_new = 32 * 960 - cal_for(code).fb_clamp
+    e_old = 32 * 344 - min(10 ** 9, c_old.fb_clamp)
+    e_new = 32 * 344 - cal_for(code).fb_clamp
     check(e_old > 0 and e_new < 0, f"at full reference: E can never go negative with the stock clamp (min E {e_old}); it can with 42865 (min E {e_new})")
 
 

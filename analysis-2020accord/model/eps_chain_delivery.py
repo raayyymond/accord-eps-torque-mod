@@ -541,8 +541,8 @@ def _self_check():
     # V300 / THE RELEASE (2026-10-15): stock + the angle loop. Asserts only, prints nothing; the cave is V299's byte for
     # byte, Kp/Kd on all 28 records, every telemetry/legacy run back to stock, id string A16C. Skips if images are absent.
     _self_check_v300()
-    # V37A rev 2 (2026-10-17): V37's x2 torque KEPT + the rate-reference map at 2x slope (Y = 4*idx, no cap), fb clamp
-    # 42865; rail 820 from idx 63. Asserts only, prints nothing; skips if the images are absent.
+    # V37A rev 3 (2026-10-17): V37's x2 torque KEPT + the rate-reference map as a line to 2x the stock top (344), fb clamp
+    # 15360; rail 820 from idx 128. Asserts only, prints nothing; skips if the images are absent.
     _self_check_v37a()
 
 

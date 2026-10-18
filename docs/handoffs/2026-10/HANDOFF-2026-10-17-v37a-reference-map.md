@@ -1,6 +1,23 @@
 # HANDOFF 2026-10-17 — V37A: the operator's V37 file, with the 2× moved onto the rate-reference map
 
-**Status at close-out:** V37A **REV 2** BUILT, VERIFIED, **NOT FLOWN**. Four adversarial lenses passed rev 1 (none "do not
+**Status at close-out:** V37A **REV 3** BUILT, VERIFIED, **NOT FLOWN** — the flight candidate. Rev 1 and rev 2 SUPERSEDED.
+
+## REV 3 (same day) — the operator's second correction
+*"assist map should also not just be 2x slope, sorry, should just be linear with 2x the previous max."* Rev 3 map: every
+record Y'[i] = round(2·Ytop·X[i]/240), a straight line from the origin to twice the record's stock top (V280 rev 2's formula
+with K_TOP = 2). Slot 7: **0,17,29,34,46,92,138,183,229,344**; the integer LERP walk stays within 1.37 counts of the line.
+Feedback clamp `0xC62E6` 7680 → **15360** (exactly 2×; Honda's 1.3953 ratio held). Torque stays V37's 2× (1782/1024/1024).
+301 B vs V37, 0 code bytes. rwd `39990-TVA,A160-V37A-REV3-V37BASE-MAP.LINE.2XTOP344-GAIN1782-CLAMPS1024-FBCLAMP15360-0x13000-0x100000.rwd`
+sha256 `af57a2365a1781d58410039ed6acd7303d61989253be6f13bb44ce859c040ee8`; image `_v37a_REV3_plain_image.bin` sha256
+`e33a97ee2a9cd8be2e4a8080c121fec74776588c46d10f35a0ae34458487805e`. Delivered (fb = 0): idx 12 T 33 (stock 23, V37 46),
+idx 60 T 275 (152/304), idx 120 T 755 (324/649), P rails from idx 128 → T 820. **Consequence to state plainly:** Honda's map
+is concave, so a straight line to 2× its top sits BELOW it until idx ≈ 77 (17 vs 24 at idx 12) — small corrections ask a
+slower wheel than stock while being pushed 2× as hard; the 2× ask is reached only toward full demand (344 ≈ 44.5 deg/s).
+The same 2× top flew as V278 rev 3 (Honda's shape, ×6 torque: 42 deg/s hands-light, no ring). Golden `_self_check_v37a`
+repointed to rev 3 (97 symbols, hash unchanged). Rev-3 delta re-check PASS_WITH_DEFECTS (`docs/review/ADV-V37A-REV3-DELTA-2026-10-17.md`): bytes/CRC/payload clean, map == formula from stock, LERP within 1.37 of the line, rail idx 128 / T 820; it corrected the crossing to idx 76–78; open: DTC 0x5E under a stalled railed lane.
+Pre-registered read: full-demand hands-light rate ≈ 42 deg/s (stock 24); low-demand rate per idx 0.7–1× stock; null ⇒ inert.
+
+*(Previous status line, kept:)* V37A **REV 2** BUILT, VERIFIED, **NOT FLOWN**. Four adversarial lenses passed rev 1 (none "do not
 flash"); the focused re-check of the rev-2 delta is PASS_WITH_DEFECTS (`docs/review/ADV-V37A-REV2-DELTA-2026-10-17.md`): rail +820 (+827/−828 with D), the 1024 clamp cannot bind, no truncation, no lane-derived threshold crossed; OPEN: DTC 0x5E observer under a prolonged stall at the rail — watch its latch on the first drive.
 
 ## REV 2 (same day) — the operator's correction
