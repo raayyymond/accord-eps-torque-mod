@@ -80,6 +80,7 @@ from eps_chain_control import (
     _self_check_v298,
     _self_check_v299,
     _self_check_v300,
+    _self_check_v37a,
     a160_governor_rate_cap,
     computed_runtime_governor,
     engage_decider,
@@ -540,6 +541,9 @@ def _self_check():
     # V300 / THE RELEASE (2026-10-15): stock + the angle loop. Asserts only, prints nothing; the cave is V299's byte for
     # byte, Kp/Kd on all 28 records, every telemetry/legacy run back to stock, id string A16C. Skips if images are absent.
     _self_check_v300()
+    # V37A (2026-10-17): the x2 LKAS mod moved from the torque constant onto the rate-reference map (Y = 4*idx, no
+    # cap), gain/clamps back to stock, fb clamp 42865. Asserts only, prints nothing; skips if the images are absent.
+    _self_check_v37a()
 
 
 def _demo():

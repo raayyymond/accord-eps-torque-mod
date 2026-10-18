@@ -638,3 +638,33 @@ fly — that decision is his.**_
 **Page:** https://claude.ai/artifact/8Ry8529v6FZikkiBmz6PRc (the firmware code-path page; the V300 release section first).
 
 **Fork for this image: `Dom-release`** (upstream `823a5d5674` + 5 commits, HEAD `45a1a529c2`, PUSHED as origin/accord-PTM (2026-10-15); `docs/review/FORK-REBUILD-Dom-release-2026-10-15.md`): detection from fw alone (`39990-TVA,A16` + one capital; A160 and stock excluded), `steerControlType = angle`, `apply_steer_angle_limits_vm` on its own state then the error clip as a pure bound, 250 deg/s, DBC signal `STEER_CONTROL_ARM` = 2 every frame, idle hold, sensor-status fault, the variable-ratio map (level 16.84 as a constant), lagd guard, lane-change gate, **turn-initiation lead OFF under angle control** (the measured cause). Dropped: the params, the 0x1AB bar, the status word, all torque-mode code. Revert path: Dom `c6452361` + the V299 rwd.
+
+### V37A — V37's 2× LKAS mod MOVED from the torque constant onto the RATE-REFERENCE MAP (built 2026-10-17, NOT FLOWN)
+
+**Base and identification.** The operator's Downloads file `39990-TVA,A160-V37-2xTorque.rwd` (sha256 `8a809d1b…4202da`) is **V37 byte-exact** (= `39990-TVA,A160-V37-V36-DTC0x49-OFF-torqueMax255-rateMax65535-dtcGate255-…rwd` in accord-firmwares; decrypts to `_v37_plain_image.bin` sha256 `9ce66090…`). Naming per the operator (V36→V36A): **V37A**. Script `analysis-2020accord/builds/v18_v49/build_v37a_tva.py`; rwd `39990-TVA,A160-V37A-V37BASE-MAP.SLOPE2X.NOCAP-GAIN891-CLAMPS512-FBCLAMP42865-0x13000-0x100000.rwd` sha256 `c9bd34460010348cc310492aec761763b4b151aa855f3f6a9bab3e750f2d0163`; image `_v37a_plain_image.bin` sha256 `7cb6fd3a39116d947c4ff63802974afa9628103bada77957c909f4e9cd919930`. Exactly one on disk, in `../accord-firmwares`.
+
+**The ask, verbatim in substance:** change the 2× implementation from a 2× LKAS gain constant to the LKAS angle-velocity setpoint table having a 2× slope w.r.t. the CAN input, with the top cap removed (fixed 2× slope all the way up).
+
+**Cells (cal-only, 356 B vs V37, zero code bytes):**
+
+| cell | stock | V37 | V37A | what |
+|---|---|---|---|---|
+| 28 assist-map records via `0xC9A88` (`0xE4000..0xE8105`), Y[1..9] | concave, slot 7 = 0,24,42,50,62,100,126,154,166,172 (slope 2/idx to idx 32, cap 172) | = stock | **slot 7 = 0,48,80,96,128,256,384,512,640,960 = 4·idx exactly at every idx 0..240** (other records: 2× their own Y[1]/12 slope, rounded; selectors 0/2/4/5 deviate ≤ 1.17 counts from a line) | the rate loop's REFERENCE |
+| `0xC62E6` | 7680 | 7680 | **42865** | fb clamp on the lagged wheel rate r26; = round(7680·960/172), Honda's 1.3953 sp:fb ratio held at the new top. Without it fb freezes at ≈31 deg/s and E could never go negative above sp 240 (idx 60). 3 readers, all `ld.hu` (0x28F96/9C/B8) — orchestrator's own positive-controlled scan |
+| `0xC646C` | 891 | 1782 | **891** | arb Q15 output gain = the LKAS forward gain on this image (`ld.h 0x746c[tp]` @0x2A1EE; no V57 decouple here) + 4 other `ld.hu` readers (0x2B656/0x2C488/0x36686/0x3684A) that also go back to stock |
+| `0xC61B2` / `0xC61B4` | 512 | 1024 | **512** | limit&pack / lane output clamps; 410 < 512 never binds |
+| CRC trailers `0xC6FFC`, `0xE4FFC..0xE8FFC` | | | recomputed | walk 49/49, chain 50/50 |
+
+Carried from V37 unchanged: V36 debounce (`0xC64B4..B7`=0xFF, `0xC61C0/C2/C4`=0xFFFF), V37 DTC-0x49 gate `0xC64B8`=0xFF, `0xC64DE`=0x1B, corridor ×4 + boost floor 4096 (int+float), PN bytes. No telemetry cave exists on this base.
+
+**Delivered surface, from the images through the golden model (fb = 0 bound):** idx 12: sp 24/24/48, T 23/46/47 (stock/V37/V37A); idx 32: 62/62/128, T 76/153/158; idx 60: 95/95/240, T 152/304/384; idx 64+: V37A P railed 15360 → **T 410 = Honda's rail** (stock 399 at idx 240, V37 799). **P rails from idx 63 on V37A at a stalled wheel; stock never rails** (Kp climbs 248→512 over idx 0..68, so stalled-wheel P grows ~idx²). At idx 120 the loop nulls at ≈62 deg/s (stock/V37 ≈19). **Peak LKAS torque HALVES vs V37** (Honda's again); the reference is 2× at small signal and 5.6× at the top (≈124 deg/s vs 22).
+
+**Class.** The REFERENCE lever (V276 ×6 → V278 ×2 → V280 line to 1032, all at ×6 torque) applied for the first time to a STOCK-TORQUE image: moves what the loop asks for, puts how hard it pushes back to Honda. Cal-only, no cave.
+
+**Verification.** 69/69 build checks (24 load-bearing by the audit's census; 15 vacuous, ~10 readback); independent rebuild bit-identical; CRC two ways; rwd payload == image; golden `_self_check_v37a` (97 symbols, hash `740f4bcd…` unchanged); the Downloads rwd decrypts to the base. **Adversarial pass, four lenses, NONE "do not flash"** (`docs/review/ADV-V37A-*-2026-10-17.md`): ARITHMETIC PASS_WITH_DEFECTS (no overflow/sign/truncation; Y read `ld.hu` + `mulh`; idx ±240 via 0xC64F0/F1; n hard-coded 10; mirror reproduces rail idx 63 / T 410) · UNITS PASS_WITH_DEFECTS (16.1257 wire/idx and DC 30.89 re-derived; max idx 238/239 by sign so top sp 952/956; "2× slope" exact only in the first segment, 2.0→5.6× to the top; the P/sum clamps bind at |E| 5650 so above sp 177 the reference raises authority not rate) · BUILD AUDIT PASS_WITH_DEFECTS (hashes reproduced, 0 unexplained bytes, headers == V37; gap: a +1 on an interior knot of a non-live record would pass the script) · INTERLOCKS PASS_WITH_DEFECTS (gp-0x6a32 has zero readers besides the lane; map table read only by the lane + a dead twin; no stall/overload timer; soft-EME floor 4096 ≫ 417).
+
+**Risks to accept, stated before the drive:** (1) authority halves vs V37; (2) P rails from idx 63 at a stall — V280's 7 Hz "small signal riding on a large one" mechanism is reachable at 1/6 of V280's torque (BELIEF: milder); (3) the 0xE4 RX-fault sentinel (0x7FFF → idx 238) now rails P for the 2.048 s ramp-down at 410 T (stock 397, V37 794) chasing 123 deg/s instead of 22 — Honda's torque, half of V37's, longer push; mitigation cal `0xC63F6` 16→328 exists, NOT applied; (4) V36/V37 trips stay OFF, so a driver holding the wheel gets no firmware override (D2); (5) DTC 0x5E observer under a stall at the rail — BELIEF, unverified (D1).
+
+**Pre-registered read (free on the wire, one engaged episode):** achieved wheel rate per idx at idx ≤ 60 DOUBLES vs V37/stock (0.26 → 0.52 deg/s per idx); full-demand hands-light rate well above stock's ≈24 deg/s, well below 124 (torque-limited). **Null:** rate per idx unchanged ⇒ the map is not the live setpoint source on this image (selector ≠ 7) ⇒ inert, not harmful.
+
+**Page:** https://claude.ai/artifact/TavHVFCPZmYEeNng6e5Loq · handoff `docs/handoffs/2026-10/HANDOFF-2026-10-17-v37a-reference-map.md`.

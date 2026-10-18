@@ -315,7 +315,7 @@ Only these other things need saying:
 
   | file | KB | contents |
   |---|---|---|
-  | `analysis-2020accord/model/eps_lkas_chain_model.py` | 45 | **FACADE** — re-exports all 94 symbols; `import eps_lkas_chain_model` still works unchanged |
+  | `analysis-2020accord/model/eps_lkas_chain_model.py` | 45 | **FACADE** — re-exports all 97 symbols; `import eps_lkas_chain_model` still works unchanged |
   | `analysis-2020accord/model/eps_chain_core.py` | 52 | SECTIONS 0–1 — `Calibration`, containers, helpers |
   | `analysis-2020accord/model/eps_chain_lanes.py` | 124 | SECTIONS 2–3 — CAN intake, torque voter, base assist, boost index, the rate lanes |
   | `analysis-2020accord/model/eps_chain_control.py` | 161 | SECTIONS 4–6 — engage SM, arbitration, **the LKAS rate PID (5D)**, mixer/gate, aggregator, governor, analyses |
@@ -323,7 +323,7 @@ Only these other things need saying:
 
   Dependency order is strict and acyclic: `core` → `lanes` → `control` → `delivery`. **Keep it updated.**
   🛑 **VERIFICATION CONTRACT — re-run it after ANY edit to these files:** `import eps_lkas_chain_model`
-  must expose **exactly 94 symbols** (NON-DUNDER: `[x for x in dir(M) if not x.startswith("__")]` — this INCLUDES the 11 underscore-prefixed helpers; counting only public names gives 83 and looks like a broken contract; 87→88 on 2026-09-07 when `lkas_setpoint_prefilter` was added for V288; 88→90 on 2026-09-08 when `lkas_sum_notch` + `lkas_fb_lag` were added for V289; **90→94 on 2026-09-13 when the LKAS RATE PID ITSELF was added** — `lkas_rate_pid_tick` + `lkas_rate_pid_surface` + `lkas_output_lag` + `lkas_rate_lerp`, SECTION 5D of `eps_chain_control.py`, closing the gap that had left V288's and V289's mirrors with no caller), and `_self_check()` + `_demo()` stdout must hash to
+  must expose **exactly 97 symbols** (NON-DUNDER: `[x for x in dir(M) if not x.startswith("__")]` — this INCLUDES the 11 underscore-prefixed helpers; counting only public names gives 83 and looks like a broken contract; 87→88 on 2026-09-07 when `lkas_setpoint_prefilter` was added for V288; 88→90 on 2026-09-08 when `lkas_sum_notch` + `lkas_fb_lag` were added for V289; **90→94 on 2026-09-13 when the LKAS RATE PID ITSELF was added** — `lkas_rate_pid_tick` + `lkas_rate_pid_surface` + `lkas_output_lag` + `lkas_rate_lerp`, SECTION 5D of `eps_chain_control.py`, closing the gap that had left V288's and V289's mirrors with no caller; 94→96 with `_self_check_v299`/`_self_check_v300` (2026-10); **96→97 on 2026-10-17 with `_self_check_v37a`**), and `_self_check()` + `_demo()` stdout must hash to
   **`740f4bcd0534212a0c200a9359b0b4318e1419bea33823d66e2e89c12961102d`** (2,512 bytes) — **unchanged**, because every `_self_check_v2xx()` asserts and prints nothing.
 
 - 🛑 **CITE BY HEADING OR GREP STRING, NEVER BY LINE NUMBER.** The golden model split on 2026-08-12 and

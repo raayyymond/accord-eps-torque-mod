@@ -1499,6 +1499,86 @@ def _self_check_v300():
     assert u16(img, 0xC62EA) == 0 and img[0xC61C0:0xC61C6] == b"\xff" * 6 and img[0xC64B4:0xC64B9] == b"\xff" * 5
 
 
+
+def _self_check_v37a():
+    """V37A (2026-10-17): V37's 2x LKAS mod MOVED from the torque constant to the RATE-REFERENCE MAP.  Called from
+    _self_check(); prints NOTHING, so the hashed _self_check()+_demo() stdout is unchanged.
+
+    Reads the BUILT V37A image, the V37 base and the STOCK dump (skips silently if any is absent) and asserts:
+    (a) 0xC646C/0xC61B2/0xC61B4 are STOCK (891/512/512) on V37A and 1782/1024/1024 on V37; (b) 0xC62E6 is 42865 on
+    V37A, 7680 on stock and V37, and Honda's setpoint:feedback ratio 7680/(32*172) is held at the new top 32*960 to
+    2e-5; (c) all 28 assist-map records keep n = 10 and the stock X row, Y[0] = 0, and the live slot-7 record 0xE502C
+    reads 0,48,80,96,128,256,384,512,640,960; (d) through THIS module's integer LERP walk the live record returns
+    exactly 4*idx for EVERY idx 0..240 (no cap) while stock returns 2*idx only to idx 12 and saturates at 172;
+    (e) through lkas_rate_pid_surface() with every PID cell read from each image: at fb = 0 the stalled-wheel P rails
+    from idx 63 on V37A and never on stock (14964 < 15360 at idx 240); delivered T at idx 240 is 410 on V37A (Honda's
+    rail, gain 891) vs 399 stock vs 799 V37 (the x2 constant it replaces); (f) nothing below 0xC0000 differs V37A vs
+    V37 (cal-only), and the V36/V37 debounce/DTC bytes are carried."""
+    import glob
+    import os
+    import struct
+    from dataclasses import replace as _replace
+    root = os.environ.get("ACCORD_FIRMWARE_ROOT", "C:/Users/dudei/Desktop/Projects/accord-firmwares")
+    hit = glob.glob(os.path.join(root, "analysis-2020accord", "_v37a_plain_image.bin"))
+    base_p = os.path.join(root, "analysis-2020accord", "_v37_plain_image.bin")
+    stock_p = os.path.join(root, "analysis-2020accord", "stock_fw_dump", "code.bin")
+    if not hit or not os.path.exists(base_p) or not os.path.exists(stock_p):
+        return
+    img = open(hit[0], "rb").read()
+    v37 = open(base_p, "rb").read()
+    stock = open(stock_p, "rb").read()
+    u16 = lambda b, a: struct.unpack_from("<H", b, a)[0]        # noqa: E731
+    s16 = lambda b, a: struct.unpack_from("<h", b, a)[0]        # noqa: E731
+    u32 = lambda b, a: struct.unpack_from("<I", b, a)[0]        # noqa: E731
+
+    def rec(b, p, n):
+        return tuple(u16(b, p + 2 + 2 * i) for i in range(n)), tuple(s16(b, p + 2 + 2 * n + 2 * i) for i in range(n))
+
+    def cal_of(b):
+        live, kp, kd = u32(b, 0xC9A88 + 28), u32(b, 0xCB994 + 28), u32(b, 0xCB7D4 + 28)
+        mx, my = rec(b, live, 10)
+        kx, ky = rec(b, kp, 5)
+        dx, dy = rec(b, kd, 4)
+        return _replace(Calibration(), assist_map_x=mx, assist_map_y=my, kp_x=kx, kp_y=ky, kd_x=dx, kd_y=dy,
+                        fb_clamp=u16(b, 0xC62E6), pid_p_clamp=u16(b, 0xC61BC), sum_clamp=u16(b, 0xC61BE),
+                        pid_d_clamp=u16(b, 0xC61B6), pid_i_clamp=u16(b, 0xC61BA), pid_ki=u16(b, 0xC63E6),
+                        fb_lag_a=s16(b, 0xC63E8), fb_lag_b=u16(b, 0xC63EA), out_lag_a=s16(b, 0xC63EC),
+                        out_lag_b=u16(b, 0xC63EE), lkas_forward_gain=u16(b, 0xC646C), out_clamp=u16(b, 0xC61B4))
+
+    # (a) gain + clamps
+    assert (u16(img, 0xC646C), u16(img, 0xC61B2), u16(img, 0xC61B4)) == (891, 512, 512) == (u16(stock, 0xC646C), u16(stock, 0xC61B2), u16(stock, 0xC61B4))
+    assert (u16(v37, 0xC646C), u16(v37, 0xC61B2), u16(v37, 0xC61B4)) == (1782, 1024, 1024)
+    assert img[0x2A1EE:0x2A1F2] == stock[0x2A1EE:0x2A1F2] == bytes.fromhex("253f6c74")      # ld.h 0x746c[tp]: reads 0xC646C
+    # (b) feedback clamp
+    assert u16(img, 0xC62E6) == 42865 and u16(stock, 0xC62E6) == u16(v37, 0xC62E6) == 7680
+    assert abs(42865 / (32 * 960) - 7680 / (32 * 172)) < 2e-5
+    # (c) the 28 records
+    live_y = (0, 48, 80, 96, 128, 256, 384, 512, 640, 960)
+    for k in range(28):
+        p = u32(stock, 0xC9A88 + 4 * k)
+        assert u32(img, 0xC9A88 + 4 * k) == p and u16(img, p) == 10
+        X, Y = rec(img, p, 10)
+        sX, sY = rec(stock, p, 10)
+        assert X == sX == (0, 12, 20, 24, 32, 64, 96, 128, 160, 240) and Y[0] == 0
+        assert Y[1] == 2 * sY[1] and all(Y[i + 1] > Y[i] for i in range(9))
+        assert rec(v37, p, 10) == (sX, sY)                                                   # V37 never touched the map
+    assert rec(img, u32(img, 0xC9A88 + 28), 10)[1] == live_y
+    # (d) the walk: exact line, no cap, vs stock's shape
+    assert all(lkas_rate_lerp((0, 12, 20, 24, 32, 64, 96, 128, 160, 240), live_y, i) == 4 * i for i in range(241))
+    sx, sy = rec(stock, u32(stock, 0xC9A88 + 28), 10)
+    assert all(lkas_rate_lerp(sx, sy, i) == 2 * i for i in range(13)) and lkas_rate_lerp(sx, sy, 240) == 172 == lkas_rate_lerp(sx, sy, 300)
+    # (e) the delivered surface at fb = 0 (a BOUND, the stalled wheel)
+    ca, cb, cs = cal_of(img), cal_of(v37), cal_of(stock)
+    assert (lkas_rate_pid_surface(240, ca)["T"], lkas_rate_pid_surface(240, cs)["T"], lkas_rate_pid_surface(240, cb)["T"]) == (410, 399, 799)
+    assert lkas_rate_pid_surface(240, ca)["P"] == 15360 and lkas_rate_pid_surface(240, cs)["P"] == 14964
+    rail = next(i for i in range(241) if lkas_rate_pid_surface(i, ca)["P"] >= 15360)
+    assert rail == 63 and lkas_rate_pid_surface(62, ca)["P"] < 15360
+    assert lkas_rate_pid_surface(12, ca)["sp"] == 48 == 2 * lkas_rate_pid_surface(12, cs)["sp"]
+    assert lkas_rate_pid_surface(60, ca)["sp"] == 240 and 32 * 240 == 7680                 # the stock clamp's rate, reached at idx 60
+    # (f) cal-only and carried
+    assert img[0x13000:0xC0000] == v37[0x13000:0xC0000]
+    assert img[0xC64B4:0xC64B9] == b"\xff" * 5 == v37[0xC64B4:0xC64B9] and img[0xC61C0:0xC61C6] == b"\xff" * 6
+
 def steer_torque_arbitration(sensors: SensorInputs, st: EpsState, cal: Calibration) -> int:
     """
     Limit the LKAS setpoint, apply the Q15 gain/clamp, and run the two inlined SMs (driver assist is
