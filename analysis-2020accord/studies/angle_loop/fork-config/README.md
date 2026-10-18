@@ -5,7 +5,7 @@
 
 | file | sha256 | what |
 |---|---|---|
-| `toggle-config_V300_accord-PTM.json` | `102448fadd6daf66414da93827b767e31e9f9713f1c82fe7b8bc9b6e7ffa4c4a` | **Restore this** (Galaxy: restore toggle config). 10 keys, a delta. |
+| `toggle-config_V300_accord-PTM.json` | `102448fadd6daf66414da93827b767e31e9f9713f1c82fe7b8bc9b6e7ffa4c4a` | **Optional** — the operator's preference backup (lane centering on). 10 keys, a delta. Not needed for angle control. |
 | `toggle-config_V300_accord-PTM.decoded.json` | `c0cc674c6d7a5e23ef2755af5cbe7a3decd324f5b8484cb85c1eb649ebc7b92e` | Readable copy. |
 | `write_v300_config.py` | | Writer. Kit codec positive-controlled; fork codec read with `git show` at the commit, equal to the kit's and unchanged since `c6452361e`; every key checked against `params_keys.h` at `45a1a529c2` (declared, BOOL/FLOAT, defaults); base V299-A re-hashed; both codecs decode the written files back from disk. |
 
@@ -38,9 +38,11 @@ So the value cannot change the controller. It is written `false` (the declared d
 Not in the file (left alone, not in V299-A either): `LaneCenterOffset` / `LaneCenteringE2EAuthority` (read `controlsd.py` via `starpilot_variables.py`, only under `LaneCentering`), `AlwaysOnLateral*`, `SafeMode`. **Safe Mode** forces managed keys incl. `UseAutoSteerDelay`; keep it off.
 
 ### Deploy order (V300)
+**No config to restore and no params rebuild (verified 2026-10-18, on the device):** the angle controller is selected by the EPS fw alone — `honda/interface.py` sets `steerControlType = angle` from `39990-TVA,A16<letter>`, `interfaces.py` skips the ForceTorqueController/NNFF conversion for an angle car, `controlsd.py` picks `LatControlAngle` first, `SteerRatio` is backfilled from `CarParams` at first fingerprint and the rack map overrides it anyway. Pinned by `test_angle_control_needs_no_params_and_survives_stale_toggles` (accord-PTM `83fa2e68c8`; passes on the PC shim 248/248 and on the comma 4's own modules, with the device's stale `ForceTorqueController = 1`). `toggle-config_V300_accord-PTM.json` is now only the operator's PREFERENCE backup — its single live difference from a fresh install is `LaneCentering` true (default false).
+
 1. Device: `git fetch origin accord-PTM && git checkout -B accord-PTM origin/accord-PTM`; reboot.
 2. Flash V300 rev 2 (operator names the file and the bus; openpilot killed first). Reboot.
-3. Restore `toggle-config_V300_accord-PTM.json` while parked. Reboot.
+3. (Optional) restore `toggle-config_V300_accord-PTM.json` for the operator's own preferences. Reboot.
 4. Check: carFw EPS `39990-TVA,A16C`; `carParams.steerControlType` = angle; no LKAS fault; the car's own LKAS off.
 
 ### REVERT
