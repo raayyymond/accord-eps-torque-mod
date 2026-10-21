@@ -1,0 +1,322 @@
+======================================================================================================================
+ROUTE 75604b0a432fdc89_000000ad--5909e7772a   fw ['39990-TVA,A16C']   fork 83fa2e68c   steerControlType angle   (1.7 s)
+  params {'AccordAngleMaxRate': None, 'AccordAngleClipScale': None, 'AccordAngleBarFromEps': None, 'SteerRatio': '16.84', 'AccordEpsAngleLoop': None, 'GitCommit': '83fa2e68c854be204c35a29b57ef2ab7957a5bc0'}
+  engaged 621 s ; |theta| >= thr engaged 25.6 s, of it hands-off 0.5 s by |bar| < 300, 2.6 s with the reaction test (4.6 s of it are reaction frames)
+  rate cap 2.50 deg/frame (release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged))
+  LANE TAP: NOT AVAILABLE on release firmware (no tap) -- the Trms / Tpk / Tflip columns and HOLD T flips below are '-'
+  t      dur   v    theta  HO%  rmsTh rmsSp rmsCc  R2  lag  k    resid  fTh  fRes  revTh revSp revCc cap%  e50  e95  Trms Tpk Tflip f1229 tg1229 f512 tg512 f300 bar90
+    59.0  5.1  3.5 -148.4    0  3.03  3.98  6.47 0.37  30 0.46  2.45 1.07 0.88  0.20  0.20  0.59    0  1.3 15.8    -   -     -  0.80  0.00  0.81  0.20  0.84  2606
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 9 % (median window R2 0.13); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   107.6  3.6  4.9 -175.1    0 18.14 18.35 13.68 0.94   0 0.96  4.24 0.59 1.56  0.84  0.84  0.84    1  5.2 16.5    -   -     -  0.88  0.00  0.89  0.00  0.89  3213
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.04 (onsets 0.28 /s)
+         REACTION TEST: hands-off 1 % (vs 0 % by |bar| < 300), reaction frames 16 % (median window R2 0.16); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   128.3  4.0  6.6  130.5    0  2.91  4.11  3.03 0.56  70 0.54  1.96 0.98 0.49  0.25  0.75  0.75    0  5.6 14.8    -   -     -  0.71  0.00  0.77  0.75  0.84  3445
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 4 % (vs 0 % by |bar| < 300), reaction frames 15 % (median window R2 0.12); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   146.3  4.3 12.4  -66.7   11  2.14  1.30  1.83 0.55   0 1.23  1.44 0.49 0.59  0.23  0.23  0.69    0  1.2 16.5    -   -     -  0.38  0.23  0.42  0.69  0.49  3355
+         HOLD 3.3 s: wheel rms 8.95 pp 28.40 deg, sp rms 3.84, wheel rev 0.00 /s, sp rev 0.00 /s, f 0.49 Hz, T flips - /s, |sp-th| 0.9, f1229 0.28, clip 0.00 ; episode clip-bound 0.03 (onsets 0.23 /s)
+         REACTION TEST: hands-off 48 % (vs 11 % by |bar| < 300), reaction frames 40 % (median window R2 0.22); 1229 freeze onsets 0.23 /s, 0.00 /s of them in a reaction frame
+   675.7  4.3  6.6  118.8    0  7.12  6.62  5.90 0.90  70 1.07  2.30 0.68 0.49  0.70  1.62  1.62    0 12.8 15.9    -   -     -  0.52  1.16  0.74  0.70  0.81  2622
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.08 (onsets 0.93 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 8 % (median window R2 0.06); 1229 freeze onsets 1.16 /s, 0.23 /s of them in a reaction frame
+   688.9  4.3  4.0 -185.6    0  8.75  8.46  7.69 0.88  10 0.97  3.02 0.78 0.88  0.23  0.69  2.54    0 14.6 16.5    -   -     -  0.51  0.23  0.62  0.92  0.75  2877
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.04 (onsets 0.23 /s)
+         REACTION TEST: hands-off 9 % (vs 0 % by |bar| < 300), reaction frames 19 % (median window R2 0.10); 1229 freeze onsets 0.23 /s, 0.00 /s of them in a reaction frame
+  no hands-off (>= 80 %) high-angle engaged episode
+======================================================================================================================
+ROUTE 75604b0a432fdc89_000000ae--74557c6b94   fw ['39990-TVA,A16C']   fork 83fa2e68c   steerControlType angle   (1.3 s)
+  params {'AccordAngleMaxRate': None, 'AccordAngleClipScale': None, 'AccordAngleBarFromEps': None, 'SteerRatio': '16.84', 'AccordEpsAngleLoop': None, 'GitCommit': '83fa2e68c854be204c35a29b57ef2ab7957a5bc0'}
+  engaged 602 s ; |theta| >= thr engaged 38.7 s, of it hands-off 1.7 s by |bar| < 300, 5.2 s with the reaction test (7.0 s of it are reaction frames)
+  rate cap 2.50 deg/frame (release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged))
+  LANE TAP: NOT AVAILABLE on release firmware (no tap) -- the Trms / Tpk / Tflip columns and HOLD T flips below are '-'
+  t      dur   v    theta  HO%  rmsTh rmsSp rmsCc  R2  lag  k    resid  fTh  fRes  revTh revSp revCc cap%  e50  e95  Trms Tpk Tflip f1229 tg1229 f512 tg512 f300 bar90
+   287.1  2.9 12.7  -66.1    0  1.47  0.55  0.46 0.06 400 -0.79  1.39 0.78 0.88  1.04  4.15  4.15    0  1.9  5.3    -   -     -  0.55  0.69  0.84  0.69  0.91  3188
+         HOLD 2.7 s: wheel rms 2.87 pp 10.73 deg, sp rms 0.68, wheel rev 1.11 /s, sp rev 4.43 /s, f 0.49 Hz, T flips - /s, |sp-th| 1.9, f1229 0.58, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.02); 1229 freeze onsets 0.69 /s, 0.00 /s of them in a reaction frame
+   290.9  2.3 11.6  -68.2    0  1.55  1.87  1.85 0.43 170 0.58  1.06 0.49 1.27  0.43  4.27  4.27    0  3.5  8.9    -   -     -  0.32  1.28  0.86  0.85  0.94  1481
+         HOLD 1.5 s: wheel rms 2.59 pp 10.97 deg, sp rms 0.53, wheel rev 0.00 /s, sp rev 6.08 /s, f 1.07 Hz, T flips - /s, |sp-th| 3.5, f1229 0.25, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.06); 1229 freeze onsets 1.28 /s, 0.00 /s of them in a reaction frame
+   294.0  1.3 12.0  -64.8   28  1.44  0.90  0.93 0.67  90 0.96  1.37 0.78 1.07  0.79  0.79  0.79    0  4.2  9.0    -   -     -  0.00  0.00  0.02  0.00  0.21   358
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 28 % (vs 28 % by |bar| < 300), reaction frames 6 % (median window R2 0.28); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   714.2  1.1  0.5   90.0    0  2.83  2.44 42.06 0.93  10 0.89  0.71 0.98 0.98  0.00  0.00  0.91    0 17.4 17.6    -   -     -  1.00  0.00  1.00  0.00  1.00  2679
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.05); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   716.8  2.5  1.0  134.6    0  4.49  4.02  1.20 0.99  20 1.08  0.47 0.49 0.49  0.00  0.00  2.77    0 16.9 17.0    -   -     -  0.85  0.40  0.95  0.40  0.98  2006
+         HOLD 1.0 s: wheel rms 0.20 pp 0.94 deg, sp rms 0.20, wheel rev 0.00 /s, sp rev 0.00 /s, f 1.27 Hz, T flips - /s, |sp-th| 17.0, f1229 1.00, clip 1.00 ; episode clip-bound 0.49 (onsets 2.77 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 1 % (median window R2 0.07); 1229 freeze onsets 0.40 /s, 0.00 /s of them in a reaction frame
+   720.1  3.1  5.1 -151.6    0  9.13 10.14  5.65 0.84  20 0.86  3.79 0.59 0.49  0.32  1.61  0.97    1 12.3 16.3    -   -     -  0.88  0.00  0.89  0.00  0.93  2944
+         HOLD 0.6 s: wheel rms 0.47 pp 1.10 deg, sp rms 0.55, wheel rev 0.00 /s, sp rev 0.00 /s, f nan Hz, T flips - /s, |sp-th| 16.2, f1229 1.00, clip 0.90 ; episode clip-bound 0.25 (onsets 0.65 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 7 % (median window R2 0.09); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   739.5  8.2  3.9 -227.1    0  7.57  7.14  9.32 0.55 160 0.79  5.13 0.59 0.59  0.61  1.34  2.56    1 15.3 16.7    -   -     -  0.73  1.46  0.88  0.73  0.91  2746
+         HOLD 0.6 s: wheel rms 0.35 pp 1.43 deg, sp rms 0.33, wheel rev 0.00 /s, sp rev 0.00 /s, f nan Hz, T flips - /s, |sp-th| 0.1, f1229 0.98, clip 0.14 ; episode clip-bound 0.06 (onsets 0.73 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 10 % (median window R2 0.11); 1229 freeze onsets 1.46 /s, 0.00 /s of them in a reaction frame
+   768.7  1.8  6.9   61.4   50  1.21  0.81  0.82 0.78  90 1.44  0.63 0.68 1.66  0.56  5.56  5.56    0  0.5  3.6    -   -     -  0.00  0.00  0.01  0.56  0.03   234
+         HOLD 1.4 s: wheel rms 0.40 pp 1.39 deg, sp rms 0.61, wheel rev 0.00 /s, sp rev 5.19 /s, f 0.88 Hz, T flips - /s, |sp-th| 0.4, f1229 0.00, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 100 % (vs 50 % by |bar| < 300), reaction frames 72 % (median window R2 0.68); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   777.8  1.5  8.1   74.4    0  3.00  2.62  1.55 0.94   0 1.13  1.31 0.78 0.88  0.67  2.01  2.01    0 13.0 16.1    -   -     -  0.97  2.68  1.00  0.00  1.00  1980
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.05); 1229 freeze onsets 2.68 /s, 0.00 /s of them in a reaction frame
+   780.5  1.1  7.7   68.7    0  4.56  4.61  2.62 0.99 200 1.13  2.53 1.07 2.15  0.94  0.94  0.00    0  9.3 15.3    -   -     -  0.97  0.94  1.00  0.00  1.00  1836
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 6 % (median window R2 0.33); 1229 freeze onsets 0.94 /s, 0.00 /s of them in a reaction frame
+   828.1  4.1  4.7 -173.4    2 10.79  6.80 10.58 0.78   0 1.33  5.32 0.49 0.78  0.73  2.18  2.67    1 16.2 17.7    -   -     -  0.47  0.24  0.53  1.70  0.62  3250
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.02 (onsets 1.21 /s)
+         REACTION TEST: hands-off 17 % (vs 2 % by |bar| < 300), reaction frames 25 % (median window R2 0.38); 1229 freeze onsets 0.24 /s, 0.00 /s of them in a reaction frame
+   864.1  6.0  2.3  216.7    5  9.31  8.68 18.91 0.82 120 0.96  4.03 0.49 0.78  0.83  1.00  3.67    1 15.8 16.9    -   -     -  0.36  0.17  0.42  1.17  0.50  3033
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.01 (onsets 0.33 /s)
+         REACTION TEST: hands-off 33 % (vs 5 % by |bar| < 300), reaction frames 48 % (median window R2 0.49); 1229 freeze onsets 0.17 /s, 0.17 /s of them in a reaction frame
+  no hands-off (>= 80 %) high-angle engaged episode
+  HANDS-OFF by the REACTION TEST (>= 80 %) episodes: 1, 1.8 s; dur-weighted 1229 freeze onsets 0.00 /s (0.00 /s in reaction frames)
+======================================================================================================================
+ROUTE 75604b0a432fdc89_000000af--a4e305dfc5   fw ['39990-TVA,A16C']   fork 311c4cc0b   steerControlType angle   (1.7 s)
+  params {'AccordAngleMaxRate': None, 'AccordAngleClipScale': None, 'AccordAngleBarFromEps': None, 'SteerRatio': '16.84', 'AccordEpsAngleLoop': None, 'GitCommit': '311c4cc0b7ca605576b6b9e73a76117efc596a9b'}
+  engaged 668 s ; |theta| >= thr engaged 33.5 s, of it hands-off 2.4 s by |bar| < 300, 10.2 s with the reaction test (12.3 s of it are reaction frames)
+  rate cap 2.50 deg/frame (release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged))
+  LANE TAP: NOT AVAILABLE on release firmware (no tap) -- the Trms / Tpk / Tflip columns and HOLD T flips below are '-'
+  t      dur   v    theta  HO%  rmsTh rmsSp rmsCc  R2  lag  k    resid  fTh  fRes  revTh revSp revCc cap%  e50  e95  Trms Tpk Tflip f1229 tg1229 f512 tg512 f300 bar90
+    62.5  1.1  2.8  102.3    0  8.26  6.15  5.54 0.99 160 0.93  3.79 1.07 2.83  0.00  1.87  1.87    1  7.5 15.6    -   -     -  0.00  0.00  0.08  2.80  0.32   506
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 54 % (vs 0 % by |bar| < 300), reaction frames 96 % (median window R2 0.82); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+    68.9  8.9  1.8  196.7   14 12.41 11.49 14.88 0.91 110 1.05  3.74 0.49 0.49  0.56  0.56  1.01    0  3.2 16.3    -   -     -  0.40  0.22  0.45  0.45  0.51  2697
+         HOLD 3.0 s: wheel rms 3.58 pp 12.80 deg, sp rms 0.08, wheel rev 0.34 /s, sp rev 0.00 /s, f 0.49 Hz, T flips - /s, |sp-th| 3.1, f1229 0.06, clip 0.00 ; episode clip-bound 0.01 (onsets 0.34 /s)
+         REACTION TEST: hands-off 17 % (vs 14 % by |bar| < 300), reaction frames 11 % (median window R2 0.23); 1229 freeze onsets 0.22 /s, 0.00 /s of them in a reaction frame
+   111.7  5.1  5.2  134.9   11  5.88  4.55  4.47 0.84  80 1.17  2.41 0.68 0.49  0.58  2.92  2.92    0  2.8 14.4    -   -     -  0.23  0.00  0.28  0.78  0.40  2873
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.01 (onsets 0.39 /s)
+         REACTION TEST: hands-off 55 % (vs 11 % by |bar| < 300), reaction frames 68 % (median window R2 0.69); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   328.2  5.1  8.1   91.9    0  4.75  2.86  2.81 0.91 160 1.58  1.70 0.49 0.68  0.59  4.12  3.33    0  2.8 15.3    -   -     -  0.19  0.78  0.31  1.76  0.45  1636
+         HOLD 1.4 s: wheel rms 0.60 pp 2.99 deg, sp rms 0.90, wheel rev 0.74 /s, sp rev 8.09 /s, f 0.78 Hz, T flips - /s, |sp-th| 1.5, f1229 0.20, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 10 % (vs 0 % by |bar| < 300), reaction frames 19 % (median window R2 0.34); 1229 freeze onsets 0.78 /s, 0.00 /s of them in a reaction frame
+   675.1  5.0  6.8 -128.3   10  1.75  2.43  2.37 0.87 100 0.87  0.73 0.49 2.05  0.20  3.02  3.02    0  6.5 11.0    -   -     -  0.00  0.00  0.12  3.82  0.26   561
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 74 % (vs 10 % by |bar| < 300), reaction frames 82 % (median window R2 0.66); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   783.6  4.8  4.2 -170.8    0  7.73  6.59  4.83 0.69  70 0.97  4.33 0.59 0.49  0.21  2.29  3.12    1  7.1 16.8    -   -     -  0.65  0.42  0.71  0.21  0.75  2850
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.04 (onsets 0.42 /s)
+         REACTION TEST: hands-off 20 % (vs 0 % by |bar| < 300), reaction frames 23 % (median window R2 0.10); 1229 freeze onsets 0.42 /s, 0.00 /s of them in a reaction frame
+  1038.2  3.4  4.4 -211.6    3 20.16 16.72 22.86 0.93   0 1.17  5.61 0.49 1.86  0.88  0.88  2.65    2 16.5 19.6    -   -     -  0.49  0.29  0.54  1.18  0.60  3381
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.17 (onsets 1.76 /s)
+         REACTION TEST: hands-off 3 % (vs 3 % by |bar| < 300), reaction frames 20 % (median window R2 0.31); 1229 freeze onsets 0.29 /s, 0.00 /s of them in a reaction frame
+  no hands-off (>= 80 %) high-angle engaged episode
+======================================================================================================================
+ROUTE 75604b0a432fdc89_000000b0--26515d54d1   fw ['39990-TVA,A16C']   fork 311c4cc0b   steerControlType angle   (2.5 s)
+  params {'AccordAngleMaxRate': None, 'AccordAngleClipScale': None, 'AccordAngleBarFromEps': None, 'SteerRatio': '16.84', 'AccordEpsAngleLoop': None, 'GitCommit': '311c4cc0b7ca605576b6b9e73a76117efc596a9b'}
+  engaged 1040 s ; |theta| >= thr engaged 52.7 s, of it hands-off 3.2 s by |bar| < 300, 10.9 s with the reaction test (11.5 s of it are reaction frames)
+  rate cap 2.50 deg/frame (release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged))
+  LANE TAP: NOT AVAILABLE on release firmware (no tap) -- the Trms / Tpk / Tflip columns and HOLD T flips below are '-'
+  t      dur   v    theta  HO%  rmsTh rmsSp rmsCc  R2  lag  k    resid  fTh  fRes  revTh revSp revCc cap%  e50  e95  Trms Tpk Tflip f1229 tg1229 f512 tg512 f300 bar90
+    89.1  2.5  3.5 -118.2   17 10.10  7.26  6.93 0.96 190 0.99  6.80 0.49 0.98  0.40  1.98  2.77    0  5.1 16.9    -   -     -  0.00  0.00  0.01  0.00  0.19   344
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.06 (onsets 0.00 /s)
+         REACTION TEST: hands-off 70 % (vs 17 % by |bar| < 300), reaction frames 73 % (median window R2 0.66); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+    95.4  5.2  3.2 -162.2    0 14.21 13.93 12.93 0.91  60 0.97  4.26 0.49 0.98  0.58  0.58  3.65    0 15.7 18.3    -   -     -  0.48  0.00  0.55  1.35  0.64  3418
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.01 (onsets 0.38 /s)
+         REACTION TEST: hands-off 38 % (vs 0 % by |bar| < 300), reaction frames 46 % (median window R2 0.44); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   108.0  4.8  2.7  315.7    0 13.64 13.28 23.15 0.94   0 1.01  3.51 0.68 0.59  1.04  1.04  4.37    0 17.0 20.3    -   -     -  0.84  0.62  0.93  0.42  0.98  3669
+         HOLD 0.6 s: wheel rms 0.53 pp 1.50 deg, sp rms 0.53, wheel rev 1.79 /s, sp rev 1.79 /s, f nan Hz, T flips - /s, |sp-th| 17.0, f1229 1.00, clip 0.97 ; episode clip-bound 0.21 (onsets 1.04 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 1 % (median window R2 0.02); 1229 freeze onsets 0.62 /s, 0.00 /s of them in a reaction frame
+   114.6  4.6  2.9  237.2    0 12.28 12.55 16.59 0.97   0 0.97  2.02 0.49 0.68  0.22  1.51  6.68    1 17.5 19.0    -   -     -  0.61  0.00  0.66  0.86  0.74  3341
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.02 (onsets 0.22 /s)
+         REACTION TEST: hands-off 11 % (vs 0 % by |bar| < 300), reaction frames 20 % (median window R2 0.16); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   135.9  5.7  3.8  175.1    0  7.91  8.03 14.54 0.99   0 0.98  0.57 0.49 0.49  0.18  0.18  5.12    0 17.1 17.6    -   -     -  0.85  0.71  0.88  0.00  0.90  3197
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.11 (onsets 1.77 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 8 % (median window R2 0.06); 1229 freeze onsets 0.71 /s, 0.71 /s of them in a reaction frame
+   148.9  5.5  4.1 -158.3    3  9.32  8.38 11.36 0.86  90 1.02  3.67 0.49 0.68  0.54  2.89  3.62    1  5.2 16.7    -   -     -  0.27  0.18  0.41  2.35  0.55  2932
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.12 (onsets 0.90 /s)
+         REACTION TEST: hands-off 46 % (vs 3 % by |bar| < 300), reaction frames 54 % (median window R2 0.66); 1229 freeze onsets 0.18 /s, 0.00 /s of them in a reaction frame
+   228.5  3.2 10.5   71.4    0  1.89  1.57  1.39 0.84 330 0.96  1.21 0.49 0.68  0.31  0.31  0.31    0  6.9  9.0    -   -     -  0.00  0.00  0.01  0.62  0.20   366
+         HOLD 2.2 s: wheel rms 3.64 pp 11.47 deg, sp rms 2.76, wheel rev 0.00 /s, sp rev 0.45 /s, f 0.59 Hz, T flips - /s, |sp-th| 7.1, f1229 0.00, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 18 % (vs 0 % by |bar| < 300), reaction frames 27 % (median window R2 0.40); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   303.2  4.6  4.9 -135.4    0 12.51 11.02 13.11 0.85  80 1.02  5.47 0.49 0.88  0.65  1.52  1.96    0  8.5 16.4    -   -     -  0.73  0.87  0.84  1.30  0.91  2962
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.06 (onsets 0.43 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 6 % (median window R2 0.06); 1229 freeze onsets 0.87 /s, 0.22 /s of them in a reaction frame
+   314.0  3.3  5.4 -110.4    0  6.11  6.15  5.42 0.90 130 0.98  2.23 0.68 0.68  0.90  1.51  2.71    0  6.0 16.0    -   -     -  0.13  0.00  0.30  0.90  0.45  1539
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 29 % (vs 0 % by |bar| < 300), reaction frames 52 % (median window R2 0.51); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   346.4  4.5 12.6  -66.6   17  1.83  0.75  0.74 0.58 390 1.40  1.61 0.59 0.59  0.66  5.95  3.74    0  1.6  4.1    -   -     -  0.00  0.22  0.08  2.20  0.17   473
+         HOLD 3.2 s: wheel rms 1.46 pp 8.61 deg, sp rms 1.23, wheel rev 0.63 /s, sp rev 7.84 /s, f 0.49 Hz, T flips - /s, |sp-th| 1.3, f1229 0.00, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 17 % (vs 17 % by |bar| < 300), reaction frames 0 % (median window R2 0.08); 1229 freeze onsets 0.22 /s, 0.00 /s of them in a reaction frame
+   352.4  4.9 12.5  -65.6   38  2.73  1.44  1.56 0.74 280 1.79  1.36 0.49 0.78  0.62  5.13  4.31    0  2.0  3.7    -   -     -  0.03  0.41  0.16  0.41  0.24   793
+         HOLD 3.8 s: wheel rms 1.45 pp 6.90 deg, sp rms 0.75, wheel rev 0.27 /s, sp rev 5.07 /s, f 0.49 Hz, T flips - /s, |sp-th| 1.9, f1229 0.01, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 38 % (vs 38 % by |bar| < 300), reaction frames 0 % (median window R2 0.02); 1229 freeze onsets 0.41 /s, 0.00 /s of them in a reaction frame
+   358.8  1.9  4.8  -67.2    0  1.60  1.48  2.45 0.99   0 1.08  0.21 0.78 0.49  0.53  0.53  5.88    0 16.5 16.8    -   -     -  1.00  0.00  1.00  0.00  1.00  2166
+         HOLD 1.0 s: wheel rms 0.42 pp 1.40 deg, sp rms 0.46, wheel rev 1.02 /s, sp rev 1.02 /s, f 1.37 Hz, T flips - /s, |sp-th| 16.5, f1229 1.00, clip 0.98 ; episode clip-bound 0.68 (onsets 4.28 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.02); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+  no hands-off (>= 80 %) high-angle engaged episode
+======================================================================================================================
+ROUTE 75604b0a432fdc89_000000b1--9038570540   fw ['39990-TVA,A16C']   fork 311c4cc0b   steerControlType angle   (1.2 s)
+  params {'AccordAngleMaxRate': None, 'AccordAngleClipScale': None, 'AccordAngleBarFromEps': None, 'SteerRatio': '16.84', 'AccordEpsAngleLoop': None, 'GitCommit': '311c4cc0b7ca605576b6b9e73a76117efc596a9b'}
+  engaged 332 s ; |theta| >= thr engaged 4.0 s, of it hands-off 0.0 s by |bar| < 300, 0.6 s with the reaction test (1.0 s of it are reaction frames)
+  rate cap 2.50 deg/frame (release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged))
+  LANE TAP: NOT AVAILABLE on release firmware (no tap) -- the Trms / Tpk / Tflip columns and HOLD T flips below are '-'
+  t      dur   v    theta  HO%  rmsTh rmsSp rmsCc  R2  lag  k    resid  fTh  fRes  revTh revSp revCc cap%  e50  e95  Trms Tpk Tflip f1229 tg1229 f512 tg512 f300 bar90
+   241.7  4.0  6.6   92.1    0  4.10  3.72  2.05 0.95  30 1.07  0.95 0.49 1.17  0.25  1.26  2.76    0  8.2 16.2    -   -     -  0.36  1.01  0.63  1.26  0.71  1588
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.14 (onsets 1.51 /s)
+         REACTION TEST: hands-off 15 % (vs 0 % by |bar| < 300), reaction frames 26 % (median window R2 0.19); 1229 freeze onsets 1.01 /s, 0.00 /s of them in a reaction frame
+  no hands-off (>= 80 %) high-angle engaged episode
+======================================================================================================================
+ROUTE 75604b0a432fdc89_000000b2--b41c6320f8   fw ['39990-TVA,A16C']   fork 311c4cc0b   steerControlType angle   (0.9 s)
+  params {'AccordAngleMaxRate': None, 'AccordAngleClipScale': None, 'AccordAngleBarFromEps': None, 'SteerRatio': '16.84', 'AccordEpsAngleLoop': None, 'GitCommit': '311c4cc0b7ca605576b6b9e73a76117efc596a9b'}
+  engaged 341 s ; |theta| >= thr engaged 58.3 s, of it hands-off 4.6 s by |bar| < 300, 12.3 s with the reaction test (12.6 s of it are reaction frames)
+  rate cap 2.50 deg/frame (release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged))
+  LANE TAP: NOT AVAILABLE on release firmware (no tap) -- the Trms / Tpk / Tflip columns and HOLD T flips below are '-'
+  t      dur   v    theta  HO%  rmsTh rmsSp rmsCc  R2  lag  k    resid  fTh  fRes  revTh revSp revCc cap%  e50  e95  Trms Tpk Tflip f1229 tg1229 f512 tg512 f300 bar90
+    90.2  5.5  3.9 -178.5    0  7.13  6.53  7.45 0.81  50 0.97  3.28 0.78 0.49  0.18  0.55  2.73    0  2.4 16.8    -   -     -  0.74  0.18  0.80  0.18  0.83  2757
+         HOLD 0.6 s: wheel rms 0.29 pp 1.32 deg, sp rms 0.22, wheel rev 0.00 /s, sp rev 0.00 /s, f 1.86 Hz, T flips - /s, |sp-th| 0.2, f1229 1.00, clip 0.43 ; episode clip-bound 0.13 (onsets 0.73 /s)
+         REACTION TEST: hands-off 1 % (vs 0 % by |bar| < 300), reaction frames 9 % (median window R2 0.12); 1229 freeze onsets 0.18 /s, 0.00 /s of them in a reaction frame
+   112.2  6.0  3.5 -151.7    9  4.76  5.43  7.61 0.63 100 0.69  2.91 0.78 0.59  0.17  0.17  0.50    0  2.4 16.5    -   -     -  0.50  0.17  0.58  0.50  0.63  2652
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 20 % (vs 9 % by |bar| < 300), reaction frames 36 % (median window R2 0.29); 1229 freeze onsets 0.17 /s, 0.00 /s of them in a reaction frame
+   233.4  4.7  7.8   87.3   12  2.52  2.22  1.75 0.74  50 0.95  1.35 0.49 0.78  0.22  2.37  2.37    0  7.0 15.7    -   -     -  0.42  1.72  0.60  0.00  0.62  1579
+         HOLD 0.6 s: wheel rms 2.08 pp 6.49 deg, sp rms 1.19, wheel rev 0.00 /s, sp rev 5.26 /s, f nan Hz, T flips - /s, |sp-th| 9.4, f1229 0.63, clip 0.21 ; episode clip-bound 0.08 (onsets 0.65 /s)
+         REACTION TEST: hands-off 12 % (vs 12 % by |bar| < 300), reaction frames 4 % (median window R2 0.08); 1229 freeze onsets 1.72 /s, 0.00 /s of them in a reaction frame
+   274.5  1.8 10.7  -72.7    1  2.94  2.55  1.44 0.46  70 1.03  2.59 0.98 0.59  0.56  3.91  2.79    0  2.6  9.8    -   -     -  0.12  0.56  0.27  3.35  0.71  1336
+         HOLD 0.7 s: wheel rms 1.05 pp 3.97 deg, sp rms 1.07, wheel rev 0.00 /s, sp rev 4.62 /s, f 1.86 Hz, T flips - /s, |sp-th| 2.3, f1229 0.00, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 1 % (vs 1 % by |bar| < 300), reaction frames 1 % (median window R2 0.08); 1229 freeze onsets 0.56 /s, 0.00 /s of them in a reaction frame
+   278.7  1.6 10.2  -67.9    0  1.80  0.71  0.75 0.54 400 2.00  1.49 0.68 1.37  0.63  1.27  1.27    0  3.1  6.7    -   -     -  0.34  2.53  1.00  0.00  1.00  1508
+         HOLD 0.8 s: wheel rms 2.52 pp 8.62 deg, sp rms 0.37, wheel rev 0.00 /s, sp rev 2.60 /s, f 1.95 Hz, T flips - /s, |sp-th| 3.5, f1229 0.34, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.09); 1229 freeze onsets 2.53 /s, 0.00 /s of them in a reaction frame
+   281.8  2.4 10.6  -65.1   52  0.78  0.78  0.78 0.45 340 0.71  0.66 0.88 1.07  0.42  4.18  2.93    0  2.0  3.6    -   -     -  0.01  0.00  0.19  0.42  0.25   942
+         HOLD 2.3 s: wheel rms 1.28 pp 5.63 deg, sp rms 0.80, wheel rev 0.44 /s, sp rev 4.42 /s, f 0.49 Hz, T flips - /s, |sp-th| 1.8, f1229 0.01, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 52 % (vs 52 % by |bar| < 300), reaction frames 0 % (median window R2 0.07); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   285.2  1.9 10.9  -60.3  100  0.12  0.74  0.73 0.13  60 0.12  0.12 0.59 0.59  0.00  2.13  2.13    0  1.1  3.0    -   -     -  0.00  0.00  0.00  0.00  0.00   148
+         HOLD 1.5 s: wheel rms 0.07 pp 0.40 deg, sp rms 0.73, wheel rev 0.00 /s, sp rev 2.70 /s, f 0.88 Hz, T flips - /s, |sp-th| 1.1, f1229 0.00, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 100 % (vs 100 % by |bar| < 300), reaction frames 0 % (median window R2 0.00); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   287.9  1.2 11.0  -66.6    0  3.03  0.88  0.86 0.92 190 2.28  1.30 0.88 1.17  0.83  2.50  0.83    0  3.4  5.5    -   -     -  0.27  0.83  0.38  3.33  0.55  1833
+         HOLD 0.6 s: wheel rms 1.34 pp 4.22 deg, sp rms 0.52, wheel rev 1.61 /s, sp rev 3.23 /s, f nan Hz, T flips - /s, |sp-th| 1.7, f1229 0.24, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.05); 1229 freeze onsets 0.83 /s, 0.00 /s of them in a reaction frame
+   291.3  1.8 12.1  -68.5   18  2.63  1.64  1.68 0.86 160 1.31  1.10 0.49 0.98  0.56  0.56  0.56    0  5.4 10.3    -   -     -  0.17  1.69  0.29  0.56  0.44  1338
+         HOLD 0.8 s: wheel rms 3.55 pp 9.35 deg, sp rms 1.13, wheel rev 0.00 /s, sp rev 1.22 /s, f 1.66 Hz, T flips - /s, |sp-th| 8.4, f1229 0.37, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 18 % (vs 18 % by |bar| < 300), reaction frames 0 % (median window R2 0.16); 1229 freeze onsets 1.69 /s, 0.00 /s of them in a reaction frame
+   375.1  2.6  3.5   95.4    0  3.72  5.59  6.87 0.28 400 0.36  3.43 0.49 0.49  0.38  0.38  2.69    1 16.3 17.4    -   -     -  0.80  3.46  0.88  0.38  0.95  1980
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.04 (onsets 1.15 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 8 % (median window R2 0.01); 1229 freeze onsets 3.46 /s, 0.00 /s of them in a reaction frame
+   381.5  3.6  4.2 -123.8    0 12.64 11.46 16.88 0.89  90 1.04  4.28 0.49 0.78  0.28  0.83  2.22    1  8.3 16.5    -   -     -  0.29  0.55  0.46  1.66  0.59  2672
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 23 % (vs 0 % by |bar| < 300), reaction frames 36 % (median window R2 0.30); 1229 freeze onsets 0.55 /s, 0.00 /s of them in a reaction frame
+   402.1  7.5  4.6 -195.3    0 17.17 16.36 21.31 0.95  50 1.03  3.70 0.49 0.88  0.67  1.21  1.74    0 15.4 18.2    -   -     -  0.43  0.27  0.54  2.01  0.65  3699
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.01 (onsets 0.40 /s)
+         REACTION TEST: hands-off 34 % (vs 0 % by |bar| < 300), reaction frames 45 % (median window R2 0.49); 1229 freeze onsets 0.27 /s, 0.13 /s of them in a reaction frame
+   427.1  2.2  7.0   66.4    0  3.12  2.25  1.10 0.90  30 1.26  0.95 0.68 1.17  2.31  2.31  3.24    0 15.7 16.0    -   -     -  1.00  0.00  1.00  0.00  1.00  1840
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.31 (onsets 2.78 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.01); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   436.1  2.4  8.1   70.2    0  2.14  1.16  1.51 0.31 330 -1.15  1.66 0.59 0.88  0.41  1.23  2.06    0 15.4 15.7    -   -     -  0.84  2.06  1.00  0.00  1.00  1672
+         HOLD 0.8 s: wheel rms 0.88 pp 2.65 deg, sp rms 0.88, wheel rev 0.00 /s, sp rev 0.00 /s, f 1.86 Hz, T flips - /s, |sp-th| 15.6, f1229 0.82, clip 0.61 ; episode clip-bound 0.40 (onsets 2.06 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.01); 1229 freeze onsets 2.06 /s, 0.00 /s of them in a reaction frame
+   440.1  1.5  8.1   66.0    0  2.92  1.28  2.39 0.76 400 1.58  2.19 0.78 0.88  0.68  6.76  4.05    0  6.6 12.7    -   -     -  0.44  0.00  0.59  0.00  0.66  1681
+         HOLD 0.7 s: wheel rms 2.70 pp 9.44 deg, sp rms 1.22, wheel rev 0.00 /s, sp rev 9.86 /s, f 1.66 Hz, T flips - /s, |sp-th| 11.3, f1229 0.85, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 6 % (median window R2 0.18); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   472.5  4.7  5.0 -149.9    0  7.40  6.64  8.40 0.76  50 0.97  3.61 0.49 0.59  0.64  0.64  1.06    0 16.6 17.3    -   -     -  0.87  0.21  0.94  0.42  0.97  3195
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.09 (onsets 1.27 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 3 % (median window R2 0.04); 1229 freeze onsets 0.21 /s, 0.00 /s of them in a reaction frame
+   502.9  7.1  2.6  174.5    0  8.63  8.69 14.08 0.86 130 0.92  3.33 0.49 0.59  1.55  2.39  4.08    1  7.3 16.7    -   -     -  0.29  0.00  0.42  2.39  0.55  2987
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.01 (onsets 0.14 /s)
+         REACTION TEST: hands-off 51 % (vs 0 % by |bar| < 300), reaction frames 66 % (median window R2 0.68); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+  HANDS-OFF (>= 80 %) episodes: 1, 1.9 s; dur-weighted rms wheel 0.12 sp 0.74 cc 0.73 deg, R2 0.13, resid 0.12, rev wheel 0.00 sp 2.13 /s, f1229 0.000, cap 0.00 -> MIXED
+  clip-bound duty (dur-weighted) 0.00
+  HANDS-OFF by the REACTION TEST (>= 80 %) episodes: 1, 1.9 s; dur-weighted 1229 freeze onsets 0.00 /s (0.00 /s in reaction frames)
+======================================================================================================================
+ROUTE 75604b0a432fdc89_000000b3--7449208c37   fw ['39990-TVA,A16C']   fork 311c4cc0b   steerControlType angle   (1.3 s)
+  params {'AccordAngleMaxRate': None, 'AccordAngleClipScale': None, 'AccordAngleBarFromEps': None, 'SteerRatio': '16.84', 'AccordEpsAngleLoop': None, 'GitCommit': '311c4cc0b7ca605576b6b9e73a76117efc596a9b'}
+  engaged 594 s ; |theta| >= thr engaged 27.6 s, of it hands-off 2.3 s by |bar| < 300, 10.7 s with the reaction test (12.8 s of it are reaction frames)
+  rate cap 2.50 deg/frame (release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged))
+  LANE TAP: NOT AVAILABLE on release firmware (no tap) -- the Trms / Tpk / Tflip columns and HOLD T flips below are '-'
+  t      dur   v    theta  HO%  rmsTh rmsSp rmsCc  R2  lag  k    resid  fTh  fRes  revTh revSp revCc cap%  e50  e95  Trms Tpk Tflip f1229 tg1229 f512 tg512 f300 bar90
+   137.1  7.4  5.0  101.2    0  6.85  7.73  6.69 0.91  10 0.85  2.11 0.49 0.59  0.94  1.75  3.36    0 16.0 16.9    -   -     -  0.76  0.81  0.89  0.67  0.92  3193
+         HOLD 0.6 s: wheel rms 0.87 pp 2.30 deg, sp rms 0.81, wheel rev 0.00 /s, sp rev 0.00 /s, f nan Hz, T flips - /s, |sp-th| 16.3, f1229 0.98, clip 0.75 ; episode clip-bound 0.18 (onsets 1.48 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 4 % (median window R2 0.13); 1229 freeze onsets 0.81 /s, 0.13 /s of them in a reaction frame
+   297.8  5.3  8.6   77.4   21  1.71  1.90  1.89 0.88 180 0.81  0.84 0.49 1.37  0.19  2.08  2.08    0  1.6  3.7    -   -     -  0.00  0.00  0.04  1.51  0.20   393
+         HOLD 1.3 s: wheel rms 1.09 pp 3.83 deg, sp rms 1.14, wheel rev 0.00 /s, sp rev 5.51 /s, f 1.17 Hz, T flips - /s, |sp-th| 1.1, f1229 0.00, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 50 % (vs 21 % by |bar| < 300), reaction frames 45 % (median window R2 0.49); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   683.2  4.9  7.2 -126.1    5  3.23  3.33  3.34 0.95 160 0.97  0.78 0.49 0.68  0.20  2.65  2.65    0  6.7 11.5    -   -     -  0.00  0.00  0.09  3.46  0.28   512
+         HOLD 0.6 s: wheel rms 1.44 pp 3.60 deg, sp rms 0.68, wheel rev 0.00 /s, sp rev 9.52 /s, f nan Hz, T flips - /s, |sp-th| 5.3, f1229 0.00, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 54 % (vs 5 % by |bar| < 300), reaction frames 64 % (median window R2 0.56); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   737.2  4.2  5.9 -139.9   18  3.96  3.92  3.05 0.84  80 0.92  1.74 0.59 0.49  0.24  1.69  2.17    0  5.9 15.3    -   -     -  0.00  0.00  0.06  1.93  0.20   400
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 60 % (vs 18 % by |bar| < 300), reaction frames 69 % (median window R2 0.58); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   789.1  5.7  4.3 -134.5    4  5.46  6.19  5.12 0.95 170 0.86  1.30 0.59 0.78  0.53  1.23  2.46    0 13.4 16.5    -   -     -  0.00  0.00  0.04  1.23  0.22   401
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.10 (onsets 0.53 /s)
+         REACTION TEST: hands-off 50 % (vs 4 % by |bar| < 300), reaction frames 72 % (median window R2 0.60); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+  no hands-off (>= 80 %) high-angle engaged episode
+======================================================================================================================
+ROUTE 75604b0a432fdc89_000000b4--008b967c94   fw ['39990-TVA,A16C']   fork 311c4cc0b   steerControlType angle   (1.2 s)
+  params {'AccordAngleMaxRate': None, 'AccordAngleClipScale': None, 'AccordAngleBarFromEps': None, 'SteerRatio': '16.84', 'AccordEpsAngleLoop': None, 'GitCommit': '311c4cc0b7ca605576b6b9e73a76117efc596a9b'}
+  engaged 576 s ; |theta| >= thr engaged 31.4 s, of it hands-off 1.0 s by |bar| < 300, 6.4 s with the reaction test (8.7 s of it are reaction frames)
+  rate cap 2.50 deg/frame (release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged))
+  LANE TAP: NOT AVAILABLE on release firmware (no tap) -- the Trms / Tpk / Tflip columns and HOLD T flips below are '-'
+  t      dur   v    theta  HO%  rmsTh rmsSp rmsCc  R2  lag  k    resid  fTh  fRes  revTh revSp revCc cap%  e50  e95  Trms Tpk Tflip f1229 tg1229 f512 tg512 f300 bar90
+   166.1  3.4 10.6   71.4    3  2.49  2.01  1.63 0.96 210 0.98  1.63 0.49 1.07  0.30  0.30  0.30    0  5.4  9.1    -   -     -  0.00  0.00  0.02  0.89  0.17   370
+         HOLD 2.6 s: wheel rms 2.10 pp 9.92 deg, sp rms 1.07, wheel rev 0.00 /s, sp rev 0.38 /s, f 0.49 Hz, T flips - /s, |sp-th| 5.4, f1229 0.00, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 10 % (vs 3 % by |bar| < 300), reaction frames 37 % (median window R2 0.45); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   205.2  4.0  5.1 -139.3    0  8.40  8.94 12.81 0.94  20 0.92  2.28 0.49 0.49  0.74  0.74  2.22    0 15.8 16.5    -   -     -  0.93  0.00  0.95  0.25  0.97  2971
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.20 (onsets 1.48 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 1 % (median window R2 0.06); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   213.2  3.7  7.8  -82.7    0  7.14  5.80  4.31 0.95  70 1.23  1.74 0.49 1.17  0.81  1.90  2.44    0  6.3 15.8    -   -     -  0.40  0.54  0.51  1.90  0.66  1933
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.07 (onsets 1.90 /s)
+         REACTION TEST: hands-off 11 % (vs 0 % by |bar| < 300), reaction frames 29 % (median window R2 0.29); 1229 freeze onsets 0.54 /s, 0.00 /s of them in a reaction frame
+   243.1  1.7 12.8  -65.3    0  1.03  0.26  0.28 0.34 400 -1.89  1.10 1.27 1.17  0.59  2.35  0.00    0  1.6  4.7    -   -     -  0.32  1.76  0.78  2.94  0.98  1624
+         HOLD 1.7 s: wheel rms 2.09 pp 6.70 deg, sp rms 0.88, wheel rev 0.59 /s, sp rev 2.35 /s, f 0.68 Hz, T flips - /s, |sp-th| 1.6, f1229 0.32, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.01); 1229 freeze onsets 1.76 /s, 0.00 /s of them in a reaction frame
+   245.6  3.1 12.4  -64.1    0  0.87  0.48  0.51 0.21   0 -0.92  0.77 0.49 0.49  0.97  3.87  0.97    0  4.1  6.9    -   -     -  0.77  4.84  1.00  0.00  1.00  1810
+         HOLD 3.1 s: wheel rms 1.89 pp 6.77 deg, sp rms 1.10, wheel rev 0.97 /s, sp rev 3.87 /s, f 0.49 Hz, T flips - /s, |sp-th| 4.1, f1229 0.77, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.06); 1229 freeze onsets 4.84 /s, 0.00 /s of them in a reaction frame
+   249.5  2.9 12.1  -65.6   32  1.37  0.93  0.95 0.05  40 0.30  1.36 0.59 0.59  0.35  5.96  4.56    0  5.9 10.0    -   -     -  0.31  0.70  0.40  0.00  0.42  1662
+         HOLD 2.2 s: wheel rms 3.99 pp 11.05 deg, sp rms 1.86, wheel rev 0.00 /s, sp rev 6.79 /s, f 0.88 Hz, T flips - /s, |sp-th| 6.1, f1229 0.40, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 32 % (vs 32 % by |bar| < 300), reaction frames 0 % (median window R2 0.19); 1229 freeze onsets 0.70 /s, 0.00 /s of them in a reaction frame
+   254.1  1.8 11.0  -69.2    0  4.36  1.43  1.85 0.85 240 2.81  1.92 0.49 1.17  0.57  3.98  3.98    0  2.3  5.6    -   -     -  0.11  0.57  0.17  2.27  0.26  1545
+         HOLD 0.6 s: wheel rms 0.73 pp 3.49 deg, sp rms 0.37, wheel rev 0.00 /s, sp rev 6.45 /s, f nan Hz, T flips - /s, |sp-th| 1.6, f1229 0.00, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 1 % (median window R2 0.40); 1229 freeze onsets 0.57 /s, 0.00 /s of them in a reaction frame
+   655.2  3.9  7.4 -106.8    0  2.44  2.54  2.49 0.80 170 0.84  1.21 0.49 0.68  0.26  0.78  0.26    0  8.7 15.1    -   -     -  0.00  0.00  0.06  1.81  0.21   408
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 69 % (vs 0 % by |bar| < 300), reaction frames 82 % (median window R2 0.61); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   787.8  6.5  2.7 -156.3    0 15.30 14.90 20.88 0.94  90 0.99  3.91 0.49 0.68  0.77  2.01  3.25    2 12.9 18.1    -   -     -  0.32  0.77  0.50  2.94  0.65  3259
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips - /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.01 (onsets 0.62 /s)
+         REACTION TEST: hands-off 33 % (vs 0 % by |bar| < 300), reaction frames 49 % (median window R2 0.49); 1229 freeze onsets 0.77 /s, 0.15 /s of them in a reaction frame
+  no hands-off (>= 80 %) high-angle engaged episode
+======================================================================================================================
+ROUTE 75604b0a432fdc89_0000009c--7f2f4d267c   fw ['39990-TVA,A16B']   fork c6452361e   steerControlType angle   (1.3 s)
+  params {'AccordAngleMaxRate': '250.0', 'AccordAngleClipScale': '1.0', 'AccordAngleBarFromEps': '1', 'SteerRatio': '16.84', 'AccordEpsAngleLoop': '1', 'GitCommit': 'c6452361e43812c7a7931c76dd4e036bbe5a1835'}
+  engaged 542 s ; |theta| >= thr engaged 22.5 s, of it hands-off 0.0 s by |bar| < 300, 8.0 s with the reaction test (9.4 s of it are reaction frames)
+  rate cap 2.50 deg/frame (logged param AccordAngleMaxRate=250.0 deg/s)
+  t      dur   v    theta  HO%  rmsTh rmsSp rmsCc  R2  lag  k    resid  fTh  fRes  revTh revSp revCc cap%  e50  e95  Trms Tpk Tflip f1229 tg1229 f512 tg512 f300 bar90
+   331.6  5.9  6.9   92.5    0  4.50  5.83  9.70 0.80  40 0.69  2.09 0.59 0.49  1.19  2.55  5.78    0 10.5 16.8  106 150  0.00  0.74  2.89  0.95  0.34  0.97  2476
+         HOLD 0.5 s: wheel rms 1.07 pp 4.18 deg, sp rms 0.47, wheel rev 1.92 /s, sp rev 5.77 /s, f nan Hz, T flips 0.00 /s, |sp-th| 5.5, f1229 0.74, clip 0.12 ; episode clip-bound 0.05 (onsets 0.85 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.02); 1229 freeze onsets 2.89 /s, 0.00 /s of them in a reaction frame
+   702.7  5.8  6.2 -127.5    0  5.15  5.37  6.25 0.90 130 0.91  1.66 0.68 2.54  2.61  5.04  5.39    1  4.7 15.4  110 187  0.00  0.06  1.22  0.31  5.74  0.54  1009
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips nan /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.01 (onsets 0.70 /s)
+         REACTION TEST: hands-off 100 % (vs 0 % by |bar| < 300), reaction frames 100 % (median window R2 0.81); 1229 freeze onsets 1.22 /s, 1.22 /s of them in a reaction frame
+   746.2  4.8  3.9 -168.3    0  8.78  8.99 12.27 0.85 180 0.90  3.45 0.78 0.49  0.21  0.21  0.21    0  3.0 17.2   58 161  0.21  0.59  0.21  0.64  0.83  0.72  2783
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips nan /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.01 (onsets 0.21 /s)
+         REACTION TEST: hands-off 25 % (vs 0 % by |bar| < 300), reaction frames 39 % (median window R2 0.23); 1229 freeze onsets 0.21 /s, 0.00 /s of them in a reaction frame
+   780.9  6.0  3.8 -137.4    0  4.73  4.00  4.11 0.42  50 0.77  3.64 0.49 0.88  0.50  2.16  2.16    0  1.3 13.6   71 167  0.17  0.57  0.17  0.63  1.33  0.71  2373
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips nan /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.02 (onsets 0.66 /s)
+         REACTION TEST: hands-off 18 % (vs 0 % by |bar| < 300), reaction frames 30 % (median window R2 0.18); 1229 freeze onsets 0.17 /s, 0.17 /s of them in a reaction frame
+  no hands-off (>= 80 %) high-angle engaged episode
+  HANDS-OFF by the REACTION TEST (>= 80 %) episodes: 1, 5.8 s; dur-weighted 1229 freeze onsets 1.22 /s (1.22 /s in reaction frames)
+======================================================================================================================
+ROUTE 75604b0a432fdc89_0000009d--371ec93849   fw ['39990-TVA,A16B']   fork c6452361e   steerControlType angle   (1.2 s)
+  params {'AccordAngleMaxRate': '250.0', 'AccordAngleClipScale': '1.0', 'AccordAngleBarFromEps': '1', 'SteerRatio': '16.84', 'AccordEpsAngleLoop': '1', 'GitCommit': 'c6452361e43812c7a7931c76dd4e036bbe5a1835'}
+  engaged 567 s ; |theta| >= thr engaged 22.1 s, of it hands-off 0.1 s by |bar| < 300, 1.8 s with the reaction test (3.8 s of it are reaction frames)
+  rate cap 2.50 deg/frame (logged param AccordAngleMaxRate=250.0 deg/s)
+  t      dur   v    theta  HO%  rmsTh rmsSp rmsCc  R2  lag  k    resid  fTh  fRes  revTh revSp revCc cap%  e50  e95  Trms Tpk Tflip f1229 tg1229 f512 tg512 f300 bar90
+   138.3  2.1  9.0   91.2    0  4.32  3.23  3.28 0.74  80 1.17  2.65 0.49 0.49  0.48  0.48  0.48    0  3.1 16.9  122 148  0.00  0.02  0.96  0.47  4.33  0.68  1068
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips nan /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.11); 1229 freeze onsets 0.96 /s, 0.00 /s of them in a reaction frame
+   224.6  3.0 12.7  -67.9    0  2.53  0.16  0.77 0.03  10 2.59  2.47 0.68 0.68  0.99  2.65  0.33    0  1.7  7.0   74 132  0.00  0.69  0.99  0.86  1.32  0.89  3025
+         HOLD 3.0 s: wheel rms 3.14 pp 13.29 deg, sp rms 1.34, wheel rev 0.99 /s, sp rev 2.65 /s, f 0.49 Hz, T flips 0.00 /s, |sp-th| 1.7, f1229 0.69, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 5 % (median window R2 0.03); 1229 freeze onsets 0.99 /s, 0.00 /s of them in a reaction frame
+   227.8  1.5 12.6  -64.9    2  1.96  0.93  0.89 0.39  70 1.50  1.62 1.37 0.78  0.67  1.33  1.33    0  2.4  4.6  101 128  0.00  0.00  0.00  0.07  2.00  0.22   458
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips nan /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 2 % (vs 2 % by |bar| < 300), reaction frames 9 % (median window R2 0.38); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   231.7  3.8 13.1  -66.9    0  1.57  0.57  0.77 0.01   0 -0.23  1.57 0.78 0.78  1.33  1.33  3.46    0  5.6 11.1   21  29  0.00  1.00  0.00  1.00  0.00  1.00  3171
+         HOLD 3.1 s: wheel rms 1.42 pp 9.72 deg, sp rms 2.14, wheel rev 1.63 /s, sp rev 1.30 /s, f 0.88 Hz, T flips 0.00 /s, |sp-th| 5.7, f1229 1.00, clip 0.00 ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.01); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   569.0  3.6  6.0 -129.4    2  4.91  4.61  1.75 0.90  70 0.99  1.87 0.68 0.49  0.84  2.51  2.51    0  5.2 15.4  119 170  0.00  0.00  0.00  0.09  2.51  0.34   489
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips nan /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.00 (onsets 0.00 /s)
+         REACTION TEST: hands-off 50 % (vs 2 % by |bar| < 300), reaction frames 79 % (median window R2 0.61); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+   758.9  3.8  5.8 -157.3    0  7.87  6.26  5.89 0.62 180 0.99  4.85 0.59 0.49  0.26  0.79  2.37    1 13.6 17.4   53 141  0.26  0.70  0.26  0.74  1.06  0.80  3213
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips nan /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.02 (onsets 0.79 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 17 % (median window R2 0.11); 1229 freeze onsets 0.26 /s, 0.00 /s of them in a reaction frame
+   775.0  2.6  3.2 -225.9    0  3.44  5.20 26.57 0.29   0 0.37  2.93 0.88 0.68  0.00  0.00  0.00    1 17.0 18.2   36  63  0.00  1.00  0.00  1.00  0.00  1.00  3064
+         HOLD 0.0 s: wheel rms nan pp nan deg, sp rms nan, wheel rev nan /s, sp rev nan /s, f nan Hz, T flips nan /s, |sp-th| nan, f1229 nan, clip nan ; episode clip-bound 0.07 (onsets 1.15 /s)
+         REACTION TEST: hands-off 0 % (vs 0 % by |bar| < 300), reaction frames 0 % (median window R2 0.02); 1229 freeze onsets 0.00 /s, 0.00 /s of them in a reaction frame
+  no hands-off (>= 80 %) high-angle engaged episode

@@ -1,0 +1,249 @@
+== 1. ATTRIBUTION
+route | EPS fw | fork commit | branch | steerControlType | CP.steerRatio | CP.maxLatAccel | route min | engaged min | engaged min by band 0-3/3-6/6-10/10-15/15-22/>22 | hands-on (>600) engaged min <6 / <10 | alerts
+ad | 39990-TVA,A16C | 83fa2e68c8 | accord-PTM | angle | 16.33 | 0.325 | 13.0 | 10.4 | 0.3 / 0.4 / 1.0 / 1.2 / 0.9 / 6.7 | 0.24 / 0.41 | take control | turn exceeds limit
+ae | 39990-TVA,A16C | 83fa2e68c8 | accord-PTM | angle | 16.33 | 0.325 | 15.0 | 10.0 | 0.2 / 0.8 / 1.6 / 0.7 / 0.4 / 6.5 | 0.39 / 0.63 | take control | turn exceeds limit
+af | 39990-TVA,A16C | 311c4cc0b7 | accord-PTM | angle | 16.33 | 3.589 | 19.0 | 11.1 | 1.7 / 1.3 / 1.6 / 1.4 / 1.4 / 3.6 | 0.36 / 0.42 | 
+b0 | 39990-TVA,A16C | 311c4cc0b7 | accord-PTM | angle | 16.33 | 3.589 | 26.4 | 17.3 | 1.2 / 2.6 / 3.4 / 4.5 / 3.9 / 1.7 | 0.74 / 1.20 | take control | turn exceeds limit
+b1 | 39990-TVA,A16C | 311c4cc0b7 | accord-PTM | angle | 16.33 | 3.589 | 13.1 | 5.5 | 0.2 / 0.2 / 0.2 / 3.4 / 1.5 / 0.0 | 0.09 / 0.11 | 
+b2 | 39990-TVA,A16C | 311c4cc0b7 | accord-PTM | angle | 16.33 | 3.589 | 9.1 | 5.7 | 0.4 / 0.7 / 1.6 / 1.1 / 0.6 / 1.1 | 0.48 / 1.08 | 
+b3 | 39990-TVA,A16C | 311c4cc0b7 | accord-PTM | angle | 16.33 | 3.589 | 14.9 | 9.9 | 0.5 / 0.9 / 1.3 / 2.0 / 1.3 / 3.8 | 0.19 / 0.28 | 
+b4 | 39990-TVA,A16C | 311c4cc0b7 | accord-PTM | angle | 16.33 | 3.589 | 13.8 | 9.6 | 0.2 / 0.4 / 1.1 / 2.5 / 4.2 / 1.3 | 0.14 / 0.33 | take control | turn exceeds limit
+9c | 39990-TVA,A16B | c6452361e4 | Dom | angle | 16.33 | 0.325 | 14.7 | 9.0 | 0.5 / 0.4 / 0.8 / 1.1 / 2.1 / 4.0 | 0.20 / 0.32 | 
+9d | 39990-TVA,A16B | c6452361e4 | Dom | angle | 16.33 | 0.325 | 13.6 | 9.4 | 0.9 / 0.7 / 0.7 / 2.9 / 2.2 / 2.1 | 0.16 / 0.31 | 
+79 | 39990-TVA,A16A | 2712e13369 | Dom | angle | 16.33 | 0.325 | 20.4 | 11.2 | 1.0 / 1.4 / 1.9 / 1.9 / 3.4 / 1.5 | 1.01 / 1.33 | take control | turn exceeds limit
+
+== bar sign (disengaged, |bar| > 600, |w| > 30: fraction with bar*w > 0)
+  ad k -1 agree 0.23 n 4753
+  ae k -1 agree 0.11 n 3719
+  af k -1 agree 0.12 n 4674
+  b0 k -1 agree 0.17 n 3077
+  b1 k -1 agree 0.19 n 5585
+  b2 k -1 agree 0.08 n 2895
+  b3 k -1 agree 0.12 n 5302
+  b4 k -1 agree 0.22 n 5298
+  9c k -1 agree 0.27 n 4794
+  9d k -1 agree 0.29 n 5418
+  79 k -1 agree 0.16 n 6153
+
+== 2a. GRIND BANDS, pooled by firmware: engaged/disengaged hands-on (|bar| > 600, |w| > 30), 1-s windows, ratio of medians per (speed 0-3/3-6/6-10, rate 30-60/60-120/>120) bin, engaged-weighted geometric mean
+  V300 v<6  n eng 92 dis 346 (matched 92/346):
+     bar 5-9 (V2) 1.36 (eng p50 32.6 / dis p50 22.9)
+     bar 15-25 (C3) 1.27 (eng p50 17.2 / dis p50 14.4)
+     bar 35-50 (V1) 0.90 (eng p50 9.2 / dis p50 8.7)
+     rate 5-9 (V2) 1.08 (eng p50 1.5 / dis p50 1.6)
+     rate 15-25 (C3) 0.91 (eng p50 0.7 / dis p50 0.8)
+     rate 35-50 (V1) 0.76 (eng p50 0.5 / dis p50 0.5)
+     rate 8-25 (C2) 1.15 (eng p50 1.4 / dis p50 1.4)
+  V300 v<10  n eng 119 dis 367 (matched 119/367):
+     bar 5-9 (V2) 1.30 (eng p50 32.9 / dis p50 23.7)
+     bar 15-25 (C3) 1.25 (eng p50 19.8 / dis p50 14.6)
+     bar 35-50 (V1) 0.88 (eng p50 10.2 / dis p50 9.0)
+     rate 5-9 (V2) 1.02 (eng p50 1.5 / dis p50 1.6)
+     rate 15-25 (C3) 0.89 (eng p50 0.7 / dis p50 0.8)
+     rate 35-50 (V1) 0.80 (eng p50 0.5 / dis p50 0.5)
+     rate 8-25 (C2) 1.05 (eng p50 1.4 / dis p50 1.4)
+  V299 v<6  n eng 13 dis 99 (matched 8/31):
+     bar 5-9 (V2) 1.57 (eng p50 28.9 / dis p50 28.6)
+     bar 15-25 (C3) 1.64 (eng p50 23.2 / dis p50 18.0)
+     bar 35-50 (V1) 0.91 (eng p50 8.8 / dis p50 10.8)
+     rate 5-9 (V2) 1.41 (eng p50 1.9 / dis p50 1.6)
+     rate 15-25 (C3) 1.11 (eng p50 0.9 / dis p50 0.9)
+     rate 35-50 (V1) 0.49 (eng p50 0.3 / dis p50 0.6)
+     rate 8-25 (C2) 1.69 (eng p50 2.1 / dis p50 1.6)
+  V299 v<10  n eng 19 dis 113 (matched 13/39):
+     bar 5-9 (V2) 1.79 (eng p50 43.4 / dis p50 28.6)
+     bar 15-25 (C3) 1.82 (eng p50 25.1 / dis p50 17.9)
+     bar 35-50 (V1) 1.02 (eng p50 9.1 / dis p50 11.4)
+     rate 5-9 (V2) 1.48 (eng p50 1.9 / dis p50 1.6)
+     rate 15-25 (C3) 1.08 (eng p50 0.9 / dis p50 0.9)
+     rate 35-50 (V1) 0.47 (eng p50 0.4 / dis p50 0.7)
+     rate 8-25 (C2) 1.54 (eng p50 1.9 / dis p50 1.6)
+  V298 v<6  n eng 45 dis 64 (matched 31/61):
+     bar 5-9 (V2) 1.72 (eng p50 41.5 / dis p50 27.1)
+     bar 15-25 (C3) 1.33 (eng p50 26.8 / dis p50 16.5)
+     bar 35-50 (V1) 0.76 (eng p50 8.8 / dis p50 6.9)
+     rate 5-9 (V2) 1.54 (eng p50 1.8 / dis p50 1.6)
+     rate 15-25 (C3) 1.17 (eng p50 0.7 / dis p50 0.7)
+     rate 35-50 (V1) 0.73 (eng p50 0.3 / dis p50 0.4)
+     rate 8-25 (C2) 1.35 (eng p50 1.5 / dis p50 1.3)
+  V298 v<10  n eng 53 dis 64 (matched 31/61):
+     bar 5-9 (V2) 1.72 (eng p50 44.9 / dis p50 27.1)
+     bar 15-25 (C3) 1.33 (eng p50 27.6 / dis p50 16.5)
+     bar 35-50 (V1) 0.76 (eng p50 9.6 / dis p50 6.9)
+     rate 5-9 (V2) 1.54 (eng p50 2.0 / dis p50 1.6)
+     rate 15-25 (C3) 1.17 (eng p50 0.7 / dis p50 0.7)
+     rate 35-50 (V1) 0.73 (eng p50 0.3 / dis p50 0.4)
+     rate 8-25 (C2) 1.35 (eng p50 1.5 / dis p50 1.3)
+
+== 2a'. per route, v<10: n eng/dis hands-on windows; unmatched eng/dis median ratio bar 35-50 / bar 15-25 / rate 5-9
+  ad n 15/50  1.01 / 1.34 / 0.93
+  ae n 21/38  0.79 / 1.22 / 0.86
+  af n 12/49  1.52 / 1.82 / 0.91
+  b0 n 30/32  0.91 / 1.50 / 1.11
+  b1 n 0/58  - / - / -
+  b2 n 25/31  1.10 / 0.76 / 1.08
+  b3 n 7/54  1.67 / 1.17 / 0.88
+  b4 n 9/55  1.21 / 1.52 / 0.98
+  9c n 9/50  0.56 / 1.21 / 1.14
+  9d n 10/63  1.12 / 1.56 / 1.33
+  79 n 53/64  1.39 / 1.67 / 1.30
+
+== 2b. dwells/min (symptom instrument, engaged, @0.25 and @0.50 deg/s) 0-5 | 5-10 m/s
+  ad 0-5: 0.0 / 12.2 (29.4 s)   5-10: 2.7 / 17.3 (65.7 s)
+  ae 0-5: 0.0 / 3.5 (33.9 s)   5-10: 2.0 / 16.1 (119.5 s)
+  af 0-5: 9.1 / 29.2 (158.1 s)   5-10: 3.5 / 22.1 (119.5 s)
+  b0 0-5: 5.5 / 21.7 (185.5 s)   5-10: 9.4 / 32.0 (241.6 s)
+  b1 0-5: 7.0 / 24.5 (17.2 s)   5-10: 10.5 / 28.0 (17.1 s)
+  b2 0-5: 4.2 / 10.6 (56.8 s)   5-10: 2.8 / 13.4 (107.7 s)
+  b3 0-5: 9.0 / 27.8 (66.9 s)   5-10: 5.6 / 23.5 (96.9 s)
+  b4 0-5: 6.4 / 14.9 (28.3 s)   5-10: 2.6 / 20.6 (69.8 s)
+  9c 0-5: 15.0 / 27.4 (43.9 s)   5-10: 2.0 / 24.3 (59.3 s)
+  9d 0-5: 6.8 / 28.8 (79.0 s)   5-10: 0.0 / 13.7 (52.6 s)
+  79 0-5: 4.7 / 12.3 (102.1 s)   5-10: 1.2 / 15.9 (154.6 s)
+  POOLED V300 0-5 m/s: 6.2 /min @0.25, 21.6 /min @0.50 over 576 s
+  POOLED V299 0-5 m/s: 9.8 /min @0.25, 28.3 /min @0.50 over 123 s
+  POOLED V298 0-5 m/s: 4.7 /min @0.25, 12.3 /min @0.50 over 102 s
+
+== 2c. C1 hand fight (frames: engaged, |bar| > 600)
+  v<6: route | hands-on s | opposing | aiding | opposing AND at the clip | at clip | |err| p50 | opposing |err| p50 | P-only lane torque when opposing p50/p90 T (rail %) | opposing with |bar| > 1200
+   ad | 14.7 | 68.3 % | 8.5 % | 12.5 % | 12.5 % | 3.0 | 8.0 | 422.2/906.1 (17.2 %) | 61.7 %
+   ae | 23.3 | 67.0 % | 22.6 % | 35.9 % | 36.8 % | 16.0 | 16.6 | 877.4/974.7 (35.7 %) | 61.6 %
+   af | 21.8 | 77.6 % | 13.4 % | 26.9 % | 26.9 % | 12.1 | 14.6 | 773.1/950.4 (31.4 %) | 68.2 %
+   b0 | 44.6 | 90.3 % | 5.4 % | 48.1 % | 48.1 % | 16.2 | 16.5 | 891.6/948.3 (36.2 %) | 79.6 %
+   b1 | 5.1 | 95.5 % | 1.8 % | 43.8 % | 43.8 % | 15.9 | 16.0 | 928.7/945.5 (37.7 %) | 69.9 %
+   b2 | 28.7 | 70.9 % | 16.3 % | 28.9 % | 30.3 % | 16.0 | 16.4 | 867.0/977.2 (35.2 %) | 62.0 %
+   b3 | 11.3 | 71.9 % | 15.6 % | 21.7 % | 22.4 % | 12.4 | 16.0 | 869.3/934.8 (35.3 %) | 58.2 %
+   b4 | 8.3 | 98.3 % | 0.8 % | 30.5 % | 30.5 % | 15.8 | 15.9 | 874.8/939.4 (35.5 %) | 84.4 %
+   9c | 11.9 | 63.0 % | 9.4 % | 3.8 % | 6.1 % | 2.0 | 2.9 | 154.7/867.3 (6.3 %) | 50.5 %
+   9d | 9.7 | 91.5 % | 6.7 % | 38.0 % | 38.0 % | 15.6 | 16.0 | 887.7/990.4 (36.1 %) | 79.9 %
+   79 | 60.5 | 21.0 % | 56.8 % | 0.0 % | 0.0 % | 3.1 | 3.3 | 181.7/403.8 (7.4 %) | 11.4 %
+   POOLED V300: 158 s, opposing 78.8 %, opposing at clip 33.6 %
+   POOLED V299: 22 s, opposing 75.8 %, opposing at clip 19.1 %
+   POOLED V298: 60 s, opposing 21.0 %, opposing at clip 0.0 %
+  C1 vs band energy (hands-on engaged windows with > 50 % opposing-at-clip vs < 10 %), v<6, pooled V300:
+     bar 5-9 (V2): at-clip p50 23.5 (n 26) vs not p50 35.9 (n 45)
+     bar 15-25 (C3): at-clip p50 18.1 (n 26) vs not p50 13.9 (n 45)
+     bar 35-50 (V1): at-clip p50 11.1 (n 26) vs not p50 6.9 (n 45)
+     rate 5-9 (V2): at-clip p50 1.4 (n 26) vs not p50 1.5 (n 45)
+     rate 15-25 (C3): at-clip p50 0.7 (n 26) vs not p50 0.6 (n 45)
+     rate 35-50 (V1): at-clip p50 0.5 (n 26) vs not p50 0.4 (n 45)
+     rate 8-25 (C2): at-clip p50 1.5 (n 26) vs not p50 1.4 (n 45)
+  v<10: route | hands-on s | opposing | aiding | opposing AND at the clip | at clip | |err| p50 | opposing |err| p50 | P-only lane torque when opposing p50/p90 T (rail %) | opposing with |bar| > 1200
+   ad | 24.9 | 68.1 % | 16.6 % | 12.4 % | 12.9 % | 8.1 | 12.2 | 707.9/958.8 (28.8 %) | 59.7 %
+   ae | 37.8 | 78.3 % | 14.2 % | 34.7 % | 35.3 % | 15.6 | 15.8 | 903.0/984.0 (36.7 %) | 70.0 %
+   af | 25.4 | 75.6 % | 15.7 % | 23.2 % | 23.2 % | 10.8 | 13.2 | 727.8/944.8 (29.6 %) | 63.5 %
+   b0 | 72.2 | 82.3 % | 10.0 % | 34.1 % | 34.5 % | 13.8 | 15.7 | 872.0/960.0 (35.4 %) | 72.9 %
+   b1 | 6.7 | 96.4 % | 1.5 % | 36.6 % | 36.6 % | 15.7 | 15.8 | 924.7/946.0 (37.6 %) | 63.9 %
+   b2 | 65.0 | 83.2 % | 8.8 % | 24.6 % | 25.2 % | 13.3 | 15.3 | 800.0/975.9 (32.5 %) | 74.6 %
+   b3 | 16.9 | 77.8 % | 12.1 % | 26.5 % | 27.0 % | 14.7 | 15.6 | 894.3/983.0 (36.3 %) | 60.8 %
+   b4 | 19.7 | 91.0 % | 6.9 % | 31.0 % | 31.0 % | 15.4 | 15.6 | 881.1/988.7 (35.8 %) | 79.1 %
+   9c | 19.2 | 72.1 % | 7.8 % | 3.6 % | 5.1 % | 3.0 | 5.1 | 288.2/896.2 (11.7 %) | 56.1 %
+   9d | 18.7 | 90.2 % | 4.4 % | 29.0 % | 29.0 % | 9.8 | 11.3 | 629.3/993.3 (25.6 %) | 74.3 %
+   79 | 79.7 | 27.9 % | 49.2 % | 0.0 % | 0.0 % | 2.8 | 2.9 | 164.9/401.7 (6.7 %) | 14.5 %
+   POOLED V300: 269 s, opposing 80.7 %, opposing at clip 28.2 %
+   POOLED V299: 38 s, opposing 81.1 %, opposing at clip 16.1 %
+   POOLED V298: 80 s, opposing 27.9 %, opposing at clip 0.0 %
+  C1 vs band energy (hands-on engaged windows with > 50 % opposing-at-clip vs < 10 %), v<10, pooled V300:
+     bar 5-9 (V2): at-clip p50 23.5 (n 32) vs not p50 38.4 (n 58)
+     bar 15-25 (C3): at-clip p50 20.0 (n 32) vs not p50 18.2 (n 58)
+     bar 35-50 (V1): at-clip p50 12.5 (n 32) vs not p50 8.8 (n 58)
+     rate 5-9 (V2): at-clip p50 1.3 (n 32) vs not p50 1.5 (n 58)
+     rate 15-25 (C3): at-clip p50 0.7 (n 32) vs not p50 0.7 (n 58)
+     rate 35-50 (V1): at-clip p50 0.6 (n 32) vs not p50 0.4 (n 58)
+     rate 8-25 (C2): at-clip p50 1.5 (n 32) vs not p50 1.4 (n 58)
+
+== 2c'. C1 vs band energy CONTROLLED FOR HAND TORQUE: pooled V300 hands-on engaged windows v<10, binned by |bar| p50: band p50 at-clip (>50 %% opposing-at-clip) vs not (<10 %%)
+  |bar| 600-1200: n 0 / 11 | bar 5-9 (V2) - vs 95.0 | bar 15-25 (C3) - vs 26.4 | bar 35-50 (V1) - vs 10.9 | rate 8-25 (C2) - vs 1.6
+  |bar| 1200-2000: n 2 / 11 | bar 5-9 (V2) 10.2 vs 35.9 | bar 15-25 (C3) 45.8 vs 22.9 | bar 35-50 (V1) 8.8 vs 8.8 | rate 8-25 (C2) 1.5 vs 1.6
+  |bar| 2000-inf: n 30 / 36 | bar 5-9 (V2) 24.1 vs 25.7 | bar 15-25 (C3) 20.0 vs 13.1 | bar 35-50 (V1) 12.9 vs 7.9 | rate 8-25 (C2) 1.5 vs 1.4
+
+== 2a''. V1 at HIGH ANGLE (the record's grind #2 condition): hands-on windows v<10 with |angle| max > 150, engaged vs disengaged, by firmware
+  V300 n eng 62 dis 217 | bar 35-50 eng 8.8 dis 9.4 | bar 15-25 eng 15.7 dis 16.3 | bar 5-9 eng 34.7 dis 23.5 | |bar| p50 eng 2644.0 dis 2613.2
+  V299 n eng 9 dis 73 | bar 35-50 eng 8.8 dis 11.4 | bar 15-25 eng 23.9 dis 19.5 | bar 5-9 eng 47.4 dis 28.8 | |bar| p50 eng 2690.0 dis 2415.1
+  V298 n eng 23 dis 35 | bar 35-50 eng 8.8 dis 7.9 | bar 15-25 eng 30.1 dis 19.3 | bar 5-9 eng 51.0 dis 27.5 | |bar| p50 eng 2464.8 dis 2347.5
+
+== 2d. C2: setpoint vs measured wheel under a hand (xcorr of first differences; cross-spectrum 0.5-5 Hz)
+  ad v<10 hands-on: xcorr lag +0 fr r 0.78 gain 0.90 | spectral tau 0.2 ms gain 0.82 coh 0.27 | HANDS-OFF tau -72.0 ms gain 0.74 | FORK desired-vs-wheel tau -8.6 ms gain 0.63 coh 0.08 ; sent-vs-wheel tau -1.1 ms gain 0.85
+  ae v<10 hands-on: xcorr lag +1 fr r 0.62 gain 0.76 | spectral tau 9.9 ms gain 0.76 coh 0.18 | HANDS-OFF tau -42.7 ms gain 1.05 | FORK desired-vs-wheel tau 4.6 ms gain 0.27 coh 0.01 ; sent-vs-wheel tau 10.1 ms gain 0.76
+  af v<10 hands-on: xcorr lag +0 fr r 0.67 gain 0.78 | spectral tau 10.9 ms gain 0.79 coh 0.18 | HANDS-OFF tau -93.1 ms gain 0.76 | FORK desired-vs-wheel tau 8.4 ms gain 0.78 coh 0.11 ; sent-vs-wheel tau 11.4 ms gain 0.80
+  b0 v<10 hands-on: xcorr lag +0 fr r 0.84 gain 0.86 | spectral tau 10.5 ms gain 0.88 coh 0.45 | HANDS-OFF tau -77.2 ms gain 0.96 | FORK desired-vs-wheel tau -46.3 ms gain 0.25 coh 0.01 ; sent-vs-wheel tau 11.6 ms gain 0.85
+  b1 v<10 hands-on: xcorr lag +1 fr r 0.61 gain 0.85 | spectral tau 3.7 ms gain 1.00 coh 0.67 | HANDS-OFF tau -78.5 ms gain 0.71 | FORK desired-vs-wheel tau 100.0 ms gain 0.11 coh 0.01 ; sent-vs-wheel tau 4.6 ms gain 0.99
+  b2 v<10 hands-on: xcorr lag +1 fr r 0.76 gain 0.87 | spectral tau -4.3 ms gain 0.81 coh 0.31 | HANDS-OFF tau -52.4 ms gain 0.67 | FORK desired-vs-wheel tau -2.6 ms gain 0.75 coh 0.07 ; sent-vs-wheel tau -4.1 ms gain 0.81
+  b3 v<10 hands-on: xcorr lag +1 fr r 0.67 gain 0.85 | spectral tau 6.9 ms gain 1.07 coh 0.33 | HANDS-OFF tau -100.7 ms gain 1.21 | FORK desired-vs-wheel tau -2.4 ms gain 0.33 coh 0.04 ; sent-vs-wheel tau 8.8 ms gain 1.08
+  b4 v<10 hands-on: xcorr lag +1 fr r 0.84 gain 0.88 | spectral tau 0.1 ms gain 0.87 coh 0.53 | HANDS-OFF tau -84.5 ms gain 0.92 | FORK desired-vs-wheel tau -29.9 ms gain 0.75 coh 0.15 ; sent-vs-wheel tau 0.7 ms gain 0.85
+  9c v<10 hands-on: xcorr lag +0 fr r 0.71 gain 0.81 | spectral tau 4.1 ms gain 0.64 coh 0.18 | HANDS-OFF tau -132.9 ms gain 1.40 | FORK desired-vs-wheel tau 1.7 ms gain 0.86 coh 0.15 ; sent-vs-wheel tau 4.4 ms gain 0.64
+  9d v<10 hands-on: xcorr lag +1 fr r 0.76 gain 0.81 | spectral tau 5.1 ms gain 0.70 coh 0.28 | HANDS-OFF tau -104.2 ms gain 1.16 | FORK desired-vs-wheel tau 19.6 ms gain 0.56 coh 0.05 ; sent-vs-wheel tau 6.6 ms gain 0.71
+  79 v<10 hands-on: xcorr lag +1 fr r 0.93 gain 1.02 | spectral tau -15.8 ms gain 1.15 coh 0.87 | HANDS-OFF tau -42.7 ms gain 0.51 | FORK desired-vs-wheel tau -22.4 ms gain 0.46 coh 0.02 ; sent-vs-wheel tau -14.7 ms gain 1.16
+
+== 2e. TOP-10 candidate grind episodes (V300, engaged, |bar| > 600, |w| > 30, v < 10; score = max over bands of the window / the pooled V300 disengaged hands-on median in its speed x rate bin)
+route | t s (segment) | v m/s | angle deg | |bar| p50 | |rate| p50 deg/s | top band (x control) | bar 5-9/15-25/35-50 | rate 5-9/15-25/35-50 | opposing-at-clip
+b0 | 690 (seg 11, +30 s) | 6.3 | -12 | 2665 | 68 | rate 15-25 (C3) x11.7 | 33/159/71 | 2.11/8.90/1.92 | 33.0 % | peak bar 29 Hz, rate 24 Hz
+ae | 745 (seg 12, +25 s) | 3.5 | -284 | 2125 | 41 | bar 5-9 (V2) x8.9 | 216/11/7 | 3.95/0.62/0.29 | 0.0 % | peak bar 5 Hz, rate 5 Hz
+b3 | 141 (seg 2, +21 s) | 5.3 | +117 | 823 | 45 | bar 15-25 (C3) x8.2 | 108/97/27 | 3.14/1.69/0.60 | 0.0 % | peak bar 9 Hz, rate 6 Hz
+b2 | 375 (seg 6, +15 s) | 6.2 | +77 | 1472 | 48 | bar 15-25 (C3) x6.7 | 36/179/18 | 4.89/2.97/0.91 | 0.0 % | peak bar 15 Hz, rate 5 Hz
+b2 | 381 (seg 6, +21 s) | 2.3 | -60 | 638 | 73 | bar 5-9 (V2) x6.5 | 132/25/7 | 4.08/0.80/0.16 | 0.0 % | peak bar 10 Hz, rate 6 Hz
+b2 | 376 (seg 6, +16 s) | 3.3 | +112 | 1849 | 32 | bar 15-25 (C3) x6.1 | 16/72/12 | 0.71/1.71/0.33 | 57.0 % | peak bar 15 Hz, rate 15 Hz
+b0 | 692 (seg 11, +32 s) | 7.2 | +40 | 2232 | 82 | rate 8-25 (C2) x5.5 | 56/98/17 | 4.88/4.10/1.36 | 0.0 % | peak bar 13 Hz, rate 5 Hz
+b3 | 737 (seg 12, +17 s) | 6.4 | -39 | 1124 | 66 | bar 5-9 (V2) x5.3 | 159/38/11 | 4.19/0.78/0.39 | 8.0 % | peak bar 9 Hz, rate 5 Hz
+b0 | 361 (seg 6, +1 s) | 4.3 | -23 | 2371 | 58 | bar 15-25 (C3) x5.1 | 25/60/28 | 2.08/2.97/1.48 | 72.0 % | peak bar 17 Hz, rate 6 Hz
+b4 | 791 (seg 13, +11 s) | 2.2 | -359 | 921 | 122 | bar 15-25 (C3) x5.0 | 87/96/21 | 4.35/1.27/0.64 | 17.0 % | peak bar 12 Hz, rate 7 Hz
+  scores of all 119 V300 engaged hands-on windows: p50 2.00 p90 4.82 max 11.66 ; same score on the disengaged control windows: p50 1.58 p90 3.06 max 25.86 (n 367)
+
+== 3. MAX ANGLE
+route | engaged setpoint peak (wire) | engaged wheel peak | wheel peak any | planner desired peak | sent peak | limiter replay agreement | frames |theta|>150 engaged: n, clip-bound, VM-bound, rate-bound
+ad | 270 | 275 | 392 | 270 | 270 | 99.8 % | 962, 26.2 %, 0.0 %, 16.0 %
+ae | 317 | 305 | 389 | 388 | 317 | 100.0 % | 1485, 48.3 %, 0.0 %, 28.4 %
+af | 245 | 229 | 396 | 278 | 245 | 99.8 % | 1610, 28.3 %, 0.0 %, 18.1 %
+b0 | 373 | 390 | 393 | 332 | 373 | 99.9 % | 1940, 82.2 %, 0.0 %, 42.2 %
+b1 | 132 | 126 | 393 | 132 | 132 | 100.0 % | 0, -, -, -
+b2 | 330 | 346 | 394 | 301 | 330 | 100.0 % | 1971, 48.8 %, 0.0 %, 23.0 %
+b3 | 186 | 176 | 394 | 203 | 186 | 99.8 % | 486, 48.4 %, 0.0 %, 11.9 %
+b4 | 368 | 386 | 395 | 270 | 368 | 100.0 % | 487, 72.3 %, 0.0 %, 36.1 %
+9c | 267 | 274 | 388 | 267 | 267 | 99.9 % | 499, 15.6 %, 0.0 %, 14.6 %
+9d | 288 | 305 | 391 | 267 | 288 | 99.8 % | 480, 46.9 %, 0.0 %, 19.2 %
+79 | 388 | 388 | 394 | 374 | 388 | 79.4 % | 3269, 59.5 %, 0.0 %, 24.0 %
+
+  WHEEL SHORT OF THE PLANNER (|desired| > 30, desired - wheel > 2 deg outward): which bound, by speed band, pooled V300
+  V300
+    0-3      20.0 s short | VM 0.0 %  clip 46.9 %  rate 6.4 %  none-of-the-fork-bounds 46.7 % | shortfall p50 (route medians) 16/31/5/20/37/52/8 deg | |wheel| p50 22/241/196/32/85/91/105
+    3-6      56.5 s short | VM 0.0 %  clip 60.2 %  rate 4.3 %  none-of-the-fork-bounds 35.5 % | shortfall p50 (route medians) 19/28/14/21/36/21/18/11 deg | |wheel| p50 35/156/135/66/47/165/113/73
+    6-10     83.1 s short | VM 0.0 %  clip 43.7 %  rate 3.7 %  none-of-the-fork-bounds 52.6 % | shortfall p50 (route medians) 16/21/8/10/15/13/8/16 deg | |wheel| p50 88/50/91/36/110/49/77/57
+    10-15    52.7 s short | VM 21.3 %  clip 15.2 %  rate 5.7 %  none-of-the-fork-bounds 57.8 % | shortfall p50 (route medians) 4/7/8/10/9/7 deg | |wheel| p50 45/57/60/58/38/60
+    15-22     2.4 s short | VM 25.0 %  clip 35.0 %  rate 8.8 %  none-of-the-fork-bounds 31.2 % | shortfall p50 (route medians) 9/9 deg | |wheel| p50 29/23
+  V299
+    3-6      10.7 s short | VM 0.0 %  clip 37.3 %  rate 4.8 %  none-of-the-fork-bounds 58.0 % | shortfall p50 (route medians) 10/13 deg | |wheel| p50 128/68
+    6-10      6.6 s short | VM 0.0 %  clip 16.1 %  rate 5.9 %  none-of-the-fork-bounds 78.0 % | shortfall p50 (route medians) 6/8 deg | |wheel| p50 96/47
+    10-15     9.2 s short | VM 44.5 %  clip 28.8 %  rate 3.0 %  none-of-the-fork-bounds 23.6 % | shortfall p50 (route medians) 9 deg | |wheel| p50 54
+  V298
+    0-3       5.2 s short | VM 0.0 %  clip 43.0 %  rate 4.2 %  none-of-the-fork-bounds 52.8 % | shortfall p50 (route medians) 8 deg | |wheel| p50 102
+    3-6      22.8 s short | VM 0.0 %  clip 66.8 %  rate 5.6 %  none-of-the-fork-bounds 27.6 % | shortfall p50 (route medians) 30 deg | |wheel| p50 98
+    6-10     16.4 s short | VM 0.0 %  clip 56.0 %  rate 1.8 %  none-of-the-fork-bounds 42.2 % | shortfall p50 (route medians) 20 deg | |wheel| p50 36
+    10-15     6.7 s short | VM 20.5 %  clip 37.8 %  rate 1.2 %  none-of-the-fork-bounds 40.5 % | shortfall p50 (route medians) 17 deg | |wheel| p50 30
+    15-22     1.2 s short | VM 13.9 %  clip 34.4 %  rate 9.0 %  none-of-the-fork-bounds 42.6 % | shortfall p50 (route medians) 9 deg | |wheel| p50 31
+
+  HANDS-OFF (|bar| < 300 for 0.5 s) + QUASI-STATIC (|d desired/dt| < 10 deg/s for 0.5 s) short-of-planner, by firmware
+  V300  hands-off engaged peak |wheel| per route: 64.3/304.1/221.5/188.1/29.9/112.6/169.8/133.1 ; hands-off s at |theta|>150: 0.0/0.4/1.5/0.2/0.0/0.0/0.1/0.0 (clip duty -/57.1 %/7.3 %/100.0 %/-/-/0.0 %/-)
+    0-3       1.2 s | VM 0.0 % clip 0.0 % rate 0.0 % none 100.0 % | shortfall p50 3 | |wheel| p50 206 max 206 | desired max 209
+  V299  hands-off engaged peak |wheel| per route: 17.3/154.5 ; hands-off s at |theta|>150: 0.0/0.1 (clip duty -/0.0 %)
+  V298  hands-off engaged peak |wheel| per route: 203.8 ; hands-off s at |theta|>150: 0.1 (clip duty 0.0 %)
+
+  CLIP / VM duty on all latActive frames, pooled V300, by band (all angles | |theta| > 150)
+    0-3        281 s : clip 12.8 %  VM 0.0 % | |theta|>150:  26.2 s clip 55.1 %
+    3-6        435 s : clip 16.8 %  VM 0.0 % | |theta|>150:  58.4 s clip 50.0 %
+    6-10       710 s : clip 6.6 %  VM 0.0 % | |theta|>150:   4.8 s clip 42.5 %
+    10-15     1008 s : clip 1.1 %  VM 1.6 % | |theta|>150:   0.0 s clip -
+    15-22      849 s : clip 0.3 %  VM 0.1 % | |theta|>150:   0.0 s clip -
+    >22       1471 s : clip 0.2 %  VM 0.0 % | |theta|>150:   0.0 s clip -
+
+== 3b. SATURATION ALERT duty (controlsState active rows; the timer rule of LatControl._check_saturation)
+  ad logged 1.0 % (13 eps) | OLD rule replay 1.0 % (13 eps, agrees with logged 100.0 %) | NEW rule 9b7ef55826 replay 0.1 % (1 eps, agrees 99.1 %)
+  ae logged 1.1 % (18 eps) | OLD rule replay 1.1 % (18 eps, agrees with logged 100.0 %) | NEW rule 9b7ef55826 replay 0.0 % (1 eps, agrees 98.9 %)
+  af logged 0.0 % (0 eps) | OLD rule replay 1.3 % (17 eps, agrees with logged 98.7 %) | NEW rule 9b7ef55826 replay 0.0 % (0 eps, agrees 100.0 %)
+  b0 logged 0.2 % (2 eps) | OLD rule replay 1.7 % (37 eps, agrees with logged 98.5 %) | NEW rule 9b7ef55826 replay 0.2 % (4 eps, agrees 99.6 %)
+  b1 logged 0.0 % (0 eps) | OLD rule replay 0.9 % (10 eps, agrees with logged 99.1 %) | NEW rule 9b7ef55826 replay 0.0 % (0 eps, agrees 100.0 %)
+  b2 logged 0.0 % (0 eps) | OLD rule replay 2.6 % (24 eps, agrees with logged 97.4 %) | NEW rule 9b7ef55826 replay 0.2 % (6 eps, agrees 99.8 %)
+  b3 logged 0.2 % (1 eps) | OLD rule replay 2.5 % (34 eps, agrees with logged 97.2 %) | NEW rule 9b7ef55826 replay 0.0 % (2 eps, agrees 99.8 %)
+  b4 logged 0.6 % (3 eps) | OLD rule replay 2.8 % (39 eps, agrees with logged 97.6 %) | NEW rule 9b7ef55826 replay 0.0 % (0 eps, agrees 99.4 %)
+  9c logged 1.0 % (30 eps) | OLD rule replay 1.0 % (30 eps, agrees with logged 100.0 %) | NEW rule 9b7ef55826 replay 0.0 % (0 eps, agrees 99.0 %)
+  9d logged 0.8 % (20 eps) | OLD rule replay 0.6 % (17 eps, agrees with logged 99.9 %) | NEW rule 9b7ef55826 replay 0.0 % (1 eps, agrees 99.3 %)
+  79 logged 4.2 % (64 eps) | OLD rule replay 4.1 % (65 eps, agrees with logged 99.9 %) | NEW rule 9b7ef55826 replay 1.4 % (33 eps, agrees 97.2 %)

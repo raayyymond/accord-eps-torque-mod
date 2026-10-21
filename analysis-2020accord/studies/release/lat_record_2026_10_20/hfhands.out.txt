@@ -1,0 +1,27 @@
+== r79 V298
+  dis hands-off still n= 406  rms 5-9 / 15-25 / 35-50 Hz  p50   0.7 /   1.6 /   1.3   p95   8.2 /   4.0 /   2.0
+  dis hands-off turn  n=   5  rms 5-9 / 15-25 / 35-50 Hz  p50  29.3 /  13.7 /   8.8   p95  49.3 /  20.7 /  13.2
+  dis hands-on  still n=  47  rms 5-9 / 15-25 / 35-50 Hz  p50  20.1 /   8.5 /   3.5   p95  52.9 /  22.5 /   9.8
+  dis hands-on  turn  n=  64  rms 5-9 / 15-25 / 35-50 Hz  p50  24.8 /  16.0 /   6.5   p95  80.5 /  29.9 /  15.3
+  eng hands-off still n=  47  rms 5-9 / 15-25 / 35-50 Hz  p50  33.4 /  12.5 /   4.2   p95 127.7 /  26.3 /   8.3
+  eng hands-off turn  n=  12  rms 5-9 / 15-25 / 35-50 Hz  p50  81.6 /  19.0 /   7.4   p95 302.1 /  42.2 /  17.2
+  eng hands-on  still n=  12  rms 5-9 / 15-25 / 35-50 Hz  p50  32.5 /  21.8 /   9.5   p95  42.8 /  47.2 /  14.7
+  eng hands-on  turn  n=  41  rms 5-9 / 15-25 / 35-50 Hz  p50  31.8 /  19.9 /   6.9   p95 129.8 /  49.1 /  15.6
+== r9c V299
+  dis hands-off still n= 230  rms 5-9 / 15-25 / 35-50 Hz  p50   0.5 /   0.9 /   1.0   p95   3.7 /   3.7 /   2.6
+  dis hands-off turn  n=   2  rms 5-9 / 15-25 / 35-50 Hz  p50  27.6 /  14.4 /   7.1   p95  43.0 /  15.4 /   8.2
+  dis hands-on  still n=  37  rms 5-9 / 15-25 / 35-50 Hz  p50  19.5 /   7.7 /   4.2   p95  48.5 /  19.0 /  14.1
+  dis hands-on  turn  n=  47  rms 5-9 / 15-25 / 35-50 Hz  p50  29.1 /  17.6 /   9.4   p95  74.7 /  32.0 /  16.8
+  eng hands-off still n=  28  rms 5-9 / 15-25 / 35-50 Hz  p50  19.5 /   8.6 /   3.9   p95  65.2 /  20.3 /   9.4
+  eng hands-off turn  n=   3  rms 5-9 / 15-25 / 35-50 Hz  p50 136.8 /  20.2 /   8.0   p95 185.6 /  29.1 /  10.3
+  eng hands-on  still n=   3  rms 5-9 / 15-25 / 35-50 Hz  p50  16.3 /  18.7 /   8.4   p95  34.0 /  58.0 /   8.6
+  eng hands-on  turn  n=   7  rms 5-9 / 15-25 / 35-50 Hz  p50  16.5 /  17.0 /   5.4   p95 177.6 /  28.7 /   7.6
+== r9d V299
+  dis hands-off still n= 121  rms 5-9 / 15-25 / 35-50 Hz  p50   0.8 /   2.0 /   1.4   p95  15.8 /   6.9 /   2.9
+  dis hands-off turn  n=   5  rms 5-9 / 15-25 / 35-50 Hz  p50  22.6 /  15.5 /   8.8   p95  58.2 /  28.1 /  11.2
+  dis hands-on  still n=  27  rms 5-9 / 15-25 / 35-50 Hz  p50  30.7 /   6.7 /   3.6   p95  62.9 /  24.5 /  11.0
+  dis hands-on  turn  n=  49  rms 5-9 / 15-25 / 35-50 Hz  p50  36.4 /  18.1 /   9.7   p95  72.8 /  28.9 /  18.1
+  eng hands-off still n=  69  rms 5-9 / 15-25 / 35-50 Hz  p50  24.5 /   9.9 /   3.7   p95  72.5 /  33.3 /  10.4
+  eng hands-on  still n=   2  rms 5-9 / 15-25 / 35-50 Hz  p50  16.3 /  21.4 /   6.1   p95  24.3 /  32.8 /   6.8
+  eng hands-on  turn  n=   3  rms 5-9 / 15-25 / 35-50 Hz  p50  74.7 /  22.0 /   6.7   p95  76.2 /  34.5 /  11.0
+0.6 s

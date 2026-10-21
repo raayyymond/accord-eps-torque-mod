@@ -1,0 +1,3306 @@
+{
+ "meta": {
+  "tag": "rb3_744920_al",
+  "prefix": "75604b0a432fdc89_000000b3--7449208c37",
+  "source": "route",
+  "carfw": [
+   {
+    "ecu": "gateway",
+    "fw": "38897-TVA-A010\u0000\u0000",
+    "addr": 417001457
+   },
+   {
+    "ecu": "transmission",
+    "fw": "28102-6B8-A800\u0000\u0000",
+    "addr": 416947953
+   },
+   {
+    "ecu": "programmedFuelInjection",
+    "fw": "37805-6B2-A810\u0000\u0000",
+    "addr": 416944369
+   },
+   {
+    "ecu": "hud",
+    "fw": "78209-TVA-A010\u0000\u0000",
+    "addr": 416965105
+   },
+   {
+    "ecu": "vsa",
+    "fw": "57114-TVA-C060\u0000\u0000",
+    "addr": 416950513
+   },
+   {
+    "ecu": "fwdCamera",
+    "fw": "36161-TVA-A060\u0000\u0000",
+    "addr": 416986609
+   },
+   {
+    "ecu": "electricBrakeBooster",
+    "fw": "46114-TVA-A120\u0000\u0000",
+    "addr": 416951281
+   },
+   {
+    "ecu": "srs",
+    "fw": "77959-TVA-A460\u0000\u0000",
+    "addr": 416961521
+   },
+   {
+    "ecu": "eps",
+    "fw": "39990-TVA,A16C\u0000\u0000",
+    "addr": 416952561
+   },
+   {
+    "ecu": "fwdRadar",
+    "fw": "36802-TVA-A170\u0000\u0000",
+    "addr": 416985329
+   },
+   {
+    "ecu": "shiftByWire",
+    "fw": "54008-TVC-A910\u0000\u0000",
+    "addr": 416943089
+   },
+   {
+    "ecu": "combinationMeter",
+    "fw": "78109-TVC-A220\u0000\u0000",
+    "addr": 416964849
+   },
+   {
+    "ecu": "gateway",
+    "fw": "\fL0431510\u0000\u0000\u0000\u0000                  ",
+    "addr": 417001457
+   },
+   {
+    "ecu": "programmedFuelInjection",
+    "fw": "\u000bK2302106782\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "addr": 416944369
+   },
+   {
+    "ecu": "transmission",
+    "fw": "\u0010T6B8A11D0710869A\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "addr": 416947953
+   },
+   {
+    "ecu": "electricBrakeBooster",
+    "fw": "\u000b00801118210\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "addr": 416951281
+   },
+   {
+    "ecu": "vsa",
+    "fw": "\u000b00860922592\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "addr": 416950513
+   },
+   {
+    "ecu": "fwdCamera",
+    "fw": "\u000e12402003032735\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "addr": 416986609
+   },
+   {
+    "ecu": "fwdRadar",
+    "fw": "\u000e7452200526020E\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "addr": 416985329
+   },
+   {
+    "ecu": "hud",
+    "fw": "\u0018L1321660\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "addr": 416965105
+   },
+   {
+    "ecu": "combinationMeter",
+    "fw": "\u0018L1401980\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "addr": 416964849
+   },
+   {
+    "ecu": "srs",
+    "fw": "\u000bC1CP11PSB4Y\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "addr": 416961521
+   },
+   {
+    "ecu": "shiftByWire",
+    "fw": "\u001222550510070B103980\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+    "addr": 416943089
+   },
+   {
+    "ecu": "eps",
+    "fw": "\u0011L-130520-03461268             ",
+    "addr": 416952561
+   },
+   {
+    "ecu": "fwdRadar",
+    "fw": "36802-TVA-A170\u0000\u0000",
+    "addr": 416985329
+   },
+   {
+    "ecu": "fwdCamera",
+    "fw": "36161-TVA-A060\u0000\u0000",
+    "addr": 416986609
+   }
+  ],
+  "params": {
+   "AMapKey1": "",
+   "AMapKey2": "",
+   "AOLLKASMigratedToButtonControl": "1",
+   "AccelerationPath": "1",
+   "AccelerationProfile": "0",
+   "ActiveSmallModel": "tsfdo",
+   "ActiveSmallModelName": "Terrific Super Fantastic Do Over",
+   "ActiveSmallModelVersion": "v15",
+   "AdjacentLeadsUI": "1",
+   "AdjacentPath": "0",
+   "AdjacentPathMetrics": "0",
+   "AdvancedCustomUI": "1",
+   "AdvancedLateralTune": "1",
+   "AdvancedLongitudinalTune": "1",
+   "AggressiveCoolingEnabled": "0",
+   "AggressiveFollow": "1.0",
+   "AggressiveFollowHigh": "0.8",
+   "AggressiveJerkAcceleration": "50.0",
+   "AggressiveJerkDanger": "30.0",
+   "AggressiveJerkDeceleration": "150.0",
+   "AggressiveJerkSpeed": "100.0",
+   "AggressiveJerkSpeedDecrease": "150.0",
+   "AggressivePersonalityProfile": "1",
+   "AlertVolumeControl": "0",
+   "AllowGpuModelDownloadWithoutGpu": "0",
+   "AllowImpossibleAcceleration": "0",
+   "AlphaLongitudinalEnabled": "1",
+   "AlwaysAllowUploads": "0",
+   "AlwaysOnLateral": "1",
+   "AlwaysOnLateralLKAS": "1",
+   "ApiCache_DriveStats": "{\"all\": {\"distance\": 5118.7011036318145, \"minutes\": 11762, \"routes\": 687}, \"week\": {\"distance\": 106.47124077705666, \"minutes\": 290, \"routes\": 21}}",
+   "ApiCache_NavDestinations": "[]",
+   "AthenadPid": "26224",
+   "AthenadRecentlyViewedRoutes": "75604b0a432fdc89|00000079--a1f5d2a272,0000007c--fda9720710,75604b0a432fdc89|00000086--2a05e2f4a4,75604b0a432fdc89|00000091--d7533c57f3,75604b0a432fdc89|00000090--535681730a,75604b0a432fdc89|0000009a--512c3dd0b4,75604b0a432fdc89|0000009d--371ec93849,75604b0a432fdc89|0000009c--7f2f4d267c,75604b0a432fd...",
+   "AthenadUploadQueue": "[]",
+   "AutomaticUpdates": "0",
+   "AutomaticallyDownloadModels": "1",
+   "AvailableModelArtifactFormats": "tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single_v1,tinygrad_single...",
+   "AvailableModelNames": "TR14,TR15,TR16,LeTR,Space Lab 2,Vikander,Filet-O-Fish,Vegetarian-Filet-O-Fish,Down To Ride,Down To Ride v6,UV DTR v6,Steam Powered,Falling Phoenix,Kumar's Vibe,Green Watermelon v3,Green Watermelon v5,Green Watermelon v6,Green Watermelon v8,Green Watermelon v9,Cool Green Watermelon,Firehose,Neurips,T...",
+   "AvailableModelSeries": "TR Series,TR Series,TR Series,TR Series,SL Series,Custom Series,FoF Series,FoF Series,DTR Series,DTR Series,DTR Series,SP Series,Custom Series,Custom Series,WM Series,WM Series,WM Series,WM Series,WM Series,WM Series,WM Series,NR Series,TCP Series,TCP Series,WM Series,NV Series,WM Series,WM Series,W...",
+   "AvailableModels": "tr14223,tr15223,tr16223,letr223,spacelab22223,vikander223,fof223,vfof223,dtr223,dtr6223,uvdtr6223,sp2223,fp223,kv223,gwm3223,gwm5223,gwm6223,gwm8223,gwm9223,cgwm223,bd223,nr223,tcp2223,tcp3223,fbw223,nevada223,wmi4223,wmi523,wmi623,wmi723,wmi7223,wmi823,wmi923,wmi1023,wmi1123,cd21023,op223,op323,op4...",
+   "BelowSteerSpeedVolume": "101",
+   "BlacklistedModels": "",
+   "BlindSpotMetrics": "1",
+   "BlindSpotPath": "1",
+   "BluetoothDisconnectControllersOffroad": "0",
+   "BluetoothEnabled": "0",
+   "BootCount": "201",
+   "BootLogo": "starpilot",
+   "BootLogoToDownload": "",
+   "BorderMetrics": "0",
+   "BorderWidth": "100.0",
+   "BuildMetadata": "{\"channel\": \"accord-PTM\", \"openpilot\": {\"version\": \"0.11.2\", \"release_notes\": \"Version 0.10.3 (2025-12-17)\\n========================\\n* New driving model #36249\\n  * New temporal policy architecture\\n  * New on-policy training physics noise model\\n* New driver monitoring model #36409\\n  * Trained on...",
+   "CCMLaunchAssist": "0",
+   "CCMLead": "1",
+   "CCMSetSpeedMargin": "3.0",
+   "CCMSpeed": "45.0",
+   "CCMSpeedLead": "35.0",
+   "CCStatus": "0",
+   "CECurves": "0",
+   "CECurvesLead": "0",
+   "CELead": "1",
+   "CEModelStopTime": "9.0",
+   "CEOpenRoad": "0",
+   "CESignalLaneDetection": "1",
+   "CESignalSpeed": "0.0",
+   "CESlowerLead": "1",
+   "CESpeed": "0.0",
+   "CESpeedLead": "0.0",
+   "CEStatus": "0",
+   "CEStopLights": "1",
+   "CEStoppedLead": "1",
+   "CalibratedLateralAcceleration": "2.3354909925923915",
+   "CalibrationParams": "<binary>",
+   "CalibrationProgress": "70.54166666666667",
+   "CameraOffset": "0.0",
+   "CameraView": "2",
+   "CancelButtonControl": "1",
+   "CancelButtonControlsMigrated": "0",
+   "CancelDownloadMaps": "0",
+   "CancelModelDownload": "0",
+   "CancelThemeDownload": "0",
+   "CarBatteryCapacity": "30000000",
+   "CarMake": "Honda",
+   "CarModel": "HONDA_ACCORD",
+   "CarModelName": "Honda Accord 2018-22",
+   "CarParamsPersistent": "<binary>",
+   "CarParamsPrevRoute": "<binary>",
+   "ClearNavOnOffroad": "1",
+   "ClearNavOnOffroadTimeoutMinutes": "0",
+   "ClusterOffset": "1.0",
+   "ColorScheme": "stock",
+   "ColorToDownload": "",
+   "CommunityFavorites": "gwm8223,sc23,pop223",
+   "Compass": "0",
+   "CompletedTrainingVersion": "0.2.0",
+   "ConditionalChill": "0",
+   "ConditionalExperimental": "1",
+   "ControllerActionSlots": "[]",
+   "CurrentBootlog": "000000c8--103b42ceb3",
+   "CurvatureData": "",
+   "CurveSpeedController": "1",
+   "CurveSpeedControllerNoLead": "0",
+   "CustomAccelProfile": "0",
+   "CustomAccelProfile0MPH": "3.0",
+   "CustomAccelProfile11MPH": "2.5",
+   "CustomAccelProfile22MPH": "2.0",
+   "CustomAccelProfile34MPH": "1.5",
+   "CustomAccelProfile45MPH": "1.0",
+   "CustomAccelProfile56MPH": "0.8",
+   "CustomAccelProfile89MPH": "0.6",
+   "CustomAccelProfileBreakpoint10MPH": "123.031496",
+   "CustomAccelProfileBreakpoint11MPH": "134.216178",
+   "CustomAccelProfileBreakpoint12MPH": "145.400859",
+   "CustomAccelProfileBreakpoint1MPH": "0.0",
+   "CustomAccelProfileBreakpoint2MPH": "11.184681",
+   "CustomAccelProfileBreakpoint3MPH": "22.369363",
+   "CustomAccelProfileBreakpoint4MPH": "33.554044",
+   "CustomAccelProfileBreakpoint5MPH": "44.738726",
+   "CustomAccelProfileBreakpoint6MPH": "55.923407",
+   "CustomAccelProfileBreakpoint7MPH": "89.477452",
+   "CustomAccelProfileBreakpoint8MPH": "100.662133",
+   "CustomAccelProfileBreakpoint9MPH": "111.846815",
+   "CustomAccelProfileBreakpointsInitialized": "0",
+   "CustomAccelProfileInitialized": "0",
+   "CustomAccelProfilePoint10Accel": "0.45",
+   "CustomAccelProfilePoint11Accel": "0.4",
+   "CustomAccelProfilePoint12Accel": "0.35",
+   "CustomAccelProfilePoint1Accel": "3.0",
+   "CustomAccelProfilePoint2Accel": "2.5",
+   "CustomAccelProfilePoint3Accel": "2.0",
+   "CustomAccelProfilePoint4Accel": "1.5",
+   "CustomAccelProfilePoint5Accel": "1.0",
+   "CustomAccelProfilePoint6Accel": "0.8",
+   "CustomAccelProfilePoint7Accel": "0.6",
+   "CustomAccelProfilePoint8Accel": "0.55",
+   "CustomAccelProfilePoint9Accel": "0.5",
+   "CustomAccelProfilePointCount": "7",
+   "CustomAlerts": "0",
+   "CustomCruise": "5.0",
+   "CustomCruiseLong": "1.0",
+   "CustomPersonalities": "1",
+   "CustomThemes": "0",
+   "CustomUI": "1",
+   "DebugMode": "0",
+   "DecelerationProfile": "2",
+   "DeveloperMetrics": "1",
+   "DeveloperSidebar": "1",
+   "DeveloperSidebarMetric1": "1",
+   "DeveloperSidebarMetric2": "2",
+   "DeveloperSidebarMetric3": "3",
+   "DeveloperSidebarMetric4": "4",
+   "DeveloperSidebarMetric5": "5",
+   "DeveloperSidebarMetric6": "6",
+   "DeveloperSidebarMetric7": "7",
+   "DeveloperUI": "0",
+   "DeveloperWidgets": "1",
+   "DeviceManagement": "1",
+   "DeviceShutdown": "6",
+   "DisableOnroadUploads": "0",
+   "DisableOpenpilotLongitudinal": "0",
+   "DisableWideRoad": "0",
+   "DiscordUsername": "",
+   "DisengageOnAccelerator": "0",
+   "DisengageVolume": "101",
+   "DistanceButtonControl": "1",
+   "DistanceIconPack": "stock",
+   "DistanceIconToDownload": "",
+   "DongleId": "75604b0a432fdc89",
+   "DownloadAllModels": "0",
+   "DownloadMaps": "0",
+   "DownloadableBootLogos": "Galaxy,Kaofui,KaofuiChristmas,Luky,StarPilotChristmas,Stock,StockChristmas,TotallyTune,TotallyTuneChristmas",
+   "DownloadableColors": "Duck,Stalin,Tesla,Weeb",
+   "DownloadableDistanceIcons": "Aggressive,Kaofui,Relaxed,Standard,Traffic",
+   "DownloadableIcons": "Duck,Frog,Kaofui,Stalin,Tesla,Weeb",
+   "DownloadableSignals": "Duck,Tesla,Weeb",
+   "DownloadableSounds": "Duck,Old Engage Sounds,Stalin,Tesla,Weeb",
+   "DownloadableWheels": "Chevy Bolt,Chevy Truck,Chevy Volt,Dancing Duck,Hyundai,Kia,Lexus,Miyano,Monka Steer,Pedro,Rocket,Rubber Duck,Stalin,Toyota,Vibe Cat,Waving Frog,Weeb",
+   "DriverCamera": "0",
+   "DrivingModel": "tsfdo",
+   "DrivingModelName": "Terrific Super Fantastic Do Over",
+   "DrivingModelVersion": "v15",
+   "DynamicPathWidth": "0",
+   "DynamicPedalsOnUI": "1",
+   "EVTuning": "0",
+   "EnableTorqueBarWidget": "1",
+   "EngageVolume": "101",
+   "FLMActiveOverrides": "{}",
+   "FLMActiveProfileId": "",
+   "FLMSubmittedTune": "{}",
+   "FLMTrialApplied": "0",
+   "FLMTrialBaseline": "",
+   "FPSCounter": "0",
+   "Fahrenheit": "0",
+   "FavoriteDestinations": "[]",
+   "FavoriteTrafficModeCounter": "0",
+   "FavoriteVirtualAccelCruiseCounter": "0",
+   "FavoriteVirtualDecelCruiseCounter": "0",
+   "FlashPanda": "0",
+   "ForceAutoTune": "0",
+   "ForceAutoTuneOff": "1",
+   "ForceFingerprint": "0",
+   "ForceOffroad": "0",
+   "ForceOnroad": "0",
+   "ForceStandstill": "0",
+   "ForceStopDistanceOffset": "0",
+   "ForceStops": "0",
+   "ForceTorqueController": "1",
+   "FordCurvatureBlendHigh": "0.4",
+   "FordCurvatureBlendLow": "0.4",
+   "FordCurvatureLaneChangeFactor": "0.85",
+   "FordHandsFreeCluster": "0",
+   "FordHumanTurnDetection": "1",
+   "FordLKASButtonControlMigrated": "0",
+   "GMAutoHold": "0",
+   "GMDashSpoofOffsets": "0",
+   "GMPedalLongitudinal": "1",
+   "GalaxyDashboardStats": "",
+   "GalaxyDeveloperMode": "",
+   "GalaxyDeviceName": "",
+   "GalaxyMobileDefault": "",
+   "GalaxyPaired": "0",
+   "GalaxyUploadPending": "0",
+   "GitBranch": "accord-PTM",
+   "GitCommit": "311c4cc0b7ca605576b6b9e73a76117efc596a9b",
+   "GitCommitDate": "'1792379411 2026-10-18 20:10:11 -0700'",
+   "GitDiff": "diff --git a/starpilot/assets/active_theme/colors b/starpilot/assets/active_theme/colors\nindex ae64ab1c..41291274 120000\n--- a/starpilot/assets/active_theme/colors\n+++ b/starpilot/assets/active_theme/colors\n@@ -1 +1 @@\n-../stock_theme/colors\n\\ No newline at end of file\n+/data/openpilot/openpilot/sta...",
+   "GitRemote": "https://github.com/raayyymond/StarPilot.git",
+   "GithubSshKeys": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM/iXailOJQ8Mkk5E+nGtbmBA/VHCmcyD2jUiTwf/yzQ\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSCXxDSMPj2/93OI+Sj3bkbsNdux9h4slRp/CMiMmJT\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILkI3CyhhqdnX/Dv7vkWCHhQntXjNvpUwXDo4z2bXgf9\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMUnyz9qrDt+RIK4HyrXL...",
+   "GithubUsername": "raayyymond",
+   "GoatScream": "0",
+   "GoatScreamCriticalAlerts": "0",
+   "GpuModelReadySound": "0",
+   "GreenLightAlert": "1",
+   "GsmMetered": "1",
+   "HKGRemoteStartBootsComma": "0",
+   "HardwareSerial": "7fe43f61",
+   "HasAcceptedTerms": "2",
+   "HideAlerts": "0",
+   "HideChangingLanesBanner": "0",
+   "HideDMIcon": "0",
+   "HideDistanceProfileBanner": "0",
+   "HideLeadMarker": "0",
+   "HideMaxSpeed": "0",
+   "HideSpeed": "0",
+   "HideSpeedLimit": "0",
+   "HideSteeringWheel": "0",
+   "HideTurningBanner": "0",
+   "HigherBitrate": "0",
+   "HolidayThemes": "1",
+   "HondaBoschARadar": "1",
+   "HondaGasFactorParams": "0.3341646431295513",
+   "HondaLateralPidKiScale": "1.0",
+   "HondaLateralPidKpScale": "1.0",
+   "HondaWindFactorParams": "1.9470337132737823",
+   "HumanLaneChanges": "0",
+   "IconPack": "stock",
+   "IconToDownload": "",
+   "IgnoreIgnitionLine": "0",
+   "IncreaseFollowingLowVisibility": "0.0",
+   "IncreaseFollowingRain": "0.0",
+   "IncreaseFollowingRainStorm": "0.0",
+   "IncreaseFollowingSnow": "0.0",
+   "IncreaseThermalLimits": "0",
+   "IncreasedStoppedDistance": "0.0",
+   "IncreasedStoppedDistanceLowVisibility": "0.0",
+   "IncreasedStoppedDistanceRain": "0.0",
+   "IncreasedStoppedDistanceRainStorm": "0.0",
+   "IncreasedStoppedDistanceSnow": "0.0",
+   "InstallDate": "2026-07-28T15:05:13.704484",
+   "IsEngaged": "0",
+   "IsOffroad": "0",
+   "IsOnroad": "1",
+   "IsRHD": "0",
+   "IsReleaseBranch": "0",
+   "IsRhdDetected": "0",
+   "IsTestedBranch": "0",
+   "IssueReported": "{}",
+   "JeepBrakeHold": "0",
+   "KeepScreenOnGpuLoading": "0",
+   "KonikDongleId": "",
+   "KonikMinutes": "0",
+   "LKASButtonControl": "9",
+   "LaneCenterOffset": "0.0",
+   "LaneCentering": "1",
+   "LaneCenteringE2EAuthority": "0.2",
+   "LaneCenteringPauseOnSignal": "1",
+   "LaneChangeCloseGap": "0",
+   "LaneChangeCloseGapSeconds": "0.6",
+   "LaneChangeSmoothing": "4",
+   "LaneChangeTime": "0.4",
+   "LaneChanges": "1",
+   "LaneDetectionWidth": "0.0",
+   "LaneLinesColor": "",
+   "LaneLinesWidth": "4.0",
+   "LanguageSetting": "main_en",
+   "LastGPSPosition": "{\"latitude\": 37.4000195, \"longitude\": -122.065501, \"bearing\": 192.80288696289062, \"speed\": 0.0, \"hasFix\": true, \"updatedAtMonotonic\": 11468.652890467, \"updatedAtSec\": 1792466367.1046054}",
+   "LastMapsUpdate": "",
+   "LastOffroadStatusPacket": "{\"count\": 2, \"pandaStates\": [{\"voltage\": 14102, \"current\": 230, \"ignitionLine\": true, \"controlsAllowed\": false, \"rxBufferOverflow\": 0, \"txBufferOverflow\": 0, \"pandaType\": \"cuatro\", \"ignitionCan\": false, \"safetyModel\": \"noOutput\", \"faultStatus\": \"none\", \"powerSaveEnabled\": false, \"uptime\": 10, \"fault...",
+   "LastUpdateRouteCount": "177",
+   "LastUpdateTime": "2026-10-20T00:09:44.520690",
+   "LastUpdateUptimeOnroad": "173111.2949604178",
+   "LatSmoothSeconds": "0.1",
+   "LateralManeuverStatus": "{}",
+   "LateralResumeDelay": "0.0",
+   "LateralTune": "1",
+   "LeadDepartingAlert": "1",
+   "LeadDetectionThreshold": "35",
+   "LeadIndicator": "1",
+   "LeadInfo": "1",
+   "LeadInfoMode": "2",
+   "LiveDelay": "<binary>",
+   "LiveParametersV2": "<binary>",
+   "LiveTorqueParameters": "",
+   "LockDoors": "1",
+   "LockDoorsTimer": "0",
+   "LongCancelButtonControl": "5",
+   "LongDistanceButtonControl": "5",
+   "LongModeButtonControl": "0",
+   "LongPitch": "1",
+   "LongSmoothSeconds": "0.3",
+   "LongStarButtonControl": "0",
+   "LongitudinalActuatorDelay": "0.3",
+   "LongitudinalActuatorDelayStock": "0.5",
+   "LongitudinalManeuverPaddleMode": "auto",
+   "LongitudinalManeuverStatus": "{}",
+   "LongitudinalPersonality": "0",
+   "LongitudinalPersonalityProfiles": "",
+   "LongitudinalTune": "1",
+   "LoudBlindspotAlert": "1",
+   "LoudBlindspotAlertWhenDisengaged": "0",
+   "LowVoltageShutdown": "11.8",
+   "MainCruiseButtonControl": "0",
+   "ManualUpdateInitiated": "0",
+   "MapAcceleration": "0",
+   "MapBoxRequests": "{}",
+   "MapDeceleration": "0",
+   "MapGears": "0",
+   "MapSpeedLimit": "0.0",
+   "MapboxPublicKey": "",
+   "MapboxSecretKey": "",
+   "MapdSettings": "{}",
+   "MapsDownloadProgress": "",
+   "MapsDownloadSizeCache": "{\"version\":2,\"storageBytes\":0,\"selections\":{}}",
+   "MapsSelected": "",
+   "MaxDesiredAcceleration": "4.0",
+   "MinimumBackupSize": "2945832780",
+   "MinimumLaneChangeSpeed": "20.0",
+   "ModeButtonControl": "0",
+   "Model": "tsfdo",
+   "ModelDownloadProgress": "",
+   "ModelDrivesAndScores": "{}",
+   "ModelLabConfig": "{}",
+   "ModelLabModelToDownload": "",
+   "ModelLabRuntime": "{}",
+   "ModelManifestVersion": "v25",
+   "ModelRandomizer": "0",
+   "ModelReleasedDates": "2025-06-30,2025-07-11,2025-07-21,2025-07-14,2025-07-26,2025-05-03,2025-03-07,2025-06-21,2025-07-08,2025-08-12,2025-08-13,2025-08-16,2025-08-14,2025-08-16,2025-08-22,2025-09-09,2025-09-20,2025-09-28,2025-10-21,2025-10-24,2025-08-31,2025-11-12,2025-10-09,2025-10-10,2025-09-04,2025-09-07,2025-12-22,202...",
+   "ModelSortMode": "alphabetical",
+   "ModelToDownload": "",
+   "ModelUI": "1",
+   "ModelVersion": "v15",
+   "ModelVersions": "v8,v8,v8,v8,v8,v8,v9,v9,v8,v10,v10,v10,v10,v10,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v11,v12,v12,v12,v12,v12,v12,v12,v12,v12,v12,v12,v14,v15,v15,v15,v15,v15,v15,v15,v15,v15,v15,v15,v15,v15,v15,v11,v11,v11,v11,v11,v11,v11,v11,v9,v15,v15,v15,v15,v15,v15,v1...",
+   "NAPAdaptiveAccel": "1",
+   "NAPFollowDistance": "4",
+   "NAPForcePreAP": "0",
+   "NAPPedalCalibDone": "0",
+   "NAPPedalCalibFactor": "1.0",
+   "NAPPedalCalibMax": "99.6",
+   "NAPPedalCalibMin": "-3.0",
+   "NAPPedalCalibZero": "0.0",
+   "NAPPedalCanBus": "2",
+   "NAPPedalEnabled": "0",
+   "NAPPedalProfile": "4",
+   "NAPRadarBehindNosecone": "0",
+   "NAPRadarEnabled": "0",
+   "NAPRadarOffset": "0.0",
+   "NNFF": "0",
+   "NNFFLite": "0",
+   "NNFFModelName": "",
+   "NavDesiresAllowed": "0",
+   "NavDestination": "",
+   "NavInstructionCollapsed": "0",
+   "NavInstructionState": "{}",
+   "NavLanePositioningAllowed": "0",
+   "NavLongitudinalAllowed": "0",
+   "NavigationUI": "0",
+   "NetworkMetered": "0",
+   "NextMapSpeedLimit": "{}",
+   "NoLogging": "0",
+   "NoUploads": "0",
+   "NostalgiaMode": "0",
+   "NudgelessLaneChange": "1",
+   "NudgelessLaneChangeOnlyWhenEngaged": "0",
+   "NumericalTemp": "0",
+   "Offset1": "5.0",
+   "Offset2": "5.0",
+   "Offset3": "5.0",
+   "Offset4": "5.0",
+   "Offset5": "10.0",
+   "Offset6": "10.0",
+   "Offset7": "10.0",
+   "OneLaneChange": "0",
+   "OnroadCycleRequested": "0",
+   "OnroadDistanceButton": "0",
+   "OnroadDistanceButtonPressed": "0",
+   "OpenpilotEnabledToggle": "1",
+   "OverpassRequests": "{}",
+   "PIPPreviewEnabled": "0",
+   "PIPPreviewInvert": "0",
+   "PIPPreviewMask": "{\"width\": 1928, \"height\": 1208, \"center_left\": [315, 548], \"center_right\": [1571, 539], \"crop_size\": 580}",
+   "PIPPreviewShowOnBSM": "0",
+   "PIPPreviewShowOnBlinker": "0",
+   "PandaSignatures": "<binary>",
+   "PathColor": "",
+   "PathEdgeWidth": "20.0",
+   "PathEdgesColor": "",
+   "PathWidth": "6.1",
+   "PauseAOLOnBrake": "0",
+   "PauseLateralOnSignal": "0",
+   "PauseLateralSpeed": "0.0",
+   "PedalsOnUI": "0",
+   "PersistChillState": "0",
+   "PersistExperimentalState": "0",
+   "PersistedCCStatus": "0",
+   "PersistedCEStatus": "0",
+   "PreferredSchedule": "2",
+   "PreviousSpeedLimit": "0.0",
+   "PrimeType": "0",
+   "PriusClusterOffsetMigrated": "0",
+   "PromptDistractedVolume": "101",
+   "PromptVolume": "101",
+   "PulseGlideSpeedDelta": "5.0",
+   "QOLLateral": "1",
+   "QOLLongitudinal": "1",
+   "QOLVisuals": "1",
+   "RadarTakeoffs": "1",
+   "RadarTracksUI": "0",
+   "RainbowPath": "0",
+   "RandomEvents": "0",
+   "RandomThemes": "0",
+   "RandomThemesHolidays": "0",
+   "RecordAudio": "1",
+   "RecordAudioFeedback": "0",
+   "RecordFront": "1",
+   "RecoveryPower": "1.0",
+   "RedneckCruise": "0",
+   "ReduceAccelerationLowVisibility": "0",
+   "ReduceAccelerationRain": "0",
+   "ReduceAccelerationRainStorm": "0",
+   "ReduceAccelerationSnow": "0",
+   "ReduceLateralAccelerationLowVisibility": "0",
+   "ReduceLateralAccelerationRain": "0",
+   "ReduceLateralAccelerationRainStorm": "0",
+   "ReduceLateralAccelerationSnow": "0",
+   "RefuseVolume": "101",
+   "RelaxedFollow": "1.6",
+   "RelaxedFollowHigh": "1.4",
+   "RelaxedJerkAcceleration": "100.0",
+   "RelaxedJerkDanger": "100.0",
+   "RelaxedJerkDeceleration": "100.0",
+   "RelaxedJerkSpeed": "100.0",
+   "RelaxedJerkSpeedDecrease": "100.0",
+   "RelaxedPersonalityProfile": "0",
+   "RemapCancelToDistance": "0",
+   "RemoteStartBootsComma": "0",
+   "ReverseCruise": "1",
+   "RivianAngleControl": "0",
+   "RoadEdgesWidth": "2.0",
+   "RoadNameUI": "1",
+   "RotatingWheel": "1",
+   "RouteCount": "180",
+   "SLCAbbreviatedSources": "0",
+   "SLCActiveSourcesOnly": "0",
+   "SLCAdoptSpeedLimit": "0",
+   "SLCConfirmation": "0",
+   "SLCConfirmationHigher": "0",
+   "SLCConfirmationLower": "0",
+   "SLCFallback": "2",
+   "SLCForceCruiseSpeed": "0.0",
+   "SLCLookaheadHigher": "0",
+   "SLCLookaheadLower": "0",
+   "SLCMapboxFiller": "1",
+   "SLCOverride": "1",
+   "SLCPriority": "",
+   "SLCPriority1": "Vision",
+   "SLCPriority2": "Map Data",
+   "SNGHack": "1",
+   "SafeMode": "0",
+   "ScreenBrightness": "101",
+   "ScreenBrightnessManual": "100",
+   "ScreenBrightnessOffset": "0",
+   "ScreenBrightnessOnroad": "101",
+   "ScreenBrightnessOnroadManual": "100",
+   "ScreenBrightnessOnroadOffset": "0",
+   "ScreenManagement": "1",
+   "ScreenOffToggleCounter": "",
+   "ScreenRecorder": "0",
+   "ScreenTimeout": "30",
+   "ScreenTimeoutOnroad": "30",
+   "SecOCKeys": "",
+   "SentryModeEnabled": "0",
+   "SentryModeLastEvent": "{}",
+   "SentryModeSensitivity": "0.04",
+   "SentryModeWarningTime": "1.0",
+   "SetSpeedLimit": "0",
+   "SetSpeedOffset": "0.0",
+   "ShowAllToggles": "0",
+   "ShowBrakeStatus": "0",
+   "ShowCCMStatus": "0",
+   "ShowCEMStatus": "1",
+   "ShowCPU": "0",
+   "ShowCSCStatus": "1",
+   "ShowGPU": "0",
+   "ShowIP": "0",
+   "ShowMemoryUsage": "0",
+   "ShowModeStatusBanner": "1",
+   "ShowSLCOffset": "1",
+   "ShowSpeedLimits": "1",
+   "ShowSteering": "0",
+   "ShowStoppingPoint": "1",
+   "ShowStoppingPointMetrics": "1",
+   "ShowStorageLeft": "0",
+   "ShowStorageUsed": "0",
+   "ShownToggleDescriptions": "{}",
+   "SidebarMetrics": "0",
+   "SidebarOpen": "0",
+   "SignalAnimation": "stock",
+   "SignalMetrics": "0",
+   "SignalToDownload": "",
+   "SimpleMode": "0",
+   "SonataHybridLKASButtonControlMigrated": "0",
+   "SoundPack": "stock",
+   "SoundToDownload": "",
+   "SpeedLimitAccepted": "0",
+   "SpeedLimitChangedAlert": "0",
+   "SpeedLimitController": "0",
+   "SpeedLimitFiller": "0",
+   "SpeedLimitSources": "0",
+   "SpeedLimits": "",
+   "SpeedLimitsFiltered": "",
+   "SshEnabled": "1",
+   "StandardFollow": "1.2",
+   "StandardFollowHigh": "0.95",
+   "StandardJerkAcceleration": "100.0",
+   "StandardJerkDanger": "100.0",
+   "StandardJerkDeceleration": "100.0",
+   "StandardJerkSpeed": "100.0",
+   "StandardJerkSpeedDecrease": "100.0",
+   "StandardPersonalityProfile": "1",
+   "StandbyButtonPressTime": "",
+   "StandbyMode": "0",
+   "StandbyWakeButton": "0",
+   "StandbyWakeCriticalAlert": "1",
+   "StandbyWakeDisengage": "1",
+   "StandbyWakeEngage": "1",
+   "StandbyWakeInfoAlert": "1",
+   "StandbyWakeTurnSignal": "0",
+   "StandbyWakeWarningAlert": "1",
+   "StarButtonControl": "0",
+   "StarPilotApiToken": "",
+   "StarPilotCarParamsPersistent": "\u0000\u0000\u0000\u0000\u0005\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0000\u0001\u0000 \u0000\u0000\u0000\f\u0004\u0000\u0000\u0001\u0000\u0000\u0000\u000f\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0003\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+   "StarPilotDongleId": "",
+   "StarPilotFavoriteSlots": "[]",
+   "StarPilotStats": "",
+   "StarPilotTogglesUpdated": "0",
+   "StartAccel": "0.0",
+   "StartAccelStock": "0.0",
+   "StartupMessageBottom": "Always keep hands on wheel and eyes on road",
+   "StartupMessageTop": "Be ready to take over at any time",
+   "StaticPedalsOnUI": "0",
+   "SteerDelay": "0.2",
+   "SteerDelayModeMigrated": "1",
+   "SteerDelayStock": "0.3500000059604645",
+   "SteerFriction": "0.011",
+   "SteerFrictionStock": "0.2120497077703476",
+   "SteerKP": "0.9",
+   "SteerKPStock": "0.6",
+   "SteerLatAccel": "14.0",
+   "SteerLatAccelStock": "1.689333438873291",
+   "SteerOffset": "0.0",
+   "SteerOffsetStock": "0.0",
+   "SteerRatio": "16.84",
+   "SteerRatioStock": "16.329999923706055",
+   "StingerObjectShadow": "0",
+   "StockConfidenceBallWidget": "0",
+   "StockDongleId": "75604b0a432fdc89",
+   "StopAccel": "-2.0",
+   "StopAccelStock": "-2.0",
+   "StoppedTimer": "0",
+   "StoppingDecelRate": "0.30000001192092896",
+   "StoppingDecelRateStock": "0.30000001192092896",
+   "SubaruAvhStartup": "0",
+   "SubaruRedneckCruise": "0",
+   "SubaruSNG": "1",
+   "SubaruSNGManualParkingBrake": "0",
+   "SubaruStopStartOff": "0",
+   "SwitchbackModeCooldown": "5",
+   "SwitchbackModeEnabled": "0",
+   "TacoTune": "0",
+   "TermsVersion": "2",
+   "TeslaAOLDisengageOnBrake": "0",
+   "TeslaAOLScreenTap": "0",
+   "TeslaCoopSteering": "0",
+   "TeslaWakeOnCAN": "0",
+   "TestAlert": "",
+   "TetheringEnabled": "0",
+   "ThemeDownloadProgress": "",
+   "ThemesDownloaded": "{\"boot_logos\": [\"Starpilot\"], \"themes\": {\"Frog\": [\"colors\", \"signals\", \"sounds\"], \"Frog Animated\": [\"distance_icons\", \"icons\"]}, \"steering_wheels\": [\"Frog\"]}",
+   "Timezone": "America/Los_Angeles",
+   "TinygradUpdateAvailable": "0",
+   "ToyotaAutoHold": "0",
+   "ToyotaDoors": "1",
+   "ToyotaRadarMode": "0",
+   "TrafficFollow": "0.75",
+   "TrafficJerkAcceleration": "100.0",
+   "TrafficJerkDanger": "100.0",
+   "TrafficJerkDeceleration": "100.0",
+   "TrafficJerkSpeed": "100.0",
+   "TrafficJerkSpeedDecrease": "100.0",
+   "TrafficPersonalityProfile": "0",
+   "TrailerLoad": "0",
+   "TrainingVersion": "0.2.0",
+   "TruckTuning": "0",
+   "TuningLevel": "0",
+   "TuningLevelConfirmed": "0",
+   "TurnDesires": "1",
+   "TurnSteeringLimitMuteSpeed": "0",
+   "UbloxAvailable": "1",
+   "UnlockDoors": "1",
+   "UpdateFailedCount": "0",
+   "UpdateSpeedLimits": "0",
+   "UpdateSpeedLimitsStatus": "",
+   "UpdateTinygrad": "0",
+   "UpdateWheelImage": "0",
+   "Updated": "September 01, 2026 - 05:12PM",
+   "UpdaterAvailableBranches": "Dom,StarPilot,accord-PTM,HEAD",
+   "UpdaterCurrentDescription": "0.11.2 / accord-PTM / 311c4cc / Oct 18",
+   "UpdaterCurrentReleaseNotes": "<h1>Version 0.10.3 (2025-12-17)</h1>\n<ul>\n<li>New driving model #36249\n<ul>\n<li>New temporal policy architecture</li>\n<li>New on-policy training physics noise model</li>\n</ul>\n</li>\n<li>New driver monitoring model #36409\n<ul>\n<li>Trained on a new dataset, including comma four data</li>\n</ul>\n</li>\n<...",
+   "UpdaterFetchAvailable": "0",
+   "UpdaterLastFetchTime": "2026-09-02T00:12:40.200928",
+   "UpdaterNewDescription": "",
+   "UpdaterNewReleaseNotes": "",
+   "UpdaterState": "idle",
+   "UpdaterTargetBranch": "accord-PTM",
+   "UptimeOffroad": "2362451.0950914184",
+   "UptimeOnroad": "176021.07101373447",
+   "UseActiveTheme": "0",
+   "UseAutoSteerDelay": "1",
+   "UseKonikServer": "0",
+   "UsePrebuilt": "1",
+   "UseSI": "1",
+   "UseVienna": "0",
+   "UserFavorites": "tsfdo,rdf23",
+   "VASMAnnotationConfig": "{}",
+   "VASMConfidenceThreshold": "0.85",
+   "VASMEnabled": "0",
+   "VASMLastUpdateMonoTime": "0",
+   "VASMLeftActive": "0",
+   "VASMLeftConfidence": "0.0",
+   "VASMRightActive": "0",
+   "VASMRightConfidence": "0.0",
+   "VASMSmoothSeconds": "0.2",
+   "VASMTimestampEof": "0",
+   "VEgoStarting": "0.5",
+   "VEgoStartingStock": "0.5",
+   "VEgoStopping": "0.5",
+   "VEgoStoppingStock": "0.5",
+   "Version": "0.11.2",
+   "VeryLongCancelButtonControl": "6",
+   "VeryLongDistanceButtonControl": "6",
+   "VeryLongModeButtonControl": "0",
+   "VeryLongStarButtonControl": "0",
+   "VisionSpeedLimit": "0.0",
+   "VisionSpeedLimitAutoBookmark": "0",
+   "VisionSpeedLimitAutoPreserveSegment": "0",
+   "VisionSpeedLimitBookmarkCount": "0",
+   "VisionSpeedLimitConfidence": "0.0",
+   "VisionSpeedLimitDebugSession": "",
+   "VisionSpeedLimitDetection": "0",
+   "VisionSpeedLimitLastEvent": "",
+   "VisionSpeedLimitLowLimitFilter": "0",
+   "VisionSpeedLimitLowLimitThreshold": "25",
+   "VisionSpeedLimitStatus": "",
+   "VisionSpeedLimitStream": "",
+   "VisionSpeedLimitSupportCount": "0",
+   "VisionSpeedLimitSupportSpeed": "0.0",
+   "VisionSpeedLimitTrainingCollector": "1",
+   "VoltOnePedalMode": "0",
+   "VoltSNG": "0",
+   "WarningImmediateVolume": "101",
+   "WarningSoftVolume": "101",
+   "WeatherPresets": "0",
+   "WeatherToken": "",
+   "WheelButtonBookmarkCounter": "0",
+   "WheelControlAOLCounter": "0",
+   "WheelControlDisengageCounter": "0",
+   "WheelControlEngageCounter": "0",
+   "WheelControlForceCoastCounter": "0",
+   "WheelControlMappings": "[]",
+   "WheelControlPulseGlideCounter": "0",
+   "WheelControlStatus": "",
+   "WheelControls": "",
+   "WheelControlsEnabled": "0",
+   "WheelIcon": "stock",
+   "WheelSpeed": "0",
+   "WheelToDownload": "",
+   "openpilotMinutes": "11762"
+  },
+  "git": {
+   "commit": "311c4cc0b7ca605576b6b9e73a76117efc596a9b",
+   "branch": "accord-PTM",
+   "remote": "https://github.com/raayyymond/StarPilot.git"
+  },
+  "cam": {
+   "n": 89418,
+   "n_req": 826,
+   "max_abs": 1182.0
+  },
+  "tap": {
+   "available": false,
+   "letter": "A16C",
+   "why": "fwVersion 39990-TVA,A16C = V300 (release): telemetry removed (0x1AB is Honda's motor torque; 0x14A byte 4 bits 3-7 are stock)"
+  },
+  "fork_extract_s": 21.143985271453857
+ },
+ "exposure": {
+  "5-8": {
+   "eng_s": 61.36,
+   "handsoff_s": 52.4
+  },
+  "8-10": {
+   "eng_s": 35.55,
+   "handsoff_s": 34.55
+  },
+  "10-12.5": {
+   "eng_s": 64.52,
+   "handsoff_s": 61.78
+  },
+  "12.5-15": {
+   "eng_s": 56.46,
+   "handsoff_s": 56.38
+  },
+  "15-22": {
+   "eng_s": 80.85,
+   "handsoff_s": 80.8
+  },
+  ">22": {
+   "eng_s": 228.02,
+   "handsoff_s": 227.89
+  },
+  "<5": {
+   "eng_s": 66.9,
+   "handsoff_s": 58.39
+  },
+  "engaged_s": 593.66,
+  "n_episodes": 4
+ },
+ "attrib": {
+  "eps_fw": [
+   "39990-TVA,A16C",
+   "\u0011L-130520-03461268"
+  ],
+  "live_image": true,
+  "image_letter": "A16C",
+  "params": {
+   "SteerDelay": "0.2",
+   "UseAutoSteerDelay": "1",
+   "AlwaysOnLateral": "1",
+   "SteerRatio": "16.84",
+   "ForceTorqueController": "1",
+   "GitCommit": "311c4cc0b7ca605576b6b9e73a76117efc596a9b",
+   "GitBranch": "accord-PTM"
+  },
+  "cam": {
+   "n": 89418,
+   "n_req": 826,
+   "max_abs": 1182.0
+  },
+  "git": {
+   "commit": "311c4cc0b7ca605576b6b9e73a76117efc596a9b",
+   "branch": "accord-PTM",
+   "remote": "https://github.com/raayyymond/StarPilot.git"
+  },
+  "fork_inactive_match": 0.34364963503649637,
+  "n_inactive": 10275,
+  "raw_max": 1863.0
+ },
+ "tap": {
+  "available": false,
+  "letter": "A16C",
+  "why": "fwVersion 39990-TVA,A16C = V300 (release): telemetry removed (0x1AB is Honda's motor torque; 0x14A byte 4 bits 3-7 are stock)"
+ },
+ "a2": null,
+ "reg_struct_v0": null,
+ "reg_struct": null,
+ "struct_inputs": null,
+ "replay": null,
+ "replay_corrected": null,
+ "reg_r1b": null,
+ "verdict": null,
+ "reg": null,
+ "verdict_literal": null,
+ "r2": null,
+ "friction": null,
+ "light": null,
+ "r3": {
+  "fire": false,
+  "n": 0,
+  "n_review": 0,
+  "events": [],
+  "review": []
+ },
+ "r6": {
+  "fire": false,
+  "n": 0,
+  "events": []
+ },
+ "r8": {
+  "fire": false,
+  "bad_status": 0,
+  "bad_b4": 0,
+  "have_status": true,
+  "have_b4": true,
+  "n": 59366
+ },
+ "census": {
+  "w18": {
+   "n_seg": 459,
+   "lines": []
+  },
+  "bar": {
+   "n_seg": 459,
+   "lines": []
+  }
+ },
+ "r4": {
+  "fire": false,
+  "new": []
+ },
+ "rp": {
+  "presence": {
+   "n_win": 959,
+   "n_pres": 0,
+   "pres_pct": 0.0,
+   "amp_p50": NaN,
+   "amp_p90": NaN,
+   "f0_p50": NaN
+  },
+  "presence_all": {
+   "n_win": 1173,
+   "n_pres": 2,
+   "pres_pct": 0.17050298380221654,
+   "amp_p50": 0.9182067651148258,
+   "amp_p90": 1.086251291258554,
+   "f0_p50": 23.866519788914786
+  },
+  "strongturn": {
+   "hi_ang_s": 35.61,
+   "n_eps": 2,
+   "n_hi": 2,
+   "n_f7": 0,
+   "f7_per100": 0.0,
+   "f7_fdom": [],
+   "f7_per100_thr80": 0.0,
+   "f7_per100_thr60": 0.0,
+   "f7_per100_thr40": 0.0,
+   "n_win": 47,
+   "n_win_all": 47,
+   "ripL_p50_all": NaN,
+   "ripL_p90_all": NaN,
+   "rip_abs_p50_all": NaN,
+   "lvl_p50_all": NaN,
+   "rate68_p50_all": 1.4793020307413736,
+   "f0_p50_all": 6.0,
+   "n_win_light": 40,
+   "ripL_p50_light": NaN,
+   "ripL_p90_light": NaN,
+   "rip_abs_p50_light": NaN,
+   "lvl_p50_light": NaN,
+   "rate68_p50_light": 1.7519475488491467,
+   "f0_p50_light": 6.0,
+   "t_s_ang30_off": 22.42,
+   "w59_ang30_off": 2.505025537701177,
+   "w1822_ang30_off": 0.6020255575912316,
+   "T68_ang30_off": NaN,
+   "t_s_ang30_light": 4.75
+  },
+  "spectra": {
+   "hands-off creep 1-3 m/s": {
+    "t_s": 20.95,
+    "n_seg": 3,
+    "amps": null
+   },
+   "hands-off 3-8 m/s": {
+    "t_s": 80.11,
+    "n_seg": 24,
+    "amps": {
+     "5-9": 0.9961025415826077,
+     "9-13": 0.3902292967478904,
+     "13-17": 0.34405048008234773,
+     "18-22": 0.28079046620292986,
+     "22-26": 0.19621015246683868,
+     "26-30": 0.1856397826010478
+    },
+    "lines": {
+     "10-17": [
+      11.71875,
+      1.2604579912445943
+     ],
+     "17-24": [
+      19.921875,
+      3.850567048157881
+     ],
+     "22-30": [
+      25.78125,
+      1.3795177037026662
+     ],
+     "5-9.5": [
+      8.984375,
+      1.2956185359371495
+     ]
+    }
+   },
+   "hands-off 8-15 m/s": {
+    "t_s": 150.83,
+    "n_seg": 56,
+    "amps": {
+     "5-9": 0.7952635060012521,
+     "9-13": 0.45326799407057344,
+     "13-17": 0.42332081064141164,
+     "18-22": 0.27237456774294516,
+     "22-26": 0.21959786018855862,
+     "26-30": 0.1944729883696083
+    },
+    "lines": {
+     "10-17": [
+      12.5,
+      1.4736869638034404
+     ],
+     "17-24": [
+      18.75,
+      1.35412768822929
+     ],
+     "22-30": [
+      25.78125,
+      1.185242847562166
+     ],
+     "5-9.5": [
+      6.25,
+      2.0269422835412865
+     ]
+    }
+   },
+   "hands-off >=15 m/s": {
+    "t_s": 307.62,
+    "n_seg": 183,
+    "amps": {
+     "5-9": 0.4240082373354659,
+     "9-13": 0.5914800590143168,
+     "13-17": 0.43618834063515843,
+     "18-22": 0.22814183729491866,
+     "22-26": 0.21181808846544434,
+     "26-30": 0.21031159816135409
+    },
+    "lines": {
+     "10-17": [
+      10.546875,
+      2.762459591240682
+     ],
+     "17-24": [
+      20.703125,
+      0.4657862746148793
+     ],
+     "22-30": [
+      27.734375,
+      3.154621254095793
+     ],
+     "5-9.5": [
+      5.46875,
+      0.4485514753650224
+     ]
+    }
+   },
+   "hands-off ALL speeds": {
+    "t_s": 566.64,
+    "n_seg": 293,
+    "amps": {
+     "5-9": 0.6057020848694772,
+     "9-13": 0.5342523913605329,
+     "13-17": 0.4190102452028456,
+     "18-22": 0.24487595995090372,
+     "22-26": 0.20962752703103651,
+     "26-30": 0.20255797115086563
+    },
+    "lines": {
+     "10-17": [
+      10.546875,
+      2.401406303603519
+     ],
+     "17-24": [
+      21.09375,
+      0.4835834842758966
+     ],
+     "22-30": [
+      27.734375,
+      1.8867566861693597
+     ],
+     "5-9.5": [
+      6.25,
+      0.5732004388742604
+     ]
+    }
+   },
+   "ALL engaged": {
+    "t_s": 593.66,
+    "n_seg": 459,
+    "amps": {
+     "5-9": 1.5609092739972055,
+     "9-13": 0.8286661246129515,
+     "13-17": 0.7013662059946991,
+     "18-22": 0.40072697694909154,
+     "22-26": 0.32379166223785955,
+     "26-30": 0.3206404039451989
+    },
+    "lines": {
+     "10-17": [
+      10.9375,
+      1.4960609149775665
+     ],
+     "17-24": [
+      19.921875,
+      0.6931040428036466
+     ],
+     "22-30": [
+      27.734375,
+      0.4586239270731085
+     ],
+     "5-9.5": [
+      5.078125,
+      0.0
+     ]
+    }
+   },
+   "DISENGAGED (loop OPEN)": {
+    "t_s": 300.66,
+    "n_seg": 227,
+    "amps": {
+     "5-9": 1.7435755736605285,
+     "9-13": 0.8150540353968788,
+     "13-17": 0.5746761418311883,
+     "18-22": 0.42243147559616756,
+     "22-26": 0.42491403457980725,
+     "26-30": 0.4668311971979844
+    },
+    "lines": {
+     "10-17": [
+      10.15625,
+      0.6014700539653575
+     ],
+     "17-24": [
+      17.96875,
+      1.3329377867533903
+     ],
+     "22-30": [
+      27.734375,
+      2.170236152755746
+     ],
+     "5-9.5": [
+      6.640625,
+      0.46638840719214336
+     ]
+    }
+   }
+  },
+  "eng_over_dis": {
+   "5-9": 0.8952346531903825,
+   "9-13": 1.0167008426741235,
+   "13-17": 1.2204547134318413,
+   "18-22": 0.9486200723645297,
+   "22-26": 0.7620168690310583,
+   "26-30": 0.6868444222874299
+  }
+ },
+ "goal": {
+  "8-15": {
+   "secs": 92.71,
+   "track": 1.0029747267667501,
+   "n_hold": 0,
+   "hold_min": NaN,
+   "hold_med": NaN,
+   "track_pass": true,
+   "hold_pass": null,
+   "scored": true
+  },
+  "15-22": {
+   "secs": 64.65,
+   "track": 0.853315348539313,
+   "n_hold": 0,
+   "hold_min": NaN,
+   "hold_med": NaN,
+   "track_pass": false,
+   "hold_pass": null,
+   "scored": true
+  },
+  ">22": {
+   "secs": 215.85,
+   "track": 0.9672786566307084,
+   "n_hold": 0,
+   "hold_min": NaN,
+   "hold_med": NaN,
+   "track_pass": true,
+   "hold_pass": null,
+   "scored": true
+  }
+ },
+ "dj": {
+  "5-8": {
+   "secs": 50.44,
+   "n": 3,
+   "per_min": 3.568596352101507,
+   "jmax": 2.0999999999999943
+  },
+  "8-10": {
+   "secs": 20.97,
+   "n": 1,
+   "per_min": 2.8612303290414878,
+   "jmax": 0.6000000000000001
+  },
+  "10-12.5": {
+   "secs": 58.16,
+   "n": 2,
+   "per_min": 2.063273727647868,
+   "jmax": 0.30000000000000004
+  },
+  "12.5-15": {
+   "secs": 55.12,
+   "n": 1,
+   "per_min": 1.088534107402032,
+   "jmax": 0.30000000000000027
+  },
+  "15-22": {
+   "secs": 79.31,
+   "n": 4,
+   "per_min": 3.026100113478754,
+   "jmax": 0.625539253085816
+  },
+  ">22": {
+   "secs": 227.85,
+   "n": 6,
+   "per_min": 1.5799868334430547,
+   "jmax": 0.6000000000000001
+  },
+  "<5": {
+   "secs": 66.89999999999999,
+   "n": 2,
+   "per_min": 1.7937219730941707,
+   "jmax": 1.9000000000000004
+  }
+ },
+ "dwells": {
+  "0-5": {
+   "sec": 66.9,
+   "scored": true,
+   "n": 31,
+   "sweep": {
+    "0.25": 8.968609865470851,
+    "0.50": 27.802690582959638,
+    "1.00": 36.77130044843049,
+    "2.00": 48.430493273542595
+   },
+   "per_min_025": 8.968609865470851,
+   "per_min_050": 27.802690582959638,
+   "dwell_p50": 0.38,
+   "dwell_p90": 0.7000000000000001,
+   "snap_p50": 0.40000000000000013,
+   "snap_p90": 3.620000000000002
+  },
+  "5-10": {
+   "sec": 96.91,
+   "scored": true,
+   "n": 38,
+   "sweep": {
+    "0.25": 5.572180373542462,
+    "0.50": 23.526983799401506,
+    "1.00": 33.43308224125477,
+    "2.00": 39.00526261479724
+   },
+   "per_min_025": 5.572180373542462,
+   "per_min_050": 23.526983799401506,
+   "dwell_p50": 0.395,
+   "dwell_p90": 0.9130000000000005,
+   "snap_p50": 0.6499999999999999,
+   "snap_p90": 2.7199999999999998
+  },
+  "10-20": {
+   "sec": 184.11,
+   "scored": true,
+   "n": 120,
+   "sweep": {
+    "0.25": 7.169626853511487,
+    "0.50": 39.10705556460811,
+    "1.00": 39.10705556460811,
+    "2.00": 35.848134267557434
+   },
+   "per_min_025": 7.169626853511487,
+   "per_min_050": 39.10705556460811,
+   "dwell_p50": 0.41000000000000003,
+   "dwell_p90": 0.9920000000000002,
+   "snap_p50": 0.5000000000000001,
+   "snap_p90": 5.040000000000009
+  },
+  ">20": {
+   "sec": 244.94,
+   "scored": true,
+   "n": 187,
+   "sweep": {
+    "0.25": 10.533191802073977,
+    "0.50": 45.807136441577526,
+    "1.00": 42.13276720829591,
+    "2.00": 24.740752837429575
+   },
+   "per_min_025": 10.533191802073977,
+   "per_min_050": 45.807136441577526,
+   "dwell_p50": 0.45,
+   "dwell_p90": 1.1300000000000001,
+   "snap_p50": 0.4,
+   "snap_p90": 1.55
+  }
+ },
+ "refs": {
+  "r6c": {
+   "tag": "r6c",
+   "build": "V282",
+   "secs_eng": 3136.41,
+   "dwells": {
+    "0-5": {
+     "sec": 309.48,
+     "scored": true,
+     "n": 67,
+     "sweep": {
+      "0.25": 0.5816207832493214,
+      "0.50": 12.989530825901511,
+      "1.00": 26.560682435052346,
+      "2.00": 37.22373012795657
+     },
+     "per_min_025": 0.5816207832493214,
+     "per_min_050": 12.989530825901511,
+     "dwell_p50": 0.26,
+     "dwell_p90": 0.378,
+     "snap_p50": 1.0,
+     "snap_p90": 5.120000000000007
+    },
+    "5-10": {
+     "sec": 377.02,
+     "scored": true,
+     "n": 118,
+     "sweep": {
+      "0.25": 0.47742825314306936,
+      "0.50": 18.778844623627396,
+      "1.00": 33.579120471062545,
+      "2.00": 35.8071189857302
+     },
+     "per_min_025": 0.47742825314306936,
+     "per_min_050": 18.778844623627396,
+     "dwell_p50": 0.28500000000000003,
+     "dwell_p90": 0.5259999999999999,
+     "snap_p50": 0.5,
+     "snap_p90": 2.2400000000000007
+    },
+    "10-20": {
+     "sec": 675.66,
+     "scored": true,
+     "n": 274,
+     "sweep": {
+      "0.25": 0.44401030103898415,
+      "0.50": 24.33176449693633,
+      "1.00": 39.42811473226179,
+      "2.00": 33.83358493917059
+     },
+     "per_min_025": 0.44401030103898415,
+     "per_min_050": 24.33176449693633,
+     "dwell_p50": 0.31,
+     "dwell_p90": 0.64,
+     "snap_p50": 0.30000000000000004,
+     "snap_p90": 2.859999999999999
+    },
+    ">20": {
+     "sec": 1763.7,
+     "scored": true,
+     "n": 643,
+     "sweep": {
+      "0.25": 0.23813573737030105,
+      "0.50": 21.8744684470148,
+      "1.00": 48.64772920564722,
+      "2.00": 26.262969892838917
+     },
+     "per_min_025": 0.23813573737030105,
+     "per_min_050": 21.8744684470148,
+     "dwell_p50": 0.31,
+     "dwell_p90": 0.6080000000000007,
+     "snap_p50": 0.20000000000000007,
+     "snap_p90": 1.4000000000000001
+    }
+   },
+   "census_lines": {
+    "w18": [
+     {
+      "f": 19.921875,
+      "excess_db": 5.909469499894166,
+      "amp": 1.2535907192936442
+     }
+    ],
+    "bar": [
+     {
+      "f": 19.921875,
+      "excess_db": 5.933947273821982,
+      "amp": 29.686231289323946
+     }
+    ]
+   },
+   "presence": {
+    "n_win": 4717,
+    "n_pres": 124,
+    "pres_pct": 2.6287894848420605,
+    "amp_p50": 2.1253695609823176,
+    "amp_p90": 2.692507797816441,
+    "f0_p50": 19.983828867364267
+   },
+   "presence_all": {
+    "n_win": 6215,
+    "n_pres": 609,
+    "pres_pct": 9.798873692679003,
+    "amp_p50": 2.630431895450176,
+    "amp_p90": 5.101097921713131,
+    "f0_p50": 20.03173828125
+   },
+   "strongturn": {
+    "hi_ang_s": 97.17,
+    "n_eps": 4,
+    "n_hi": 4,
+    "n_f7": 1,
+    "f7_per100": 1.0291242152927857,
+    "f7_per100_thr80": 1.0291242152927857,
+    "f7_per100_thr60": 1.0291242152927857,
+    "f7_per100_thr40": 2.0582484305855715,
+    "n_win": 106,
+    "n_win_all": 106,
+    "ripL_p50_all": 0.09807690393847238,
+    "ripL_p90_all": 0.2252834814392191,
+    "rip_abs_p50_all": 69.15924073044127,
+    "lvl_p50_all": 862.0,
+    "rate68_p50_all": 3.4736042273640937,
+    "f0_p50_all": 7.0,
+    "n_win_light": 95,
+    "ripL_p50_light": 0.10778427192111328,
+    "ripL_p90_light": 0.23106697169540946,
+    "rip_abs_p50_light": 75.98182476717518,
+    "lvl_p50_light": 832.0,
+    "rate68_p50_light": 3.6449243900482466,
+    "f0_p50_light": 7.0,
+    "t_s_ang30_off": 43.61,
+    "w59_ang30_off": 1.0174905639629452,
+    "w1822_ang30_off": 1.8626345737066181,
+    "T68_ang30_off": 15.745514344704977,
+    "t_s_ang30_light": 29.93
+   },
+   "eng_over_dis": {
+    "5-9": 0.8320096021080391,
+    "9-13": 1.1045324439286186,
+    "13-17": 1.8702503170679443,
+    "18-22": 3.3990127726115658,
+    "22-26": 2.066821275738947,
+    "26-30": 1.9681384683669956
+   },
+   "r3": {
+    "fire": true,
+    "n": 1,
+    "events": [
+     {
+      "chan": "w18",
+      "band": "2.50-5.5",
+      "t": 35972.63828282707,
+      "dur": 1.51,
+      "f0": 3.3333333333333335,
+      "cycles": 5.0,
+      "amp_max": 5.855455191103491,
+      "r_gm": 1.0382523729057311,
+      "growing": false,
+      "narrow": 0.7078499263766782,
+      "v": 1.5795424806457243
+     }
+    ]
+   },
+   "friction": {
+    "0-5": {
+     "secs": 279.06,
+     "ok": true,
+     "Fc": 106.75675625179923,
+     "se_Fc": 4.405093481388714,
+     "k": 5.150284751159355,
+     "b": 3.5197203447198753,
+     "r2": 0.7423163370360712,
+     "n_slide": 14974,
+     "n_break": 27,
+     "Fs_p50": 91.87842644978932,
+     "Fs_p90": 192.69336131708897
+    },
+    "5-8": {
+     "secs": 182.59,
+     "ok": true,
+     "Fc": 77.45248943824613,
+     "se_Fc": 6.8245431230575795,
+     "k": 7.154324096811674,
+     "b": 0.4321715807086255,
+     "r2": 0.8672068426309856,
+     "n_slide": 7368,
+     "n_break": 37,
+     "Fs_p50": 65.99093085193995,
+     "Fs_p90": 140.52084076887527
+    },
+    "8-12.5": {
+     "secs": 342.12,
+     "ok": true,
+     "Fc": 86.08557246544235,
+     "se_Fc": 3.517602776694987,
+     "k": 16.18711681276269,
+     "b": 3.6763607782001575,
+     "r2": 0.8646669551141763,
+     "n_slide": 11887,
+     "n_break": 55,
+     "Fs_p50": 48.95416544145409,
+     "Fs_p90": 129.68214059362836
+    },
+    "12.5-18": {
+     "secs": 359.99,
+     "ok": true,
+     "Fc": 64.71821810994162,
+     "se_Fc": 5.063330363731819,
+     "k": 22.391285051400036,
+     "b": 7.317251492053728,
+     "r2": 0.9062932817737269,
+     "n_slide": 8337,
+     "n_break": 79,
+     "Fs_p50": 37.93215326112367,
+     "Fs_p90": 127.45807619802405
+    },
+    "18-25": {
+     "secs": 310.49,
+     "ok": true,
+     "Fc": 55.49311751220183,
+     "se_Fc": 8.949732410561257,
+     "k": 33.78765887965574,
+     "b": 10.38269746429905,
+     "r2": 0.881078787280318,
+     "n_slide": 3827,
+     "n_break": 71,
+     "Fs_p50": 22.11163996642131,
+     "Fs_p90": 70.35750723271804
+    },
+    ">25": {
+     "secs": 1510.04,
+     "ok": true,
+     "Fc": 63.21642883208914,
+     "se_Fc": 3.9793155097935946,
+     "k": 39.7585836335896,
+     "b": 4.697078156172321,
+     "r2": 0.9255557437275659,
+     "n_slide": 13760,
+     "n_break": 360,
+     "Fs_p50": 30.048801277961886,
+     "Fs_p90": 81.74840897425338
+    }
+   }
+  },
+  "r39": {
+   "tag": "r39",
+   "build": "V282",
+   "secs_eng": 879.84,
+   "dwells": {
+    "0-5": {
+     "sec": 157.29,
+     "scored": true,
+     "n": 17,
+     "sweep": {
+      "0.25": 0.3814609956131986,
+      "0.50": 6.484836925424376,
+      "1.00": 12.969673850848752,
+      "2.00": 19.07304978065993
+     },
+     "per_min_025": 0.3814609956131986,
+     "per_min_050": 6.484836925424376,
+     "dwell_p50": 0.3,
+     "dwell_p90": 0.77,
+     "snap_p50": 0.30000000000000004,
+     "snap_p90": 75.24000000000007
+    },
+    "5-10": {
+     "sec": 326.83,
+     "scored": true,
+     "n": 49,
+     "sweep": {
+      "0.25": 0.0,
+      "0.50": 8.995502248875562,
+      "1.00": 22.213383104366184,
+      "2.00": 34.5133555671144
+     },
+     "per_min_025": 0.0,
+     "per_min_050": 8.995502248875562,
+     "dwell_p50": 0.25,
+     "dwell_p90": 0.41000000000000003,
+     "snap_p50": 1.85,
+     "snap_p90": 4.792551387733773
+    },
+    "10-20": {
+     "sec": 285.87,
+     "scored": true,
+     "n": 79,
+     "sweep": {
+      "0.25": 0.839542449365096,
+      "0.50": 16.580963374960646,
+      "1.00": 34.00146919928639,
+      "2.00": 43.44632175464372
+     },
+     "per_min_025": 0.839542449365096,
+     "per_min_050": 16.580963374960646,
+     "dwell_p50": 0.29,
+     "dwell_p90": 0.542,
+     "snap_p50": 1.0,
+     "snap_p90": 6.0200000000000005
+    },
+    ">20": {
+     "sec": 105.74000000000001,
+     "scored": true,
+     "n": 17,
+     "sweep": {
+      "0.25": 0.0,
+      "0.50": 9.646302250803858,
+      "1.00": 31.776054473236236,
+      "2.00": 48.23151125401929
+     },
+     "per_min_025": 0.0,
+     "per_min_050": 9.646302250803858,
+     "dwell_p50": 0.24,
+     "dwell_p90": 0.42200000000000004,
+     "snap_p50": 1.5000000000000004,
+     "snap_p90": 8.0
+    }
+   },
+   "census_lines": {
+    "w18": [
+     {
+      "f": 7.421875,
+      "excess_db": 5.679755251489444,
+      "amp": 2.2633764825046367
+     },
+     {
+      "f": 19.921875,
+      "excess_db": 6.457039315573679,
+      "amp": 1.8339362223797455
+     }
+    ],
+    "bar": [
+     {
+      "f": 7.421875,
+      "excess_db": 6.048304708678252,
+      "amp": 199.0060688129452
+     },
+     {
+      "f": 19.921875,
+      "excess_db": 6.714693409830755,
+      "amp": 44.012155470113825
+     }
+    ]
+   },
+   "presence": {
+    "n_win": 727,
+    "n_pres": 12,
+    "pres_pct": 1.6506189821182944,
+    "amp_p50": 2.0575492035725738,
+    "amp_p90": 2.352960873102379,
+    "f0_p50": 19.989924973615423
+   },
+   "presence_all": {
+    "n_win": 1742,
+    "n_pres": 364,
+    "pres_pct": 20.895522388059703,
+    "amp_p50": 2.7659792940489716,
+    "amp_p90": 5.508043821624828,
+    "f0_p50": 20.03173828125
+   },
+   "strongturn": {
+    "hi_ang_s": 97.43,
+    "n_eps": 4,
+    "n_hi": 4,
+    "n_f7": 0,
+    "f7_per100": 0.0,
+    "f7_per100_thr80": 1.0263779123473262,
+    "f7_per100_thr60": 5.131889561736631,
+    "f7_per100_thr40": 4.105511649389305,
+    "n_win": 112,
+    "n_win_all": 112,
+    "ripL_p50_all": 0.1313029652847195,
+    "ripL_p90_all": 0.4104052346737403,
+    "rip_abs_p50_all": 78.87314105123778,
+    "lvl_p50_all": 730.0,
+    "rate68_p50_all": 4.228262703224825,
+    "f0_p50_all": 7.0,
+    "n_win_light": 107,
+    "ripL_p50_light": 0.13378605670884097,
+    "ripL_p90_light": 0.4341983881342555,
+    "rip_abs_p50_light": 87.04964836773941,
+    "lvl_p50_light": 708.0,
+    "rate68_p50_light": 4.314703894633764,
+    "f0_p50_light": 7.0,
+    "t_s_ang30_off": 43.26,
+    "w59_ang30_off": 1.0037469162529151,
+    "w1822_ang30_off": 1.0154757977905704,
+    "T68_ang30_off": 9.374613073878699,
+    "t_s_ang30_light": 27.72
+   },
+   "eng_over_dis": {
+    "5-9": 1.680750266328024,
+    "9-13": 1.213840346515938,
+    "13-17": 1.86339717732584,
+    "18-22": 3.920103479982114,
+    "22-26": 2.3466829329654306,
+    "26-30": 2.229142514160052
+   },
+   "r3": {
+    "fire": true,
+    "n": 2,
+    "events": [
+     {
+      "chan": "theta",
+      "band": "0.25-0.9",
+      "t": 199.1662420814807,
+      "dur": 11.02,
+      "f0": 0.4132231404958678,
+      "cycles": 4.5,
+      "amp_max": 4.198427731433563,
+      "r_gm": 1.001380988938578,
+      "growing": false,
+      "narrow": 0.8404173804766611,
+      "v": 8.800656844962099
+     },
+     {
+      "chan": "theta",
+      "band": "0.25-0.9",
+      "t": 868.2520130412101,
+      "dur": 9.42,
+      "f0": 0.42016806722689076,
+      "cycles": 4.0,
+      "amp_max": 3.013732852600779,
+      "r_gm": 0.8306857476613381,
+      "growing": false,
+      "narrow": 0.644293425347499,
+      "v": 16.086713852066957
+     }
+    ]
+   },
+   "friction": {
+    "0-5": {
+     "secs": 116.56,
+     "ok": true,
+     "Fc": 97.84622823480858,
+     "se_Fc": 6.861121474005141,
+     "k": 4.105217419059047,
+     "b": 3.3317197881882876,
+     "r2": 0.8148198342065034,
+     "n_slide": 7925,
+     "n_break": 6,
+     "Fs_p50": 134.35119603073764,
+     "Fs_p90": 235.91200229808908
+    },
+    "5-8": {
+     "secs": 132.58,
+     "ok": true,
+     "Fc": 80.7157582007058,
+     "se_Fc": 5.820381129996015,
+     "k": 6.757514211329049,
+     "b": 1.426163761844768,
+     "r2": 0.8091912259714322,
+     "n_slide": 8153,
+     "n_break": 11,
+     "Fs_p50": 113.72098460520107,
+     "Fs_p90": 210.17870191914426
+    },
+    "8-12.5": {
+     "secs": 267.82,
+     "ok": true,
+     "Fc": 102.14421190630088,
+     "se_Fc": 3.307976939693984,
+     "k": 13.835662516433514,
+     "b": 0.11579590736386958,
+     "r2": 0.8472721497176416,
+     "n_slide": 12492,
+     "n_break": 29,
+     "Fs_p50": 46.45196650327634,
+     "Fs_p90": 162.22456029446096
+    },
+    "12.5-18": {
+     "secs": 142.81,
+     "ok": true,
+     "Fc": 98.08897635133678,
+     "se_Fc": 4.566426077426325,
+     "k": 24.97364040845278,
+     "b": 0.6770098970114695,
+     "r2": 0.9053135653950741,
+     "n_slide": 5794,
+     "n_break": 18,
+     "Fs_p50": 37.69950679249172,
+     "Fs_p90": 126.39698691834548
+    },
+    "18-25": {
+     "secs": 47.32,
+     "ok": true,
+     "Fc": 71.84390710689237,
+     "se_Fc": 10.01123760322968,
+     "k": 28.236647832855787,
+     "b": 2.7472037993217446,
+     "r2": 0.8625392516489736,
+     "n_slide": 1766,
+     "n_break": 4,
+     "Fs_p50": 95.69391589742924,
+     "Fs_p90": 146.3206680721092
+    },
+    ">25": {
+     "secs": 58.16,
+     "ok": true,
+     "Fc": 58.48300794863293,
+     "se_Fc": 9.769297895177933,
+     "k": 49.6152123974372,
+     "b": 7.9059736415688455,
+     "r2": 0.8598627944489854,
+     "n_slide": 2042,
+     "n_break": 5,
+     "Fs_p50": 20.5948793731608,
+     "Fs_p90": 29.828833258279374
+    }
+   }
+  },
+  "r71b_v294": {
+   "tag": "r71b_v294",
+   "build": "V294 (V295 stand-in)",
+   "secs_eng": 800.75,
+   "dwells": {
+    "0-5": {
+     "sec": 109.71000000000001,
+     "scored": true,
+     "n": 64,
+     "sweep": {
+      "0.25": 19.14137270987148,
+      "0.50": 35.00136724090785,
+      "1.00": 36.6420563303254,
+      "2.00": 32.81378178835111
+     },
+     "per_min_025": 19.14137270987148,
+     "per_min_050": 35.00136724090785,
+     "dwell_p50": 0.385,
+     "dwell_p90": 1.1630000000000003,
+     "snap_p50": 0.5499999999999998,
+     "snap_p90": 3.0
+    },
+    "5-10": {
+     "sec": 226.18,
+     "scored": true,
+     "n": 118,
+     "sweep": {
+      "0.25": 7.958263330091078,
+      "0.50": 31.302502431691572,
+      "1.00": 32.36360420903705,
+      "2.00": 30.506676098682465
+     },
+     "per_min_025": 7.958263330091078,
+     "per_min_050": 31.302502431691572,
+     "dwell_p50": 0.405,
+     "dwell_p90": 1.0779999999999998,
+     "snap_p50": 0.39999999999999997,
+     "snap_p90": 5.860000000000004
+    },
+    "10-20": {
+     "sec": 375.85,
+     "scored": true,
+     "n": 246,
+     "sweep": {
+      "0.25": 8.30118398297193,
+      "0.50": 39.27098576559798,
+      "1.00": 39.74990022615405,
+      "2.00": 35.439670081149394
+     },
+     "per_min_025": 8.30118398297193,
+     "per_min_050": 39.27098576559798,
+     "dwell_p50": 0.41000000000000003,
+     "dwell_p90": 1.23,
+     "snap_p50": 0.30000000000000004,
+     "snap_p90": 3.9000000000000004
+    },
+    ">20": {
+     "sec": 84.89,
+     "scored": true,
+     "n": 67,
+     "sweep": {
+      "0.25": 5.654376251619743,
+      "0.50": 47.35540110731535,
+      "1.00": 47.35540110731535,
+      "2.00": 36.75344563552833
+     },
+     "per_min_025": 5.654376251619743,
+     "per_min_050": 47.35540110731535,
+     "dwell_p50": 0.39,
+     "dwell_p90": 0.8239999999999998,
+     "snap_p50": 0.2,
+     "snap_p90": 1.5999999999999999
+    }
+   },
+   "census_lines": {
+    "w18": [],
+    "bar": []
+   },
+   "presence": {
+    "n_win": 1014,
+    "n_pres": 0,
+    "pres_pct": 0.0,
+    "amp_p50": NaN,
+    "amp_p90": NaN,
+    "f0_p50": NaN
+   },
+   "presence_all": {
+    "n_win": 1580,
+    "n_pres": 8,
+    "pres_pct": 0.5063291139240507,
+    "amp_p50": 1.0755706665806826,
+    "amp_p90": 1.3999138433867762,
+    "f0_p50": 16.793771593888223
+   },
+   "strongturn": {
+    "hi_ang_s": 83.58,
+    "n_eps": 10,
+    "n_hi": 10,
+    "n_f7": 0,
+    "f7_per100": 0.0,
+    "f7_per100_thr80": 0.0,
+    "f7_per100_thr60": 0.0,
+    "f7_per100_thr40": 0.0,
+    "n_win": 81,
+    "n_win_all": 81,
+    "ripL_p50_all": 0.005012108120546612,
+    "ripL_p90_all": 0.02187091512163947,
+    "rip_abs_p50_all": 3.6535965831605646,
+    "lvl_p50_all": 740.0,
+    "rate68_p50_all": 1.4188621980608516,
+    "f0_p50_all": 6.0,
+    "n_win_light": 80,
+    "ripL_p50_light": 0.004935796246188464,
+    "ripL_p90_light": 0.020116872412854852,
+    "rip_abs_p50_light": 3.6016712851388695,
+    "lvl_p50_light": 742.0,
+    "rate68_p50_light": 1.4075336108496996,
+    "f0_p50_light": 6.0,
+    "t_s_ang30_off": 47.06,
+    "w59_ang30_off": 1.5857674126124626,
+    "w1822_ang30_off": 0.3012523525779579,
+    "T68_ang30_off": 1.7652875825931824,
+    "t_s_ang30_light": 10.79
+   },
+   "eng_over_dis": {
+    "5-9": 1.0549465377342782,
+    "9-13": 1.8874536342569876,
+    "13-17": 1.8768979557749013,
+    "18-22": 1.2262988906099122,
+    "22-26": 1.1395827641897283,
+    "26-30": 1.1048813143581444
+   },
+   "r3": {
+    "fire": false,
+    "n": 0,
+    "events": []
+   },
+   "friction": {
+    "0-5": {
+     "secs": 83.71,
+     "ok": true,
+     "Fc": 8.304535765198326,
+     "se_Fc": 13.037049764024298,
+     "k": 4.636283206805828,
+     "b": 3.0980854117121064,
+     "r2": 0.8696678248998794,
+     "n_slide": 2536,
+     "n_break": 38,
+     "Fs_p50": 69.26779704803363,
+     "Fs_p90": 193.66588995696634
+    },
+    "5-8": {
+     "secs": 90.95,
+     "ok": true,
+     "Fc": 9.53820186562099,
+     "se_Fc": 8.82401585999336,
+     "k": 7.443884294893929,
+     "b": 2.0743336812165474,
+     "r2": 0.9000391218284615,
+     "n_slide": 3374,
+     "n_break": 21,
+     "Fs_p50": 90.20645353278965,
+     "Fs_p90": 186.0731550903276
+    },
+    "8-12.5": {
+     "secs": 252.04,
+     "ok": true,
+     "Fc": 67.7958141666739,
+     "se_Fc": 4.373844590332542,
+     "k": 12.377644565747861,
+     "b": -0.2677554204583892,
+     "r2": 0.913493244054288,
+     "n_slide": 7750,
+     "n_break": 80,
+     "Fs_p50": 50.570574952581694,
+     "Fs_p90": 170.12120351671936
+    },
+    "12.5-18": {
+     "secs": 177.24,
+     "ok": true,
+     "Fc": 85.65369785555775,
+     "se_Fc": 5.311372512202178,
+     "k": 27.833833033878133,
+     "b": -0.48133134256779897,
+     "r2": 0.9182470318909881,
+     "n_slide": 3064,
+     "n_break": 80,
+     "Fs_p50": 28.981260631738195,
+     "Fs_p90": 95.02469923583851
+    },
+    "18-25": {
+     "secs": 51.26,
+     "ok": true,
+     "Fc": 74.45464535766928,
+     "se_Fc": 8.156322574002182,
+     "k": 26.78662619130379,
+     "b": -2.1337880032179584,
+     "r2": 0.9324352166747361,
+     "n_slide": 920,
+     "n_break": 25,
+     "Fs_p50": 23.893988035653095,
+     "Fs_p90": 49.400419606436145
+    },
+    ">25": {
+     "secs": 66.01,
+     "ok": true,
+     "Fc": 54.91523847427927,
+     "se_Fc": 8.099289562951173,
+     "k": 35.28977053193354,
+     "b": -1.4139917904240782,
+     "r2": 0.9519997219175612,
+     "n_slide": 1003,
+     "n_break": 28,
+     "Fs_p50": 27.714096344843902,
+     "Fs_p90": 68.5671413448981
+    }
+   }
+  }
+ },
+ "v299": {
+  "tap": {
+   "available": false,
+   "letter": "A16C",
+   "why": "fwVersion 39990-TVA,A16C = V300 (release): telemetry removed (0x1AB is Honda's motor torque; 0x14A byte 4 bits 3-7 are stock)"
+  },
+  "rule_validation": {
+   "mirror_sha": "eaca5ea500f60030",
+   "mirror_src": "analysis-2020accord/studies/angle_loop/v299_design/revise/rev_h1.py",
+   "random": {
+    "n": 4000,
+    "mismatch": 0,
+    "ep_mismatch": 0,
+    "n_frz": 2571,
+    "n_run": 1429,
+    "neg_rev1caps": 16,
+    "neg_v298": 921
+   },
+   "targeted": {
+    "n": 2000,
+    "mismatch": 0,
+    "ep_mismatch": 0,
+    "n_frz": 664,
+    "n_run": 1336,
+    "neg_rev1caps": 136,
+    "neg_v298": 1041
+   },
+   "pass": true,
+   "wall_s": 0.05348992347717285
+  },
+  "attrib": {
+   "fw_letter": "A16C",
+   "image": "V300",
+   "params": {
+    "AccordAngleBarFromEps": null,
+    "AccordAngleMaxRate": null,
+    "AccordAngleClipScale": null
+   },
+   "angle_loop": null,
+   "git": "311c4cc0b7ca605576b6b9e73a76117efc596a9b",
+   "fork_cache": true,
+   "fork_commit": "311c4cc0b7ca605576b6b9e73a76117efc596a9b",
+   "fork_schema": "fork 311c4cc0b sha1 23d123e352cc0830",
+   "has_status_field": false,
+   "status": null,
+   "release": true,
+   "rate_cap": 2.5,
+   "rate_cap_src": "release fork constant MAX_ANGLE_RATE in C:\\Users\\dudei\\Desktop\\Projects\\openpilots\\raayyymond-StarPilot\\StarPilot-release\\opendbc_repo\\opendbc\\car\\honda\\values.py (nothing logged)",
+   "derived": {
+    "n_lat": 59130,
+    "rate": 0.025367833587011668,
+    "clip": 0.02058176898359547
+   },
+   "status_present": 0.0,
+   "status_n_lat": 59130,
+   "fork_cache_path": "C:\\Users\\dudei\\Desktop\\Projects\\accord-eps-torque-mod\\analysis-2020accord\\_scratch\\cache\\v280\\rb3_744920_al_fork.npz"
+  },
+  "o1": {
+   "testable": false,
+   "why": "the panel's limiter reconstruction failed on this route (IndexError: boolean index did not match indexed array along axis 0; size of axis is 88592 but size of corresponding boolean axis is )"
+  },
+  "snap": {
+   "testable": true,
+   "why": "",
+   "cap": 2.5,
+   "cap_src": "release fork constant MAX_ANGLE_RATE in C:\\Users\\dudei\\Desktop\\Projects\\openpilots\\raayyymond-StarPilot\\StarPilot-release\\opendbc_repo\\opendbc\\car\\honda\\values.py (nothing logged)",
+   "n_steps": 59126,
+   "n_snap": 0,
+   "n_snap_clip": 0,
+   "n_snap_noclip": 0,
+   "max_toward": 2.500000238418579,
+   "clip_src": "reconstructed (|co - theta| at the fork's error clip)",
+   "events": [],
+   "max_rate_param": 120.0
+  },
+  "rule_identity": {
+   "ok": false,
+   "why": "NOT AVAILABLE on release firmware (no tap)"
+  },
+  "posctrl": {
+   "ran": null,
+   "source": "NOT AVAILABLE on release firmware (no tap)"
+  },
+  "stutter": {
+   "stall": {
+    "0-5": {
+     "turn_s": 9.55,
+     "n": 3,
+     "per_min": 18.848167539267013,
+     "depth_p50": 1.0442212325089233
+    },
+    "5-10": {
+     "turn_s": 26.71,
+     "n": 9,
+     "per_min": 20.217147135904156,
+     "depth_p50": 0.9296513263922642
+    },
+    "10-20": {
+     "turn_s": 5.35,
+     "n": 0,
+     "per_min": 0.0,
+     "depth_p50": NaN
+    },
+    ">20": {
+     "turn_s": 0.0,
+     "n": 0,
+     "per_min": NaN,
+     "depth_p50": NaN
+    }
+   },
+   "trains": {
+    "0-5": {
+     "n": 0,
+     "per_min": 0.0,
+     "share": 0.0,
+     "freq_p50": NaN
+    },
+    "5-10": {
+     "n": 1,
+     "per_min": 2.2463496817671285,
+     "share": 0.019468363908648447,
+     "freq_p50": 4.545454545454546
+    },
+    "10-20": {
+     "n": 0,
+     "per_min": 0.0,
+     "share": 0.0,
+     "freq_p50": NaN
+    },
+    ">20": {
+     "n": 0,
+     "per_min": NaN,
+     "share": NaN,
+     "freq_p50": NaN
+    }
+   },
+   "spec": {
+    "0-5": {
+     "n": 5,
+     "rms_4_8": 4.19579109753855,
+     "rms_2_10": 5.444546078122274,
+     "fpk": 4.6875
+    },
+    "5-10": {
+     "n": 21,
+     "rms_4_8": 4.529978561666131,
+     "rms_2_10": 9.16120059262799,
+     "fpk": 2.34375
+    },
+    "10-20": null,
+    ">20": null
+   },
+   "dwells": {
+    "0-5": 8.968609865470851,
+    "5-10": 5.572180373542462,
+    "10-20": 7.169626853511487,
+    ">20": 10.533191802073977
+   }
+  },
+  "enrich": {
+   "300": {
+    "0-5": {
+     "near_s": 4.63,
+     "free_s": 4.92,
+     "n_near": 2,
+     "n_free": 1,
+     "rate_near": 25.91792656587473,
+     "rate_free": 12.195121951219512,
+     "ratio": 2.125269978401728,
+     "scored": false
+    },
+    "5-10": {
+     "near_s": 20.31,
+     "free_s": 6.4,
+     "n_near": 8,
+     "n_free": 1,
+     "rate_near": 23.633677991137372,
+     "rate_free": 9.375,
+     "ratio": 2.5209256523879864,
+     "scored": true
+    },
+    "10-20": {
+     "near_s": 3.12,
+     "free_s": 2.23,
+     "n_near": 0,
+     "n_free": 0,
+     "rate_near": 0.0,
+     "rate_free": 0.0,
+     "ratio": NaN,
+     "scored": false
+    },
+    "0-20": {
+     "near_s": 28.06,
+     "free_s": 13.55,
+     "n_near": 10,
+     "n_free": 2,
+     "rate_near": 21.382751247327157,
+     "rate_free": 8.856088560885608,
+     "ratio": 2.414468995010692,
+     "scored": true
+    }
+   },
+   "512": {
+    "0-5": {
+     "near_s": 3.21,
+     "free_s": 6.34,
+     "n_near": 2,
+     "n_free": 1,
+     "rate_near": 37.38317757009346,
+     "rate_free": 9.46372239747634,
+     "ratio": 3.9501557632398754,
+     "scored": false
+    },
+    "5-10": {
+     "near_s": 13.94,
+     "free_s": 12.77,
+     "n_near": 6,
+     "n_free": 3,
+     "rate_near": 25.82496413199426,
+     "rate_free": 14.095536413469068,
+     "ratio": 1.8321377331420372,
+     "scored": true
+    },
+    "10-20": {
+     "near_s": 2.16,
+     "free_s": 3.19,
+     "n_near": 0,
+     "n_free": 0,
+     "rate_near": 0.0,
+     "rate_free": 0.0,
+     "ratio": NaN,
+     "scored": false
+    },
+    "0-20": {
+     "near_s": 19.31,
+     "free_s": 22.3,
+     "n_near": 8,
+     "n_free": 4,
+     "rate_near": 24.857586742620406,
+     "rate_free": 10.762331838565022,
+     "ratio": 2.309684101501813,
+     "scored": true
+    }
+   },
+   "300|512": {
+    "0-5": {
+     "near_s": 4.93,
+     "free_s": 4.62,
+     "n_near": 3,
+     "n_free": 0,
+     "rate_near": 36.51115618661258,
+     "rate_free": 0.0,
+     "ratio": Infinity,
+     "scored": false
+    },
+    "5-10": {
+     "near_s": 20.55,
+     "free_s": 6.16,
+     "n_near": 8,
+     "n_free": 1,
+     "rate_near": 23.357664233576642,
+     "rate_free": 9.74025974025974,
+     "ratio": 2.3980535279805353,
+     "scored": true
+    },
+    "10-20": {
+     "near_s": 3.18,
+     "free_s": 2.17,
+     "n_near": 0,
+     "n_free": 0,
+     "rate_near": 0.0,
+     "rate_free": 0.0,
+     "ratio": NaN,
+     "scored": false
+    },
+    "0-20": {
+     "near_s": 28.66,
+     "free_s": 12.95,
+     "n_near": 11,
+     "n_free": 1,
+     "rate_near": 23.02861130495464,
+     "rate_free": 4.633204633204634,
+     "ratio": 4.970341939986043,
+     "scored": true
+    }
+   },
+   "1229": {
+    "0-5": {
+     "near_s": 1.4,
+     "free_s": 8.15,
+     "n_near": 1,
+     "n_free": 2,
+     "rate_near": 42.85714285714286,
+     "rate_free": 14.723926380368097,
+     "ratio": 2.9107142857142865,
+     "scored": false
+    },
+    "5-10": {
+     "near_s": 3.16,
+     "free_s": 23.55,
+     "n_near": 0,
+     "n_free": 9,
+     "rate_near": 0.0,
+     "rate_free": 22.929936305732483,
+     "ratio": 0.0,
+     "scored": false
+    },
+    "10-20": {
+     "near_s": 0.11,
+     "free_s": 5.24,
+     "n_near": 0,
+     "n_free": 0,
+     "rate_near": 0.0,
+     "rate_free": 0.0,
+     "ratio": NaN,
+     "scored": false
+    },
+    "0-20": {
+     "near_s": 4.67,
+     "free_s": 36.94,
+     "n_near": 1,
+     "n_free": 11,
+     "rate_near": 12.847965738758031,
+     "rate_free": 17.866811044937737,
+     "ratio": 0.7190967490753358,
+     "scored": false
+    }
+   },
+   "onsets1229": {
+    "n": 14,
+    "per_min_turn": 20.187454938716655,
+    "n_short": 8,
+    "n_handsoff": 0,
+    "per_min_handsoff": 0.0,
+    "n_handsoff_short": 0,
+    "turn_s": 41.61,
+    "n_handsoff_r2": 0,
+    "per_min_handsoff_r2": 0.0,
+    "n_handsoff_r2_short": 0,
+    "react_frac_eng": 0.06286426574133343,
+    "react_k_median": 0.8687895765372784,
+    "hi_s": 27.56,
+    "hi_handsoff_s": 2.33,
+    "hi_handsoff_r2_s": 10.67,
+    "hi_react_s": 12.75,
+    "n_all_in_hi": 6,
+    "n_handsoff_r2_in_hi": 0,
+    "n_handsoff_in_hi": 0
+   }
+  },
+  "hard": {
+   "<3": {
+    "s": 2.25,
+    "rms": 2.0834185165341568
+   },
+   "3-8": {
+    "s": 20.25,
+    "rms": 5.566785869381152
+   },
+   "8-12": {
+    "s": 7.4,
+    "rms": 2.878708761175024
+   },
+   "12-18": {
+    "s": 0.0,
+    "rms": NaN
+   },
+   "18-25": {
+    "s": 0.0,
+    "rms": NaN
+   },
+   ">25": {
+    "s": 0.0,
+    "rms": NaN
+   },
+   "ALL": {
+    "s": 29.9,
+    "rms": 4.967968865277714
+   }
+  },
+  "refs": {
+   "r6c": {
+    "stall": {
+     "0-5": {
+      "turn_s": 72.93,
+      "n": 36,
+      "per_min": 29.617441382147263,
+      "depth_p50": 1.0402427340462514
+     },
+     "5-10": {
+      "turn_s": 81.76,
+      "n": 30,
+      "per_min": 22.015655577299412,
+      "depth_p50": 1.0427552449421738
+     },
+     "10-20": {
+      "turn_s": 17.06,
+      "n": 0,
+      "per_min": 0.0,
+      "depth_p50": NaN
+     },
+     ">20": {
+      "turn_s": 0.62,
+      "n": 0,
+      "per_min": NaN,
+      "depth_p50": NaN
+     }
+    },
+    "trains": {
+     "0-5": {
+      "n": 2,
+      "per_min": 1.6454134101192923,
+      "share": 0.014397367338543809,
+      "freq_p50": 4.603174603174603
+     },
+     "5-10": {
+      "n": 3,
+      "per_min": 2.2015655577299413,
+      "share": 0.023605675146771036,
+      "freq_p50": 6.666666666666667
+     },
+     "10-20": {
+      "n": 0,
+      "per_min": 0.0,
+      "share": 0.0,
+      "freq_p50": NaN
+     },
+     ">20": {
+      "n": 0,
+      "per_min": NaN,
+      "share": NaN,
+      "freq_p50": NaN
+     }
+    },
+    "spec": {
+     "0-5": {
+      "n": 22,
+      "rms_4_8": 5.04786292071259,
+      "rms_2_10": 7.6286853925007705,
+      "fpk": 2.34375
+     },
+     "5-10": {
+      "n": 60,
+      "rms_4_8": 4.787258545890895,
+      "rms_2_10": 7.313147626568959,
+      "fpk": 2.34375
+     },
+     "10-20": {
+      "n": 4,
+      "rms_4_8": 2.203418330761096,
+      "rms_2_10": 2.8358196386676235,
+      "fpk": 7.8125
+     },
+     ">20": null
+    },
+    "dwells": {
+     "0-5": 0.5816207832493214,
+     "5-10": 0.47742825314306936,
+     "10-20": 0.44401030103898415,
+     ">20": 0.23813573737030105
+    },
+    "enrich": {
+     "300": {
+      "0-5": {
+       "near_s": 60.97,
+       "free_s": 11.96,
+       "n_near": 30,
+       "n_free": 6,
+       "rate_near": 29.52271608988027,
+       "rate_free": 30.100334448160535,
+       "ratio": 0.9808102345415779,
+       "scored": true
+      },
+      "5-10": {
+       "near_s": 67.29,
+       "free_s": 14.47,
+       "n_near": 25,
+       "n_free": 5,
+       "rate_near": 22.291573785109225,
+       "rate_free": 20.73255010366275,
+       "ratio": 1.0751969089017683,
+       "scored": true
+      },
+      "10-20": {
+       "near_s": 12.62,
+       "free_s": 4.44,
+       "n_near": 0,
+       "n_free": 0,
+       "rate_near": 0.0,
+       "rate_free": 0.0,
+       "ratio": NaN,
+       "scored": false
+      },
+      "0-20": {
+       "near_s": 140.88,
+       "free_s": 30.87,
+       "n_near": 55,
+       "n_free": 11,
+       "rate_near": 23.424190800681433,
+       "rate_free": 21.379980563654033,
+       "ratio": 1.0956132879045997,
+       "scored": true
+      }
+     },
+     "512": {
+      "0-5": {
+       "near_s": 54.31,
+       "free_s": 18.62,
+       "n_near": 30,
+       "n_free": 6,
+       "rate_near": 33.14306757503222,
+       "rate_free": 19.334049409237377,
+       "ratio": 1.7142331062419445,
+       "scored": true
+      },
+      "5-10": {
+       "near_s": 64.2,
+       "free_s": 17.56,
+       "n_near": 25,
+       "n_free": 5,
+       "rate_near": 23.36448598130841,
+       "rate_free": 17.084282460136677,
+       "ratio": 1.3676012461059186,
+       "scored": true
+      },
+      "10-20": {
+       "near_s": 12.88,
+       "free_s": 4.18,
+       "n_near": 0,
+       "n_free": 0,
+       "rate_near": 0.0,
+       "rate_free": 0.0,
+       "ratio": NaN,
+       "scored": false
+      },
+      "0-20": {
+       "near_s": 131.39,
+       "free_s": 40.36,
+       "n_near": 55,
+       "n_free": 11,
+       "rate_near": 25.116066671740622,
+       "rate_free": 16.352824578790884,
+       "ratio": 1.5358855316234112,
+       "scored": true
+      }
+     },
+     "300|512": {
+      "0-5": {
+       "near_s": 61.91,
+       "free_s": 11.02,
+       "n_near": 31,
+       "n_free": 5,
+       "rate_near": 30.043611694395093,
+       "rate_free": 27.22323049001815,
+       "ratio": 1.1036020029074465,
+       "scored": true
+      },
+      "5-10": {
+       "near_s": 68.76,
+       "free_s": 13.0,
+       "n_near": 25,
+       "n_free": 5,
+       "rate_near": 21.815008726003487,
+       "rate_free": 23.076923076923077,
+       "ratio": 0.9453170447934844,
+       "scored": true
+      },
+      "10-20": {
+       "near_s": 13.31,
+       "free_s": 3.75,
+       "n_near": 0,
+       "n_free": 0,
+       "rate_near": 0.0,
+       "rate_free": 0.0,
+       "ratio": NaN,
+       "scored": false
+      },
+      "0-20": {
+       "near_s": 143.98,
+       "free_s": 27.77,
+       "n_near": 56,
+       "n_free": 10,
+       "rate_near": 23.33657452423948,
+       "rate_free": 21.606049693914297,
+       "ratio": 1.0800944575635505,
+       "scored": true
+      }
+     },
+     "1229": {
+      "0-5": {
+       "near_s": 12.52,
+       "free_s": 60.41,
+       "n_near": 14,
+       "n_free": 22,
+       "rate_near": 67.0926517571885,
+       "rate_free": 21.85068697235557,
+       "ratio": 3.070505373221028,
+       "scored": true
+      },
+      "5-10": {
+       "near_s": 23.55,
+       "free_s": 58.21,
+       "n_near": 16,
+       "n_free": 14,
+       "rate_near": 40.76433121019108,
+       "rate_free": 14.430510221611407,
+       "ratio": 2.8248710949347893,
+       "scored": true
+      },
+      "10-20": {
+       "near_s": 4.46,
+       "free_s": 12.6,
+       "n_near": 0,
+       "n_free": 0,
+       "rate_near": 0.0,
+       "rate_free": 0.0,
+       "ratio": NaN,
+       "scored": false
+      },
+      "0-20": {
+       "near_s": 40.53,
+       "free_s": 131.22,
+       "n_near": 30,
+       "n_free": 36,
+       "rate_near": 44.41154700222057,
+       "rate_free": 16.46090534979424,
+       "ratio": 2.6980014803849,
+       "scored": true
+      }
+     },
+     "onsets1229": {
+      "n": 143,
+      "per_min_turn": 49.776643267389915,
+      "n_short": 104,
+      "n_handsoff": 0,
+      "per_min_handsoff": 0.0,
+      "n_handsoff_short": 0,
+      "turn_s": 172.37
+     }
+    },
+    "hard": {
+     "<3": {
+      "s": 10.16,
+      "rms": 2.967389789324823
+     },
+     "3-8": {
+      "s": 41.22,
+      "rms": 4.279693033113516
+     },
+     "8-12": {
+      "s": 20.64,
+      "rms": 1.5037155144712206
+     },
+     "12-18": {
+      "s": 8.36,
+      "rms": 0.38570204036838684
+     },
+     "18-25": {
+      "s": 0.24,
+      "rms": NaN
+     },
+     ">25": {
+      "s": 0.0,
+      "rms": NaN
+     },
+     "ALL": {
+      "s": 85.12,
+      "rms": 3.4527650599509516
+     }
+    },
+    "enrich_1229": "onsets"
+   },
+   "r39": {
+    "stall": {
+     "0-5": {
+      "turn_s": 74.27,
+      "n": 25,
+      "per_min": 20.196580045778916,
+      "depth_p50": 1.0329362683207992
+     },
+     "5-10": {
+      "turn_s": 70.04,
+      "n": 20,
+      "per_min": 17.133066818960593,
+      "depth_p50": 1.0098798608915587
+     },
+     "10-20": {
+      "turn_s": 18.06,
+      "n": 1,
+      "per_min": 3.322259136212625,
+      "depth_p50": 1.158964460088566
+     },
+     ">20": {
+      "turn_s": 1.44,
+      "n": 1,
+      "per_min": NaN,
+      "depth_p50": 0.8652978010776176
+     }
+    },
+    "trains": {
+     "0-5": {
+      "n": 0,
+      "per_min": 0.0,
+      "share": 0.0,
+      "freq_p50": NaN
+     },
+     "5-10": {
+      "n": 1,
+      "per_min": 0.8566533409480296,
+      "share": 0.0105653912050257,
+      "freq_p50": 3.846153846153846
+     },
+     "10-20": {
+      "n": 0,
+      "per_min": 0.0,
+      "share": 0.0,
+      "freq_p50": NaN
+     },
+     ">20": {
+      "n": 0,
+      "per_min": NaN,
+      "share": NaN,
+      "freq_p50": NaN
+     }
+    },
+    "spec": {
+     "0-5": {
+      "n": 43,
+      "rms_4_8": 3.953206263738293,
+      "rms_2_10": 7.892352890290155,
+      "fpk": 2.34375
+     },
+     "5-10": {
+      "n": 33,
+      "rms_4_8": 5.495147435229819,
+      "rms_2_10": 7.451134605138368,
+      "fpk": 7.03125
+     },
+     "10-20": null,
+     ">20": null
+    },
+    "dwells": {
+     "0-5": 0.3814609956131986,
+     "5-10": 0.0,
+     "10-20": 0.839542449365096,
+     ">20": 0.0
+    },
+    "enrich": {
+     "300": {
+      "0-5": {
+       "near_s": 54.67,
+       "free_s": 19.6,
+       "n_near": 21,
+       "n_free": 4,
+       "rate_near": 23.047375160051217,
+       "rate_free": 12.244897959183673,
+       "ratio": 1.8822023047375163,
+       "scored": true
+      },
+      "5-10": {
+       "near_s": 59.76,
+       "free_s": 10.28,
+       "n_near": 14,
+       "n_free": 6,
+       "rate_near": 14.056224899598394,
+       "rate_free": 35.01945525291829,
+       "ratio": 0.4013833110218652,
+       "scored": true
+      },
+      "10-20": {
+       "near_s": 13.29,
+       "free_s": 4.77,
+       "n_near": 1,
+       "n_free": 0,
+       "rate_near": 4.514672686230249,
+       "rate_free": 0.0,
+       "ratio": Infinity,
+       "scored": false
+      },
+      "0-20": {
+       "near_s": 127.72,
+       "free_s": 34.65,
+       "n_near": 36,
+       "n_free": 10,
+       "rate_near": 16.911994989038522,
+       "rate_free": 17.316017316017316,
+       "ratio": 0.9766677106169747,
+       "scored": true
+      }
+     },
+     "512": {
+      "0-5": {
+       "near_s": 49.55,
+       "free_s": 24.72,
+       "n_near": 21,
+       "n_free": 4,
+       "rate_near": 25.42885973763875,
+       "rate_free": 9.708737864077671,
+       "ratio": 2.619172552976791,
+       "scored": true
+      },
+      "5-10": {
+       "near_s": 54.15,
+       "free_s": 15.89,
+       "n_near": 14,
+       "n_free": 6,
+       "rate_near": 15.51246537396122,
+       "rate_free": 22.65575833857772,
+       "ratio": 0.6847029855340105,
+       "scored": true
+      },
+      "10-20": {
+       "near_s": 12.04,
+       "free_s": 6.02,
+       "n_near": 1,
+       "n_free": 0,
+       "rate_near": 4.983388704318937,
+       "rate_free": 0.0,
+       "ratio": Infinity,
+       "scored": false
+      },
+      "0-20": {
+       "near_s": 115.74,
+       "free_s": 46.63,
+       "n_near": 36,
+       "n_free": 10,
+       "rate_near": 18.662519440124417,
+       "rate_free": 12.867252841518335,
+       "ratio": 1.450388802488336,
+       "scored": true
+      }
+     },
+     "300|512": {
+      "0-5": {
+       "near_s": 55.51,
+       "free_s": 18.76,
+       "n_near": 21,
+       "n_free": 4,
+       "rate_near": 22.69861286254729,
+       "rate_free": 12.793176972281449,
+       "ratio": 1.7742749054224465,
+       "scored": true
+      },
+      "5-10": {
+       "near_s": 60.01,
+       "free_s": 10.03,
+       "n_near": 14,
+       "n_free": 6,
+       "rate_near": 13.997667055490751,
+       "rate_free": 35.89232303090728,
+       "ratio": 0.3899905571293673,
+       "scored": true
+      },
+      "10-20": {
+       "near_s": 13.43,
+       "free_s": 4.63,
+       "n_near": 1,
+       "n_free": 0,
+       "rate_near": 4.467609828741623,
+       "rate_free": 0.0,
+       "ratio": Infinity,
+       "scored": false
+      },
+      "0-20": {
+       "near_s": 128.95,
+       "free_s": 33.42,
+       "n_near": 36,
+       "n_free": 10,
+       "rate_near": 16.75067855758046,
+       "rate_free": 17.953321364452425,
+       "ratio": 0.9330127956572316,
+       "scored": true
+      }
+     },
+     "1229": {
+      "0-5": {
+       "near_s": 12.2,
+       "free_s": 62.07,
+       "n_near": 8,
+       "n_free": 17,
+       "rate_near": 39.34426229508197,
+       "rate_free": 16.433059449009182,
+       "ratio": 2.3942140790742528,
+       "scored": true
+      },
+      "5-10": {
+       "near_s": 12.61,
+       "free_s": 57.43,
+       "n_near": 9,
+       "n_free": 11,
+       "rate_near": 42.823156225218085,
+       "rate_free": 11.49225143653143,
+       "ratio": 3.726263427294356,
+       "scored": true
+      },
+      "10-20": {
+       "near_s": 3.04,
+       "free_s": 15.02,
+       "n_near": 1,
+       "n_free": 0,
+       "rate_near": 19.736842105263158,
+       "rate_free": 0.0,
+       "ratio": Infinity,
+       "scored": false
+      },
+      "0-20": {
+       "near_s": 27.85,
+       "free_s": 134.52,
+       "n_near": 18,
+       "n_free": 28,
+       "rate_near": 38.77917414721723,
+       "rate_free": 12.488849241748438,
+       "ratio": 3.105103872787894,
+       "scored": true
+      }
+     },
+     "onsets1229": {
+      "n": 95,
+      "per_min_turn": 34.79641047555094,
+      "n_short": 67,
+      "n_handsoff": 0,
+      "per_min_handsoff": 0.0,
+      "n_handsoff_short": 0,
+      "turn_s": 163.81
+     }
+    },
+    "hard": {
+     "<3": {
+      "s": 16.08,
+      "rms": 4.471118602008654
+     },
+     "3-8": {
+      "s": 38.38,
+      "rms": 4.548241719771392
+     },
+     "8-12": {
+      "s": 17.89,
+      "rms": 2.2769263038837404
+     },
+     "12-18": {
+      "s": 3.7,
+      "rms": 2.1197307831236945
+     },
+     "18-25": {
+      "s": 0.0,
+      "rms": NaN
+     },
+     ">25": {
+      "s": 0.0,
+      "rms": NaN
+     },
+     "ALL": {
+      "s": 76.51,
+      "rms": 4.02039089241193
+     }
+    },
+    "enrich_1229": "onsets"
+   }
+  },
+  "releases": {
+   "n": 0,
+   "n_trunc": 0,
+   "n_regrab": 8,
+   "n_disengaged": 0,
+   "n_f3_scored": 0,
+   "n_f5_scored": 0,
+   "f3": false,
+   "f5": false,
+   "n_f3": 0,
+   "n_f5": 0,
+   "swing_max": NaN,
+   "swing_max_scored": NaN,
+   "gap15_max": NaN,
+   "lurch": {
+    "n": 0,
+    "max": NaN,
+    "cls": "NOT TESTABLE (no light outward release at 5-10 m/s)"
+   },
+   "rows": []
+  },
+  "turnins": {
+   "n": 0,
+   "n_returns": 0,
+   "n_not_handsoff": 0,
+   "rows": [],
+   "returns": [],
+   "n_sp_moved": 0,
+   "n_truncated": 0,
+   "F4a": {
+    "n": 0,
+    "fire": false,
+    "n_fire": 0,
+    "ovs_max": NaN,
+    "n_unreached": 0
+   },
+   "F4b": {
+    "n": 0,
+    "fire": false,
+    "n_fire": 0,
+    "ovs_max": NaN,
+    "n_unreached": 0
+   },
+   "F4c": {
+    "n": 0,
+    "fire": false,
+    "n_fire": 0,
+    "ovs_max": NaN,
+    "n_unreached": 0
+   }
+  },
+  "vm": {
+   "sR": 16.84,
+   "l": 2.8299999237060547,
+   "sf": -0.0006999872680281922
+  },
+  "f10": {
+   "n": 0,
+   "secs": 0.0,
+   "fire": false,
+   "rows": []
+  },
+  "cap": {
+   "n": 0,
+   "secs": 0.0,
+   "rows": [],
+   "short_p50": NaN,
+   "short_max": NaN,
+   "d3_ovs_max": NaN,
+   "d3_n": 0,
+   "sentence": "NOT AVAILABLE on release firmware (no tap) (the replayed integrator's bound state is scored against the tap)",
+   "cls": null
+  },
+  "hands": {
+   "unavailable": true,
+   "why": "NOT AVAILABLE on release firmware (no tap)",
+   "f7": null,
+   "n_f7": null,
+   "f7_longest": NaN,
+   "f7b": null,
+   "n_f7b": null,
+   "f7b_longest": NaN,
+   "f7b_events": [],
+   "f9": null,
+   "tap_max_handsoff": NaN,
+   "n_f9_hi": null,
+   "pressed_known": true
+  },
+  "bar": {
+   "testable": false,
+   "unavailable": true,
+   "why": "NOT AVAILABLE on release firmware (no tap): F8 compares carState.steeringTorqueEps with the tap",
+   "canvalid": {
+    "angle_mode": true,
+    "why": "steerControlType angle, carFw A16C",
+    "n_frames": 88578,
+    "n_boot": 4,
+    "drops": 0,
+    "drops_lat": 0
+   }
+  },
+  "verdict": {
+   "rows": [
+    {
+     "id": "F1",
+     "status": "NOT AVAILABLE",
+     "measured": "carFw A16C = V300; rule-identity replay: NOT AVAILABLE on release firmware (no tap); accordAngleStatus field removed in the release fork; bits derived offline: rate-bound 2.54 %, clip-bound 2.06 % of 59130 latActive frames; O1-like snaps (|d theta_sp| > the fork's rate cap 2.50 deg / frame toward the wheel, both frames latActive): 0 NOT clip-bound (counted) + 0 clip-bound (not counted, ruling) of 59126 steps",
+     "bar": "V299 replay identity (needs the tap); the setpoint-step clause below is stock-signal",
+     "note": "setpoint-step clause alone: PASS (cap 2.50 deg/frame: release fork constant MAX_ANGLE_RATE in C:\\Users\\dudei\\Desktop\\Projects\\openpilots\\raayyymond-StarPilot\\StarPilot-release\\opendbc_repo\\opendbc\\car\\honda\\values.py (nothing logged))"
+    },
+    {
+     "id": "F2",
+     "status": "PASS",
+     "measured": "presence 0.00 %, F7 0.00 /100 s, new 5-30 Hz line False, 18-22 eng/dis 0.95, 13-17 1.22",
+     "bar": "presence <= 0.5 %, F7 0, no new line, 18-22 <= 2.5, 13-17 <= 3.5",
+     "note": ""
+    },
+    {
+     "id": "F3",
+     "status": "NOT TESTABLE",
+     "measured": "0 releases (8 re-grabs excluded, 0 truncated, 0 disengaged first); none at >= 5 m/s or on a straight",
+     "bar": "",
+     "note": "card D5 / D6 / D8"
+    },
+    {
+     "id": "F5",
+     "status": "NOT TESTABLE",
+     "measured": "no release at >= 5 m/s with a full 1.5-s window (0 releases (8 re-grabs excluded, 0 truncated, 0 disengaged first))",
+     "bar": "",
+     "note": "card D5 / D8"
+    },
+    {
+     "id": "F4a",
+     "status": "NOT TESTABLE",
+     "measured": "no hands-off turn-in in its class (0 turn-ins found, 0 not hands-off)",
+     "bar": ">= 45 deg at <= 10 m/s, > 6 deg",
+     "note": "card D2 / D3"
+    },
+    {
+     "id": "F4b",
+     "status": "NOT TESTABLE",
+     "measured": "no hands-off turn-in in its class (0 turn-ins found, 0 not hands-off)",
+     "bar": "20-45 deg at <= 4.5 m/s, > 8.5 deg",
+     "note": "card D2 / D3"
+    },
+    {
+     "id": "F4c",
+     "status": "NOT TESTABLE",
+     "measured": "no hands-off turn-in in its class (0 turn-ins found, 0 not hands-off)",
+     "bar": "20-45 deg at 4.5-10 m/s, > 6 deg",
+     "note": "card D2 / D3"
+    },
+    {
+     "id": "F6",
+     "status": "FAIL",
+     "measured": "trains 2.25 /min of turning at 5-10 m/s; in-turn 4-8 Hz rms 4.530 deg/s at 5-10 m/s; surges near |bar| 300|512 crossings 4.97 x free (29 s near)",
+     "bar": "trains >= 4.7 /min, or 4-8 Hz rms >= 7.09 deg/s (both at 5-10 m/s), or near >= 2x free",
+     "note": "fires on: 300|512 enrichment; predicted (BELIEF): sim 0 stall-surges / turn (V298 1.75-6.1); 4-8 Hz 1.0-1.3 deg/s (V298 3.2-6.0, sim metric)"
+    },
+    {
+     "id": "F6b",
+     "status": "PASS",
+     "measured": "HANDS-OFF |w| > 1229 onsets 0.0 /min of turning (n 0, 0 < 0.1 s; all onsets 14 = 20.2 /min); surges near |w| > 1229 ONSETS (rising edges) - x free",
+     "bar": "near onsets >= 2x free, or > 20 hands-off onsets /min of turning",
+     "note": "1229 enrichment under-exposed (5 s near)"
+    },
+    {
+     "id": "F6b-R",
+     "status": "OBSERVATION",
+     "measured": "HANDS-OFF |w| > 1229 onsets under the REACTION-TEST label (R2 >= 0.5 of |bar| vs the wheel's angular acceleration, 1 s window; a bar the wheel's own inertia explains is not a hand): 0.0 /min of turning (n 0, 0 < 0.1 s) against 0.0 /min (n 0) under the |bar| < 300 label; at |theta| >= 60 deg: 0 vs 0 onsets",
+     "bar": "by construction an OBSERVATION (the label is new 2026-10-15, not in the spec); the bar F6b uses is > 20 /min -> this label would not fire",
+     "note": "BELIEF: R2 alone cannot tell a wheel the hand is accelerating from a wheel accelerating by itself"
+    },
+    {
+     "id": "F7",
+     "status": "NOT AVAILABLE",
+     "measured": "NOT AVAILABLE on release firmware (no tap)",
+     "bar": "",
+     "note": "pressed + tap opposing needs the lane tap"
+    },
+    {
+     "id": "F7b",
+     "status": "NOT AVAILABLE",
+     "measured": "NOT AVAILABLE on release firmware (no tap)",
+     "bar": "",
+     "note": "needs the lane tap"
+    },
+    {
+     "id": "F8",
+     "status": "NOT AVAILABLE",
+     "measured": "NOT AVAILABLE on release firmware (no tap): F8 compares carState.steeringTorqueEps with the tap",
+     "bar": "",
+     "note": "canValid drops: 0 of 88578 angle-mode frames after the first valid one (steerControlType angle, carFw A16C; 4 boot rows before it; latActive 0)"
+    },
+    {
+     "id": "F9",
+     "status": "NOT AVAILABLE",
+     "measured": "NOT AVAILABLE on release firmware (no tap)",
+     "bar": "",
+     "note": "the hands-off tap maximum needs the lane tap"
+    },
+    {
+     "id": "F10",
+     "status": "NOT TESTABLE",
+     "measured": "no >= 3 s hands-off curve hold at 10-13 m/s with |a_lat| >= 1.5",
+     "bar": "",
+     "note": "card D7 / D9"
+    },
+    {
+     "id": "X3",
+     "status": "DOSE",
+     "measured": "cap-250 dose: rate cap 250 deg/s (2.50 deg/frame; release fork constant MAX_ANGLE_RATE in C:\\Users\\dudei\\Desktop\\Projects\\openpilots\\raayyymond-StarPilot\\StarPilot-release\\opendbc_repo\\opendbc\\car\\honda\\values.py (nothing logged)); error-clip scale x1 (default 1.0, nothing logged); AccordAngleBarFromEps None",
+     "bar": "a later dose only (config A = cap 120, clip x1.0)",
+     "note": "the dose that flew, read from the logged params / the fork's constants -- not assumed"
+    },
+    {
+     "id": "R9",
+     "status": "OPERATOR",
+     "measured": "the operator's report (grinding, ratcheting, vibration, a lurch, 'fights my hands', anything new)",
+     "bar": "his call; outranks every band",
+     "note": ""
+    }
+   ],
+   "fails": [
+    "F6"
+   ],
+   "not_testable": [
+    "F3",
+    "F5",
+    "F4a",
+    "F4b",
+    "F4c",
+    "F10"
+   ],
+   "dose": "cap-250 dose",
+   "headline": "FAIL: F6"
+  },
+  "timing": {
+   "fork_cache": 21.155504941940308,
+   "rule_validation": 0.38643789291381836,
+   "o1": 0.04679512977600098,
+   "rule_identity": 0.0,
+   "stutter": 0.10494017601013184,
+   "episodes": 0.024068117141723633,
+   "total": 21.737951278686523
+  }
+ }
+}

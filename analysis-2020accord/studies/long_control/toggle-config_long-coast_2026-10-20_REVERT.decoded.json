@@ -1,0 +1,6 @@
+{
+ "AggressiveJerkAcceleration": 50.0,
+ "AggressiveJerkDeceleration": 150.0,
+ "AggressiveJerkSpeedDecrease": 150.0,
+ "AggressiveJerkDanger": 30.0
+}

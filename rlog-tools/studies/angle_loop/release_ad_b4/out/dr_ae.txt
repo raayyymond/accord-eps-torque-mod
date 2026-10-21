@@ -1,0 +1,139 @@
+==============================================================================================================
+ANGLE-LOOP DRIVE READ -- rae_74557c_al
+==============================================================================================================
+0. ATTRIBUTION  EPS fw ['39990-TVA,A16C', '\x11L-130520-03461268'] -> image A16C (LIVE image) = V300 (release)
+   LANE TAP: NOT AVAILABLE on release firmware (no tap) -- fwVersion 39990-TVA,A16C = V300 (release): telemetry removed (0x1AB is Honda's motor torque; 0x14A byte 4 bits 3-7 are stock)
+   fork params {'SteerDelay': '0.2', 'UseAutoSteerDelay': '1', 'AlwaysOnLateral': '1', 'SteerRatio': '16.84', 'ForceTorqueController': '1', 'GitCommit': '83fa2e68c854be204c35a29b57ef2ab7957a5bc0', 'GitBranch': 'accord-PTM'} ; git {'commit': '83fa2e68c854be204c35a29b57ef2ab7957a5bc0', 'branch': 'accord-PTM', 'remote': 'https://github.com/raayyymond/StarPilot.git'}
+   fork angle interface (SPEC C3): inactive frames >= 2 deg with raw == 0x14A field: 0.485 (n 10733)  [angle fork ~1.0, torque fork ~0]; max |raw| engaged 3172 (SPEC C2 clip 4000)
+   camera bus-2 0xE4: 90064 frames, 1882 with request=1, max |torque| 2560  (PREREQUISITE VIOLATED: the camera LKAS is commanding)
+   engaged 602.3 s in 5 episodes; by band (engaged / hands-off s): 5-8 82/67  8-10 37/34  10-12.5 24/15  12.5-15 16/12  15-22 21/20  >22 387/378  <5 35/15
+
+1. VERDICT (structural regression on the lane tap): NOT AVAILABLE on release firmware (no tap)
+   (LIVE / NOT LIVE / INVERTED, the tap regression, the replay method and A2/R7 all read 0x1AB, which on this firmware is Honda's motor torque, not the lane)
+
+2. STOP BANDS (any one -> REVERT)
+   R1 INVERTED          NOT AVAILABLE on release firmware (no tap)
+   R2 rail hands-off    NOT AVAILABLE on release firmware (no tap)
+   R3* 0.25-5.5 Hz ring False  0 events []
+   R4 new 5-30 Hz line  False  []
+   R5 ring presence 0.00 %  F7 0.00 /100 s (n 0, 59 s at |angle| >= 30)
+   R6 |err| > 10 deg     False  []
+   R7 (see A2)          NOT AVAILABLE on release firmware (no tap)
+   R8 health            False  (status bad 0, b4 bad 0; have status True b4 True)
+
+3. THE GOAL (score bands; the operator scores symptoms)
+   8-15      15 s  tracking 0.998 [pass]  turn-hold min   -   med   -   (n 0) [-]  (under 60 s: reported, not a goal verdict)
+   15-22  no hands-off run >= 15 s
+   >22      345 s  tracking 0.999 [pass]  turn-hold min 0.960 med 1.003 (n 16) [pass]
+   dwell-then-jump (nl_sim.dwell_jump, ref = theta_sp), per min: 5-8 0.00  8-10 0.00  10-12.5 0.00  12.5-15 0.00  15-22 0.00  >22 0.93  <5 0.00
+   dwells/min @0.25 deg/s (symptom instrument):  this  0-5 0.00  5-10 2.01  10-20 0.00  >20 2.43
+        r6c          (V282)                       0-5 0.58  5-10 0.48  10-20 0.44  >20 0.24
+        r39          (V282)                       0-5 0.38  5-10 0.00  10-20 0.84  >20 0.00
+        r71b_v294    (V294 (V295 stand-in))                       0-5 19.14  5-10 7.96  10-20 8.30  >20 5.65
+   18-22 Hz engaged/disengaged: this 1.12 ; refs {'r6c': '3.40', 'r39': '3.92', 'r71b_v294': '1.23'}
+   ring presence (hands-off): this 0.00 % ; refs {'r6c': '2.63', 'r39': '1.65', 'r71b_v294': '0.00'}
+   F7 /100 s: this 0.00 ; refs {'r6c': '1.03', 'r39': '0.00', 'r71b_v294': '0.00'}
+   5-30 Hz lines on w18  (>= 4 dB): []
+   5-30 Hz lines on bar  (>= 4 dB): [(14.8, 6.2)]
+
+4. FRICTION per band (hands-off; T counts): NOT AVAILABLE on release firmware (no tap)
+
+5. LIGHT-HOLD EPISODES (300 <= |bar| < 512 for >= 1 s): NOT AVAILABLE on release firmware (no tap)
+
+6. V299 / DRIVE-2 BLOCKS (drive_read_v299.py; criteria: docs/specs/design/v299/DESIGN-V299-SYNTHESIS-rev3-2026-10-02.md §7, docs/scoring/DRIVE-CARD-V299-drive2-2026-10-02.md)
+   hands-off frame everywhere below (spec rev 3 §7.1): latActive, |wire| < 300, not pressed, |bar| < 300 for the preceding 0.5 s (wire = bar / 1.024 = carState.steeringTorque units)
+6A ATTRIBUTION  EPS family A16C -> image V300 ; V299 fork params {'AccordAngleBarFromEps': None, 'AccordAngleMaxRate': None, 'AccordAngleClipScale': None} ; AccordEpsAngleLoop None
+   DOSE THAT FLEW (cap-250 dose): rate cap 250 deg/s (2.50 deg/frame; release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged)); error-clip scale x1 (default 1.0, nothing logged); AccordAngleBarFromEps None
+   fork cache rae_74557c_al_fork.npz ; schema pinned to 83fa2e68c854be204c35a29b57ef2ab7957a5bc0 (fork 83fa2e68c sha1 23d123e352cc0830) ; accordAngleStatus field in schema: False
+   accordAngleStatus: not published by the release fork (removed by design, not a defect); 59956 latActive carState frames
+   limiter constants read from C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py : MAX_ANGLE_RATE 2.50 deg/frame, MAX_LATERAL_JERK 3.5886, error clip BP [3.1, 8.0, 10.0, 11.75, 17.5, 26.9] V [17.0, 15.5, 19.5, 17.0, 8.5, 4.5]
+   accordAngleStatus FIELD ABSENT on this route (the release fork removed it): bits derived offline from carControl / carOutput / carState (derive_status): rate-bound 6.25 %, clip-bound 4.82 % of 59956 latActive frames
+   O1-LIKE SNAPS (F1; |d theta_sp| > 2.50 deg in one frame TOWARD the wheel -- the fork's rate cap, release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged) -- both frames latActive): 3 of 59951 latActive steps -- 0 NOT clip-bound (COUNTED by F1), 3 clip-bound (reconstructed (|co - theta| at the fork's error clip); NOT counted, orchestrator ruling 2026-10-02); largest toward-wheel step 3.18 deg/frame
+     +  710.0 s  step  -2.97 deg toward a wheel -15.61 deg away, @  6.6 m/s  clip-bound
+     +  710.0 s  step  -3.18 deg toward a wheel -15.96 deg away, @  6.4 m/s  clip-bound
+     +  710.1 s  step  -2.68 deg toward a wheel -16.01 deg away, @  6.3 m/s  clip-bound
+   (information) co_ang vs the fork limiter WITHOUT the O1 override: equal (<= 0.01 deg) on 98.47 % of 59956 latActive frames, 228 runs > 0.5 deg (4.8 s); control, the V298 limiter WITH O1: 88.99 %
+6B RULE IDENTITY (F1's instrument; R2 of the tap on HANDS-OFF settled frames)
+   V299 rule (drive_read_fastlane.v299_cand: static_freeze + arb_bound + the loop's I test) vs the spec mirror cave_rev2 (analysis-2020accord/studies/angle_loop/v299_design/revise/rev_h1.py, sha eaca5ea500f60030): random 0/4000 mismatches (E' 0; 2571 freezes / 1429 runs), targeted 0/2000 (E' 0) -> PASS; negatives (must be > 0): mirror at rev-1 caps 136, the V298 rule 1962 (0.07 s)
+   rule identity NOT AVAILABLE: NOT AVAILABLE on release firmware (no tap)
+6C STUTTER READOUTS (the goal's criteria, ruling ii) -- per minute of TURNING time (|0.5 s mean rate| >= 10 deg/s)
+   readout / band                     0-5                       5-10                      10-20                     >20                       
+   stall-surges /min [r6c/r39]        40.66 [29.62/20.20]       32.07 [22.02/17.13]       37.14 [0.00/3.32]         - [-/-]                   
+   ratchet trains /min [r6c/r39]      4.52 [1.65/0.00]          0.00 [2.20/0.86]          0.00 [0.00/0.00]          - [-/-]                   
+   4-8 Hz rate rms deg/s [r6c/r39]    4.55 [5.05/3.95]          3.24 [4.79/5.50]          - [2.20/-]                - [-/-]                   
+   dwells /min @0.25 [r6c/r39]        0.00 [0.58/0.38]          2.01 [0.48/0.00]          0.00 [0.44/0.84]          2.43 [0.24/0.00]          
+   (refs: r6c, r39; V282 both)
+   ENRICHMENT: stall-surges /min within +-0.25 s of a |bar| crossing (300 / 512: both edges) or a |w| > 1229 ONSET (rising edge only, F6b) vs free [near/free = ratio; near s]
+     300      0-5 70.0/19.5=3.60 (11s)  5-10 42.7/14.9=2.87 (20s)  10-20 0.0/92.1=0.00 (7s)*  0-20 43.1/28.0=1.54 (38s)
+     512      0-5 89.8/16.8=5.35 (9s)*  5-10 61.5/14.9=4.13 (12s)  10-20 52.8/13.4=3.95 (7s)*  0-20 68.4/15.5=4.40 (27s)
+     300|512  0-5 67.4/20.0=3.37 (12s)  5-10 40.3/16.4=2.46 (21s)  10-20 42.0/21.9=1.92 (9s)*  0-20 48.3/18.8=2.57 (41s)
+     1229on   0-5 78.4/35.7=2.19 (3s)*  5-10 51.8/26.5=1.95 (7s)*  10-20 60.4/18.9=3.19 (5s)*  0-20 60.1/29.6=2.03 (15s)
+     ref r6c    300|512 0-20: 23.3/21.6 = 1.08
+     ref r39    300|512 0-20: 16.8/18.0 = 0.93
+   |w| > 1229 freeze onsets on engaged turning frames: 58 (49.9 /min of 70 s turning; 32 shorter than 0.1 s); HANDS-OFF (the 0.5 s before = hands-off frames) 0 = 0.0 /min (0 short)   [* = under-exposed: < 10 s near or < 5 events]
+   REACTION-TEST hands-off label (R2 >= 0.5 of |bar| vs the wheel's angular acceleration over a 1 s window, k > 0; BELIEF: cannot separate a hand that accelerates the wheel): HANDS-OFF |w| > 1229 onsets 2 = 1.7 /min (2 short) against 0 = 0.0 /min under the |bar| < 300 label; reaction frames 5.9 % of engaged time (median k 0.86 word/(deg/s^2)); at |theta| >= 60 deg (39.7 s engaged): hands-off 1.7 s by |bar| < 300, 5.2 s with the reaction test, 7.2 s are reaction frames; onsets there 1 vs 0
+   (information, ruling ii) 1.6-3 Hz HARD-TURN wheel-rate rms, deg/s (m6_goal_scoring's definition: |theta| >= 20, unpressed) [refs]: <3 14.42 [2.97/4.47]  3-8 6.45 [4.28/4.55]  8-12 4.61 [1.50/2.28]  12-18 4.10 [0.39/2.12]  18-25 - [-/-]  >25 - [-/-]  ALL 7.66 [3.45/4.02]
+6D RELEASES (spec rev 3 §7.1: |wire| > 300 for >= 0.5 s, released at the first |wire| < 150; re-grab within 1.5 s excluded): 0 scored, 21 re-grabs excluded, 0 truncated, 1 disengaged first; F3 scored 0, F5 scored 0
+   RELEASE-LURCH NULL SENTENCE (card §4: light outward releases at 5-10 m/s, <= 6.1 nominal / 6.5-12 heavy / > 12 F3): n 0, max swing - deg -> NOT TESTABLE (no light outward release at 5-10 m/s)
+6E F4 HANDS-OFF TURN-INS (spec rev 3 §7.1; overshoot vs theta_sp_final in the 3 s after 90 %): 0 scored-class candidates, 2 returns (information), 1 excursions not hands-off; window NOT cut at the next setpoint move: 0 had the setpoint move inside it (flagged SP-MOVED), 0 truncated by a disengage
+   return t  3141.3 @ 12.5 m/s  -66.0 ->   -2.2 deg, unwind past centre - deg (hands on)
+   return t  3703.8 @  7.9 m/s  +25.2 ->   +1.9 deg, unwind past centre 0.00 deg (hands on)
+6F F10 RING (curve holds 10-13 m/s, |a_lat| >= 1.5 m/s^2 from theta_sp via the carParams model sR 16.84, >= 3 s): 0 holds, 0 s
+6G CAP READ (hands-off curve holds 8-12.5 m/s, |a_lat| >= 2, >= 3 s; the replayed V299 I at the 6144 bound over the LAST second): 0 holds, 0 s; shortfall p50 - max - deg [predicted (BELIEF): shortfall <= 3.2 deg at 8 m/s and <= 0.9 deg from 9 m/s (nominal); 3-7 deg at 8-10 m/s if ms_free-like]
+   D3 gate input: 0 hands-off 60-90 deg turn-ins at 8-10 m/s (full turn-in list), max overshoot - deg
+   CAP NULL SENTENCE (card §4 / spec §6.2): NOT AVAILABLE on release firmware (no tap) (the replayed integrator's bound state is scored against the tap)
+6H HANDS / AUTHORITY  NOT AVAILABLE on release firmware (no tap): F7, F7b and F9 read the lane tap
+6I BAR CHECK  NOT AVAILABLE on release firmware (no tap): F8 compares carState.steeringTorqueEps with the tap; canValid drops (every angle-mode frame after the first valid one): 0 of 89485 angle-mode frames after the first valid one (steerControlType angle, carFw A16C; 8 boot rows before it; latActive 0)
+
+==============================================================================================================
+DRIVE-2 VERDICT (V299 cap-250 dose; pre-registered: spec rev 3 §7 + the drive card) -- FAIL: F6, F6b
+   NOTE: this route's EPS image is V300 (A16C), the RELEASE firmware: no lane tap. F1 (replay identity), F7, F7b, F8, F9 and the cap read are NOT AVAILABLE; the stock-signal rows below (angle, 0xE4 setpoint, driver torque word, speed) are valid reads.
+   F1   NOT AVAILABLE carFw A16C = V300; rule-identity replay: NOT AVAILABLE on release firmware (no tap); accordAngleStatus field removed in the release fork; bits derived offline: rate-bound 6.25 %, clip-bound 4.82 % of 59956 latActive frames; O1-like snaps (|d theta_sp| > the fork's rate cap 2.50 deg / frame toward the wheel, both frames latActive): 0 NOT clip-bound (counted) + 3 clip-bound (not counted, ruling) of 59951 steps
+                     bar: V299 replay identity (needs the tap); the setpoint-step clause below is stock-signal
+                     setpoint-step clause alone: PASS (cap 2.50 deg/frame: release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged))
+   F2   PASS         presence 0.00 %, F7 0.00 /100 s, new 5-30 Hz line False, 18-22 eng/dis 1.12, 13-17 2.06
+                     bar: presence <= 0.5 %, F7 0, no new line, 18-22 <= 2.5, 13-17 <= 3.5
+   F3   NOT TESTABLE 0 releases (21 re-grabs excluded, 0 truncated, 1 disengaged first); none at >= 5 m/s or on a straight
+                     card D5 / D6 / D8
+   F5   NOT TESTABLE no release at >= 5 m/s with a full 1.5-s window (0 releases (21 re-grabs excluded, 0 truncated, 1 disengaged first))
+                     card D5 / D8
+   F4a  NOT TESTABLE no hands-off turn-in in its class (0 turn-ins found, 1 not hands-off)
+                     bar: >= 45 deg at <= 10 m/s, > 6 deg
+                     card D2 / D3
+   F4b  NOT TESTABLE no hands-off turn-in in its class (0 turn-ins found, 1 not hands-off)
+                     bar: 20-45 deg at <= 4.5 m/s, > 8.5 deg
+                     card D2 / D3
+   F4c  NOT TESTABLE no hands-off turn-in in its class (0 turn-ins found, 1 not hands-off)
+                     bar: 20-45 deg at 4.5-10 m/s, > 6 deg
+                     card D2 / D3
+   F6   FAIL         trains 0.00 /min of turning at 5-10 m/s; in-turn 4-8 Hz rms 3.240 deg/s at 5-10 m/s; surges near |bar| 300|512 crossings 2.57 x free (41 s near)
+                     bar: trains >= 4.7 /min, or 4-8 Hz rms >= 7.09 deg/s (both at 5-10 m/s), or near >= 2x free
+                     fires on: 300|512 enrichment; predicted (BELIEF): sim 0 stall-surges / turn (V298 1.75-6.1); 4-8 Hz 1.0-1.3 deg/s (V298 3.2-6.0, sim metric)
+   F6b  FAIL         HANDS-OFF |w| > 1229 onsets 0.0 /min of turning (n 0, 0 < 0.1 s; all onsets 58 = 49.9 /min); surges near |w| > 1229 ONSETS (rising edges) 2.03 x free
+                     bar: near onsets >= 2x free, or > 20 hands-off onsets /min of turning
+   F6b-R OBSERVATION  HANDS-OFF |w| > 1229 onsets under the REACTION-TEST label (R2 >= 0.5 of |bar| vs the wheel's angular acceleration, 1 s window; a bar the wheel's own inertia explains is not a hand): 1.7 /min of turning (n 2, 2 < 0.1 s) against 0.0 /min (n 0) under the |bar| < 300 label; at |theta| >= 60 deg: 1 vs 0 onsets
+                     bar: by construction an OBSERVATION (the label is new 2026-10-15, not in the spec); the bar F6b uses is > 20 /min -> this label would not fire
+                     BELIEF: R2 alone cannot tell a wheel the hand is accelerating from a wheel accelerating by itself
+   F7   NOT AVAILABLE NOT AVAILABLE on release firmware (no tap)
+                     pressed + tap opposing needs the lane tap
+   F7b  NOT AVAILABLE NOT AVAILABLE on release firmware (no tap)
+                     needs the lane tap
+   F8   NOT AVAILABLE NOT AVAILABLE on release firmware (no tap): F8 compares carState.steeringTorqueEps with the tap
+                     canValid drops: 0 of 89485 angle-mode frames after the first valid one (steerControlType angle, carFw A16C; 8 boot rows before it; latActive 0)
+   F9   NOT AVAILABLE NOT AVAILABLE on release firmware (no tap)
+                     the hands-off tap maximum needs the lane tap
+   F10  NOT TESTABLE no >= 3 s hands-off curve hold at 10-13 m/s with |a_lat| >= 1.5
+                     card D7 / D9
+   X3   DOSE         cap-250 dose: rate cap 250 deg/s (2.50 deg/frame; release fork constant MAX_ANGLE_RATE in C:\Users\dudei\Desktop\Projects\openpilots\raayyymond-StarPilot\StarPilot-release\opendbc_repo\opendbc\car\honda\values.py (nothing logged)); error-clip scale x1 (default 1.0, nothing logged); AccordAngleBarFromEps None
+                     bar: a later dose only (config A = cap 120, clip x1.0)
+                     the dose that flew, read from the logged params / the fork's constants -- not assumed
+   R9   OPERATOR     the operator's report (grinding, ratcheting, vibration, a lurch, 'fights my hands', anything new)
+                     bar: his call; outranks every band
+   NULL SENTENCE, STUTTER (card §4): if F1 passes and surges are not enriched at 300/512 crossings, yet the operator still reports ratcheting or stutter, the freeze relay was not the mechanism -> stop iterating the integral policy; next is the small-correction stick (M1).  Now: F1 NOT AVAILABLE, 300|512 enrichment 2.57 x (scored).
+   NULL SENTENCE, CAP (card §4): NOT AVAILABLE on release firmware (no tap) (the replayed integrator's bound state is scored against the tap)
+   NULL SENTENCE, LURCH (card §4): n 0 light outward releases at 5-10 m/s, max - deg -> NOT TESTABLE (no light outward release at 5-10 m/s)
+==============================================================================================================
+V299 blocks 26.58 s (fork cache 25.92, rule validation 0.46, rule identity + positive control 0.00, O1 0.06, stutter+refs 0.09, episodes 0.03)
+
+RUNTIME 108.9 s wall (imports 2.5, references 0.0, route load 75.6, read 30.8 incl. lane replays 0.0; replay cache 0 hit / 0 computed, under C:\Users\dudei\Desktop\Projects\accord-eps-torque-mod\_scratch\angle_loop\drive-read\replay)                                                                                                                                                                                                                                                                                          
+wrote rlog-tools\studies\angle_loop\release_ad_b4\out\dr_ae.json (+ .txt)
