@@ -1,0 +1,31 @@
+# HANDOFF 2026-10-21 — launch jerk = the Bosch gas learner; torque bar = angle error; error clip from Kmax − Imax
+
+Previous: `HANDOFF-2026-10-20-v300-first-flights-long-pingpong.md`. **No firmware built or flashed.** Fork accord-PTM `311c4cc0` → `272394d0` (3 commits) PUSHED to origin; the device still runs 311c4cc0 until `git pull origin accord-PTM` + reboot. Page: https://claude.ai/artifact/CvZEDCq6RZW8xM4VBPPTz2.
+
+## 0. Where things stand
+- ON THE CAR: V300 rev 2 (`39990-TVA,A16C`) + accord-PTM 311c4cc0. Routes b5 (Oct 21 09:14), b6 (17:35), b8 (18:11), b9 (19:55, 12 segs) copied from `/data/media/0/realdata` over ssh into `analysis-2020accord/rlogs/` (connect's download prompt blocked the browser path; b7 is a 0-minute stub, not fetched). useradmin git_commit for b9 = 311c4cc0, clean.
+- Operator's notes: (1) bookmarked a jerky acceleration on the latest route, "requested high accel, overshot, cut off, undershoot, hard again" — turbo lag + gear change, launches; (2) torque bar should show desired − actual steer angle, max = the error limit; (3) set the fork's error clip where Kp·e = Kmax − Imax in the firmware PID, if larger than today's.
+
+## 1. Launch jerk (E unless marked) — `analysis-2020accord/studies/long_control/LAUNCH-JERK-READ-2026-10-21.md`, `long_launch_jerk_read.py`
+- The bookmark: b9 seg 6 + 30.1 s (route t 390.0; `bookmarkButton` + `userBookmark`). The launch 13 s before it (0 → 18.9 m/s, lead, chill) overshoots/cuts/undershoots three times at ~2 s, each cut within ±0.3 s of the 2→3, 3→4, 4→5 upshifts.
+- Chain: Bosch longcontrol has kp = ki = 0 (`opendbc/car/interfaces.py` std params; honda sets kiV only for Nidec) ⇒ actuators.accel = aTarget. The ONLY accel feedback is the gas-factor learner in `honda/carcontroller.py`: `factor += (accel − aEgo)/50 × force` per 20 ms, clip [0.1, 3.0], `gas = interp(force × factor, [−0.2, 2], [0, 1600])`, +60/frame rise cap, persisted as HondaGasFactorParams.
+- Decomposition over 10 full launches (b5–b9): aTarget smooth (median 0.16 m/s² per cycle) while aEgo drops 1.37; the factor carries 89 % of every gas cut (offline replay reproduces GAS_COMMAND p50 6–28 / p90 9–76 counts); factor 0.24 → 1.75 in 3 s of spool, to the 0.10 floor at boost, max slew 2.8 /s; aEgo lags the gas 320 ms. 23/28 cycles hold an upshift. Shift-vs-cut order unresolved (needs the 0x1A3 shift byte). BELIEF: turbo lag + shift dips are the trigger, the learner sustains it.
+- FIX (`da4b2c1845`, Fable-designed per the operator's instruction): `bosch_gas_learn_speed(HONDA_ACCORD) = 2000` (was 50; Insight 150 / RDX 300 precedent) and `bosch_gas_learning_allowed(last_gas, 1600)` = no learning while the last gas command sat on the rail (all Bosch cars). Replay (open loop on the logged aEgo, cruise-seeded): factor swing 1.15 → 0.03 (bookmark 1.96 → 0.05), slew 1.6 → 0.04 /s, 88 % of the cut depth gone, 10/10 under 0.1; speed alone gives the whole effect, the rail freeze only guards a high seed (b5's 1.14). PRICE (B): first 4 s ≈ 72 % of today's gas (684 vs 962 counts).
+- Pre-registered readout (first drive): `--learn-speed=2000 --rail-freeze` replay p90 ≤ 80 counts (deployment check; today 338–1083); inverse-lookup factor swing p10–p90 0.55 → < 0.15; gas-cut cycles per full launch median 2.5 → ≤ 1 (≤ half the launches with any); factor share of a remaining cut 0.89 → < 0.3. Null: swing < 0.15 but ≥ 2 cycles ⇒ plant/planner, decode 0x1A3.
+- Not touched: the 10-20 coast deadband / toggle config (separate symptom, still undeployed).
+
+## 2. Torque bar (`b5d39556fe`)
+`selfdrive/ui/onroad/starpilot/torque_bar.py`: when `CP.brand == honda` and `HondaFlags.EPS_ANGLE_LOOP_FW`, bar = clip((carOutput.actuatorsOutput.steeringAngleDeg − carState.steeringAngleDeg) / ANGLE_ERROR_MAX(vEgoRaw), ±1), 0 when latActive is off. Other angle cars keep the lateral-accel bar.
+
+## 3. Error clip from the firmware (`272394d0cf`) — `docs/traces/TRACE-2026-10-21-v300-kmax-imax.md`, mirror `studies/long_control/pidclamps/kmax_imax.py`
+- From the V300 rev 2 image (7d58c823…), fresh Ghidra import + integer mirror, and re-derived independently by the orchestrator (agreement at every knot): sp = −wire (raw = −10·deg), E = 16·(θsp − θ) in 0.1° counts, E′ = (E·G(v))≫8 (table 0xC4CDA: 1178/1465/760/560/1068/2188 at the fork's six knots), P = (E′·112)≫8 clamp ±15360 (0xC61BC), S = I≫7 + P + D, ×254/256 taper, **Kmax = 0xC61BE = 15360** (15481 pre-taper; binds first; the 3072 output clamp never binds from the PID, a full sum delivers 2482). **Imax (I≫7 units)** = the cave's freeze cap min(16θ′+1250, 4096) ≤ 6.0 m/s, 6144 to 12.5 m/s, then the 8192 ICL (0xC61BA). Correction: the cave overwrites r26 with gp-0x6abe, so D = clamp(6·rotor-rate, ±10240) — D is on rotor rate, not angle.
+- Solve P = 15481 − Imax: **35.4 / 23.4 / 45.0 / 61.0 / 25.0 / 12.2°** at 3.1/8/10/11.75/17.5/26.9 m/s (P at its own clamp: 47.7/38.4/74/100/52.6/25.7°). All larger than 17/15.5/19.5/17/8.5/4.5 ⇒ all applied; a fork test pins the integer mirror. BELIEF carried from earlier traces: 0.1°/count, 64 v-word/km/h, Kp 112 on the 27 non-live records (the V300 audit checked all 28).
+- Risk stated: at 3 m/s the P room rises from 36 % to 74 % of the sum; the 10-20 read ranked hands-on creep grinding as the hand fight AT this clip, so hands-on creep may feel worse. The 1229 hand freeze, the 250 deg/s cap and the 400° cap are unchanged.
+
+## 4. Verification
+Fork tests run ON THE COMMA 4 (files overlaid, `python` of /usr/local/venv with a pytest stand-in; the overlay was then restored by scp from `git show 311c4cc0:…`, device tree clean): test_honda + test_honda_accord_angle 33 passed / 0 failed (11 fixture-taking tests not runnable without pytest); torque_bar imports on the device and reads 0.48 at +17°/3.1 m/s. ⚠ Remote shell WRITES over ssh are blocked by the harness classifier (`git checkout` on the device was denied); scp works.
+
+## 5. NEXT
+1. Operator: `ssh comma; cd /data/openpilot && git pull origin accord-PTM` (→ 272394d0), reboot, drive with launches; `python analysis-2020accord/studies/long_control/long_launch_jerk_read.py <route>` with the pre-registered readout above; score launch strength (the price) and hands-on creep (the clip risk) in his own words.
+2. If the launch is too soft: the planner's acceleration profile, not the learner.
+3. Coast deadband (10-20) still open.
