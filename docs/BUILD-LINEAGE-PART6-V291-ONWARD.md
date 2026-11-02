@@ -696,3 +696,28 @@ only cutoff. Consequence: the soft DTC-0x49 counter stays live (the V37 mask is 
 (three weak script guards, since fixed), Lens C FAIL on REV 2 → fixed in REV 3. Page https://claude.ai/artifact/4xPMkqRT1czKaemNg55fJw.
 **V300 → A340: MAPPED, NOT BUILT** — see `docs/specs/design/a340/PORT-SPEC-A340-2026-11-01.md` (the cave re-assembly step was stopped
 three times by the safety classifier; no 6× bytes exist).
+
+### V300-A340 REV 1 — the 6× angle-loop mod PORTED to 39990-TVA-A340 (2026-11-01, BUILT, NOT FLOWN)
+Base = A340 STOCK. Script `analysis-2020accord/builds/a340/build_v300_a340.py` (143/143; re-assembles the cave from
+`a340_cave_listing.py` and runs its H1 on the built bytes; writes only with `ACCORD_V300_A340_WRITE=1`). Image
+`_v300_a340_REV1_plain_image.bin` sha **`597f32caa94949e2f54cbd18d2fb9c5983c745cd9c9f98b8a13d387632086cd1`**; rwd
+`39990-TVA,A340-V300-A340-REV1-ANGLELOOP.KP7.KD48.KI20.ICL8192-GHALF.CAMSAR7-AUTH5328.CL3072-NODAMPAXIS.EME5120-0x13000-0x100000.rwd`
+sha **`6cd332022e2abf5c49f554fb5bcfbee0c6cc138b832d538aa7fc9eb1f1de707d`**. 821 B vs stock, 4 CRC blocks. F181 `39990-TVA,A34C`.
+**Class:** V300's loop (C3-rev2-P + camera gate, two-level A3 bound, 1229 freeze) re-registered for A340's lane: cave 0xC4C00
+(260 B, sha 3e14a246…, link r7, freeze-out r13, scratch r10/r16, E in r9; gp 6a8e/6a2e/4ec0/69c8/6da0), 7 code sites (0x292EE,
+0x29E68, 0x29E6E, 0x2A334, 0x2A340 `jarl 0xC4C00,r7`, 0x2A3D4, 0x2A622 → 0x7E88), private gain 0xC6E88 = 5328, clamps 3072.
+**Gain re-expression** (A340: P = (E·Kp)>>3 with 8-bit Kp, I inc ((e5·Ki)<<2)>>3): Kp 7, Ki 20, Kd 48, cave G/S table ÷2
+(round-half-up), CAM decay sar 7 — P and I per unit error equal A160's. A160's P/sum clamps 15360 and output lag 992/507 ported
+(A340 stock 20480 / 1005·324 would put the rail 7 % higher). Rail 2472 (A160 2461); 3072 clamp does not bind.
+Carried as A160 V300: A4 fb-lag 0/8192/65535/DB 0, ICL 8192, A5 dir-2 fade u8 tables := A340 dir-0 values, A7 EME ±5120/5.0, D6
+debounce (**0xC6508 STOCK**). NOT carried: DampAxis rows/alpha2 (GATE 2 not re-scored on A340's plant), D7, D11, telemetry.
+Verification: cave H1 0/20000 (control 0/20000, negative controls fail), decode_refs clean, encoder reproduces the 7 A160 V300
+edits, Ghidra decode of the built image's cave == listing (orchestrator). Adversarial lenses A/B/C: see the handoff.
+**REV 2 (2026-11-02) — supersedes REV 1 (deleted).** Adversarial Lens C FAILED REV 1: it omitted the 13 DampAxis bytes that A160's
+GATE 2 re-score showed are required with this exact controller (stock rows → GM 20 → 5.2 dB at 3 m/s), and no A340 GATE 2 exists.
+REV 2 carries them: rows `0xD7A5C`/`0xD7A6C` := −29490,−17202,−16000 (same addresses, X and structure as A160) and the A340 producer
+alpha2 **`0xC40D4`** 22 → 14 (A160's `0xC40DC` holds other data on A340). Image `_v300_a340_REV2_plain_image.bin` sha
+**`21fc57834940825447aad04048ece4bc25d318f933d6c7f6af53f3cd7193575e`**; rwd `…V300-A340-REV2-…DAMPAXIS.V299.A3400C40D4.14.EME5120…rwd`
+sha **`b6f6c960a2602a9e06446036ec55486025ad66970d4bca24ad44b7c06e3de3e4`**; 838 B vs stock in 5 CRC blocks (adds 0xD7). Lenses on REV 1:
+A PASS (Ghidra decode == listing, 200k-vector sim, widths, liveness), B PASS_WITH_DEFECTS (script guards, since fixed), C FAIL → REV 2.
+BELIEF carried from A160: GATE 2 margin on the A340 plant (K1 900 both, K2 1157 vs 1159, different base-assist bank).
