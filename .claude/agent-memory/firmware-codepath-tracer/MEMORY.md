@@ -113,3 +113,6 @@ The filenames are descriptive and searchable. Index only what a future session w
 that file does exist on disk.)
 - [V37 cells are not slot-indexed; dormant at standstill (2026-10-05)](reference_accord_v37_cells_are_not_slot_indexed_and_dormant_at_standstill.md) — 42-byte diff, reader census, slot 2 vs 11 identical, no latch path found
 - [Coding area 0x1000, sensor trim chain, 37 hard DTC ids, 3 corrections (2026-10-05)](reference_accord_coding_area_0x1000_sensor_trim_and_hard_dtc_census.md) — per-ECU data below 0x13000; 0xC64C3 gate = 0
+- [A340 angle-loop RAM map + new speed-LERP stage (2026-11-01)](reference_accord_a340_angle_loop_ram_map_and_speed_lerp_stage.md) — A160→A340 gp map, producers/slots, FUN_0002a740 speed-scheduled records, cave home 0xC4B2C
+- [A340 lane map + 5 structural deltas (2026-11-01)](reference_a340_lkas_lane_map_and_structural_deltas.md) — FUN_00029230; speed-scheduled RAM gains; P>>3; r6 live at hook
+- [A340 interlock/fade/DampAxis cell map (2026-11-01)](reference_a340_interlock_fade_dampaxis_cell_map.md) — SM cals x8-10, lockout already 0, dir-0 fades in RAM, angle K 1157

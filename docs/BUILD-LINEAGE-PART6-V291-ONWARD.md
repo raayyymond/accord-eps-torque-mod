@@ -677,3 +677,22 @@ Carried from V37 unchanged: V36 debounce (`0xC64B4..B7`=0xFF, `0xC61C0/C2/C4`=0x
 **Pre-registered read (free on the wire, one engaged episode):** achieved wheel rate per idx at idx ≤ 60 DOUBLES vs V37/stock (0.26 → 0.52 deg/s per idx); full-demand hands-light rate well above stock's ≈24 deg/s, well below 124 (torque-limited). **Null:** rate per idx unchanged ⇒ the map is not the live setpoint source on this image (selector ≠ 7) ⇒ inert, not harmful.
 
 **Page:** https://claude.ai/artifact/TavHVFCPZmYEeNng6e5Loq · handoff `docs/handoffs/2026-10/HANDOFF-2026-10-17-v37a-reference-map.md`.
+
+### V37A-A340 REV 3 — the 2× "PTM-lite" mod PORTED to the 39990-TVA-A340 firmware (2026-11-01, BUILT, NOT FLOWN)
+**Base = A340 STOCK** (`accord-firmwares/analysis-2020accord/other bins/39990-TVA-A340.bin`, sha `01a53539…f071`), a DIFFERENT
+COMPILE of the application (C30_802_D_12_00) — no A160 address carries over; every cell re-found by function (Ghidra `/A340_stock.bin`,
+traces in `docs/specs/design/a340/`). Script `analysis-2020accord/builds/a340/build_v37a_a340.py` (125/125, writes only with
+`ACCORD_V37A_A340_WRITE=1`). Image `_v37a_a340_REV3_plain_image.bin` sha **`8654c02f8ddbe9b94d426081145c06ef33955a769c406665218bcdfb5dfb7aca`**;
+rwd `39990-TVA,A340-V37A-A340-REV3-MAP.LINE.2XTOP374-GAIN1776-CLAMPS900-FBCLAMP15360-V36PKG.DTCGATE.STOCK-0x13000-0x100000.rwd` sha
+**`cf9f4adf6671b48866b12ed312a0220f788eed01f07e23defd2253435d9592d9`**. 412 B vs stock in 4 CRC blocks, no code bytes.
+Cells (A340): gain `0xC648A` 888→1776 · clamps `0xC61C2`/`0xC61C0` 512→**900** (= 2 × stock peak 450; A340's 20480 P/sum clamps and
+1.066 lag DC would otherwise give 2.28× at the 1024 clamp — REV 1/2 superseded) · map = all **36** speed-scheduled records (ptr tables
+`0xC72A4/0xC72D4/0xC7304`) Y → line to 374 · fb clamp `0xC62F8` 7680→15360 · debounce `0xC61D0/D2/D4`→0xFFFF, `0xC6504..07`→0xFF ·
+EME step `0xC652E` 27 · corridor `0xC679E/A0/AA/AC` ±4096 + f32 `0xC65E8/EC/FC/0x6600` · boost `0xC67B8/BA/BC` 4096 + f32 `0xC6614/18/1C` ·
+PN `0x13109`, `0x14120`. 🛑 **`0xC6508` LEFT AT STOCK 112** (REV 2 had 0xFF): on A340 it is ALSO the driver-override demand cut
+(`0x2A076 cmp r11,r15 ; cmovh 0,r10,r10`) — the B-type fade records stay at 255 on A340 whereas A160's reach 0 at X=112, so the byte is the
+only cutoff. Consequence: the soft DTC-0x49 counter stays live (the V37 mask is not ported). Adversarial: Lens A PASS_WITH_DEFECTS
+(2× holds at full demand < ~70 km/h; 2.18×/2.39× at 90/130 km/h on the clamp edge; fb-only ceiling 274→900), Lens B PASS_WITH_DEFECTS
+(three weak script guards, since fixed), Lens C FAIL on REV 2 → fixed in REV 3. Page https://claude.ai/artifact/4xPMkqRT1czKaemNg55fJw.
+**V300 → A340: MAPPED, NOT BUILT** — see `docs/specs/design/a340/PORT-SPEC-A340-2026-11-01.md` (the cave re-assembly step was stopped
+three times by the safety classifier; no 6× bytes exist).

@@ -4,6 +4,14 @@
 > boxes and the 84 finding/correction blocks that used to follow it are ARCHIVED under `docs/archive/` (pointers
 > at the end of this file). They are a record, not a briefing; nothing was retracted by the moves.
 
+## ✈ 2026-11-01 — A340 PORT: V37A 2× BUILT (REV 3, not flown); V300 6× MAPPED, NOT BUILT
+The operator's second variant `39990-TVA-A340` is a **different compile** (no A160 address carries over; lane gains are 36-record
+speed-scheduled RAM tables; P = (E·Kp)>>3 with 8-bit Kp). **V37A-A340 REV 3** image `8654c02f…` / rwd `cf9f4adf…` (clamps 900 = 2× the
+stock peak 450; `0xC6508` kept stock — on A340 it is the driver-override demand cut). Adversarial A/B PASS_WITH_DEFECTS, C FAIL on REV 2
+fixed in REV 3. **V300 → A340 is fully mapped** (`docs/specs/design/a340/PORT-SPEC-A340-2026-11-01.md`) but the cave re-assembly was
+classifier-stopped three times; nothing 6× is on disk. Page https://claude.ai/artifact/4xPMkqRT1czKaemNg55fJw. Handoff
+`docs/handoffs/2026-11/HANDOFF-2026-11-01-a340-port.md`. Lineage: PART6 entry "V37A-A340 REV 3".
+
 ## ✈ THE DECISION, IN ONE PLACE — updated 2026-10-21 (evening) (SET-SPEED PING-PONG = THE BOSCH BRAKE FLOOR; FORK 038103ddd4 PUSHED)
 
 > 🛑 **2026-10-21 evening — two more fork commits on accord-PTM, `272394d0` → `038103ddd4`, PUSHED to origin, NOT yet pulled on the device (it runs 272394d0 since the bb drive; deploy = `git pull origin accord-PTM` + reboot). Firmware untouched (V300 rev 2).** Page: https://claude.ai/artifact/KycTb96kJAGEpmnqSsrEYJ. Handoff: `docs/handoffs/2026-10/HANDOFF-2026-10-21b-cruise-pingpong-brake-floor.md`.
