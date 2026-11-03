@@ -721,3 +721,35 @@ alpha2 **`0xC40D4`** 22 → 14 (A160's `0xC40DC` holds other data on A340). Imag
 sha **`b6f6c960a2602a9e06446036ec55486025ad66970d4bca24ad44b7c06e3de3e4`**; 838 B vs stock in 5 CRC blocks (adds 0xD7). Lenses on REV 1:
 A PASS (Ghidra decode == listing, 200k-vector sim, widths, liveness), B PASS_WITH_DEFECTS (script guards, since fixed), C FAIL → REV 2.
 BELIEF carried from A160: GATE 2 margin on the A340 plant (K1 900 both, K2 1157 vs 1159, different base-assist bank).
+**REV 3 (2026-11-02) — supersedes REV 2 (deleted): + the DTC-0x49 counter mask (row D6b), see "V37A-A340 REV 4" below for the mechanism.**
+Image `_v300_a340_REV3_plain_image.bin` sha **`dc30a73b104d03b1550ed23aa1088278d1f5cfa5257dbaa095a091de137a56e0`**; rwd
+`39990-TVA,A340-V300-A340-REV3-ANGLELOOP.KP7.KD48.KI20.ICL8192-GHALF.CAMSAR7-AUTH5328.CL3072-DAMPAXIS.V299.A3400C40D4.14-DTCB.MASK7D28.EME5120-0x13000-0x100000.rwd`
+sha **`2819a6f2d197327684e9a8831a938664588e567247c17f2efabec77d5ad49917`**. 842 B vs stock in 5 CRC blocks; vs REV 2 exactly `0x2961E/F`, `0x29630/1`
+(`09 75` → `29 7d` twice) + the 0xC4FFC trailer. 159/159 (92 substantive); D6b constants asserted == the 2× script's. NOT FLOWN.
+
+### V37A-A340 REV 4 — the DTC-0x49 counter MASK the port had left out (2026-11-02, BUILT, NOT FLOWN) — supersedes REV 3 (deleted)
+**Operator:** *"we didn't make sure the same DTC 0x49 safeguard placed in A160 was done in A340. Make sure this DTC does not fire for the A340."*
+**Why it was open:** A160 V37 masks the counter by `0xC64B8 := 0xFF`. On A340 the twin byte `0xC6508` is ALSO the hand-override demand cut
+(0x2A068 → 0x2A076), so REV 3 kept it at 112 and the counter stayed live with the V36 package = the A160 V36 regression by construction.
+**Edit (i), 4 code bytes:** `0x2961C` `85 67 09 75` → `85 67 29 7d` and `0x2962E` `85 3f 09 75` → `85 3f 29 7d` — the two counter-B gate
+reads `ld.bu 0x7508[tp]` become `ld.bu 0x7D28[tp]` = `0xC6D28`, a stock-0xFF byte in the unreferenced run [0xC6D28,0xC6FF0) (parity-exact scan,
+6-byte XIV, ld.hu/ld.w spans, pointers all null; the neighbouring LERP table ends at 0xC6D27 under a `< cal[0x7d1c]` guard). Even displacement
+⇒ hw1 unchanged. `0xC6508` stays 112 and keeps its other 4 readers (override cut + 3 in the uncalled twins `FUN_0002ae74`/`FUN_0002b4a0`).
+**Mechanism (EVIDENCE, tracer + orchestrator disassembly):** counter B `gp-0x671e` (u8); operand `gp-0x67f5` = rectified hand-torque index, u8
+clamped ≤ 254; `0x295B8/BC` load `0xC6530/31` (50/50), `0x295C4 add`, `0x295C6 zxb` ⇒ threshold 100; `0x295C8 cmp; bc` → else `0x295CC`
+STEER_STATUS 7 (`gp-0x67cd`) + `FUN_00016ed0(0x49,1,1,1)` + counter reset. `< 50` path `0x2962A..0x29644`: reset unless hand > gate AND r22 ≠ 0;
+`≥ 50` path `0x29600..`: free-runs unless status(`gp-0x67c8`) == 2 and r22 == 0 (then consults the gate at 0x2961C with `cmovh 2,r11`).
+With gate 0xFF: `hand > 255` never ⇒ counter 0 every tick ⇒ the ≥ 50 phase and the trip unreachable. Same instruction sequence as A160
+`0x291E0..0x29236` (19/86 bytes differ: displacements + r11/r10) ⇒ the semantics A160 has flown since V37. Cal-only alternative (raise
+`0xC6530/31`) REJECTED: byte-truncated sum ≤ 254, counter still free-runs above 50 ⇒ only delays. Residual case: a RAM counter ≥ 50 at the
+first start after the flash gives at most ONE trip then pinned (BELIEF the reset clears RAM; A160 V37 onto a tripped V36 ECU showed none).
+**Build:** `builds/a340/build_v37a_a340.py` REV 4, 142/142 (49 substantive), < 10 s; `byte_readers` (parity-exact) added because `tp_readers`
+counts the odd neighbour (0x46020/0x460F0 read 0xC6509); byte-exact mirror `dtc49_counter_b_tick` + sweep (stock gate: fires up to 3× / 250
+ticks and re-arms; masked: max counter 0, 0 trips from any start < 50). Image `_v37a_a340_REV4_plain_image.bin` sha
+**`5b71a52d4208f03eb225cabc5426e3f063c557682369db462ce82bf310cfd98e`**; rwd
+`39990-TVA,A340-V37A-A340-REV4-MAP.LINE.2XTOP374-GAIN1776-CLAMPS900-FBCLAMP15360-V36PKG.DTCB.MASK7D28-0x13000-0x100000.rwd` sha
+**`e7728d58a12958a69a2f8441b83d5cf918f31ba0d3f5548ae5e0725f8b6fd2e6`**. 416 B vs stock in 4 CRC blocks; vs REV 3 exactly the 4 hw2 bytes +
+the 0xC4FFC trailer. **Adversarial pass:** A/B/C all PASS_WITH_DEFECTS, none DO_NOT_FLASH (A: own mirror 0 mismatches, boot init starts the counter at 0, loads decode as ld.bu 0x7D28[tp]; B: fresh rebuild == hashes, all bytes attributed, 11 mutations caught, A160 claim 19/86 verified; C: host private 6 ways, twins dead 3 ways, override cut byte-identical, DTC 0x49 has no reachable setter left, 0x23 untouched, GATE 1/2 unaffected). Page https://claude.ai/artifact/4xPMkqRT1czKaemNg55fJw (section "DTC 0x49 on A340");
+handoff `docs/handoffs/2026-11/HANDOFF-2026-11-02-a340-dtc49-mask.md`. **Coverage lost:** counter-sourced DTC 0x49 / STEER_STATUS 7 (as A160
+since V37); STEER_STATUS 7 still reachable from the fault block 0x29570. Lens C census: DTC 0x49's only two setters are the counter trip and its dead twin ⇒ NO reachable code sets 0x49 after this build; DTC 0x23 (12 setters) untouched; STEER_STATUS 7 (fault block) and 4 (counter A, held off by V36 cals) still reachable; STEER_STATUS 2 from this counter is gone (as A160 V37). Lens A: hand index gp-0x67f5 saturates at 255 (not 254), both masked compares are strict; r22 = clamp(gp-0x6976, ±LERP); boot zero-fill 0x14720 + .data copy (flash 0x87320.. → RAM 0xFEDF11C0; counter from 0x87A42 = 0) ⇒ the residual ≥50 start is unreachable; gp-0x67cd << 4 is the 0x18F STEER_STATUS nibble (FUN_000569CC). BELIEF (Lens A residual): a cal overlay copy to 0xFA800000 at boot with runtime write helpers having no static caller — same exposure as every cal on A160.
+

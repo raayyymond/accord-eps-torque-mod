@@ -1,5 +1,18 @@
 # -*- coding: utf-8 -*-
-r"""builds/a340/build_v37a_a340.py -- V37A REV 3 ("PTM-lite", the 2x mod) PORTED TO 39990-TVA-A340.  REV 3.
+r"""builds/a340/build_v37a_a340.py -- V37A REV 4 ("PTM-lite", the 2x mod) PORTED TO 39990-TVA-A340.  REV 4.
+
+=== REV 4 (2026-11-02, operator: "make sure DTC 0x49 does not fire on A340") ======================
+REV 3 left the DTC-0x49 counter-B gate byte 0xC6508 at stock 112 because the SAME byte is the hand-override demand cut
+(0x2A068 ld.bu -> 0x2A076 cmp/cmovh), so the V37 mask (gate := 0xFF) was NOT ported and the counter could saturate under 2x
+authority exactly as on A160 V36 (dash lights + LKAS drop).  REV 4 ports the mask WITHOUT touching the override cut: the two
+counter-B gate READS, 0x2961C `ld.bu 0x7508[tp],r12` and 0x2962E `ld.bu 0x7508[tp],r7`, are re-pointed (hw2 0x7509 -> 0x7D29)
+to 0xC6D28, a byte that is 0xFF on stock inside the unreferenced run [0xC6D28,0xC6FF0) and is NEVER written.  Those two
+instructions then compare the hand index gp-0x67f5 (u8 <= 255) against 0xFF: `hand > 0xFF` is never true, the counter<50 path
+stores 0 every tick, the counter never reaches 50 and the >= 50 free-running phase is unreachable, so the saturation compare
+and the FUN_00016ed0(0x49) call are dead.  The override cut at 0x2A068/0x2A076 still reads 0xC6508 == 112 (asserted).
+The A340 block 0x295F2..0x29648 is the SAME instruction sequence as A160's 0x291E0..0x29236 (only gp/tp displacements and
+r11-vs-r10 differ), so "gate reads 0xFF" here is the semantics A160 has flown since V37.  4 code bytes, same CRC block as the
+part-number byte.  (i) below.  REV 3 (image 8654c02f..., rwd cf9f4adf...) is deleted from disk.
 
 === REV 3 (2026-11-01, adversarial Lens C FAIL, orchestrator-verified) ============================
 REV 2 forced the DTC-0x49 gate byte 0xC6508 to 0xFF as A160 V37 does.  On A340 that SAME byte is also the driver-override
@@ -100,9 +113,10 @@ A340_SHA = "01a53539e19bb0b54fb339a08644ca6981b844fad41276a1f8c305f13aa6f071"
 A160_STOCK_SHA = "3f1d55a98aac6e73631d94d583065c57d83dd3a86df0e7d06e56a3feb58fd822"
 A160_V37A_NAME = "_v37a_REV3_plain_image.bin"
 
-LABEL = "V37A-A340-REV3"
-TAG = "MAP.LINE.2XTOP374-GAIN1776-CLAMPS900-FBCLAMP15360-V36PKG.DTCGATE.STOCK"
-IMG_NAME = "_v37a_a340_REV3_plain_image.bin"
+LABEL = "V37A-A340-REV4"
+TAG = "MAP.LINE.2XTOP374-GAIN1776-CLAMPS900-FBCLAMP15360-V36PKG.DTCB.MASK7D28"
+IMG_NAME = "_v37a_a340_REV4_plain_image.bin"
+EXP_IMG_SHA = "5b71a52d4208f03eb225cabc5426e3f063c557682369db462ce82bf310cfd98e"   # Lens B D2: frozen REV 4 image sha (catch-all)
 RWD_NAME = f"39990-TVA,A340-{LABEL}-{TAG}-0x{START:X}-0x{END:X}.rwd"
 VSTR = [b"39990-TVA-A310", b"39990-TVA-A340", b"39990-TVA,A340"]
 HW_STR = b"001100121020"
@@ -114,7 +128,13 @@ LP_CLAMP = (0xC61C0, 512, 900)
 FB_CLAMP = (0xC62F8, 7680, 15360)
 DEBOUNCE_U16 = [(0xC61D0, 12800, 0xFFFF), (0xC61D2, 8960, 0xFFFF), (0xC61D4, 11520, 0xFFFF)]
 DEBOUNCE_U8 = [(0xC6504, 112, 0xFF), (0xC6505, 96, 0xFF), (0xC6506, 54, 0xFF), (0xC6507, 64, 0xFF)]
-DTC_GATE = (0xC6508, 112)   # REV 3: LEFT AT STOCK -- it is also the driver-override cutoff on A340 (Lens C)
+DTC_GATE = (0xC6508, 112)   # REV 3/4: LEFT AT STOCK -- it is also the driver-override cutoff on A340 (Lens C)
+# (i) REV 4: the two counter-B gate READS are re-pointed to a 0xFF byte (the V37 mask, override cut untouched)
+DTC_B_SITES = {0x2961C: "85670975", 0x2962E: "853f0975"}     # ld.bu 0x7508[tp],r12 / ld.bu 0x7508[tp],r7  (stock bytes)
+DTC_B_HOST = 0xC6D28                                         # 0xFF on stock, inside the free run [0xC6D28,0xC6FF0); NEVER written
+DTC_B_HW2 = (DTC_B_HOST - 0xBF000) | 1                      # 0x7D29: even disp keeps hw1 (bit 0 lives in hw1 bit 5); hw2 bit 0 = 1
+GATE_READERS_STOCK = [0x2961C, 0x2962E, 0x2A068, 0x2AF52, 0x2AF64, 0x2B6B8]   # 2 counter-B, 1 override cut, 3 in the uncalled twin
+OVERRIDE_CUT_SITE = (0x2A068, "855f0975")                    # ld.bu 0x7508[tp],r11 -> 0x2A076 cmp r11,r15 ; cmovh 0,r10,r10
 EME_STEP = (0xC652E, 17, 27)
 # EME corridor + boost floor: (int16 addr, f32 addr, stock int, new int)  -- lockstep pairs int == f32*1024
 EME_PAIRS = [(0xC679E, 0xC65E8, 1024, 4096), (0xC67A0, 0xC65EC, 1024, 4096),
@@ -204,6 +224,78 @@ def tp_readers(img, cell):
         if (hw2 & 0xFFFE) == (disp & 0xFFFE):
             hits.append(a)
     return hits
+
+
+def byte_readers(img, cell):
+    """PARITY-EXACT scan for 4-byte tp-relative BYTE loads of `cell`: ld.bu (op 0x3C even disp / 0x3D odd disp, disp bit 0 in
+    hw1 bit 5, hw2 = disp|1) and ld.b (op 0x38, hw2 = disp).  `tp_readers` compares hw2 & 0xFFFE and so reports the ODD
+    parity neighbour as a reader of an even byte cell (0xC6508: 6 real + 2 readers of 0xC6509 at 0x46020/0x460F0)."""
+    disp = cell - 0xBF000
+    hits = []
+    for a in range(0x13000, 0xC0000, 2):
+        hw1 = img[a] | (img[a + 1] << 8)
+        if hw1 & 0x1F != 5:
+            continue
+        op = (hw1 >> 5) & 0x3F
+        hw2 = img[a + 2] | (img[a + 3] << 8)
+        if op == (0x3C | (disp & 1)) and hw2 == (disp | 1):
+            hits.append(a)
+        elif op == 0x38 and hw2 == disp:
+            hits.append(a)
+    return hits
+
+
+def dtc49_counter_b_tick(cnt, hand, r22, status, gate, sat_lo, sat_hi, cal_7531):
+    """Byte-exact integer mirror of the DTC-0x49 counter-B state machine in FUN_00029230, 0x295B8..0x29648 (A340 stock
+    bytes; tracer-dtc49-a340 2026-11-02 + orchestrator dry-run disassembly).  Every operand is a u8 cell.
+      cnt    = gp-0x671e  counter B            hand = gp-0x67f5  |hand torque| index, u8, SATURATES AT 255 (0x29400 addi -0xff ;
+                                                     0x2940C cmovc) -- so the mask relies on the strict compares, which hold on both sites
+      status = gp-0x67c8                       r22  = the speed-limited lane command clamp(gp-0x6976, +-LERP) (0x293E4/0x293F2/0x29462);
+                                                     only zero vs non-zero matters here
+      gate   = the byte the two gate reads fetch: 0xC6508 (112) on stock / REV 3, 0xC6D28 (0xFF) on REV 4
+      sat_lo/sat_hi = 0xC6530/0xC6531 (50/50)  cal_7531 = 0xC6531 (50), the <50 / >=50 split
+    Returns (new_cnt, dtc_fired, r11_set_2).  r11 = 2 reaches STEER_STATUS (gp-0x67cd, the 0x18F nibble) only via this block's
+    later stores (0x29694 / 0x2970A); with the mask, counter B can no longer put status 2 or 7 on the wire (Lens A, 2026-11-02)."""
+    thr = (sat_lo + sat_hi) & 0xFF                     # 0x295B8/BC ld.bu ; 0x295C4 add r7,r13 ; 0x295C6 zxb r13  -> 100
+    if not (cnt < thr):                                # 0x295C8 cmp r13,r15 ; 0x295CA bc 0x295EE  (taken while cnt < thr)
+        # 0x295CC mov 7,r11 ; st.b r11,-0x67cd (STEER_STATUS=7) ; 0x295D2.. FUN_00016ed0(0x49,1,1,1) ; 0x295E0 st.b r0,-0x671e
+        return 0, True, False
+    # 0x295EE.. (counter-A prologue, r11 = setfne of another flag) then 0x295FC cmp r7,r15 ; bc 0x2962A  (cnt < cal_7531)
+    if cnt < cal_7531:
+        # 0x2962A ld.bu hand->r16 ; 0x2962E ld.bu GATE->r7 ; 0x29632 cmp r7,r16 ; 0x29634 bnh 0x29644
+        if not (hand > gate):
+            return 0, False, False                     # 0x29644 st.b r0,-0x671e
+        if r22 == 0:                                   # 0x29636 cmp r0,r22 ; 0x29638 be 0x29644
+            return 0, False, False
+        return (cnt + 1) & 0xFF, False, False          # 0x2963A addi 1,r15,r14 ; 0x2963E st.b r14,-0x671e
+    # cnt >= cal_7531: 0x29600 ld.bu status->r16 ; 0x29604 cmp 2,r16 ; bne 0x2960C ; 0x29608 cmp r0,r22 ; be 0x29618
+    if status == 2 and r22 == 0:
+        # 0x29618 ld.bu hand->r9 ; 0x2961C ld.bu GATE->r12 ; 0x29620 cmp r12,r9 ; 0x29622 cmovh 2,r11,r11 ; 0x29626 bh 0x29648
+        if hand > gate:
+            return cnt, False, True                    # hold, r11 := 2
+        return 0, False, False                         # 0x29628 br 0x29644 -> st.b r0
+    return (cnt + 1) & 0xFF, False, True               # 0x2960C mov 2,r11 ; addi 1,r15,r14 ; st.b r14,-0x671e (free-running phase, r11 := 2)
+
+
+def dtc49_sweep(gate, starts, ticks=120):
+    """Drive the mirror from every start counter in `starts`, every hand index, r22 and status, for `ticks` ticks.
+    Returns (max counter seen, max DTC fires from one start, counter ever non-zero AFTER having been zero)."""
+    mx, fires, rearm = 0, 0, False
+    for hand in range(256):
+        for r22 in (0, 1):
+            for status in (0, 1, 2, 3):
+                for cnt0 in starts:
+                    cnt, n, seen0 = cnt0, 0, cnt0 == 0
+                    for _ in range(ticks):
+                        cnt, f, _r = dtc49_counter_b_tick(cnt, hand, r22, status, gate, 50, 50, 50)
+                        n += f
+                        mx = max(mx, cnt)
+                        if cnt == 0:
+                            seen0 = True
+                        elif seen0:
+                            rearm = True
+                    fires = max(fires, n)
+    return mx, fires, rearm
 
 
 def is_ld_hu_tp(img, a, cell):
@@ -329,7 +421,7 @@ def build():
     R = Run()
     ck = R.check
     print("=" * 118)
-    print(f"  {LABEL}: V37A rev 3 (2x torque + rate-reference line to 2x top + fb clamp 2x + V37 package) ported to A340")
+    print(f"  {LABEL}: V37A rev 3 (2x torque + rate-reference line to 2x top + fb clamp 2x + V37 package incl. the DTC-0x49 mask) ported to A340")
     print("=" * 118)
 
     stock = open(A340_PATH, "rb").read()
@@ -415,7 +507,66 @@ def build():
         touched[a] = "e" if a != EME_STEP[0] else "f"
     ck(all(u16(code, a) == 0xFFFF for a, _, _ in DEBOUNCE_U16) and all(code[a] == 0xFF for a, _, _ in DEBOUNCE_U8)
        and code[EME_STEP[0]] == 27, "debounce 0xFFFF x3, 0xFF x4, EME step 27", "T")
-    ck(code[DTC_GATE[0]] == DTC_GATE[1] == stock[DTC_GATE[0]], "REV 3: DTC-0x49 gate / override cutoff 0xC6508 == STOCK 112 (untouched)", "S")
+    ck(code[DTC_GATE[0]] == DTC_GATE[1] == stock[DTC_GATE[0]], "REV 3/4: DTC-0x49 gate / override cutoff 0xC6508 == STOCK 112 (untouched)", "S")
+
+    # ---- [4b] REV 4: counter-B gate reads -> 0xC6D28 (0xFF) ----------------------------------------------------
+    print("\n  [4b] (i) REV 4: DTC-0x49 COUNTER-B GATE READS 0x2961C/0x2962E -> 0xC6D28 (0xFF) -- V37's mask, override cut untouched")
+    ck(stock[DTC_B_HOST] == 0xFF and all(b == 0xFF for b in stock[0xC6D28:0xC6FF0]), "host 0xC6D28 is 0xFF inside the 0xFF run [0xC6D28,0xC6FF0) on stock", "V")
+    ck(tp_readers(stock, DTC_B_HOST) == [] and tp_readers(stock, DTC_B_HOST - 2) == [] and byte_readers(stock, DTC_B_HOST) == [] and byte_readers(stock, DTC_B_HOST + 1) == [] and stock.count(struct.pack("<I", DTC_B_HOST)) == 0
+       and not any(u16(stock, a) == (DTC_B_HOST & 0xFFFF) for a in range(START, 0xC0000, 2)),
+       "no tp load of 0xC6D28 or 0xC6D26 (any width), no absolute pointer, no 0x6D28 halfword in code (control: 0xC6508 below)", "S")
+    ck(sorted(byte_readers(stock, DTC_GATE[0])) == GATE_READERS_STOCK and sorted(set(tp_readers(stock, DTC_GATE[0])) - set(GATE_READERS_STOCK)) == [0x46020, 0x460F0]
+       and byte_readers(stock, DTC_GATE[0] + 1) == [0x46020, 0x460F0],
+       f"positive control + census: 0xC6508 has exactly the 6 stock readers {[hex(a) for a in GATE_READERS_STOCK]}; the loose scan's 2 extra hits "
+       f"0x46020/0x460F0 are ld.bu 0x7509[tp] = readers of the ODD neighbour 0xC6509 (parity trap)", "S")
+    for a, sh in DTC_B_SITES.items():
+        ck(stock[a:a + 4] == bytes.fromhex(sh) and ((u16(stock, a) >> 5) & 0x3F) == 0x3C and u16(stock, a + 2) == 0x7509,
+           f"stock 0x{a:05X} == {sh}: ld.bu 0x7508[tp] (even disp, op 0x3C, hw2 0x7509)", "V")
+        put16(a + 2, DTC_B_HW2, "i")
+        ck(code[a:a + 2] == stock[a:a + 2] and u16(code, a + 2) == 0x7D29 and 0xBF000 + (u16(code, a + 2) & 0xFFFE) == DTC_B_HOST,
+           f"0x{a:05X}: hw1 unchanged ({stock[a:a + 2].hex()}), hw2 0x7509 -> 0x{u16(code, a + 2):04X} = ld.bu 0x7D28[tp] (0xC6D28)", "T")
+    ck(sorted(byte_readers(code, DTC_B_HOST)) == sorted(DTC_B_SITES) and sorted(byte_readers(code, DTC_GATE[0])) == sorted(set(GATE_READERS_STOCK) - set(DTC_B_SITES))
+       and byte_readers(code, DTC_B_HOST + 1) == [] and byte_readers(code, DTC_GATE[0] + 1) == [0x46020, 0x460F0],
+       "BUILT: 0xC6D28 has exactly the two counter-B reads; 0xC6508 keeps the override cut 0x2A068 + the 3 twin reads", "S")
+    a, sh = OVERRIDE_CUT_SITE
+    ck(bytes(code[a:a + 4]) == stock[a:a + 4] == bytes.fromhex(sh) and bytes(code[0x2A06C:0x2A080]) == stock[0x2A06C:0x2A080],
+       "override cut 0x2A068 ld.bu 0x7508[tp],r11 and its compare/cmovh/branch 0x2A06C..0x2A080 byte-identical to stock", "S")
+    ck(code[DTC_B_HOST] == 0xFF and code[DTC_GATE[0]] == 112, "BUILT: host byte 0xFF (never written), gate byte 112", "S")
+    ck(bytes(code[0x295F2:0x29648]) == bytes(stock[0x295F2:0x29648]).replace(b"\x09\x75", b"\x29\x7d"),
+       "the counter-B block 0x295F2..0x29648 differs from stock ONLY in the two hw2 halfwords", "S")
+    # byte-exact mirror of the SM: stock gate 112 trips the DTC under a sustained push; gate 0xFF can never move the counter
+    ck((u8(stock, 0xC6530), u8(stock, 0xC6531), u8(code, 0xC6530), u8(code, 0xC6531)) == (50, 50, 50, 50)
+       and ((u8(code, 0xC6530) + u8(code, 0xC6531)) & 0xFF) == 100, "saturation cals 0xC6530/31 == 50/50 on stock and built: threshold (50+50)&0xFF = 100", "V")
+    cnt, t = 0, 0
+    while True:                                                                      # stock: hand 113, request live, status 0
+        cnt, f, _ = dtc49_counter_b_tick(cnt, 113, 1, 0, 112, 50, 50, 50)
+        t += 1
+        if f or t > 1000:
+            break
+    ck(f and t == 101, f"MIRROR, stock gate 112: a sustained hand index 113 with a live request fires DTC 0x49 on tick {t} (100 increments + the trip)", "S")
+    # Lens B D1: drive the mirror from the byte the BUILT loads actually fetch (decode hw2 of each site), not from the host constant
+    g_sites = {code[0xBF000 + (u16(code, a + 2) & 0xFFFE)] for a in DTC_B_SITES}
+    ck(g_sites == {0xFF} and all(((u16(code, a) >> 5) & 0x3F) == 0x3C and (u16(code, a + 2) & 1) == 1 for a in DTC_B_SITES),
+       "both built gate loads decode as even-disp ld.bu (op 0x3C, hw2 bit 0 set) and the byte they fetch is 0xFF", "S")
+    g = g_sites.pop()
+    m_s, f_s, r_s = dtc49_sweep(112, (0, 1, 49, 50, 99), ticks=250)
+    m_n, f_n, r_n = dtc49_sweep(g, (0, 1, 49), ticks=120)
+    m_r, f_r, r_r = dtc49_sweep(g, (50, 99, 100, 254, 255), ticks=120)
+    ck(f_s >= 2 and m_s >= 100 and r_s,
+       f"MIRROR, stock gate 112 (hand 0..255 x r22 x status x starts 0,1,49,50,99): fires up to {f_s}x in 250 ticks, re-arms after each trip (max counter {m_s})", "S")
+    ck(m_n == 0 and f_n == 0 and not r_n,
+       f"MIRROR, gate 0x{g:02X}, start counter 0/1/49 (every reachable state): counter is 0 after EVERY tick for every hand/r22/status, "
+       f"DTC never fires, nothing re-arms (max {m_n}, fires {f_n})", "S")
+    ck(f_r <= 1 and not r_r and m_r <= 100,
+       f"MIRROR, gate 0x{g:02X}, start >= 50 (UNREACHABLE: boot zero-fills RAM at 0x14720 and the .data copy sets gp-0x671e from flash 0x87A42 = 0; "
+       f"the mask cannot produce it): at most {f_r} trip then pinned at 0 forever", "S")
+    ck(stock[0x87A42] == 0 == code[0x87A42], "counter B's .data init byte (flash 0x87A42 -> gp-0x671e = 0xFEDF18E2) is 0 on stock and built (Lens A boot trace)", "V")
+    # the same instruction sequence flew on A160 as V37 with its gate byte at 0xFF (displacement-agnostic compare)
+    a160s = open(FW_ROOT / "analysis-2020accord" / "stock_fw_dump" / "code.bin", "rb").read()
+    nd = sum(x != y for x, y in zip(stock[0x295F2:0x29648], a160s[0x291E0:0x29236]))
+    ck(len(stock[0x295F2:0x29648]) == len(a160s[0x291E0:0x29236]) == 86 and nd == 19,
+       f"A340 0x295F2..0x29648 vs A160 0x291E0..0x29236: {nd} of 86 bytes differ (gp/tp displacements + r11/r10 only) -- "
+       f"the SM A160 flies with gate 0xFF since V37", "S")
 
     # ---- [5] EME corridor + boost floor, lockstep pairs ---------------------------------------------------------
     print("\n  [5] (g) EME CORRIDOR x4 + BOOST FLOOR 4096 (int16 + f32 mirrors)")
@@ -472,10 +623,11 @@ def build():
     print("\n  [8] FULL-FILE DIFF vs A340 STOCK over [0x13000, 0x100000)")
     d = [i for i in range(START, END) if code[i] != stock[i]]
     unowned = [i for i in d if i not in touched and i not in trailers]
-    ck(not unowned, f"{len(d)} bytes differ; every one owned by an edit (a)-(h) or a CRC trailer (unowned: "
+    ck(not unowned, f"{len(d)} bytes differ; every one owned by an edit (a)-(i) or a CRC trailer (unowned: "
        f"{[hex(i) for i in unowned[:8]]})", "S")
     low = sorted(i for i in d if i < 0xC0000)
-    ck(low == sorted(PN_BYTES), f"below 0xC0000 exactly the two part-number bytes differ: {[hex(i) for i in low]}", "S")
+    ck(low == sorted(list(PN_BYTES) + [a + 2 + k for a in DTC_B_SITES for k in (0, 1)]),
+       f"below 0xC0000 exactly the two part-number bytes + the 4 hw2 bytes of (i) differ: {[hex(i) for i in low]}", "S")
     ck(code[:START] == stock[:START], "bootloader region [0,0x13000) untouched", "S")
     runs = []
     for i in d:
@@ -583,6 +735,7 @@ def build():
        f"output paths fit {MAX_PATH} chars (image {len(str(out_i))}, rwd {len(str(out_r))})", "C")
 
     img_sha, rwd_sha = hashlib.sha256(bytes(code)).hexdigest(), hashlib.sha256(rwd).hexdigest()
+    ck(img_sha == EXP_IMG_SHA, f"REV 4 image sha frozen: {img_sha[:16]}... (expected {EXP_IMG_SHA[:16]}...)", "S")
     print("\n" + "=" * 118)
     print(f"  image SHA256 {img_sha}   ({IMG_NAME})")
     print(f"  .rwd  SHA256 {rwd_sha}   ({RWD_NAME})")

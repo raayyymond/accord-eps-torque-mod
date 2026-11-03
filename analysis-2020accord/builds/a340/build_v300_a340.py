@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
-r"""builds/a340/build_v300_a340.py -- V300-A340 REV 1: the 6x "PTM" (A160 V300 rev 2, the firmware ANGLE LOOP) PORTED TO
+r"""builds/a340/build_v300_a340.py -- V300-A340 REV 3: the 6x "PTM" (A160 V300 rev 2, the firmware ANGLE LOOP) PORTED TO
 39990-TVA-A340.  BASE = A340 STOCK (sha256 01a53539...).  NOT FLOWN.
+
+REV 3 (2026-11-02, operator: "make sure DTC 0x49 does not fire on A340"): row D6b -- the DTC-0x49 counter-B gate READS
+  0x2961C `ld.bu 0x7508[tp],r12` and 0x2962E `ld.bu 0x7508[tp],r7` are re-pointed (hw2 0x7509 -> 0x7D29) to 0xC6D28, a byte that
+  is 0xFF on stock inside the unreferenced run [0xC6D28,0xC6FF0) and is NEVER written (the 16-bit gain cell A6 lives at 0xC6E88 in the
+  same run).  The hand index gp-0x67f5 (u8) can never exceed 0xFF, so the counter<50 path stores 0 every tick, the >= 50 free-running
+  phase is unreachable and the FUN_00016ed0(0x49) call is dead -- V37's mask, ported.  The override cut 0x2A068/0x2A076 still reads
+  0xC6508 == 112 (asserted stock).  REV 2 carried the V36 debounce package with 0xC6508 stock, so the counter could saturate under 6x
+  authority as on A160 V36.  4 code bytes in the main CRC block.  REV 2 (image 21fc5783..., rwd b6f6c960...) is deleted from disk.
 
 STUDY BUILD.  A built image on disk is not a flash.  Nothing here sends anything to a car; flashing is gated on the
 operator naming the file and the bus.  Files are written ONLY with ACCORD_V300_A340_WRITE=1 (default: dry run).
@@ -41,6 +49,8 @@ THE EDITS (A160 V300 census row -> A340):
   D4  low-speed lockout 0xC62FC: already 0 on A340 stock -- no edit (asserted)
   D6  STEER_STATUS debounce as the 2x REV 3 build: 0xC61D0/D2/D4 -> 0xFFFF x3, 0xC6504..07 -> 0xFF x4.
       0xC6508 (DTC-0x49 gate AND the A340 driver-override cutoff, Lens C on V37A-A340 REV 2) STAYS STOCK 112.
+  D6b REV 3: counter-B gate reads 0x2961C/0x2962E hw2 0x7509 -> 0x7D29 (read 0xC6D28 = 0xFF): the DTC-0x49 mask (V37) without
+      touching the override cut.  Same edit as V37A-A340 REV 4 (i).
 
 REV 2 (2026-11-02, adversarial Lens C FAIL on REV 1, accepted by the orchestrator): the 13 DampAxis bytes ARE carried --
   rows 0xD7A5C / 0xD7A6C := A160 V300's -29490,-17202,-16000 (stock -9830,-5734,-1966; same addresses on A340, same X 0,1280,5760,
@@ -105,10 +115,10 @@ A160_V300_NAME = ("_v300_V300-REV2-RELEASE-ANGLELOOP.FROMSTOCK-KP112.KD48.KI40.I
                   ".NOMAP.STOCKASSIST.DAMPAXIS.V299.A16C_plain_image.bin")
 A160_V300_SHA = "7d58c823"          # prefix (memory: V300 rev 2 image 7d58c823...); asserted as a prefix
 
-EXP_IMG_SHA = "21fc57834940825447aad04048ece4bc25d318f933d6c7f6af53f3cd7193575e"
-LABEL = "V300-A340-REV2"
-TAG = "ANGLELOOP.KP7.KD48.KI20.ICL8192-GHALF.CAMSAR7-AUTH5328.CL3072-DAMPAXIS.V299.A3400C40D4.14" + (".EME5120" if CARRY_A7 else "")
-IMG_NAME = "_v300_a340_REV2_plain_image.bin"
+EXP_IMG_SHA = "dc30a73b104d03b1550ed23aa1088278d1f5cfa5257dbaa095a091de137a56e0"
+LABEL = "V300-A340-REV3"
+TAG = "ANGLELOOP.KP7.KD48.KI20.ICL8192-GHALF.CAMSAR7-AUTH5328.CL3072-DAMPAXIS.V299.A3400C40D4.14-DTCB.MASK7D28" + (".EME5120" if CARRY_A7 else "")
+IMG_NAME = "_v300_a340_REV3_plain_image.bin"
 RWD_NAME = f"39990-TVA,A340-{LABEL}-{TAG}-0x{START:X}-0x{END:X}.rwd"
 RELEASE_LETTER = b"C"
 VSTR = [b"39990-TVA-A310", b"39990-TVA-A340", b"39990-TVA,A340", b"39990-TVA,A34C"]
@@ -130,6 +140,12 @@ SITES = {   # id: (addr, stock hex, instruction spec for enc())
     "OPH":  (0x2A3D4, "8951",     ("mov", 26, 10)),
     "A6":   (0x2A620, "255f8a74", ("ld_h_tp", 0xC6E88, 11)),
 }
+# D6b (REV 3): the two DTC-0x49 counter-B gate reads -> 0xC6D28 (0xFF).  Same constants as build_v37a_a340 (i); asserted equal.
+DTC_B_SITES = {0x2961C: "85670975", 0x2962E: "853f0975"}
+DTC_B_HOST = 0xC6D28
+DTC_B_HW2 = (DTC_B_HOST - TP) | 1                                     # 0x7D29
+GATE_READERS_STOCK = [0x2961C, 0x2962E, 0x2A068, 0x2AF52, 0x2AF64, 0x2B6B8]
+OVERRIDE_CUT_SITE = (0x2A068, "855f0975")
 # A160 positive control for the encoder: (addr, V300-image bytes, spec) -- must reproduce the A160 V300 image
 A160_SITES = {
     "E1":   (0x28F4C, ("ld_h_gp", -0x6A00, 7)),
@@ -157,7 +173,9 @@ CAL = [
     (0xC61D0, 12800, 0xFFFF, "D6", False), (0xC61D2, 8960, 0xFFFF, "D6", False), (0xC61D4, 11520, 0xFFFF, "D6", False),
 ]
 CAL_U8 = [(0xC6504, 112, 0xFF, "D6"), (0xC6505, 96, 0xFF, "D6"), (0xC6506, 54, 0xFF, "D6"), (0xC6507, 64, 0xFF, "D6")]
+DTC_GATE_ADDR = 0xC6508
 STOCK_CELLS = {"D4 low-speed lockout 0xC62FC": (0xC62FC, 0), "DTC-0x49 gate / override cutoff 0xC6508": (0xC6508, 112, "u8"),
+               "D6b host 0xC6D28 (never written)": (0xC6D28, 0xFF, "u8"),
                "post-fade clamp 0xC61CA": (0xC61CA, 20476), "D clamp 0xC61C4": (0xC61C4, 10240),
                "shared fwd gain 0xC648A": (0xC648A, 888)}
 DAMPAXIS_ROWS = (0xD7A5C, 0xD7A6C)    # -9830,-5734,-1966 on stock; REV 2: := A160 V300's rows (D8k)
@@ -353,6 +371,30 @@ def build():
         ck(stock[a:a + len(bytes.fromhex(sh))].hex() == sh, f"stock-only 0x{a:05X} == {sh} ({nm})", "V")
     j = dec_jr(stock, 0x29E74)
     ck(j == (0, SKIP_TGT), f"A2's new taken target 0x29E74 is `jr 0x2A596` (Honda skip epilogue): {j}", "S")
+
+    # ---- [2b] D6b: DTC-0x49 counter-B gate reads -> 0xC6D28 (0xFF) ----------------------------------------------
+    print("\n  [2b] D6b (REV 3): DTC-0x49 COUNTER-B GATE READS 0x2961C/0x2962E -> 0xC6D28 (0xFF) -- V37's mask, override cut untouched")
+    ck((DTC_B_SITES, DTC_B_HOST, DTC_B_HW2, GATE_READERS_STOCK, OVERRIDE_CUT_SITE) ==
+       (V37A340.DTC_B_SITES, V37A340.DTC_B_HOST, V37A340.DTC_B_HW2, V37A340.GATE_READERS_STOCK, V37A340.OVERRIDE_CUT_SITE),
+       "D6b constants == build_v37a_a340 (i) constants (one definition of the edit)", "C")
+    ck(stock[DTC_B_HOST] == 0xFF and DTC_B_HOST < GAIN_CELL and GAIN_CELL + 2 <= 0xC6FF0,
+       "host 0xC6D28 is 0xFF and does not overlap the A6 gain cell 0xC6E88/89 in the same free run", "V")
+    ck(V37A340.byte_readers(stock, DTC_B_HOST) == [] and V37A340.byte_readers(stock, DTC_B_HOST + 1) == [] and not tp_refs(stock, DTC_B_HOST)
+       and not tp_refs(stock, DTC_B_HOST - 2) and stock.count(struct.pack("<I", DTC_B_HOST)) == 0,
+       "no byte/half/word tp load of 0xC6D28 (parity-exact + loose), no absolute pointer on stock", "S")
+    ck(sorted(V37A340.byte_readers(stock, DTC_GATE_ADDR)) == GATE_READERS_STOCK and V37A340.byte_readers(stock, DTC_GATE_ADDR + 1) == [0x46020, 0x460F0],
+       "positive control + census: 0xC6508 has exactly its 6 stock byte readers (the 2 loose extra hits read the odd neighbour 0xC6509)", "S")
+    for a, sh in DTC_B_SITES.items():
+        ck(stock[a:a + 4] == bytes.fromhex(sh) and u16(stock, a + 2) == 0x7509, f"stock 0x{a:05X} == {sh} (ld.bu 0x7508[tp])", "V")
+        put(a + 2, struct.pack("<H", DTC_B_HW2), "D6b")
+        ck(code[a:a + 2] == stock[a:a + 2] and u16(code, a + 2) == 0x7D29, f"0x{a:05X}: hw1 unchanged, hw2 -> 0x7D29 = ld.bu 0x7D28[tp] (0xC6D28)", "T")
+    ck(sorted(V37A340.byte_readers(code, DTC_B_HOST)) == sorted(DTC_B_SITES) and sorted(V37A340.byte_readers(code, DTC_GATE_ADDR)) == sorted(set(GATE_READERS_STOCK) - set(DTC_B_SITES)),
+       "BUILT: 0xC6D28 has exactly the two counter-B reads; 0xC6508 keeps the override cut 0x2A068 + the 3 twin reads", "S")
+    a, sh = OVERRIDE_CUT_SITE
+    ck(bytes(code[a:a + 4]) == stock[a:a + 4] == bytes.fromhex(sh) and bytes(code[0x2A06C:0x2A080]) == stock[0x2A06C:0x2A080],
+       "override cut 0x2A068 ld.bu 0x7508[tp],r11 and its compare/cmovh/branch 0x2A06C..0x2A080 byte-identical to stock", "S")
+    ck(bytes(code[0x295F2:0x29648]) == bytes(stock[0x295F2:0x29648]).replace(b"\x09\x75", b"\x29\x7d"),
+       "the counter-B block 0x295F2..0x29648 differs from stock ONLY in the two hw2 halfwords", "S")
     j = dec_jr(code, 0x2A340)
     ck(j == (7, CAVE_BASE), f"built hook decodes as jarl 0x{CAVE_BASE:X},r7: {j}", "S")
     ck(u16(code, 0x2A622) == GAIN_CELL - TP, f"built 0x2A620 reads tp+0x{u16(code, 0x2A622):04X} = 0x{TP + u16(code, 0x2A622):05X}", "S")
@@ -553,13 +595,14 @@ def build():
     unowned = [i for i in d if i not in touched and i not in trailers]
     ck(not unowned, f"{len(d)} bytes differ; every one owned by a row or a CRC trailer (unowned {[hex(i) for i in unowned[:8]]})", "S")
     low = sorted({touched.get(i) for i in d if i < 0xC0000})
-    ck(low == ["A1", "A2", "A6"], f"below 0xC0000 only rows A1 (F181), A2 (lane), A6 (repoint) differ: {low} (the cave A3 is at 0xC4C00)", "S")
+    ck(low == ["A1", "A2", "A6", "D6b"], f"below 0xC0000 only rows A1 (F181), A2 (lane), A6 (repoint), D6b (gate reads) differ: {low} (the cave A3 is at 0xC4C00)", "S")
     ck(sorted({touched.get(i) for i in d if CAVE_BASE <= i < CAVE_BASE + CAVE_LEN}) == ["A3"]
        and not [i for i in d if 0xC0000 <= i < 0xC6000 and not (CAVE_BASE <= i < CAVE_BASE + CAVE_LEN) and i not in trailers
                 and i != DAMPAXIS_ALPHA2[0]],
        "in [0xC0000,0xC6000) only the cave and the DampAxis alpha2 byte 0xC40D4 differ (plus the main-block trailer)", "S")
-    code_runs = sorted({a for a in d if 0x14000 <= a < 0xC0000 and touched.get(a) in ("A2", "A6")})
-    ck(len(code_runs) <= 22, f"in-place code bytes differing: {len(code_runs)} (7 sites, <= 22 B)", "S")
+    code_runs = sorted({a for a in d if 0x14000 <= a < 0xC0000 and touched.get(a) in ("A2", "A6", "D6b")})
+    ck(len(code_runs) <= 26 and sum(1 for a in code_runs if touched[a] == "D6b") == 4,
+       f"in-place code bytes differing: {len(code_runs)} (9 sites, <= 26 B; D6b exactly 4)", "S")
     runs = []
     for i in d:
         if runs and i == runs[-1][1] + 1 and touched.get(i, "crc") == touched.get(runs[-1][0], "crc"):
@@ -647,7 +690,7 @@ def build():
         return True
     ck(all(_knots_ok(tabs, n, want) for (_, tabs, n, _, want) in GAIN_TABLES),
        "Kp 7 / Kd 48 / Ki 20 pinned on every knot of all 36 records of each table, walked from the BUILT pointer tables", "S")
-    ck(img_sha == EXP_IMG_SHA, f"REV 2 image sha frozen: {img_sha[:16]}... (expected {EXP_IMG_SHA[:16]}...)", "S")
+    ck(img_sha == EXP_IMG_SHA, f"REV 3 image sha frozen: {img_sha[:16]}... (expected {EXP_IMG_SHA[:16]}...)", "S")
     print("\n" + "=" * 118)
     print(f"  image SHA256 {img_sha}   ({IMG_NAME})")
     print(f"  .rwd  SHA256 {rwd_sha}   ({RWD_NAME})")

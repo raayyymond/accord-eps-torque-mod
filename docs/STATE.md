@@ -4,7 +4,22 @@
 > boxes and the 84 finding/correction blocks that used to follow it are ARCHIVED under `docs/archive/` (pointers
 > at the end of this file). They are a record, not a briefing; nothing was retracted by the moves.
 
-## ✈ 2026-11-01 — A340 PORT: V37A 2× BUILT (REV 3) AND V300 6× BUILT (REV 2), neither flown
+## ✈ 2026-11-02 — A340 PORT: V37A 2× REV 4 AND V300 6× REV 3 BUILT (the DTC-0x49 mask added), neither flown
+**2026-11-02 revision (operator: "make sure DTC 0x49 does not fire on A340").** The 2026-11-01 builds had left the DTC-0x49 over-torque
+counter LIVE: its gate byte `0xC6508` is also the hand-override demand cut on A340, so V37's `gate := 0xFF` could not be ported as a cal edit, and
+with the V36 package in place the counter free-ran exactly as on A160 V36 (dash lights + LKAS drop). Fix = **4 code bytes**: the hw2 of the two
+counter-gate loads `0x2961C` / `0x2962E` go `0x7509 → 0x7D29` (`ld.bu 0x7508[tp]` → `ld.bu 0x7D28[tp]`, reading the unreferenced 0xFF byte
+`0xC6D28`); the hand index `gp-0x67f5` is a u8 so the compare never passes, counter B `gp-0x671e` is stored 0 every tick and the trip
+(`FUN_00016ed0(0x49,1,1,1)` + STEER_STATUS 7) is unreachable; the override cut `0x2A068/0x2A076` still reads 112. **V37A-A340 REV 4** image
+`5b71a52d…d98e` / rwd `e7728d58…d2e6` (416 B vs stock); **V300-A340 REV 3** image `dc30a73b…a56e0` / rwd `2819a6f2…4917` (842 B vs stock); each
+= its predecessor + the 4 bytes + the main CRC; REV 3 / REV 2 deleted from `accord-firmwares`. Byte-exact mirror `dtc49_counter_b_tick` + sweep
+in the 2× script (stock gate fires and re-arms; masked gate from any start < 50: max 0, never fires; a residual RAM start ≥ 50 gives at most one
+trip then pinned — BELIEF that the post-flash reset clears it). Cal-only alternative (raise 0xC6530/31) REJECTED: byte-truncated sum caps at 254,
+counter still free-runs → only delays. Adversarial pass: A/B/C all PASS_WITH_DEFECTS, none DO_NOT_FLASH (A: own mirror 0 mismatches, boot init starts the counter at 0, loads decode as ld.bu 0x7D28[tp]; B: fresh rebuild == hashes, all bytes attributed, 11 mutations caught, A160 claim 19/86 verified; C: host private 6 ways, twins dead 3 ways, override cut byte-identical, DTC 0x49 has no reachable setter left, 0x23 untouched, GATE 1/2 unaffected). Handoff `docs/handoffs/2026-11/HANDOFF-2026-11-02-a340-dtc49-mask.md`;
+lineage PART6 "V37A-A340 REV 4" / "V300-A340 REV 3". Scanner trap: the port's `tp_readers` counts the odd parity neighbour for byte cells
+(8 vs the real 6 readers of 0xC6508); `byte_readers` (parity-exact) added.
+
+*The 2026-11-01 record, kept for the port's structure:*
 The operator's second variant `39990-TVA-A340` is a **different compile** (no A160 address carries over; lane gains are 36-record
 speed-scheduled RAM tables; P = (E·Kp)>>3 with 8-bit Kp). **V37A-A340 REV 3** image `8654c02f…` / rwd `cf9f4adf…` (clamps 900 = 2× the
 stock peak 450; `0xC6508` kept stock — on A340 it is the driver-override demand cut). Adversarial A/B PASS_WITH_DEFECTS, C FAIL on REV 2
