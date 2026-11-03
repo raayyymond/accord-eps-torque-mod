@@ -27,9 +27,10 @@ sites is the behaviour A160 has flown since V37.
 **Byte-exact mirror** (`dtc49_counter_b_tick` in `build_v37a_a340.py`, every line addressed): threshold `(0xC6530+0xC6531)&0xFF = 100`
 at `0x295C4/C6`; `< 50` path (`0x2962A..`) resets unless hand > gate AND a request is live; `≥ 50` path (`0x29600..`) free-runs unless
 status == 2 with no request, in which case it consults the gate. Sweep: hand 0..255 × r22 × status × start counters — stock gate fires
-up to 3× in 250 ticks and re-arms; masked gate from any start < 50: max counter 0, zero trips; a RESIDUAL start ≥ 50 (RAM state only
-possible from before the flash) gives at most one trip, then pinned at 0 forever (BELIEF: the post-flash reset clears RAM; A160 V37
-onto a tripped V36 ECU showed no DTC).
+up to 3× in 250 ticks and re-arms; masked gate from any start < 50: max counter 0, zero trips; a start ≥ 50 would give at most one trip then pin
+at 0, and Lens A traced that state UNREACHABLE (boot zero-fill at 0x14720 + the .data copy start the counter at 0 from flash 0x87A42;
+the 2× script now asserts that byte is 0). Also from Lens A: the hand index gp-0x67f5 saturates at 255 (both masked compares are strict,
+so the mask still holds); r22 is the clamped lane command, not a flag.
 
 **Scanner trap caught on the way.** The port scripts' `tp_readers` compares `hw2 & 0xFFFE`, so for a BYTE cell it counts the odd
 parity neighbour: it reported 8 readers of 0xC6508, two of which (`0x46020`, `0x460F0`, op 0x3D) read 0xC6509. `byte_readers`
