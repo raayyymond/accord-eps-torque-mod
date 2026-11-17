@@ -1,0 +1,70 @@
+(1) plant seen by the angle loop (x3 lane inside), engaged, not pressed, mean|tq| < 400.  [5 %, 95 %] bootstrap over chunks
+  band (2, 6): A340 n None, A160 n 20 -- skipped
+  band  6-10 m/s: A340 v 8.3 n 7 (sp rms 1.55 deg) | A160 v 8.3 n 60 (sp rms 1.37 deg)
+     k T/deg                    A340   45.43 [  36.95,   54.76]   A160   34.49 [  30.06,   50.42]   ratio 1.32 [0.85, 1.66]
+     c T/deg (Im 1/P at w->0)   A340   33.31 [  15.87,   58.60]   A160  -13.40 [ -19.02,   13.23]   ratio -2.49 [-8.07, 3.64]
+     b T/(deg/s)                A340    8.82 [  -2.01,   17.61]   A160   14.29 [  11.75,   17.09]   ratio 0.62 [-0.16, 1.31]
+     Im(1/P) @0.5 Hz            A340   51.98 [  45.64,   68.96]   A160   31.92 [  23.30,   59.66]   ratio 1.63 [0.83, 2.47]
+     track phase @0.3 Hz deg    A340  -37.08 [ -40.62,  -33.09]   A160  -24.82 [ -33.04,  -19.05]   ratio 1.49 [1.07, 2.00]
+     f(|T|=0.707) Hz            A340    0.58 [   0.49,    0.67]   A160    0.57 [   0.52,    1.00]   ratio 1.03 [0.55, 1.21]
+  band 10-16 m/s: A340 v 13.5 n 39 (sp rms 1.84 deg) | A160 v 13.3 n 176 (sp rms 1.31 deg)
+     k T/deg                    A340   23.42 [  18.72,   30.53]   A160   23.68 [  18.62,   28.91]   ratio 0.99 [0.73, 1.43]
+     c T/deg (Im 1/P at w->0)   A340   15.43 [  10.57,   25.31]   A160  -10.42 [ -15.97,   -3.21]   ratio -1.48 [-4.56, -0.81]
+     b T/(deg/s)                A340    1.53 [  -0.44,    7.00]   A160    8.91 [   7.21,   10.93]   ratio 0.17 [-0.05, 0.83]
+     Im(1/P) @0.5 Hz            A340   18.27 [  13.46,   36.75]   A160   18.33 [  12.19,   29.14]   ratio 1.00 [0.57, 2.33]
+     track phase @0.3 Hz deg    A340  -41.93 [ -51.18,  -35.34]   A160  -30.09 [ -37.85,  -21.56]   ratio 1.39 [1.03, 2.08]
+     f(|T|=0.707) Hz            A340    0.66 [   0.50,    0.96]   A160    0.54 [   0.45,    0.64]   ratio 1.22 [0.85, 1.90]
+  band 16-23 m/s: A340 v 17.5 n 26 (sp rms 1.02 deg) | A160 v 19.4 n 126 (sp rms 0.77 deg)
+     k T/deg                    A340   50.59 [  44.74,   53.70]   A160   48.47 [  44.69,   53.32]   ratio 1.04 [0.89, 1.15]
+     c T/deg (Im 1/P at w->0)   A340   28.11 [  15.58,   41.26]   A160    4.93 [   0.74,   24.05]   ratio 5.70 [0.75, 21.36]
+     b T/(deg/s)                A340   10.53 [   4.26,   17.17]   A160   13.74 [   4.19,   16.36]   ratio 0.77 [0.32, 2.87]
+     Im(1/P) @0.5 Hz            A340   62.19 [  51.22,   73.92]   A160   57.30 [  50.41,   66.07]   ratio 1.09 [0.85, 1.35]
+     track phase @0.3 Hz deg    A340  -44.39 [ -47.41,  -42.03]   A160  -32.31 [ -36.25,  -29.78]   ratio 1.37 [1.22, 1.53]
+     f(|T|=0.707) Hz            A340    0.48 [   0.44,    0.50]   A160    0.59 [   0.49,    0.70]   ratio 0.80 [0.65, 0.99]
+  band 23-32 m/s: A340 v 26.6 n 32 (sp rms 0.42 deg) | A160 v 28.5 n 197 (sp rms 0.59 deg)
+     k T/deg                    A340   94.27 [  87.30,  101.03]   A160   69.20 [  66.21,   71.91]   ratio 1.36 [1.25, 1.47]
+     c T/deg (Im 1/P at w->0)   A340   47.82 [  35.77,   60.76]   A160   27.82 [  21.86,   34.27]   ratio 1.72 [1.21, 2.35]
+     b T/(deg/s)                A340   16.14 [  12.00,   19.90]   A160   14.21 [  11.99,   16.31]   ratio 1.14 [0.81, 1.52]
+     Im(1/P) @0.5 Hz            A340  103.39 [  90.86,  115.37]   A160   91.36 [  84.71,   98.99]   ratio 1.13 [0.97, 1.29]
+     track phase @0.3 Hz deg    A340  -39.23 [ -40.86,  -37.99]   A160  -29.01 [ -31.08,  -27.33]   ratio 1.35 [1.26, 1.45]
+     f(|T|=0.707) Hz            A340    0.50 [   0.47,    0.54]   A160    0.84 [   0.62,    0.89]   ratio 0.60 [0.54, 0.82]
+
+(1b) same, hand gate mean|tq| < 150 (A340 only where n >= 6):
+  band (23, 32) n 22: k 101.9 c 59.0 b 13.86 Im@0.5 110.1
+  A160 band (2, 6) n 17: k 55.6 c 9.8 b 13.73 Im@0.5 70.0
+  A160 band (6, 10) n 49: k 52.5 c 17.4 b 13.01 Im@0.5 59.7
+  A160 band (10, 16) n 151: k 41.7 c 8.6 b 9.25 Im@0.5 39.6
+  A160 band (16, 23) n 117: k 51.4 c 2.0 b 17.60 Im@0.5 64.3
+  A160 band (23, 32) n 186: k 69.2 c 28.8 b 14.16 Im@0.5 92.4
+
+(2) hands check, engaged not pressed v > 8: |T_tb/theta| (0x18F units per deg) and coherence by log bin
+     f      :   0.19   0.30   0.42   0.59   0.84   1.18   1.67   2.37   3.35   4.73   6.69
+     A340 mod  |H|   54.7   73.4   46.6   16.9   43.1   65.4   75.9   94.4  245.3  347.2  646.6   (n 111, median mean|tq| 185)
+     A340 mod  coh   0.42   0.50   0.28   0.01   0.06   0.08   0.05   0.06   0.23   0.18   0.27
+     A160 V300 |H|   39.9   59.2   76.5  108.6   94.0  102.3  130.8  152.9  226.7  382.1  682.4   (n 575, median mean|tq| 118)
+     A160 V300 coh   0.45   0.48   0.36   0.35   0.24   0.22   0.28   0.28   0.35   0.38   0.35
+(3) A340 mod engaged 1-3 m/s: 19 s total, 18 s not pressed
+(3) A340 mod engaged 3-6 m/s: 28 s total, 25 s not pressed
+(3) A340 mod engaged 6-10 m/s: 55 s total, 54 s not pressed
+(3) A340 stock engaged 1-3 m/s: 0 s total, 0 s not pressed
+(3) A340 stock engaged 3-6 m/s: 0 s total, 0 s not pressed
+(3) A340 stock engaged 6-10 m/s: 0 s total, 0 s not pressed
+(3) A160 V300 engaged 1-3 m/s: 304 s total, 247 s not pressed
+(3) A160 V300 engaged 3-6 m/s: 554 s total, 439 s not pressed
+(3) A160 V300 engaged 6-10 m/s: 895 s total, 785 s not pressed
+
+(4) STOCK A340 engaged not pressed: 133 s in runs >= 5.12 s.  stock LKAS cmd -> wheel rate (deg/s per cmd count):
+      0.39 Hz: |H| 0.0024  phase -162 deg  coh 0.80
+      0.78 Hz: |H| 0.0033  phase -169 deg  coh 0.87
+      1.17 Hz: |H| 0.0041  phase -180 deg  coh 0.90
+      1.95 Hz: |H| 0.0046  phase  173 deg  coh 0.89
+      3.12 Hz: |H| 0.0047  phase  165 deg  coh 0.68
+      5.08 Hz: |H| 0.0062  phase  151 deg  coh 0.40
+      8.20 Hz: |H| 0.0056  phase  157 deg  coh 0.05
+
+(5) rms of the 8-20 Hz band of the 0x14A rate over 1 s windows, engaged & not pressed, by speed (p50 / p90 / p99 deg/s, n s)
+     A340 REV3 (mod)  1-6 m/s: 4.75 / 8.73 / 9.83 (44 s) | 6-10 m/s: 7.53 / 8.95 / 10.01 (54 s) | 10-20 m/s: 9.26 / 10.17 / 10.64 (484 s) | 20-32 m/s: 8.49 / 9.94 / 10.82 (224 s)
+     A340 stock fw    1-6 m/s: n<2 s | 6-10 m/s: n<2 s | 10-20 m/s: 1.21 / 2.33 / 3.81 (135 s) | 20-32 m/s: n<2 s
+     A160 V300        1-6 m/s: 0.57 / 1.42 / 2.83 (686 s) | 6-10 m/s: 0.68 / 1.60 / 3.08 (785 s) | 10-20 m/s: 0.60 / 1.50 / 3.07 (2136 s) | 20-32 m/s: 0.60 / 1.48 / 2.78 (1670 s)
+
+wall 3.0 s

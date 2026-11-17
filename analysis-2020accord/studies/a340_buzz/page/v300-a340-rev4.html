@@ -1,0 +1,333 @@
+<title>V300-A340 REV 4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* layout: one reading column (lab-notebook report), figures break out to a wider measure; tables and diagrams scroll in their own box */
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#18212b; --muted:#5b6876; --rule:#d5dbe2;
+  --stock:#2f6f9f; --rev3:#c2452d; --rev4:#0f8a7a; --warn:#9a6a00; --mark:#fff3d6;
+  --ev:#0f6b5e; --bel:#8a4b00;
+  --display:"Space Grotesk","IBM Plex Sans",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#11161c; --panel:#18202a; --ink:#e4e9ef; --muted:#97a3b0; --rule:#2c3743;
+  --stock:#6fb1e0; --rev3:#f0806a; --rev4:#4fd1bd; --warn:#e2b04a; --mark:#3a3118;
+  --ev:#5fd0bd; --bel:#e6a35c; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#11161c; --panel:#18202a; --ink:#e4e9ef; --muted:#97a3b0; --rule:#2c3743;
+  --stock:#6fb1e0; --rev3:#f0806a; --rev4:#4fd1bd; --warn:#e2b04a; --mark:#3a3118;
+  --ev:#5fd0bd; --bel:#e6a35c; color-scheme:dark }
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:980px;margin:0 auto;padding-block:36px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:40px}
+section{display:flex;flex-direction:column;gap:14px;min-width:0}
+h1{font-family:var(--display);font-size:clamp(28px,5vw,40px);line-height:1.1;margin:0;text-wrap:balance;font-weight:600}
+h2{font-family:var(--display);font-size:22px;margin:0;font-weight:600;text-wrap:balance;padding-top:18px;border-top:1px solid var(--rule)}
+h3{font-size:15px;margin:6px 0 0;font-weight:600}
+p,li{max-width:68ch;margin:0}
+ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:18px;max-width:64ch}
+code,.mono{font-family:var(--mono);font-size:.88em}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:1px 6px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.ev{color:var(--ev)} .bel{color:var(--bel)}
+.status{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.status b{color:var(--ink);font-weight:500}
+.risk{background:var(--mark);border-left:3px solid var(--warn);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.scroll{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums;width:100%}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+td.n,th.n{text-align:right;white-space:nowrap}
+.bar{display:inline-block;height:8px;border-radius:2px;vertical-align:middle;margin-right:6px}
+figure{margin:0;background:var(--panel);border:1px solid var(--rule);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+figcaption{font-size:13px;color:var(--muted);max-width:80ch}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:6px}
+.legend i.dash{border-top-style:dashed}
+svg text{font-family:var(--mono);fill:var(--muted);font-size:11px}
+svg .lbl{fill:var(--ink);font-family:var(--body);font-size:12.5px}
+svg .ttl{fill:var(--ink);font-family:var(--body);font-size:13px;font-weight:600}
+svg .box{fill:var(--panel);stroke:var(--rule);stroke-width:1.2}
+svg .hot{fill:var(--panel);stroke:var(--rev4);stroke-width:2}
+svg .wire{stroke:var(--muted);stroke-width:1.4;fill:none}
+svg .axis{stroke:var(--rule);stroke-width:1;fill:none}
+pre{margin:0;background:var(--panel);border:1px solid var(--rule);padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.5;overflow-x:auto}
+</style>
+
+<div class="wrap">
+<header style="display:flex;flex-direction:column;gap:14px">
+  <div class="eyebrow">39990-TVA-A340 · 6× angle-loop port · built 2026-11-17 · not flown</div>
+  <h1>V300-A340 REV 4</h1>
+  <p class="lede">REV 3 buzzed on a user's 2.0T Accord because its tripled damping rows were ported by address. On the A340 firmware those rows belong to a chassis code that uses them in manual driving as well as under LKAS. REV 4 leaves that lane exactly as Honda shipped it and changes nothing else.</p>
+  <div class="status">
+    <span>image <b>e73278a1…f2c6</b></span><span>rwd <b>4bc63270…bcdc</b></span>
+    <span>reports <b>39990-TVA,A34D</b></span><span>vs stock <b>825 B</b></span><span>vs REV 3 <b>14 B + 8 CRC</b></span>
+  </div>
+  <div class="risk">
+    <strong>Risk before the drive</strong>
+    <p>Steering authority is unchanged from REV 3: the lane rail is 2472 counts, 5.49× the stock A340 peak of 450. Manual driving is byte-identical to stock in every dynamic term.</p>
+    <p>Engaged, the angle loop now runs on Honda's damping lane, which no car has flown with this loop. The stability study passes it with defects: one corner (very light steering inertia, at or below about 18 km/h) fails the release gate. If that corner is real the driver would feel a 7–11 Hz wheel shudder for a few cycles after a correction, hands light, engaged only. Revert if it sustains for 2 s.</p>
+    <p>The record on the A160 car is a caution: under the earlier 6× rate loop the stock lane left low-speed grinding (V106 tripled it for that reason), and a quarter-strength lane (V94) vibrated badly. The angle loop has its own derivative term and is a different loop, but the stock lane under it is untested. Make the first engaged test at 5–20 km/h with hands ready.</p>
+  </div>
+</header>
+
+<section>
+  <h2>What the user reported, and what the logs show</h2>
+  <p>The user's words: "a slight buzz on return to center movements between 11 and 1, even without starpilot engaged." Two public routes from the same car were scored: one on REV 3 (23 segments) and one on stock firmware (7 segments). The operator's A160 car on A160 V300 is the control (10 routes).</p>
+  <p>The metric is the wheel-rate signal on CAN <code>0x14A</code>, high-passed at 10 Hz, rms over 0.32 s, in deg/s. "Buzzing" means above 4 deg/s. Cell: moving above 8 m/s, wheel still, within 10° of centre, light hand torque. <span class="tag ev">EVIDENCE</span></p>
+  <div class="scroll"><table>
+    <thead><tr><th>Condition</th><th class="n">REV 3, user car</th><th class="n">Stock, same car</th><th class="n">A160 V300</th></tr></thead>
+    <tbody>
+      <tr><td>Engaged, time buzzing</td><td class="n"><span class="bar" style="width:89px;background:var(--rev3)"></span>88.9 %</td><td class="n"><span class="bar" style="width:2px;background:var(--stock)"></span>0.6 %</td><td class="n">0.0–0.4 %</td></tr>
+      <tr><td>Engaged, median level</td><td class="n">8.91 deg/s</td><td class="n">0.81</td><td class="n">0.46–0.63</td></tr>
+      <tr><td>Manual, time buzzing</td><td class="n"><span class="bar" style="width:48px;background:var(--rev3)"></span>48.1 %</td><td class="n"><span class="bar" style="width:2px;background:var(--stock)"></span>0.1 %</td><td class="n">0.0–0.2 %</td></tr>
+      <tr><td>Manual, returning to centre within 30°</td><td class="n"><span class="bar" style="width:94px;background:var(--rev3)"></span>94 % (9.1 s)</td><td class="n"><span class="bar" style="width:3px;background:var(--stock)"></span>2.8 %</td><td class="n">1.0 % (80 s)</td></tr>
+    </tbody></table></div>
+  <ul>
+    <li>In manual buzz the LKAS request bit and command are zero throughout (31 episodes, 85 s). The angle loop is not required for it.</li>
+    <li>It needs a kick, then sustains: after a quiet second, a wheel movement above 8 deg/s starts it 95 % of the time; under 3 deg/s, 4 %. Once started it is still there a second later 88–98 % of the time.</li>
+    <li>It grows to full size in about three cycles and then holds a constant amplitude. Firm hand torque suppresses it (engaged duty 79–88 % → 13 %).</li>
+    <li>As sampled at 100 Hz it sits at 12–22 Hz. The true frequency is not resolved; the angle and rate fields disagree in a way a real 12–30 Hz motion of one shaft cannot produce, so an alias of roughly 70–130 Hz is the leading reading. <span class="tag bel">BELIEF</span></li>
+  </ul>
+  <div class="grid3">
+    <figure><svg id="tr1" viewBox="0 0 320 200" role="img" aria-label="Stock manual wheel rate trace"></svg><figcaption>Stock, manual return to centre (66° of travel). Smooth.</figcaption></figure>
+    <figure><svg id="tr2" viewBox="0 0 320 200" role="img" aria-label="REV 3 manual wheel rate trace"></svg><figcaption>REV 3, manual, request 0, wheel within 4° of centre. The cycle starts after a small movement.</figcaption></figure>
+    <figure><svg id="tr3" viewBox="0 0 320 200" role="img" aria-label="REV 3 engaged wheel rate trace"></svg><figcaption>REV 3, engaged, the segment the user pointed to (seg 7, about 25 s in).</figcaption></figure>
+  </div>
+  <p class="legend"><span>Wheel rate from <code>0x14A</code>, deg/s, 100 Hz samples, 4 s each, same vertical scale.</span></p>
+</section>
+
+<section>
+  <h2>Cause: the same two table rows mean different cars</h2>
+  <p>The damping lane ("DampAxis") reads one of 34 speed tables. Which one is chosen by a mode byte, and the mode byte comes from the car's coded chassis key: two modes for manual driving, two for LKAS engaged. All 34 tables are identical on stock, on both firmwares. A160 V300 tripled records 26 and 27. <span class="tag ev">EVIDENCE</span> image bytes and decompile.</p>
+  <figure>
+    <div class="scroll"><svg id="keys" viewBox="0 0 900 300" style="min-width:680px" role="img" aria-label="Chassis key to damping record mapping on A160 and A340"></svg></div>
+    <figcaption>On A160 the tripled records are the engaged modes of the operator's car only. On A340 the same record numbers belong to keys TWAA0 and TWAA1, for manual and engaged both. No other A340 key reaches them.</figcaption>
+  </figure>
+  <ul>
+    <li>Every other ECU on the user's car reports a <code>TWA</code> part number (2.0T). That the EPS is coded TWAA0 or TWAA1 is inferred from that and from the manual buzz; the coded key itself is not in the logs. <span class="tag bel">BELIEF</span></li>
+    <li>With the request off, the only REV 3 edits that act dynamically are the 13 DampAxis bytes; the EME ladder only raises limits. Request-off audit of all 842 changed bytes. <span class="tag ev">EVIDENCE</span></li>
+    <li>So this car ran the tripled lane hands-on, in manual. No car had done that before: the operator's car is manual on records 24/25, which were never edited.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Where the edit sits</h2>
+  <figure>
+    <div class="scroll"><svg id="flow" viewBox="0 0 1040 640" style="min-width:860px" role="img" aria-label="Signal flow of the LKAS demand path and the damping lane"></svg></div>
+    <figcaption>Simplified chain, read from the REV 4 image. The top row runs only while LKAS is requested. The damping lane and base assist run always. REV 4 touches only the highlighted block, and only by not editing it. Speed axes are raw counts (64 per km/h, as on A160 <span class="tag bel">BELIEF</span>).</figcaption>
+  </figure>
+  <div class="legend"><span><i style="border-color:var(--stock)"></i>stock A340</span><span><i style="border-color:var(--rev3)"></i>REV 3</span><span><i class="dash" style="border-color:var(--rev4)"></i>REV 4</span></div>
+  <div class="grid2">
+    <figure><svg id="lerpY" viewBox="0 0 440 260" role="img" aria-label="DampAxis speed table"></svg><figcaption>DampAxis gain Y(v), records 26/27. REV 4 lies on stock. REV 3 was ×3.0, ×3.0, ×8.1 at 0, 20, 90 km/h.</figcaption></figure>
+    <figure><svg id="lerpG" viewBox="0 0 440 260" role="img" aria-label="Cave error gain table"></svg><figcaption>Angle-loop error gain G′(v) in the cave, unchanged from REV 3 (A160 V300's table halved).</figcaption></figure>
+    <figure><svg id="lerpKp" viewBox="0 0 440 260" role="img" aria-label="Kp table"></svg><figcaption>Kp table (all 36 records). Stock rate-loop values against the flat 7 the angle loop uses. Unchanged from REV 3.</figcaption></figure>
+    <figure><svg id="lerpKd" viewBox="0 0 440 260" role="img" aria-label="Kd and Ki tables"></svg><figcaption>Kd 32 → 48 and Ki 0 → 20, flat on every record. Unchanged from REV 3.</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <h2>The damping lane itself</h2>
+  <p>The lane multiplies a filtered wheel acceleration by Y(v). Mirrored from the decompile (producer <code>FUN_00041fe6</code>, consumer <code>FUN_00037794</code>), 1 kHz:</p>
+<pre>y0   += ((1024*rate - y0) * 37) >> 7        # EMA 1, 0xC645A = 37
+d32   = 32 * (y0 - y0_prev)                 # acceleration, clamp +-0xFA0000
+yA   += ((d32 - yA) * alpha2) >> 6          # EMA 2, 0xC40D4: stock 22, REV 3 14, REV 4 22
+g     = yA >> 9                             # gp-0x6bfc
+lane  = clamp((((g * Y(v)) >> 6) * 0x111) >> 18, +-511)   # 0xC407E = 511 -> gp-0x6af6</pre>
+  <div class="grid2">
+    <figure><svg id="bodeM" viewBox="0 0 440 260" role="img" aria-label="Lane gain versus frequency"></svg><figcaption>Lane output per unit of wheel rate, against frequency, low-speed row. REV 3 is 2.9× stock at 10 Hz and 2.0× at 100 Hz.</figcaption></figure>
+    <figure><svg id="bodeP" viewBox="0 0 440 260" role="img" aria-label="Lane phase versus frequency"></svg><figcaption>Phase of the lane against wheel rate. The two filters turn a pure acceleration term (+90°) into a lagging one by 60–90 Hz; with 2–3 ms of loop delay the lane's own loop reaches −180° at 81–130 Hz.</figcaption></figure>
+  </div>
+  <ul>
+    <li>A gain with two lags, a delay and a ±511 clamp gives a constant-amplitude cycle once the gain passes a critical value. Predicted aliases for REV 3 at 100 Hz sampling are 15.2 and 19.2 Hz; measured median 16.3 Hz. <span class="tag bel">BELIEF</span> for the mechanism, <span class="tag ev">EVIDENCE</span> for the arithmetic.</li>
+    <li>Stock is quiet on this car, so the stock gain is below critical. REV 3 buzzes only after a kick, so three times stock is near or above it. That bounds the stock margin to somewhere between 0 and about 7.5 dB. No dose above stock can be defended without another drive, so REV 4 uses none.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>What REV 4 changes, read from the image</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Cell</th><th>What it is</th><th class="n">Stock</th><th class="n">REV 3</th><th class="n">REV 4</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">0xD7A5C..61</td><td>DampAxis record 26, Y at 0/20/90 km/h</td><td class="n">−9830, −5734, −1966</td><td class="n">−29490, −17202, −16000</td><td class="n">−9830, −5734, −1966</td></tr>
+      <tr><td class="mono">0xD7A6C..71</td><td>DampAxis record 27</td><td class="n">−9830, −5734, −1966</td><td class="n">−29490, −17202, −16000</td><td class="n">−9830, −5734, −1966</td></tr>
+      <tr><td class="mono">0xC40D4</td><td>Acceleration filter coefficient (/64)</td><td class="n">22</td><td class="n">14</td><td class="n">22</td></tr>
+      <tr><td class="mono">0x1310D</td><td>Version letter in the reported string</td><td class="n">…-A340</td><td class="n">…,A34C</td><td class="n">…,A34D</td></tr>
+    </tbody></table></div>
+  <p>Everything else is REV 3: the angle-loop cave (260 B at <code>0xC4C00</code>), seven in-place lane edits, the DTC-0x49 counter mask, the 6× authority cell, the gain tables, the debounce package and the EME ladder. Delivered surface from the lane mirror on the built image: rail 2472 counts against a stock full-demand peak of 450, identical to REV 3.</p>
+  <ul>
+    <li>The letter changes so that a route identifies the build. The fork accepts <code>39990-TVA,A34</code> plus any capital letter.</li>
+    <li>The stock-revert file was re-packed to accept <code>,A34D</code> as well (payload unchanged; new rwd <span class="mono">51be7dd8…</span>). The older revert file would refuse a REV 4 ECU.</li>
+    <li>REV 3's rwd is removed from the firmware repo's working tree; its image is kept as the record of what flew.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Stability of the engaged loop on Honda's lane</h2>
+  <p>A160 kept the tripled lane because one corner of its plant family failed with the stock lane. The same study was repeated for this car. The A340 plant could be identified only below 1.5 Hz, where it is not distinguishable from the A160 car; inertia and high-frequency damping are unmeasured, and there is no usable engaged data below 6 m/s.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Configuration</th><th class="n">A160 family, fails / 49</th><th class="n">Min gain margin</th><th class="n">Max closed-loop peak</th><th class="n">A340 box, fails / 336</th></tr></thead>
+    <tbody>
+      <tr><td>REV 3 (rows ×3, coefficient 14)</td><td class="n">0</td><td class="n">19.4 dB</td><td class="n">−2.5 dB</td><td class="n">0</td></tr>
+      <tr><td><strong>REV 4 (stock rows, 22)</strong></td><td class="n">1</td><td class="n">5.3 dB</td><td class="n">+5.4 dB at 11 Hz</td><td class="n">12</td></tr>
+      <tr><td>Stock rows, coefficient 14</td><td class="n">1</td><td class="n">5.7 dB</td><td class="n">+4.6 dB</td><td class="n">12</td></tr>
+      <tr><td>Rows ×1.5, 22</td><td class="n">0</td><td class="n">9.2 dB</td><td class="n">−0.5 dB</td><td class="n">3</td></tr>
+      <tr><td>Rows ×2, 22</td><td class="n">0</td><td class="n">12.6 dB</td><td class="n">−1.1 dB</td><td class="n">0</td></tr>
+    </tbody></table></div>
+  <ul>
+    <li>All of REV 4's failing points are the light-inertia member at 3–8 m/s. At the central A340 estimate the margin is 18.3–36.1 dB with the peak below −7 dB at every speed.</li>
+    <li>That corner's inertia is smaller than the inertia the tripled lane itself contributed when the plant was fitted, so it may not be physical. With the lane modelled as its own block, REV 4 fails none of 60 cases unless real damping at 5–11 Hz is under about 1.5–2.5 units per deg/s; the A160 fit gives 4.9–5.5. <span class="tag bel">BELIEF</span></li>
+    <li>The intermediate doses look better on the engaged loop and worse on the lane's own loop, which is the loop that buzzed. They would also act in manual on this key.</li>
+    <li>Verdict of the study: pass with defects. The defects are the failed corner as the gate is written, no headroom above stock on the lane loop, and an unmeasured A340 inertia.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>One short drive reads it</h2>
+  <p>Everything needed is already on the wire. First check that the route reports <code>39990-TVA,A34D</code>.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Question</th><th>Readout</th><th>Clean</th><th>Not clean</th></tr></thead>
+    <tbody>
+      <tr><td>Is the buzz gone?</td><td>10 Hz high-passed <code>0x14A</code> rate, 0.32 s rms; above 8 m/s, wheel near centre, light hands; engaged and manual</td><td>median below 1.0, under 2 % of time above 4 deg/s (stock 0.81 / 0.6 %)</td><td>REV 3 was 8.91 / 88.9 % engaged, 48 % manual</td></tr>
+      <tr><td>Did the low-speed corner appear?</td><td>8–20 Hz band of the same signal, 1 s rms; engaged, not pressed, 1–8 m/s, 20 s or more</td><td>p50 ≤ 1.5 and p90 ≤ 3.0 (A160 V300 at 1–8 m/s 0.61 / 1.54; A340 stock at 10–20 m/s 1.20 / 2.33)</td><td>REV 3 was 5.83 / 8.61; revert at 2 s above 4 deg/s</td></tr>
+    </tbody></table></div>
+  <p>If the buzz is unchanged on a route that reports <code>,A34D</code>, the damping lane is not its cause and the request-off audit is wrong somewhere. If manual is clean and engaged still buzzes, the cycle belongs to the angle loop on this car.</p>
+</section>
+
+<section id="adv">
+  <h2>Adversarial pass on the built image</h2>
+  <p>Three independent agents attacked the image on disjoint surfaces, each briefed to make it fail and each able to return "do not flash". All three returned pass with defects.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Lens</th><th>What it re-derived</th><th>Defects carried</th></tr></thead>
+    <tbody>
+      <tr><td><strong>A · bytes and build</strong></td><td>Rebuilt REV 4 from the REV 3 image without the build script and got the file on disk byte for byte. All 50 CRC blocks pass two ways. The rwd payload equals the image; the revert payload equals the stock dump. Ran the flasher's real part gate: an ECU on <code>,A34C</code> or <code>,A34D</code> can always reach REV 4 or stock. The fork classifies <code>,A34D</code> as angle-loop firmware. 11 of 11 injected mutations were caught.</td><td>Low: the accept list still includes <code>-A310</code> (inherited). Low: the fork's tests have no <code>,A34D</code> case. Info: the 2× file rejects <code>,A34C</code>/<code>,A34D</code>, so 6× → 2× goes through stock.</td></tr>
+      <tr><td><strong>B · lanes, keys, interlocks</strong></td><td>REV 4 differs from REV 3 by the letter, the 13 bytes and two CRC trailers; no code byte. The letter has one reader, the UDS reply. Every chassis key gets the same edited controller (all 108 gain records) and a stock damping lane (all 34 records). With the request off the lane term is zero times the 6× gain. The raised EME cells bound a monitor and do not clamp delivered assist.</td><td>Medium: the EME monitor is looser in manual than stock (±1024 → ±5120), as on REV 3 and A160 V300; it adds no torque. Low-medium: on a takeover from a saturated command the lane decays from up to about 2470 counts over about 95 ms, as on REV 3. Belief: a register-indirect writer of the haptic-pulse enable is not excluded; <code>FUN_0002C0FC</code> not traced to its outputs.</td></tr>
+      <tr><td><strong>C · dynamics and lineage</strong></td><td>Re-derived the lane's loop from scratch and matched the critical gains to two decimals. Confirmed on 137,675 samples that all manual buzz has request and command zero, including seven runs before the route's first engagement. Perturbed the stability study: single-axis moves of stiffness, inertia, lane delay, lane scale and two-mass modes all pass at the central estimate.</td><td>High: no car has flown the angle loop on the stock lane. High: damping at 5–11 Hz at creep is unmeasured on this car; with a tenth of the A160 value the model rings at 7–8 Hz (+7 to +9 dB). High: the chassis key is inferred, not read. Medium: why engagement doubles the buzz duty is unexplained.</td></tr>
+    </tbody></table></div>
+  <p>The orchestrator's ruling on lens C's corner: it meets the lens's written fail bar only at a damping the data can neither confirm nor exclude, in a linear model with no Coulomb friction. It is recorded as the stated risk above, with a low-speed first test, and not as a block. The decision to flash is the operator's and the car owner's.</p>
+</section>
+
+<section>
+  <h2>Not established</h2>
+  <ul>
+    <li>The car's coded key. It decides whether the rows were live; everything else in the chain is read from bytes.</li>
+    <li>The true buzz frequency, and which element each <code>0x14A</code> field measures.</li>
+    <li>Why the tripled lane is quiet on the operator's A160 car while engaged, hands off, and not on this car. The lane and its gain to the governor are identical on both firmwares; the plants are not known to be.</li>
+    <li>A160 V300 on any A160 car other than key TVCA4: those cars run stock rows with the changed filter coefficient, a combination that was never scored.</li>
+  </ul>
+</section>
+</div>
+
+<script>
+const D = {"damp":{"stock":[[0,1280,5760],[-9830,-5734,-1966]],"rev3":[[0,1280,5760],[-29490,-17202,-16000]],"rev4":[[0,1280,5760],[-9830,-5734,-1966]]},"alpha2":{"stock":22,"rev3":14,"rev4":22},"Kp":{"stock":[[0,68,112,136,208],[10,15,19,21,21]],"rev4":[[0,68,112,136,208],[7,7,7,7,7]]},"Kd":{"stock":[[0,40,80,112],[32,32,32,32]],"rev4":[[0,40,80,112],[48,48,48,48]]},"Ki":{"stock":[[0,8,40,72],[0,0,0,0]],"rev4":[[0,8,40,72],[20,20,20,20]]},"cave_tbl":[[714,589,521],[1843,733,-3132],[2304,380,-1016],[2707,280,785],[4032,534,1059],[6198,1094,0],[65535,1094,0]],"freq":[1.0,1.05,1.11,1.17,1.23,1.3,1.37,1.44,1.51,1.6,1.68,1.77,1.86,1.96,2.07,2.18,2.29,2.42,2.54,2.68,2.82,2.97,3.13,3.3,3.47,3.66,3.85,4.06,4.27,4.5,4.74,4.99,5.26,5.54,5.84,6.15,6.47,6.82,7.18,7.56,7.97,8.39,8.84,9.31,9.8,10.33,10.88,11.45,12.06,12.71,13.38,14.1,14.85,15.64,16.47,17.35,18.27,19.24,20.27,21.35,22.48,23.68,24.94,26.27,27.67,29.14,30.7,32.33,34.05,35.86,37.77,39.79,41.9,44.14,46.49,48.96,51.57,54.32,57.21,60.25,63.46,66.84,70.4,74.15,78.1,82.26,86.64,91.25,96.11,101.23,106.62,112.3,118.27,124.57,131.21,138.19,145.55,153.3,161.47,170.06,179.12,188.66,198.7,209.29,220.43,232.17,244.53,257.55,271.27,285.71,300.93,316.95,333.83,351.6,370.33,390.05,410.82,432.69,455.73,480.0],"H_stock_lo":{"mag":[0.0643,0.0677,0.0713,0.0751,0.0791,0.0833,0.0878,0.0924,0.0973,0.1025,0.108,0.1137,0.1198,0.1261,0.1328,0.1399,0.1473,0.1551,0.1634,0.172,0.1811,0.1907,0.2008,0.2115,0.2227,0.2344,0.2468,0.2598,0.2735,0.288,0.3031,0.319,0.3358,0.3533,0.3718,0.3912,0.4116,0.4329,0.4553,0.4789,0.5035,0.5293,0.5563,0.5846,0.6141,0.645,0.6772,0.7108,0.7457,0.7821,0.8199,0.8591,0.8997,0.9416,0.9849,1.0295,1.0752,1.1221,1.1699,1.2186,1.2679,1.3177,1.3678,1.4178,1.4676,1.5168,1.5651,1.6121,1.6575,1.7008,1.7417,1.7797,1.8146,1.8458,1.8731,1.8961,1.9146,1.9284,1.9372,1.941,1.9398,1.9336,1.9225,1.9067,1.8864,1.8618,1.8333,1.8012,1.766,1.7279,1.6875,1.6452,1.6012,1.5561,1.5101,1.4637,1.4171,1.3707,1.3246,1.2793,1.2348,1.1913,1.1491,1.1083,1.0689,1.0311,0.9951,0.9608,0.9283,0.8978,0.8693,0.8429,0.8186,0.7965,0.7767,0.7595,0.7449,0.7331,0.7244,0.7192],"ph":[88.2,88.2,88.1,88.0,87.8,87.7,87.6,87.5,87.3,87.2,87.1,86.9,86.7,86.6,86.4,86.2,86.0,85.8,85.5,85.3,85.1,84.8,84.5,84.2,83.9,83.6,83.3,82.9,82.5,82.1,81.7,81.3,80.8,80.3,79.8,79.3,78.7,78.1,77.5,76.8,76.1,75.4,74.6,73.8,73.0,72.1,71.2,70.2,69.2,68.1,67.0,65.8,64.6,63.3,61.9,60.5,59.0,57.5,55.9,54.2,52.5,50.7,48.8,46.9,44.9,42.9,40.7,38.6,36.3,34.0,31.7,29.3,26.9,24.5,22.0,19.5,17.0,14.5,12.0,9.5,7.1,4.7,2.3,-0.0,-2.3,-4.5,-6.6,-8.6,-10.5,-12.4,-14.1,-15.7,-17.2,-18.6,-19.9,-21.0,-22.0,-22.8,-23.5,-24.1,-24.5,-24.8,-25.0,-24.9,-24.8,-24.4,-23.9,-23.3,-22.5,-21.5,-20.4,-19.0,-17.6,-15.9,-14.1,-12.0,-9.9,-7.5,-4.9,-2.2]},"H_rev3_lo":{"mag":[0.1929,0.2031,0.2139,0.2253,0.2373,0.2499,0.2632,0.2772,0.2919,0.3074,0.3237,0.3409,0.359,0.3781,0.3981,0.4192,0.4414,0.4648,0.4894,0.5153,0.5425,0.5712,0.6013,0.633,0.6663,0.7013,0.7381,0.7768,0.8175,0.8602,0.905,0.952,1.0014,1.0532,1.1075,1.1644,1.2239,1.2863,1.3515,1.4196,1.4908,1.565,1.6423,1.7228,1.8065,1.8934,1.9835,2.0767,2.173,2.2722,2.3743,2.4789,2.586,2.6952,2.8061,2.9184,3.0316,3.1452,3.2586,3.3711,3.4821,3.5907,3.6962,3.7977,3.8944,3.9852,4.0695,4.1462,4.2146,4.2739,4.3234,4.3626,4.391,4.4082,4.4141,4.4086,4.3918,4.3639,4.3254,4.2766,4.2184,4.1512,4.076,3.9936,3.9049,3.8107,3.712,3.6096,3.5045,3.3973,3.289,3.1801,3.0714,2.9634,2.8567,2.7517,2.6489,2.5485,2.4509,2.3563,2.2649,2.177,2.0926,2.0118,1.9348,1.8616,1.7922,1.7268,1.6653,1.6078,1.5543,1.5049,1.4597,1.4188,1.3824,1.3506,1.3237,1.3021,1.2863,1.2768],"ph":[87.6,87.5,87.4,87.3,87.1,87.0,86.8,86.6,86.4,86.3,86.1,85.8,85.6,85.4,85.1,84.9,84.6,84.3,84.0,83.7,83.4,83.0,82.7,82.3,81.9,81.4,81.0,80.5,80.0,79.5,78.9,78.3,77.7,77.0,76.4,75.6,74.9,74.1,73.3,72.4,71.5,70.5,69.5,68.5,67.3,66.2,65.0,63.7,62.4,61.0,59.5,58.0,56.4,54.8,53.1,51.3,49.4,47.5,45.5,43.5,41.4,39.2,37.0,34.7,32.3,29.9,27.5,25.0,22.5,20.0,17.4,14.9,12.3,9.7,7.2,4.7,2.2,-0.3,-2.7,-5.1,-7.4,-9.6,-11.8,-13.8,-15.8,-17.7,-19.5,-21.1,-22.7,-24.2,-25.5,-26.7,-27.8,-28.7,-29.6,-30.3,-30.8,-31.3,-31.6,-31.7,-31.7,-31.6,-31.4,-30.9,-30.4,-29.7,-28.8,-27.8,-26.6,-25.3,-23.8,-22.1,-20.3,-18.3,-16.1,-13.8,-11.2,-8.5,-5.6,-2.5]},"H_stock_hi":{"mag":[0.0129,0.0135,0.0143,0.015,0.0158,0.0167,0.0176,0.0185,0.0195,0.0205,0.0216,0.0227,0.024,0.0252,0.0266,0.028,0.0295,0.031,0.0327,0.0344,0.0362,0.0381,0.0402,0.0423,0.0445,0.0469,0.0494,0.052,0.0547,0.0576,0.0606,0.0638,0.0672,0.0707,0.0744,0.0782,0.0823,0.0866,0.0911,0.0958,0.1007,0.1059,0.1113,0.1169,0.1228,0.129,0.1354,0.1422,0.1491,0.1564,0.164,0.1718,0.1799,0.1883,0.197,0.2059,0.215,0.2244,0.234,0.2437,0.2536,0.2635,0.2736,0.2836,0.2935,0.3034,0.313,0.3224,0.3315,0.3402,0.3483,0.3559,0.3629,0.3692,0.3746,0.3792,0.3829,0.3857,0.3874,0.3882,0.388,0.3867,0.3845,0.3813,0.3773,0.3724,0.3667,0.3602,0.3532,0.3456,0.3375,0.329,0.3202,0.3112,0.302,0.2927,0.2834,0.2741,0.2649,0.2559,0.247,0.2383,0.2298,0.2217,0.2138,0.2062,0.199,0.1922,0.1857,0.1796,0.1739,0.1686,0.1637,0.1593,0.1553,0.1519,0.149,0.1466,0.1449,0.1438],"ph":[88.2,88.2,88.1,88.0,87.8,87.7,87.6,87.5,87.3,87.2,87.1,86.9,86.7,86.6,86.4,86.2,86.0,85.8,85.5,85.3,85.1,84.8,84.5,84.2,83.9,83.6,83.3,82.9,82.5,82.1,81.7,81.3,80.8,80.3,79.8,79.3,78.7,78.1,77.5,76.8,76.1,75.4,74.6,73.8,73.0,72.1,71.2,70.2,69.2,68.1,67.0,65.8,64.6,63.3,61.9,60.5,59.0,57.5,55.9,54.2,52.5,50.7,48.8,46.9,44.9,42.9,40.7,38.6,36.3,34.0,31.7,29.3,26.9,24.5,22.0,19.5,17.0,14.5,12.0,9.5,7.1,4.7,2.3,-0.0,-2.3,-4.5,-6.6,-8.6,-10.5,-12.4,-14.1,-15.7,-17.2,-18.6,-19.9,-21.0,-22.0,-22.8,-23.5,-24.1,-24.5,-24.8,-25.0,-24.9,-24.8,-24.4,-23.9,-23.3,-22.5,-21.5,-20.4,-19.0,-17.6,-15.9,-14.1,-12.0,-9.9,-7.5,-4.9,-2.2]},"H_rev3_hi":{"mag":[0.1046,0.1102,0.1161,0.1222,0.1287,0.1356,0.1428,0.1504,0.1584,0.1668,0.1756,0.185,0.1948,0.2051,0.216,0.2274,0.2395,0.2522,0.2655,0.2796,0.2943,0.3099,0.3262,0.3434,0.3615,0.3805,0.4005,0.4215,0.4435,0.4667,0.491,0.5165,0.5433,0.5714,0.6009,0.6317,0.6641,0.6979,0.7333,0.7702,0.8088,0.8491,0.8911,0.9347,0.9802,1.0273,1.0762,1.1267,1.179,1.2328,1.2882,1.345,1.403,1.4623,1.5225,1.5834,1.6448,1.7064,1.768,1.829,1.8892,1.9482,2.0054,2.0605,2.1129,2.1622,2.2079,2.2495,2.2867,2.3188,2.3457,2.367,2.3824,2.3917,2.3949,2.3919,2.3828,2.3677,2.3468,2.3203,2.2887,2.2523,2.2115,2.1668,2.1186,2.0675,2.014,1.9584,1.9014,1.8432,1.7845,1.7254,1.6664,1.6078,1.5499,1.493,1.4372,1.3827,1.3297,1.2784,1.2289,1.1811,1.1353,1.0915,1.0497,1.01,0.9724,0.9369,0.9035,0.8723,0.8433,0.8165,0.792,0.7698,0.75,0.7328,0.7182,0.7065,0.6979,0.6927],"ph":[87.6,87.5,87.4,87.3,87.1,87.0,86.8,86.6,86.4,86.3,86.1,85.8,85.6,85.4,85.1,84.9,84.6,84.3,84.0,83.7,83.4,83.0,82.7,82.3,81.9,81.4,81.0,80.5,80.0,79.5,78.9,78.3,77.7,77.0,76.4,75.6,74.9,74.1,73.3,72.4,71.5,70.5,69.5,68.5,67.3,66.2,65.0,63.7,62.4,61.0,59.5,58.0,56.4,54.8,53.1,51.3,49.4,47.5,45.5,43.5,41.4,39.2,37.0,34.7,32.3,29.9,27.5,25.0,22.5,20.0,17.4,14.9,12.3,9.7,7.2,4.7,2.2,-0.3,-2.7,-5.1,-7.4,-9.6,-11.8,-13.8,-15.8,-17.7,-19.5,-21.1,-22.7,-24.2,-25.5,-26.7,-27.8,-28.7,-29.6,-30.3,-30.8,-31.3,-31.6,-31.7,-31.7,-31.6,-31.4,-30.9,-30.4,-29.7,-28.8,-27.8,-26.6,-25.3,-23.8,-22.1,-20.3,-18.3,-16.1,-13.8,-11.2,-8.5,-5.6,-2.5]},"tr_rev3_manual":{"rate":[0,-1,-3,-7,-9,-5,1,6,2,3,3,3,3,3,2,2,3,4,3,2,2,1,0,1,0,0,1,1,-1,0,0,0,-1,-1,-3,-3,-1,0,1,1,0,-1,0,0,0,1,1,1,2,2,3,2,3,2,2,1,0,1,1,1,0,0,0,1,1,0,0,1,1,0,1,1,0,0,0,1,1,1,0,0,0,0,1,0,0,0,1,0,0,1,1,0,-1,0,1,1,0,1,1,0,-1,-1,-1,0,0,1,1,0,-1,-1,-1,0,0,1,-1,-1,-3,-3,-1,-1,-1,-3,-5,-5,-4,-2,-2,-2,-3,-2,-5,-10,-13,-13,-12,-1,8,9,-7,-18,-16,-2,11,10,-6,-17,-14,1,12,13,-2,-13,-11,2,13,12,-1,-13,-12,2,13,12,-4,-17,-15,-1,10,9,-5,-17,-12,7,13,6,-8,-13,-5,10,16,11,-4,-12,-8,5,12,7,-7,-13,-8,5,10,2,-16,-21,-4,8,5,-16,-21,-8,10,9,-10,-19,-12,6,16,13,-5,-15,-12,4,15,13,-3,-15,-13,2,13,13,-2,-14,-13,2,13,13,0,-11,-11,1,13,12,1,-10,-9,4,15,15,1,-9,-9,5,20,19,4,-7,-4,18,23,10,-7,-11,-8,6,12,6,-7,-12,-9,5,12,9,-1,-12,-15,-2,12,14,2,-9,-10,3,15,14,1,-9,-7,6,16,14,0,-11,-9,4,15,12,0,-11,-12,0,12,12,-2,-17,-18,-4,9,9,-3,-12,-9,5,17,17,2,-9,-7,5,15,13,1,-11,-11,0,12,12,-1,-12,-12,-1,12,13,3,-6,-12,-8,7,13,9,-5,-12,-10,-2,6,5,-5,-15,-12,3,16,12,-3,-14,-12,2,14,15,1,-10,-11,0,12,14,3,-7,-8,0,14,15,4,-8,-11,-2,8,12,6,-7,-13,-8,6,12,11,0,-10,-10,-2,7,10,4,-9,-13,-5,16,17,2,-18,-22,-5,16,21,11,-10,-18,-14,2,8,3,-13,-19,-11],"ang":[3.8,3.7,3.7,3.7,3.6,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.6,3.6,3.6,3.7,3.7,3.7,3.7,3.7,3.7,3.7,3.7,3.7,3.7,3.7,3.7,3.6,3.6,3.6,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.6,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.5,3.4,3.4,3.4,3.4,3.3,3.3,3.1,3.1,3.0,3.0,2.9,2.9,2.9,2.8,2.8,2.7,2.6,2.6,2.4,2.5,2.4,2.4,2.2,2.2,2.1,2.2,2.2,2.1,2.0,1.9,1.9,2.0,2.0,2.0,1.9,1.7,1.9,1.9,2.0,1.9,1.9,1.7,1.7,1.9,1.9,1.9,1.7,1.6,1.6,1.7,1.6,1.6,1.5,1.4,1.4,1.5,1.5,1.4,1.3,1.3,1.4,1.5,1.5,1.5,1.4,1.5,1.5,1.5,1.5,1.4,1.4,1.4,1.4,1.4,1.4,1.3,1.1,1.0,1.1,1.0,0.9,0.7,0.6,0.6,0.6,0.5,0.4,0.2,0.4,0.5,0.5,0.5,0.3,0.2,0.3,0.4,0.5,0.4,0.2,0.2,0.2,0.3,0.4,0.3,0.2,0.1,0.2,0.2,0.2,0.2,0.2,0.1,0.2,0.2,0.4,0.2,0.2,0.2,0.2,0.4,0.5,0.4,0.4,0.4,0.4,0.5,0.6,0.6,0.6,0.7,0.8,1.0,1.1,1.0,1.0,1.0,1.1,1.2,1.1,1.0,0.9,0.9,0.9,1.0,1.0,0.9,0.9,0.8,0.8,0.9,0.9,0.9,0.8,0.8,0.9,1.0,1.0,1.0,0.9,0.9,1.1,1.2,1.3,1.3,1.2,1.2,1.2,1.3,1.4,1.3,1.3,1.2,1.2,1.3,1.3,1.3,1.2,1.1,1.1,1.1,1.0,0.9,0.8,0.8,0.9,1.0,1.1,1.1,1.0,1.0,1.2,1.3,1.3,1.3,1.2,1.2,1.2,1.3,1.3,1.3,1.2,1.2,1.2,1.2,1.3,1.3,1.2,1.2,1.2,1.2,1.3,1.3,1.2,1.2,1.1,1.2,1.2,1.2,1.0,0.9,0.8,0.9,0.9,1.0,1.0,0.9,0.8,0.8,0.9,1.0,1.0,0.9,0.9,0.9,1.0,1.1,1.1,1.0,1.0,1.1,1.2,1.3,1.3,1.2,1.2,1.3,1.3,1.4,1.3,1.3,1.2,1.2,1.2,1.3,1.3,1.3,1.2,1.1,1.2,1.2,1.3,1.2,1.1,0.9,0.9,1.0,1.3,1.3,1.2,0.9,0.8,0.9,1.0,1.1,1.1,1.0,0.9,0.9,0.9,0.8,0.7,0.6,0.6,0.6],"seg":22,"t0":19.0},"tr_rev3_eng":{"rate":[15,-25,-37,16,-40,-26,16,-41,-8,12,-42,-11,12,-43,-12,9,-48,-3,5,-49,13,-9,-43,10,-6,-40,14,-4,-42,15,-15,-34,15,-28,-24,13,-45,-8,7,-52,2,-3,-47,21,-40,-17,12,-58,10,-24,-32,9,-60,-2,-13,-47,16,-58,0,-1,-48,24,-43,-18,11,-55,6,-20,-47,12,-55,6,2,-47,28,-42,-13,15,-48,16,-23,-30,-4,-73,-2,-48,-34,-2,-66,26,-11,-17,34,-3,-18,31,1,-17,18,-45,-22,-12,-64,7,-57,-18,-4,-52,31,-28,-6,16,-40,2,15,-44,9,-29,-40,3,-73,-1,-50,-35,-9,-69,12,-39,-4,16,-53,24,-32,-13,18,-52,6,-41,-30,-3,-69,11,-56,-17,-1,-54,19,-59,0,-15,-38,17,-68,10,-54,-12,-11,-53,19,-60,3,-16,-33,17,-59,11,-30,-22,6,-62,11,-53,-13,-6,-51,21,-58,5,-12,-31,16,-59,14,-34,-19,3,-61,13,-58,-11,-3,-44,26,-49,14,-8,-26,19,-51,19,-31,-17,3,-57,16,-49,-6,-7,-46,11,-60,2,-21,-30,17,-61,22,-18,-7,27,-43,18,-21,-12,19,-50,29,-39,1,1,-38,23,-59,12,-33,-22,6,-60,21,-37,3,25,-37,31,-7,-21,30,-35,0,8,-48,12,-20,-26,24,-54,23,-15,-16,32,-40,27,-16,-22,20,-35,1,13,-41,33,-26,-5,23,-40,11,3,-36,22,-30,-8,21,-42,25,-13,-20,27,-41,30,-14,-18,24,-46,25,-20,-16,23,-49,25,-19,-11,20,-44,32,-14,-7,20,-47,28,-16,-13,23,-48,27,-19,-9,24,-47,31,-33,11,16,-34,33,-28,-1,19,-45,31,-31,1,20,-40,43,-19,9,19,-40,21,-9,-22,30,-35,7,20,-39,23,-9,-22,27,-36,4,19,-38,27,0,-18,32,-30,2,18,-41,21,-8,-23,29,-30,5,22,-36,25,-2,-20,28,-30,3,23,-37,22,-5,-22,28,-31,1,19,-39,23,-5,-22,30,-29,1,22,-36,24,-2,-21,30,-29,2],"ang":[-12.3,-12.7,-12.8,-12.9,-13.3,-13.3,-13.4,-13.9,-13.7,-13.9,-14.3,-14.3,-14.4,-14.8,-14.7,-15.0,-15.4,-15.3,-15.6,-15.9,-15.8,-16.1,-16.3,-16.3,-16.7,-16.8,-16.7,-17.0,-17.2,-17.1,-17.5,-17.6,-17.6,-18.1,-18.1,-18.2,-18.7,-18.5,-18.8,-19.1,-19.1,-19.5,-19.7,-19.6,-20.2,-20.1,-20.3,-20.7,-20.6,-21.1,-21.2,-21.4,-21.9,-21.9,-22.4,-22.6,-22.7,-23.2,-23.1,-23.5,-23.7,-23.6,-24.1,-24.1,-24.3,-24.7,-24.6,-25.1,-25.3,-25.5,-26.1,-25.8,-26.2,-26.3,-26.2,-26.7,-26.6,-26.8,-27.1,-26.9,-27.4,-27.5,-27.8,-28.4,-28.5,-29.2,-29.3,-29.8,-30.2,-30.0,-30.4,-30.3,-30.0,-30.1,-30.1,-29.9,-30.1,-30.0,-29.9,-30.5,-30.6,-31.1,-31.4,-31.5,-32.2,-32.2,-32.7,-32.9,-32.8,-33.1,-32.9,-33.0,-33.4,-33.3,-33.5,-33.7,-33.6,-34.1,-34.3,-34.5,-35.1,-35.2,-35.9,-36.0,-36.5,-37.0,-37.0,-37.5,-37.3,-37.5,-37.9,-37.7,-38.1,-38.0,-38.2,-38.4,-38.4,-39.0,-39.1,-39.6,-39.9,-40.0,-40.6,-40.6,-41.0,-41.2,-41.3,-41.9,-41.8,-42.2,-42.4,-42.5,-42.9,-42.9,-43.6,-43.6,-44.0,-44.3,-44.4,-44.9,-44.7,-45.3,-45.3,-45.5,-45.8,-45.8,-46.3,-46.3,-46.6,-46.9,-47.0,-47.5,-47.5,-48.0,-48.2,-48.3,-48.7,-48.6,-49.1,-49.1,-49.2,-49.6,-49.5,-50.0,-49.9,-50.4,-50.6,-50.7,-51.2,-51.2,-51.7,-51.8,-51.8,-52.1,-51.9,-52.3,-52.2,-52.3,-52.6,-52.5,-53.0,-53.0,-53.3,-53.6,-53.6,-54.2,-54.0,-54.4,-54.6,-54.7,-55.2,-55.1,-55.7,-55.7,-55.9,-56.2,-56.0,-56.4,-56.2,-56.3,-56.4,-56.3,-56.8,-56.6,-56.8,-57.0,-56.9,-57.3,-57.1,-57.4,-57.5,-57.5,-58.0,-57.8,-58.4,-58.4,-58.7,-59.0,-58.9,-59.4,-59.1,-59.3,-59.4,-59.0,-59.4,-59.3,-59.2,-59.5,-59.4,-59.6,-59.8,-59.8,-60.1,-60.1,-60.2,-60.6,-60.3,-60.8,-60.7,-60.7,-60.9,-60.6,-60.9,-60.9,-60.9,-61.2,-61.1,-61.3,-61.4,-61.2,-61.5,-61.3,-61.4,-61.6,-61.4,-61.7,-61.8,-61.7,-62.1,-62.0,-62.1,-62.3,-62.1,-62.4,-62.3,-62.3,-62.6,-62.3,-62.6,-62.5,-62.6,-62.8,-62.6,-62.9,-62.9,-62.9,-63.2,-63.0,-63.3,-63.2,-63.3,-63.5,-63.3,-63.5,-63.4,-63.5,-63.7,-63.5,-63.8,-63.7,-63.8,-64.0,-63.8,-64.1,-64.0,-64.1,-64.3,-64.1,-64.5,-64.2,-64.4,-64.4,-64.2,-64.6,-64.3,-64.6,-64.7,-64.5,-64.9,-64.7,-64.8,-64.9,-64.6,-64.9,-64.6,-64.7,-64.8,-64.7,-65.0,-64.9,-64.9,-65.1,-64.9,-65.0,-65.2,-65.0,-65.3,-65.2,-65.2,-65.5,-65.3,-65.4,-65.5,-65.3,-65.5,-65.4,-65.3,-65.6,-65.4,-65.5,-65.7,-65.5,-65.8,-65.7,-65.7,-65.9,-65.7,-65.8,-65.9,-65.7,-65.9,-65.8,-65.8,-66.0,-65.8,-65.9,-66.1,-65.9,-66.2,-66.1,-66.0,-66.3,-66.1,-66.2,-66.4,-66.2,-66.4,-66.4,-66.3,-66.6,-66.4,-66.5,-66.6,-66.4,-66.6,-66.5,-66.4,-66.7,-66.5],"seg":7,"t0":23.5},"tr_stock_manual":{"rate":[-49,-49,-49,-54,-59,-62,-63,-69,-67,-65,-61,-61,-64,-66,-62,-60,-56,-51,-47,-47,-45,-42,-38,-38,-38,-35,-32,-33,-32,-31,-30,-29,-27,-28,-27,-27,-28,-30,-30,-31,-34,-36,-37,-37,-38,-40,-41,-44,-44,-43,-42,-41,-39,-36,-34,-31,-30,-27,-24,-23,-23,-24,-27,-28,-28,-28,-30,-32,-36,-40,-44,-49,-54,-55,-56,-57,-59,-59,-59,-58,-57,-56,-54,-51,-50,-46,-42,-40,-36,-33,-30,-30,-29,-30,-29,-30,-31,-31,-30,-30,-30,-32,-33,-36,-35,-37,-40,-44,-43,-44,-43,-47,-45,-46,-45,-44,-42,-41,-38,-36,-30,-32,-25,-24,-20,-21,-17,-17,-16,-17,-14,-12,-12,-14,-10,-10,-11,-13,-7,-11,-12,-12,-9,-11,-9,-9,-7,-10,-10,-11,-8,-12,-7,-8,-8,-10,-3,-7,-5,-4,-4,-7,-6,-6,-5,-5,-5,-3,-5,-8,-7,-8,-8,-9,-7,-10,-10,-6,-8,-8,-5,-2,-2,-1,0,-1,0,0,0,-2,-1,-1,-1,-1,-1,-2,-2,-3,-2,-2,-2,-2,-2,-1,-1,0,1,0,1,0,0,-2,-2,-3,-3,-4,-4,-5,-8,-11,-12,-12,-13,-12,-12,-13,-13,-10,-11,-8,-6,-7,-6,-4,-1,0,1,1,0,1,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,0,0,0,0,1,0,0,1,0,0,1,1,0,0,1,1,1,1,0,1,0,0,0,0,1,1,0,0,0,0,1,1,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,1,1,1,0,1,-1,0,0,0,1,1,1,0,0,0,0,0,1,0,1,1,0,0,0,1,1,1,1,1,0,0,2,0,1,0,1,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,-2,-2,0,0,0,1,1,0,0,0,1,1,1,0,1,1,1,1,1,0,2,2,2,3,2,1,1,1,1,1,1,2],"ang":[65.1,64.6,64.1,63.6,62.9,62.3,61.7,61.0,60.2,59.5,58.9,58.3,57.5,56.8,56.1,55.4,54.9,54.3,53.7,53.3,52.7,52.3,51.9,51.4,51.0,50.6,50.2,49.9,49.5,49.2,48.8,48.5,48.2,48.0,47.6,47.3,47.0,46.7,46.3,46.0,45.6,45.3,44.8,44.4,43.9,43.5,43.0,42.6,42.0,41.6,41.1,40.6,40.1,39.8,39.3,39.0,38.7,38.3,38.1,37.8,37.5,37.2,37.0,36.6,36.3,36.0,35.6,35.3,34.8,34.4,33.9,33.4,32.7,32.2,31.5,30.9,30.3,29.6,28.9,28.2,27.5,26.8,26.2,25.6,25.0,24.5,23.9,23.5,23.1,22.6,22.3,21.9,21.6,21.2,20.9,20.5,20.2,19.8,19.5,19.1,18.8,18.3,18.0,17.6,17.2,16.7,16.2,15.8,15.2,14.7,14.3,13.7,13.1,12.6,12.1,11.5,11.0,10.6,10.1,9.6,9.3,8.9,8.6,8.3,8.1,7.9,7.7,7.4,7.2,7.1,6.8,6.7,6.6,6.4,6.3,6.2,6.0,5.9,5.8,5.7,5.5,5.3,5.2,5.1,4.9,4.8,4.8,4.5,4.4,4.3,4.2,4.1,3.9,3.8,3.7,3.6,3.6,3.5,3.4,3.4,3.3,3.1,3.1,3.0,2.9,2.9,2.8,2.8,2.7,2.7,2.6,2.4,2.3,2.2,2.1,2.0,1.9,1.9,1.7,1.6,1.5,1.5,1.5,1.5,1.5,1.4,1.4,1.4,1.4,1.4,1.4,1.4,1.3,1.3,1.3,1.3,1.3,1.2,1.2,1.2,1.1,1.0,1.0,1.0,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.9,0.8,0.8,0.7,0.7,0.6,0.6,0.5,0.2,0.1,-0.0,-0.1,-0.3,-0.5,-0.6,-0.8,-0.9,-1.0,-1.0,-1.2,-1.3,-1.3,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3,-1.4,-1.4,-1.3,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.3,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.3,-1.3,-1.3,-1.3,-1.3,-1.3],"seg":6,"t0":11.0}};
+const NS = "http://www.w3.org/2000/svg";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function el(p, tag, attrs, text){ const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; p.appendChild(e); return e; }
+function nice(lo, hi, n){ const span = hi - lo, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0))); const f = step0 / mag; const step = (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mag; const t = []; for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) t.push(+v.toFixed(10)); return t; }
+// one chart helper: series = [{x:[],y:[],color:'--token',dash:bool,step:bool}], opts {x,y,w,h,xl,yl,xlog,ymin,ymax,xticks,title,mini}
+function chart(svg, series, o){
+  const m = o.mini ? {l:4,r:4,t:4,b:4} : {l:52,r:12,t:o.title?24:10,b:38};
+  const X0 = (o.x||0) + m.l, Y0 = (o.y||0) + m.t, W = o.w - m.l - m.r, H = o.h - m.t - m.b;
+  let xs = series.flatMap(s => s.x), ys = series.flatMap(s => s.y);
+  let xmin = o.xmin ?? Math.min(...xs), xmax = o.xmax ?? Math.max(...xs), ymin = o.ymin ?? Math.min(...ys), ymax = o.ymax ?? Math.max(...ys);
+  if (o.ymin == null && o.ymax == null){ const pad = (ymax - ymin) * 0.08 || 1; ymin -= pad; ymax += pad; }
+  const fx = v => X0 + (o.xlog ? (Math.log10(v) - Math.log10(xmin)) / (Math.log10(xmax) - Math.log10(xmin)) : (v - xmin) / (xmax - xmin)) * W;
+  const fy = v => Y0 + H - (v - ymin) / (ymax - ymin) * H;
+  const g = el(svg, "g", {});
+  if (!o.mini){
+    if (o.title) el(g, "text", {x:X0, y:(o.y||0)+14, class:"ttl"}, o.title);
+    const yt = o.yticks || nice(ymin, ymax, 5);
+    yt.forEach(v => { el(g, "line", {x1:X0, x2:X0+W, y1:fy(v), y2:fy(v), class:"axis"}); el(g, "text", {x:X0-6, y:fy(v)+4, "text-anchor":"end"}, String(v)); });
+    const xt = o.xticks || nice(xmin, xmax, 5);
+    xt.forEach(v => { el(g, "line", {x1:fx(v), x2:fx(v), y1:Y0+H, y2:Y0+H+4, class:"axis"}); el(g, "text", {x:fx(v), y:Y0+H+16, "text-anchor":"middle"}, String(v)); });
+    el(g, "line", {x1:X0, x2:X0+W, y1:Y0+H, y2:Y0+H, class:"axis"});
+    if (o.xl) el(g, "text", {x:X0+W/2, y:Y0+H+32, "text-anchor":"middle"}, o.xl);
+    if (o.yl) el(g, "text", {x:(o.x||0)+12, y:Y0+H/2, "text-anchor":"middle", transform:`rotate(-90 ${(o.x||0)+12} ${Y0+H/2})`}, o.yl);
+  } else {
+    el(g, "rect", {x:X0, y:Y0, width:W, height:H, fill:"none", class:"axis"});
+  }
+  series.forEach(s => {
+    const pts = s.x.map((v, i) => `${fx(v).toFixed(1)},${fy(Math.max(ymin, Math.min(ymax, s.y[i]))).toFixed(1)}`).join(" ");
+    const a = {points:pts, fill:"none", stroke:`var(${s.color})`, "stroke-width":o.mini?1.6:(s.w||2), "stroke-linejoin":"round"};
+    if (s.dash) a["stroke-dasharray"] = "6 4";
+    el(g, "polyline", a);
+    if (s.dots) s.x.forEach((v, i) => el(g, "circle", {cx:fx(v), cy:fy(s.y[i]), r:o.mini?2:3, fill:`var(${s.color})`}));
+  });
+}
+function lerpSeries(rec, color, extra){ return Object.assign({x:rec[0], y:rec[1], color, dots:true}, extra||{}); }
+
+// traces
+[["tr1","tr_stock_manual","--stock","Stock · manual"],["tr2","tr_rev3_manual","--rev3","REV 3 · manual, request 0"],["tr3","tr_rev3_eng","--rev3","REV 3 · engaged"]].forEach(([id,k,c,t]) => {
+  const r = D[k].rate, x = r.map((_, i) => i / 100);
+  chart(document.getElementById(id), [{x, y:r, color:c, w:1.3}], {w:320, h:200, ymin:-80, ymax:80, yticks:[-80,-40,0,40,80], xticks:[0,1,2,3,4], xl:"s", yl:"deg/s", title:t});
+});
+
+// LERPs
+const dY = D.damp;
+chart(document.getElementById("lerpY"), [lerpSeries(dY.stock,"--stock"), lerpSeries(dY.rev3,"--rev3"), lerpSeries(dY.rev4,"--rev4",{dash:true,dots:false,w:2.4})], {w:440, h:260, ymin:-32000, ymax:0, yticks:[-30000,-20000,-10000,0], xticks:[0,1280,5760], xl:"speed counts (0, 20, 90 km/h)", yl:"Y", title:"DampAxis Y(v) · 0xD7A5C / 0xD7A6C"});
+const ct = D.cave_tbl.filter(r => r[0] !== 65535);
+chart(document.getElementById("lerpG"), [{x:ct.map(r=>r[0]), y:ct.map(r=>r[1]), color:"--rev4", dots:true}], {w:440, h:260, ymin:0, ymax:1200, xmin:0, xticks:[714,2304,4032,6198], xl:"speed counts", yl:"G′", title:"Cave error gain G′(v) · 0xC4CDA"});
+chart(document.getElementById("lerpKp"), [lerpSeries(D.Kp.stock,"--stock"), lerpSeries(D.Kp.rev4,"--rev4",{dash:true})], {w:440, h:260, ymin:0, ymax:24, xticks:D.Kp.stock[0], xl:"table axis, counts", yl:"Kp", title:"Kp"});
+chart(document.getElementById("lerpKd"), [lerpSeries(D.Kd.stock,"--stock"), lerpSeries(D.Kd.rev4,"--rev4",{dash:true}), {x:D.Kd.stock[0], y:[0,0,0,0], color:"--stock", dots:true}, {x:D.Kd.stock[0], y:[20,20,20,20], color:"--rev4", dash:true, dots:true}], {w:440, h:260, ymin:0, ymax:56, yticks:[0,20,32,48], xticks:D.Kd.stock[0], xl:"table axis, counts", yl:"Kd (upper pair), Ki (lower pair)", title:"Kd and Ki"});
+
+// lane response
+const f = D.freq, db = a => a.map(v => +(20 * Math.log10(v)).toFixed(2));
+chart(document.getElementById("bodeM"), [{x:f, y:db(D.H_stock_lo.mag), color:"--stock"}, {x:f, y:db(D.H_rev3_lo.mag), color:"--rev3"}, {x:f, y:db(D.H_stock_lo.mag), color:"--rev4", dash:true, w:2.4}], {w:440, h:260, xlog:true, xmin:1, xmax:480, xticks:[1,3,10,30,100,300], xl:"Hz", yl:"dB", title:"Lane gain, low-speed row"});
+chart(document.getElementById("bodeP"), [{x:f, y:D.H_stock_lo.ph, color:"--stock"}, {x:f, y:D.H_rev3_lo.ph, color:"--rev3"}, {x:f, y:D.H_stock_lo.ph, color:"--rev4", dash:true, w:2.4}], {w:440, h:260, xlog:true, xmin:1, xmax:480, xticks:[1,3,10,30,100,300], ymin:-90, ymax:90, yticks:[-90,-45,0,45,90], xl:"Hz", yl:"degrees", title:"Lane phase vs wheel rate"});
+
+// key map diagram
+(function(){
+  const s = document.getElementById("keys");
+  const col = (x, title, key, modes, hot, note) => {
+    el(s, "text", {x, y:22, class:"ttl"}, title);
+    el(s, "rect", {x, y:36, width:120, height:44, class:"box", rx:3});
+    el(s, "text", {x:x+60, y:55, class:"lbl", "text-anchor":"middle"}, "chassis key");
+    el(s, "text", {x:x+60, y:72, "text-anchor":"middle"}, key);
+    const lab = ["manual","manual","engaged","engaged"];
+    modes.forEach((mo, i) => {
+      const y = 100 + i * 46, isHot = hot.includes(mo);
+      el(s, "path", {d:`M${x+120},58 C${x+160},58 ${x+150},${y+16} ${x+190},${y+16}`, class:"wire"});
+      el(s, "rect", {x:x+190, y, width:210, height:32, class:isHot?"hot":"box", rx:3, style:isHot?"stroke:var(--rev3)":""});
+      el(s, "text", {x:x+200, y:y+20, class:"lbl"}, `${lab[i]} → record ${mo}`);
+      el(s, "text", {x:x+392, y:y+20, "text-anchor":"end", style:isHot?"fill:var(--rev3)":""}, isHot ? "×3 in V300 / REV 3" : "stock");
+    });
+    el(s, "text", {x, y:292}, note);
+  };
+  col(10, "A160 firmware · operator's car", "TVCA4", [24,25,26,27], [26,27], "Tripled lane only while engaged. Flew quietly.");
+  col(470, "A340 firmware · user's car (2.0T)", "TWAA0 / TWAA1", [26,26,27,27], [26,27], "Tripled lane in manual and engaged. Buzzed.");
+  el(s, "line", {x1:445, x2:445, y1:10, y2:290, class:"axis"});
+})();
+
+// signal-flow diagram
+(function(){
+  const s = document.getElementById("flow");
+  const defs = el(s, "defs", {}); const mk = el(defs, "marker", {id:"arr", viewBox:"0 0 10 10", refX:9, refY:5, markerWidth:7, markerHeight:7, orient:"auto-start-reverse"}); el(mk, "path", {d:"M0,0 L10,5 L0,10 z", style:"fill:var(--muted)"});
+  const box = (x, y, w, h, title, lines, cls) => { el(s, "rect", {x, y, width:w, height:h, class:cls||"box", rx:3}); el(s, "text", {x:x+10, y:y+18, class:"ttl"}, title); (lines||[]).forEach((t, i) => el(s, "text", {x:x+10, y:y+36+i*15}, t)); };
+  const wire = d => el(s, "path", {d, class:"wire", "marker-end":"url(#arr)"});
+  el(s, "text", {x:10, y:16, class:"lbl"}, "LKAS lane · runs only while the 0xE4 request bit is 1 (gate 0x29E68 / 0x29E6E)");
+  box(10, 26, 150, 120, "StarPilot", ["angle setpoint", "0xE4 = −10·angle", "100 Hz"]);
+  box(190, 26, 220, 120, "Cave 0xC4C00", ["E = 4·sp − 16·θ", "E′ = (E·G′(v)) >> 8", "hand freeze, angle bound"]);
+  chart(s, [{x:ct.map(r=>r[0]), y:ct.map(r=>r[1]), color:"--rev4"}], {x:318, y:84, w:84, h:54, mini:true, ymin:0, ymax:1200, xmin:0});
+  box(440, 26, 220, 120, "PID", ["P = (E′·Kp) >> 3, Kp 7", "I: Ki 20, limit 8192", "D: Kd 48 on 1 kHz rate"]);
+  chart(s, [{x:D.Kp.stock[0], y:D.Kp.stock[1], color:"--stock"}, {x:D.Kp.rev4[0], y:D.Kp.rev4[1], color:"--rev4", dash:true}], {x:568, y:84, w:84, h:54, mini:true, ymin:0, ymax:24});
+  box(690, 26, 150, 120, "Clamp + lag", ["sum clamp 15360", "lag 992 / 507", "(stock 20480, 1005/324)"]);
+  box(870, 26, 160, 120, "Authority", ["× 5328 (0xC6E88)", "stock 888 = ×6", "clamp 3072 (stock 512)", "rail 2472"]);
+  wire("M160,86 H188"); wire("M410,86 H438"); wire("M660,86 H688"); wire("M840,86 H868");
+  el(s, "text", {x:10, y:206, class:"lbl"}, "Always running · manual and engaged");
+  box(10, 216, 300, 110, "Base assist", ["torque sensor → assist maps, damper, return", "pages 0xCE000–0xD9FFF", "byte-identical to stock"]);
+  box(340, 216, 520, 150, "DampAxis lane · REV 4: stock", ["motor rate → EMA 37/128 → Δ ×32 → EMA α2/64", "→ × Y(v) → clamp ±511", "α2 0xC40D4 = 22   (REV 3: 14)", "Y record = ptr[mode], mode from chassis key", "all 34 records stock   (REV 3: 26, 27 tripled)"], "hot");
+  chart(s, [{x:dY.stock[0], y:dY.stock[1], color:"--stock"}, {x:dY.rev3[0], y:dY.rev3[1], color:"--rev3"}, {x:dY.rev4[0], y:dY.rev4[1], color:"--rev4", dash:true}], {x:700, y:238, w:150, h:118, mini:true, ymin:-32000, ymax:0});
+  el(s, "text", {x:10, y:446, class:"lbl"}, "Common output path");
+  box(190, 456, 190, 100, "Sum", ["lanes added ×1", "clamp ±10240"]);
+  box(410, 456, 190, 100, "Governor", ["rate-limit ramps", "same code as A160"]);
+  box(630, 456, 200, 100, "EME limiter", ["corridor ±5120", "(stock ±1024)", "raises limits only"]);
+  box(860, 456, 170, 100, "Motor", ["current loop", "not traced past here"]);
+  wire("M380,506 H408"); wire("M600,506 H628"); wire("M830,506 H858");
+  wire("M950,146 V186 H285 V454"); wire("M160,326 V400 H240 V454"); wire("M600,366 V410 H330 V454");
+  el(s, "text", {x:300, y:180, class:"lbl"}, "LKAS torque (zero when not requested)");
+})();
+</script>

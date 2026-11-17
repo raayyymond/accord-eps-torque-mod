@@ -753,3 +753,31 @@ the 0xC4FFC trailer. **Adversarial pass:** A/B/C all PASS_WITH_DEFECTS, none DO_
 handoff `docs/handoffs/2026-11/HANDOFF-2026-11-02-a340-dtc49-mask.md`. **Coverage lost:** counter-sourced DTC 0x49 / STEER_STATUS 7 (as A160
 since V37); STEER_STATUS 7 still reachable from the fault block 0x29570. Lens C census: DTC 0x49's only two setters are the counter trip and its dead twin ⇒ NO reachable code sets 0x49 after this build; DTC 0x23 (12 setters) untouched; STEER_STATUS 7 (fault block) and 4 (counter A, held off by V36 cals) still reachable; STEER_STATUS 2 from this counter is gone (as A160 V37). Lens A: hand index gp-0x67f5 saturates at 255 (not 254), both masked compares are strict; r22 = clamp(gp-0x6976, ±LERP); boot zero-fill 0x14720 + .data copy (flash 0x87320.. → RAM 0xFEDF11C0; counter from 0x87A42 = 0) ⇒ the residual ≥50 start is unreachable; gp-0x67cd << 4 is the 0x18F STEER_STATUS nibble (FUN_000569CC). BELIEF (Lens A residual): a cal overlay copy to 0xFA800000 at boot with runtime write helpers having no static caller — same exposure as every cal on A160.
 
+### V300-A340 REV 3 — FLEW 2026-11-16 on a third-party user's 2.0T car: the wheel BUZZED, engaged and in manual (see REV 4)
+User's words: "fantastic" + "a slight buzz on return to center movements between 11 and 1, even without starpilot engaged". Route
+`27da1a2b0cde4a09|00000055--a39019e01a` (F181 `39990-TVA,A34C`); stock baseline same car `…|0000005d--ff985a4e01`. Instrument: 0x14A wheel
+rate, 10 Hz high-pass, 0.32 s rms (BZ), buzz = BZ > 4 deg/s; cell v > 8 m/s, wheel still, |ang| < 10°, light torque: engaged 8.91 / 88.9 %
+(stock 0.81 / 0.6 %, A160 V300 ≤ 0.63 / ≤ 0.4 %), manual 48.1 % (0.1 %, ≤ 0.2 %). Manual buzz has request = 0, cmd = 0 throughout.
+
+### V300-A340 REV 4 — REV 3 with the DampAxis lane left STOCK; F181 A34D (2026-11-17, BUILT, NOT FLOWN) — supersedes REV 3 (rwd removed)
+**Class of intervention:** a REVERT of one carried lever on the A340 port, not a new lever. Image `e73278a1f682da2aa0a2c5ea3012a6bc7c554bb41dfb2accd23f6bd399aaf2c6`,
+rwd `4bc6327084e7da45eebd123e7ba9855c039b17de06de67c8408aff912452bcdc`, 825 B vs A340 stock in 4 CRC blocks; vs REV 3: rows `0xD7A5C..61`,
+`0xD7A6C..71` → stock (−9830,−5734,−1966), `0xC40D4` 14 → 22, `0x1310D` 'C' → 'D', trailers `0xC4FFC`/`0xD7FFC`; no code byte. Script
+`analysis-2020accord/builds/a340/build_v300_a340.py` (164/164, 96 substantive).
+**Why (🛑 RULE 6 again — a lever is only in force where the car reads the record you edited, and it is in force WHEREVER a car reads it):**
+REV 2 carried the 13 DampAxis bytes "same addresses". The consumer reads `ptr[mode]` (A340 table `0xCBE40`), mode from the chassis-key table
+`0xCD000 + 0x24·row` (+0x12..15 = [manual, manual, engaged, engaged]). A160: 26/27 = TVCA4's ENGAGED modes only. A340: 26/27 = TWAA0/TWAA1 =
+[26,26,27,27], manual AND engaged, and no other key (A340 TVCA4 = 16..19; TVCA3/TVCX0/TVCA6 = 24,24,25,25; TWAA3 = 20..23; TWAA4 = 28,28,29,29).
+The user's car is TWA (2.0T) ⇒ BELIEF key TWAA0/1 ⇒ ×3/×3/×8.1 acceleration feedback hands-on in manual, never flown before. With the request
+off nothing else in the build acts dynamically (audit of all 842 B). Lane's own loop: −180° at 81–130 Hz with 2–3 ms delay, clamp ±511 ⇒
+constant-amplitude cycle; aliases 15.2/19.2 Hz vs measured 16.3 Hz. Lane chain/gain identical on A340 and A160 (ratio 1.0 to the governor).
+**GATE 2 (angle loop on the stock lane, A340): PASS-WITH-DEFECTS** — fails the release gate only at J_lo, 3–8 m/s (+5.4 dB at 11 Hz, corner
+BELIEF inadmissible); central A340 estimate GM ≥ 18.3 dB; intermediate doses (×1.5, ×2, α2 14) rejected: the stock lane-loop margin is only
+known to lie in (0, 7.5 dB]. **Adversarial A/B/C: all PASS_WITH_DEFECTS**, none DO_NOT_FLASH (C's literal bar is met only at 0.1× A160 damping
+at creep — ruled a stated risk). **Risk:** no car has flown the angle loop on the stock lane (A160 kept ×3 by its GATE 2; on the ×6 rate loop
+stock left low-speed grinding → V106 ×3, and ×0.25 = V94 was stopped). **Instrument for its own edit:** BZ cell (clean: median < 1.0, < 2 %
+above 4) and the 8–20 Hz band engaged at 1–8 m/s (clean p50 ≤ 1.5 / p90 ≤ 3.0; revert ≥ 2 s above 4 deg/s); F181 `,A34D` identifies the build.
+**Null licenses:** buzz unchanged ⇒ the lane is not the cause; manual clean + engaged buzzing ⇒ the angle loop on this plant.
+STOCK-A340 revert rwd re-packed to accept `,A34D` (sha `51be7dd8…`, payload unchanged). Open: the car's coded key; A160 V300 on non-TVCA4 A160
+keys = stock rows + α2 14, never scored. Page https://claude.ai/artifact/RKPUALFvKXPthPGbmuj2a6; handoff
+`docs/handoffs/2026-11/HANDOFF-2026-11-17-a340-buzz-rev4.md`; studies `analysis-2020accord/studies/a340_buzz/`, `rlog-tools/studies/a340_buzz/`.

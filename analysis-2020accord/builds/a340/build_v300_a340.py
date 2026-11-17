@@ -1,6 +1,19 @@
 # -*- coding: utf-8 -*-
-r"""builds/a340/build_v300_a340.py -- V300-A340 REV 3: the 6x "PTM" (A160 V300 rev 2, the firmware ANGLE LOOP) PORTED TO
-39990-TVA-A340.  BASE = A340 STOCK (sha256 01a53539...).  NOT FLOWN.
+r"""builds/a340/build_v300_a340.py -- V300-A340 REV 4: the 6x "PTM" (A160 V300 rev 2, the firmware ANGLE LOOP) PORTED TO
+39990-TVA-A340.  BASE = A340 STOCK (sha256 01a53539...).  NOT FLOWN.  (REV 3 FLEW on a user's 2.0T car and BUZZED.)
+
+REV 4 (2026-11-17, after REV 3's first flight, route 27da1a2b0cde4a09|00000055): the 13 DampAxis bytes are NOT carried -- rows
+  0xD7A5C / 0xD7A6C and alpha2 0xC40D4 stay A340 STOCK (-9830,-5734,-1966 / 22), and F181 reads 39990-TVA,A34D so a route
+  identifies the build.  Why: REV 2 carried the rows "by address".  The DampAxis consumer FUN_00037794 reads record ptr[mode]
+  (table 0xCBE40), mode = gp+0x63fd from the chassis-key table 0xCD000 + 0x24*row, columns [manual, manual, engaged, engaged].
+  On A160 records 26/27 are the ENGAGED modes of key TVCA4 (the operator's car, manual = 24/25, never edited).  On A340 records
+  26/27 belong to keys TWAA0/TWAA1 = [26,26,27,27]: MANUAL and engaged both, and to no other key (A340 TVCA4 = 16..19).  The
+  user's car (all ECUs TWA = 2.0T) therefore ran x3 / x3 / x8.1 acceleration feedback in manual driving too -- a lane no car
+  had flown hands-on -- and showed a kick-started, constant-amplitude oscillation of the wheel rate (0x14A, +-13..25 deg/s,
+  12-22 Hz as sampled at 100 Hz) for 89 % of engaged and 48 % of manual near-centre time; the same car on stock: 0.6 % / 0.1 %.
+  With the request bit 0 the only dynamic REV 3 edits were these 13 bytes (request-off audit, 842 B / 139 groups).  REV 4 makes
+  manual driving byte-identical to stock in every dynamic term (the A7 EME ladder only raises limits).  REV 3's rwd is deleted
+  from disk (image kept as the record of what flew).  = REV 3 minus 13 bytes, F181 letter C -> D, CRC trailers.
 
 REV 3 (2026-11-02, operator: "make sure DTC 0x49 does not fire on A340"): row D6b -- the DTC-0x49 counter-B gate READS
   0x2961C `ld.bu 0x7508[tp],r12` and 0x2962E `ld.bu 0x7508[tp],r7` are re-pointed (hw2 0x7509 -> 0x7D29) to 0xC6D28, a byte that
@@ -115,13 +128,15 @@ A160_V300_NAME = ("_v300_V300-REV2-RELEASE-ANGLELOOP.FROMSTOCK-KP112.KD48.KI40.I
                   ".NOMAP.STOCKASSIST.DAMPAXIS.V299.A16C_plain_image.bin")
 A160_V300_SHA = "7d58c823"          # prefix (memory: V300 rev 2 image 7d58c823...); asserted as a prefix
 
-EXP_IMG_SHA = "dc30a73b104d03b1550ed23aa1088278d1f5cfa5257dbaa095a091de137a56e0"
-LABEL = "V300-A340-REV3"
-TAG = "ANGLELOOP.KP7.KD48.KI20.ICL8192-GHALF.CAMSAR7-AUTH5328.CL3072-DAMPAXIS.V299.A3400C40D4.14-DTCB.MASK7D28" + (".EME5120" if CARRY_A7 else "")
-IMG_NAME = "_v300_a340_REV3_plain_image.bin"
+EXP_IMG_SHA = "e73278a1f682da2aa0a2c5ea3012a6bc7c554bb41dfb2accd23f6bd399aaf2c6"
+REV3_IMG_SHA = "dc30a73b104d03b1550ed23aa1088278d1f5cfa5257dbaa095a091de137a56e0"   # what flew; REV 4 = REV 3 minus DampAxis, letter D
+REV3_IMG_NAME = "_v300_a340_REV3_plain_image.bin"
+LABEL = "V300-A340-REV4"
+TAG = "ANGLELOOP.KP7.KD48.KI20.ICL8192-GHALF.CAMSAR7-AUTH5328.CL3072-DAMPAXIS.STOCK-DTCB.MASK7D28" + (".EME5120" if CARRY_A7 else "")
+IMG_NAME = "_v300_a340_REV4_plain_image.bin"
 RWD_NAME = f"39990-TVA,A340-{LABEL}-{TAG}-0x{START:X}-0x{END:X}.rwd"
-RELEASE_LETTER = b"C"
-VSTR = [b"39990-TVA-A310", b"39990-TVA-A340", b"39990-TVA,A340", b"39990-TVA,A34C"]
+RELEASE_LETTER = b"D"                # REV 3 was "C"; the fork accepts 39990-TVA,A34 + any capital letter (accord-PTM 9942bd70e1)
+VSTR = [b"39990-TVA-A310", b"39990-TVA-A340", b"39990-TVA,A340", b"39990-TVA,A34C", b"39990-TVA,A34D"]
 HW_STR = b"001100121020"
 
 GP, TP = 0xFEDF8000, 0xBF000
@@ -178,8 +193,10 @@ STOCK_CELLS = {"D4 low-speed lockout 0xC62FC": (0xC62FC, 0), "DTC-0x49 gate / ov
                "D6b host 0xC6D28 (never written)": (0xC6D28, 0xFF, "u8"),
                "post-fade clamp 0xC61CA": (0xC61CA, 20476), "D clamp 0xC61C4": (0xC61C4, 10240),
                "shared fwd gain 0xC648A": (0xC648A, 888)}
-DAMPAXIS_ROWS = (0xD7A5C, 0xD7A6C)    # -9830,-5734,-1966 on stock; REV 2: := A160 V300's rows (D8k)
-DAMPAXIS_ALPHA2 = (0xC40D4, 22, 14)    # A340 producer FUN_00041fe6 EMA alpha2 (D5k); A160's was 0xC40DC
+DAMPAXIS_ROWS = (0xD7A5C, 0xD7A6C)    # -9830,-5734,-1966 on stock; REV 2/3 wrote A160 V300's rows here; REV 4: STOCK (not written)
+DAMPAXIS_ALPHA2 = (0xC40D4, 22, 14)    # A340 producer FUN_00041fe6 EMA alpha2; stock 22; REV 2/3 wrote 14; REV 4: STOCK (not written)
+DAMPAXIS_PTR, DAMPAXIS_NREC = 0xCBE40, 34          # consumer FUN_00037794: record = ptr[mode], mode = gp+0x63fd
+KEYTAB, KEYROW, KEYMODES = 0xCD000, 0x24, 0x12     # chassis-key table: 5-byte key, modes [manual, manual, engaged, engaged] at +0x12
 # A7: (A340 int16, A340 f32, A160 int16, A160 f32)
 A7_PAIRS = [(0xC679E, 0xC65E8, 0xC674E, 0xC6598), (0xC67A0, 0xC65EC, 0xC6750, 0xC659C),
             (0xC67AA, 0xC65FC, 0xC675A, 0xC65AC), (0xC67AC, 0xC6600, 0xC675C, 0xC65B0),
@@ -496,11 +513,33 @@ def build():
     ck(struct.unpack_from("<3h", stock, DAMPAXIS_ROWS[0]) == (-9830, -5734, -1966) == struct.unpack_from("<3h", stock, DAMPAXIS_ROWS[1])
        and struct.unpack_from("<3H", stock, DAMPAXIS_ROWS[0] - 6) == (0, 1280, 5760) and stock[DAMPAXIS_ALPHA2[0]] == DAMPAXIS_ALPHA2[1],
        "stock DampAxis rows -9830,-5734,-1966 with X 0,1280,5760 and alpha2 22 (A340 cells)", "V")
-    for a in DAMPAXIS_ROWS:
-        put(a, bytes(a160[a:a + 6]), "D8k")
-    put(DAMPAXIS_ALPHA2[0], bytes([DAMPAXIS_ALPHA2[2]]), "D5k")
-    ck(all(struct.unpack_from("<3h", code, a) == (-29490, -17202, -16000) == struct.unpack_from("<3h", a160, a) for a in DAMPAXIS_ROWS)
-       and code[DAMPAXIS_ALPHA2[0]] == 14 == a160[0xC40DC], "REV 2: DampAxis rows := A160 V300's -29490,-17202,-16000 (both rows) and alpha2 14 (D8k/D5k)", "S")
+    # REV 4: the DampAxis lane is NOT edited.  Record WHY from the image: which chassis keys select records 26/27.
+    ptrs = struct.unpack_from(f"<{DAMPAXIS_NREC}I", stock, DAMPAXIS_PTR)
+    ck(ptrs[26] == DAMPAXIS_ROWS[0] - 8 and ptrs[27] == DAMPAXIS_ROWS[1] - 8,
+       f"the rows REV 2/3 edited are records ptr[26] = 0x{ptrs[26]:05X} and ptr[27] = 0x{ptrs[27]:05X} of the consumer's table 0xCBE40", "S")
+    keys = {}
+    for r in range(64):
+        o = KEYTAB + KEYROW * r
+        if stock[o] == 0xFF:
+            break
+        keys[bytes(stock[o:o + 5]).decode("latin1")] = tuple(stock[o + KEYMODES:o + KEYMODES + 4])
+    users = sorted(k for k, m in keys.items() if 26 in m or 27 in m)
+    ck(users == ["TWAA0", "TWAA1"] and keys["TWAA0"] == keys["TWAA1"] == (26, 26, 27, 27) and keys["TVCA4"] == (16, 17, 18, 19),
+       f"A340 key table ({len(keys)} keys): records 26/27 are selected ONLY by {users} = [26,26,27,27] (manual AND engaged); "
+       f"TVCA4 = {keys['TVCA4']} (on A160 TVCA4 = [24,25,26,27]: engaged only)", "S")
+    ak = {bytes(a160[KEYTAB + KEYROW * r:KEYTAB + KEYROW * r + 5]).decode("latin1"): tuple(a160[KEYTAB + KEYROW * r + KEYMODES:KEYTAB + KEYROW * r + KEYMODES + 4])
+          for r in range(32) if a160[KEYTAB + KEYROW * r] != 0xFF}
+    ck(ak.get("TVCA4") == (24, 25, 26, 27) and sorted(k for k, m in ak.items() if 26 in m or 27 in m) == ["TVCA4"],
+       f"CONTROL on the A160 V300 image: records 26/27 belong only to TVCA4 = {ak.get('TVCA4')} (cols 2/3 = engaged) -- the same reader, a different car", "S")
+    ck(all(bytes(code[p:p + 14]) == bytes(stock[p:p + 14]) for p in ptrs) and len({bytes(code[p:p + 14]) for p in ptrs}) == 1
+       and struct.unpack_from("<H3H3h", code, ptrs[26]) == (3, 0, 1280, 5760, -9830, -5734, -1966)
+       and code[DAMPAXIS_ALPHA2[0]] == stock[DAMPAXIS_ALPHA2[0]] == DAMPAXIS_ALPHA2[1] == 22,
+       "REV 4 BUILT: all 34 DampAxis records identical and STOCK (-9830,-5734,-1966; X 0,1280,5760), alpha2 0xC40D4 = 22 (stock)", "S")
+    rev3_p = Path(plain_image_path(REV3_IMG_NAME))
+    rev3 = rev3_p.read_bytes() if rev3_p.exists() else None
+    ck(rev3 is not None and hashlib.sha256(rev3).hexdigest() == REV3_IMG_SHA
+       and all(struct.unpack_from("<3h", rev3, a) == (-29490, -17202, -16000) for a in DAMPAXIS_ROWS) and rev3[DAMPAXIS_ALPHA2[0]] == 14,
+       "CONTROL: the REV 3 image (what flew, sha dc30a73b...) carries -29490,-17202,-16000 on both rows and alpha2 14", "C")
     lag_a, lag_b = s16(code, 0xC63FC), u16(code, 0xC63FE)
     ck((lag_a, lag_b) == (s16(a160, 0xC63EC), u16(a160, 0xC63EE)),
        f"output lag {lag_a}/{lag_b} == the A160 V300 image's 0xC63EC/0xC63EE (DC {2 * lag_b / ((1024 - lag_a) * 32):.4f})", "S")
@@ -567,7 +606,7 @@ def build():
     ck(stock[0x1310D:0x1310E] == b"0" and stock[0x14117:0x14125] == b"39990-TVA-A340", "stock letter '0'; dead copy at 0x14117", "V")
     put(0x13109, b",", "A1")
     put(0x1310D, RELEASE_LETTER, "A1")
-    ck(bytes(code[0x13100:0x1310E]) == b"39990-TVA,A34C" and bytes(code[0x14117:0x14125]) == b"39990-TVA-A340",
+    ck(bytes(code[0x13100:0x1310E]) == b"39990-TVA,A34D" and bytes(code[0x14117:0x14125]) == b"39990-TVA-A340",
        f"F181 {bytes(code[0x13100:0x1310E])}; dead copy unchanged", "T")
 
     # ---- [9] CRC ---------------------------------------------------------------------------------------------------
@@ -575,7 +614,7 @@ def build():
     diff0 = {a for a in range(START, END) if code[a] != stock[a]}
     blocks = sorted({tuple(V53.owning_block(code, a)) for a in diff0})
     print(f"      touched blocks: {[f'[0x{b0:05X},0x{b1:05X})' for b0, b1 in blocks]}")
-    ck([b0 for b0, _ in blocks if 0xCE000 <= b0 < 0xDA000] == [0xD7000], "the only owning block in the base-assist pages 0xCE..0xD9 is 0xD7 (the DampAxis rows), as A160 V300 rev 2", "S")
+    ck([b0 for b0, _ in blocks if 0xCE000 <= b0 < 0xDA000] == [], "REV 4: NO touched block in the base-assist pages 0xCE..0xD9 (the DampAxis rows are stock)", "S")
     mid = walk_counts(code)
     ck(mid[1] == (50, len(blocks)), f"before recompute the full chain fails EXACTLY the {len(blocks)} touched blocks ({mid[1]})", "S")
     trailers = set()
@@ -597,9 +636,8 @@ def build():
     low = sorted({touched.get(i) for i in d if i < 0xC0000})
     ck(low == ["A1", "A2", "A6", "D6b"], f"below 0xC0000 only rows A1 (F181), A2 (lane), A6 (repoint), D6b (gate reads) differ: {low} (the cave A3 is at 0xC4C00)", "S")
     ck(sorted({touched.get(i) for i in d if CAVE_BASE <= i < CAVE_BASE + CAVE_LEN}) == ["A3"]
-       and not [i for i in d if 0xC0000 <= i < 0xC6000 and not (CAVE_BASE <= i < CAVE_BASE + CAVE_LEN) and i not in trailers
-                and i != DAMPAXIS_ALPHA2[0]],
-       "in [0xC0000,0xC6000) only the cave and the DampAxis alpha2 byte 0xC40D4 differ (plus the main-block trailer)", "S")
+       and not [i for i in d if 0xC0000 <= i < 0xC6000 and not (CAVE_BASE <= i < CAVE_BASE + CAVE_LEN) and i not in trailers],
+       "REV 4: in [0xC0000,0xC6000) ONLY the cave differs (plus the main-block trailer); 0xC40D4 is stock", "S")
     code_runs = sorted({a for a in d if 0x14000 <= a < 0xC0000 and touched.get(a) in ("A2", "A6", "D6b")})
     ck(len(code_runs) <= 26 and sum(1 for a in code_runs if touched[a] == "D6b") == 4,
        f"in-place code bytes differing: {len(code_runs)} (9 sites, <= 26 B; D6b exactly 4)", "S")
@@ -617,9 +655,14 @@ def build():
         tag = touched.get(a0, "crc")
         print(f"         0x{a0:05X}-0x{a1:05X} ({a1 - a0 + 1:3d} B) [{tag:>3}]  stock {stock[a0:a1 + 1].hex()[:28]:28}"
               f"  new {bytes(code[a0:a1 + 1]).hex()[:28]}")
-    d8k = {a + k for a in DAMPAXIS_ROWS for k in range(6)} | set(range(0xD7FFC, 0xD8000))
-    ck(all(code[a] == stock[a] for a in range(0xCE000, 0xDA000) if a not in d8k) and sum(1 for a in d8k if code[a] != stock[a]) >= 12,
-       "pages 0xCE..0xD9 byte-identical to stock incl. trailers EXCEPT the 12 DampAxis row bytes + the 0xD7 trailer (as A160 V300 rev 2)", "S")
+    ck(bytes(code[0xCE000:0xDA000]) == bytes(stock[0xCE000:0xDA000]),
+       "REV 4: pages 0xCE..0xD9 (base assist, damper, DampAxis records) byte-identical to stock INCLUDING their CRC trailers", "S")
+    if rev3 is not None:
+        dd = [i for i in range(START, END) if code[i] != rev3[i]]
+        own = {a + k for a in DAMPAXIS_ROWS for k in range(6)} | {DAMPAXIS_ALPHA2[0], 0x1310D}
+        tr3 = {b1 + k for b0, b1 in {tuple(V53.owning_block(code, a)) for a in own} for k in range(4)}
+        ck(set(dd) - tr3 == own and all(i in own or i in tr3 for i in dd),
+           f"REV 4 vs the REV 3 image: {len(dd)} B differ = the 12 row bytes + alpha2 + the F181 letter (14 B) + CRC trailers of their blocks, nothing else", "S")
     map_recs = {p for _, _, p in ptr_records(stock, (0xC72A4, 0xC72D4, 0xC7304))}
     ck(all(code[p:p + 42] == stock[p:p + 42] for p in map_recs), f"rate-reference map: all {len(map_recs)} records STOCK (no x6 map, as A160 V300)", "S")
 
@@ -642,7 +685,7 @@ def build():
     rail = rn["T"]
 
     # ---- [12] rwd --------------------------------------------------------------------------------------------------
-    print("\n  [12] .rwd ENCODE (V38 container; '/' = A310, A340, TVA,A340, TVA,A34C; '!' x4) + READBACK")
+    print("\n  [12] .rwd ENCODE (V38 container; '/' = A310, A340, TVA,A340, TVA,A34C, TVA,A34D; '!' x5) + READBACK")
     src = Path(FF.V38_RWD).read_bytes()
     ck(hashlib.sha256(src).hexdigest() == FF.V38_RWD_SHA256, "V38 source .rwd sha256 (container template)", "C")
     FF.assert_x31_checksum(src, "V38 source")
@@ -670,8 +713,8 @@ def build():
        "cipher validated NON-CIRCULARLY: V38 rwd decodes to the known V38 plain image", "S")
     got = {t.decode("latin1"): [v.decode("latin1") for v in vv] for t, vv in parse_x31(rwd)["headers"]}
     print(f"      headers: {got}")
-    ck(got.get("/") == [s.decode() for s in VSTR] and got.get("!") == [HW_STR.decode()] * 4 and got.get("&") == ["BF109E"],
-       "'/' = A310, A340, TVA,A340, TVA,A34C; '!' 001100121020 x4; '&' BF109E unchanged", "T")
+    ck(got.get("/") == [s.decode() for s in VSTR] and got.get("!") == [HW_STR.decode()] * len(VSTR) and got.get("&") == ["BF109E"],
+       "'/' = A310, A340, TVA,A340, TVA,A34C, TVA,A34D; '!' 001100121020 x5; '&' BF109E unchanged", "T")
     ck(bytes(code[0x13100:0x1310E]).decode() in got.get("/", []), "the built F181 string is in the '/' list", "S")
     out_i, out_r = Path(plain_image_path(IMG_NAME)), Path(RWD_DIR, RWD_NAME)
     ck(len(str(out_i)) <= MAX_PATH and len(str(out_r)) <= MAX_PATH,
@@ -690,7 +733,7 @@ def build():
         return True
     ck(all(_knots_ok(tabs, n, want) for (_, tabs, n, _, want) in GAIN_TABLES),
        "Kp 7 / Kd 48 / Ki 20 pinned on every knot of all 36 records of each table, walked from the BUILT pointer tables", "S")
-    ck(img_sha == EXP_IMG_SHA, f"REV 3 image sha frozen: {img_sha[:16]}... (expected {EXP_IMG_SHA[:16]}...)", "S")
+    ck(img_sha == EXP_IMG_SHA, f"REV 4 image sha frozen: {img_sha[:16]}... (expected {EXP_IMG_SHA[:16]}...)", "S")
     print("\n" + "=" * 118)
     print(f"  image SHA256 {img_sha}   ({IMG_NAME})")
     print(f"  .rwd  SHA256 {rwd_sha}   ({RWD_NAME})")
@@ -713,7 +756,7 @@ def main():
         print("\n      DRY RUN -- NOT WRITTEN.  Set ACCORD_V300_A340_WRITE=1 to emit the files.")
         return 0
     print("\n  [13] WRITE -- guarded, re-hashed after")
-    others = [p for p in Path(RWD_DIR).glob("*V300-A340*") if p.name != RWD_NAME]
+    others = [p for p in Path(RWD_DIR).glob("*V300-A340*") if p.name != RWD_NAME]       # REV 3's rwd must be gone first
     if others:
         raise SystemExit(f"WRITE GUARD: another V300-A340 rwd exists: {[p.name for p in others]}")
     for path, blob, sha in ((r["out_i"], r["code"], r["img_sha"]), (r["out_r"], r["rwd"], r["rwd_sha"])):

@@ -3,7 +3,7 @@
 Purpose: a REVERT file for the A340 car.  The payload is the stock image's [0x13000, 0x100000) byte for byte (nothing
 edited, not even the part-number strings), so flashing it returns the ECU to the dump it came from.  The '/' header lists
 every string the A340 ECU can report so the flasher's part-number gate accepts it from stock, from the 2x build
-(39990-TVA,A340) and from the 6x build (39990-TVA,A34C).
+(39990-TVA,A340) and from the 6x builds (39990-TVA,A34C = V300-A340 REV 3; 39990-TVA,A34D = REV 4, added 2026-11-17).
 
 Base: ../accord-firmwares/analysis-2020accord/other bins/39990-TVA-A340.bin  (sha256 01a53539..., the operator's dump).
 Container: the V38 .rwd (parsed, cipher validated non-circularly against the known V38 plain image).
@@ -46,7 +46,7 @@ A340_SHA = "01a53539e19bb0b54fb339a08644ca6981b844fad41276a1f8c305f13aa6f071"
 
 LABEL = "STOCK-A340"
 RWD_NAME = f"39990-TVA-A340-{LABEL}-UNMODIFIED.DUMP.01a53539-REVERT-0x{START:X}-0x{END:X}.rwd"
-VSTR = [b"39990-TVA-A310", b"39990-TVA-A340", b"39990-TVA,A340", b"39990-TVA,A34C"]   # == the V300-A340 list
+VSTR = [b"39990-TVA-A310", b"39990-TVA-A340", b"39990-TVA,A340", b"39990-TVA,A34C", b"39990-TVA,A34D"]   # == the V300-A340 list
 HW_STR = b"001100121020"
 OK, BAD = "[PASS]", "[FAIL]"
 
@@ -121,12 +121,12 @@ def build(dry_run=False):
     got = {t.decode("latin1"): [v.decode("latin1") for v in vv] for t, vv in parse_x31(rwd)["headers"]}
     print(f"      headers: {got}")
     ck(got.get("/") == [s.decode() for s in VSTR] and got.get("!") == [HW_STR.decode()] * len(VSTR) and got.get("&") == ["BF109E"],
-       "'/' lists stock A340, the 2x string (TVA,A340) and the 6x string (TVA,A34C); '!' x4; '&' BF109E unchanged")
+       "'/' lists stock A340, the 2x string (TVA,A340) and the 6x strings (TVA,A34C, TVA,A34D); '!' x5; '&' BF109E unchanged")
     # the flasher's own gate (prefix match either way) must accept every string this ECU can report
     # eps-update-tva.py cannot be imported (dash in the name); the rule below is its app_id_matches_part verbatim
     norm = lambda b: b.rstrip(b"\x00").strip()                                                  # noqa: E731
     gate = lambda a: any(norm(a) == norm(p) or norm(a).startswith(norm(p)) or norm(p).startswith(norm(a)) for p in VSTR)   # noqa: E731
-    ck(all(gate(s) for s in (b"39990-TVA-A340\x00\x00", b"39990-TVA,A340\x00\x00", b"39990-TVA,A34C\x00\x00")) and not gate(b"39990-TVA-A160\x00\x00"),
+    ck(all(gate(s) for s in (b"39990-TVA-A340\x00\x00", b"39990-TVA,A340\x00\x00", b"39990-TVA,A34C\x00\x00", b"39990-TVA,A34D\x00\x00")) and not gate(b"39990-TVA-A160\x00\x00"),
        "flasher part gate (eps-update-tva.app_id_matches_part rule): accepts A340 stock / 2x / 6x F181 strings, rejects an A160 ECU")
 
     out_r = Path(RWD_DIR, RWD_NAME)

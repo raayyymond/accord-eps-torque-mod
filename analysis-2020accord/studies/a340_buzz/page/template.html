@@ -1,0 +1,325 @@
+<title>V300-A340 REV 4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* layout: one reading column (lab-notebook report), figures break out to a wider measure; tables and diagrams scroll in their own box */
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#18212b; --muted:#5b6876; --rule:#d5dbe2;
+  --stock:#2f6f9f; --rev3:#c2452d; --rev4:#0f8a7a; --warn:#9a6a00; --mark:#fff3d6;
+  --ev:#0f6b5e; --bel:#8a4b00;
+  --display:"Space Grotesk","IBM Plex Sans",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#11161c; --panel:#18202a; --ink:#e4e9ef; --muted:#97a3b0; --rule:#2c3743;
+  --stock:#6fb1e0; --rev3:#f0806a; --rev4:#4fd1bd; --warn:#e2b04a; --mark:#3a3118;
+  --ev:#5fd0bd; --bel:#e6a35c; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#11161c; --panel:#18202a; --ink:#e4e9ef; --muted:#97a3b0; --rule:#2c3743;
+  --stock:#6fb1e0; --rev3:#f0806a; --rev4:#4fd1bd; --warn:#e2b04a; --mark:#3a3118;
+  --ev:#5fd0bd; --bel:#e6a35c; color-scheme:dark }
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:980px;margin:0 auto;padding-block:36px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:40px}
+section{display:flex;flex-direction:column;gap:14px;min-width:0}
+h1{font-family:var(--display);font-size:clamp(28px,5vw,40px);line-height:1.1;margin:0;text-wrap:balance;font-weight:600}
+h2{font-family:var(--display);font-size:22px;margin:0;font-weight:600;text-wrap:balance;padding-top:18px;border-top:1px solid var(--rule)}
+h3{font-size:15px;margin:6px 0 0;font-weight:600}
+p,li{max-width:68ch;margin:0}
+ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:18px;max-width:64ch}
+code,.mono{font-family:var(--mono);font-size:.88em}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:1px 6px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.ev{color:var(--ev)} .bel{color:var(--bel)}
+.status{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.status b{color:var(--ink);font-weight:500}
+.risk{background:var(--mark);border-left:3px solid var(--warn);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.scroll{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums;width:100%}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+td.n,th.n{text-align:right;white-space:nowrap}
+.bar{display:inline-block;height:8px;border-radius:2px;vertical-align:middle;margin-right:6px}
+figure{margin:0;background:var(--panel);border:1px solid var(--rule);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+figcaption{font-size:13px;color:var(--muted);max-width:80ch}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:6px}
+.legend i.dash{border-top-style:dashed}
+svg text{font-family:var(--mono);fill:var(--muted);font-size:11px}
+svg .lbl{fill:var(--ink);font-family:var(--body);font-size:12.5px}
+svg .ttl{fill:var(--ink);font-family:var(--body);font-size:13px;font-weight:600}
+svg .box{fill:var(--panel);stroke:var(--rule);stroke-width:1.2}
+svg .hot{fill:var(--panel);stroke:var(--rev4);stroke-width:2}
+svg .wire{stroke:var(--muted);stroke-width:1.4;fill:none}
+svg .axis{stroke:var(--rule);stroke-width:1;fill:none}
+pre{margin:0;background:var(--panel);border:1px solid var(--rule);padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.5;overflow-x:auto}
+</style>
+
+<div class="wrap">
+<header style="display:flex;flex-direction:column;gap:14px">
+  <div class="eyebrow">39990-TVA-A340 · 6× angle-loop port · built 2026-11-17 · not flown</div>
+  <h1>V300-A340 REV 4</h1>
+  <p class="lede">REV 3 buzzed on a user's 2.0T Accord because its tripled damping rows were ported by address. On the A340 firmware those rows belong to a chassis code that uses them in manual driving as well as under LKAS. REV 4 leaves that lane exactly as Honda shipped it and changes nothing else.</p>
+  <div class="status">
+    <span>image <b>e73278a1…f2c6</b></span><span>rwd <b>4bc63270…bcdc</b></span>
+    <span>reports <b>39990-TVA,A34D</b></span><span>vs stock <b>825 B</b></span><span>vs REV 3 <b>14 B + 8 CRC</b></span>
+  </div>
+  <div class="risk">
+    <strong>Risk before the drive</strong>
+    <p>Steering authority is unchanged from REV 3: the lane rail is 2472 counts, 5.49× the stock A340 peak of 450. Manual driving is byte-identical to stock in every dynamic term.</p>
+    <p>Engaged, the angle loop now runs on Honda's damping lane, which no car has flown with this loop. The stability study passes it with defects: one corner (very light steering inertia, at or below about 18 km/h) fails the release gate. If that corner is real the driver would feel a 7–11 Hz wheel shudder for a few cycles after a correction, hands light, engaged only. Revert if it sustains for 2 s.</p>
+    <p>The record on the A160 car is a caution: under the earlier 6× rate loop the stock lane left low-speed grinding (V106 tripled it for that reason), and a quarter-strength lane (V94) vibrated badly. The angle loop has its own derivative term and is a different loop, but the stock lane under it is untested. Make the first engaged test at 5–20 km/h with hands ready.</p>
+  </div>
+</header>
+
+<section>
+  <h2>What the user reported, and what the logs show</h2>
+  <p>The user's words: "a slight buzz on return to center movements between 11 and 1, even without starpilot engaged." Two public routes from the same car were scored: one on REV 3 (23 segments) and one on stock firmware (7 segments). The operator's A160 car on A160 V300 is the control (10 routes).</p>
+  <p>The metric is the wheel-rate signal on CAN <code>0x14A</code>, high-passed at 10 Hz, rms over 0.32 s, in deg/s. "Buzzing" means above 4 deg/s. Cell: moving above 8 m/s, wheel still, within 10° of centre, light hand torque. <span class="tag ev">EVIDENCE</span></p>
+  <div class="scroll"><table>
+    <thead><tr><th>Condition</th><th class="n">REV 3, user car</th><th class="n">Stock, same car</th><th class="n">A160 V300</th></tr></thead>
+    <tbody>
+      <tr><td>Engaged, time buzzing</td><td class="n"><span class="bar" style="width:89px;background:var(--rev3)"></span>88.9 %</td><td class="n"><span class="bar" style="width:2px;background:var(--stock)"></span>0.6 %</td><td class="n">0.0–0.4 %</td></tr>
+      <tr><td>Engaged, median level</td><td class="n">8.91 deg/s</td><td class="n">0.81</td><td class="n">0.46–0.63</td></tr>
+      <tr><td>Manual, time buzzing</td><td class="n"><span class="bar" style="width:48px;background:var(--rev3)"></span>48.1 %</td><td class="n"><span class="bar" style="width:2px;background:var(--stock)"></span>0.1 %</td><td class="n">0.0–0.2 %</td></tr>
+      <tr><td>Manual, returning to centre within 30°</td><td class="n"><span class="bar" style="width:94px;background:var(--rev3)"></span>94 % (9.1 s)</td><td class="n"><span class="bar" style="width:3px;background:var(--stock)"></span>2.8 %</td><td class="n">1.0 % (80 s)</td></tr>
+    </tbody></table></div>
+  <ul>
+    <li>In manual buzz the LKAS request bit and command are zero throughout (31 episodes, 85 s). The angle loop is not required for it.</li>
+    <li>It needs a kick, then sustains: after a quiet second, a wheel movement above 8 deg/s starts it 95 % of the time; under 3 deg/s, 4 %. Once started it is still there a second later 88–98 % of the time.</li>
+    <li>It grows to full size in about three cycles and then holds a constant amplitude. Firm hand torque suppresses it (engaged duty 79–88 % → 13 %).</li>
+    <li>As sampled at 100 Hz it sits at 12–22 Hz. The true frequency is not resolved; the angle and rate fields disagree in a way a real 12–30 Hz motion of one shaft cannot produce, so an alias of roughly 70–130 Hz is the leading reading. <span class="tag bel">BELIEF</span></li>
+  </ul>
+  <div class="grid3">
+    <figure><svg id="tr1" viewBox="0 0 320 200" role="img" aria-label="Stock manual wheel rate trace"></svg><figcaption>Stock, manual return to centre (66° of travel). Smooth.</figcaption></figure>
+    <figure><svg id="tr2" viewBox="0 0 320 200" role="img" aria-label="REV 3 manual wheel rate trace"></svg><figcaption>REV 3, manual, request 0, wheel within 4° of centre. The cycle starts after a small movement.</figcaption></figure>
+    <figure><svg id="tr3" viewBox="0 0 320 200" role="img" aria-label="REV 3 engaged wheel rate trace"></svg><figcaption>REV 3, engaged, the segment the user pointed to (seg 7, about 25 s in).</figcaption></figure>
+  </div>
+  <p class="legend"><span>Wheel rate from <code>0x14A</code>, deg/s, 100 Hz samples, 4 s each, same vertical scale.</span></p>
+</section>
+
+<section>
+  <h2>Cause: the same two table rows mean different cars</h2>
+  <p>The damping lane ("DampAxis") reads one of 34 speed tables. Which one is chosen by a mode byte, and the mode byte comes from the car's coded chassis key: two modes for manual driving, two for LKAS engaged. All 34 tables are identical on stock, on both firmwares. A160 V300 tripled records 26 and 27. <span class="tag ev">EVIDENCE</span> image bytes and decompile.</p>
+  <figure>
+    <div class="scroll"><svg id="keys" viewBox="0 0 900 300" style="min-width:680px" role="img" aria-label="Chassis key to damping record mapping on A160 and A340"></svg></div>
+    <figcaption>On A160 the tripled records are the engaged modes of the operator's car only. On A340 the same record numbers belong to keys TWAA0 and TWAA1, for manual and engaged both. No other A340 key reaches them.</figcaption>
+  </figure>
+  <ul>
+    <li>Every other ECU on the user's car reports a <code>TWA</code> part number (2.0T). That the EPS is coded TWAA0 or TWAA1 is inferred from that and from the manual buzz; the coded key itself is not in the logs. <span class="tag bel">BELIEF</span></li>
+    <li>With the request off, the only REV 3 edits that act dynamically are the 13 DampAxis bytes; the EME ladder only raises limits. Request-off audit of all 842 changed bytes. <span class="tag ev">EVIDENCE</span></li>
+    <li>So this car ran the tripled lane hands-on, in manual. No car had done that before: the operator's car is manual on records 24/25, which were never edited.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Where the edit sits</h2>
+  <figure>
+    <div class="scroll"><svg id="flow" viewBox="0 0 1040 640" style="min-width:860px" role="img" aria-label="Signal flow of the LKAS demand path and the damping lane"></svg></div>
+    <figcaption>Simplified chain, read from the REV 4 image. The top row runs only while LKAS is requested. The damping lane and base assist run always. REV 4 touches only the highlighted block, and only by not editing it. Speed axes are raw counts (64 per km/h, as on A160 <span class="tag bel">BELIEF</span>).</figcaption>
+  </figure>
+  <div class="legend"><span><i style="border-color:var(--stock)"></i>stock A340</span><span><i style="border-color:var(--rev3)"></i>REV 3</span><span><i class="dash" style="border-color:var(--rev4)"></i>REV 4</span></div>
+  <div class="grid2">
+    <figure><svg id="lerpY" viewBox="0 0 440 260" role="img" aria-label="DampAxis speed table"></svg><figcaption>DampAxis gain Y(v), records 26/27. REV 4 lies on stock. REV 3 was ×3.0, ×3.0, ×8.1 at 0, 20, 90 km/h.</figcaption></figure>
+    <figure><svg id="lerpG" viewBox="0 0 440 260" role="img" aria-label="Cave error gain table"></svg><figcaption>Angle-loop error gain G′(v) in the cave, unchanged from REV 3 (A160 V300's table halved).</figcaption></figure>
+    <figure><svg id="lerpKp" viewBox="0 0 440 260" role="img" aria-label="Kp table"></svg><figcaption>Kp table (all 36 records). Stock rate-loop values against the flat 7 the angle loop uses. Unchanged from REV 3.</figcaption></figure>
+    <figure><svg id="lerpKd" viewBox="0 0 440 260" role="img" aria-label="Kd and Ki tables"></svg><figcaption>Kd 32 → 48 and Ki 0 → 20, flat on every record. Unchanged from REV 3.</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <h2>The damping lane itself</h2>
+  <p>The lane multiplies a filtered wheel acceleration by Y(v). Mirrored from the decompile (producer <code>FUN_00041fe6</code>, consumer <code>FUN_00037794</code>), 1 kHz:</p>
+<pre>y0   += ((1024*rate - y0) * 37) >> 7        # EMA 1, 0xC645A = 37
+d32   = 32 * (y0 - y0_prev)                 # acceleration, clamp +-0xFA0000
+yA   += ((d32 - yA) * alpha2) >> 6          # EMA 2, 0xC40D4: stock 22, REV 3 14, REV 4 22
+g     = yA >> 9                             # gp-0x6bfc
+lane  = clamp((((g * Y(v)) >> 6) * 0x111) >> 18, +-511)   # 0xC407E = 511 -> gp-0x6af6</pre>
+  <div class="grid2">
+    <figure><svg id="bodeM" viewBox="0 0 440 260" role="img" aria-label="Lane gain versus frequency"></svg><figcaption>Lane output per unit of wheel rate, against frequency, low-speed row. REV 3 is 2.9× stock at 10 Hz and 2.0× at 100 Hz.</figcaption></figure>
+    <figure><svg id="bodeP" viewBox="0 0 440 260" role="img" aria-label="Lane phase versus frequency"></svg><figcaption>Phase of the lane against wheel rate. The two filters turn a pure acceleration term (+90°) into a lagging one by 60–90 Hz; with 2–3 ms of loop delay the lane's own loop reaches −180° at 81–130 Hz.</figcaption></figure>
+  </div>
+  <ul>
+    <li>A gain with two lags, a delay and a ±511 clamp gives a constant-amplitude cycle once the gain passes a critical value. Predicted aliases for REV 3 at 100 Hz sampling are 15.2 and 19.2 Hz; measured median 16.3 Hz. <span class="tag bel">BELIEF</span> for the mechanism, <span class="tag ev">EVIDENCE</span> for the arithmetic.</li>
+    <li>Stock is quiet on this car, so the stock gain is below critical. REV 3 buzzes only after a kick, so three times stock is near or above it. That bounds the stock margin to somewhere between 0 and about 7.5 dB. No dose above stock can be defended without another drive, so REV 4 uses none.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>What REV 4 changes, read from the image</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Cell</th><th>What it is</th><th class="n">Stock</th><th class="n">REV 3</th><th class="n">REV 4</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">0xD7A5C..61</td><td>DampAxis record 26, Y at 0/20/90 km/h</td><td class="n">−9830, −5734, −1966</td><td class="n">−29490, −17202, −16000</td><td class="n">−9830, −5734, −1966</td></tr>
+      <tr><td class="mono">0xD7A6C..71</td><td>DampAxis record 27</td><td class="n">−9830, −5734, −1966</td><td class="n">−29490, −17202, −16000</td><td class="n">−9830, −5734, −1966</td></tr>
+      <tr><td class="mono">0xC40D4</td><td>Acceleration filter coefficient (/64)</td><td class="n">22</td><td class="n">14</td><td class="n">22</td></tr>
+      <tr><td class="mono">0x1310D</td><td>Version letter in the reported string</td><td class="n">…-A340</td><td class="n">…,A34C</td><td class="n">…,A34D</td></tr>
+    </tbody></table></div>
+  <p>Everything else is REV 3: the angle-loop cave (260 B at <code>0xC4C00</code>), seven in-place lane edits, the DTC-0x49 counter mask, the 6× authority cell, the gain tables, the debounce package and the EME ladder. Delivered surface from the lane mirror on the built image: rail 2472 counts against a stock full-demand peak of 450, identical to REV 3.</p>
+  <ul>
+    <li>The letter changes so that a route identifies the build. The fork accepts <code>39990-TVA,A34</code> plus any capital letter.</li>
+    <li>The stock-revert file was re-packed to accept <code>,A34D</code> as well (payload unchanged; new rwd <span class="mono">51be7dd8…</span>). The older revert file would refuse a REV 4 ECU.</li>
+    <li>REV 3's rwd is removed from the firmware repo's working tree; its image is kept as the record of what flew.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Stability of the engaged loop on Honda's lane</h2>
+  <p>A160 kept the tripled lane because one corner of its plant family failed with the stock lane. The same study was repeated for this car. The A340 plant could be identified only below 1.5 Hz, where it is not distinguishable from the A160 car; inertia and high-frequency damping are unmeasured, and there is no usable engaged data below 6 m/s.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Configuration</th><th class="n">A160 family, fails / 49</th><th class="n">Min gain margin</th><th class="n">Max closed-loop peak</th><th class="n">A340 box, fails / 336</th></tr></thead>
+    <tbody>
+      <tr><td>REV 3 (rows ×3, coefficient 14)</td><td class="n">0</td><td class="n">19.4 dB</td><td class="n">−2.5 dB</td><td class="n">0</td></tr>
+      <tr><td><strong>REV 4 (stock rows, 22)</strong></td><td class="n">1</td><td class="n">5.3 dB</td><td class="n">+5.4 dB at 11 Hz</td><td class="n">12</td></tr>
+      <tr><td>Stock rows, coefficient 14</td><td class="n">1</td><td class="n">5.7 dB</td><td class="n">+4.6 dB</td><td class="n">12</td></tr>
+      <tr><td>Rows ×1.5, 22</td><td class="n">0</td><td class="n">9.2 dB</td><td class="n">−0.5 dB</td><td class="n">3</td></tr>
+      <tr><td>Rows ×2, 22</td><td class="n">0</td><td class="n">12.6 dB</td><td class="n">−1.1 dB</td><td class="n">0</td></tr>
+    </tbody></table></div>
+  <ul>
+    <li>All of REV 4's failing points are the light-inertia member at 3–8 m/s. At the central A340 estimate the margin is 18.3–36.1 dB with the peak below −7 dB at every speed.</li>
+    <li>That corner's inertia is smaller than the inertia the tripled lane itself contributed when the plant was fitted, so it may not be physical. With the lane modelled as its own block, REV 4 fails none of 60 cases unless real damping at 5–11 Hz is under about 1.5–2.5 units per deg/s; the A160 fit gives 4.9–5.5. <span class="tag bel">BELIEF</span></li>
+    <li>The intermediate doses look better on the engaged loop and worse on the lane's own loop, which is the loop that buzzed. They would also act in manual on this key.</li>
+    <li>Verdict of the study: pass with defects. The defects are the failed corner as the gate is written, no headroom above stock on the lane loop, and an unmeasured A340 inertia.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>One short drive reads it</h2>
+  <p>Everything needed is already on the wire. First check that the route reports <code>39990-TVA,A34D</code>.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Question</th><th>Readout</th><th>Clean</th><th>Not clean</th></tr></thead>
+    <tbody>
+      <tr><td>Is the buzz gone?</td><td>10 Hz high-passed <code>0x14A</code> rate, 0.32 s rms; above 8 m/s, wheel near centre, light hands; engaged and manual</td><td>median below 1.0, under 2 % of time above 4 deg/s (stock 0.81 / 0.6 %)</td><td>REV 3 was 8.91 / 88.9 % engaged, 48 % manual</td></tr>
+      <tr><td>Did the low-speed corner appear?</td><td>8–20 Hz band of the same signal, 1 s rms; engaged, not pressed, 1–8 m/s, 20 s or more</td><td>p50 ≤ 1.5 and p90 ≤ 3.0 (A160 V300 at 1–8 m/s 0.61 / 1.54; A340 stock at 10–20 m/s 1.20 / 2.33)</td><td>REV 3 was 5.83 / 8.61; revert at 2 s above 4 deg/s</td></tr>
+    </tbody></table></div>
+  <p>If the buzz is unchanged on a route that reports <code>,A34D</code>, the damping lane is not its cause and the request-off audit is wrong somewhere. If manual is clean and engaged still buzzes, the cycle belongs to the angle loop on this car.</p>
+</section>
+
+<section id="adv">
+  <h2>Adversarial pass on the built image</h2>
+  <!--ADV-->
+</section>
+
+<section>
+  <h2>Not established</h2>
+  <ul>
+    <li>The car's coded key. It decides whether the rows were live; everything else in the chain is read from bytes.</li>
+    <li>The true buzz frequency, and which element each <code>0x14A</code> field measures.</li>
+    <li>Why the tripled lane is quiet on the operator's A160 car while engaged, hands off, and not on this car. The lane and its gain to the governor are identical on both firmwares; the plants are not known to be.</li>
+    <li>A160 V300 on any A160 car other than key TVCA4: those cars run stock rows with the changed filter coefficient, a combination that was never scored.</li>
+  </ul>
+</section>
+</div>
+
+<script>
+const D = __DATA__;
+const NS = "http://www.w3.org/2000/svg";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function el(p, tag, attrs, text){ const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; p.appendChild(e); return e; }
+function nice(lo, hi, n){ const span = hi - lo, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0))); const f = step0 / mag; const step = (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mag; const t = []; for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) t.push(+v.toFixed(10)); return t; }
+// one chart helper: series = [{x:[],y:[],color:'--token',dash:bool,step:bool}], opts {x,y,w,h,xl,yl,xlog,ymin,ymax,xticks,title,mini}
+function chart(svg, series, o){
+  const m = o.mini ? {l:4,r:4,t:4,b:4} : {l:52,r:12,t:o.title?24:10,b:38};
+  const X0 = (o.x||0) + m.l, Y0 = (o.y||0) + m.t, W = o.w - m.l - m.r, H = o.h - m.t - m.b;
+  let xs = series.flatMap(s => s.x), ys = series.flatMap(s => s.y);
+  let xmin = o.xmin ?? Math.min(...xs), xmax = o.xmax ?? Math.max(...xs), ymin = o.ymin ?? Math.min(...ys), ymax = o.ymax ?? Math.max(...ys);
+  if (o.ymin == null && o.ymax == null){ const pad = (ymax - ymin) * 0.08 || 1; ymin -= pad; ymax += pad; }
+  const fx = v => X0 + (o.xlog ? (Math.log10(v) - Math.log10(xmin)) / (Math.log10(xmax) - Math.log10(xmin)) : (v - xmin) / (xmax - xmin)) * W;
+  const fy = v => Y0 + H - (v - ymin) / (ymax - ymin) * H;
+  const g = el(svg, "g", {});
+  if (!o.mini){
+    if (o.title) el(g, "text", {x:X0, y:(o.y||0)+14, class:"ttl"}, o.title);
+    const yt = o.yticks || nice(ymin, ymax, 5);
+    yt.forEach(v => { el(g, "line", {x1:X0, x2:X0+W, y1:fy(v), y2:fy(v), class:"axis"}); el(g, "text", {x:X0-6, y:fy(v)+4, "text-anchor":"end"}, String(v)); });
+    const xt = o.xticks || nice(xmin, xmax, 5);
+    xt.forEach(v => { el(g, "line", {x1:fx(v), x2:fx(v), y1:Y0+H, y2:Y0+H+4, class:"axis"}); el(g, "text", {x:fx(v), y:Y0+H+16, "text-anchor":"middle"}, String(v)); });
+    el(g, "line", {x1:X0, x2:X0+W, y1:Y0+H, y2:Y0+H, class:"axis"});
+    if (o.xl) el(g, "text", {x:X0+W/2, y:Y0+H+32, "text-anchor":"middle"}, o.xl);
+    if (o.yl) el(g, "text", {x:(o.x||0)+12, y:Y0+H/2, "text-anchor":"middle", transform:`rotate(-90 ${(o.x||0)+12} ${Y0+H/2})`}, o.yl);
+  } else {
+    el(g, "rect", {x:X0, y:Y0, width:W, height:H, fill:"none", class:"axis"});
+  }
+  series.forEach(s => {
+    const pts = s.x.map((v, i) => `${fx(v).toFixed(1)},${fy(Math.max(ymin, Math.min(ymax, s.y[i]))).toFixed(1)}`).join(" ");
+    const a = {points:pts, fill:"none", stroke:`var(${s.color})`, "stroke-width":o.mini?1.6:(s.w||2), "stroke-linejoin":"round"};
+    if (s.dash) a["stroke-dasharray"] = "6 4";
+    el(g, "polyline", a);
+    if (s.dots) s.x.forEach((v, i) => el(g, "circle", {cx:fx(v), cy:fy(s.y[i]), r:o.mini?2:3, fill:`var(${s.color})`}));
+  });
+}
+function lerpSeries(rec, color, extra){ return Object.assign({x:rec[0], y:rec[1], color, dots:true}, extra||{}); }
+
+// traces
+[["tr1","tr_stock_manual","--stock","Stock · manual"],["tr2","tr_rev3_manual","--rev3","REV 3 · manual, request 0"],["tr3","tr_rev3_eng","--rev3","REV 3 · engaged"]].forEach(([id,k,c,t]) => {
+  const r = D[k].rate, x = r.map((_, i) => i / 100);
+  chart(document.getElementById(id), [{x, y:r, color:c, w:1.3}], {w:320, h:200, ymin:-80, ymax:80, yticks:[-80,-40,0,40,80], xticks:[0,1,2,3,4], xl:"s", yl:"deg/s", title:t});
+});
+
+// LERPs
+const dY = D.damp;
+chart(document.getElementById("lerpY"), [lerpSeries(dY.stock,"--stock"), lerpSeries(dY.rev3,"--rev3"), lerpSeries(dY.rev4,"--rev4",{dash:true,dots:false,w:2.4})], {w:440, h:260, ymin:-32000, ymax:0, yticks:[-30000,-20000,-10000,0], xticks:[0,1280,5760], xl:"speed counts (0, 20, 90 km/h)", yl:"Y", title:"DampAxis Y(v) · 0xD7A5C / 0xD7A6C"});
+const ct = D.cave_tbl.filter(r => r[0] !== 65535);
+chart(document.getElementById("lerpG"), [{x:ct.map(r=>r[0]), y:ct.map(r=>r[1]), color:"--rev4", dots:true}], {w:440, h:260, ymin:0, ymax:1200, xmin:0, xticks:[714,2304,4032,6198], xl:"speed counts", yl:"G′", title:"Cave error gain G′(v) · 0xC4CDA"});
+chart(document.getElementById("lerpKp"), [lerpSeries(D.Kp.stock,"--stock"), lerpSeries(D.Kp.rev4,"--rev4",{dash:true})], {w:440, h:260, ymin:0, ymax:24, xticks:D.Kp.stock[0], xl:"table axis, counts", yl:"Kp", title:"Kp"});
+chart(document.getElementById("lerpKd"), [lerpSeries(D.Kd.stock,"--stock"), lerpSeries(D.Kd.rev4,"--rev4",{dash:true}), {x:D.Kd.stock[0], y:[0,0,0,0], color:"--stock", dots:true}, {x:D.Kd.stock[0], y:[20,20,20,20], color:"--rev4", dash:true, dots:true}], {w:440, h:260, ymin:0, ymax:56, yticks:[0,20,32,48], xticks:D.Kd.stock[0], xl:"table axis, counts", yl:"Kd (upper pair), Ki (lower pair)", title:"Kd and Ki"});
+
+// lane response
+const f = D.freq, db = a => a.map(v => +(20 * Math.log10(v)).toFixed(2));
+chart(document.getElementById("bodeM"), [{x:f, y:db(D.H_stock_lo.mag), color:"--stock"}, {x:f, y:db(D.H_rev3_lo.mag), color:"--rev3"}, {x:f, y:db(D.H_stock_lo.mag), color:"--rev4", dash:true, w:2.4}], {w:440, h:260, xlog:true, xmin:1, xmax:480, xticks:[1,3,10,30,100,300], xl:"Hz", yl:"dB", title:"Lane gain, low-speed row"});
+chart(document.getElementById("bodeP"), [{x:f, y:D.H_stock_lo.ph, color:"--stock"}, {x:f, y:D.H_rev3_lo.ph, color:"--rev3"}, {x:f, y:D.H_stock_lo.ph, color:"--rev4", dash:true, w:2.4}], {w:440, h:260, xlog:true, xmin:1, xmax:480, xticks:[1,3,10,30,100,300], ymin:-90, ymax:90, yticks:[-90,-45,0,45,90], xl:"Hz", yl:"degrees", title:"Lane phase vs wheel rate"});
+
+// key map diagram
+(function(){
+  const s = document.getElementById("keys");
+  const col = (x, title, key, modes, hot, note) => {
+    el(s, "text", {x, y:22, class:"ttl"}, title);
+    el(s, "rect", {x, y:36, width:120, height:44, class:"box", rx:3});
+    el(s, "text", {x:x+60, y:55, class:"lbl", "text-anchor":"middle"}, "chassis key");
+    el(s, "text", {x:x+60, y:72, "text-anchor":"middle"}, key);
+    const lab = ["manual","manual","engaged","engaged"];
+    modes.forEach((mo, i) => {
+      const y = 100 + i * 46, isHot = hot.includes(mo);
+      el(s, "path", {d:`M${x+120},58 C${x+160},58 ${x+150},${y+16} ${x+190},${y+16}`, class:"wire"});
+      el(s, "rect", {x:x+190, y, width:210, height:32, class:isHot?"hot":"box", rx:3, style:isHot?"stroke:var(--rev3)":""});
+      el(s, "text", {x:x+200, y:y+20, class:"lbl"}, `${lab[i]} → record ${mo}`);
+      el(s, "text", {x:x+392, y:y+20, "text-anchor":"end", style:isHot?"fill:var(--rev3)":""}, isHot ? "×3 in V300 / REV 3" : "stock");
+    });
+    el(s, "text", {x, y:292}, note);
+  };
+  col(10, "A160 firmware · operator's car", "TVCA4", [24,25,26,27], [26,27], "Tripled lane only while engaged. Flew quietly.");
+  col(470, "A340 firmware · user's car (2.0T)", "TWAA0 / TWAA1", [26,26,27,27], [26,27], "Tripled lane in manual and engaged. Buzzed.");
+  el(s, "line", {x1:445, x2:445, y1:10, y2:290, class:"axis"});
+})();
+
+// signal-flow diagram
+(function(){
+  const s = document.getElementById("flow");
+  const defs = el(s, "defs", {}); const mk = el(defs, "marker", {id:"arr", viewBox:"0 0 10 10", refX:9, refY:5, markerWidth:7, markerHeight:7, orient:"auto-start-reverse"}); el(mk, "path", {d:"M0,0 L10,5 L0,10 z", style:"fill:var(--muted)"});
+  const box = (x, y, w, h, title, lines, cls) => { el(s, "rect", {x, y, width:w, height:h, class:cls||"box", rx:3}); el(s, "text", {x:x+10, y:y+18, class:"ttl"}, title); (lines||[]).forEach((t, i) => el(s, "text", {x:x+10, y:y+36+i*15}, t)); };
+  const wire = d => el(s, "path", {d, class:"wire", "marker-end":"url(#arr)"});
+  el(s, "text", {x:10, y:16, class:"lbl"}, "LKAS lane · runs only while the 0xE4 request bit is 1 (gate 0x29E68 / 0x29E6E)");
+  box(10, 26, 150, 120, "StarPilot", ["angle setpoint", "0xE4 = −10·angle", "100 Hz"]);
+  box(190, 26, 220, 120, "Cave 0xC4C00", ["E = 4·sp − 16·θ", "E′ = (E·G′(v)) >> 8", "hand freeze, angle bound"]);
+  chart(s, [{x:ct.map(r=>r[0]), y:ct.map(r=>r[1]), color:"--rev4"}], {x:318, y:84, w:84, h:54, mini:true, ymin:0, ymax:1200, xmin:0});
+  box(440, 26, 220, 120, "PID", ["P = (E′·Kp) >> 3, Kp 7", "I: Ki 20, limit 8192", "D: Kd 48 on 1 kHz rate"]);
+  chart(s, [{x:D.Kp.stock[0], y:D.Kp.stock[1], color:"--stock"}, {x:D.Kp.rev4[0], y:D.Kp.rev4[1], color:"--rev4", dash:true}], {x:568, y:84, w:84, h:54, mini:true, ymin:0, ymax:24});
+  box(690, 26, 150, 120, "Clamp + lag", ["sum clamp 15360", "lag 992 / 507", "(stock 20480, 1005/324)"]);
+  box(870, 26, 160, 120, "Authority", ["× 5328 (0xC6E88)", "stock 888 = ×6", "clamp 3072 (stock 512)", "rail 2472"]);
+  wire("M160,86 H188"); wire("M410,86 H438"); wire("M660,86 H688"); wire("M840,86 H868");
+  el(s, "text", {x:10, y:206, class:"lbl"}, "Always running · manual and engaged");
+  box(10, 216, 300, 110, "Base assist", ["torque sensor → assist maps, damper, return", "pages 0xCE000–0xD9FFF", "byte-identical to stock"]);
+  box(340, 216, 520, 150, "DampAxis lane · REV 4: stock", ["motor rate → EMA 37/128 → Δ ×32 → EMA α2/64", "→ × Y(v) → clamp ±511", "α2 0xC40D4 = 22   (REV 3: 14)", "Y record = ptr[mode], mode from chassis key", "all 34 records stock   (REV 3: 26, 27 tripled)"], "hot");
+  chart(s, [{x:dY.stock[0], y:dY.stock[1], color:"--stock"}, {x:dY.rev3[0], y:dY.rev3[1], color:"--rev3"}, {x:dY.rev4[0], y:dY.rev4[1], color:"--rev4", dash:true}], {x:700, y:238, w:150, h:118, mini:true, ymin:-32000, ymax:0});
+  el(s, "text", {x:10, y:446, class:"lbl"}, "Common output path");
+  box(190, 456, 190, 100, "Sum", ["lanes added ×1", "clamp ±10240"]);
+  box(410, 456, 190, 100, "Governor", ["rate-limit ramps", "same code as A160"]);
+  box(630, 456, 200, 100, "EME limiter", ["corridor ±5120", "(stock ±1024)", "raises limits only"]);
+  box(860, 456, 170, 100, "Motor", ["current loop", "not traced past here"]);
+  wire("M380,506 H408"); wire("M600,506 H628"); wire("M830,506 H858");
+  wire("M950,146 V186 H285 V454"); wire("M160,326 V400 H240 V454"); wire("M600,366 V410 H330 V454");
+  el(s, "text", {x:300, y:180, class:"lbl"}, "LKAS torque (zero when not requested)");
+})();
+</script>

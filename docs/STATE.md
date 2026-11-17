@@ -4,8 +4,49 @@
 > boxes and the 84 finding/correction blocks that used to follow it are ARCHIVED under `docs/archive/` (pointers
 > at the end of this file). They are a record, not a briefing; nothing was retracted by the moves.
 
-## ✈ 2026-11-02 — A340 PORT: V37A 2× REV 4 AND V300 6× REV 3 BUILT (the DTC-0x49 mask added), neither flown
+## ✈ 2026-11-17 — A340: V300 6× REV 3 FLEW ON A USER'S CAR AND BUZZED; **V300-A340 REV 4 BUILT, NOT FLOWN** (DampAxis lane left STOCK); V37A 2× REV 4 built, not flown
 > **2026-11-02 evening — FORK + REVERT FILE:** the fork's angle-fw predicate only knew `39990-TVA,A16`+letter, so V300-A340 (`39990-TVA,A34C`) would have been steered in TORQUE mode on `accord-PTM` (and dashcam-only on `dev`); FIXED on `accord-PTM` `9942bd70e1` (PUSHED): families `(A16, A34)` + letter, tests extended (predicate checked standalone 14/14; the full Honda suite cannot run on Windows, run it on the device). The 2× build (`39990-TVA,A340`) was already torque mode via the comma rule. `dev` still needs the same change + `39990-TVA,A340` in `MODIFIED_EPS_FW`. **STOCK-A340 REVERT RWD built** from the operator's dump (payload == `01a53539…` byte-identical over [0x13000,0x100000), CRC 49/50 clean, '/' lists -A310/-A340/,A340/,A34C so the flasher gate accepts stock, 2× and 6× ECUs): `flashing-2020accord/rwd/39990-TVA-A340-STOCK-A340-UNMODIFIED.DUMP.01a53539-REVERT-0x13000-0x100000.rwd` sha256 `0965a24c…bb21`, script `builds/a340/build_stock_a340.py` (12/12, 2 s).
+**2026-11-17 — V300-A340 REV 3 FLEW ON A THIRD-PARTY USER'S 2.0T CAR AND BUZZED; REV 4 BUILT, NOT FLOWN.** User's words: "fantastic", plus
+"a slight buzz on return to center movements between 11 and 1, even without starpilot engaged". Routes (public, CAN on bus 1):
+`27da1a2b0cde4a09|00000055--a39019e01a` = REV 3 (F181 `39990-TVA,A34C`, 23 segs), `…|0000005d--ff985a4e01` = STOCK firmware, same car (7 segs).
+**EVIDENCE (0x14A wheel rate, 10 Hz high-pass, 0.32 s rms "BZ", deg/s; buzz = BZ > 4; cell: v > 8 m/s, wheel still, |ang| < 10°, light torque):**
+engaged median 8.91 / 88.9 % of time on REV 3 vs 0.81 / 0.6 % stock same car vs 0.46–0.63 / ≤ 0.4 % A160 V300 (10 routes); manual 48.1 % vs
+0.1 % vs ≤ 0.2 %; manual return to centre within 30°: 94 % vs 2.8 % vs 1.0 %. Manual buzz has request = 0 and cmd = 0 throughout (31 episodes,
+85 s; 7 runs before the route's first engagement). Kick-started (P 0.04 → 0.95 with a > 8 deg/s move), constant amplitude after ~3 cycles,
+firm grip suppresses it; 12–22 Hz as sampled, true frequency unresolved (angle and rate fields disagree with a real 12–30 Hz single-shaft motion;
+alias of ~70–130 Hz is the leading reading, BELIEF).
+**CAUSE (EVIDENCE for every link but the car's key):** the port carried the DampAxis rows BY ADDRESS. The consumer `FUN_00037794` reads record
+`ptr[mode]` (table `0xCBE40`, 34 records, all identical on stock), `mode = gp+0x63fd` from the chassis-key table `0xCD000 + 0x24·row`, columns
++0x12..15 = [manual, manual, engaged, engaged]. A160: records 26/27 = the ENGAGED modes of key TVCA4 (the operator's car; manual = 24/25, never
+edited). **A340: records 26/27 belong to keys TWAA0/TWAA1 = [26,26,27,27] — manual AND engaged — and to no other key** (A340 TVCA4 = 16..19).
+All of the user's other ECUs are `TWA` (2.0T) ⇒ BELIEF the EPS is coded TWAA0/1; then the ×3/×3/×8.1 lane ran hands-on in manual, which no car
+had flown. Request-off audit (842 B, 139 groups): with the request bit 0 only the 13 DampAxis bytes act dynamically (the A7 EME cells bound a
+monitor; the cave/PID is skipped at `0x29E68/6E`, lane term = 0 × the 6× gain). The lane's own loop (2 EMA lags + 2–3 ms delay, clamp ±511)
+reaches −180° at 81–130 Hz; predicted aliases 15.2 / 19.2 Hz vs measured median 16.3 Hz. Lane chain and gain to the governor are identical on
+A340 and A160 (ratio 1.0); why the A160 car is quiet engaged at ×3 is NOT established (plants not known to be equal).
+**V300-A340 REV 4** (image `e73278a1…f2c6`, rwd `4bc63270…bcdc`, F181 **`39990-TVA,A34D`**, 825 B vs stock, NOT FLOWN) = REV 3 with the 13
+DampAxis bytes at STOCK (rows −9830,−5734,−1966; α2 `0xC40D4` 22) + the letter C → D; nothing else. Manual driving = stock in every dynamic
+term. REV 3's rwd removed from `accord-firmwares` (in git history; its image kept). **STOCK-A340 revert rwd re-packed** to accept `,A34D`
+(payload unchanged; new sha `51be7dd8…`, old `0965a24c…` would refuse a REV 4 ECU). The 2× rwd accepts neither `,A34C` nor `,A34D` (6× → 2× goes
+via stock). Fork: `is_accord_eps_angle_loop_fw` accepts `,A34D` (no test case for it yet).
+**GATE 2 (engaged loop on the stock lane): PASS-WITH-DEFECTS.** A340 plant identifiable only < 1.5 Hz (not distinguishable from A160 there);
+central estimate GM 18.3–36.1 dB, peak ≤ −7 dB; fails the release gate at the J_lo member, 3–8 m/s (+5.4 dB at 11 Hz; that corner's inertia is
+below the lane's own contribution, BELIEF inadmissible); with the lane as its own block 0 fails / 60 unless real 5–11 Hz damping < 1.5–2.5
+T/(deg/s) (A160 fit 4.9–5.5; unmeasured on A340). Stock lane-loop margin is only bounded to (0, 7.5 dB] ⇒ no dose above stock is defensible
+without a drive. **Adversarial pass, 3 lenses, all PASS_WITH_DEFECTS** (A bytes/build: independent rebuild == disk, 50/50 CRC two ways, 11/11
+mutations caught, no stranded version transition; B lanes/keys/interlocks: every key gets the same controller and a stock lane, request-off term
+zero, F181 letter has one reader; C dynamics/lineage: literal fail bar met only at 0.1× A160 damping at creep (+7…+9 dB at 7–8 Hz, linear,
+no Coulomb friction) — ruled a stated risk, not a block). 🛑 **RISK BEFORE THE DRIVE:** no car has flown the angle loop on the stock lane; on the
+A160 ×6 RATE loop the stock lane left low-speed grinding (V106 tripled it) and ×0.25 (V94) was stopped by the operator. First engaged test at
+5–20 km/h, hands ready. **READOUTS (one short drive, check `,A34D` in carParams first):** BZ cell above — clean = median < 1.0, < 2 % above 4;
+low-speed corner — 8–20 Hz band of the 0x14A rate, 1 s rms, engaged, not pressed, 1–8 m/s: clean p50 ≤ 1.5 / p90 ≤ 3.0 (A160 V300 0.61/1.54,
+REV 3 5.83/8.61), revert at ≥ 2 s above 4 deg/s. **A NULL LICENSES:** buzz unchanged on a `,A34D` route ⇒ the lane is not the cause and the
+request-off audit is wrong somewhere; manual clean + engaged buzzing ⇒ the cycle is the angle loop's on this plant.
+**OPEN:** the car's coded key (decides everything above); true buzz frequency; `FUN_0002C0FC` (reads `0xC61C0`) untraced; why engagement doubles
+the duty. 🛑 **A160 V300 on any A160 key other than TVCA4 runs STOCK rows with α2 14 — a combination never scored** (other A160 users).
+Page https://claude.ai/artifact/RKPUALFvKXPthPGbmuj2a6 · handoff `docs/handoffs/2026-11/HANDOFF-2026-11-17-a340-buzz-rev4.md` · studies
+`analysis-2020accord/studies/a340_buzz/` (tracer, GATE 2, lenses A/B/C) + `rlog-tools/studies/a340_buzz/` (drive analysis, BZ metric).
+
 **2026-11-02 revision (operator: "make sure DTC 0x49 does not fire on A340").** The 2026-11-01 builds had left the DTC-0x49 over-torque
 counter LIVE: its gate byte `0xC6508` is also the hand-override demand cut on A340, so V37's `gate := 0xFF` could not be ported as a cal edit, and
 with the V36 package in place the counter free-ran exactly as on A160 V36 (dash lights + LKAS drop). Fix = **4 code bytes**: the hw2 of the two
